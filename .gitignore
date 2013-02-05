@@ -1,0 +1,10 @@
+target/
+!kimios-webclient2/src/main/webapp/ext/src/fx/target
+*.class
+.settings/
+.classpath
+.project
+*.iml
+.idea/*
+Thumbs.db
+.DS_Store
