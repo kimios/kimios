@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Kimios - Document Management System Software
+  ~ Copyright (C) 2008-2013  DevLib'
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 2 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+        xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+        http://cxf.apache.org/jaxrs
+        http://cxf.apache.org/schemas/jaxrs.xsd"
+        default-autowire="byName">
+
+    <jaxrs:server id="kimiosRestServer"
+            address="/rest/">
+        <jaxrs:providers>
+            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+        </jaxrs:providers>
+        <jaxrs:serviceBeans>
+            <ref bean="securityServiceBean"/>
+            <ref bean="workspaceServiceBean"/>
+            <ref bean="folderServiceBean"/>
+            <ref bean="documentServiceBean"/>
+            <ref bean="documentVersionServiceBean"/>
+            <ref bean="administrationServiceBean"/>
+            <ref bean="studioServiceBean"/>
+            <ref bean="informationServiceBean"/>
+            <ref bean="logServiceBean"/>
+            <ref bean="reportingServiceBean"/>
+            <ref bean="fileTransferServiceBean"/>
+            <ref bean="ruleServiceBean"/>
+            <ref bean="extensionServiceBean"/>
+            <ref bean="notificationServiceBean"/>
+            <ref bean="searchServiceBean"/>
+        </jaxrs:serviceBeans>
+        <jaxrs:extensionMappings>
+            <entry key="json" value="application/json"/>
+        </jaxrs:extensionMappings>
+    </jaxrs:server>
+
+</beans>

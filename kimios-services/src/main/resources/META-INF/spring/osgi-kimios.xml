@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Kimios - Document Management System Software
+  ~ Copyright (C) 2008-2013  DevLib'
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 2 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:osgi="http://www.springframework.org/schema/osgi"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+               http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+               http://www.springframework.org/schema/osgi
+               http://www.springframework.org/schema/osgi/spring-osgi.xsd">
+
+
+    <osgi:reference id="sessionManager"
+            interface="org.kimios.kernel.security.ISessionManager"/>
+
+    <osgi:reference id="administrationController"
+            interface="org.kimios.kernel.controller.IAdministrationController"/>
+    <osgi:reference id="studioController"
+            interface="org.kimios.kernel.controller.IStudioController"/>
+    <osgi:reference id="documentController"
+            interface="org.kimios.kernel.controller.IDocumentController"/>
+    <osgi:reference id="documentVersionController"
+            interface="org.kimios.kernel.controller.IDocumentVersionController"/>
+    <osgi:reference id="workspaceController"
+            interface="org.kimios.kernel.controller.IWorkspaceController"/>
+    <osgi:reference id="folderController"
+            interface="org.kimios.kernel.controller.IFolderController"/>
+
+    <osgi:reference id="fileTransferController"
+            interface="org.kimios.kernel.controller.IFileTransferController"/>
+    <osgi:reference id="reportingController"
+            interface="org.kimios.kernel.controller.IReportingController"/>
+    <osgi:reference id="rulesController"
+            interface="org.kimios.kernel.controller.IRuleManagementController"/>
+    <osgi:reference id="securityController"
+            interface="org.kimios.kernel.controller.ISecurityController"/>
+    <osgi:reference id="informationController"
+            interface="org.kimios.kernel.controller.IServerInformationController"/>
+    <osgi:reference id="workflowController"
+            interface="org.kimios.kernel.controller.IWorkflowController"/>
+
+    <osgi:reference id="extensionController"
+            interface="org.kimios.kernel.controller.IExtensionController"/>
+
+    <osgi:reference id="pathController"
+            interface="org.kimios.kernel.controller.IPathController"/>
+    <osgi:reference id="searchController"
+            interface="org.kimios.kernel.controller.ISearchController"/>
+
+
+</beans>

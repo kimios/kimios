@@ -1,0 +1,144 @@
+/*
+ * Kimios - Document Management System Software
+ * Copyright (C) 2012-2013  DevLib'
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 2 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+kimios.explorer.Toolbar = Ext.extend(Ext.Toolbar, {
+    constructor : function(config){
+        this.id = 'kimios-toolbar';
+        this.toolsMenu = new kimios.menu.ToolsMenu({
+            hidden: true
+        });
+    
+        this.myTasksButton = new Ext.Button({
+            text : kimios.lang('MyTasks'),
+            iconCls : 'tasks',
+            hidden: true,
+            enableToggle : true,
+            toggleHandler : function(b, s){
+                var vp = kimios.explorer.getViewport();
+                if (s == true){
+                    vp.eastPanel.expand();
+                }else{
+                    vp.eastPanel.collapse();
+                }
+                vp.doLayout();
+            }
+        });
+
+        this.logoutButton = new Ext.Button({
+            text : kimios.lang('Logout'),
+            iconCls : 'exit',
+            hidden: true,
+            handler : function() {
+                window.location.href = contextPath + '/../logout.jsp';
+            }
+        });
+
+        this.loggedAsLabel = new Ext.form.DisplayField({
+            id : 'kimios-logged-label',
+            value : this.getLoggedAsString()
+        });
+
+        this.languageMenu = new kimios.menu.LanguageMenu();
+
+        this.myAccountButton = new Ext.Button({
+            text : kimios.lang('MyAccount'),
+            iconCls : 'admin-user-tree-node',
+            hidden: true,
+            handler : function(){
+                new Ext.Window({
+                    id : 'kimios-my-account',
+                    title : kimios.lang('MyAccount'),
+                    iconCls : 'admin-user-tree-node',
+                    closable : true,
+                    border : true,
+                    layout : 'fit',
+                    maximizable : false,
+                    modal : true,
+                    width : 350,
+                    height : 200,
+                    items : [new kimios.MyAccountPanel({})]
+                }).show();
+            }
+        });
+        kimios.explorer.Toolbar.superclass.constructor.call(this, config);
+    },
+  
+    initComponent : function(){
+        kimios.explorer.Toolbar.superclass.initComponent.apply(this, arguments);
+        this.add('->');
+        this.add(this.loggedAsLabel);
+        this.add(' ');
+        this.add(this.languageMenu);
+        this.add(' ');
+
+        var buttonsArray = [];
+        buttonsArray.push(this.myTasksButton);
+        buttonsArray.push(this.myAccountButton);
+        buttonsArray.push(this.toolsMenu);
+        buttonsArray.push(this.logoutButton);
+        this.add(new Ext.ButtonGroup({
+            columns: buttonsArray.length,
+            items: buttonsArray
+        }));
+
+        var domainsListStore = kimios.store.AdminStore.getDomainsStore();
+        domainsListStore.load({
+            scope : this,
+            callback: function(r){
+                for (var i=0; i<r.length; i++){
+                    if (currentSource == r[i].data.name){
+                        kimios.setImplPackage(r[i].data.className);
+                        break;
+                    }
+                }
+                var isVisible = kimios.getImplPackage() == 'org.kimios.kernel.user.impl.HAuthenticationSource';
+                this.myTasksButton.setVisible(true);
+                this.myAccountButton.setVisible(isVisible);
+                this.toolsMenu.setVisible(!Ext.getCmp('kimios-tools').simpleUser);
+                this.logoutButton.setVisible(true);
+                this.doLayout(); // IE bug fix
+            }
+        });
+    },
+  
+    getLoggedAsString : function(){
+        var html = '<span style="color:gray;">'+kimios.lang('Welcome')+', ';
+    
+        if (currentName != null && currentName != '' && currentName != 'null')
+            html += currentName;
+        else
+            html += currentUser + '@' + currentSource;
+        html += '</span>';
+        return html;
+    },
+  
+    refreshLanguage : function(lg){
+        this.languageMenu.refreshLanguage();
+        this.toolsMenu.refreshLanguage();
+        this.myTasksButton.setText(kimios.lang('MyTasks'));
+        this.myAccountButton.setText(kimios.lang('MyAccount'));
+        this.logoutButton.setText(kimios.lang('Logout'));
+        this.loggedAsLabel.setValue(lg != undefined ? lg : this.getLoggedAsString());
+        this.doLayout();
+    },
+  
+    refresh : function(){
+        this.toolsMenu.refresh();
+        this.doLayout();
+    }
+});
+
+

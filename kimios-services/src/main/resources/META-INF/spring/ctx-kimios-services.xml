@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~ Kimios - Document Management System Software
+  ~ Copyright (C) 2012-2013  DevLib'
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 2 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:jaxws="http://cxf.apache.org/jaxws"
+        xmlns:soap="http://cxf.apache.org/bindings/soap"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+        http://cxf.apache.org/jaxws
+        http://cxf.apache.org/schemas/jaxws.xsd
+        http://cxf.apache.org/bindings/soap
+        http://cxf.apache.org/schemas/configuration/soap.xsd
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd"
+        default-autowire="byName">
+
+
+    <import resource="classpath*:/META-INF/cxf/cxf.xml"/>
+    <import resource="classpath*:/META-INF/cxf/cxf-extension-soap.xml"/>
+
+
+    <!-- Service beans -->
+
+    <bean id="serviceHelper" class="org.kimios.webservices.ServiceHelper">
+        <property name="sessionManager" ref="sessionManager"/>
+    </bean>
+    <bean id="kimiosCoreService" class="org.kimios.webservices.CoreService" abstract="true" lazy-init="true">
+        <property name="helper" ref="serviceHelper"/>
+        <property name="securityController" ref="securityController"/>
+        <property name="documentController" ref="documentController"/>
+        <property name="documentVersionController" ref="documentVersionController"/>
+        <property name="folderController" ref="folderController"/>
+        <property name="workspaceController" ref="workspaceController"/>
+        <property name="pathController" ref="pathController"/>
+        <property name="informationController" ref="informationController"/>
+        <property name="workflowController" ref="workflowController"/>
+        <property name="studioController" ref="studioController"/>
+        <property name="transferController" ref="fileTransferController"/>
+        <property name="reportingController" ref="reportingController"/>
+        <property name="administrationController" ref="administrationController"/>
+        <property name="searchController" ref="searchController"/>
+        <property name="ruleController" ref="rulesController"/>
+        <property name="extensionController" ref="extensionController"/>
+    </bean>
+
+    <!-- Aegis data binding -->
+
+    <bean id="jaxws-and-aegis-service-factory" class="org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean"
+            scope="prototype">
+        <property name="dataBinding">
+            <bean class="org.apache.cxf.aegis.databinding.AegisDatabinding">
+                <property name="aegisContext">
+                    <bean class="org.apache.cxf.aegis.AegisContext">
+                        <property name="rootClassNames">
+                            <list>
+                                <value>org.kimios.webservices.DMServiceException</value>
+                            </list>
+                        </property>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+        <property name="serviceConfigurations">
+            <list>
+                <bean class="org.apache.cxf.jaxws.support.JaxWsServiceConfiguration"/>
+                <bean class="org.apache.cxf.service.factory.DefaultServiceConfiguration"/>
+            </list>
+        </property>
+    </bean>
+
+
+    <bean id="securityServiceBean"
+            class="org.kimios.webservices.impl.SecurityServiceImpl"
+            parent="kimiosCoreService"
+            />
+    <!-- Service endpoint -->
+    <jaxws:endpoint id="securityServiceWs"
+            implementorClass="org.kimios.webservices.impl.SecurityServiceImpl"
+            implementor="#securityServiceBean"
+            address="/SecurityService"
+            endpointName="SecurityService"
+            >
+
+        <jaxws:binding>
+            <soap:soapBinding name="SecurityService" />
+        </jaxws:binding>
+        <jaxws:serviceFactory>
+            <ref bean="jaxws-and-aegis-service-factory"/>
+        </jaxws:serviceFactory>
+    </jaxws:endpoint>
+
+
+    <bean id="administrationServiceBean" class="org.kimios.webservices.impl.AdministrationServiceImpl"
+            parent="kimiosCoreService"/>
+    <!-- Service endpoint -->
+    <jaxws:endpoint id="administrationServiceWs"
+            implementorClass="org.kimios.webservices.impl.AdministrationServiceImpl"
+            implementor="#administrationServiceBean"
+            address="/AdministrationService"
+            endpointName="AdministrationService"
+            >
+        <jaxws:binding>
+            <soap:soapBinding name="AdministrationService"/>
+        </jaxws:binding>
+        <jaxws:serviceFactory>
+            <ref bean="jaxws-and-aegis-service-factory"/>
+        </jaxws:serviceFactory>
+    </jaxws:endpoint>
+
+    <bean id="studioServiceBean" class="org.kimios.webservices.impl.StudioServiceImpl" parent="kimiosCoreService"/>
+    <!-- Service endpoint -->
+    <jaxws:endpoint id="studioServiceWs"
+            implementorClass="org.kimios.webservices.impl.StudioServiceImpl"
+            implementor="#studioServiceBean"
+            address="/StudioService"
+            endpointName="StudioService"
+            depends-on="studioServiceBean"
+            >
+        <jaxws:binding>
+            <soap:soapBinding name="StudioService"/>
+        </jaxws:binding>
+        <jaxws:serviceFactory>
+            <ref bean="jaxws-and-aegis-service-factory"/>
+        </jaxws:serviceFactory>
+    </jaxws:endpoint>
+
+    <bean id="documentServiceBean" class="org.kimios.webservices.impl.DocumentServiceImpl" parent="kimiosCoreService"/>
+    <!-- Service endpoint -->
+    <jaxws:endpoint id="documentServiceWs"
+            implementorClass="org.kimios.webservices.impl.DocumentServiceImpl"
+            implementor="#documentServiceBean"
+            address="/DocumentService"
+
+            endpointName="DocumentService"
+            depends-on="documentServiceBean"
+            >
+        <jaxws:binding>
+            <soap:soapBinding name="DocumentService"/>
+        </jaxws:binding>
+        <jaxws:serviceFactory>
+            <ref bean="jaxws-and-aegis-service-factory"/>
+        </jaxws:serviceFactory>
+    </jaxws:endpoint>
+
+
+    <bean id="documentVersionServiceBean" class="org.kimios.webservices.impl.DocumentVersionServiceImpl"
+            parent="kimiosCoreService"/>
+    <!-- Service endpoint -->
+    <jaxws:endpoint id="documentVersionServiceWs"
+            implementorClass="org.kimios.webservices.impl.DocumentVersionServiceImpl"
+            implementor="#documentVersionServiceBean"
+            address="/DocumentVersionService"
+            endpointName="DocumentVersionService"
+            >
+        <jaxws:binding>
+            <soap:soapBinding name="DocumentVersionService"/>
+        </jaxws:binding>
+        <jaxws:serviceFactory>
+            <ref bean="jaxws-and-aegis-service-factory"/>
+        </jaxws:serviceFactory>
+    </jaxws:endpoint>
+
+    <bean id="folderServiceBean" class="org.kimios.webservices.impl.FolderServiceImpl" parent="kimiosCoreService"/>
+    <!-- Service endpoint -->
+    <jaxws:endpoint id="folderServiceWs"
+            implementorClass="org.kimios.webservices.impl.FolderServiceImpl"
+            implementor="#folderServiceBean"
+            address="/FolderService"
+            endpointName="FolderService"
+            >
+        <jaxws:binding>
+            <soap:soapBinding name="FolderService"/>
+        </jaxws:binding>
+        <jaxws:serviceFactory>
+            <ref bean="jaxws-and-aegis-service-factory"/>
+        </jaxws:serviceFactory>
+    </jaxws:endpoint>
+
+
+    <bean id="workspaceServiceBean" class="org.kimios.webservices.impl.WorkspaceServiceImpl"
+            parent="kimiosCoreService"/>
+    <!-- Service endpoint -->
+    <jaxws:endpoint id="workspaceServiceWs"
+            implementorClass="org.kimios.webservices.impl.WorkspaceServiceImpl"
+            implementor="#workspaceServiceBean"
+            address="/WorkspaceService"
+            endpointName="WorkspaceService"
+            >
+        <jaxws:binding>
+            <soap:soapBinding name="WorkspaceService"/>
+        </jaxws:binding>
+        <jaxws:serviceFactory>
+            <ref bean="jaxws-and-aegis-service-factory"/>
+        </jaxws:serviceFactory>
+    </jaxws:endpoint>
+
+    <bean id="searchServiceBean" class="org.kimios.webservices.impl.SearchServiceImpl" parent="kimiosCoreService"/>
+    <!-- Service endpoint -->
+    <jaxws:endpoint id="searchServiceWs"
+            implementorClass="org.kimios.webservices.impl.SearchServiceImpl"
+            implementor="#searchServiceBean"
+            address="/SearchService"
+            endpointName="SearchService"
+            >
+        <jaxws:binding>
+            <soap:soapBinding name="SearchService"/>
+        </jaxws:binding>
+        <jaxws:serviceFactory>
+            <ref bean="jaxws-and-aegis-service-factory"/>
+        </jaxws:serviceFactory>
+    </jaxws:endpoint>
+
+    <bean id="notificationServiceBean" class="org.kimios.webservices.impl.NotificationServiceImpl"
+            parent="kimiosCoreService"/>
+    <!-- Service endpoint -->
+    <jaxws:endpoint id="notificationServiceWs"
+            implementorClass="org.kimios.webservices.impl.NotificationServiceImpl"
+            implementor="#notificationServiceBean"
+            address="/NotificationService"
+            endpointName="NotificationService"
+            >
+        <jaxws:binding>
+            <soap:soapBinding name="NotificationService"/>
+        </jaxws:binding>
+        <jaxws:serviceFactory>
+            <ref bean="jaxws-and-aegis-service-factory"/>
+        </jaxws:serviceFactory>
+    </jaxws:endpoint>
+
+    <bean id="logServiceBean" class="org.kimios.webservices.impl.LogServiceImpl" parent="kimiosCoreService"/>
+    <!-- Service endpoint -->
+    <jaxws:endpoint id="logServiceWs"
+            implementorClass="org.kimios.webservices.impl.LogServiceImpl"
+            implementor="#logServiceBean"
+            address="/LogService"
+            endpointName="LogService"
+            >
+        <jaxws:binding>
+            <soap:soapBinding name="LogService"/>
+        </jaxws:binding>
+        <jaxws:serviceFactory>
+            <ref bean="jaxws-and-aegis-service-factory"/>
+        </jaxws:serviceFactory>
+    </jaxws:endpoint>
+
+    <bean id="informationServiceBean" class="org.kimios.webservices.impl.InformationServiceImpl"
+            parent="kimiosCoreService"/>
+    <!-- Service endpoint -->
+    <jaxws:endpoint id="informationServiceWs"
+            implementorClass="org.kimios.webservices.impl.InformationServiceImpl"
+            implementor="#informationServiceBean"
+            address="/InformationService"
+            endpointName="InformationService"
+            >
+        <jaxws:binding>
+            <soap:soapBinding name="InformationService"/>
+        </jaxws:binding>
+        <jaxws:serviceFactory>
+            <ref bean="jaxws-and-aegis-service-factory"/>
+        </jaxws:serviceFactory>
+    </jaxws:endpoint>
+
+    <bean id="extensionServiceBean" class="org.kimios.webservices.impl.ExtensionServiceImpl"
+            parent="kimiosCoreService"/>
+    <!-- Service endpoint -->
+    <jaxws:endpoint id="extensionServiceWs"
+            implementorClass="org.kimios.webservices.impl.ExtensionServiceImpl"
+            implementor="#extensionServiceBean"
+            address="/ExtensionService"
+            endpointName="ExtensionService"
+            >
+        <jaxws:binding>
+            <soap:soapBinding name="ExtensionService"/>
+        </jaxws:binding>
+        <jaxws:serviceFactory>
+            <ref bean="jaxws-and-aegis-service-factory"/>
+        </jaxws:serviceFactory>
+    </jaxws:endpoint>
+
+    <bean id="ruleServiceBean" class="org.kimios.webservices.impl.RuleServiceImpl" parent="kimiosCoreService"/>
+    <!-- Service endpoint -->
+    <jaxws:endpoint id="ruleServiceWs"
+            implementorClass="org.kimios.webservices.impl.RuleServiceImpl"
+            implementor="#ruleServiceBean"
+            address="/RuleService"
+            endpointName="RuleService"
+            >
+        <jaxws:binding>
+            <soap:soapBinding name="RuleService"/>
+        </jaxws:binding>
+        <jaxws:serviceFactory>
+            <ref bean="jaxws-and-aegis-service-factory"/>
+        </jaxws:serviceFactory>
+    </jaxws:endpoint>
+
+
+    <bean id="reportingServiceBean" class="org.kimios.webservices.impl.ReportingServiceImpl"
+            parent="kimiosCoreService"/>
+    <!-- Service endpoint -->
+    <jaxws:endpoint id="reportingServiceWs"
+            implementorClass="org.kimios.webservices.impl.ReportingServiceImpl"
+            implementor="#reportingServiceBean"
+            address="/ReportingService"
+            endpointName="ReportingService"
+            >
+        <jaxws:binding>
+            <soap:soapBinding name="ReportingService"/>
+        </jaxws:binding>
+        <jaxws:serviceFactory>
+            <ref bean="jaxws-and-aegis-service-factory"/>
+        </jaxws:serviceFactory>
+    </jaxws:endpoint>
+
+    <bean id="fileTransferServiceBean" class="org.kimios.webservices.impl.FileTransferServiceImpl"
+            parent="kimiosCoreService"/>
+    <!-- Service endpoint -->
+    <jaxws:endpoint id="fileTransferServiceWs"
+            implementorClass="org.kimios.webservices.impl.FileTransferServiceImpl"
+            implementor="#fileTransferServiceBean"
+            address="/FileTransferService"
+            endpointName="FileTransferService"
+            >
+        <jaxws:binding>
+            <soap:soapBinding name="FileTransferService"/>
+        </jaxws:binding>
+        <jaxws:serviceFactory>
+            <ref bean="jaxws-and-aegis-service-factory"/>
+        </jaxws:serviceFactory>
+    </jaxws:endpoint>
+
+</beans>

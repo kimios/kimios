@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~ Kimios - Document Management System Software
+  ~ Copyright (C) 2008-2012  DevLib'
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 2 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "classpath://org/kimios/kernel/hibernate/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <!-- MS SQL Server Pojo Mapping -->
+    <class name="org.kimios.kernel.ws.pojo.Document" entity-name="DocumentPojo" mutable="false">
+        <subselect>
+            SELECT doc.id, doc.dm_entity_name, doc.dm_entity_owner, doc.dm_entity_owner_source, doc.creation_date,
+            doc.update_date, doc.folder_id, doc.mime_type, doc.extension, doc.path AS document_path, dv.id AS
+            version_id, dv.type_name, dv.version_length AS file_length, dv.creation_date AS version_creation_date,
+            dv.modification_date AS version_update_date, dv.document_type_id, doc.locked, doc.lock_by, doc.lock_source,
+            doc.lock_date, req.outofworkflow, stat.status_name, stat.last_wfs
+            FROM ( SELECT d.id, dm.dm_entity_name, dm.dm_entity_owner, dm.dm_entity_owner_source, dm.creation_date,
+            dm.update_date, d.folder_id, d.mime_type, d.extension,
+            CASE
+            WHEN chk.username IS NOT NULL THEN 1
+            ELSE 0
+            END AS locked, chk.username AS lock_by, chk.user_source AS lock_source, chk.checkout_date AS lock_date,
+            dm.dm_entity_path AS path
+            FROM document d
+            LEFT JOIN checkout chk ON d.id = chk.document_id
+            LEFT JOIN dm_entity dm ON d.id = dm.dm_entity_id AND dm.dm_entity_type = 3) doc
+            JOIN ( SELECT b.id, b.author, b.author_source, b.creation_date, b.modification_date, b.document_id,
+            b.storage_path, b.version_length, b.document_type_id, b.hash_md5, b.hash_sha1, dt.type_name
+            FROM ( SELECT document_version.document_id, max(document_version.creation_date) AS creation_date
+            FROM document_version
+            GROUP BY document_version.document_id) a
+            JOIN document_version b ON a.creation_date = b.creation_date AND a.document_id = b.document_id
+            LEFT JOIN document_type dt ON b.document_type_id = dt.id) dv ON dv.document_id = doc.id
+            LEFT JOIN ( SELECT dws.document_id, stu.id AS last_wfs, stu.status_name
+            FROM ( SELECT document_workflow_status.document_id, max(document_workflow_status.status_date) AS status_date
+            FROM document_workflow_status
+            GROUP BY document_workflow_status.document_id) c
+            JOIN document_workflow_status dws ON c.document_id = dws.document_id AND c.status_date = dws.status_date
+            JOIN workflow_status stu ON dws.workflow_status_id = stu.id) stat ON stat.document_id = doc.id
+            LEFT JOIN ( SELECT r2.document_id,
+            CASE
+            WHEN st1.successor_id IS NOT NULL OR (r2.request_status = 1 OR r2.request_status = 3) THEN 0
+            ELSE 1
+            END AS outofworkflow
+            FROM ( SELECT document_workflow_status_request.document_id,
+            max(document_workflow_status_request.request_date) AS request_date
+            FROM document_workflow_status_request
+            GROUP BY document_workflow_status_request.document_id) r1
+            JOIN document_workflow_status_request r2 ON r1.document_id = r2.document_id AND r1.request_date =
+            r2.request_date
+            JOIN workflow_status st1 ON r2.workflow_status_id = st1.id) req ON req.document_id = doc.id
+        </subselect>
+        <id name="uid" type="long" column="id">
+            <generator class="assigned"></generator>
+        </id>
+        <property name="name">
+            <column name="dm_entity_name"/>
+        </property>
+        <property name="owner">
+            <column name="dm_entity_owner"/>
+        </property>
+        <property name="ownerSource">
+            <column name="dm_entity_owner_source"/>
+        </property>
+        <property name="creationDate">
+            <column sql-type="date" name="creation_date"/>
+        </property>
+        <property name="updateDate">
+            <column sql-type="date" name="update_date"/>
+        </property>
+        <property name="versionCreationDate">
+            <column sql-type="date" name="version_creation_date"/>
+        </property>
+        <property name="versionUpdateDate">
+            <column sql-type="date" name="version_update_date"/>
+        </property>
+        <property name="folderUid">
+            <column name="folder_id"/>
+        </property>
+        <property name="mimeType">
+            <column name="mime_type"/>
+        </property>
+        <property name="extension">
+            <column name="extension"/>
+        </property>
+        <property name="path">
+            <column name="document_path"/>
+        </property>
+        <property name="documentTypeUid" not-null="true">
+            <column name="document_type_id" not-null="false" default="0"></column>
+        </property>
+        <property name="documentTypeName" not-null="true">
+            <column name="type_name" not-null="false" default=""></column>
+        </property>
+        <property name="checkedOut">
+            <column name="locked" default="false"></column>
+        </property>
+        <property name="checkoutUser">
+            <column name="lock_by"></column>
+        </property>
+        <property name="checkoutUserSource">
+            <column name="lock_source"/>
+        </property>
+        <property name="checkoutDate">
+            <column name="lock_date"/>
+        </property>
+        <property name="length">
+            <column name="file_length"/>
+        </property>
+        <property name="workflowStatusUid">
+            <column name="last_wfs"></column>
+        </property>
+        <property name="workflowStatusName">
+            <column name="status_name"/>
+        </property>
+        <property name="outOfWorkflow">
+            <column name="outofworkflow"></column>
+        </property>
+    </class>
+</hibernate-mapping>

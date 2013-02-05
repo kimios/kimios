@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Kimios - Document Management System Software
+  ~ Copyright (C) 2008-2012  DevLib'
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 2 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.0.xsd"
+        default-autowire="byName">
+
+
+    <!--util file to bundle client with server in one app -->
+
+
+    <bean id="administrationController" class="org.kimios.client.controller.AdministrationController">
+        <property name="client" ref="administrationServiceBean"/>
+    </bean>
+
+    <bean id="securityController" class="org.kimios.client.controller.SecurityController">
+        <property name="client" ref="securityServiceBean"/>
+    </bean>
+    <bean id="studioController" class="org.kimios.client.controller.StudioController">
+        <property name="client" ref="studioServiceBean"/>
+    </bean>
+    <bean id="workspaceController" class="org.kimios.client.controller.WorkspaceController">
+        <property name="client" ref="workspaceServiceBean"/>
+    </bean>
+    <bean id="folderController" class="org.kimios.client.controller.FolderController">
+        <property name="client" ref="folderServiceBean"/>
+    </bean>
+    <bean id="documentController" class="org.kimios.client.controller.DocumentController">
+        <property name="client" ref="documentServiceBean"/>
+    </bean>
+    <bean id="documentVersionController" class="org.kimios.client.controller.DocumentVersionController">
+        <property name="client" ref="documentVersionServiceBean"/>
+    </bean>
+
+    <bean id="logController" class="org.kimios.client.controller.LogController">
+        <property name="client" ref="logServiceBean"/>
+    </bean>
+
+    <bean id="fileTransferController" class="org.kimios.client.controller.FileTransferController">
+        <property name="temporaryFilesPath" value="${temp.directory}"/>
+        <property name="chunkSize" value="${transfer.chunksize}"/>
+        <property name="client" ref="fileTransferServiceBean"/>
+        <property name="documentVersionClient" ref="documentVersionServiceBean"/>
+    </bean>
+
+    <bean id="extensionController" class="org.kimios.client.controller.ExtensionController">
+        <property name="client" ref="extensionServiceBean"/>
+    </bean>
+
+    <bean id="reportingController" class="org.kimios.client.controller.ReportingController">
+        <property name="client" ref="reportingServiceBean"/>
+    </bean>
+
+
+    <bean id="serverInformationController" class="org.kimios.client.controller.ServerInformationController">
+        <property name="client" ref="informationServiceBean"/>
+    </bean>
+
+    <bean id="searchController" class="org.kimios.client.controller.SearchController">
+        <property name="client" ref="searchServiceBean"/>
+    </bean>
+
+    <bean id="workflowController" class="org.kimios.client.controller.WorkflowController">
+        <property name="client" ref="workflowServiceBean"/>
+    </bean>
+
+    <bean id="ruleController" class="org.kimios.client.controller.RuleController">
+        <property name="client" ref="ruleServiceBean"/>
+    </bean>
+
+</beans>

@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Kimios - Document Management System Software
+  ~ Copyright (C) 2008-2012  DevLib'
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 2 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:aop="http://www.springframework.org/schema/aop"
+        xmlns:tx="http://www.springframework.org/schema/tx"
+        xsi:schemaLocation="
+      http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+      http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+      http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method read-only="true" name="reindex" timeout="3600000"/>
+            <tx:method name="updateAclsRecursiveMode" timeout="3600000"/>
+            <tx:method name="*"/>
+        </tx:attributes>
+    </tx:advice>
+
+
+    <bean id="sessionFactory"
+            class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource">
+            <ref bean="kimiosDataSource"/>
+        </property>
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.cache.use_query_cache">true</prop>
+                <prop key="hibernate.cache.use_second_level_cache">true</prop>
+                <prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</prop>
+                <prop key="hibernate.dialect">${jdbc.dialect}</prop>
+                <prop key="hibernate.show_sql">false</prop>
+                <prop key="hibernate.format_sql">true</prop>
+                <prop key="hibernate.hbm2ddl.auto">${jdbc.ddl.mode}</prop>
+                <prop key="hibernate.default_schema">${jdbc.schema}</prop>
+                <prop key="hibernate.current_session_context_class">jta</prop>
+                <prop key="hibernate.connection.release_mode">after_statement</prop>
+                <prop key="hibernate.transaction.factory_class">${jta.tx.factory}</prop>
+                <prop key="hibernate.transaction.manager_lookup_class">${jta.tx.managerlookup}</prop>
+                <prop key="hibernate.jdbc.use_streams_for_binary">true</prop>
+            </props>
+        </property>
+        <property name="annotatedClasses">
+            <list>
+                <value>org.kimios.kernel.user.AuthenticationSourceBean</value>
+            </list>
+        </property>
+        <property name="packagesToScan">
+            <list>
+                <value>org.kimios.kernel.dms</value>
+                <value>org.kimios.kernel.dms.metafeeds.impl</value>
+                <value>org.kimios.kernel.repositories</value>
+                <value>org.kimios.kernel.security</value>
+                <value>org.kimios.kernel.rules</value>
+                <value>org.kimios.kernel.log</value>
+                <value>org.kimios.kernel.filetransfer</value>
+            </list>
+        </property>
+        <property name="mappingLocations">
+            <list>
+                <value>classpath:/org/kimios/kernel/hibernate/mapping/authentication.hbm.xml</value>
+                <value>classpath:/org/kimios/kernel/hibernate/mapping/${jdbc.databasetype}/dm*.hbm.xml</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="ruleManager" class="org.kimios.kernel.rules.RuleManager">
+        <property name="ruleBeanFactory" ref="ruleFactory"></property>
+    </bean>
+
+    <bean id="eventHandlerManager" class="org.kimios.kernel.events.EventHandlerManager" factory-method="getInstance"
+            init-method="init"/>
+
+    <bean id="eventInterceptor" class="org.kimios.kernel.events.interceptors.GenericInterceptor" init-method="init">
+        <property name="ruleManager" ref="ruleManager"></property>
+    </bean>
+
+    <aop:config>
+        <aop:pointcut id="securityService"
+                expression="execution(* org.kimios.kernel.controller.ISecurityController.*(..))"/>
+        <aop:pointcut id="informationService"
+                expression="execution(* org.kimios.kernel.controller.IServerInformationController.*(..))"/>
+        <aop:pointcut id="workspaceService"
+                expression="execution(* org.kimios.kernel.controller.IWorkspaceController.*(..))"/>
+        <aop:pointcut id="documentService"
+                expression="execution(* org.kimios.kernel.controller.IDocumentController.*(..))"/>
+        <aop:pointcut id="folderService"
+                expression="execution(* org.kimios.kernel.controller.IFolderController.*(..))"/>
+        <aop:pointcut id="documentVersionService"
+                expression="execution(* org.kimios.kernel.controller.IDocumentVersionController.*(..))"/>
+        <aop:pointcut id="workflowService"
+                expression="execution(* org.kimios.kernel.controller.IWorkflowController.*(..))"/>
+        <aop:pointcut id="studioService"
+                expression="execution(* org.kimios.kernel.controller.IStudioController.*(..))"/>
+        <aop:pointcut id="administrationService"
+                expression="execution(* org.kimios.kernel.controller.IAdministrationController.*(..))"/>
+        <aop:pointcut id="reportingService"
+                expression="execution(* org.kimios.kernel.controller.IReportingController.*(..))"/>
+        <aop:pointcut id="fileTransferService"
+                expression="execution(* org.kimios.kernel.controller.IFileTransferController.*(..))"/>
+        <aop:pointcut id="searchService"
+                expression="execution(* org.kimios.kernel.controller.ISearchController.*(..))"/>
+        <aop:pointcut id="ruleService"
+                expression="execution(* org.kimios.kernel.controller.IRuleManagementController.*(..))"/>
+        <aop:pointcut id="sessionService"
+                expression="execution(* org.kimios.kernel.security.ISessionManager.getSession(*))"/>
+        <aop:pointcut id="aclUpdateService"
+                expression="execution(* org.kimios.kernel.jobs.security.IACLUpdater.*(..))"/>
+        <aop:pointcut id="pathService" expression="execution(* org.kimios.kernel.controller.IPathController.*(..))"/>
+        <aop:pointcut id="extService"
+                expression="execution(* org.kimios.kernel.controller.IExtensionController.*(..))"/>
+
+        <aop:pointcut id="repoService"
+                expression="execution(* org.kimios.kernel.repositories.RepositoryService.*(..))"/>
+
+
+        <aop:pointcut id="sessManagerPct"
+                expression="execution(* org.kimios.kernel.security.SessionManager.*SessionContext(..))"/>
+
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="securityService"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="informationService"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="folderService"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="documentService"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="documentVersionService"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="workspaceService"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="workflowService"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="administrationService"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="studioService"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="reportingService"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="fileTransferService"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="searchService"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="sessionService"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="ruleService"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="pathService"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="extService"/>
+
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="aclUpdateService"/>
+
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="repoService"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="sessManagerPct"/>
+
+
+        <aop:advisor advice-ref="eventInterceptor" pointcut-ref="aclUpdateService"/>
+        <aop:advisor advice-ref="eventInterceptor" pointcut-ref="securityService"/>
+        <aop:advisor advice-ref="eventInterceptor" pointcut-ref="workspaceService"/>
+        <aop:advisor advice-ref="eventInterceptor" pointcut-ref="folderService"/>
+        <aop:advisor advice-ref="eventInterceptor" pointcut-ref="documentService"/>
+        <aop:advisor advice-ref="eventInterceptor" pointcut-ref="workflowService"/>
+        <aop:advisor advice-ref="eventInterceptor" pointcut-ref="documentVersionService"/>
+        <aop:advisor advice-ref="eventInterceptor" pointcut-ref="fileTransferService"/>
+        <aop:advisor advice-ref="eventInterceptor" pointcut-ref="administrationService"/>
+        <aop:advisor advice-ref="eventInterceptor" pointcut-ref="extService"/>
+
+    </aop:config>
+    <bean id="appContextProvider" class="org.kimios.utils.spring.ApplicationContextProvider"/>
+</beans>
+              
+
+

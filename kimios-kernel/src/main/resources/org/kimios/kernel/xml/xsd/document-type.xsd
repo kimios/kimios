@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Kimios - Document Management System Software
+  ~ Copyright (C) 2012-2013  DevLib'
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 2 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xsd:element name="document-type">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="unbounded" ref="meta"/>
+      </xsd:sequence>
+      <xsd:attribute name="document-type-uid" use="required" type="xsd:long"/>
+      <xsd:attribute name="name" use="required" type="xsd:string"/>
+      <xsd:attribute name="uid" use="optional" type="xsd:long"/>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element name="meta">
+    <xsd:complexType>
+      <xsd:attribute name="meta_feed" use="required" type="xsd:integer"/>
+      <xsd:attribute name="meta_type" use="required" type="xsd:integer"/>
+      <xsd:attribute name="name" use="required" type="xsd:string"/>
+      <xsd:attribute name="uid" use="required" type="xsd:long"/>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>
