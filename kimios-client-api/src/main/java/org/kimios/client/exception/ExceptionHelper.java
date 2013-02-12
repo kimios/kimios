@@ -20,6 +20,8 @@
  */
 package org.kimios.client.exception;
 
+import javax.ws.rs.WebApplicationException;
+
 /**
  *
  * @author Fabien Alin
@@ -27,6 +29,8 @@ package org.kimios.client.exception;
 public class ExceptionHelper {
 
     public Exception convertException(Exception ex) {
+
+
         if (ex.getMessage() != null) {
             if (ex.getMessage().contains("Error 01")) {
                 return new InvalidSessionException(ex.getMessage());

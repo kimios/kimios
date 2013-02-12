@@ -21,38 +21,46 @@ import java.util.Date;
 /**
  * This class represents a report with its content
  */
-public class Report {
+public class Report
+{
 
     private String name;
+
     private Date date;
+
     private Header header;
+
     private Body body;
 
     /**
      * @return the name
      */
-    public String getName() {
+    public String getName()
+    {
         return name;
     }
 
     /**
      * @return the date
      */
-    public Date getDate() {
+    public Date getDate()
+    {
         return date;
     }
 
     /**
      * @return the header
      */
-    public Header getHeader() {
+    public Header getHeader()
+    {
         return header;
     }
 
     /**
      * @return the body
      */
-    public Body getBody() {
+    public Body getBody()
+    {
         return body;
     }
 }

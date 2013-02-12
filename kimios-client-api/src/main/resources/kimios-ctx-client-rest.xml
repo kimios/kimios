@@ -17,189 +17,184 @@
   -->
 
 <beans xmlns="http://www.springframework.org/schema/beans"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns:jaxrs="http://cxf.apache.org/jaxrs"
-        xsi:schemaLocation="http://www.springframework.org/schema/beans
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+       xmlns:cxf="http://cxf.apache.org/core"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
         http://cxf.apache.org/jaxrs
-        http://cxf.apache.org/schemas/jaxrs.xsd"
-        default-autowire="byName">
+        http://cxf.apache.org/schemas/jaxrs.xsd
+        http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
+        "
+       default-autowire="byName">
 
 
-    <bean id="aegisBean" class="org.apache.cxf.aegis.databinding.AegisDatabinding"
-            scope="prototype">
-        <property name="aegisContext">
-            <bean class="org.apache.cxf.aegis.AegisContext">
-                <property name="rootClassNames">
-                    <list>
-                        <value>org.kimios.webservices.DMServiceException</value>
-                    </list>
-                </property>
-            </bean>
-        </property>
-    </bean>
 
-    <bean id="jaxwsAndAegisServiceFactory" class="org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean"
-            scope="prototype">
-        <property name="dataBinding" ref="aegisBean"/>
-        <property name="serviceConfigurations">
-            <list>
-                <bean class="org.apache.cxf.jaxws.support.JaxWsServiceConfiguration"/>
-                <bean class="org.apache.cxf.aegis.databinding.AegisServiceConfiguration"/>
-                <bean class="org.apache.cxf.service.factory.DefaultServiceConfiguration"/>
-            </list>
-        </property>
-    </bean>
-
-
-    <jaxrs:client id="administrationService" serviceClass="org.kimios.webservices.AdministrationService"
-            address="${server.url}/services/rest/">
+    <jaxrs:client threadSafe="true"  id="administrationService" serviceClass="org.kimios.webservices.AdministrationService"
+                  address="${server.url}${service.context}/rest/">
         <jaxrs:providers>
             <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
         </jaxrs:providers>
         <jaxrs:headers>
             <entry key="Accept" value="application/json"/>
         </jaxrs:headers>
     </jaxrs:client>
 
-    <jaxrs:client id="securityService" serviceClass="org.kimios.webservices.SecurityService"
-            address="${server.url}/services/rest/">
+    <jaxrs:client threadSafe="true" id="securityService" serviceClass="org.kimios.webservices.SecurityService"
+                  address="${server.url}${service.context}/rest/">
         <jaxrs:providers>
             <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
         </jaxrs:providers>
-        <jaxrs:dataBinding>
-            <ref bean="aegisBean"/>
-        </jaxrs:dataBinding>
+        <jaxrs:headers>
+            <entry key="Accept" value="application/json"/>
+        </jaxrs:headers>
     </jaxrs:client>
 
-    <jaxrs:client id="studioService" serviceClass="org.kimios.webservices.StudioService"
-            address="${server.url}/services/rest/">
+    <jaxrs:client threadSafe="true" id="studioService" serviceClass="org.kimios.webservices.StudioService"
+                  address="${server.url}${service.context}/rest/">
         <jaxrs:providers>
             <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
         </jaxrs:providers>
-        <jaxrs:dataBinding>
-            <ref bean="aegisBean"/>
-        </jaxrs:dataBinding>
+        <jaxrs:headers>
+            <entry key="Accept" value="application/json"/>
+        </jaxrs:headers>
     </jaxrs:client>
 
-    <jaxrs:client id="documentService" serviceClass="org.kimios.webservices.DocumentService"
-            address="${server.url}/services/rest/">
+    <jaxrs:client threadSafe="true" id="documentService" serviceClass="org.kimios.webservices.DocumentService"
+                  address="${server.url}${service.context}/rest/">
         <jaxrs:providers>
             <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
         </jaxrs:providers>
-        <jaxrs:dataBinding>
-            <ref bean="aegisBean"/>
-        </jaxrs:dataBinding>
+        <jaxrs:headers>
+            <entry key="Accept" value="application/json"/>
+        </jaxrs:headers>
     </jaxrs:client>
 
-    <jaxrs:client id="documentVersionService" serviceClass="org.kimios.webservices.DocumentVersionService"
-            address="${server.url}/services/rest/">
+    <jaxrs:client threadSafe="true" id="documentVersionService" serviceClass="org.kimios.webservices.DocumentVersionService"
+                  address="${server.url}${service.context}/rest/">
         <jaxrs:providers>
             <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
         </jaxrs:providers>
-        <jaxrs:dataBinding>
-            <ref bean="aegisBean"/>
-        </jaxrs:dataBinding>
+        <jaxrs:headers>
+            <entry key="Accept" value="application/json"/>
+        </jaxrs:headers>
     </jaxrs:client>
 
-    <jaxrs:client id="folderService" serviceClass="org.kimios.webservices.FolderService"
-            address="${server.url}/services/rest/">
+    <jaxrs:client threadSafe="true" id="folderService" serviceClass="org.kimios.webservices.FolderService"
+                  address="${server.url}${service.context}/rest/">
         <jaxrs:providers>
             <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
         </jaxrs:providers>
-        <jaxrs:dataBinding>
-            <ref bean="aegisBean"/>
-        </jaxrs:dataBinding>
+        <jaxrs:headers>
+            <entry key="Accept" value="application/json"/>
+        </jaxrs:headers>
     </jaxrs:client>
 
-    <jaxrs:client id="workspaceService" serviceClass="org.kimios.webservices.WorkspaceService"
-            address="${server.url}/services/rest/">
+    <jaxrs:client threadSafe="true" id="workspaceService" serviceClass="org.kimios.webservices.WorkspaceService"
+                  address="${server.url}${service.context}/rest/">
         <jaxrs:providers>
             <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
         </jaxrs:providers>
-        <jaxrs:dataBinding>
-            <ref bean="aegisBean"/>
-        </jaxrs:dataBinding>
+        <jaxrs:headers>
+            <entry key="Accept" value="application/json"/>
+        </jaxrs:headers>
     </jaxrs:client>
 
-    <jaxrs:client id="workflowService" serviceClass="org.kimios.webservices.NotificationService"
-            address="${server.url}/services/rest/">
+    <jaxrs:client threadSafe="true" id="workflowService" serviceClass="org.kimios.webservices.NotificationService"
+                  name="workflowService"
+                  address="${server.url}${service.context}/rest/" bus="cxf" >
         <jaxrs:providers>
             <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
+            <bean class="org.kimios.webservices.DateParamConverter" />
         </jaxrs:providers>
-        <jaxrs:dataBinding>
-            <ref bean="aegisBean"/>
-        </jaxrs:dataBinding>
+        <jaxrs:headers>
+            <entry key="Accept" value="application/json"/>
+        </jaxrs:headers>
     </jaxrs:client>
 
-    <jaxrs:client id="reportingService" serviceClass="org.kimios.webservices.ReportingService"
-            address="${server.url}/services/rest/">
+    <jaxrs:client threadSafe="true" id="reportingService" serviceClass="org.kimios.webservices.ReportingService"
+                  address="${server.url}${service.context}/rest/">
         <jaxrs:providers>
             <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
         </jaxrs:providers>
-        <jaxrs:dataBinding>
-            <ref bean="aegisBean"/>
-        </jaxrs:dataBinding>
+        <jaxrs:headers>
+            <entry key="Accept" value="application/json"/>
+        </jaxrs:headers>
     </jaxrs:client>
 
-    <jaxrs:client id="fileTransferService" serviceClass="org.kimios.webservices.FileTransferService"
-            address="${server.url}/services/rest/">
+    <jaxrs:client threadSafe="true" id="fileTransferService" serviceClass="org.kimios.webservices.FileTransferService"
+                  address="${server.url}${service.context}/rest/">
         <jaxrs:providers>
             <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
         </jaxrs:providers>
-        <jaxrs:dataBinding>
-            <ref bean="aegisBean"/>
-        </jaxrs:dataBinding>
+        <jaxrs:headers>
+            <entry key="Accept" value="*/*"/>
+        </jaxrs:headers>
     </jaxrs:client>
 
-    <jaxrs:client id="extensionService" serviceClass="org.kimios.webservices.ExtensionService"
-            address="${server.url}/services/rest/">
+    <jaxrs:client threadSafe="true" id="extensionService" serviceClass="org.kimios.webservices.ExtensionService"
+                  address="${server.url}${service.context}/rest/">
         <jaxrs:providers>
             <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
         </jaxrs:providers>
-        <jaxrs:dataBinding>
-            <ref bean="aegisBean"/>
-        </jaxrs:dataBinding>
+        <jaxrs:headers>
+            <entry key="Accept" value="application/json"/>
+        </jaxrs:headers>
     </jaxrs:client>
 
-    <jaxrs:client id="logService" serviceClass="org.kimios.webservices.LogService"
-            address="${server.url}/services/rest/">
+    <jaxrs:client threadSafe="true" id="logService" serviceClass="org.kimios.webservices.LogService"
+                  address="${server.url}${service.context}/rest/">
         <jaxrs:providers>
             <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
         </jaxrs:providers>
-        <jaxrs:dataBinding>
-            <ref bean="aegisBean"/>
-        </jaxrs:dataBinding>
+        <jaxrs:headers>
+            <entry key="Accept" value="application/json"/>
+        </jaxrs:headers>
     </jaxrs:client>
 
-    <jaxrs:client id="informationService" serviceClass="org.kimios.webservices.InformationService"
-            address="${server.url}/services/rest/">
+    <jaxrs:client threadSafe="true" id="informationService" serviceClass="org.kimios.webservices.InformationService"
+                  address="${server.url}${service.context}/rest/">
         <jaxrs:providers>
             <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
         </jaxrs:providers>
-        <jaxrs:dataBinding>
-            <ref bean="aegisBean"/>
-        </jaxrs:dataBinding>
+        <jaxrs:headers>
+            <entry key="Accept" value="application/json"/>
+        </jaxrs:headers>
     </jaxrs:client>
 
-    <jaxrs:client id="searchService" serviceClass="org.kimios.webservices.SearchService"
-            address="${server.url}/services/rest/">
+    <jaxrs:client threadSafe="true" id="searchService" serviceClass="org.kimios.webservices.SearchService"
+                  address="${server.url}${service.context}/rest/">
         <jaxrs:providers>
             <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
         </jaxrs:providers>
-        <jaxrs:dataBinding>
-            <ref bean="aegisBean"/>
-        </jaxrs:dataBinding>
+        <jaxrs:headers>
+            <entry key="Accept" value="application/json"/>
+        </jaxrs:headers>
     </jaxrs:client>
 
-    <jaxrs:client id="ruleService" serviceClass="org.kimios.webservices.RuleService"
-            address="${server.url}/services/rest/">
+    <jaxrs:client threadSafe="true" id="ruleService" serviceClass="org.kimios.webservices.RuleService"
+                  address="${server.url}${service.context}/rest/">
         <jaxrs:providers>
             <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
         </jaxrs:providers>
-        <jaxrs:dataBinding>
-            <ref bean="aegisBean"/>
-        </jaxrs:dataBinding>
+        <jaxrs:headers>
+            <entry key="Accept" value="application/json"/>
+        </jaxrs:headers>
     </jaxrs:client>
 
 
@@ -231,6 +226,7 @@
     </bean>
 
     <bean id="fileTransferController" class="org.kimios.client.controller.FileTransferController">
+        <property name="restMode" value="true" />
         <property name="temporaryFilesPath" value="${temp.directory}"/>
         <property name="chunkSize" value="${transfer.chunksize}"/>
         <property name="client" ref="fileTransferService"/>
@@ -255,6 +251,7 @@
     </bean>
 
     <bean id="workflowController" class="org.kimios.client.controller.WorkflowController">
+        <property name="restMode" value="true" />
         <property name="client" ref="workflowService"/>
     </bean>
 

@@ -20,26 +20,33 @@ import org.kimios.client.exception.ExceptionHelper;
 import org.kimios.kernel.ws.pojo.DMEntityAttribute;
 import org.kimios.webservices.ExtensionService;
 
-public class ExtensionController {
+public class ExtensionController
+{
 
-	private ExtensionService client;
+    private ExtensionService client;
 
-    public ExtensionService getClient() {
+    public ExtensionService getClient()
+    {
         return client;
     }
 
-    public void setClient(ExtensionService client) {
+    public void setClient( ExtensionService client )
+    {
         this.client = client;
     }
 
-    public DMEntityAttribute getDMEntityAttribute(String sessionId,
-			long dmEntityId, String dmEntityAttributeName) throws Exception {
-		try {
-            return client.getEntityAttribute(sessionId, dmEntityId, dmEntityAttributeName);
-		} catch (Exception e) {
-			throw new ExceptionHelper().convertException(e);
-		}
-	}
+    public DMEntityAttribute getDMEntityAttribute( String sessionId, long dmEntityId, String dmEntityAttributeName )
+        throws Exception
+    {
+        try
+        {
+            return client.getEntityAttribute( sessionId, dmEntityId, dmEntityAttributeName );
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
+        }
+    }
 
-	// TODO: Create others Attribute functions Call
+    // TODO: Create others Attribute functions Call
 }

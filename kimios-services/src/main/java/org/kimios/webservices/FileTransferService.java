@@ -16,14 +16,17 @@
  */
 package org.kimios.webservices;
 
+import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.StreamingOutput;
 
+import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.kimios.kernel.ws.pojo.DataTransaction;
+
+import java.io.InputStream;
 
 /**
  * Created by IntelliJ IDEA. User: farf Date: 4/1/12 Time: 4:58 PM
@@ -34,37 +37,68 @@ public interface FileTransferService
 {
     @GET
     @Path("/startUploadTransaction")
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     public DataTransaction startUploadTransaction(
-            @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
-            @QueryParam(value = "documentId") @WebParam(name = "documentId") long documentId,
-            @QueryParam(value = "isCompressed") @WebParam(name = "isCompressed") boolean isCompressed) throws DMServiceException;
+        @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+        @QueryParam(value = "documentId") @WebParam(name = "documentId") long documentId,
+        @QueryParam(value = "isCompressed") @WebParam(name = "isCompressed") boolean isCompressed )
+        throws DMServiceException;
 
     @GET
     @Path("/sendChunk")
-    @Produces("application/json")
-    public void sendChunk(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
-            @QueryParam(value = "transactionId") @WebParam(name = "transactionId") long transactionId,
-            @QueryParam(value = "data") @WebParam(name = "data") byte[] data) throws DMServiceException;
+    @Produces(MediaType.APPLICATION_JSON)
+    public void sendChunk( @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+                           @QueryParam(value = "transactionId") @WebParam(
+                               name = "transactionId") long transactionId,
+                           @QueryParam(value = "data") @WebParam(name = "data") byte[] data )
+        throws DMServiceException;
 
     @GET
     @Path("/endUploadTransaction")
-    @Produces("application/json")
-    public void endUploadTransaction(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
-            @QueryParam(value = "transactionId") @WebParam(name = "transactionId") long transactionId,
-            @QueryParam(value = "md5") @WebParam(name = "md5") String md5,
-            @QueryParam(value = "sha1") @WebParam(name = "sha1") String sha1) throws DMServiceException;
+    @Produces(MediaType.APPLICATION_JSON)
+    public void endUploadTransaction( @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+                                      @QueryParam(value = "transactionId") @WebParam(
+                                          name = "transactionId") long transactionId,
+                                      @QueryParam(value = "md5") @WebParam(name = "md5") String md5,
+                                      @QueryParam(value = "sha1") @WebParam(name = "sha1") String sha1 )
+        throws DMServiceException;
 
     @GET
     @Path("/startDownloadTransaction")
-    @Produces("application/json")
-    public DataTransaction startDownloadTransaction(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
-            @QueryParam(value = "documentVersionId") @WebParam(name = "documentVersionId") long documentVersionId,
-            @QueryParam(value = "isCompressed") @WebParam(name = "isCompressed") boolean isCompressed)
-            throws DMServiceException;
+    @Produces(MediaType.APPLICATION_JSON)
+    public DataTransaction startDownloadTransaction(
+        @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+        @QueryParam(value = "documentVersionId") @WebParam(name = "documentVersionId") long documentVersionId,
+        @QueryParam(value = "isCompressed") @WebParam(name = "isCompressed") boolean isCompressed )
+        throws DMServiceException;
 
-    byte[] getChunck(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
-            @QueryParam(value = "transactionId") @WebParam(name = "transactionId") long transactionId,
-            @QueryParam(value = "offset") @WebParam(name = "offset") long offset,
-            @QueryParam(value = "chunkSize") @WebParam(name = "chunkSize") int chunkSize) throws DMServiceException;
+
+    public byte[] getChunck( @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+                             @QueryParam(value = "transactionId") @WebParam(
+                                 name = "transactionId") long transactionId,
+                             @QueryParam(value = "offset") @WebParam(name = "offset") long offset,
+                             @QueryParam(value = "chunkSize") @WebParam(name = "chunkSize") int chunkSize )
+        throws DMServiceException;
+
+
+    @POST
+    @Path("/uploadDocument")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    public void uploadDocument( @QueryParam("sessionId") String sessionId,
+                                @QueryParam("transactionId") long transactionId,
+                                @Multipart(value = "document") InputStream documentStream,
+                                @Multipart(value = "md5", required = false) String hashMd5,
+                                @Multipart(value = "sha1", required = false) String hashSha1 )
+        throws DMServiceException;
+
+
+    @GET
+    @Path( "/downloadDocumentVersion" )
+    @Produces( MediaType.APPLICATION_OCTET_STREAM )
+    public InputStream downloadDocumentVersion( @QueryParam("sessionId") String sessionId,
+                                                @QueryParam("transactionId") long transactionId )
+        throws DMServiceException;
+
+
 }

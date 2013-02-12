@@ -18,27 +18,47 @@ package org.kimios.client.controller.helpers;
 
 import java.io.*;
 
-public class ByteArrayDataSource implements javax.activation.DataSource {
-  private byte[] bytes;
-  public void setBytes(byte[] bytes) { this.bytes = bytes; }
-  public byte[] getBytes() { return bytes; }
-  private String contentType;
-  public void setContentType(String contentType) {
-    this.contentType = contentType;
-  }
-  public String getContentType() { return contentType; }
-  public InputStream getInputStream() {
-    return new ByteArrayInputStream(bytes);
-  }
-  
-  public OutputStream getOutputStream() {
-    final ByteArrayOutputStream baos =
-      new ByteArrayOutputStream();
-    return new FilterOutputStream(baos);
-  }
-  
-  public String getName() {
-    return "";
-  }
+public class ByteArrayDataSource
+    implements javax.activation.DataSource
+{
+    private byte[] bytes;
+
+    public void setBytes( byte[] bytes )
+    {
+        this.bytes = bytes;
+    }
+
+    public byte[] getBytes()
+    {
+        return bytes;
+    }
+
+    private String contentType;
+
+    public void setContentType( String contentType )
+    {
+        this.contentType = contentType;
+    }
+
+    public String getContentType()
+    {
+        return contentType;
+    }
+
+    public InputStream getInputStream()
+    {
+        return new ByteArrayInputStream( bytes );
+    }
+
+    public OutputStream getOutputStream()
+    {
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        return new FilterOutputStream( baos );
+    }
+
+    public String getName()
+    {
+        return "";
+    }
 }
 

@@ -23,40 +23,53 @@ import java.util.Date;
 
 /**
  * Used to get information about Kimios Server
- * 
+ *
  * @author Fabien Alin
  */
-public class ServerInformationController {
+public class ServerInformationController
+{
 
     private InformationService client;
 
-    public InformationService getClient() {
+    public InformationService getClient()
+    {
         return client;
     }
 
-    public void setClient(InformationService client) {
+    public void setClient( InformationService client )
+    {
         this.client = client;
     }
 
     /**
      * Return the current server version number
      */
-    public String getServerVersionNumber() throws Exception {
-        try {
+    public String getServerVersionNumber()
+        throws Exception
+    {
+        try
+        {
             return client.getServerVersionNumber();
-        } catch (Exception e) {
-            throw new ExceptionHelper().convertException(e);
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
         }
     }
 
     /**
      * Return the server online time
      */
-    public Date getServerOnlineTime(String sessionId) throws Exception {
-        try {
-            return client.getServerOnlineTime(sessionId);
-        } catch (Exception e) {
-            throw new ExceptionHelper().convertException(e);
+    public Date getServerOnlineTime( String sessionId )
+        throws Exception
+    {
+        try
+        {
+            return client.getServerOnlineTime( sessionId );
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
         }
     }
 }

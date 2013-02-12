@@ -22,34 +22,45 @@ import org.kimios.webservices.LogService;
 
 /**
  * LogController is used to get document logs
- * 
+ *
  * @author Fabien Alin
  */
-public class LogController {
+public class LogController
+{
 
     private LogService client;
 
-    public LogService getClient() {
+    public LogService getClient()
+    {
         return client;
     }
 
-    public void setClient(LogService client) {
+    public void setClient( LogService client )
+    {
         this.client = client;
     }
 
     /**
      * Get document logs
      */
-    public Log[] getDocumentLogs(String sessionId, long documentId) throws Exception {
-        try {
-            Log[] tmp = client.getDocumentLogs(sessionId, documentId);
-            if (tmp != null) {
+    public Log[] getDocumentLogs( String sessionId, long documentId )
+        throws Exception
+    {
+        try
+        {
+            Log[] tmp = client.getDocumentLogs( sessionId, documentId );
+            if ( tmp != null )
+            {
                 return tmp;
-            } else {
+            }
+            else
+            {
                 return new Log[0];
             }
-        } catch (Exception e) {
-            throw new ExceptionHelper().convertException(e);
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
         }
     }
 }

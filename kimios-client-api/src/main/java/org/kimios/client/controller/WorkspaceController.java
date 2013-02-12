@@ -26,70 +26,98 @@ import org.kimios.webservices.WorkspaceService;
 /**
  * WorkspaceController is used to create, update, delete and get workspaces
  */
-public class WorkspaceController {
+public class WorkspaceController
+{
 
     private WorkspaceService client;
 
-    public WorkspaceService getClient() {
+    public WorkspaceService getClient()
+    {
         return client;
     }
 
-    public void setClient(WorkspaceService client) {
+    public void setClient( WorkspaceService client )
+    {
         this.client = client;
     }
 
     /**
      * Get workspace readable by a given user
      */
-    public Workspace[] getWorkspaces(String sessionId) throws Exception, DMSException, ConfigException, AccessDeniedException {
-        try {
-           return client.getWorkspaces(sessionId);
-        } catch (Exception e) {
-            throw new ExceptionHelper().convertException(e);
+    public Workspace[] getWorkspaces( String sessionId )
+        throws Exception, DMSException, ConfigException, AccessDeniedException
+    {
+        try
+        {
+            return client.getWorkspaces( sessionId );
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
         }
     }
 
     /**
      * Return workspace for a given id
      */
-    public Workspace getWorkspace(String sessionId, long workspaceId) throws Exception, DMSException, ConfigException, AccessDeniedException {
-        try {
-           return client.getWorkspace(sessionId, workspaceId);
-        } catch (Exception e) {
-            throw new ExceptionHelper().convertException(e);
+    public Workspace getWorkspace( String sessionId, long workspaceId )
+        throws Exception, DMSException, ConfigException, AccessDeniedException
+    {
+        try
+        {
+            return client.getWorkspace( sessionId, workspaceId );
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
         }
     }
 
     /**
      * Create new workspace and return id
      */
-    public long createWorkspace(String sessionId, Workspace w) throws Exception, DMSException, ConfigException, AccessDeniedException {
-        try {
-           return client.createWorkspace(sessionId, w.getName());
-        } catch (Exception e) {
-            throw new ExceptionHelper().convertException(e);
+    public long createWorkspace( String sessionId, Workspace w )
+        throws Exception, DMSException, ConfigException, AccessDeniedException
+    {
+        try
+        {
+            return client.createWorkspace( sessionId, w.getName() );
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
         }
     }
 
     /**
-     * Update workspace 
+     * Update workspace
      */
-    public void updateWorkspace(String sessionId, Workspace w) throws Exception, DMSException, ConfigException, AccessDeniedException {
-        try {
-            client.updateWorkspace(sessionId, w.getUid(), w.getName());
-        } catch (Exception e) {
-            throw new ExceptionHelper().convertException(e);
+    public void updateWorkspace( String sessionId, Workspace w )
+        throws Exception, DMSException, ConfigException, AccessDeniedException
+    {
+        try
+        {
+            client.updateWorkspace( sessionId, w.getUid(), w.getName() );
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
         }
     }
 
     /**
      * Delete workspace (and children)
      */
-    public void deleteWorkspace(String sessionId, long workspaceId) throws Exception, DMSException, ConfigException, AccessDeniedException {
-        try {
-            client.deleteWorkspace(sessionId, workspaceId);
-        } catch (Exception e) {
-            throw new ExceptionHelper().convertException(e);
+    public void deleteWorkspace( String sessionId, long workspaceId )
+        throws Exception, DMSException, ConfigException, AccessDeniedException
+    {
+        try
+        {
+            client.deleteWorkspace( sessionId, workspaceId );
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
         }
     }
 }

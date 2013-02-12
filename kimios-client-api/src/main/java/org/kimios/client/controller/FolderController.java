@@ -27,92 +27,131 @@ import org.kimios.webservices.FolderService;
 /**
  * FolderController is used to create, update, delete and get folders
  */
-public class FolderController {
+public class FolderController
+{
 
     private FolderService client;
 
-    public FolderService getClient() {
+    public FolderService getClient()
+    {
         return client;
     }
 
-    public void setClient(FolderService client) {
+    public void setClient( FolderService client )
+    {
         this.client = client;
     }
 
     /**
      * Get folder for a given parent workspace
      */
-    public Folder[] getFolders(String sessionId, Workspace w) throws Exception, DMSException, ConfigException, AccessDeniedException {
-        try {
-            return client.getFolders(sessionId, w.getUid(), 1);
-        } catch (Exception e) {
-            throw new ExceptionHelper().convertException(e);
+    public Folder[] getFolders( String sessionId, Workspace w )
+        throws Exception, DMSException, ConfigException, AccessDeniedException
+    {
+        try
+        {
+            return client.getFolders( sessionId, w.getUid(), 1 );
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
         }
     }
 
     /**
      * Get folder for a given parent folder
      */
-    public Folder[] getFolders(String sessionId, Folder f) throws Exception, DMSException, ConfigException, AccessDeniedException {
-        try {
-            return client.getFolders(sessionId, f.getUid(), 2);
-        } catch (Exception e) {
-            throw new ExceptionHelper().convertException(e);
+    public Folder[] getFolders( String sessionId, Folder f )
+        throws Exception, DMSException, ConfigException, AccessDeniedException
+    {
+        try
+        {
+            return client.getFolders( sessionId, f.getUid(), 2 );
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
         }
     }
 
     /**
      * Get folder for a given parent (workspace or folder)
      */
-    public Folder[] getFolders(String sessionId, long parentId, int parentType) throws Exception, DMSException, ConfigException, AccessDeniedException {
-        try {
-            return client.getFolders(sessionId, parentId, parentType);
-        } catch (Exception e) {
-            throw new ExceptionHelper().convertException(e);
+    public Folder[] getFolders( String sessionId, long parentId, int parentType )
+        throws Exception, DMSException, ConfigException, AccessDeniedException
+    {
+        try
+        {
+            return client.getFolders( sessionId, parentId, parentType );
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
         }
     }
 
     /**
      * Get folder
      */
-    public Folder getFolder(String sessionId, long folderId) throws Exception, DMSException, ConfigException, AccessDeniedException {
-        try {
-            return client.getFolder(sessionId, folderId);
-        } catch (Exception e) {
-            throw new ExceptionHelper().convertException(e);
+    public Folder getFolder( String sessionId, long folderId )
+        throws Exception, DMSException, ConfigException, AccessDeniedException
+    {
+        try
+        {
+            return client.getFolder( sessionId, folderId );
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
         }
     }
 
     /**
      * Create a new folder in a given parent folder
      */
-    public long createFolder(String sessionId, Folder f, boolean isSecurityInherited) throws Exception, DMSException, ConfigException, AccessDeniedException {
-        try {
-            return client.createFolder(sessionId, f.getName(), f.getParentUid(), f.getParentType(), isSecurityInherited);
-        } catch (Exception e) {
-            throw new ExceptionHelper().convertException(e);
+    public long createFolder( String sessionId, Folder f, boolean isSecurityInherited )
+        throws Exception, DMSException, ConfigException, AccessDeniedException
+    {
+        try
+        {
+            return client.createFolder( sessionId, f.getName(), f.getParentUid(), f.getParentType(),
+                                        isSecurityInherited );
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
         }
     }
 
     /**
      * Update folder (for name and/or parent change) for a given folder
      */
-    public void updateFolder(String sessionId, Folder f) throws Exception, DMSException, ConfigException, AccessDeniedException {
-        try {
-            client.updateFolder(sessionId, f.getUid(), f.getName(), f.getParentUid(), f.getParentType());
-        } catch (Exception e) {
-            throw new ExceptionHelper().convertException(e);
+    public void updateFolder( String sessionId, Folder f )
+        throws Exception, DMSException, ConfigException, AccessDeniedException
+    {
+        try
+        {
+            client.updateFolder( sessionId, f.getUid(), f.getName(), f.getParentUid(), f.getParentType() );
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
         }
     }
 
     /**
      * Remove folder of given id
      */
-    public void deleteFolder(String sessionId, long folderId) throws Exception, DMSException, ConfigException, AccessDeniedException {
-        try {
-            client.deleteFolder(sessionId, folderId);
-        } catch (Exception e) {
-            throw new ExceptionHelper().convertException(e);
+    public void deleteFolder( String sessionId, long folderId )
+        throws Exception, DMSException, ConfigException, AccessDeniedException
+    {
+        try
+        {
+            client.deleteFolder( sessionId, folderId );
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
         }
     }
 }

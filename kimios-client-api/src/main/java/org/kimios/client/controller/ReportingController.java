@@ -24,26 +24,34 @@ import org.kimios.webservices.ReportingService;
  *
  * @author jludmann
  */
-public class ReportingController {
+public class ReportingController
+{
 
     private ReportingService client;
 
-    public ReportingService getClient() {
+    public ReportingService getClient()
+    {
         return client;
     }
 
-    public void setClient(ReportingService client) {
+    public void setClient( ReportingService client )
+    {
         this.client = client;
     }
 
     /**
      * Return specific report from given XML parameters
      */
-    public String getReport(String sessionId, String className, String xmlParameters) throws Exception {
-        try {
-            return client.getReport(sessionId, className, xmlParameters);
-        } catch (Exception e) {
-            throw new ExceptionHelper().convertException(e);
+    public String getReport( String sessionId, String className, String xmlParameters )
+        throws Exception
+    {
+        try
+        {
+            return client.getReport( sessionId, className, xmlParameters );
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
         }
     }
 
@@ -51,33 +59,48 @@ public class ReportingController {
      * Return XML stream containing all attributes from a specified report with
      * its class name
      */
-    public String getReportAttributes(String sessionId, String className) throws Exception {
-        try {
-            return client.getReportAttributes(sessionId, className);
-        } catch (Exception e) {
-            throw new ExceptionHelper().convertException(e);
+    public String getReportAttributes( String sessionId, String className )
+        throws Exception
+    {
+        try
+        {
+            return client.getReportAttributes( sessionId, className );
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
         }
     }
 
     /**
      * Return XML stream containing all implemented reports
      */
-    public String getReportsList(String sessionId) throws Exception {
-        try {
-            return client.getReportsList(sessionId);
-        } catch (Exception e) {
-            throw new ExceptionHelper().convertException(e);
+    public String getReportsList( String sessionId )
+        throws Exception
+    {
+        try
+        {
+            return client.getReportsList( sessionId );
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
         }
     }
 
     /**
      * Clear uncompleted transactions
      */
-    public void removeGhostTransaction(String sessionId, Long transactionId) throws Exception {
-        try {
-            client.removeGhostTransaction(sessionId, transactionId);
-        } catch (Exception ex) {
-            throw new ExceptionHelper().convertException(ex);
+    public void removeGhostTransaction( String sessionId, Long transactionId )
+        throws Exception
+    {
+        try
+        {
+            client.removeGhostTransaction( sessionId, transactionId );
+        }
+        catch ( Exception ex )
+        {
+            throw new ExceptionHelper().convertException( ex );
         }
     }
 }

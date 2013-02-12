@@ -30,7 +30,7 @@ import org.kimios.webservices.CoreService;
 import org.kimios.webservices.DMServiceException;
 import org.kimios.webservices.DocumentService;
 
-@WebService(targetNamespace = "http://kimios.org", serviceName = "ReportingService", name = "ReportingService")
+@WebService(targetNamespace = "http://kimios.org", serviceName = "DocumentService", name = "DocumentService")
 public class DocumentServiceImpl extends CoreService implements DocumentService
 {
     /**

@@ -22,45 +22,56 @@
 package org.kimios.client.controller.helpers.rules;
 
 /**
- *
  * @author Fabien Alin
  */
-public class RuleParameter {
+public class RuleParameter
+{
 
     private String name;
+
     private String type;
+
     private String listType;
+
     private Object value;
 
-    public String getListType() {
+    public String getListType()
+    {
         return listType;
     }
 
-    public void setListType(String listType) {
+    public void setListType( String listType )
+    {
         this.listType = listType;
     }
 
-    public String getName() {
+    public String getName()
+    {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName( String name )
+    {
         this.name = name;
     }
 
-    public String getType() {
+    public String getType()
+    {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType( String type )
+    {
         this.type = type;
     }
 
-    public Object getValue() {
+    public Object getValue()
+    {
         return value;
     }
 
-    public void setValue(Object value) {
+    public void setValue( Object value )
+    {
         this.value = value;
     }
 }

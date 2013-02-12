@@ -25,45 +25,60 @@ import org.kimios.client.exception.ExceptionHelper;
 import org.kimios.webservices.RuleService;
 
 /**
- * 
  * @author Fabien Alin
  */
-public class RuleController {
+public class RuleController
+{
 
-  private RuleService client;
+    private RuleService client;
 
-    public RuleService getClient() {
+    public RuleService getClient()
+    {
         return client;
     }
 
-    public void setClient(RuleService client) {
+    public void setClient( RuleService client )
+    {
         this.client = client;
     }
 
-    public String[] getAvailablesRules(String sessionId) throws Exception {
-    try {
-      return client.getAvailablesRules(sessionId);
-    } catch (Exception e) {
-      throw new ExceptionHelper().convertException(e);
+    public String[] getAvailablesRules( String sessionId )
+        throws Exception
+    {
+        try
+        {
+            return client.getAvailablesRules( sessionId );
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
+        }
     }
-  }
 
-  public String getRuleParametersDescription(String sessionId,
-      String javaClassName) throws Exception {
-    try {
-      return client.getRuleParam(sessionId, javaClassName);
-    } catch (Exception e) {
-      throw new ExceptionHelper().convertException(e);
+    public String getRuleParametersDescription( String sessionId, String javaClassName )
+        throws Exception
+    {
+        try
+        {
+            return client.getRuleParam( sessionId, javaClassName );
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
+        }
     }
-  }
 
-  public void createRule(String sessionId, String conditionJavaClass,
-      String ruleName, String path, String xml) throws Exception {
-    try {
-      client.createRule(sessionId, conditionJavaClass, ruleName, path, xml);
-    } catch (Exception e) {
-      throw new ExceptionHelper().convertException(e);
+    public void createRule( String sessionId, String conditionJavaClass, String ruleName, String path, String xml )
+        throws Exception
+    {
+        try
+        {
+            client.createRule( sessionId, conditionJavaClass, ruleName, path, xml );
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
+        }
     }
-  }
 }
 

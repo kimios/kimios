@@ -91,7 +91,7 @@ public class DMEntity {
         this.checkoutDate = (d.getCheckoutDate() != null ? d.getCheckoutDate().getTime() : null);
         this.checkoutUser = d.getCheckoutUser();
         this.checkoutUserSource = d.getCheckoutUserSource();
-        this.outOfWorkflow = d.getOutOfWorkflow();
+        this.outOfWorkflow = d.getOutOfWorkflow() != null ? d.getOutOfWorkflow() : true;
         this.workflowStatusName = d.getWorkflowStatusName();
         this.workflowStatusUid = d.getWorkflowStatusUid() != null ? d.getWorkflowStatusUid() : 0;
         this.documentTypeName = d.getDocumentTypeName();

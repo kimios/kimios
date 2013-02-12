@@ -255,13 +255,13 @@
                     <artifactId>jtds</artifactId>
                     <version>1.2.4</version>
                 </dependency>
-                <dependency>
+                <!--<dependency>
                     <groupId>oracle</groupId>
                     <artifactId>oracle-jdbc</artifactId>
                     <version>5.0</version>
                     <scope>system</scope>
                     <systemPath>${basedir}/../ext-libs/ojdbc5.jar</systemPath>
-                </dependency>
+                </dependency>-->
                 <dependency>
                     <groupId>com.atomikos</groupId>
                     <artifactId>transactions-hibernate3</artifactId>

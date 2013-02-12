@@ -27,7 +27,8 @@ import java.util.zip.ZipOutputStream;
 /**
  * Utility class about file compression
  */
-public class FileCompressionHelper {
+public class FileCompressionHelper
+{
 
     /**
      * @param tmpFilePath
@@ -36,37 +37,47 @@ public class FileCompressionHelper {
      * @throws ConfigException
      * @throws java.io.IOException
      */
-    public static String getTempFilePath(String tmpFilePath, String sessionUid) throws ConfigException, IOException {
-        File path = new File(tmpFilePath);
-        if (!path.exists()) {
+    public static String getTempFilePath( String tmpFilePath, String sessionUid )
+        throws ConfigException, IOException
+    {
+        File path = new File( tmpFilePath );
+        if ( !path.exists() )
+        {
             path.mkdirs();
         }
-        String tmpFileName = "/" + sessionUid + (new Date()).getTime();
-        File tmp = new File(tmpFilePath + tmpFileName);
+        String tmpFileName = "/" + sessionUid + ( new Date() ).getTime();
+        File tmp = new File( tmpFilePath + tmpFileName );
         tmp.createNewFile();
         return tmpFileName;
     }
 
     /**
      * Get an uncompressed file from compressed file
+     *
      * @param toUncompress
      * @return
      * @throws Exception
      * @throws ConfigException
      * @throws java.io.IOException
      */
-    public static InputStream getUncompressedFile(File toUncompress) throws Exception, ConfigException, IOException {
-        FileInputStream toRead = new FileInputStream(toUncompress);
-        ZipInputStream zis = new ZipInputStream(new BufferedInputStream(toRead));
-        if (zis.getNextEntry() != null) {
+    public static InputStream getUncompressedFile( File toUncompress )
+        throws Exception, ConfigException, IOException
+    {
+        FileInputStream toRead = new FileInputStream( toUncompress );
+        ZipInputStream zis = new ZipInputStream( new BufferedInputStream( toRead ) );
+        if ( zis.getNextEntry() != null )
+        {
             return zis;
-        } else {
-            throw new Exception("File Error");
+        }
+        else
+        {
+            throw new Exception( "File Error" );
         }
     }
 
     /**
      * Get an uploadable compressed version from input stream
+     *
      * @param in
      * @param sessionUid
      * @param tmpFilePath
@@ -74,27 +85,31 @@ public class FileCompressionHelper {
      * @throws ConfigException
      * @throws java.io.IOException
      */
-    public static File getUploadableCompressedVersion(InputStream in, String sessionUid, String tmpFilePath) throws ConfigException, IOException {
-        File toCompress = new File(getTempFilePath(tmpFilePath, sessionUid));
-        FileOutputStream fos = new FileOutputStream(toCompress);
+    public static File getUploadableCompressedVersion( InputStream in, String sessionUid, String tmpFilePath )
+        throws ConfigException, IOException
+    {
+        File toCompress = new File( getTempFilePath( tmpFilePath, sessionUid ) );
+        FileOutputStream fos = new FileOutputStream( toCompress );
         int bufferSize = 1024 * 512;
         byte[] j = new byte[bufferSize];
         int readByte = 0;
-        while ((readByte = in.read(j, 0, bufferSize)) != -1) {
-            fos.write(j, 0, readByte);
+        while ( ( readByte = in.read( j, 0, bufferSize ) ) != -1 )
+        {
+            fos.write( j, 0, readByte );
         }
         fos.flush();
         fos.close();
-        File tmp = new File(tmpFilePath + toCompress.getName());
-        FileOutputStream dest = new FileOutputStream(tmp);
-        ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(dest));
+        File tmp = new File( tmpFilePath + toCompress.getName() );
+        FileOutputStream dest = new FileOutputStream( tmp );
+        ZipOutputStream out = new ZipOutputStream( new BufferedOutputStream( dest ) );
         byte[] data = new byte[2048];
-        BufferedInputStream original = new BufferedInputStream(new FileInputStream(toCompress), 2048);
-        ZipEntry entry = new ZipEntry(toCompress.getName());
-        out.putNextEntry(entry);
+        BufferedInputStream original = new BufferedInputStream( new FileInputStream( toCompress ), 2048 );
+        ZipEntry entry = new ZipEntry( toCompress.getName() );
+        out.putNextEntry( entry );
         int count;
-        while ((count = original.read(data, 0, 2048)) != -1) {
-            out.write(data, 0, count);
+        while ( ( count = original.read( data, 0, 2048 ) ) != -1 )
+        {
+            out.write( data, 0, count );
         }
         out.close();
         //Delete Temporary File

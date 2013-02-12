@@ -18,6 +18,7 @@ package org.kimios.kernel.controller;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.events.annotations.DmsEvent;
@@ -35,43 +36,49 @@ public interface IFileTransferController
     /**
      * Start an upload transaction for a document (will update the last document version)
      */
-    public DataTransfer startUploadTransaction(Session session,
-            long documentIid, boolean isCompressed)
-            throws CheckoutViolationException, AccessDeniedException,
-            DataSourceException, IOException, ConfigException;
+    public DataTransfer startUploadTransaction( Session session, long documentIid, boolean isCompressed )
+        throws CheckoutViolationException, AccessDeniedException, DataSourceException, IOException, ConfigException;
 
     /**
      * Write data to update temporary file of a given upload transaction
      */
-    public void sendChunk(Session session, long transactionUid, byte[] data)
-            throws ConfigException, AccessDeniedException, DataSourceException,
-            FileNotFoundException, IOException;
+    public void sendChunk( Session session, long transactionUid, byte[] data )
+        throws ConfigException, AccessDeniedException, DataSourceException, FileNotFoundException, IOException;
 
     /**
      * End a given upload transaction :
-     *
+     * <p/>
      * - InegrityCheck done - Update of the document version - Remove transaction and temporary file
      */
-    @DmsEvent(eventName = { DmsEventName.FILE_UPLOAD })
-    public DataTransfer endUploadTransaction(Session session,
-            long transactionUid, String hashMD5, String hashSHA1)
-            throws ConfigException, AccessDeniedException, IOException,
-            DataSourceException, RepositoryException,
-            TransferIntegrityException;
+    @DmsEvent( eventName = { DmsEventName.FILE_UPLOAD } )
+    public DataTransfer endUploadTransaction( Session session, long transactionUid, String hashMD5, String hashSHA1 )
+        throws ConfigException, AccessDeniedException, IOException, DataSourceException, RepositoryException,
+        TransferIntegrityException;
 
     /**
      * Start download transaction
      */
-    @DmsEvent(eventName = { DmsEventName.DOCUMENT_VERSION_READ })
-    public DataTransfer startDownloadTransaction(Session session,
-            long documentVersionUid, boolean isCompressed) throws IOException,
-            RepositoryException, DataSourceException, ConfigException,
-            AccessDeniedException;
+    @DmsEvent( eventName = { DmsEventName.DOCUMENT_VERSION_READ } )
+    public DataTransfer startDownloadTransaction( Session session, long documentVersionUid, boolean isCompressed )
+        throws IOException, RepositoryException, DataSourceException, ConfigException, AccessDeniedException;
 
     /**
      * Send chunk to client for a given offset and chunk size, in a given download transaction
      */
-    public byte[] getChunk(Session session, long transferUid, long offset,
-            int chunkSize) throws ConfigException, DataSourceException,
-            AccessDeniedException, RepositoryException, IOException;
+    public byte[] getChunk( Session session, long transferUid, long offset, int chunkSize )
+        throws ConfigException, DataSourceException, AccessDeniedException, RepositoryException, IOException;
+
+
+    /*
+        Send document Stream on started transaction
+     */
+    public void uploadDocument( Session session, long transactionId, InputStream documentStream, String hashMd5,
+                                String hashSha1 )
+        throws CheckoutViolationException, AccessDeniedException, DataSourceException, IOException, ConfigException;
+
+    /*
+        Get document version stream for direct version read
+    */
+    public InputStream getDocumentVersionStream( Session session, long transactionId )
+        throws ConfigException, AccessDeniedException, DataSourceException, IOException;
 }

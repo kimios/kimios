@@ -81,6 +81,7 @@ public interface DocumentVersionService
             @QueryParam(value = "documentTypeId") @WebParam(name = "documentTypeId") long documentTypeId,
             @QueryParam(value = "xmlStream") @WebParam(name = "xmlStream") String xmlStream) throws DMServiceException;
 
+    @GET
     @Path("/getMetaString")
     @Produces("application/json")
     public String getMetaString(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,

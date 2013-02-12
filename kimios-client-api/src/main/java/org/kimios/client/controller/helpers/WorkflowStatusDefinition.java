@@ -22,27 +22,34 @@ import org.kimios.kernel.ws.pojo.WorkflowStatusManager;
 
 /**
  * The workflow status definition
- * 
+ *
  * @author Fabien Alin
  */
-public class WorkflowStatusDefinition {
+public class WorkflowStatusDefinition
+{
 
     private WorkflowStatus workflowStatus;
 
     private long uid;
+
     private long workflowUid;
+
     private String name;
+
     private long successorUid;
+
     private int position;
-    
-    
+
+
     private WorkflowStatusManager[] workflowStatusManagers;
 
-    public WorkflowStatus getWorkflowStatus() {
+    public WorkflowStatus getWorkflowStatus()
+    {
         return workflowStatus;
     }
 
-    public void setWorkflowStatus(WorkflowStatus workflowStatus) {
+    public void setWorkflowStatus( WorkflowStatus workflowStatus )
+    {
         this.workflowStatus = workflowStatus;
         this.uid = workflowStatus.getUid();
         this.name = workflowStatus.getName();
@@ -50,51 +57,63 @@ public class WorkflowStatusDefinition {
         this.workflowUid = workflowStatus.getUid();
     }
 
-    public WorkflowStatusManager[] getWorkflowStatusManagers() {
+    public WorkflowStatusManager[] getWorkflowStatusManagers()
+    {
         return workflowStatusManagers;
     }
 
-    public void setWorkflowStatusManagers(WorkflowStatusManager[] workflowStatusManagers) {
+    public void setWorkflowStatusManagers( WorkflowStatusManager[] workflowStatusManagers )
+    {
         this.workflowStatusManagers = workflowStatusManagers;
     }
 
-    public String getName() {
+    public String getName()
+    {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName( String name )
+    {
         this.name = name;
     }
 
-    public long getSuccessorUid() {
+    public long getSuccessorUid()
+    {
         return successorUid;
     }
 
-    public void setSuccessorUid(long successorUid) {
+    public void setSuccessorUid( long successorUid )
+    {
         this.successorUid = successorUid;
     }
 
-    public long getUid() {
+    public long getUid()
+    {
         return uid;
     }
 
-    public void setUid(long uid) {
+    public void setUid( long uid )
+    {
         this.uid = uid;
     }
 
-    public long getWorkflowUid() {
+    public long getWorkflowUid()
+    {
         return workflowUid;
     }
 
-    public void setWorkflowUid(long workflowStatusUid) {
+    public void setWorkflowUid( long workflowStatusUid )
+    {
         this.workflowUid = workflowStatusUid;
     }
 
-    public int getPosition() {
+    public int getPosition()
+    {
         return position;
     }
 
-    public void setPosition(int position) {
+    public void setPosition( int position )
+    {
         this.position = position;
     }
 }

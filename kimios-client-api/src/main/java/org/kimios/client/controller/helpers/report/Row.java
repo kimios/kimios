@@ -21,24 +21,30 @@ import java.util.List;
 /**
  * Represents a row in a body
  */
-public class Row {
+public class Row
+{
 
     private List<Cell> cells;
 
     /**
      * @return the cells
      */
-    public List<Cell> getCells() {
+    public List<Cell> getCells()
+    {
         return cells;
     }
 
-    public Cell getCell(String name) throws Exception {
-        for (Cell c : cells) {
-            if (c.getName().equals(name)) {
+    public Cell getCell( String name )
+        throws Exception
+    {
+        for ( Cell c : cells )
+        {
+            if ( c.getName().equals( name ) )
+            {
                 return c;
             }
         }
-        throw new Exception("Cell " + name + " not found");
+        throw new Exception( "Cell " + name + " not found" );
     }
 }
 

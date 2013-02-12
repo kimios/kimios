@@ -22,8 +22,6 @@
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
        default-autowire="byName">
 
-    <!--<context:property-placeholder location="classpath:/kimios.properties"/>
-    -->
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="location">
             <value>kimios.properties</value>

@@ -21,14 +21,16 @@ import java.util.List;
 /**
  * The body of a report
  */
-public class Body {
+public class Body
+{
 
     private List<Row> rows;
 
     /**
      * @return the rows
      */
-    public List<Row> getRows() {
+    public List<Row> getRows()
+    {
         return rows;
     }
 }

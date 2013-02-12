@@ -24,9 +24,6 @@ import org.kimios.kernel.exception.MetaFeedSearchException;
  *
  *
  *
- *
- *
- *
  */
 public class MetaFeedBean extends MetaFeedImpl
 {

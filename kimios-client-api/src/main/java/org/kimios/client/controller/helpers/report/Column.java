@@ -19,14 +19,16 @@ package org.kimios.client.controller.helpers.report;
 /**
  * Represents a column in a header
  */
-public class Column {
+public class Column
+{
 
     private String name;
 
     /**
      * @return the name
      */
-    public String getName() {
+    public String getName()
+    {
         return name;
     }
 }

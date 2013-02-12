@@ -30,21 +30,25 @@ import org.kimios.kernel.ws.pojo.Group;
 import org.kimios.kernel.ws.pojo.User;
 
 /**
- *
  * @author Fabien Alin
  */
-public class UserConverter implements Converter{
+public class UserConverter
+    implements Converter
+{
 
-    public boolean canConvert(Class arg0) {
-        return (User.class == arg0 || Group.class == arg0);
+    public boolean canConvert( Class arg0 )
+    {
+        return ( User.class == arg0 || Group.class == arg0 );
     }
 
-    public void marshal(Object arg0, HierarchicalStreamWriter arg1, MarshallingContext arg2) {
-        
+    public void marshal( Object arg0, HierarchicalStreamWriter arg1, MarshallingContext arg2 )
+    {
+
     }
 
-    public Object unmarshal(HierarchicalStreamReader arg0, UnmarshallingContext arg1) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public Object unmarshal( HierarchicalStreamReader arg0, UnmarshallingContext arg1 )
+    {
+        throw new UnsupportedOperationException( "Not supported yet." );
     }
 }
 

@@ -18,17 +18,24 @@ package org.kimios.client.controller.helpers;
 
 /**
  * This class contains all the entity codes used by the DMS Kernel
- * 
+ *
  * @author jludmann
  */
-public class DMEntityType {
+public class DMEntityType
+{
 
     public final static int WORKSPACE = 1;
+
     public final static int FOLDER = 2;
+
     public final static int DOCUMENT = 3;
+
     public final static int TEMPLATE = 4;
+
     public final static int WORKFLOW = 5;
+
     public final static int DATASOURCE = 6;
+
     public final static int SYMBOLIC_LINK = 7;
 }
 

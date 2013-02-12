@@ -31,48 +31,58 @@ import java.util.Map;
 /**
  * Utility class allowing to generate XML authentication source fields and
  * create map from XML fields
- * 
+ *
  * @author jludmann
  */
-public class AuthenticationSourceUtil {
+public class AuthenticationSourceUtil
+{
 
     private String sourceName;
+
     private String newSourceName;
+
     private Map<String, String> fields = new HashMap<String, String>();
 
-    public AuthenticationSourceUtil(String sourceName) {
+    public AuthenticationSourceUtil( String sourceName )
+    {
         this.sourceName = sourceName;
     }
 
     /**
      * Get the authentication source name
      */
-    public String getName() {
+    public String getName()
+    {
         return this.sourceName;
     }
 
     /**
      * Specify a new authentication source name (for update only)
      */
-    public void changeName(String newSourceName) {
+    public void changeName( String newSourceName )
+    {
         this.newSourceName = newSourceName;
     }
 
     /**
      * Add new field
      */
-    public void addField(String key, String value) {
-        if (key != null) {
-            fields.put(key, value);
+    public void addField( String key, String value )
+    {
+        if ( key != null )
+        {
+            fields.put( key, value );
         }
     }
 
     /**
      * Set fields
      */
-    public AuthenticationSourceUtil setFields(Map<String, String> parameters) {
-        for (String key : parameters.keySet()) {
-            addField(key, parameters.get(key));
+    public AuthenticationSourceUtil setFields( Map<String, String> parameters )
+    {
+        for ( String key : parameters.keySet() )
+        {
+            addField( key, parameters.get( key ) );
         }
         return this;
     }
@@ -80,40 +90,46 @@ public class AuthenticationSourceUtil {
     /**
      * Convert the authentication source to XML
      */
-    public String generateXml() {
-        StringBuffer xml = new StringBuffer("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-        xml.append("<authentication-source name=\"");
-        xml.append(sourceName);
-        xml.append("\"");
-        if (newSourceName != null) {
-            xml.append(" newName=\"");
-            xml.append(newSourceName);
-            xml.append("\" ");
+    public String generateXml()
+    {
+        StringBuffer xml = new StringBuffer( "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" );
+        xml.append( "<authentication-source name=\"" );
+        xml.append( sourceName );
+        xml.append( "\"" );
+        if ( newSourceName != null )
+        {
+            xml.append( " newName=\"" );
+            xml.append( newSourceName );
+            xml.append( "\" " );
         }
-        xml.append(">\n");
-        for (String key : fields.keySet()) {
-            xml.append("<field name=\"");
-            xml.append(key);
-            xml.append("\" value=\"");
-            xml.append(fields.get(key));
-            xml.append("\" />\n");
+        xml.append( ">\n" );
+        for ( String key : fields.keySet() )
+        {
+            xml.append( "<field name=\"" );
+            xml.append( key );
+            xml.append( "\" value=\"" );
+            xml.append( fields.get( key ) );
+            xml.append( "\" />\n" );
         }
-        xml.append("</authentication-source>\n");
+        xml.append( "</authentication-source>\n" );
         return xml.toString();
     }
 
     /**
      * Get a authentication source map from XML fields
      */
-    public static Map<String, String> getFields(String xml) throws ParserConfigurationException, SAXException, IOException {
+    public static Map<String, String> getFields( String xml )
+        throws ParserConfigurationException, SAXException, IOException
+    {
         Map<String, String> fields = new HashMap<String, String>();
-        ByteArrayInputStream in = new ByteArrayInputStream(xml.getBytes());
-        Document d = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(in);
-        NodeList nl = d.getDocumentElement().getElementsByTagName("field");
-        for (int i = 0; i < nl.getLength(); i++) {
-            String name = nl.item(i).getAttributes().getNamedItem("name").getNodeValue();
-            String value = nl.item(i).getAttributes().getNamedItem("value").getNodeValue();
-            fields.put(name, value);
+        ByteArrayInputStream in = new ByteArrayInputStream( xml.getBytes() );
+        Document d = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().parse( in );
+        NodeList nl = d.getDocumentElement().getElementsByTagName( "field" );
+        for ( int i = 0; i < nl.getLength(); i++ )
+        {
+            String name = nl.item( i ).getAttributes().getNamedItem( "name" ).getNodeValue();
+            String value = nl.item( i ).getAttributes().getNamedItem( "value" ).getNodeValue();
+            fields.put( name, value );
         }
         return fields;
     }
@@ -121,24 +137,30 @@ public class AuthenticationSourceUtil {
     /**
      * Get a class name list of all implemented authentication sources
      */
-    public static List<String> getAvailable(String xml) throws ParserConfigurationException, SAXException, IOException {
+    public static List<String> getAvailable( String xml )
+        throws ParserConfigurationException, SAXException, IOException
+    {
         List<String> availableClassName = new ArrayList<String>();
-        ByteArrayInputStream in = new ByteArrayInputStream(xml.getBytes());
-        Document d = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(in);
-        NodeList nl = d.getDocumentElement().getElementsByTagName("authentication-source");
-        for (int i = 0; i < nl.getLength(); i++) {
-            availableClassName.add(nl.item(i).getAttributes().getNamedItem("class-name").getNodeValue());
+        ByteArrayInputStream in = new ByteArrayInputStream( xml.getBytes() );
+        Document d = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().parse( in );
+        NodeList nl = d.getDocumentElement().getElementsByTagName( "authentication-source" );
+        for ( int i = 0; i < nl.getLength(); i++ )
+        {
+            availableClassName.add( nl.item( i ).getAttributes().getNamedItem( "class-name" ).getNodeValue() );
         }
         return availableClassName;
     }
 
-    public static List<String> getAvailableParams(String xml) throws ParserConfigurationException, SAXException, IOException {
+    public static List<String> getAvailableParams( String xml )
+        throws ParserConfigurationException, SAXException, IOException
+    {
         List<String> availableParams = new ArrayList<String>();
-        ByteArrayInputStream in = new ByteArrayInputStream(xml.getBytes());
-        Document d = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(in);
-        NodeList nl = d.getDocumentElement().getElementsByTagName("field");
-        for (int i = 0; i < nl.getLength(); i++) {
-            availableParams.add(nl.item(i).getAttributes().getNamedItem("name").getNodeValue());
+        ByteArrayInputStream in = new ByteArrayInputStream( xml.getBytes() );
+        Document d = javax.xml.parsers.DocumentBuilderFactory.newInstance().newDocumentBuilder().parse( in );
+        NodeList nl = d.getDocumentElement().getElementsByTagName( "field" );
+        for ( int i = 0; i < nl.getLength(); i++ )
+        {
+            availableParams.add( nl.item( i ).getAttributes().getNamedItem( "name" ).getNodeValue() );
         }
         return availableParams;
     }

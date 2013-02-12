@@ -19,22 +19,26 @@ package org.kimios.client.controller.helpers.report;
 /**
  * Represents a cell in a row
  */
-public class Cell {
+public class Cell
+{
 
     private String name;
+
     private Object value;
 
     /**
      * @return the name
      */
-    public String getName() {
+    public String getName()
+    {
         return name;
     }
 
     /**
      * @return the value
      */
-    public Object getValue() {
+    public Object getValue()
+    {
         return value;
     }
 }

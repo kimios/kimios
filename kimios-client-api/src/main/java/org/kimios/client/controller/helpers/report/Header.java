@@ -21,14 +21,16 @@ import java.util.List;
 /**
  * The header of a report
  */
-public class Header {
+public class Header
+{
 
     private List<Column> columns;
 
     /**
      * @return the columns
      */
-    public List<Column> getColumns() {
+    public List<Column> getColumns()
+    {
         return columns;
     }
 }

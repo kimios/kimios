@@ -55,6 +55,19 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-index</artifactId>
+            <version>${project.version}</version>
+            <classifier>pojos</classifier>
+            <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
             <version>${spring.version}</version>
@@ -82,6 +95,17 @@
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+            <version>${cxf.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-rs-extension-providers</artifactId>
             <version>${cxf.version}</version>
             <exclusions>
                 <exclusion>
@@ -121,6 +145,18 @@
             <artifactId>jackson-jaxrs</artifactId>
             <version>1.9.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slfj.version}</version>
+            <scope>provided</scope>
+        </dependency>
+      <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>2.2</version>
+        <scope>provided</scope>
+      </dependency>
     </dependencies>
 
     <build>

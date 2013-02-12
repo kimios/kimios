@@ -24,36 +24,44 @@ package org.kimios.client.controller.helpers.rules;
 import java.util.List;
 
 /**
- *
  * @author Fabien Alin
  */
-public class Rule {
-    
+public class Rule
+{
+
     private String javaClassName;
+
     private String owner;
+
     private List<RuleParameter> params;
 
-    public String getJavaClassName() {
+    public String getJavaClassName()
+    {
         return javaClassName;
     }
 
-    public void setJavaClassName(String javaClassName) {
+    public void setJavaClassName( String javaClassName )
+    {
         this.javaClassName = javaClassName;
     }
 
-    public String getOwner() {
+    public String getOwner()
+    {
         return owner;
     }
 
-    public void setOwner(String owner) {
+    public void setOwner( String owner )
+    {
         this.owner = owner;
     }
 
-    public List<RuleParameter> getParams() {
+    public List<RuleParameter> getParams()
+    {
         return params;
     }
 
-    public void setParams(List<RuleParameter> params) {
+    public void setParams( List<RuleParameter> params )
+    {
         this.params = params;
     }
 }

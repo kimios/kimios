@@ -36,14 +36,19 @@ import java.util.Map;
  *
  * @author jludmann
  */
-public class ReportGenerator {
+public class ReportGenerator
+{
 
     private String sessionUid;
+
     private String className;
+
     private Map<String, String> parameters;
+
     private ReportingController reportingController;
 
-    public ReportGenerator(String sessionUid, String className, ReportingController reportingController) {
+    public ReportGenerator( String sessionUid, String className, ReportingController reportingController )
+    {
         this.sessionUid = sessionUid;
         this.className = className;
         this.parameters = new HashMap<String, String>();
@@ -53,28 +58,35 @@ public class ReportGenerator {
     /**
      * Get the class name of report generator
      */
-    public String getClassName() {
+    public String getClassName()
+    {
         return this.className;
     }
 
     /**
      * Add parameter for the related report
      */
-    public void addParameter(String name, String value) throws ReportingException
+    public void addParameter( String name, String value )
+        throws ReportingException
     {
-        if (name == null) {
-            throw new ReportingException("Parameter name can't be null");
+        if ( name == null )
+        {
+            throw new ReportingException( "Parameter name can't be null" );
         }
-        if (parameters.containsKey(name)) {
-            throw new ReportingException("Value for \"" + name + "\" is already set");
+        if ( parameters.containsKey( name ) )
+        {
+            throw new ReportingException( "Value for \"" + name + "\" is already set" );
         }
-        parameters.put(name, value);
+        parameters.put( name, value );
     }
 
-    private boolean checkParameter(String name, NodeList nodeList) {
+    private boolean checkParameter( String name, NodeList nodeList )
+    {
 
-        for (int i = 0; i < nodeList.getLength(); i++) {
-            if (name.equals(nodeList.item(i).getAttributes().getNamedItem("name").getNodeValue())) {
+        for ( int i = 0; i < nodeList.getLength(); i++ )
+        {
+            if ( name.equals( nodeList.item( i ).getAttributes().getNamedItem( "name" ).getNodeValue() ) )
+            {
                 return true;
             }
         }
@@ -84,29 +96,42 @@ public class ReportGenerator {
     /**
      * Get a report object from added parameters
      */
-    public Report generate() throws ReportingException {
-        try {
+    public Report generate()
+        throws ReportingException
+    {
+        try
+        {
             ReportingController controller = reportingController;
-            Document d = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(controller.getReportAttributes(sessionUid, className).getBytes()));
-            NodeList nl = d.getDocumentElement().getElementsByTagName("parameter");
-            if (parameters.size() > nl.getLength()) {
-                throw new ReportingException("Number of arguments for this report generator \"" + className + "\" must not exceed " + nl.getLength());
+            Document d = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(
+                new ByteArrayInputStream( controller.getReportAttributes( sessionUid, className ).getBytes() ) );
+            NodeList nl = d.getDocumentElement().getElementsByTagName( "parameter" );
+            if ( parameters.size() > nl.getLength() )
+            {
+                throw new ReportingException(
+                    "Number of arguments for this report generator \"" + className + "\" must not exceed "
+                        + nl.getLength() );
             }
-            for (String name : parameters.keySet()) {
-                if (!checkParameter(name, nl)) {
-                    throw new ReportingException("Named parameter \"" + name + "\" is invalid (see getReportAttributes)");
+            for ( String name : parameters.keySet() )
+            {
+                if ( !checkParameter( name, nl ) )
+                {
+                    throw new ReportingException(
+                        "Named parameter \"" + name + "\" is invalid (see getReportAttributes)" );
                 }
             }
-            for (int i = 0; i < nl.getLength(); i++) {
-                String value = parameters.get(nl.item(i).getAttributes().getNamedItem("name").getNodeValue());
-                nl.item(i).getAttributes().getNamedItem("value").setNodeValue(value);
+            for ( int i = 0; i < nl.getLength(); i++ )
+            {
+                String value = parameters.get( nl.item( i ).getAttributes().getNamedItem( "name" ).getNodeValue() );
+                nl.item( i ).getAttributes().getNamedItem( "value" ).setNodeValue( value );
             }
             StringWriter sw = new StringWriter();
-            TransformerFactory.newInstance().newTransformer().transform(new DOMSource(d), new StreamResult(sw));
-            String xml = controller.getReport(sessionUid, className, sw.toString());
-            return XMLGenerators.unserializeReport(xml);
-        } catch (Exception ex) {
-            throw new ReportingException(ex.getMessage());
+            TransformerFactory.newInstance().newTransformer().transform( new DOMSource( d ), new StreamResult( sw ) );
+            String xml = controller.getReport( sessionUid, className, sw.toString() );
+            return XMLGenerators.unserializeReport( xml );
+        }
+        catch ( Exception ex )
+        {
+            throw new ReportingException( ex.getMessage() );
         }
     }
 }

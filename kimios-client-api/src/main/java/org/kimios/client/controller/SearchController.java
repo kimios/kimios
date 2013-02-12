@@ -34,7 +34,7 @@ public class SearchController
         return client;
     }
 
-    public void setClient(SearchService client)
+    public void setClient( SearchService client )
     {
         this.client = client;
     }
@@ -42,50 +42,64 @@ public class SearchController
     /**
      * Make quick search and get documents
      */
-    public Document[] quickSearch(String sessionId, int dmEntityType, long dmEntityId, String query) throws Exception
+    public Document[] quickSearch( String sessionId, int dmEntityType, long dmEntityId, String query )
+        throws Exception
     {
-        try {
-            return client.quickSearch(sessionId, query, dmEntityId, dmEntityType);
-        } catch (Exception e) {
-            throw new ExceptionHelper().convertException(e);
+        try
+        {
+            return client.quickSearch( sessionId, query, dmEntityId, dmEntityType );
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
         }
     }
 
     /**
      * Make advanced search and get documents
      */
-    public Document[] advancedSearch(String sessionId, String xmlStream, long dmEntityId, int dmEntityType)
-            throws Exception
+    public Document[] advancedSearch( String sessionId, String xmlStream, long dmEntityId, int dmEntityType )
+        throws Exception
     {
-        try {
-            return client.advancedSearch(sessionId, xmlStream, dmEntityId, dmEntityType);
-        } catch (Exception e) {
-            throw new ExceptionHelper().convertException(e);
+        try
+        {
+            return client.advancedSearch( sessionId, xmlStream, dmEntityId, dmEntityType );
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
         }
     }
 
     /**
      * Get path from entity
      */
-    public String getPathFromDMEntity(String sessionId, long dmEntityId, int dmEntityType) throws Exception,
-            DMSException
+    public String getPathFromDMEntity( String sessionId, long dmEntityId, int dmEntityType )
+        throws Exception, DMSException
     {
-        try {
-            return client.getPathFromDMEntity(sessionId, dmEntityId, dmEntityType);
-        } catch (Exception e) {
-            throw new ExceptionHelper().convertException(e);
+        try
+        {
+            return client.getPathFromDMEntity( sessionId, dmEntityId, dmEntityType );
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
         }
     }
 
     /**
      * Get entity from path
      */
-    public DMEntity getDMEntityFromPath(String sessionId, String path) throws Exception, DMSException
+    public DMEntity getDMEntityFromPath( String sessionId, String path )
+        throws Exception, DMSException
     {
-        try {
-            return client.getDMentityFromPath(sessionId, path);
-        } catch (Exception e) {
-            throw new ExceptionHelper().convertException(e);
+        try
+        {
+            return client.getDMentityFromPath( sessionId, path );
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
         }
     }
 }
