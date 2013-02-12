@@ -57,7 +57,7 @@
         <hibernate.version>4.1.9.Final</hibernate.version>
         <apache.pdfbox.version>1.7.1</apache.pdfbox.version>
         <atomikos.version>3.8.0</atomikos.version>
-        <cxf.version>2.7.1</cxf.version>
+        <cxf.version>2.7.2</cxf.version>
         <velocity.version>1.6.4</velocity.version>
         <javamail.version>1.4.5</javamail.version>
         <solr4j.version>3.6.1</solr4j.version>
