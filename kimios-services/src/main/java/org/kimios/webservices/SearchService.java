@@ -18,13 +18,14 @@ package org.kimios.webservices;
 
 import javax.jws.WebParam;
 import javax.jws.WebService;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MultivaluedMap;
 
+import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.kimios.kernel.ws.pojo.DMEntity;
 import org.kimios.kernel.ws.pojo.Document;
+
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA. User: farf Date: 4/1/12 Time: 5:07 PM
@@ -63,4 +64,14 @@ public interface SearchService
     public String getPathFromDMEntity(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "entityId") @WebParam(name = "entityId") long entityId,
             @QueryParam(value = "entityType") @WebParam(name = "entityType") int entityType) throws DMServiceException;
+
+
+    @POST
+    @Path("/saveSearchQuery")
+    @Produces("application/json")
+    @Consumes("application/json")
+    public String saveSearchQuery(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+                                  @QueryParam(value = "name") @WebParam(name = "name") String name,
+                                  @WebParam(name = "criterias")
+                                  List<org.kimios.kernel.index.query.model.Criteria> criterias) throws DMServiceException;
 }

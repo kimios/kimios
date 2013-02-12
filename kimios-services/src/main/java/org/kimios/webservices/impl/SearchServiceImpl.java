@@ -17,6 +17,8 @@
 package org.kimios.webservices.impl;
 
 
+import org.apache.cxf.jaxrs.ext.multipart.Multipart;
+import org.kimios.kernel.index.query.model.Criteria;
 import org.kimios.webservices.DMServiceException;
 import org.kimios.kernel.dms.DMEntity;
 import org.kimios.kernel.dms.DMEntityType;
@@ -26,16 +28,22 @@ import org.kimios.kernel.security.Session;
 import org.kimios.kernel.ws.pojo.Document;
 import org.kimios.webservices.CoreService;
 import org.kimios.webservices.SearchService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Vector;
 
+import javax.jws.WebParam;
 import javax.jws.WebService;
+import javax.ws.rs.QueryParam;
 
 @WebService(targetNamespace = "http://kimios.org", serviceName = "SearchService", name = "SearchService")
 public class SearchServiceImpl extends CoreService implements SearchService
 {
 
+
+    private static Logger log  = LoggerFactory.getLogger(SearchService.class);
 
     public Document[] quickSearch(String sessionUid, String query, long dmEntityUid, int dmEntityType) throws DMServiceException {
         try {
@@ -125,5 +133,22 @@ public class SearchServiceImpl extends CoreService implements SearchService
         }
     }
 
+    public String saveSearchQuery(String sessionId,
+                                  String name,
+                                  List<Criteria> criterias)
+    throws DMServiceException {
+
+        try{
+
+            log.info(" >> " + criterias.toString());
+
+            return "WHAT";
+        }   catch (Exception e){
+            throw getHelper().convertException(e);
+        }
+
+
+
+    }
 }
 

@@ -48,8 +48,7 @@ import org.kimios.kernel.security.DMEntityACL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SolrIndexManager implements ISolrIndexManager
-{
+public class SolrIndexManager implements ISolrIndexManager {
     private static Logger log = LoggerFactory.getLogger(SolrIndexManager.class);
 
     private Reindexer reindexer = null;
@@ -58,15 +57,13 @@ public class SolrIndexManager implements ISolrIndexManager
 
     private IPathController pathController;
 
-    public SolrIndexManager(SolrServer solr)
-    {
+    public SolrIndexManager(SolrServer solr) {
         this.solr = solr;
     }
 
     private final SolrServer solr;
 
-    public synchronized void reindex(String path) throws DataSourceException, ConfigException, IndexException
-    {
+    public synchronized void reindex(String path) throws DataSourceException, ConfigException, IndexException {
         final String finalPath = path;
         if (this.reindexThread == null || !this.reindexThread.isAlive()) {
 
@@ -79,8 +76,7 @@ public class SolrIndexManager implements ISolrIndexManager
         }
     }
 
-    public int getReindexProgression()
-    {
+    public int getReindexProgression() {
         if (this.reindexThread != null && this.reindexer != null) {
             return this.reindexer.getReindexProgression();
         } else {
@@ -88,8 +84,7 @@ public class SolrIndexManager implements ISolrIndexManager
         }
     }
 
-    public boolean deleteDirectory(File path)
-    {
+    public boolean deleteDirectory(File path) {
         if (path.exists()) {
             File[] files = path.listFiles();
             for (int i = 0; i < files.length; i++) {
@@ -103,8 +98,7 @@ public class SolrIndexManager implements ISolrIndexManager
         return (path.delete());
     }
 
-    public void deleteDocument(Document document) throws IndexException
-    {
+    public void deleteDocument(Document document) throws IndexException {
         try {
             this.solr.deleteById(String.valueOf(document.getUid()));
             log.debug("Commited deletion of document " + document.getUid());
@@ -118,8 +112,7 @@ public class SolrIndexManager implements ISolrIndexManager
         }
     }
 
-    private SolrInputDocument toSolrInputDocument(Document document) throws DataSourceException, ConfigException
-    {
+    private SolrInputDocument toSolrInputDocument(Document document) throws DataSourceException, ConfigException {
         SolrInputDocument doc = new SolrInputDocument();
         doc.addField("DocumentUid", document.getUid());
         doc.addField("DocumentName", document.getName().toLowerCase());
@@ -134,6 +127,11 @@ public class SolrIndexManager implements ISolrIndexManager
         DocumentVersion version =
                 FactoryInstantiator.getInstance().getDocumentVersionFactory().getLastDocumentVersion(document);
 
+
+        if (version == null) {
+            log.error("Document {} has no version", document.getUid());
+            return null;
+        }
         //standard datas
         doc.addField("DocumentCreationDate", document.getCreationDate());
         doc.addField("DocumentUpdateDate", document.getUpdateDate());
@@ -188,7 +186,7 @@ public class SolrIndexManager implements ISolrIndexManager
             log.debug(document.getExtension() + " --> " + (filter != null ? filter.getClass().getName() : "No filter"));
             if (filter != null) {
                 body = filter.getBody(version.getInputStream());
-                log.debug((String)body);
+                log.debug((String) body);
             }
         } catch (Throwable ex) {
             log.debug("Error while getting body", ex);
@@ -211,13 +209,14 @@ public class SolrIndexManager implements ISolrIndexManager
         return doc;
     }
 
-    public void indexDocument(DMEntity documentEntity) throws IndexException, DataSourceException, ConfigException
-    {
+    public void indexDocument(DMEntity documentEntity) throws IndexException, DataSourceException, ConfigException {
         try {
+
 
             Document document = (Document) documentEntity;
             this.deleteDocument(document);
-            this.solr.add(toSolrInputDocument(document));
+            SolrInputDocument solrInputDocument = toSolrInputDocument(document);
+            this.solr.add(solrInputDocument);
             this.solr.commit();
         } catch (IOException io) {
             throw new IndexException(io,
@@ -231,17 +230,17 @@ public class SolrIndexManager implements ISolrIndexManager
     }
 
     public void indexDocumentList(List<DMEntity> documentEntities)
-            throws IndexException, DataSourceException, ConfigException
-    {
+            throws IndexException, DataSourceException, ConfigException {
         try {
             List<SolrInputDocument> updatedDocument = new ArrayList<SolrInputDocument>();
             List<String> updatedDocumentIds = new ArrayList<String>();
             for (DMEntity doc : documentEntities) {
-                updatedDocumentIds.add(String.valueOf(doc.getUid()));
-
                 SolrInputDocument solrInputDocument = toSolrInputDocument((Document) doc);
-                updatedDocument.add(solrInputDocument);
-                log.info("Doc added to solr Query " + doc + " / " + solrInputDocument);
+                if (solrInputDocument != null) {
+                    updatedDocumentIds.add(String.valueOf(doc.getUid()));
+                    updatedDocument.add(solrInputDocument);
+                    log.info("Doc added to solr Query " + doc + " / " + solrInputDocument);
+                }
             }
 
             this.solr.deleteById(updatedDocumentIds);
@@ -256,8 +255,7 @@ public class SolrIndexManager implements ISolrIndexManager
         }
     }
 
-    public List<? extends Number> executeQuery(Query query) throws IndexException
-    {
+    public List<? extends Number> executeQuery(Query query) throws IndexException {
         QueryResponse rsp;
         try {
             rsp = solr.query(new SolrQuery(query.toString()));
@@ -272,8 +270,7 @@ public class SolrIndexManager implements ISolrIndexManager
         }
     }
 
-    public List<Long> executeSolrQuery(SolrQuery query) throws IndexException
-    {
+    public List<Long> executeSolrQuery(SolrQuery query) throws IndexException {
         QueryResponse rsp;
         try {
             rsp = solr.query(query);
@@ -291,8 +288,7 @@ public class SolrIndexManager implements ISolrIndexManager
         }
     }
 
-    public void updateAcls(long docUid, List<DMEntityACL> acls) throws IndexException
-    {
+    public void updateAcls(long docUid, List<DMEntityACL> acls) throws IndexException {
         try {
             log.trace("Updating ACL for document #" + docUid);
             QueryResponse rsp = this.solr.query(new SolrQuery("DocumentUid:" + docUid));
@@ -317,8 +313,7 @@ public class SolrIndexManager implements ISolrIndexManager
         }
     }
 
-    public void deletePath(String path) throws IndexException
-    {
+    public void deletePath(String path) throws IndexException {
         try {
 
             log.debug("Path delete: " + path);
@@ -333,8 +328,7 @@ public class SolrIndexManager implements ISolrIndexManager
         }
     }
 
-    public void updatePath(String oldPath, String newPath) throws IndexException
-    {
+    public void updatePath(String oldPath, String newPath) throws IndexException {
         try {
             if (oldPath.endsWith("/")) {
                 oldPath = oldPath.substring(0, oldPath.lastIndexOf("/"));
@@ -365,13 +359,11 @@ public class SolrIndexManager implements ISolrIndexManager
         }
     }
 
-    public IPathController getPathController()
-    {
+    public IPathController getPathController() {
         return pathController;
     }
 
-    public void setPathController(IPathController pathController)
-    {
+    public void setPathController(IPathController pathController) {
         this.pathController = pathController;
     }
 }
