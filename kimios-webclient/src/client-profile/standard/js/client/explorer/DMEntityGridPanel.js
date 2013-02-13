@@ -329,7 +329,7 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
         });
     },
 
-    advancedSearch:function (searchConfig, form) {
+    advancedSearch:function (searchConfig, form, searchConfigParam) {
         this.gridPanel.reconfigure(kimios.store.getAdvancedSearchStore(), this.gridPanel.getColumnModel());
 
         // search by document body
@@ -352,12 +352,12 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
         // advanced search
         else {
             this.gridPanel.getStore().setBaseParam('action', 'Advanced');
-            this.gridPanel.getStore().setBaseParam('name', searchConfig.name);
-            this.gridPanel.getStore().setBaseParam('uid', searchConfig.uid);
-            this.gridPanel.getStore().setBaseParam('text', searchConfig.text);
+            this.gridPanel.getStore().setBaseParam('DocumentName', searchConfig.name);
+            this.gridPanel.getStore().setBaseParam('DocumentUid', searchConfig.uid);
+            this.gridPanel.getStore().setBaseParam('DocumentBody', searchConfig.text);
             this.gridPanel.getStore().setBaseParam('dmEntityUid', searchConfig.fromUid);
             this.gridPanel.getStore().setBaseParam('dmEntityType', searchConfig.fromType);
-            this.gridPanel.getStore().setBaseParam('documentType', searchConfig.documentType);
+            this.gridPanel.getStore().setBaseParam('DocumentTypeUid', searchConfig.documentType);
             var fields = form.getForm().getFieldValues();
 
             var obj = "({";
@@ -365,7 +365,7 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
                 var value = null;
 
                 // is date
-                if (key.indexOf('dfrom') > 0 || key.indexOf('dto') > 0)
+                if (fields[key] && fields[key] instanceof Date)
                     value = fields[key] ? fields[key].format('Y-m-d') : '';
                 else
                     value = fields[key] ? fields[key] : '';

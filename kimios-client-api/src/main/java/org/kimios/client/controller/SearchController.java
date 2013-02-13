@@ -18,9 +18,12 @@ package org.kimios.client.controller;
 
 import org.kimios.client.exception.DMSException;
 import org.kimios.client.exception.ExceptionHelper;
+import org.kimios.kernel.index.query.model.Criteria;
 import org.kimios.kernel.ws.pojo.DMEntity;
 import org.kimios.kernel.ws.pojo.Document;
 import org.kimios.webservices.SearchService;
+
+import java.util.List;
 
 /**
  * SearchController is used to find document or other entity from keywords
@@ -42,7 +45,7 @@ public class SearchController
     /**
      * Make quick search and get documents
      */
-    public Document[] quickSearch( String sessionId, int dmEntityType, long dmEntityId, String query )
+    public List<Document> quickSearch( String sessionId, int dmEntityType, long dmEntityId, String query )
         throws Exception
     {
         try
@@ -58,7 +61,7 @@ public class SearchController
     /**
      * Make advanced search and get documents
      */
-    public Document[] advancedSearch( String sessionId, String xmlStream, long dmEntityId, int dmEntityType )
+    public List<Document> advancedSearch( String sessionId, String xmlStream, long dmEntityId, int dmEntityType )
         throws Exception
     {
         try
@@ -96,6 +99,21 @@ public class SearchController
         try
         {
             return client.getDMentityFromPath( sessionId, path );
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
+        }
+    }
+
+
+    public List<Document> advancedSearchDocument( String sessionId, int page, int pageSize, long dmEntityId,
+                                                  int dmEntityType, List<Criteria> criteriaList )
+        throws Exception
+    {
+        try
+        {
+            return client.advancedSearchDocuments( sessionId, page, pageSize, dmEntityId, dmEntityType, criteriaList );
         }
         catch ( Exception e )
         {

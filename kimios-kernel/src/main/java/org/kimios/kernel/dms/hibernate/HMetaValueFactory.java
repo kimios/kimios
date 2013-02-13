@@ -84,7 +84,7 @@ public class HMetaValueFactory extends HFactory implements MetaValueFactory
             throws ConfigException, DataSourceException
     {
         try {
-            List<MetaValue> lValues = (List<MetaValue>) getSession().createCriteria(MetaValue.class)
+            List<MetaValue> lValues = (List<MetaValue>) getSession().createCriteria(MetaValueBean.class)
                     .add(Restrictions.eq("documentVersionUid", documentVersion.getUid()))
                     .addOrder(Order.asc("meta.id"))
                     .list();
@@ -114,6 +114,7 @@ public class HMetaValueFactory extends HFactory implements MetaValueFactory
                 default:
                     break;
             }
+            getSession().flush();
         } catch (HibernateException e) {
             throw new DataSourceException(e);
         }

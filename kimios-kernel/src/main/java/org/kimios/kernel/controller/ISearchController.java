@@ -25,18 +25,18 @@ import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.DMEntity;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.IndexException;
+import org.kimios.kernel.index.query.model.Criteria;
 import org.kimios.kernel.security.Session;
 import org.kimios.kernel.ws.pojo.Document;
 import org.xml.sax.SAXException;
 
 public interface ISearchController
 {
-    public List<org.kimios.kernel.dms.Document> quickSearch(Session session, String query,
-            DMEntity entity) throws IndexException, DataSourceException,
-            ConfigException;
+    public List<org.kimios.kernel.dms.Document> quickSearch( Session session, String query, DMEntity entity )
+        throws IndexException, DataSourceException, ConfigException;
 
-    public List<Document> quickSearchPojos(Session session, String query, DMEntity entity)
-            throws IndexException, DataSourceException, ConfigException;
+    public List<Document> quickSearchPojos( Session session, String query, DMEntity entity )
+        throws IndexException, DataSourceException, ConfigException;
 
     /**
      * @param session
@@ -47,15 +47,19 @@ public interface ISearchController
      * @throws IndexException
      * @throws java.io.IOException
      * @throws javax.xml.parsers.ParserConfigurationException
+     *
      * @throws org.xml.sax.SAXException
      */
-    public List<org.kimios.kernel.dms.Document> advancedSearch(Session session, String xmlStream,
-            DMEntity entity) throws DataSourceException, ConfigException,
-            IndexException, IOException, ParserConfigurationException,
-            SAXException;
+    public List<org.kimios.kernel.dms.Document> advancedSearch( Session session, String xmlStream, DMEntity entity )
+        throws DataSourceException, ConfigException, IndexException, IOException, ParserConfigurationException,
+        SAXException;
 
-    public List<Document> advancedSearchPojos(Session session, String xmlStream,
-            DMEntity entity) throws DataSourceException, ConfigException,
-            IndexException, IOException, ParserConfigurationException,
-            SAXException;
+    public List<Document> advancedSearchPojos( Session session, String xmlStream, DMEntity entity )
+        throws DataSourceException, ConfigException, IndexException, IOException, ParserConfigurationException,
+        SAXException;
+
+
+    public List<Document> advancedSearchDocuments( Session session, int page, int pageSize, List<Criteria> criteriaList,
+                                                   DMEntity entity )
+        throws DataSourceException, ConfigException, IndexException, IOException;
 }

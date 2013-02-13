@@ -61,6 +61,7 @@ import org.kimios.kernel.index.MetaBooleanValueClause;
 import org.kimios.kernel.index.MetaDateValueClause;
 import org.kimios.kernel.index.MetaNumberValueClause;
 import org.kimios.kernel.index.MetaStringValueClause;
+import org.kimios.kernel.index.query.model.Criteria;
 import org.kimios.kernel.security.Session;
 import org.kimios.kernel.ws.pojo.Document;
 import org.slf4j.Logger;
@@ -398,6 +399,14 @@ public class SearchController extends AKimiosController implements ISearchContro
             finalList.addAll(dmsFactoryInstantiator.getDocumentTypeFactory().getChildrenDocumentType(it.getUid()));
         }
         return finalList;
+    }
+
+
+    public List<Document> advancedSearchDocuments( Session session, int page, int pageSize, List<Criteria> criteriaList,
+                                                   DMEntity entity )
+        throws DataSourceException, ConfigException, IndexException, IOException
+    {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }
 

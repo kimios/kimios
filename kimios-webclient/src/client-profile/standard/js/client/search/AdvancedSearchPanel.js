@@ -20,20 +20,30 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
         this.layout = 'border';
         this.bodyStyle = 'background-color:transparent;',
 
-            this.submitButton = new Ext.Button({
-                text:kimios.lang('SearchEmptyText'),
-                scope:this,
-                handler:function () {
-                    kimios.explorer.getActivePanel().advancedSearch({
-                        name:this.nameField.getValue(),
-                        text:this.textField.getValue(),
-                        uid:this.uidField.getValue(),
-                        fromUid:this.locationField.hiddenUid,
-                        fromType:this.locationField.hiddenType,
-                        documentType:this.documentTypeField.getValue()
-                    }, this.form2);
-                }
-            });
+        this.submitButton = new Ext.Button({
+            text:kimios.lang('SearchEmptyText'),
+            scope:this,
+            handler:function () {
+                kimios.explorer.getActivePanel().advancedSearch({
+                    name:this.nameField.getValue(),
+                    text:this.textField.getValue(),
+                    uid:this.uidField.getValue(),
+                    fromUid:this.locationField.hiddenUid,
+                    fromType:this.locationField.hiddenType,
+                    documentType:this.documentTypeField.getValue()
+                }, this.form2);
+            }
+        });
+
+        this.saveButton = new Ext.Button({
+           text:kimios.lang('SearchSaveButton'),
+           scope:this,
+           handler:function () {
+               //TODO: implement save
+           }
+       });
+
+
 
         this.clearButton = new Ext.Button({
             text:kimios.lang('ClearField'),
@@ -62,7 +72,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                 labelStyle:'font-size: 11px;'
             },
             bodyStyle:'background-color:transparent;',
-            fbar:[this.clearButton, this.submitButton]
+            fbar:[this.clearButton, this.submitButton, this.saveButton]
         });
 
         this.form2 = new kimios.FormPanel({
@@ -97,17 +107,17 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
         this.form2.removeAll();
 
         this.nameField = new Ext.form.TextField({
-            name:'name',
+            name:'DocumentName',
             fieldLabel:kimios.lang('DocumentName'),
             labelSeparator:kimios.lang('LabelSeparator')
         });
         this.uidField = new Ext.form.NumberField({
-            name:'uid',
+            name:'DocumentUid',
             fieldLabel:kimios.lang('DocNum'),
             labelSeparator:kimios.lang('LabelSeparator')
         });
         this.textField = new Ext.form.TextField({
-            name:'text',
+            name:'DocumentBody',
             fieldLabel:kimios.lang('SearchText'),
             labelSeparator:kimios.lang('LabelSeparator')
         });
@@ -118,14 +128,14 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
         });
         this.documentTypeField = new kimios.form.DocumentTypeField({
             fieldLabel:kimios.lang('DocumentType'),
-            name:'documentType',
+            name:'DocumentTypeUid',
             displayField:'name',
             valueField:'uid',
             hiddenName:'documentType',
             width:200,
             labelSeparator:kimios.lang('LabelSeparator')
         });
-
+        //TODO: add fields regarding document/version creation/update date and owner/ownerSource
         this.documentTypeField.on('select', function (store, metasRecords, options) {
             kimios.store.getMetasStore(this.documentTypeField.getValue()).on('load', function (store, metasRecords, options) {
                 this.form2.removeAll();
@@ -136,14 +146,13 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                     var name = record.get('name');
                     var value = record.get('value');
                     var metaFeedUid = record.get('metaFeedUid');
-                    var paramName = 'meta_value_' + uid + '_' + type;
 
                     switch (type) {
                         case 1:
                             //string type
                             if (metaFeedUid == -1) {
                                 fields.push(new Ext.form.TextField({
-                                    name:paramName,
+                                    name: 'MetaDataString_' + uid,
                                     fieldLabel:name,
                                     value:value,
                                     emptyText:kimios.lang('SearchText'),
@@ -151,7 +160,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                                 }));
                             } else {
                                 fields.push(new kimios.form.MetaFeedField({
-                                    name:paramName,
+                                    name:'MetaDataString_' + uid,
                                     metaFeedUid:metaFeedUid,
                                     fieldLabel:name,
                                     value:value,
@@ -163,14 +172,14 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                         case 2:
                             //int type
                             fields.push(new Ext.form.NumberField({
-                                name:paramName + '_nbfrom',
+                                name: 'MetaDataNumber_' + uid + '_from',
                                 fieldLabel:name + ' (min)',
                                 value:value,
                                 emptyText:kimios.lang('MetaNumberValue'),
                                 labelSeparator:kimios.lang('LabelSeparator')
                             }));
                             fields.push(new Ext.form.NumberField({
-                                name:paramName + '_nbto',
+                                name:'MetaDataNumber_' + uid + '_to',
                                 fieldLabel:name + ' (max)',
                                 value:value,
                                 emptyText:kimios.lang('MetaNumberValue'),
@@ -180,7 +189,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                         case 3:
                             //date type
                             fields.push(new Ext.form.DateField({
-                                name:paramName + '_dfrom',
+                                name:'MetaDataDate_' + uid + '_from',
                                 fieldLabel:name + ' (min)',
                                 format:'Y-m-d',
                                 value:value,
@@ -189,7 +198,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                                 labelSeparator:kimios.lang('LabelSeparator')
                             }));
                             fields.push(new Ext.form.DateField({
-                                name:paramName + '_dto',
+                                name:'MetaDataDate_' + uid + '_to',
                                 fieldLabel:name + ' (max)',
                                 format:'Y-m-d',
                                 value:value,
@@ -201,7 +210,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                         case 4:
                             //boolean type
                             fields.push(new Ext.form.Checkbox({
-                                name:paramName,
+                                name:'MetaDataBoolean_' + uid,
                                 fieldLabel:name,
                                 checked:value == 'true' ? true : false,
                                 labelSeparator:kimios.lang('LabelSeparator')

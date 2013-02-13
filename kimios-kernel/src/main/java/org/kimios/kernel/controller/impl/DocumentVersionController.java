@@ -197,6 +197,7 @@ public class DocumentVersionController extends AKimiosController implements IDoc
                     fact.saveMetaValue(m);
                 }
             }
+
             dv.setModificationDate(new Date());
             dmsFactoryInstantiator.getDocumentVersionFactory().updateDocumentVersion(dv);
             EventContext.addParameter("version", dv);

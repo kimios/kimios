@@ -19,142 +19,189 @@ package org.kimios.controller;
 import flexjson.JSONSerializer;
 import flexjson.transformer.DateTransformer;
 import org.kimios.core.wrappers.DMEntity;
+import org.kimios.kernel.index.query.model.Criteria;
 import org.kimios.kernel.ws.pojo.Document;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
 /**
  * @author Fabien Alin
  */
-public class SearchControllerWeb extends Controller {
+public class SearchControllerWeb
+    extends Controller
+{
 
-    public SearchControllerWeb(Map<String, String> parameters) {
-        super(parameters);
+    public SearchControllerWeb( Map<String, String> parameters )
+    {
+        super( parameters );
     }
 
-    public String execute() throws Exception {
-        Document[] res = new Document[0];
-        if (action.equalsIgnoreCase("Quick")) {
+    public String execute()
+        throws Exception
+    {
+        List<Document> res = new ArrayList<Document>();
+        if ( action.equalsIgnoreCase( "Quick" ) )
+        {
 
             long dmEntityUid = -1;
-            try {
-                dmEntityUid = Long.parseLong(parameters.get("dmEntityUid"));
-            } catch (Exception e) {
+            try
+            {
+                dmEntityUid = Long.parseLong( parameters.get( "dmEntityUid" ) );
+            }
+            catch ( Exception e )
+            {
             }
             int dmEntityType = -1;
-            try {
-                dmEntityType = Integer.parseInt(parameters.get("dmEntityType"));
-            } catch (Exception e) {
+            try
+            {
+                dmEntityType = Integer.parseInt( parameters.get( "dmEntityType" ) );
+            }
+            catch ( Exception e )
+            {
                 dmEntityType = -1;
             }
-            if (dmEntityUid <= 0) {
+            if ( dmEntityUid <= 0 )
+            {
                 dmEntityUid = -1;
                 dmEntityType = -1;
             }
 
-            res = searchController
-                    .quickSearch(sessionUid, dmEntityType, dmEntityUid, parameters.get("name"));
-            log.debug("Quick search in uid: " + dmEntityUid + " [Type: " + dmEntityType + "]: " + res.length + " results");
-        } else if (action.equalsIgnoreCase("Advanced")) {
-            String docName = parameters.get("name");
-            String docUidS = parameters.get("uid");
-            String text = parameters.get("text");
-            String positionUidS = parameters.get("dmEntityUid");
-            String positionTypeS = parameters.get("dmEntityType");
-            String documentType = parameters.get("documentType");
-            long docUid = -1;
-            try {
-                docUid = Long.parseLong(docUidS);
-            } catch (Exception e) {
-            }
-            long docTypeUid = -1;
-            try {
-                docTypeUid = Long.parseLong(documentType);
-            } catch (Exception e) {
-            }
+            res = searchController.quickSearch( sessionUid, dmEntityType, dmEntityUid, parameters.get( "name" ) );
+            log.debug(
+                "Quick search in uid: " + dmEntityUid + " [Type: " + dmEntityType + "]: " + res.size() + " results" );
+        }
+        else if ( action.equalsIgnoreCase( "Advanced" ) )
+        {
+            String positionUidS = parameters.get( "dmEntityUid" );
+            String positionTypeS = parameters.get( "dmEntityType" );
             long positionUid = -1;
-            try {
-                positionUid = Long.parseLong(positionUidS);
-            } catch (Exception e) {
+            try
+            {
+                positionUid = Long.parseLong( positionUidS );
+            }
+            catch ( Exception e )
+            {
             }
             int positionType = -1;
-            try {
-                positionType = Integer.parseInt(positionTypeS);
-            } catch (Exception e) {
+            try
+            {
+                positionType = Integer.parseInt( positionTypeS );
+            }
+            catch ( Exception e )
+            {
             }
 
-            LinkedHashSet<String> hashset = new LinkedHashSet<String>();
-            hashset.add("<?xml version=\"1.0\" encoding=\"UTF-8\"?><search>\n");
-            if (docName != null && !docName.equals(""))
-                hashset.add("<document-name><![CDATA[" + docName + "]]></document-name>\n");
-            if (text != null && !text.equals(""))
-                hashset.add("<text><![CDATA[" + text + "]]></text>\n");
-            if (docUid != -1)
-                hashset.add("<document-uid>" + docUid + "</document-uid>\n");
-            if (docTypeUid != -1)
-                hashset.add("<document-type-uid>" + docTypeUid + "</document-type-uid>\n");
+            List<Long> alreayParsedMeta = new ArrayList<Long>();
+            List<Criteria> criteriaList = new ArrayList<Criteria>();
+            for ( String k : parameters.keySet() )
+            {
 
-            for (String paramKey : parameters.keySet()) {
-                if (paramKey.startsWith("meta_value_") && parameters.get(paramKey) != null && !parameters.get(paramKey).equals("")) {
-                    String metaUid = paramKey.split("_")[2];
-                    int metaType = Integer.parseInt(paramKey.split("_")[3]);
+                if ( parameters.get( k ) != null )
+                {
+                    Criteria c = new Criteria();
+                    c.setFieldName( k );
+                    c.setLevel( 0 );
+                    c.setPosition( 0 );
+                    if ( k.startsWith( "MetaData" ) && parameters.get( k ) != null
+                        && parameters.get( k ).trim().length() > 0 )
+                    {
+                        String metaUid = k.split( "_" )[1];
+                        if ( !alreayParsedMeta.contains( Long.parseLong( metaUid ) ) )
+                        {
 
-                    switch (metaType) {
-                        case 1:
-                            //text?
-                            hashset.add("<meta-value uid=\"" + metaUid + "\"><![CDATA[" + parameters.get(paramKey) + "]]></meta-value>\n");
-                            break;
-                        case 2:
-                            //number
-                            hashset.add("<meta-value uid=\"" + metaUid + "\" number-from=\"" + parameters.get("meta_value_" + metaUid + "_2_nbfrom") + "\" number-to=\"" + parameters.get("meta_value_" + metaUid + "_2_nbto") + "\" />\n");
-                            break;
-                        case 3:
-                            //date
-                            long dFrom = -1;
-                            long dTo = -1;
-                            try {
-                                dFrom = new java.text.SimpleDateFormat("yyyy-MM-dd").parse(parameters.get("meta_value_" + metaUid + "_3_dfrom")).getTime();
-                            } catch (Exception e) {
-                                dFrom = -1;
+                            if ( k.contains( "String" ) )
+                            {
+                                c.setMetaType( new Long( 1 ) );
                             }
-                            try {
-                                dTo = new java.text.SimpleDateFormat("yyyy-MM-dd").parse(parameters.get("meta_value_" + metaUid + "_3_dto")).getTime();
-                            } catch (Exception e) {
-                                dTo = -1;
+                            if ( k.contains( "Number" ) )
+                            {
+                                c.setMetaType( new Long( 2 ) );
                             }
-                            hashset.add("<meta-value uid=\"" + metaUid + "\" date-from=\"" + (dFrom != -1 ? dFrom : "") + "\" date-to=\"" + (dTo != -1 ? dTo : "") + "\" />\n");
-                            break;
-                        case 4:
-                            //boolean
-                            hashset.add("<meta-value uid=\"" + metaUid + "\" boolean-value=\"" + parameters.get(paramKey) + "\" />\n");
-                            break;
+                            if ( k.contains( "Date" ) )
+                            {
+                                c.setMetaType( new Long( 3 ) );
+                            }
+                            if ( k.contains( "Boolean" ) )
+                            {
+                                c.setMetaType( new Long( 4 ) );
+                            }
+                            c.setMetaId( Long.parseLong( metaUid ) );
+
+                            if ( k.contains( "Date" ) || k.contains( "Number" ) )
+                            {
+
+                                String fromKey = k.split( "_" )[0] + "_" + metaUid + "_from";
+                                String toKey = k.split( "_" )[0] + "_" + metaUid + "_to";
+                                if ( parameters.get( fromKey ) != null )
+                                {
+                                    c.setRangeMin( parameters.get( fromKey ) );
+                                }
+                                if ( parameters.get( toKey ) != null )
+                                {
+                                    c.setRangeMax( parameters.get( toKey ) );
+                                }
+                        /*try
+                        {
+                            dFrom = new java.text.SimpleDateFormat( "yyyy-MM-dd" ).parse(
+                                parameters.get( "" ) ).getTime();
+                        }
+                        catch ( Exception e )
+                        {
+                            dFrom = -1;
+                        }
+                        try
+                        {
+                            dTo = new java.text.SimpleDateFormat( "yyyy-MM-dd" ).parse(
+                                parameters.get( "meta_value_" + metaUid + "_3_dto" ) ).getTime();
+                        }
+                        catch ( Exception e )
+                        {
+                            dTo = -1;
+                        }*/
+                            }
+                            else
+                            {
+                                c.setQuery( parameters.get( k ) );
+                            }
+                            alreayParsedMeta.add( Long.parseLong( metaUid ) );
+                        }
+                        else
+                        {
+                        /* In case of meta already parsed: continue to next criteria */
+                            continue;
+                        }
                     }
+                    else
+                    {
+                        c.setQuery( parameters.get( k ) );
+                    }
+                    criteriaList.add( c );
                 }
+
             }
 
-            hashset.add("</search>");
-            StringBuffer xml = new StringBuffer();
-            Iterator<String> it = hashset.iterator();
-            while (it.hasNext()) {
-                xml.append(it.next());
-            }
+            int page = parameters.get( "page" ) != null ? Integer.parseInt( parameters.get( "page" ) ) : -1;
+            int pageSize = parameters.get( "pageSize" ) != null ? Integer.parseInt( parameters.get( "pageSize" ) ) : -1;
 
-            res = searchController.advancedSearch(sessionUid, xml.toString(), positionUid, positionType);
-            log.debug("Advanced search in uid: " + positionUid + " [Type: " + positionType + "]: " + res.length + " results");
+            res = searchController.advancedSearchDocument( sessionUid, page, pageSize, positionUid, positionType,
+                                                           criteriaList );
+            log.debug( "Advanced search in uid: " + positionUid + " [Type: " + positionType + "]: " + res.size()
+                           + " results" );
         }
         Vector<DMEntity> it = new Vector<DMEntity>();
-        for (Document d : res) {
-            it.add(new DMEntity(d));
+        for ( Document d : res )
+        {
+            it.add( new DMEntity( d ) );
         }
-        String jsonResp = new JSONSerializer().exclude("class")
-                .transform(new DateTransformer("MM/dd/yyyy hh:mm:ss"), "creationDate")
-                .transform(new DateTransformer("MM/dd/yyyy hh:mm:ss"), "checkoutDate")
-                .serialize(it);
-
-//            String fullResp = "{\"success\":true,\"msg\":{\"count\":" + it.size() + ",\"results\":" + jsonResp + "}}";
+        String jsonResp =
+            new JSONSerializer().exclude( "class" ).transform( new DateTransformer( "MM/dd/yyyy hh:mm:ss" ),
+                                                               "creationDate" ).transform(
+                new DateTransformer( "MM/dd/yyyy hh:mm:ss" ), "checkoutDate" ).serialize( it );
         String fullResp = "{list:" + jsonResp + "}";
         return fullResp;
     }
