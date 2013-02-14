@@ -19,6 +19,8 @@ package org.kimios.client.controller;
 import org.kimios.client.exception.DMSException;
 import org.kimios.client.exception.ExceptionHelper;
 import org.kimios.kernel.index.query.model.Criteria;
+import org.kimios.kernel.index.query.model.SearchRequest;
+import org.kimios.kernel.index.query.model.SearchResponse;
 import org.kimios.kernel.ws.pojo.DMEntity;
 import org.kimios.kernel.ws.pojo.Document;
 import org.kimios.webservices.SearchService;
@@ -45,12 +47,13 @@ public class SearchController
     /**
      * Make quick search and get documents
      */
-    public List<Document> quickSearch( String sessionId, int dmEntityType, long dmEntityId, String query )
+    public SearchResponse quickSearch( String sessionId, int dmEntityType, long dmEntityId, String query, int start,
+                                       int pageSize, String sort, String sortDir )
         throws Exception
     {
         try
         {
-            return client.quickSearch( sessionId, query, dmEntityId, dmEntityType );
+            return client.quickSearch( sessionId, query, dmEntityId, dmEntityType, start, pageSize, sort, sortDir );
         }
         catch ( Exception e )
         {
@@ -107,13 +110,81 @@ public class SearchController
     }
 
 
-    public List<Document> advancedSearchDocument( String sessionId, int page, int pageSize, long dmEntityId,
-                                                  int dmEntityType, List<Criteria> criteriaList )
+    public SearchResponse advancedSearchDocument( String sessionId, long dmEntityId, int dmEntityType,
+                                                  List<Criteria> criteriaList, int start, int pageSize, String sort,
+                                                  String sortDir )
         throws Exception
     {
         try
         {
-            return client.advancedSearchDocuments( sessionId, page, pageSize, dmEntityId, dmEntityType, criteriaList );
+            return client.advancedSearchDocuments( sessionId, dmEntityId, dmEntityType, criteriaList, start, pageSize,
+                                                   sort, sortDir );
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
+        }
+    }
+
+
+    public void saveQuery( String sessionId, String searchName, List<Criteria> criteriaList, String sort,
+                           String sortDir )
+        throws Exception
+    {
+
+        try
+        {
+            client.saveSearchQuery( sessionId, searchName, criteriaList, sort, sortDir );
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
+        }
+
+
+    }
+
+    public List<SearchRequest> listQueries( String sessionId )
+        throws Exception
+    {
+
+        try
+        {
+            return client.listSearchQueries( sessionId );
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
+        }
+
+
+    }
+
+
+    public void deleteQuery( String sessionId, Long id )
+        throws Exception
+    {
+
+        try
+        {
+            client.deleteSearchQuery( sessionId, id );
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
+        }
+
+
+    }
+
+
+    public SearchResponse executeSearchQuery( String sessionId, long savedQueryId, int start, int pageSize, String sort,
+                                              String sortDir )
+        throws Exception
+    {
+        try
+        {
+            return client.executeSearchQuery( sessionId, savedQueryId, start, pageSize, sort, sortDir );
         }
         catch ( Exception e )
         {

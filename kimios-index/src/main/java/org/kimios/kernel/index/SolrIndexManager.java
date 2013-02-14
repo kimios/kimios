@@ -44,6 +44,7 @@ import org.kimios.kernel.dms.MetaType;
 import org.kimios.kernel.dms.MetaValue;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.IndexException;
+import org.kimios.kernel.index.query.model.SearchResponse;
 import org.kimios.kernel.security.DMEntityACL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -329,7 +330,7 @@ public class SolrIndexManager
         }
     }
 
-    public List<Long> executeSolrQuery( SolrQuery query )
+    public SearchResponse executeSolrQuery( SolrQuery query )
         throws IndexException
     {
         QueryResponse rsp;
@@ -345,7 +346,9 @@ public class SolrIndexManager
 
                 list.add( (Long) dc.getFieldValue( "DocumentUid" ) );
             }
-            return list;
+            SearchResponse searchResponse = new SearchResponse( list );
+            searchResponse.setResults( new Long( documentList.getNumFound() ).intValue() );
+            return searchResponse;
         }
         catch ( SolrServerException ex )
         {

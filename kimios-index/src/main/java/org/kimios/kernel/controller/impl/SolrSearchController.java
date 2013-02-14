@@ -20,14 +20,18 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.util.ClientUtils;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.ISearchController;
@@ -45,6 +49,7 @@ import org.kimios.kernel.index.query.QueryBuilder;
 import org.kimios.kernel.index.query.factory.SearchRequestFactory;
 import org.kimios.kernel.index.query.model.Criteria;
 import org.kimios.kernel.index.query.model.SearchRequest;
+import org.kimios.kernel.index.query.model.SearchResponse;
 import org.kimios.kernel.security.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,7 +92,8 @@ public class SolrSearchController
         this.solrIndexManager = solrIndexManager;
     }
 
-    private List<Long> quickSearchIds( Session session, String query, DMEntity entity )
+    private SearchResponse quickSearchIds( Session session, String query, DMEntity entity, int start, int pageSize,
+                                           String sortField, String sortDir )
     {
         String documentNameQuery = QueryBuilder.documentNameQuery( query );
 
@@ -106,34 +112,47 @@ public class SolrSearchController
             filterQueries.add( pathQuery );
         }
         indexQuery.setFilterQueries( filterQueries.toArray( new String[]{ } ) );
+        if ( sortField != null )
+        {
+            indexQuery.addSortField( sortField,
+                                     SolrQuery.ORDER.valueOf( ( sortDir != null ? sortDir.toLowerCase() : "asc" ) ) );
+        }
         indexQuery.addSortField( "score", SolrQuery.ORDER.desc );
         indexQuery.setQuery( documentNameQuery );
+        if ( start > -1 && pageSize > -1 )
+        {
+            indexQuery.setStart( start );
+            indexQuery.setRows( pageSize );
+        }
 
-        List<Long> items = solrIndexManager.executeSolrQuery( indexQuery );
-
-        return items;
+        SearchResponse searchResponse = solrIndexManager.executeSolrQuery( indexQuery );
+        return searchResponse;
     }
 
     public List<Document> quickSearch( Session session, String query, DMEntity entity )
         throws IndexException, DataSourceException, ConfigException
     {
         return dmsFactoryInstantiator.getDocumentFactory().getDocumentsFromIds(
-            quickSearchIds( session, query, entity ) );
+            quickSearchIds( session, query, entity, -1, -1, null, null ).getDocumentIds() );
     }
 
-    public List<org.kimios.kernel.ws.pojo.Document> quickSearchPojos( Session session, String query, DMEntity entity )
+    public SearchResponse quickSearchPojos( Session session, String query, DMEntity entity, int start, int pageSize,
+                                            String sortField, String sortDir )
         throws IndexException, DataSourceException, ConfigException
     {
-        return dmsFactoryInstantiator.getDocumentFactory().getDocumentsPojosFromIds(
-            quickSearchIds( session, query, entity ) );
+        SearchResponse searchResponse = quickSearchIds( session, query, entity, start, pageSize, sortField, sortDir );
+        List<org.kimios.kernel.ws.pojo.Document> documents =
+            dmsFactoryInstantiator.getDocumentFactory().getDocumentsPojosFromIds( searchResponse.getDocumentIds() );
+        searchResponse.setRows( documents );
+        return searchResponse;
     }
 
     public List<Document> advancedSearch( Session session, String xmlStream, DMEntity entity )
         throws DataSourceException, ConfigException, IndexException, IOException, ParserConfigurationException,
         SAXException
     {
-        List<Long> docs = this.advancedSearchIds( session, xmlStream, entity );
-        return dmsFactoryInstantiator.getDocumentFactory().getDocumentsFromIds( docs );
+        SearchResponse searchResponse = this.advancedSearchIds( session, xmlStream, entity, null, null );
+        return dmsFactoryInstantiator.getDocumentFactory().getDocumentsFromIds( searchResponse.getDocumentIds() );
     }
 
     public List<org.kimios.kernel.ws.pojo.Document> advancedSearchPojos( Session session, String xmlStream,
@@ -141,12 +160,13 @@ public class SolrSearchController
         throws DataSourceException, ConfigException, IndexException, IOException, ParserConfigurationException,
         SAXException
     {
-        List<Long> docs = this.advancedSearchIds( session, xmlStream, entity );
-        return dmsFactoryInstantiator.getDocumentFactory().getDocumentsPojosFromIds( docs );
+        SearchResponse searchResponse = this.advancedSearchIds( session, xmlStream, entity, null, null );
+        return dmsFactoryInstantiator.getDocumentFactory().getDocumentsPojosFromIds( searchResponse.getDocumentIds() );
     }
 
 
-    private List<Long> advancedSearchIds( Session session, String xmlStream, DMEntity entity )
+    private SearchResponse advancedSearchIds( Session session, String xmlStream, DMEntity entity, String sortField,
+                                              String sortDir )
         throws DataSourceException, ConfigException, IndexException, IOException, ParserConfigurationException,
         SAXException
     {
@@ -289,9 +309,6 @@ public class SolrSearchController
 
                             min = new Date(
                                 Long.parseLong( node.getAttributes().getNamedItem( "date-from" ).getTextContent() ) );
-
-                            log.debug(
-                                node.getAttributes().getNamedItem( "date-from" ).getTextContent() + " --> " + min );
                             toAdd = true;
                         }
                         if ( node.getAttributes().getNamedItem( "date-to" ) != null
@@ -300,14 +317,12 @@ public class SolrSearchController
 
                             max = new Date(
                                 Long.parseLong( node.getAttributes().getNamedItem( "date-to" ).getTextContent() ) );
-                            log.debug(
-                                node.getAttributes().getNamedItem( "date-from" ).getTextContent() + " --> " + max );
                             toAdd = true;
                         }
                         if ( toAdd )
                         {
-
                             DateFormat df = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ss'Z'" );
+                            df.setTimeZone( TimeZone.getTimeZone( "UTC" ) );
                             String metaDateQuery =
                                 "MetaDataDate_" + meta.getUid() + ":[" + ( min != null ? df.format( min ) : "*" )
                                     + " TO " + ( max != null ? df.format( max ) : "*" ) + "]";
@@ -357,25 +372,59 @@ public class SolrSearchController
         log.debug( "Solr Final Query: " + sQuery );
 
         indexQuery.setQuery( sQuery.toString() );
-        List<Long> items = solrIndexManager.executeSolrQuery( indexQuery );
-
-        return items;
+        SearchResponse response = solrIndexManager.executeSolrQuery( indexQuery );
+        return response;
     }
 
 
-    public void saveSearchRequest( Session session, String name, List<Criteria> criteriaList )
-        throws DmsKernelException
+    public void saveSearchQuery( Session session, String name, List<Criteria> criteriaList, String sortField,
+                                 String sortDir )
+        throws DataSourceException, ConfigException, IndexException, IOException
     {
         SearchRequest searchRequest = new SearchRequest();
         searchRequest.setName( name );
         searchRequest.setCriteriaList( criteriaList );
         searchRequest.setOwner( session.getUserName() );
         searchRequest.setOwnerSource( session.getUserSource() );
+        searchRequest.setSortField( sortField );
+        searchRequest.setSortDir( sortDir );
         searchRequestFactory.save( searchRequest );
     }
 
-    public void updateSearchRequest( Session session, Long id, String name, List<Criteria> criteriaList )
-        throws DmsKernelException
+    public void deleteSearchQuery( Session session, Long id )
+        throws AccessDeniedException, DataSourceException, ConfigException, IndexException, IOException
+    {
+        SearchRequest searchRequest = searchRequestFactory.loadById( id );
+        if ( searchRequest == null || !( searchRequest.getOwner().equals( session.getUserName() )
+            && searchRequest.getOwnerSource().equals( session.getUserSource() ) ) )
+        {
+            throw new AccessDeniedException();
+        }
+        searchRequestFactory.deleteSearchRequest( id );
+    }
+
+    public SearchRequest loadSearchQuery( Session session, Long id )
+        throws AccessDeniedException, DataSourceException, ConfigException, IndexException, IOException
+    {
+        SearchRequest searchRequest = searchRequestFactory.loadById( id );
+        if ( searchRequest == null || !( searchRequest.getOwner().equals( session.getUserName() )
+            && searchRequest.getOwnerSource().equals( session.getUserSource() ) ) )
+        {
+            throw new AccessDeniedException();
+        }
+        return searchRequest;
+    }
+
+    public List<SearchRequest> listSavedSearch( Session session )
+        throws AccessDeniedException, DataSourceException, ConfigException, IndexException, IOException
+    {
+        return searchRequestFactory.loadSearchRequest( session.getUserName(), session.getUserSource() );
+    }
+
+
+    public void updateSearchQuery( Session session, Long id, String name, List<Criteria> criteriaList, int start,
+                                   int pageSize, String sortField, String sortDir )
+        throws AccessDeniedException, DataSourceException, ConfigException, IndexException, IOException
     {
         SearchRequest searchRequest = searchRequestFactory.loadById( id );
         if ( searchRequest == null || !( searchRequest.getOwner().equals( session.getUserName() )
@@ -397,23 +446,29 @@ public class SolrSearchController
     }
 
 
-    public List<org.kimios.kernel.ws.pojo.Document> advancedSearchDocuments( Session session, int page, int pageSize,
-                                                                             List<Criteria> criteriaList,
-                                                                             DMEntity entity )
+    public SearchResponse advancedSearchDocuments( Session session, List<Criteria> criteriaList, DMEntity entity,
+                                                   int start, int pageSize, String sortField, String sortDir )
         throws DataSourceException, ConfigException, IndexException, IOException
     {
 
-        SolrQuery query = this.parseQueryFromListCriteria( session, page, pageSize, criteriaList, entity );
-        List<Long> items = solrIndexManager.executeSolrQuery( query );
-        return dmsFactoryInstantiator.getDocumentFactory().getDocumentsPojosFromIds( items );
+        SolrQuery query =
+            this.parseQueryFromListCriteria( session, start, pageSize, criteriaList, entity, sortField, sortDir );
+        SearchResponse searchResponse = solrIndexManager.executeSolrQuery( query );
+        List<org.kimios.kernel.ws.pojo.Document> documents =
+            dmsFactoryInstantiator.getDocumentFactory().getDocumentsPojosFromIds( searchResponse.getDocumentIds() );
+        searchResponse.setRows( documents );
+        return searchResponse;
 
     }
 
     private SolrQuery parseQueryFromListCriteria( Session session, int page, int pageSize, List<Criteria> criteriaList,
-                                                  DMEntity entity )
+                                                  DMEntity entity, String sortField, String sortDir )
     {
 
         SolrQuery indexQuery = new SolrQuery();
+
+        SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd" );
+        sdf.setTimeZone( TimeZone.getTimeZone( "UTC" ) );
 
         ArrayList<String> aclFilterQueries = new ArrayList<String>();
         ArrayList<String> filterQueries = new ArrayList<String>();
@@ -431,7 +486,8 @@ public class SolrSearchController
         }
         for ( Criteria c : criteriaList )
         {
-            if ( c.getQuery() != null && c.getQuery().trim().length() > 0 || c.getRangeMin() != null || c.getRangeMax() != null )
+            if ( c.getQuery() != null && c.getQuery().trim().length() > 0 || c.getRangeMin() != null
+                || c.getRangeMax() != null )
             {
                 if ( c.getFieldName().equals( "DocumentName" ) )
                 {
@@ -522,15 +578,11 @@ public class SolrSearchController
 
                                 try
                                 {
-                                    min = new SimpleDateFormat( "yyyy-MM-dd" ).parse( c.getRangeMin() );
-
-                                    log.debug( c.getRangeMin() + " --> " + min );
+                                    min = sdf.parse( c.getRangeMin() );
                                     toAdd = true;
                                 }
                                 catch ( Exception e )
                                 {
-
-                                    e.printStackTrace();
                                     toAdd = false;
                                 }
                             }
@@ -538,19 +590,18 @@ public class SolrSearchController
                             {
                                 try
                                 {
-                                    max = new SimpleDateFormat( "yyyy-MM-dd" ).parse( c.getRangeMax() );
-                                    log.debug( c.getRangeMax() + " --> " + max );
+                                    max = sdf.parse( c.getRangeMax() );
                                     toAdd = true;
                                 }
                                 catch ( Exception e )
                                 {
-                                    e.printStackTrace();
                                     toAdd = false;
                                 }
                             }
                             if ( toAdd )
                             {
                                 DateFormat df = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ss'Z'" );
+                                df.setTimeZone( TimeZone.getTimeZone( "UTC" ) );
                                 String metaDateQuery =
                                     "MetaDataDate_" + meta.getUid() + ":[" + ( min != null ? df.format( min ) : "*" )
                                         + " TO " + ( max != null ? df.format( max ) : "*" ) + "]";
@@ -569,6 +620,12 @@ public class SolrSearchController
         }
 
         indexQuery.setFilterQueries( aclFilterQueries.toArray( new String[]{ } ) );
+        if ( sortField != null )
+        {
+            indexQuery.addSortField( sortField, sortDir != null
+                ? SolrQuery.ORDER.valueOf( sortDir.toLowerCase() )
+                : SolrQuery.ORDER.asc );
+        }
         indexQuery.addSortField( "score", SolrQuery.ORDER.desc );
         StringBuilder sQuery = new StringBuilder();
 
@@ -591,12 +648,12 @@ public class SolrSearchController
                 sQuery.append( " " );
             }
         }
-        log.debug( "NEW Solr Final Query: " + sQuery );
+        log.debug( "Solr Final Query: " + sQuery );
         indexQuery.setQuery( sQuery.toString() );
         if ( pageSize > -1 && page > -1 )
         {
             indexQuery.setRows( pageSize );
-            indexQuery.setStart( page * pageSize );
+            indexQuery.setStart( page );
         }
         else
         {
@@ -608,4 +665,23 @@ public class SolrSearchController
     }
 
 
+    public SearchResponse executeSearchQuery( Session session, Long id, int start, int pageSize, String sortField,
+                                              String sortDir )
+        throws AccessDeniedException, DataSourceException, ConfigException, IndexException, IOException
+    {
+        SearchRequest searchRequest = searchRequestFactory.loadById( id );
+        if ( searchRequest == null || !( searchRequest.getOwner().equals( session.getUserName() )
+            && searchRequest.getOwnerSource().equals( session.getUserSource() ) ) )
+        {
+            throw new AccessDeniedException();
+        }
+        ObjectMapper objectMapper = new ObjectMapper(  );
+        List<Criteria> criteriaList = objectMapper.readValue( searchRequest.getCriteriasListJson(), new TypeReference<List<Criteria>>(){});
+        SolrQuery query = this.parseQueryFromListCriteria( session, start, pageSize, criteriaList, null, sortField, sortDir );
+        SearchResponse searchResponse = this.solrIndexManager.executeSolrQuery( query );
+        List<org.kimios.kernel.ws.pojo.Document> documents =
+            dmsFactoryInstantiator.getDocumentFactory().getDocumentsPojosFromIds( searchResponse.getDocumentIds() );
+        searchResponse.setRows( documents );
+        return searchResponse;
+    }
 }

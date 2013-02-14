@@ -21,6 +21,7 @@ import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.kimios.client.controller.SecurityController;
 import org.kimios.kernel.index.query.model.Criteria;
+import org.kimios.kernel.index.query.model.SearchRequest;
 import org.kimios.webservices.DateParamConverter;
 import org.kimios.webservices.NotificationService;
 import org.kimios.webservices.SearchService;
@@ -37,32 +38,33 @@ import java.util.*;
  *
  *
  */
-public class ManualLoadingTester {
+public class ManualLoadingTester
+{
 
 
-    public static void main(String[] args) throws Exception {
+    public static void main( String[] args )
+        throws Exception
+    {
         Properties prop = new Properties();
-        prop.setProperty("server.url", "http://localhost:8080");
-        prop.setProperty("service.context", "/services");
-        prop.setProperty("temp.directory", "/tmp");
-        prop.setProperty("transfer.chunksize", "10240");
+        prop.setProperty( "server.url", "http://localhost:8080" );
+        prop.setProperty( "service.context", "/services" );
+        prop.setProperty( "temp.directory", "/tmp" );
+        prop.setProperty( "transfer.chunksize", "10240" );
         PropertyPlaceholderConfigurer cfgHolder = new PropertyPlaceholderConfigurer();
-        cfgHolder.setIgnoreUnresolvablePlaceholders(true);
-        cfgHolder.setBeanName("propResolver");
-        cfgHolder.setProperties(prop);
+        cfgHolder.setIgnoreUnresolvablePlaceholders( true );
+        cfgHolder.setBeanName( "propResolver" );
+        cfgHolder.setProperties( prop );
         ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext();
-        ctx.addBeanFactoryPostProcessor(cfgHolder);
-        ctx.setConfigLocations(new String[]{"kimios-ctx-client-rest.xml"});
+        ctx.addBeanFactoryPostProcessor( cfgHolder );
+        ctx.setConfigLocations( new String[]{ "kimios-ctx-client-rest.xml" } );
         ctx.refresh();
-        SecurityController secCtrl = ctx.getBean(SecurityController.class);
+        SecurityController secCtrl = ctx.getBean( SecurityController.class );
 
-        String sessionId = secCtrl.startSession("farfou", "loufarf", "testing");
+        String sessionId = secCtrl.startSession( "farfou", "loufarf", "testing" );
 
+        System.out.println( " >> Session Id " + sessionId );
 
-        System.out.println(" >> Session Id " + sessionId);
-
-
-        SearchService searchService = ctx.getBean(SearchService.class);
+        SearchService searchService = ctx.getBean( SearchService.class );
 
 
 
@@ -79,28 +81,40 @@ public class ManualLoadingTester {
          */
         //proxy.acceptRequest(sessionId, 17434, 1, "farfou", "testing", new Date(), "");
 
-        List<Criteria> criteriaList  = new ArrayList<Criteria>();
+        List<Criteria> criteriaList = new ArrayList<Criteria>();
 
         Criteria q = new Criteria();
 
-        q.setQuery("My query");
-        q.setLevel(1);
-        q.setFaceted(false);
-        q.setFacetRangeMin("WHAT");
+        q.setQuery( "My query" );
+        q.setLevel( 1 );
+        q.setFaceted( false );
+        q.setFacetRangeMin( "WHAT" );
 
-        criteriaList.add(q);
+        criteriaList.add( q );
 
         q = new Criteria();
 
-        q.setQuery("My query2");
-        q.setLevel(2);
-        q.setFaceted(true);
-        q.setFacetRangeMin("NIA");
+        q.setQuery( "My query2" );
+        q.setLevel( 2 );
+        q.setFaceted( true );
+        q.setFacetRangeMin( "NIA" );
 
-        criteriaList.add(q);
+        criteriaList.add( q );
 
+        searchService.saveSearchQuery( sessionId, "FUCCCCCKE", criteriaList, null, null );
 
-        searchService.saveSearchQuery(sessionId, "FUCCCCCK", criteriaList);
+        List<SearchRequest> srList = searchService.listSearchQueries( sessionId );
+
+        for ( SearchRequest sr : srList )
+        {
+            System.out.println( " >" + sr );
+            System.out.println( "Removing: " );
+            searchService.deleteSearchQuery( sessionId, sr.getId() );
+
+        }
+
+        System.out.println( " > " + searchService.listSearchQueries( sessionId ).size() );
+
 
     }
 }

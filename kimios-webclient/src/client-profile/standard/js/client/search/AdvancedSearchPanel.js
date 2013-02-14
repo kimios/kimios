@@ -39,7 +39,49 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
            text:kimios.lang('SearchSaveButton'),
            scope:this,
            handler:function () {
-               //TODO: implement save
+
+               var fields = this.form2.getForm().getFieldValues();
+
+               var obj = "({";
+               for (var key in fields) {
+                   var value = null;
+
+                   // is date
+                   if (fields[key] && fields[key] instanceof Date)
+                       value = fields[key] ? fields[key].format('Y-m-d') : '';
+                   else
+                       value = fields[key] ? fields[key] : '';
+
+                   obj += "'" + key + "':'" + value + "',";
+               }
+               if (obj.length > 2) {
+                   obj = obj.substring(0, obj.length - 1);
+               }
+               var params = eval(obj + "})");
+               params.DocumentBody = this.textField.getValue();
+               params.DocumentName = this.nameField.getValue();
+               params.DocumentUid = this.uidField.getValue();
+               params.DocumentTypeUid = this.documentTypeField.getValue();
+               params.dmEntityUid = this.locationField.hiddenType;
+               params.dmEntityType = this.locationField.hiddenType;
+
+               Ext.MessageBox.prompt( 'Save Search', 'Please enter a name for the new Search Bookmarl', function(btn, value){
+
+                   if(btn == 'ok'){
+                       params.action = 'SaveQuery';
+                       params.searchQueryName = value;
+                       kimios.ajaxRequest('Search', params , function(){
+                           alert('SAVE DONE');
+
+                           Ext.getCmp('kimios-queries-panel' ).getStore().reload();
+                       });
+                   }
+
+               }, this, false, 'New Search Bookmark' );
+
+
+
+
            }
        });
 
@@ -100,6 +142,30 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
     initComponent:function () {
         kimios.search.AdvancedSearchPanel.superclass.initComponent.apply(this, arguments);
         this.build();
+    },
+
+
+    loadFromCriterias: function(criteriaString){
+
+        console.log(criteriaString);
+
+        var obj = eval('(' + criteriaString + ')');
+        console.log(obj);
+        for (var key in obj) {
+            var value = null;
+
+            // is date
+            if (fields[key] && fields[key] instanceof Date)
+                value = fields[key] ? fields[key].format('Y-m-d') : '';
+            else
+                value = fields[key] ? fields[key] : '';
+
+            obj += "'" + key + "':'" + value + "',";
+        }
+
+
+
+
     },
 
     build:function () {

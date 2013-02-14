@@ -23,9 +23,12 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.DMEntity;
+import org.kimios.kernel.exception.AccessDeniedException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.IndexException;
 import org.kimios.kernel.index.query.model.Criteria;
+import org.kimios.kernel.index.query.model.SearchRequest;
+import org.kimios.kernel.index.query.model.SearchResponse;
 import org.kimios.kernel.security.Session;
 import org.kimios.kernel.ws.pojo.Document;
 import org.xml.sax.SAXException;
@@ -35,7 +38,8 @@ public interface ISearchController
     public List<org.kimios.kernel.dms.Document> quickSearch( Session session, String query, DMEntity entity )
         throws IndexException, DataSourceException, ConfigException;
 
-    public List<Document> quickSearchPojos( Session session, String query, DMEntity entity )
+    public SearchResponse quickSearchPojos( Session session, String query, DMEntity entity, int start, int pageSize,
+                                            String sortField, String sortDir )
         throws IndexException, DataSourceException, ConfigException;
 
     /**
@@ -59,7 +63,31 @@ public interface ISearchController
         SAXException;
 
 
-    public List<Document> advancedSearchDocuments( Session session, int page, int pageSize, List<Criteria> criteriaList,
-                                                   DMEntity entity )
+    public SearchResponse advancedSearchDocuments( Session session, List<Criteria> criteriaList, DMEntity entity,
+                                                   int start, int pageSize, String sortField, String sortDir )
         throws DataSourceException, ConfigException, IndexException, IOException;
+
+
+    public void saveSearchQuery( Session session, String name, List<Criteria> criteriaList, String sortField,
+                                 String sortDir )
+        throws DataSourceException, ConfigException, IndexException, IOException;
+
+    public void updateSearchQuery( Session session, Long id, String name, List<Criteria> criteriaList, int start,
+                                   int pageSize, String sortField, String sortDir )
+        throws AccessDeniedException, DataSourceException, ConfigException, IndexException, IOException;
+
+    public void deleteSearchQuery( Session session, Long id )
+        throws AccessDeniedException, DataSourceException, ConfigException, IndexException, IOException;
+
+    public SearchRequest loadSearchQuery( Session session, Long id )
+        throws AccessDeniedException, DataSourceException, ConfigException, IndexException, IOException;
+
+    public List<SearchRequest> listSavedSearch( Session session )
+        throws AccessDeniedException, DataSourceException, ConfigException, IndexException, IOException;
+
+    public SearchResponse executeSearchQuery( Session session, Long id, int start, int pageSize, String sortField,
+                                              String sortDir )
+        throws AccessDeniedException, DataSourceException, ConfigException, IndexException, IOException;
+
+
 }

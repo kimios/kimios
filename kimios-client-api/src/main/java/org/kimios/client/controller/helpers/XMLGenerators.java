@@ -33,8 +33,11 @@ import org.kimios.kernel.ws.pojo.WorkflowStatusManager;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.Vector;
 
 /**
@@ -110,6 +113,9 @@ public class XMLGenerators
      */
     public static String getMetaDatasDocumentXMLDescriptor( Map<Meta, String> metaValues, String dateFormat )
     {
+
+        SimpleDateFormat sdf = new SimpleDateFormat( dateFormat );
+        sdf.setTimeZone( TimeZone.getTimeZone( "UTC" ) );
         String xmlStream = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<document-meta>\r\n";
         for ( Meta m : metaValues.keySet() )
         {
@@ -133,14 +139,14 @@ public class XMLGenerators
                 case 3:
                     try
                     {
-                        xmlStream += "<![CDATA[" + new SimpleDateFormat( dateFormat ).parse(
-                            (String) metaValues.get( m ) ).getTime() + "]]></meta>\r\n";
+                        Date date = sdf.parse( (String) metaValues.get( m ) );
+                        System.out.println( " >> Parsed Content From update " + date );
+                        xmlStream += "<![CDATA[" + date.getTime() + "]]></meta>\r\n";
                     }
                     catch ( ParseException pe )
                     {
                         xmlStream += "<![CDATA[-1]]></meta>\r\n";
-                    }
-                    break;
+                    } break;
                 case 4:
                     try
                     {
@@ -153,8 +159,7 @@ public class XMLGenerators
                     }
                     break;
             }
-        }
-        xmlStream += "</document-meta>";
+        } xmlStream += "</document-meta>";
         return xmlStream;
     }
 

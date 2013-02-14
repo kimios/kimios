@@ -257,7 +257,7 @@ kimios.record = {
         {
             name:'description',
             type:'string'
-        },
+        }
     ]),
 
     historyRecord:Ext.data.Record.create([
@@ -571,5 +571,31 @@ kimios.record = {
                 type:'int'
             }
         ])
+    },
+    SearchRecord: {
+        queryRecord: Ext.data.Record.create([
+            {
+                name:'id',
+                type:'int'
+            },
+            {
+                name:'name',
+                type:'string'
+            },
+            {
+                name:'owner',
+                type:'string'
+            },
+            {
+                name:'ownerSource',
+                type:'string'
+            },
+            {
+                name:'criteriasListJson',
+                type:'string'
+            }
+        ])
+
     }
+
 };

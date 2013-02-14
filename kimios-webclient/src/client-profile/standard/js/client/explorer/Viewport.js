@@ -69,6 +69,9 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                 this.recentItemsPanel = new kimios.explorer.RecentItemsPanel({
                     border : false
                 });
+                this.searchBookmarkPanel = new kimios.explorer.SearchQueryPanel({
+                    border: false
+                                                                                });
                 this.tasksPanel = new kimios.tasks.TasksPanel();
 
                 // west
@@ -87,7 +90,7 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                     new Ext.TabPanel({
                         region : 'center',
                         margins : '5 0 0 5',
-                        items : [this.explorerPanel],
+                        items : [this.explorerPanel, this.searchBookmarkPanel],
                         enableTabScroll : true,
                         activeTab : 0,
                         plain : true

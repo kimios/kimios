@@ -24,7 +24,7 @@ DmsJsonStore = Ext.extend(Ext.data.JsonStore, {
     if(config.successHandler) this.successHandler = config.successHandler;
     if(config.failureHandler) this.failureHandler = config.failureHandler;
         DmsJsonStore.superclass.constructor.call(this, config);
-        
+
         var cmp = this;
         cmp.addListener('exception', function(dp, type, action, opts, resp, arg){
           var fHandler = function(resp){
@@ -48,7 +48,7 @@ DmsJsonStore = Ext.extend(Ext.data.JsonStore, {
             }
           }
         };
-        
+
         // dms exception
         if (resp.status == 200) {
         kimios.MessageBox.exception({
@@ -56,7 +56,7 @@ DmsJsonStore = Ext.extend(Ext.data.JsonStore, {
                     stackTrace: opts.reader.jsonData.trace
                 });
         }
-        
+
         // server exception
         else if (resp.raw) {
           if (resp.raw.exception == 'Error 01 : Invalid session') {
@@ -68,7 +68,7 @@ DmsJsonStore = Ext.extend(Ext.data.JsonStore, {
                     });
           }
         }
-        
+
         // client exception
         else {
         kimios.MessageBox.exception({
@@ -85,7 +85,7 @@ DmsJsonStore = Ext.extend(Ext.data.JsonStore, {
 });
 
 kimios.store = {
-    
+
   getLangStore : function(lang){
     return new DmsJsonStore( {
       url : 'Lang',
@@ -101,7 +101,7 @@ kimios.store = {
       }
     });
   },
-    
+
   getRightsStore : function(){
     return new DmsJsonStore( {
       url : 'DmsSecurity',
@@ -126,7 +126,7 @@ kimios.store = {
       }
     });
   },
-    
+
   getEntityStore : function(uid, type){
     return new DmsJsonStore( {
       url : 'DmsEntity',
@@ -138,7 +138,7 @@ kimios.store = {
       }
     });
   },
-  
+
   getEntitiesStore : function(){
     return new DmsJsonStore( {
       url : 'DmsEntity',
@@ -149,28 +149,58 @@ kimios.store = {
       }
     });
   },
-  
-  getQuickSearchStore : function(){
+
+  getQuickSearchStore : function(searchParams){
+
+    var baseParams = searchParams;
+    baseParams.action = 'Quick';
     return new DmsJsonStore( {
       url : 'Search',
-      root : 'list',
-      fields : kimios.record.dmEntityRecord,
-      baseParams : {
-        action : 'Quick'
-      }
+      root: 'list',
+      totalProperty: 'total',
+      idProperty: 'uid',
+      remoteSort: true,
+      fields: kimios.record.dmEntityRecord,
+      baseParams : baseParams
     });
   },
-  
-  getAdvancedSearchStore : function(){
+
+  getAdvancedSearchStore : function(searchParams){
+    var baseParams = searchParams;
+    baseParams.action = 'Advanced';
     return new DmsJsonStore( {
       url : 'Search',
-      root : 'list',
-      fields : kimios.record.dmEntityRecord,
-      baseParams : {
-        action : 'Advanced'
-      }
+      remoteSort: true,
+      root: 'list',
+      totalProperty: 'total',
+      idProperty: 'uid',
+      fields: kimios.record.dmEntityRecord,
+      baseParams : baseParams
     });
   },
+  getQueriesStore : function(){
+    var baseParams = {};
+    baseParams.action = 'ListQueries';
+    return new DmsJsonStore( {
+         url : 'Search',
+         idProperty: 'id',
+         fields: kimios.record.SearchRecord.queryRecord,
+         baseParams : baseParams
+    });
+  },
+    getSavedQueryExecStore : function(searchParams){
+        var baseParams = searchParams;
+        baseParams.action = 'ExecuteSaved';
+        return new DmsJsonStore( {
+             url : 'Search',
+             remoteSort: true,
+             root: 'list',
+             totalProperty: 'total',
+             idProperty: 'uid',
+             fields: kimios.record.dmEntityRecord,
+             baseParams : baseParams
+         });
+    },
 
   getNodeSecurityStore : function(uid, type){
     return new DmsJsonStore( {
@@ -192,7 +222,7 @@ kimios.store = {
       }]
     });
   },
-    
+
   getLastVersionStore : function(documentUid){
     return new DmsJsonStore( {
       url : 'Version',
@@ -203,7 +233,7 @@ kimios.store = {
       fields : kimios.record.dmEntityVersionRecord
     });
   },
-  
+
   getLastVersionStore : function(documentUid, hdl, scope){
     return new DmsJsonStore( {
       url : 'Version',
@@ -216,7 +246,7 @@ kimios.store = {
       fields : kimios.record.dmEntityVersionRecord
     });
   },
-  
+
   getMetaValuesStore : function(lastVersionUid){
     return new DmsJsonStore( {
       url : 'Version',
@@ -245,7 +275,7 @@ kimios.store = {
       ]
     });
   },
-  
+
   getLastMetaValuesStore : function(uid){
     return new DmsJsonStore( {
       url : 'Version',
@@ -274,7 +304,7 @@ kimios.store = {
       ]
     });
   },
-  
+
   getMetasStore : function(documentTypeUid){
     return new DmsJsonStore( {
       url : 'DmsMeta',
@@ -301,7 +331,7 @@ kimios.store = {
       autoLoad : true
     });
   },
-  
+
   getLastDocumentWorkflowStatusStore : function(documentUid){
     return new DmsJsonStore( {
       url : 'Workflow',
@@ -311,7 +341,7 @@ kimios.store = {
       }
     });
   },
-  
+
   getWorkflowStatusStore : function(workflowStatusUid){
     return new DmsJsonStore( {
       url : 'Workflow',
@@ -334,7 +364,7 @@ kimios.store = {
       }]
     });
   },
-  
+
   getWorkflowStatusRequestsStore : function(documentUid){
      return new DmsJsonStore( {
       url : 'Workflow',

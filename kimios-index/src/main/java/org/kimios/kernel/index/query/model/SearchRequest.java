@@ -18,27 +18,56 @@
 package org.kimios.kernel.index.query.model;
 
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.List;
 
 /**
  *  @author Fabien Alin
  *
  */
+
+@Entity
+@Table(name = "searchs")
+@SequenceGenerator( allocationSize = 1, name = "seq", sequenceName = "search_id_sed")
 public class SearchRequest
 {
 
-
+    @Id
+    @GeneratedValue(generator = "seq", strategy = GenerationType.AUTO)
+    @Column(name = "id")
     private Long id;
 
+
+    @Column(name = "search_name", nullable = false)
     private String name;
 
+
+    @Column(name = "owner", nullable = false)
     private String owner;
 
+
+    @Column(name = "owner_source", nullable = false)
     private String ownerSource;
 
+    @Transient
     private List<Criteria> criteriaList;
 
+    @Column(name = "search_criterias", length = 20000, nullable = false)
     private String criteriasListJson;
+
+
+    @Column(name = "search_sort_field", nullable = true)
+    private String sortField;
+
+    @Column(name = "search_sort_dir", nullable = true)
+    private String sortDir;
 
     public String getCriteriasListJson()
     {
@@ -98,6 +127,26 @@ public class SearchRequest
     public void setOwnerSource( String ownerSource )
     {
         this.ownerSource = ownerSource;
+    }
+
+    public String getSortField()
+    {
+        return sortField;
+    }
+
+    public void setSortField( String sortField )
+    {
+        this.sortField = sortField;
+    }
+
+    public String getSortDir()
+    {
+        return sortDir;
+    }
+
+    public void setSortDir( String sortDir )
+    {
+        this.sortDir = sortDir;
     }
 
     @Override

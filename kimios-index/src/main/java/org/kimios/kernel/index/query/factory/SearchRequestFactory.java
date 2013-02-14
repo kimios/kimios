@@ -55,8 +55,8 @@ public class SearchRequestFactory extends HFactory {
     public List<SearchRequest> loadSearchRequest(String userId, String userSource) {
         String query = "from SearchRequest fetch all properties where owner = :userId and ownerSource = :userSource order by name";
         return getSession().createQuery(query)
-                .setParameter("userId", userId)
-                .setParameter("userSource", userSource)
+                .setString("userId", userId)
+                .setString("userSource", userSource)
                 .list();
     }
 
@@ -66,6 +66,10 @@ public class SearchRequestFactory extends HFactory {
                 .createQuery(query)
                 .setLong("id", id)
                 .uniqueResult();
+    }
+
+    public void deleteSearchRequest(long id){
+        getSession().delete( loadById( id ) );
     }
 
 

@@ -69,6 +69,7 @@
                 <value>org.kimios.kernel.rules</value>
                 <value>org.kimios.kernel.log</value>
                 <value>org.kimios.kernel.filetransfer</value>
+                <value>org.kimios.kernel.index</value>
             </list>
         </property>
         <property name="mappingLocations">
@@ -113,8 +114,6 @@
                 expression="execution(* org.kimios.kernel.controller.IReportingController.*(..))"/>
         <aop:pointcut id="fileTransferService"
                 expression="execution(* org.kimios.kernel.controller.IFileTransferController.*(..))"/>
-        <aop:pointcut id="searchService"
-                expression="execution(* org.kimios.kernel.controller.ISearchController.*(..))"/>
         <aop:pointcut id="ruleService"
                 expression="execution(* org.kimios.kernel.controller.IRuleManagementController.*(..))"/>
         <aop:pointcut id="sessionService"
@@ -143,7 +142,6 @@
         <aop:advisor advice-ref="txAdvice" pointcut-ref="studioService"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="reportingService"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="fileTransferService"/>
-        <aop:advisor advice-ref="txAdvice" pointcut-ref="searchService"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="sessionService"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="ruleService"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="pathService"/>

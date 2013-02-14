@@ -49,6 +49,7 @@ import org.kimios.kernel.exception.RepositoryException;
 import org.kimios.kernel.exception.XMLException;
 import org.kimios.kernel.repositories.RepositoryManager;
 import org.kimios.kernel.security.Session;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.NodeList;
 
 /**
@@ -258,6 +259,8 @@ public class DocumentVersionController extends AKimiosController implements IDoc
                         long metaUid =
                                 Long.parseLong(list.item(i).getAttributes().getNamedItem("uid").getTextContent());
                         Meta m = dmsFactoryInstantiator.getMetaFactory().getMeta(metaUid);
+                        LoggerFactory.getLogger( DocumentVersionController.class )
+                            .info( "Parsed VALUE " + list.item( i ).getTextContent() );
                         MetaValue mv = toMetaValue(m.getMetaType(), dv, m, list.item(i).getTextContent());
                         if (mv != null) {
                             v.add(mv);

@@ -113,6 +113,7 @@
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/explorer/CommentsPanel.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/explorer/BreadcrumbToolbar.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/explorer/BookmarksPanel.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/explorer/SearchQueryPanel.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/explorer/RecentItemsPanel.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/search/SearchToolbar.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/search/SearchButton.js"></script>

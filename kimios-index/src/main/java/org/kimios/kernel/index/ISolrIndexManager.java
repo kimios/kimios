@@ -23,14 +23,17 @@ import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.DMEntity;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.IndexException;
+import org.kimios.kernel.index.query.model.SearchResponse;
 
 /**
  * Solr Index Manager Interface
  */
-public interface ISolrIndexManager extends AbstractIndexManager
+public interface ISolrIndexManager
+    extends AbstractIndexManager
 {
-    public List<Long> executeSolrQuery(SolrQuery query) throws IndexException;
+    public SearchResponse executeSolrQuery( SolrQuery query )
+        throws IndexException;
 
-    public void indexDocumentList(List<DMEntity> documentEntities)
-            throws IndexException, DataSourceException, ConfigException;
+    public void indexDocumentList( List<DMEntity> documentEntities )
+        throws IndexException, DataSourceException, ConfigException;
 }

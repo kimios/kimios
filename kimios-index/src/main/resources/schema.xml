@@ -244,7 +244,7 @@
         <field name="DocumentVersionLength" type="tlong" indexed="true" stored="true" required="false" />
         <field name="DocumentVersionHash" type="string" indexed="false" stored="true" required="false" />
         <field name="DocumentTypeUid" type="tlong" indexed="true" stored="true" required="false" multiValued="true"/>
-        <field name="DocumentTypeName" type="string" indexed="true" stored="true" required="false" multiValued="true"/>
+        <field name="DocumentTypeName" type="string" indexed="true" stored="true" required="false" multiValued="false"/>
         <field name="DocumentBody" type="text" indexed="true" stored="true" required="false"/>
         <field name="DocumentACL" type="string" indexed="true" stored="true" required="false" multiValued="true"/>
         <dynamicField name="MetaDataDate_*" type="date" indexed="true" stored="true" required="false"/>
