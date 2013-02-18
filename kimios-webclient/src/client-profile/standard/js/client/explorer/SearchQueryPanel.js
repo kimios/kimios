@@ -18,7 +18,7 @@
 kimios.explorer.SearchQueryPanel = Ext.extend(Ext.grid.GridPanel, {
     constructor: function (config) {
         this.id = 'kimios-queries-panel';
-        this.title = 'Search';
+        this.title = kimios.lang('SearchTab');
         this.iconCls = 'qbookmark-cls';
         this.autoScroll = true;
         this.stripeRows = true;
@@ -58,11 +58,10 @@ kimios.explorer.SearchQueryPanel = Ext.extend(Ext.grid.GridPanel, {
                 resizable: false,
                 menuDisabled: true,
                 renderer: function (val, metaData, record, rowIndex, colIndex, store) {
-                    metaData.css = kimios.util.IconHelper.getIconClass(record.data.type, record.data.extension);
+                    metaData.css = 'actions';
                 }
             },
             {
-                header: 'Name',
                 dataIndex: 'name',
                 readOnly: true,
                 sortable: true,
@@ -93,7 +92,7 @@ kimios.explorer.SearchQueryPanel = Ext.extend(Ext.grid.GridPanel, {
     },
 
     refreshLanguage: function () {
-        this.setTitle(kimios.lang('BookmarksExplorer'));
+        this.setTitle(kimios.lang('SearchTab'));
         this.noContentNode.setText(kimios.lang('NoBookmark'));
         this.doLayout();
     },
