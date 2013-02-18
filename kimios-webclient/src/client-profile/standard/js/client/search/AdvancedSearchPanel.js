@@ -16,81 +16,78 @@
  */
 kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
 
-    constructor:function (config) {
+    constructor: function (config) {
         this.layout = 'border';
         this.bodyStyle = 'background-color:transparent;',
 
-        this.submitButton = new Ext.Button({
-            text:kimios.lang('SearchEmptyText'),
-            scope:this,
-            handler:function () {
-                kimios.explorer.getActivePanel().advancedSearch({
-                    name:this.nameField.getValue(),
-                    text:this.textField.getValue(),
-                    uid:this.uidField.getValue(),
-                    fromUid:this.locationField.hiddenUid,
-                    fromType:this.locationField.hiddenType,
-                    documentType:this.documentTypeField.getValue()
-                }, this.form2);
+            this.submitButton = new Ext.Button({
+                text: kimios.lang('SearchEmptyText'),
+                scope: this,
+                handler: function () {
+                    kimios.explorer.getActivePanel().advancedSearch({
+                        name: this.nameField.getValue(),
+                        text: this.textField.getValue(),
+                        uid: this.uidField.getValue(),
+                        fromUid: this.locationField.hiddenUid,
+                        fromType: this.locationField.hiddenType,
+                        documentType: this.documentTypeField.getValue()
+                    }, this.form2);
+                }
+            });
+
+        this.saveButton = new Ext.Button({
+            text: kimios.lang('SearchSaveButton'),
+            scope: this,
+            handler: function () {
+
+                var fields = this.form2.getForm().getFieldValues();
+
+                var obj = "({";
+                for (var key in fields) {
+                    var value = null;
+
+                    // is date
+                    if (fields[key] && fields[key] instanceof Date)
+                        value = fields[key] ? fields[key].format('Y-m-d') : '';
+                    else
+                        value = fields[key] ? fields[key] : '';
+
+                    obj += "'" + key + "':'" + value + "',";
+                }
+                if (obj.length > 2) {
+                    obj = obj.substring(0, obj.length - 1);
+                }
+                var params = eval(obj + "})");
+                params.DocumentBody = this.textField.getValue();
+                params.DocumentName = this.nameField.getValue();
+                params.DocumentUid = this.uidField.getValue();
+                params.DocumentTypeUid = this.documentTypeField.getValue();
+                params.dmEntityUid = this.locationField.hiddenType;
+                params.dmEntityType = this.locationField.hiddenType;
+
+                Ext.MessageBox.prompt('Save Search', 'Please enter a name for the new Search Bookmarl', function (btn, value) {
+
+                    if (btn == 'ok') {
+                        params.action = 'SaveQuery';
+                        params.searchQueryName = value;
+                        kimios.ajaxRequest('Search', params, function () {
+                            alert('SAVE DONE');
+
+                            Ext.getCmp('kimios-queries-panel').getStore().reload();
+                        });
+                    }
+
+                }, this, false, 'New Search Bookmark');
+
+
             }
         });
 
-        this.saveButton = new Ext.Button({
-           text:kimios.lang('SearchSaveButton'),
-           scope:this,
-           handler:function () {
-
-               var fields = this.form2.getForm().getFieldValues();
-
-               var obj = "({";
-               for (var key in fields) {
-                   var value = null;
-
-                   // is date
-                   if (fields[key] && fields[key] instanceof Date)
-                       value = fields[key] ? fields[key].format('Y-m-d') : '';
-                   else
-                       value = fields[key] ? fields[key] : '';
-
-                   obj += "'" + key + "':'" + value + "',";
-               }
-               if (obj.length > 2) {
-                   obj = obj.substring(0, obj.length - 1);
-               }
-               var params = eval(obj + "})");
-               params.DocumentBody = this.textField.getValue();
-               params.DocumentName = this.nameField.getValue();
-               params.DocumentUid = this.uidField.getValue();
-               params.DocumentTypeUid = this.documentTypeField.getValue();
-               params.dmEntityUid = this.locationField.hiddenType;
-               params.dmEntityType = this.locationField.hiddenType;
-
-               Ext.MessageBox.prompt( 'Save Search', 'Please enter a name for the new Search Bookmarl', function(btn, value){
-
-                   if(btn == 'ok'){
-                       params.action = 'SaveQuery';
-                       params.searchQueryName = value;
-                       kimios.ajaxRequest('Search', params , function(){
-                           alert('SAVE DONE');
-
-                           Ext.getCmp('kimios-queries-panel' ).getStore().reload();
-                       });
-                   }
-
-               }, this, false, 'New Search Bookmark' );
-
-
-
-
-           }
-       });
-
-
 
         this.clearButton = new Ext.Button({
-            text:kimios.lang('ClearField'),
-            scope:this,
-            handler:function () {
+            text: kimios.lang('ClearField'),
+            scope: this,
+            handler: function () {
                 this.nameField.setValue("");
                 this.uidField.setValue("");
                 this.textField.setValue("");
@@ -101,56 +98,151 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
         });
 
         this.form1 = new kimios.FormPanel({
-            region:'west',
-            width:315,
-            border:false,
-            margins:'5 10 5 10',
-            bodyStyle:'padding:5px;',
-            labelWidth:150,
-            defaults:{
-                width:150,
-                selectOnFocus:true,
-                style:'font-size: 11px',
-                labelStyle:'font-size: 11px;'
+            region: 'west',
+            width: 315,
+            border: false,
+            margins: '5 10 5 10',
+            bodyStyle: 'padding:5px;',
+            labelWidth: 150,
+            defaults: {
+                width: 150,
+                selectOnFocus: true,
+                style: 'font-size: 11px',
+                labelStyle: 'font-size: 11px;'
             },
-            bodyStyle:'background-color:transparent;',
-            fbar:[this.clearButton, this.submitButton, this.saveButton]
+            bodyStyle: 'background-color:transparent;',
+            fbar: [this.clearButton, this.submitButton, this.saveButton]
         });
 
         this.form2 = new kimios.FormPanel({
-            region:'center',
-            border:false,
-            margins:'5 10 5 10',
-            bodyStyle:'padding:5px;',
-            labelWidth:150,
-            autoScroll:true,
-            hidden:true,
-            defaults:{
-                width:150,
-                selectOnFocus:true,
-                style:'font-size: 11px',
-                labelStyle:'font-size: 11px;'
+            region: 'center',
+            border: false,
+            margins: '5 10 5 10',
+            bodyStyle: 'padding:5px;',
+            labelWidth: 150,
+            autoScroll: true,
+            hidden: true,
+            defaults: {
+                width: 150,
+                selectOnFocus: true,
+                style: 'font-size: 11px',
+                labelStyle: 'font-size: 11px;'
             },
-            bodyStyle:'background-color:transparent;'
+            bodyStyle: 'background-color:transparent;'
         });
+        this.form2.addEvents('metafieldload');
+        this.form2.on('metafieldload', function () {
+//            if (console)console.log('metafieldload event levé');
+//            console.log('criteria length: ' + this.loadedMetadatas.length);
+            for (var i = 0; i < this.loadedMetadatas.length; ++i) {
+                var criteria = this.loadedMetadatas[i];
+                var query = criteria.query;
+                var fieldName = criteria.fieldName;
+                var rangeMin = criteria.rangeMin;
+                var rangeMax = criteria.rangeMax;
+
+                if (!rangeMin && !rangeMax) {
+                    for (var j = 0; j < this.form2.items.length; ++j) {
+                        var f = this.form2.items.items[j];
+                        if (f.name == fieldName) {
+                            f.setValue(query);
+                            break;
+                        }
+                    }
+                } else {
+                    for (var j = 0; j < this.form2.items.length; ++j) {
+                        var f = this.form2.items.items[j];
+                        if (f.name == fieldName + '_from') {
+                            f.setValue(rangeMin);
+                            continue;
+                        }
+                        if (f.name == fieldName + '_to') {
+                            f.setValue(rangeMax);
+                            continue;
+                        }
+                    }
+                }
+            }
+
+        }, this);
 
         this.buttonAlign = 'left';
         this.items = [this.form1, this.form2];
         kimios.search.AdvancedSearchPanel.superclass.constructor.call(this, config);
     },
 
-    initComponent:function () {
+    initComponent: function () {
         kimios.search.AdvancedSearchPanel.superclass.initComponent.apply(this, arguments);
         this.build();
     },
 
+    // Load the advanced search form with the given SearchRequest object
+    loadForm: function (searchRequest) {
+//        if (console)console.log(searchRequest);
 
-    loadFromCriterias: function(criteriaString){
+        this.nameField.setValue("");
+        this.uidField.setValue("");
+        this.textField.setValue("");
+        this.locationField.setValue("");
+        this.documentTypeField.setValue("");
+        this.form2.removeAll();
 
-        console.log(criteriaString);
+        // Display the advanced search panel
+        this.showPanel();
+
+        // Unserialize the search criteria list
+        var obj = Ext.decode(searchRequest.criteriasListJson);
+        var hasDocumentType = false;
+        this.loadedMetadatas = [];
+        for (var i = 0; i < obj.length; ++i) {
+            var criteria = obj[i];
+            var query = criteria.query;
+            var fieldName = criteria.fieldName;
+
+            //var rangeMin = criteria.rangeMin;
+            //var rangeMax = criteria.rangeMax;
+
+            if (fieldName == 'DocumentName') {
+                this.nameField.setValue(query);
+            } else if (fieldName == 'DocumentUid') {
+                this.uidField.setValue(query);
+            } else if (fieldName == 'DocumentBody') {
+                this.textField.setValue(query);
+            } else if (fieldName == 'dmEntityUid') {
+                this.locationField.setValue(query);
+            } else if (fieldName == 'DocumentTypeUid') {
+                this.documentTypeField.setValue(query);
+                this.documentTypeField.fireEvent('select');
+            }
+
+            // Meta Data parsing when document type set
+            else {
+                var begin = fieldName.substr(0, 8);
+                if (begin == 'MetaData') {
+                    this.loadedMetadatas.push(criteria);
+                }
+
+            }
+        }
+
+        // auto load search request
+        kimios.explorer.getActivePanel().advancedSearch({
+            name: this.nameField.getValue(),
+            text: this.textField.getValue(),
+            uid: this.uidField.getValue(),
+            fromUid: this.locationField.hiddenUid,
+            fromType: this.locationField.hiddenType,
+            documentType: this.documentTypeField.getValue()
+        }, this.form2);
+
+    },
+
+    loadFromCriterias: function (criteriaString) {
+
+//        if (console) console.log(criteriaString);
 
         var obj = eval('(' + criteriaString + ')');
-        console.log(obj);
+//        if (console) console.log(obj);
         for (var key in obj) {
             var value = null;
 
@@ -164,42 +256,40 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
         }
 
 
-
-
     },
 
-    build:function () {
+    build: function () {
         this.form1.removeAll();
         this.form2.removeAll();
 
         this.nameField = new Ext.form.TextField({
-            name:'DocumentName',
-            fieldLabel:kimios.lang('DocumentName'),
-            labelSeparator:kimios.lang('LabelSeparator')
+            name: 'DocumentName',
+            fieldLabel: kimios.lang('DocumentName'),
+            labelSeparator: kimios.lang('LabelSeparator')
         });
         this.uidField = new Ext.form.NumberField({
-            name:'DocumentUid',
-            fieldLabel:kimios.lang('DocNum'),
-            labelSeparator:kimios.lang('LabelSeparator')
+            name: 'DocumentUid',
+            fieldLabel: kimios.lang('DocNum'),
+            labelSeparator: kimios.lang('LabelSeparator')
         });
         this.textField = new Ext.form.TextField({
-            name:'DocumentBody',
-            fieldLabel:kimios.lang('SearchText'),
-            labelSeparator:kimios.lang('LabelSeparator')
+            name: 'DocumentBody',
+            fieldLabel: kimios.lang('SearchText'),
+            labelSeparator: kimios.lang('LabelSeparator')
         });
         this.locationField = new kimios.form.DMEntityField({
-            name:'dmEntityUid',
-            fieldLabel:kimios.lang('InFolder'),
-            labelSeparator:kimios.lang('LabelSeparator')
+            name: 'dmEntityUid',
+            fieldLabel: kimios.lang('InFolder'),
+            labelSeparator: kimios.lang('LabelSeparator')
         });
         this.documentTypeField = new kimios.form.DocumentTypeField({
-            fieldLabel:kimios.lang('DocumentType'),
-            name:'DocumentTypeUid',
-            displayField:'name',
-            valueField:'uid',
-            hiddenName:'documentType',
-            width:200,
-            labelSeparator:kimios.lang('LabelSeparator')
+            fieldLabel: kimios.lang('DocumentType'),
+            name: 'DocumentTypeUid',
+            displayField: 'name',
+            valueField: 'uid',
+            hiddenName: 'documentType',
+            width: 200,
+            labelSeparator: kimios.lang('LabelSeparator')
         });
         //TODO: add fields regarding document/version creation/update date and owner/ownerSource
         this.documentTypeField.on('select', function (store, metasRecords, options) {
@@ -219,19 +309,19 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                             if (metaFeedUid == -1) {
                                 fields.push(new Ext.form.TextField({
                                     name: 'MetaDataString_' + uid,
-                                    fieldLabel:name,
-                                    value:value,
-                                    emptyText:kimios.lang('SearchText'),
-                                    labelSeparator:kimios.lang('LabelSeparator')
+                                    fieldLabel: name,
+                                    value: value,
+                                    emptyText: kimios.lang('SearchText'),
+                                    labelSeparator: kimios.lang('LabelSeparator')
                                 }));
                             } else {
                                 fields.push(new kimios.form.MetaFeedField({
-                                    name:'MetaDataString_' + uid,
-                                    metaFeedUid:metaFeedUid,
-                                    fieldLabel:name,
-                                    value:value,
-                                    emptyText:kimios.lang('MetaFeed'),
-                                    labelSeparator:kimios.lang('LabelSeparator')
+                                    name: 'MetaDataString_' + uid,
+                                    metaFeedUid: metaFeedUid,
+                                    fieldLabel: name,
+                                    value: value,
+                                    emptyText: kimios.lang('MetaFeed'),
+                                    labelSeparator: kimios.lang('LabelSeparator')
                                 }));
                             }
                             break;
@@ -239,47 +329,47 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                             //int type
                             fields.push(new Ext.form.NumberField({
                                 name: 'MetaDataNumber_' + uid + '_from',
-                                fieldLabel:name + ' (min)',
-                                value:value,
-                                emptyText:kimios.lang('MetaNumberValue'),
-                                labelSeparator:kimios.lang('LabelSeparator')
+                                fieldLabel: name + ' (min)',
+                                value: value,
+                                emptyText: kimios.lang('MetaNumberValue'),
+                                labelSeparator: kimios.lang('LabelSeparator')
                             }));
                             fields.push(new Ext.form.NumberField({
-                                name:'MetaDataNumber_' + uid + '_to',
-                                fieldLabel:name + ' (max)',
-                                value:value,
-                                emptyText:kimios.lang('MetaNumberValue'),
-                                labelSeparator:kimios.lang('LabelSeparator')
+                                name: 'MetaDataNumber_' + uid + '_to',
+                                fieldLabel: name + ' (max)',
+                                value: value,
+                                emptyText: kimios.lang('MetaNumberValue'),
+                                labelSeparator: kimios.lang('LabelSeparator')
                             }));
                             break;
                         case 3:
                             //date type
                             fields.push(new Ext.form.DateField({
-                                name:'MetaDataDate_' + uid + '_from',
-                                fieldLabel:name + ' (min)',
-                                format:'Y-m-d',
-                                value:value,
-                                editable:false,
-                                emptyText:kimios.lang('MetaDateValue'),
-                                labelSeparator:kimios.lang('LabelSeparator')
+                                name: 'MetaDataDate_' + uid + '_from',
+                                fieldLabel: name + ' (min)',
+                                format: 'Y-m-d',
+                                value: value,
+                                editable: false,
+                                emptyText: kimios.lang('MetaDateValue'),
+                                labelSeparator: kimios.lang('LabelSeparator')
                             }));
                             fields.push(new Ext.form.DateField({
-                                name:'MetaDataDate_' + uid + '_to',
-                                fieldLabel:name + ' (max)',
-                                format:'Y-m-d',
-                                value:value,
-                                editable:false,
-                                emptyText:kimios.lang('MetaDateValue'),
-                                labelSeparator:kimios.lang('LabelSeparator')
+                                name: 'MetaDataDate_' + uid + '_to',
+                                fieldLabel: name + ' (max)',
+                                format: 'Y-m-d',
+                                value: value,
+                                editable: false,
+                                emptyText: kimios.lang('MetaDateValue'),
+                                labelSeparator: kimios.lang('LabelSeparator')
                             }));
                             break;
                         case 4:
                             //boolean type
                             fields.push(new Ext.form.Checkbox({
-                                name:'MetaDataBoolean_' + uid,
-                                fieldLabel:name,
-                                checked:value == 'true' ? true : false,
-                                labelSeparator:kimios.lang('LabelSeparator')
+                                name: 'MetaDataBoolean_' + uid,
+                                fieldLabel: name,
+                                checked: value == 'true' ? true : false,
+                                labelSeparator: kimios.lang('LabelSeparator')
                             }));
                             break;
                     }
@@ -289,6 +379,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                 this.form1.doLayout();
                 this.form2.doLayout();
                 this.doLayout();
+                this.form2.fireEvent('metafieldload');
             }, this);
         }, this);
         this.form1.add(this.nameField);
@@ -301,14 +392,14 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
         this.doLayout();
     },
 
-    showPanel:function () {
+    showPanel: function () {
         this.setVisible(true);
         var st = kimios.explorer.getActivePanel().searchToolbar;
         st.searchField.disable();
         kimios.explorer.getViewport().centerPanel.doLayout();
     },
 
-    hidePanel:function () {
+    hidePanel: function () {
         this.setVisible(false);
         var st = kimios.explorer.getActivePanel().searchToolbar;
         st.searchField.enable();
@@ -316,11 +407,12 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
         kimios.explorer.getViewport().centerPanel.doLayout();
     },
 
-    refreshLanguage:function () {
+    refreshLanguage: function () {
         this.setTitle(kimios.lang('AdvancedSearch'));
         this.clearButton.setText(kimios.lang('ClearField'));
         this.submitButton.setText(kimios.lang('SearchEmptyText'));
         this.build();
         this.doLayout();
     }
-});
+})
+;

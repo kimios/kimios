@@ -17,41 +17,41 @@
 /**
  * DM Entity POJO
  */
-kimios.DMEntityPojo = function(entity) {
-  
-  this.uid           = entity.uid;
-  this.type           = entity.type;
-  this.name           = entity.name;
-  this.path           = entity.path;
-  this.owner           = entity.owner;
-  this.ownerSource       = entity.ownerSource;
-  this.creationDate       = entity.creationDate;
-  
-  this.length          = entity.length;
-  this.extension         = entity.extension;
-  
-  this.parentUid         = entity.parentUid;
-  this.parentType       = entity.parentType;
-  
-  this.documentTypeUid    = entity.documentTypeUid;
-  this.documentTypeName    = entity.documentTypeName;
-  
-  this.workflowStatusUid    = entity.workflowStatusUid;
-  this.workflowStatusName    = entity.workflowStatusName;
-  this.statusUserName      = entity.statusUserName;
-  this.statusUserSource    = entity.statusUserSource;
-  this.statusDate        = entity.statusDate;
-  this.status          = entity.status;
-  this.outOfWorkflow      = entity.outOfWorkflow;
-  
-  this.checkedOut        = entity.checkedOut;
-  this.checkoutDate      = entity.checkoutDate;
-  this.checkoutUser      = entity.checkoutUser;
-  this.checkoutUserSource    = entity.checkoutUserSource;
-  
-  this.author          = entity.author;
-  this.authorSource      = entity.authorSource;
-  
-  this.versionUid        = entity.versionUid;
-  
+kimios.DMEntityPojo = function (entity) {
+
+    this.uid = entity.uid;
+    this.type = entity.type;
+    this.name = entity.name;
+    this.path = entity.path;
+    this.owner = entity.owner;
+    this.ownerSource = entity.ownerSource;
+    this.creationDate = entity.creationDate;
+
+    this.length = entity.length;
+    this.extension = entity.extension;
+
+    this.parentUid = entity.parentUid;
+    this.parentType = entity.parentType;
+
+    this.documentTypeUid = entity.documentTypeUid;
+    this.documentTypeName = entity.documentTypeName;
+
+    this.workflowStatusUid = entity.workflowStatusUid;
+    this.workflowStatusName = entity.workflowStatusName;
+    this.statusUserName = entity.statusUserName;
+    this.statusUserSource = entity.statusUserSource;
+    this.statusDate = entity.statusDate;
+    this.status = entity.status;
+    this.outOfWorkflow = entity.outOfWorkflow;
+
+    this.checkedOut = entity.checkedOut;
+    this.checkoutDate = entity.checkoutDate;
+    this.checkoutUser = entity.checkoutUser;
+    this.checkoutUserSource = entity.checkoutUserSource;
+
+    this.author = entity.author;
+    this.authorSource = entity.authorSource;
+
+    this.versionUid = entity.versionUid;
+
 };

@@ -280,6 +280,10 @@ kimios = {
             return Ext.getCmp('kimios-dm-entity-tree-panel');
         },
 
+        getSearchRequestsPanel : function() {
+            return Ext.getCmp('kimios-queries-panel');
+        },
+
         getBookmarksPanel : function() {
             return Ext.getCmp('kimios-bookmarks-panel');
         },
