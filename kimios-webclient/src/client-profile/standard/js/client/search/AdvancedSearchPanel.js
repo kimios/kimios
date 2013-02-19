@@ -185,7 +185,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
 
     // Load the advanced search form with the given SearchRequest object
     loadForm: function (searchRequest) {
-        if (console) console.log(searchRequest);
+//        if (console) console.log(searchRequest);
 
         // for update
         this.searchRequestId = searchRequest.id;
@@ -422,6 +422,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
         this.setTitle(kimios.lang('AdvancedSearch'));
         this.clearButton.setText(kimios.lang('ClearField'));
         this.submitButton.setText(kimios.lang('SearchEmptyText'));
+        this.saveButton.setText(kimios.lang('SearchSaveButton'));
         this.build();
         this.doLayout();
     }

@@ -294,8 +294,6 @@ kimios.ContextMenu = new function () {
         this.searchRequestsMenu.add(this.getRemoveSearchRequestsItem());
         this.searchRequestsMenu.addSeparator();
         this.searchRequestsMenu.add(this.getRefreshItem());
-        this.searchRequestsMenu.addSeparator();
-        this.searchRequestsMenu.add(this.getPropertiesItem());
     };
 
 
@@ -674,8 +672,8 @@ kimios.ContextMenu = new function () {
 
     this.getEditSearchRequestsItem = function () {
         return new Ext.menu.Item({
-            text: 'Edit Search Request',
-            iconCls: 'edit-icon',
+            text: kimios.lang('SearchRequestEdit'),
+            iconCls: 'search',
             scope: this,
             handler: function () {
                 var searchRequest = this.dmEntityPojo;
@@ -687,11 +685,28 @@ kimios.ContextMenu = new function () {
 
     this.getRemoveSearchRequestsItem = function () {
         return new Ext.menu.Item({
-            text: 'Remove Search Request',
-            iconCls: 'del-icon',
+            text: kimios.lang('SearchRequestDelete'),
+            iconCls: 'trash',
             scope: this,
             handler: function () {
-//                kimios.request.removeSearchRequest(searchRequestId);
+                var _t = this;
+                Ext.MessageBox.confirm(
+                    kimios.lang('Delete'),
+                    kimios.lang('ConfirmDelete'),
+                    function (btn) {
+                        if (btn == 'yes') {
+                            kimios.ajaxRequest('Search', {
+                                    action: 'DeleteQuery',
+                                    queryId: _t.dmEntityPojo.id
+                                },
+                                function () {
+                                    kimios.explorer.getSearchRequestsPanel().refresh();
+                                }
+                            );
+                        }
+                    },
+                    this
+                );
             }
         });
     };
