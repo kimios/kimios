@@ -18,22 +18,22 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
 
     constructor: function (config) {
         this.layout = 'border';
-        this.bodyStyle = 'background-color:transparent;',
+        this.bodyStyle = 'background-color:transparent;';
 
-            this.submitButton = new Ext.Button({
-                text: kimios.lang('SearchEmptyText'),
-                scope: this,
-                handler: function () {
-                    kimios.explorer.getActivePanel().advancedSearch({
-                        name: this.nameField.getValue(),
-                        text: this.textField.getValue(),
-                        uid: this.uidField.getValue(),
-                        fromUid: this.locationField.hiddenUid,
-                        fromType: this.locationField.hiddenType,
-                        documentType: this.documentTypeField.getValue()
-                    }, this.form2);
-                }
-            });
+        this.submitButton = new Ext.Button({
+            text: kimios.lang('SearchEmptyText'),
+            scope: this,
+            handler: function () {
+                kimios.explorer.getActivePanel().advancedSearch({
+                    name: this.nameField.getValue(),
+                    text: this.textField.getValue(),
+                    uid: this.uidField.getValue(),
+                    fromUid: this.locationField.hiddenUid,
+                    fromType: this.locationField.hiddenType,
+                    documentType: this.documentTypeField.getValue()
+                }, this.form2);
+            }
+        });
 
         this.saveButton = new Ext.Button({
             text: kimios.lang('SearchSaveButton'),
