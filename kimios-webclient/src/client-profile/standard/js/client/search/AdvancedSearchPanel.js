@@ -74,7 +74,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                     function (btn, value) {
                         if (btn == 'ok') {
                             if (searchRequestId)
-                                params.id = searchRequestId;
+                                params.searchQueryId = searchRequestId;
                             params.action = 'SaveQuery';
                             params.searchQueryName = value;
                             kimios.ajaxRequest('Search', params, function () {

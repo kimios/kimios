@@ -171,7 +171,7 @@ public class SearchServiceImpl
     }
 
 
-    public void saveSearchQuery( String sessionId, String name,
+    public void saveSearchQuery( String sessionId, Long id, String name,
                                  List<org.kimios.kernel.index.query.model.Criteria> criterias,
                                  String sortField, String sortDir )
         throws DMServiceException
@@ -179,7 +179,7 @@ public class SearchServiceImpl
         try
         {
             Session s = getHelper().getSession( sessionId );
-            searchController.saveSearchQuery( s, name, criterias, sortField, sortDir );
+            searchController.saveSearchQuery( s, id, name, criterias, sortField, sortDir );
         }
         catch ( Exception e )
         {

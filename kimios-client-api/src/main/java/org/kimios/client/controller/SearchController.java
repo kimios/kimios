@@ -127,14 +127,14 @@ public class SearchController
     }
 
 
-    public void saveQuery( String sessionId, String searchName, List<Criteria> criteriaList, String sort,
+    public void saveQuery( String sessionId, Long searchId, String searchName, List<Criteria> criteriaList, String sort,
                            String sortDir )
         throws Exception
     {
 
         try
         {
-            client.saveSearchQuery( sessionId, searchName, criteriaList, sort, sortDir );
+            client.saveSearchQuery( sessionId, searchId, searchName, criteriaList, sort, sortDir );
         }
         catch ( Exception e )
         {

@@ -101,7 +101,7 @@ public class ManualLoadingTester
 
         criteriaList.add( q );
 
-        searchService.saveSearchQuery( sessionId, "FUCCCCCKE", criteriaList, null, null );
+        searchService.saveSearchQuery( sessionId, null, "Search Request Name", criteriaList, null, null );
 
         List<SearchRequest> srList = searchService.listSearchQueries( sessionId );
 

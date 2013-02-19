@@ -101,8 +101,9 @@ public interface SearchService
     @Produces( "application/json" )
     @Consumes( "application/json" )
     public void saveSearchQuery( @QueryParam( value = "sessionId" ) @WebParam( name = "sessionId" ) String sessionId,
-                                 @QueryParam( value = "name" ) @WebParam( name = "name" ) String name, @WebParam(
-        name = "criterias" ) List<org.kimios.kernel.index.query.model.Criteria> criterias,
+                                 @QueryParam( value = "id") @WebParam( name = "id" ) Long id,
+                                 @QueryParam( value = "name" ) @WebParam( name = "name" ) String name,
+                                 @WebParam(name = "criterias" ) List<org.kimios.kernel.index.query.model.Criteria> criterias,
                                  @QueryParam( value = "sortField" ) @WebParam( name = "sortField" ) String sortField,
                                  @QueryParam( value = "sortDir" ) @WebParam( name = "sortDir" ) String sortDir )
 

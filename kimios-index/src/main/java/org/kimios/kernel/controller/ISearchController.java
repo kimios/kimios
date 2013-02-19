@@ -68,7 +68,7 @@ public interface ISearchController
         throws DataSourceException, ConfigException, IndexException, IOException;
 
 
-    public void saveSearchQuery( Session session, String name, List<Criteria> criteriaList, String sortField,
+    public void saveSearchQuery( Session session, Long id, String name, List<Criteria> criteriaList, String sortField,
                                  String sortDir )
         throws DataSourceException, ConfigException, IndexException, IOException;
 

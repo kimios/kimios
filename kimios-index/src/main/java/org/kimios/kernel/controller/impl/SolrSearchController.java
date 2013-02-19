@@ -377,11 +377,12 @@ public class SolrSearchController
     }
 
 
-    public void saveSearchQuery( Session session, String name, List<Criteria> criteriaList, String sortField,
+    public void saveSearchQuery( Session session, Long id, String name, List<Criteria> criteriaList, String sortField,
                                  String sortDir )
         throws DataSourceException, ConfigException, IndexException, IOException
     {
         SearchRequest searchRequest = new SearchRequest();
+        if (id != null) searchRequest.setId(id); // update mode
         searchRequest.setName( name );
         searchRequest.setCriteriaList( criteriaList );
         searchRequest.setOwner( session.getUserName() );
