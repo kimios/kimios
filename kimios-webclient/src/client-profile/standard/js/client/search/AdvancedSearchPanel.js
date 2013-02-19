@@ -285,25 +285,33 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
         this.form1.removeAll();
         this.form2.removeAll();
 
+        var setFieldLabelHandler = function (text) {
+            this.el.up('.x-form-item', 10, true).child('.x-form-item-label').update(text);
+        };
+
         this.nameField = new Ext.form.TextField({
             name: 'DocumentName',
             fieldLabel: kimios.lang('DocumentName'),
-            labelSeparator: kimios.lang('LabelSeparator')
+            labelSeparator: kimios.lang('LabelSeparator'),
+            setFieldLabel: setFieldLabelHandler
         });
         this.uidField = new Ext.form.NumberField({
             name: 'DocumentUid',
             fieldLabel: kimios.lang('DocNum'),
-            labelSeparator: kimios.lang('LabelSeparator')
+            labelSeparator: kimios.lang('LabelSeparator'),
+            setFieldLabel: setFieldLabelHandler
         });
         this.textField = new Ext.form.TextField({
             name: 'DocumentBody',
             fieldLabel: kimios.lang('SearchText'),
-            labelSeparator: kimios.lang('LabelSeparator')
+            labelSeparator: kimios.lang('LabelSeparator'),
+            setFieldLabel: setFieldLabelHandler
         });
         this.locationField = new kimios.form.DMEntityField({
             name: 'dmEntityUid',
             fieldLabel: kimios.lang('InFolder'),
-            labelSeparator: kimios.lang('LabelSeparator')
+            labelSeparator: kimios.lang('LabelSeparator'),
+            setFieldLabel: setFieldLabelHandler
         });
         this.documentTypeField = new kimios.form.DocumentTypeField({
             fieldLabel: kimios.lang('DocumentType'),
@@ -312,7 +320,8 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
             valueField: 'uid',
             hiddenName: 'documentType',
             width: 200,
-            labelSeparator: kimios.lang('LabelSeparator')
+            labelSeparator: kimios.lang('LabelSeparator'),
+            setFieldLabel: setFieldLabelHandler
         });
         //TODO: add fields regarding document/version creation/update date and owner/ownerSource
         this.documentTypeField.on('select', function (store, metasRecords, options) {
@@ -434,8 +443,16 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
         this.setTitle(kimios.lang('AdvancedSearch'));
         this.clearButton.setText(kimios.lang('ClearField'));
         this.submitButton.setText(kimios.lang('SearchEmptyText'));
-        this.saveButton.setText(kimios.lang('SearchSaveButton'));
-        this.build();
+        this.saveButton.setText(
+            this.searchRequestId ? kimios.lang('Update') : kimios.lang('Create')
+        );
+
+        this.nameField.setFieldLabel(kimios.lang('DocumentName'));
+        this.uidField.setFieldLabel(kimios.lang('DocNum'));
+        this.textField.setFieldLabel(kimios.lang('SearchText'));
+        this.locationField.setFieldLabel(kimios.lang('InFolder'));
+        this.documentTypeField.setFieldLabel(kimios.lang('DocumentType'));
+
         this.doLayout();
     }
 })
