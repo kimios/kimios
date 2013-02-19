@@ -67,7 +67,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                 params.DocumentTypeUid = this.documentTypeField.getValue();
 //                params.dmEntityUid = this.locationField.hiddenType;
 //                params.dmEntityType = this.locationField.hiddenType;
-                if (this.locationField.hiddenUid != -1)
+//                if (this.locationField.hiddenUid != -1)
                     params.DocumentPath = this.locationField.getValue();
 
                 var searchRequestId = this.searchRequestId;
@@ -428,6 +428,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
         this.setVisible(true);
         var st = kimios.explorer.getActivePanel().searchToolbar;
         st.searchField.disable();
+        st.criteriaButton.advancedSearchItem.setChecked(true);
         kimios.explorer.getViewport().centerPanel.doLayout();
     },
 

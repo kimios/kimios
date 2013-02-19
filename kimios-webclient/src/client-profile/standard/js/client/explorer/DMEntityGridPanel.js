@@ -35,7 +35,7 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
             defaults: {height: 26},
             items: [
                 new Ext.Container({
-                    flex: 1,
+                    flex: 2,
                     items: [this.breadcrumbToolbar]
                 }),
                 new Ext.Container({
@@ -43,6 +43,7 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
                 })
             ]
         });
+
 
         this.tbar = this.contextToolbar;
 
@@ -54,14 +55,11 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
             store: this.entityStore,
             displayInfo: true,
             pageSize: this.pagingSize,
-            displayMsg: 'Documents {0} - {1} of {2}',
-            emptyMsg: 'No mathcing documents',
+            displayMsg: '',
+            emptyMsg: '',
             prependButtons: true,
             hidden: true
         });
-
-
-        this.bbar = this.pagingToolBar;
 
         this.commentsPanel = new kimios.explorer.CommentsPanel({
             collapsed: true,
@@ -74,7 +72,8 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
             region: 'north',
             height: 180,
             hidden: true,
-            border: false
+            border: false,
+            bbar: this.pagingToolBar
         });
         this.gridPanel = new Ext.grid.GridPanel({
             region: 'center',
@@ -370,7 +369,6 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
 
         // search by document body
         if (form == undefined) {
-
             var searchStore = kimios.store.getAdvancedSearchStore({
                 DocumentBody: searchConfig.text,
                 DocumentPath: searchConfig.DocumentPath
@@ -422,8 +420,9 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
             params.DocumentName = searchConfig.name;
             params.DocumentUid = searchConfig.uid;
             params.DocumentTypeUid = searchConfig.documentType;
-            params.dmEntityUid = searchConfig.fromUid;
-            params.dmEntityType = searchConfig.fromType;
+//            params.dmEntityUid = searchConfig.fromUid;
+//            params.dmEntityType = searchConfig.fromType;
+            params.DocumentPath = searchConfig.DocumentPath;
 
             var searchStore = kimios.store.getAdvancedSearchStore(params);
 
