@@ -34,7 +34,7 @@ import java.util.List;
  */
 
 @Entity
-@Table(name = "searchs")
+@Table(name = "searches")
 @SequenceGenerator( allocationSize = 1, name = "seq", sequenceName = "search_id_sed")
 public class SearchRequest
 {

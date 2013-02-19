@@ -110,14 +110,14 @@ public class SearchController
     }
 
 
-    public SearchResponse advancedSearchDocument( String sessionId, long dmEntityId, int dmEntityType,
+    public SearchResponse advancedSearchDocument( String sessionId,
                                                   List<Criteria> criteriaList, int start, int pageSize, String sort,
                                                   String sortDir )
         throws Exception
     {
         try
         {
-            return client.advancedSearchDocuments( sessionId, dmEntityId, dmEntityType, criteriaList, start, pageSize,
+            return client.advancedSearchDocuments( sessionId, criteriaList, start, pageSize,
                                                    sort, sortDir );
         }
         catch ( Exception e )

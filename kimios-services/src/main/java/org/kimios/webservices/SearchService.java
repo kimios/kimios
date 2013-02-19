@@ -86,8 +86,6 @@ public interface SearchService
     @Produces( "application/json" )
     public SearchResponse advancedSearchDocuments(
         @QueryParam( value = "sessionId" ) @WebParam( name = "sessionId" ) String sessionId,
-        @QueryParam( value = "dmEntityId" ) @WebParam( name = "dmEntityId" ) long dmEntityId,
-        @QueryParam( value = "dmEntityType" ) @WebParam( name = "dmEntityType" ) int dmEntityType,
         @WebParam( name = "criterias" ) List<org.kimios.kernel.index.query.model.Criteria> criterias,
         @QueryParam( value = "start" ) @WebParam( name = "start" ) int start,
         @QueryParam( value = "pageSize" ) @WebParam( name = "pageSize" ) int pageSize,

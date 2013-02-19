@@ -16,9 +16,6 @@
  */
 package org.kimios.kernel.index.query;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.solr.client.solrj.util.ClientUtils;
 import org.kimios.kernel.security.DMSecurityRule;
 import org.kimios.kernel.security.SecurityEntityType;
@@ -27,15 +24,16 @@ import org.kimios.kernel.user.Group;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Build Solr Queries
  */
-public class QueryBuilder
-{
+public class QueryBuilder {
     private static Logger log = LoggerFactory.getLogger(QueryBuilder.class);
 
-    public static String buildAclQuery(Session session)
-    {
+    public static String buildAclQuery(Session session) {
 
         List<String> aclQueriesList = new ArrayList<String>();
 
@@ -102,8 +100,7 @@ public class QueryBuilder
         return builder.toString();
     }
 
-    public static String documentNameQuery(String query)
-    {
+    public static String documentNameQuery(String query) {
 
         String documentNameQuery = "";
         boolean fileExtSearch = query.toLowerCase().contains(".");
@@ -121,5 +118,14 @@ public class QueryBuilder
 
         log.debug("SOLR documentNameQuery: " + documentNameQuery);
         return documentNameQuery;
+    }
+
+    public static String documentPathQuery(String query) {
+
+        String documentPathQuery = "";
+        boolean fileExtSearch = query.toLowerCase().contains(".");
+        documentPathQuery = "DocumentParent:" + query + "/*";
+        log.debug("SOLR documentPathQuery: " + documentPathQuery);
+        return documentPathQuery;
     }
 }

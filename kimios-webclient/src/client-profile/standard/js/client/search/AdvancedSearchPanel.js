@@ -17,6 +17,7 @@
 kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
 
     constructor: function (config) {
+        var _t = this;
         this.layout = 'border';
         this.bodyStyle = 'background-color:transparent;';
 
@@ -28,15 +29,17 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                     name: this.nameField.getValue(),
                     text: this.textField.getValue(),
                     uid: this.uidField.getValue(),
-                    fromUid: this.locationField.hiddenUid,
-                    fromType: this.locationField.hiddenType,
+//                    fromUid: this.locationField.hiddenUid,
+//                    fromType: this.locationField.hiddenType,
+                    DocumentPath: this.locationField.getValue(),
                     documentType: this.documentTypeField.getValue()
                 }, this.form2);
             }
         });
 
         this.saveButton = new Ext.Button({
-            text: kimios.lang('SearchSaveButton'),
+            text: _t.searchRequestId ? kimios.lang('Update') : kimios.lang('Create'),
+//                kimios.lang('SearchSaveButton'),
             scope: this,
             handler: function () {
 
@@ -62,11 +65,14 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                 params.DocumentName = this.nameField.getValue();
                 params.DocumentUid = this.uidField.getValue();
                 params.DocumentTypeUid = this.documentTypeField.getValue();
-                params.dmEntityUid = this.locationField.hiddenType;
-                params.dmEntityType = this.locationField.hiddenType;
+//                params.dmEntityUid = this.locationField.hiddenType;
+//                params.dmEntityType = this.locationField.hiddenType;
+                if (this.locationField.hiddenUid != -1)
+                    params.DocumentPath = this.locationField.getValue();
 
                 var searchRequestId = this.searchRequestId;
                 var searchRequestName = this.searchRequestName;
+                var _this = this;
 
                 Ext.MessageBox.prompt(
                     kimios.lang('SearchSaveButton'),
@@ -80,6 +86,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                             kimios.ajaxRequest('Search', params, function () {
                                 kimios.Info.msg(kimios.lang('SearchTab'), kimios.lang('SearchSaveDone'));
                                 Ext.getCmp('kimios-queries-panel').getStore().reload();
+                                _this.saveButton.setText(kimios.lang('Update'));
                             });
                         }
                     },
@@ -87,13 +94,15 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
             }
         });
 
-
         this.clearButton = new Ext.Button({
             text: kimios.lang('ClearField'),
             scope: this,
             handler: function () {
                 this.searchRequestId = null;
                 this.searchRequestName = null;
+                this.saveButton.setText(
+                    this.searchRequestId ? kimios.lang('Update') : kimios.lang('Create')
+                );
                 this.nameField.setValue("");
                 this.uidField.setValue("");
                 this.textField.setValue("");
@@ -219,7 +228,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                 this.uidField.setValue(query);
             } else if (fieldName == 'DocumentBody') {
                 this.textField.setValue(query);
-            } else if (fieldName == 'dmEntityUid') {
+            } else if (fieldName == 'DocumentPath') {
                 this.locationField.setValue(query);
             } else if (fieldName == 'DocumentTypeUid') {
                 this.documentTypeField.setValue(query);
@@ -246,6 +255,9 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
             documentType: this.documentTypeField.getValue()
         }, this.form2);
 
+        this.saveButton.setText(
+            this.searchRequestId ? kimios.lang('Update') : kimios.lang('Create')
+        );
     },
 
     loadFromCriterias: function (criteriaString) {

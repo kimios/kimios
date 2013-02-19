@@ -112,7 +112,7 @@ public class SearchControllerWeb
             String sortDir = parameters.get("dir") != null ? parameters.get("dir").toLowerCase() : null;
 
             searchResponse =
-                    searchController.advancedSearchDocument(sessionUid, positionUid, positionType, criteriaList, page,
+                    searchController.advancedSearchDocument(sessionUid, criteriaList, page,
                             pageSize, sort, sortDir);
             log.debug("Advanced search in uid: " + positionUid + " [Type: " + positionType + "]: "
                     + searchResponse.getRows().size() + " results / " + searchResponse.getResults());

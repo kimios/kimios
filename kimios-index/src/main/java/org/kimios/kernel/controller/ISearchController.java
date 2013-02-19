@@ -63,7 +63,7 @@ public interface ISearchController
         SAXException;
 
 
-    public SearchResponse advancedSearchDocuments( Session session, List<Criteria> criteriaList, DMEntity entity,
+    public SearchResponse advancedSearchDocuments( Session session, List<Criteria> criteriaList,
                                                    int start, int pageSize, String sortField, String sortDir )
         throws DataSourceException, ConfigException, IndexException, IOException;
 
