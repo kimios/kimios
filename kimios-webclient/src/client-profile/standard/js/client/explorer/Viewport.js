@@ -78,37 +78,20 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                 this.westPanel = new Ext.Panel({
                     id: 'kimios-west-container',
                     region: 'west',
-                    layout: 'border',
+                    layout: 'accordion',
                     width: 250,
                     split: true,
-                    animCollapse: false,
-                    collapseMode: 'mini',
-                    hideCollapseTool: true,
-                    minWidth: 150,
-                    border: false,
+                    layoutConfig: {
+                        titleCollapse: true,
+                        animate: false
+                    },
+                    minWidth: 50,
+                    border: true,
                     items: [
-                        new Ext.TabPanel({
-                            region: 'center',
-                            margins: '5 0 0 5',
-                            items: [this.explorerPanel, this.searchBookmarkPanel],
-                            enableTabScroll: true,
-                            activeTab: 0,
-                            plain: true
-                        }),
-                        new Ext.TabPanel({
-                            region: 'south',
-                            margins: '0 0 5 5',
-                            height: 250,
-                            split: true,
-                            animCollapse: true,
-                            collapseMode: 'mini',
-                            collapsible: true,
-                            hideCollapseTool: true,
-                            items: [this.bookmarksPanel, this.recentItemsPanel],
-                            enableTabScroll: true,
-                            activeTab: 0
-                        })
+                        this.explorerPanel, this.searchBookmarkPanel,
+                        this.bookmarksPanel, this.recentItemsPanel
                     ],
+                    margins: '5 0 5 5',
                     listeners: {
                         scope: this,
                         expand: function (p) {

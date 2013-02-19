@@ -28,6 +28,7 @@ kimios.explorer.ExplorerPanel = Ext.extend(kimios.util.DMEntityTree, {
     this.ddGroup = 'grid2tree';
     this.ddScroll = true;
     this.enableDragDrop = true;
+    this.useArrows = true;
 
     this.listeners = {
       beforenodedrop:{

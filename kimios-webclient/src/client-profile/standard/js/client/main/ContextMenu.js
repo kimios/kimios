@@ -289,8 +289,7 @@ kimios.ContextMenu = new function () {
 
     this.initSearchRequestsMenu = function (config) {
         this.searchRequestsMenu = new Ext.menu.Menu(config);
-        //TODO default behavior this.bookmarksMenu.add(this.loadSearchRequestsItem());
-        this.searchRequestsMenu.add(this.getEditSearchRequestsItem());
+//        this.searchRequestsMenu.add(this.getEditSearchRequestsItem());
         this.searchRequestsMenu.add(this.getRemoveSearchRequestsItem());
         this.searchRequestsMenu.addSeparator();
         this.searchRequestsMenu.add(this.getRefreshItem());
