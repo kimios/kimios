@@ -253,23 +253,12 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                     }
                 }
 
-                // auto load search request
-//                kimios.explorer.getActivePanel().advancedSearch({
-//                    DocumentName: this.nameField.getValue(),
-//                    DocumentBody: this.textField.getValue(),
-//                    DocumentUid: this.uidField.getValue(),
-////                    fromUid: this.locationField.hiddenUid,
-////                    fromType: this.locationField.hiddenType,
-//                    DocumentTypeUid: this.documentTypeField.getValue()
-//                }, this.form2);
-
                 this.saveButton.setText(
                     this.searchRequestId ? kimios.lang('Update') : kimios.lang('Create')
                 );
-//                console.log('value: '+this.locationField.getValue() );
-//                if (this.locationField.getValue() == null || this.locationField.getValue().isEmpty())
-//                    this.locationField.setValue("xxxxxxx");
-//                this.locationField.setValue("");
+
+                // to fix location field resize on loadForm
+                this.locationField.setValue(this.locationField.getValue());
             }
         });
 
@@ -277,11 +266,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
     },
 
     loadFromCriterias: function (criteriaString) {
-
-//        if (console) console.log(criteriaString);
-
         var obj = eval('(' + criteriaString + ')');
-//        if (console) console.log(obj);
         for (var key in obj) {
             var value = null;
 
