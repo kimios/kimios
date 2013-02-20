@@ -30,7 +30,9 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                     DocumentBody: this.textField.getValue(),
                     DocumentUid: this.uidField.getValue(),
                     DocumentParent: this.locationField.getValue(),
-                    DocumentTypeUid: this.documentTypeField.getValue()
+                    DocumentTypeUid: this.documentTypeField.getValue(),
+                    DocumentVersionUpdateDate_from: this.documentDateFromField.getValue() ? this.documentDateFromField.getValue().format('Y-m-d') : null,
+                    DocumentVersionUpdateDate_to: this.documentDateToField.getValue() ? this.documentDateToField.getValue().format('Y-m-d') : null
                 }, this.form2);
             }
         });
@@ -104,6 +106,8 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                 this.textField.setValue("");
                 this.locationField.setValue("");
                 this.documentTypeField.setValue("");
+                this.documentDateFromField.setValue("");
+                this.documentDateToField.setValue("");
                 this.form2.removeAll();
             }
         });
@@ -205,6 +209,8 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                 this.textField.setValue("");
                 this.locationField.setValue("");
                 this.documentTypeField.setValue("");
+                this.documentDateFromField.setValue("");
+                this.documentDateToField.setValue("");
                 this.form2.removeAll();
 
                 // Display the advanced search panel
@@ -218,9 +224,8 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                     var criteria = obj[i];
                     var query = criteria.query;
                     var fieldName = criteria.fieldName;
-
-                    //var rangeMin = criteria.rangeMin;
-                    //var rangeMax = criteria.rangeMax;
+                    var rangeMin = criteria.rangeMin;
+                    var rangeMax = criteria.rangeMax;
 
                     if (fieldName == 'DocumentName') {
                         this.nameField.setValue(query);
@@ -230,6 +235,9 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                         this.textField.setValue(query);
                     } else if (fieldName == 'DocumentParent') {
                         this.locationField.setValue(query);
+                    } else if (fieldName == 'DocumentVersionUpdateDate') {
+                        this.documentDateFromField.setValue(rangeMin);
+                        this.documentDateToField.setValue(rangeMax);
                     } else if (fieldName == 'DocumentTypeUid') {
                         this.documentTypeField.setValue(query);
                         this.documentTypeField.fireEvent('select');

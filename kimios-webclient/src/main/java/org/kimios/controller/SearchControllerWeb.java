@@ -58,6 +58,8 @@ public class SearchControllerWeb
     public String execute()
             throws Exception {
         SearchResponse searchResponse = null;
+
+        // Quick
         if (action.equalsIgnoreCase("Quick")) {
 
             long dmEntityUid = -1;
@@ -89,7 +91,12 @@ public class SearchControllerWeb
                     + searchResponse.getRows().size() + " results / " + searchResponse.getResults());
 
             return retSearchResp(searchResponse);
-        } else if (action.equalsIgnoreCase("Advanced")) {
+        }
+
+        // Advanced
+        else if (action.equalsIgnoreCase("Advanced")) {
+
+            // ######### keep below for simulate quick search
             String positionUidS = parameters.get("dmEntityUid");
             String positionTypeS = parameters.get("dmEntityType");
             long positionUid = -1;
@@ -102,6 +109,7 @@ public class SearchControllerWeb
                 positionType = Integer.parseInt(positionTypeS);
             } catch (Exception e) {
             }
+            // ######### end of: keep below for simulate quick search
 
             List<Criteria> criteriaList = parseCriteriaList(parameters);
 
@@ -119,7 +127,10 @@ public class SearchControllerWeb
 
             return retSearchResp(searchResponse);
 
-        } else if (action.equalsIgnoreCase("SaveQuery")) {
+        }
+
+        // SaveQuery
+        else if (action.equalsIgnoreCase("SaveQuery")) {
             String sort = parameters.get("sort") != null ? sortFieldMapping.get(parameters.get("sort")) : null;
             String sortDir = parameters.get("dir") != null ? parameters.get("dir").toLowerCase() : null;
 
@@ -129,17 +140,23 @@ public class SearchControllerWeb
             List<Criteria> criteriaList = parseCriteriaList(parameters);
             searchController.saveQuery(sessionUid, queryId, queryName, criteriaList, sort, sortDir);
             return "";
-        } else if (action.equalsIgnoreCase("ListQueries")) {
+        }
+
+        // ListQueries
+        else if (action.equalsIgnoreCase("ListQueries")) {
             List<SearchRequest> items = searchController.listQueries(sessionUid);
             return new JSONSerializer().exclude("class").serialize(items);
-        } else if (action.equalsIgnoreCase("DeleteQuery")) {
+        }
 
+        // DeleteQuery
+        else if (action.equalsIgnoreCase("DeleteQuery")) {
             Long id = Long.parseLong(parameters.get("queryId"));
             searchController.deleteQuery(sessionUid, id);
             return "";
-        } else if (action.equalsIgnoreCase("ExecuteSaved")) {
+        }
 
-
+        // ExecuteSaved
+        else if (action.equalsIgnoreCase("ExecuteSaved")) {
             Long queryId = Long.parseLong(parameters.get("queryId"));
             int page = parameters.get("start") != null ? Integer.parseInt(parameters.get("start")) : -1;
             int pageSize = parameters.get("limit") != null ? Integer.parseInt(parameters.get("limit")) : -1;

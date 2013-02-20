@@ -416,6 +416,8 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
             params.DocumentUid = searchConfig.DocumentUid;
             params.DocumentTypeUid = searchConfig.DocumentTypeUid;
             params.DocumentParent = searchConfig.DocumentParent;
+            params.DocumentVersionUpdateDate_from = searchConfig.DocumentVersionUpdateDate_from;
+            params.DocumentVersionUpdateDate_to = searchConfig.DocumentVersionUpdateDate_to;
 
             var searchStore = kimios.store.getAdvancedSearchStore(params);
 

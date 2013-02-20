@@ -45,6 +45,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -387,10 +388,9 @@ public class SolrSearchController
 
     public SearchResponse advancedSearchDocuments(Session session, List<Criteria> criteriaList,
                                                   int start, int pageSize, String sortField, String sortDir)
-            throws DataSourceException, ConfigException, IndexException, IOException {
+            throws DataSourceException, ConfigException, IndexException, IOException, ParseException {
 
-        SolrQuery query =
-                this.parseQueryFromListCriteria(session, start, pageSize, criteriaList, sortField, sortDir);
+        SolrQuery query = this.parseQueryFromListCriteria(session, start, pageSize, criteriaList, sortField, sortDir);
         SearchResponse searchResponse = solrIndexManager.executeSolrQuery(query);
         List<org.kimios.kernel.ws.pojo.Document> documents =
                 dmsFactoryInstantiator.getDocumentFactory().getDocumentsPojosFromIds(searchResponse.getDocumentIds());
@@ -400,7 +400,7 @@ public class SolrSearchController
     }
 
     private SolrQuery parseQueryFromListCriteria(Session session, int page, int pageSize, List<Criteria> criteriaList,
-                                                 String sortField, String sortDir) {
+                                                 String sortField, String sortDir) throws ParseException {
 
         SolrQuery indexQuery = new SolrQuery();
 
@@ -426,6 +426,8 @@ public class SolrSearchController
                     filterQueries.add("DocumentUid:" + c.getQuery());
                 } else if (c.getFieldName().equals("DocumentParent")) {
                     filterQueries.add(QueryBuilder.documentParentQuery(c.getQuery()));
+                } else if (c.getFieldName().equals("DocumentVersionUpdateDate")) {
+                    queries.add(QueryBuilder.documentUpdateDateQuery(c.getRangeMin(), c.getRangeMax()));
                 } else if (c.getFieldName().equals("DocumentTypeUid")) {
                     long dtUid = Long.parseLong(c.getQuery());
                     List<DocumentType> items =
@@ -561,7 +563,7 @@ public class SolrSearchController
 
     public SearchResponse executeSearchQuery(Session session, Long id, int start, int pageSize, String sortField,
                                              String sortDir)
-            throws AccessDeniedException, DataSourceException, ConfigException, IndexException, IOException {
+            throws AccessDeniedException, DataSourceException, ConfigException, IndexException, IOException, ParseException {
         SearchRequest searchRequest = searchRequestFactory.loadById(id);
         if (searchRequest == null || !(searchRequest.getOwner().equals(session.getUserName())
                 && searchRequest.getOwnerSource().equals(session.getUserSource()))) {

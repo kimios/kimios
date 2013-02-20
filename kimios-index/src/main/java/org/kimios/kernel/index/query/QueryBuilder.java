@@ -24,8 +24,12 @@ import org.kimios.kernel.user.Group;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * Build Solr Queries
@@ -123,6 +127,21 @@ public class QueryBuilder {
     public static String documentParentQuery(String query) {
         String documentPathQuery = "DocumentParent:" + query + "/*";
         log.debug("SOLR DocumentParent Query: " + documentPathQuery);
+        return documentPathQuery;
+    }
+
+    public static String documentUpdateDateQuery(String min, String max) throws ParseException {
+
+        SimpleDateFormat localFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat solrFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+
+        Date rangeMin = localFormat.parse(min);
+        Date rangeMax = localFormat.parse(max);
+
+        localFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        String documentPathQuery = "DocumentVersionUpdateDate:[" + (rangeMin != null ? solrFormat.format(rangeMin) : "*")
+                + " TO " + (rangeMax != null ? solrFormat.format(rangeMax) : "*") + "]";
+        log.debug("SOLR DocumentVersionUpdateDate Query: " + documentPathQuery);
         return documentPathQuery;
     }
 }

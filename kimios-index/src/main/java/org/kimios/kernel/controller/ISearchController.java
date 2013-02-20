@@ -17,6 +17,7 @@
 package org.kimios.kernel.controller;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -65,7 +66,7 @@ public interface ISearchController
 
     public SearchResponse advancedSearchDocuments( Session session, List<Criteria> criteriaList,
                                                    int start, int pageSize, String sortField, String sortDir )
-        throws DataSourceException, ConfigException, IndexException, IOException;
+            throws DataSourceException, ConfigException, IndexException, IOException, ParseException;
 
 
     public void saveSearchQuery( Session session, Long id, String name, List<Criteria> criteriaList, String sortField,
@@ -87,7 +88,7 @@ public interface ISearchController
 
     public SearchResponse executeSearchQuery( Session session, Long id, int start, int pageSize, String sortField,
                                               String sortDir )
-        throws AccessDeniedException, DataSourceException, ConfigException, IndexException, IOException;
+            throws AccessDeniedException, DataSourceException, ConfigException, IndexException, IOException, ParseException;
 
 
 }
