@@ -369,12 +369,7 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
 
         // search by document body
         if (form == undefined) {
-            var searchStore = kimios.store.getAdvancedSearchStore({
-                DocumentBody: searchConfig.text,
-                DocumentPath: searchConfig.DocumentPath
-//                  dmEntityUid:searchConfig.fromUid,
-//                  dmEntityType:searchConfig.fromType
-            });
+            var searchStore = kimios.store.getAdvancedSearchStore(searchConfig);
             this.gridPanel.reconfigure(searchStore, this.gridPanel.getColumnModel());
             this.displayPagingToolBar(this.gridPanel.getStore());
             this.gridPanel.getStore().load({
@@ -416,13 +411,11 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
             var params = eval(obj + "})");
 
 
-            params.DocumentBody = searchConfig.text;
-            params.DocumentName = searchConfig.name;
-            params.DocumentUid = searchConfig.uid;
-            params.DocumentTypeUid = searchConfig.documentType;
-//            params.dmEntityUid = searchConfig.fromUid;
-//            params.dmEntityType = searchConfig.fromType;
-            params.DocumentPath = searchConfig.DocumentPath;
+            params.DocumentBody = searchConfig.DocumentBody;
+            params.DocumentName = searchConfig.DocumentName;
+            params.DocumentUid = searchConfig.DocumentUid;
+            params.DocumentTypeUid = searchConfig.DocumentTypeUid;
+            params.DocumentParent = searchConfig.DocumentParent;
 
             var searchStore = kimios.store.getAdvancedSearchStore(params);
 

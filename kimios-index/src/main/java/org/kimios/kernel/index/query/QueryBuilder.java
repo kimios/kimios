@@ -116,16 +116,13 @@ public class QueryBuilder {
             documentNameQuery = "DocumentName:*" + query.toLowerCase() + "*";
         }
 
-        log.debug("SOLR documentNameQuery: " + documentNameQuery);
+        log.debug("SOLR DocumentName Query: " + documentNameQuery);
         return documentNameQuery;
     }
 
-    public static String documentPathQuery(String query) {
-
-        String documentPathQuery = "";
-        boolean fileExtSearch = query.toLowerCase().contains(".");
-        documentPathQuery = "DocumentParent:" + query + "/*";
-        log.debug("SOLR documentPathQuery: " + documentPathQuery);
+    public static String documentParentQuery(String query) {
+        String documentPathQuery = "DocumentParent:" + query + "/*";
+        log.debug("SOLR DocumentParent Query: " + documentPathQuery);
         return documentPathQuery;
     }
 }

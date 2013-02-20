@@ -392,6 +392,8 @@ kimios.ContextMenu = new function () {
 
     this.initSearchRequestsContainerMenu = function (config) {
         this.searchRequestsContainerMenu = new Ext.menu.Menu(config);
+        this.searchRequestsContainerMenu.add(this.getAddSearchRequestItem());
+        this.searchRequestsContainerMenu.addSeparator();
         this.searchRequestsContainerMenu.add(this.getRefreshItem());
     };
 
@@ -669,15 +671,28 @@ kimios.ContextMenu = new function () {
         });
     };
 
-    this.getEditSearchRequestsItem = function () {
+    this.getAddSearchRequestItem = function () {
         return new Ext.menu.Item({
-            text: kimios.lang('SearchRequestEdit'),
+            text: kimios.lang('SearchRequestAdd'),
             iconCls: 'search',
             scope: this,
             handler: function () {
                 var searchRequest = this.dmEntityPojo;
                 var asp = kimios.explorer.getActivePanel().advancedSearchPanel;
-                asp.loadForm(searchRequest);
+//                asp.loadForm(searchRequest);
+                asp.showPanel();
+
+                asp.searchRequestId = null;
+                asp.searchRequestName = null;
+                asp.saveButton.setText(
+                    asp.searchRequestId ? kimios.lang('Update') : kimios.lang('Create')
+                );
+                asp.nameField.setValue("");
+                asp.uidField.setValue("");
+                asp.textField.setValue("");
+                asp.locationField.setValue("");
+                asp.documentTypeField.setValue("");
+                asp.form2.removeAll();
             }
         });
     };

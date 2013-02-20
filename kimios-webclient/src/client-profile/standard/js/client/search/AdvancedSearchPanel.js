@@ -26,13 +26,11 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
             scope: this,
             handler: function () {
                 kimios.explorer.getActivePanel().advancedSearch({
-                    name: this.nameField.getValue(),
-                    text: this.textField.getValue(),
-                    uid: this.uidField.getValue(),
-//                    fromUid: this.locationField.hiddenUid,
-//                    fromType: this.locationField.hiddenType,
-                    DocumentPath: this.locationField.getValue(),
-                    documentType: this.documentTypeField.getValue()
+                    DocumentName: this.nameField.getValue(),
+                    DocumentBody: this.textField.getValue(),
+                    DocumentUid: this.uidField.getValue(),
+                    DocumentParent: this.locationField.getValue(),
+                    DocumentTypeUid: this.documentTypeField.getValue()
                 }, this.form2);
             }
         });
@@ -65,10 +63,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                 params.DocumentName = this.nameField.getValue();
                 params.DocumentUid = this.uidField.getValue();
                 params.DocumentTypeUid = this.documentTypeField.getValue();
-//                params.dmEntityUid = this.locationField.hiddenType;
-//                params.dmEntityType = this.locationField.hiddenType;
-//                if (this.locationField.hiddenUid != -1)
-                    params.DocumentPath = this.locationField.getValue();
+                params.DocumentParent = this.locationField.getValue();
 
                 var searchRequestId = this.searchRequestId;
                 var searchRequestName = this.searchRequestName;
@@ -195,69 +190,75 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
     // Load the advanced search form with the given SearchRequest object
     loadForm: function (searchRequest) {
 //        if (console) console.log(searchRequest);
+        this.documentTypeField.getStore().load({
+            scope: this,
+            callback: function () {
+                // for update
+                this.searchRequestId = searchRequest.id;
+                this.searchRequestName = searchRequest.name;
 
-        // for update
-        this.searchRequestId = searchRequest.id;
-        this.searchRequestName = searchRequest.name;
+                this.nameField.setValue("");
+                this.uidField.setValue("");
+                this.textField.setValue("");
+                this.locationField.setValue("");
+                this.documentTypeField.setValue("");
+                this.form2.removeAll();
 
-        this.nameField.setValue("");
-        this.uidField.setValue("");
-        this.textField.setValue("");
-        this.locationField.setValue("");
-        this.documentTypeField.setValue("");
-        this.form2.removeAll();
+                // Display the advanced search panel
+                this.showPanel();
 
-        // Display the advanced search panel
-        this.showPanel();
+                // Unserialize the search criteria list
+                var obj = Ext.decode(searchRequest.criteriasListJson);
+                var hasDocumentType = false;
+                this.loadedMetadatas = [];
+                for (var i = 0; i < obj.length; ++i) {
+                    var criteria = obj[i];
+                    var query = criteria.query;
+                    var fieldName = criteria.fieldName;
 
-        // Unserialize the search criteria list
-        var obj = Ext.decode(searchRequest.criteriasListJson);
-        var hasDocumentType = false;
-        this.loadedMetadatas = [];
-        for (var i = 0; i < obj.length; ++i) {
-            var criteria = obj[i];
-            var query = criteria.query;
-            var fieldName = criteria.fieldName;
+                    //var rangeMin = criteria.rangeMin;
+                    //var rangeMax = criteria.rangeMax;
 
-            //var rangeMin = criteria.rangeMin;
-            //var rangeMax = criteria.rangeMax;
+                    if (fieldName == 'DocumentName') {
+                        this.nameField.setValue(query);
+                    } else if (fieldName == 'DocumentUid') {
+                        this.uidField.setValue(query);
+                    } else if (fieldName == 'DocumentBody') {
+                        this.textField.setValue(query);
+                    } else if (fieldName == 'DocumentParent') {
+                        this.locationField.setValue(query);
+                    } else if (fieldName == 'DocumentTypeUid') {
+                        this.documentTypeField.setValue(query);
+                        this.documentTypeField.fireEvent('select');
+                    }
 
-            if (fieldName == 'DocumentName') {
-                this.nameField.setValue(query);
-            } else if (fieldName == 'DocumentUid') {
-                this.uidField.setValue(query);
-            } else if (fieldName == 'DocumentBody') {
-                this.textField.setValue(query);
-            } else if (fieldName == 'DocumentPath') {
-                this.locationField.setValue(query);
-            } else if (fieldName == 'DocumentTypeUid') {
-                this.documentTypeField.setValue(query);
-                this.documentTypeField.fireEvent('select');
-            }
+                    // Meta Data parsing when document type set
+                    else {
+                        var begin = fieldName.substr(0, 8);
+                        if (begin == 'MetaData') {
+                            this.loadedMetadatas.push(criteria);
+                        }
 
-            // Meta Data parsing when document type set
-            else {
-                var begin = fieldName.substr(0, 8);
-                if (begin == 'MetaData') {
-                    this.loadedMetadatas.push(criteria);
+                    }
                 }
 
+                // auto load search request
+//                kimios.explorer.getActivePanel().advancedSearch({
+//                    DocumentName: this.nameField.getValue(),
+//                    DocumentBody: this.textField.getValue(),
+//                    DocumentUid: this.uidField.getValue(),
+////                    fromUid: this.locationField.hiddenUid,
+////                    fromType: this.locationField.hiddenType,
+//                    DocumentTypeUid: this.documentTypeField.getValue()
+//                }, this.form2);
+
+                this.saveButton.setText(
+                    this.searchRequestId ? kimios.lang('Update') : kimios.lang('Create')
+                );
             }
-        }
+        });
 
-        // auto load search request
-        kimios.explorer.getActivePanel().advancedSearch({
-            name: this.nameField.getValue(),
-            text: this.textField.getValue(),
-            uid: this.uidField.getValue(),
-            fromUid: this.locationField.hiddenUid,
-            fromType: this.locationField.hiddenType,
-            documentType: this.documentTypeField.getValue()
-        }, this.form2);
 
-        this.saveButton.setText(
-            this.searchRequestId ? kimios.lang('Update') : kimios.lang('Create')
-        );
     },
 
     loadFromCriterias: function (criteriaString) {
@@ -410,8 +411,8 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                 this.form2.setVisible(fields.length > 0);
                 this.form1.doLayout();
                 this.form2.doLayout();
-                this.doLayout();
                 this.form2.fireEvent('metafieldload');
+                this.doLayout();
             }, this);
         }, this);
         this.form1.add(this.nameField);

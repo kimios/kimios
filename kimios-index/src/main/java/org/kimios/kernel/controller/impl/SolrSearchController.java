@@ -424,8 +424,8 @@ public class SolrSearchController
                     queries.add("DocumentBody:" + bodyQuery);
                 } else if (c.getFieldName().equals("DocumentUid")) {
                     filterQueries.add("DocumentUid:" + c.getQuery());
-                } else if (c.getFieldName().equals("DocumentPath")) {
-                    filterQueries.add(QueryBuilder.documentPathQuery(c.getQuery()));
+                } else if (c.getFieldName().equals("DocumentParent")) {
+                    filterQueries.add(QueryBuilder.documentParentQuery(c.getQuery()));
                 } else if (c.getFieldName().equals("DocumentTypeUid")) {
                     long dtUid = Long.parseLong(c.getQuery());
                     List<DocumentType> items =
