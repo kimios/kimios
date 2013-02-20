@@ -37,12 +37,9 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
 
         this.saveButton = new Ext.Button({
             text: _t.searchRequestId ? kimios.lang('Update') : kimios.lang('Create'),
-//                kimios.lang('SearchSaveButton'),
             scope: this,
             handler: function () {
-
                 var fields = this.form2.getForm().getFieldValues();
-
                 var obj = "({";
                 for (var key in fields) {
                     var value = null;
@@ -64,6 +61,10 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                 params.DocumentUid = this.uidField.getValue();
                 params.DocumentTypeUid = this.documentTypeField.getValue();
                 params.DocumentParent = this.locationField.getValue();
+                if (this.documentDateFromField.getValue())
+                    params.DocumentVersionUpdateDate_from = this.documentDateFromField.getValue().format('Y-m-d');
+                if (this.documentDateToField.getValue())
+                    params.DocumentVersionUpdateDate_to = this.documentDateToField.getValue().format('Y-m-d');
 
                 var searchRequestId = this.searchRequestId;
                 var searchRequestName = this.searchRequestName;
@@ -109,13 +110,14 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
 
         this.form1 = new kimios.FormPanel({
             region: 'west',
-            width: 315,
+            width: 380,
+            autoScroll: true,
             border: false,
             margins: '5 10 5 10',
             bodyStyle: 'padding:5px;',
-            labelWidth: 150,
+            labelWidth: 160,
             defaults: {
-                width: 150,
+                width: 200,
                 selectOnFocus: true,
                 style: 'font-size: 11px',
                 labelStyle: 'font-size: 11px;'
@@ -129,11 +131,12 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
             border: false,
             margins: '5 10 5 10',
             bodyStyle: 'padding:5px;',
-            labelWidth: 150,
+            labelWidth: 160,
             autoScroll: true,
             hidden: true,
             defaults: {
-                width: 150,
+//                width: 200,
+                anchor: '100%',
                 selectOnFocus: true,
                 style: 'font-size: 11px',
                 labelStyle: 'font-size: 11px;'
@@ -324,6 +327,21 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
             labelSeparator: kimios.lang('LabelSeparator'),
             setFieldLabel: setFieldLabelHandler
         });
+        this.documentDateFromField = new Ext.form.DateField({
+            name: 'DocumentVersionUpdateDate_from',
+            fieldLabel: 'DATE (min)',
+            format: 'Y-m-d',
+            editable: false,
+            labelSeparator: kimios.lang('LabelSeparator')
+        });
+        this.documentDateToField = new Ext.form.DateField({
+            name: 'DocumentVersionUpdateDate_to',
+            fieldLabel: 'DATE (max)',
+            format: 'Y-m-d',
+            editable: false,
+            labelSeparator: kimios.lang('LabelSeparator')
+        });
+
         //TODO: add fields regarding document/version creation/update date and owner/ownerSource
         this.documentTypeField.on('select', function (store, metasRecords, options) {
             kimios.store.getMetasStore(this.documentTypeField.getValue()).on('load', function (store, metasRecords, options) {
@@ -419,6 +437,8 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
         this.form1.add(this.uidField);
         this.form1.add(this.textField);
         this.form1.add(this.locationField);
+        this.form1.add(this.documentDateFromField);
+        this.form1.add(this.documentDateToField);
         this.form1.add(this.documentTypeField);
         this.form1.doLayout();
         this.form2.doLayout();

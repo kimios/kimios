@@ -70,7 +70,7 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
         });
         this.advancedSearchPanel = new kimios.search.AdvancedSearchPanel({
             region: 'north',
-            height: 180,
+            height: 230,
             hidden: true,
             border: false,
             bbar: this.pagingToolBar

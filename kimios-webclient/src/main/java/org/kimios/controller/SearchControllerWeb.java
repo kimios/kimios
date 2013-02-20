@@ -176,6 +176,7 @@ public class SearchControllerWeb
 
 
     private List<Criteria> parseCriteriaList(Map<String, String> parameters) {
+        boolean dateRangeOk = false;
         List<Long> alreayParsedMeta = new ArrayList<Long>();
         List<Criteria> criteriaList = new ArrayList<Criteria>();
         for (String k : parameters.keySet()) {
@@ -185,6 +186,7 @@ public class SearchControllerWeb
                 c.setFieldName(k);
                 c.setLevel(0);
                 c.setPosition(0);
+
                 if (k.startsWith("MetaData")) {
 
                     String metaUid = k.split("_")[1];
@@ -206,7 +208,6 @@ public class SearchControllerWeb
                         }
 
                         if (k.contains("Date") || k.contains("Number")) {
-
                             String fromKey = k.split("_")[0] + "_" + metaUid + "_from";
                             String toKey = k.split("_")[0] + "_" + metaUid + "_to";
                             if (parameters.get(fromKey) != null) {
@@ -220,16 +221,31 @@ public class SearchControllerWeb
                         }
                         criteriaList.add(c);
                         alreayParsedMeta.add(Long.parseLong(metaUid));
-                        System.out.println(" >>> " + c);
+                        log.debug("Criteria (MetaData): " + c);
 
                     } else {
                         /* In case of meta already parsed: continue to next criteria */
                         continue;
                     }
+
                 } else {
-                    c.setQuery(parameters.get(k));
+                    if (k.startsWith("DocumentVersionUpdateDate")) {
+                        if (dateRangeOk) continue;
+                        String dateFrom = parameters.get("DocumentVersionUpdateDate_from");
+                        String dateTo = parameters.get("DocumentVersionUpdateDate_to");
+                        c.setFieldName("DocumentVersionUpdateDate");
+                        if (dateFrom != null) {
+                            c.setRangeMin(dateFrom);
+                        }
+                        if (dateTo != null) {
+                            c.setRangeMax(dateTo);
+                        }
+                        dateRangeOk = true;
+                    } else {
+                        c.setQuery(parameters.get(k));
+                    }
                     criteriaList.add(c);
-                    log.debug("Search Criteria:" + c);
+                    log.debug("Criteria:" + c);
                         /* No meta value... do nothing */
                     continue;
                 }
