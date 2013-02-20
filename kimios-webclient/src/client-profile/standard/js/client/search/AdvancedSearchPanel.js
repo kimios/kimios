@@ -114,7 +114,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
 
         this.form1 = new kimios.FormPanel({
             region: 'west',
-            width: 380,
+            width: 400,
             autoScroll: true,
             border: false,
             margins: '5 10 5 10',

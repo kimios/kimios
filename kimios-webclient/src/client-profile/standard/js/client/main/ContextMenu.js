@@ -691,6 +691,8 @@ kimios.ContextMenu = new function () {
                 asp.uidField.setValue("");
                 asp.textField.setValue("");
                 asp.locationField.setValue("");
+                asp.documentDateFromField.setValue("");
+                asp.documentDateToField.setValue("");
                 asp.documentTypeField.setValue("");
                 asp.form2.removeAll();
             }
