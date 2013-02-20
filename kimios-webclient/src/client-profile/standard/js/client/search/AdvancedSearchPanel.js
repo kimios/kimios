@@ -119,9 +119,9 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
             border: false,
             margins: '5 10 5 10',
             bodyStyle: 'padding:5px;',
-            labelWidth: 160,
+            labelWidth: 140,
             defaults: {
-                width: 200,
+                anchor: '100%',
                 selectOnFocus: true,
                 style: 'font-size: 11px',
                 labelStyle: 'font-size: 11px;'
@@ -135,7 +135,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
             border: false,
             margins: '5 10 5 10',
             bodyStyle: 'padding:5px;',
-            labelWidth: 160,
+            labelWidth: 140,
             autoScroll: true,
             hidden: true,
             defaults: {
@@ -266,6 +266,10 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                 this.saveButton.setText(
                     this.searchRequestId ? kimios.lang('Update') : kimios.lang('Create')
                 );
+//                console.log('value: '+this.locationField.getValue() );
+//                if (this.locationField.getValue() == null || this.locationField.getValue().isEmpty())
+//                    this.locationField.setValue("xxxxxxx");
+//                this.locationField.setValue("");
             }
         });
 
