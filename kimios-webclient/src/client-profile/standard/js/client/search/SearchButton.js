@@ -37,15 +37,15 @@ kimios.search.SearchButton = Ext.extend(Ext.Toolbar.Button, {
             checked: false,
             group: 'criteria'
         });
-        this.advancedSearchItem = new Ext.menu.CheckItem({
-            text: kimios.lang('AdvancedSearch'),
-            checked: false,
-            group: 'criteria'
-        });
+//        this.advancedSearchItem = new Ext.menu.CheckItem({
+//            text: kimios.lang('AdvancedSearch'),
+//            checked: false,
+//            group: 'criteria'
+//        });
         this.menu.add(this.nameSearchItem);
         this.menu.add(this.textSearchItem);
-        this.menu.addSeparator();
-        this.menu.add(this.advancedSearchItem);
+//        this.menu.addSeparator();
+//        this.menu.add(this.advancedSearchItem);
 
         var handle = function (item, changed) {
             if (changed == true) {
@@ -56,33 +56,35 @@ kimios.search.SearchButton = Ext.extend(Ext.Toolbar.Button, {
                 var sp = kimios.explorer.getActivePanel().advancedSearchPanel;
                 if (needClear == true) {
                     sf.clearSearch();
-                } else if (this.isAdvancedSearch() == false) {
-                    tab.search({
-                        name: this.isSearchByName() == true ? sf.getValue() : undefined,
-                        text: this.isSearchByText() == true ? sf.getValue() : undefined,
-                        fromUid: tab.uid,
-                        fromType: tab.type
-                    });
                 }
-                if (this.isAdvancedSearch() == true) {
-                    sf.clearSearch();
-                    sp.showPanel();
-                } else {
+//                else if (this.isAdvancedSearch() == false) {
+//                    tab.search({
+//                        name: this.isSearchByName() == true ? sf.getValue() : undefined,
+//                        text: this.isSearchByText() == true ? sf.getValue() : undefined,
+//                        fromUid: tab.uid,
+//                        fromType: tab.type
+//                    });
+//                }
+//                if (this.isAdvancedSearch() == true) {
+//                    sf.clearSearch();
+//                    sp.showPanel();
+//                }
+//                else {
                     sp.hidePanel();
-                }
+//                }
             }
             kimios.explorer.getActivePanel().doLayout();
         };
         this.nameSearchItem.on('checkchange', handle, this);
         this.textSearchItem.on('checkchange', handle, this);
-        this.advancedSearchItem.on('checkchange', handle, this);
+//        this.advancedSearchItem.on('checkchange', handle, this);
     },
 
     refreshLanguage: function () {
         this.setText(kimios.lang('SearchOptions'));
         this.nameSearchItem.setText(kimios.lang('SearchByName'));
         this.textSearchItem.setText(kimios.lang('SearchByText'));
-        this.advancedSearchItem.setText(kimios.lang('AdvancedSearch'));
+//        this.advancedSearchItem.setText(kimios.lang('AdvancedSearch'));
     },
 
     isSearchByName: function () {
@@ -91,10 +93,11 @@ kimios.search.SearchButton = Ext.extend(Ext.Toolbar.Button, {
 
     isSearchByText: function () {
         return this.textSearchItem.checked;
-    },
-
-    isAdvancedSearch: function () {
-        return this.advancedSearchItem.checked;
     }
+//    ,
+//
+//    isAdvancedSearch: function () {
+//        return this.advancedSearchItem.checked;
+//    }
 });
 

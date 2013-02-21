@@ -57,9 +57,13 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
             pageSize: this.pagingSize,
             displayMsg: '',
             emptyMsg: '',
-            prependButtons: true,
-            hidden: true
+            prependButtons: true
+//            hidden: true
         });
+
+        // hide specific refresh button
+        this.pagingToolBar.refresh.hideParent = true;
+        this.pagingToolBar.refresh.hide();
 
         this.commentsPanel = new kimios.explorer.CommentsPanel({
             collapsed: true,
@@ -70,10 +74,10 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
         });
         this.advancedSearchPanel = new kimios.search.AdvancedSearchPanel({
             region: 'north',
-            height: 230,
+            height: 260,
             hidden: true,
             border: false,
-            bbar: this.pagingToolBar
+            tbar: this.pagingToolBar
         });
         this.gridPanel = new Ext.grid.GridPanel({
             region: 'center',
@@ -190,17 +194,6 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
     initComponent: function () {
         kimios.explorer.DMEntityGridPanel.superclass.initComponent.apply(this, arguments);
 
-        //Drag'n Drop Across Tab Panel
-//    this.on('beforetabchange', function(tabPanel, newTab, currentTab){
-//      console.log('beforetabchange');
-//    }, this);
-//    this.on('contextmenu', function(){
-//      console.log('contextmenu');
-//    }, this);
-//    this.on('tabchange', function(tabPanel, panel){
-//      console.log('tabchange');
-//    }, this);
-
         // synchronize explorer with active tab
         this.on('activate', function () {
             if (this.alreadyLoad == true) {
@@ -281,29 +274,6 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
             }
         }, this);
 
-//    this.gridPanel.getSelectionModel().on('selectionchange', function(sm){
-//      if (sm.getSelections().length != 1){
-//        this.commentsPanel.setVisible(false);
-//        this.doLayout();
-//      }
-////      else{
-////        if (sm.getSelected().data.type == 3){
-////          this.commentsPanel.setVisible(true);
-////        }
-//      
-////        var data = sm.getSelected().data;
-////        var pojo = new kimios.DMEntityPojo(data);
-////        kimios.explorer.getViewport().quickViewPanel.remove(this.propertiesPanel);
-////        this.propertiesPanel = new kimios.properties.PropertiesPanel({
-////          dmEntityPojo : new kimios.DMEntityPojo(data)
-////        });
-////        kimios.explorer.getViewport().quickViewPanel.add(this.propertiesPanel);
-////        kimios.explorer.getViewport().quickViewPanel.doLayout();
-//      
-////      }
-//      
-//    }, this);
-
         this.gridPanel.getStore().on('load', function (store, records, options) {
             if (this.lastSelectedRow != undefined) {
                 this.gridPanel.getSelectionModel().selectRow(this.lastSelectedRow);
@@ -353,16 +323,19 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
     displayPagingToolBar: function (searchStore) {
         if (searchStore) {
             this.pagingToolBar.bindStore(searchStore);
-            this.pagingToolBar.setVisible(true);
+//            this.pagingToolBar.setVisible(true);
+            this.pagingToolBar.enable();
             this.doLayout();
         } else {
-            this.pagingToolBar.hide();
+            this.pagingToolBar.disable();
+//            this.pagingToolBar.hide();
         }
     },
 
     hidePagingToolBar: function () {
         this.pagingToolBar.purgeListeners();
-        this.pagingToolBar.hide();
+        this.pagingToolBar.disable();
+//        this.pagingToolBar.hide();
     },
 
     advancedSearch: function (searchConfig, form) {
@@ -380,7 +353,7 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
                 },
                 callback: function (records, options, success) {
                     this.lockSearch = true;
-                    this.setTitle(kimios.lang('DocumentsFound') + ' (' + searchStore.getTotalCount() + ')');
+                    this.setTitle(searchStore.getTotalCount() + ' ' + kimios.lang('DocumentsFound'));
                     this.setIconClass('view');
                 }
             });
@@ -438,6 +411,7 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
                     this.setIconClass('view');
                 }
             });
+
         }
     },
 

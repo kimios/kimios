@@ -114,7 +114,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
 
         this.form1 = new kimios.FormPanel({
             region: 'west',
-            width: 400,
+            width: 380,
             autoScroll: true,
             border: false,
             margins: '5 10 5 10',
@@ -326,14 +326,14 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
         });
         this.documentDateFromField = new Ext.form.DateField({
             name: 'DocumentVersionUpdateDate_from',
-            fieldLabel: 'DATE (min)',
+            fieldLabel: 'Date (min)',
             format: 'Y-m-d',
             editable: false,
             labelSeparator: kimios.lang('LabelSeparator')
         });
         this.documentDateToField = new Ext.form.DateField({
             name: 'DocumentVersionUpdateDate_to',
-            fieldLabel: 'DATE (max)',
+            fieldLabel: 'Date (max)',
             format: 'Y-m-d',
             editable: false,
             labelSeparator: kimios.lang('LabelSeparator')
@@ -445,17 +445,40 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
     showPanel: function () {
         this.setVisible(true);
         var st = kimios.explorer.getActivePanel().searchToolbar;
-        st.searchField.disable();
-        st.criteriaButton.advancedSearchItem.setChecked(true);
+        var bt = kimios.explorer.getActivePanel().breadcrumbToolbar;
+        st.disable();
+        bt.disable();
+        kimios.explorer.getActivePanel().contextToolbar.hide();
+        kimios.explorer.getToolbar().advancedSearchButton.toggle(true, true);
         kimios.explorer.getViewport().centerPanel.doLayout();
+
+        // auto set document parent
+        var path = bt.currentPath;
+        if (path) this.locationField.setValue(path);
+
+        // field resize bug fix
+        this.locationField.setValue(this.locationField.getValue());
+
+        // clean paging toolbar page counter
+        kimios.explorer.getActivePanel().pagingToolBar.bindStore(
+            kimios.explorer.getActivePanel().gridPanel.getStore(), false);
+        kimios.explorer.getActivePanel().pagingToolBar.updateInfo();
+
+
     },
 
     hidePanel: function () {
         this.setVisible(false);
         var st = kimios.explorer.getActivePanel().searchToolbar;
-        st.searchField.enable();
+        var bt = kimios.explorer.getActivePanel().breadcrumbToolbar;
+        st.enable();
+        bt.enable();
+        kimios.explorer.getActivePanel().contextToolbar.show();
+        kimios.explorer.getToolbar().advancedSearchButton.toggle(false, true);
         st.searchField.setValue(st.searchField.getValue()); // fix
         kimios.explorer.getViewport().centerPanel.doLayout();
+        this.loadedMetadatas = null;
+        this.locationField.setValue(null);
     },
 
     refreshLanguage: function () {

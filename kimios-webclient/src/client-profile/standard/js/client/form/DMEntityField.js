@@ -18,7 +18,7 @@
 kimios.form.DMEntityField = Ext.extend(Ext.form.TwinTriggerField, {
 
     constructor: function (config) {
-        this.editable = (config.editable ? config.editable : false);
+//        this.editable = (config.editable ? config.editable : false);
         this.fieldLabel = kimios.lang('Entity');
         this.hiddenUid = -1;
         this.hiddenType = -1;

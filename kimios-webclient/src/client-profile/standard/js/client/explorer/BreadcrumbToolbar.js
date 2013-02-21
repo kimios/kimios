@@ -23,6 +23,7 @@ kimios.explorer.BreadcrumbToolbar = Ext.extend(Ext.Toolbar, {
     },
 
     setPath: function (path) {
+        this.currentPath = path;
         var ap = kimios.explorer.getActivePanel();
         this.removeAll();
         this.upButton = new Ext.Toolbar.Button({

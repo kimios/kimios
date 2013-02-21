@@ -15,22 +15,42 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 kimios.explorer.Toolbar = Ext.extend(Ext.Toolbar, {
-    constructor : function(config){
+    constructor: function (config) {
         this.id = 'kimios-toolbar';
         this.toolsMenu = new kimios.menu.ToolsMenu({
             hidden: true
         });
-    
+
+        this.advancedSearchButton = new Ext.Button({
+            text: kimios.lang('SearchButton'),
+            iconCls: 'search',
+            enableToggle: true,
+            toggleHandler: function (b, s) {
+                var vp = kimios.explorer.getActivePanel();
+                if (vp == null) {
+                    this.toggle(false, true);
+                    return false;
+                }
+                if (s == true) {
+                    vp.advancedSearchPanel.build();
+                    vp.advancedSearchPanel.showPanel();
+                } else {
+                    vp.advancedSearchPanel.hidePanel();
+                }
+                vp.doLayout();
+            }
+        });
+
         this.myTasksButton = new Ext.Button({
-            text : kimios.lang('MyTasks'),
-            iconCls : 'tasks',
+            text: kimios.lang('MyTasks'),
+            iconCls: 'tasks',
             hidden: true,
-            enableToggle : true,
-            toggleHandler : function(b, s){
+            enableToggle: true,
+            toggleHandler: function (b, s) {
                 var vp = kimios.explorer.getViewport();
-                if (s == true){
+                if (s == true) {
                     vp.eastPanel.expand();
-                }else{
+                } else {
                     vp.eastPanel.collapse();
                 }
                 vp.doLayout();
@@ -38,45 +58,45 @@ kimios.explorer.Toolbar = Ext.extend(Ext.Toolbar, {
         });
 
         this.logoutButton = new Ext.Button({
-            text : kimios.lang('Logout'),
-            iconCls : 'exit',
+            tooltip: kimios.lang('Logout'),
+            iconCls: 'exit',
             hidden: true,
-            handler : function() {
+            handler: function () {
                 window.location.href = contextPath + '/../logout.jsp';
             }
         });
 
         this.loggedAsLabel = new Ext.form.DisplayField({
-            id : 'kimios-logged-label',
-            value : this.getLoggedAsString()
+            id: 'kimios-logged-label',
+            value: this.getLoggedAsString()
         });
 
         this.languageMenu = new kimios.menu.LanguageMenu();
 
         this.myAccountButton = new Ext.Button({
-            text : kimios.lang('MyAccount'),
-            iconCls : 'admin-user-tree-node',
+            text: kimios.lang('MyAccount'),
+            iconCls: 'admin-user-tree-node',
             hidden: true,
-            handler : function(){
+            handler: function () {
                 new Ext.Window({
-                    id : 'kimios-my-account',
-                    title : kimios.lang('MyAccount'),
-                    iconCls : 'admin-user-tree-node',
-                    closable : true,
-                    border : true,
-                    layout : 'fit',
-                    maximizable : false,
-                    modal : true,
-                    width : 350,
-                    height : 200,
-                    items : [new kimios.MyAccountPanel({})]
+                    id: 'kimios-my-account',
+                    title: kimios.lang('MyAccount'),
+                    iconCls: 'admin-user-tree-node',
+                    closable: true,
+                    border: true,
+                    layout: 'fit',
+                    maximizable: false,
+                    modal: true,
+                    width: 350,
+                    height: 200,
+                    items: [new kimios.MyAccountPanel({})]
                 }).show();
             }
         });
         kimios.explorer.Toolbar.superclass.constructor.call(this, config);
     },
-  
-    initComponent : function(){
+
+    initComponent: function () {
         kimios.explorer.Toolbar.superclass.initComponent.apply(this, arguments);
         this.add('->');
         this.add(this.loggedAsLabel);
@@ -85,6 +105,7 @@ kimios.explorer.Toolbar = Ext.extend(Ext.Toolbar, {
         this.add(' ');
 
         var buttonsArray = [];
+        buttonsArray.push(this.advancedSearchButton);
         buttonsArray.push(this.myTasksButton);
         buttonsArray.push(this.myAccountButton);
         buttonsArray.push(this.toolsMenu);
@@ -96,10 +117,10 @@ kimios.explorer.Toolbar = Ext.extend(Ext.Toolbar, {
 
         var domainsListStore = kimios.store.AdminStore.getDomainsStore();
         domainsListStore.load({
-            scope : this,
-            callback: function(r){
-                for (var i=0; i<r.length; i++){
-                    if (currentSource == r[i].data.name){
+            scope: this,
+            callback: function (r) {
+                for (var i = 0; i < r.length; i++) {
+                    if (currentSource == r[i].data.name) {
                         kimios.setImplPackage(r[i].data.className);
                         break;
                     }
@@ -113,10 +134,10 @@ kimios.explorer.Toolbar = Ext.extend(Ext.Toolbar, {
             }
         });
     },
-  
-    getLoggedAsString : function(){
-        var html = '<span style="color:gray;">'+kimios.lang('Welcome')+', ';
-    
+
+    getLoggedAsString: function () {
+        var html = '<span style="color:gray;">' + kimios.lang('Welcome') + ', ';
+
         if (currentName != null && currentName != '' && currentName != 'null')
             html += currentName;
         else
@@ -124,18 +145,19 @@ kimios.explorer.Toolbar = Ext.extend(Ext.Toolbar, {
         html += '</span>';
         return html;
     },
-  
-    refreshLanguage : function(lg){
+
+    refreshLanguage: function (lg) {
         this.languageMenu.refreshLanguage();
         this.toolsMenu.refreshLanguage();
+        this.advancedSearchButton.setText(kimios.lang('SearchButton'));
         this.myTasksButton.setText(kimios.lang('MyTasks'));
         this.myAccountButton.setText(kimios.lang('MyAccount'));
-        this.logoutButton.setText(kimios.lang('Logout'));
+        this.logoutButton.setTooltip(kimios.lang('Logout'));
         this.loggedAsLabel.setValue(lg != undefined ? lg : this.getLoggedAsString());
         this.doLayout();
     },
-  
-    refresh : function(){
+
+    refresh: function () {
         this.toolsMenu.refresh();
         this.doLayout();
     }

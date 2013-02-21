@@ -168,6 +168,14 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                             border: true,
                             listeners: {
                                 scope: this,
+                                tabchange: function (panel, tab) {
+                                    //checker si l'activepanel a la recherche
+                                    var panel = kimios.explorer.getActivePanel();
+                                    if (panel)
+                                        kimios.explorer.getToolbar().advancedSearchButton.toggle(panel.advancedSearchPanel.isVisible(), true);
+                                    else
+                                        kimios.explorer.getToolbar().advancedSearchButton.toggle(false, true);
+                                },
                                 contextmenu: function (panel, tab, e) {
                                     new Ext.menu.Menu({
                                         items: [
@@ -183,6 +191,7 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                                                 text: kimios.lang('CloseTab'),
                                                 iconCls: 'close',
                                                 handler: function () {
+
                                                     tab.destroy();
                                                 }
                                             }
