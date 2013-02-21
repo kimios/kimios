@@ -290,7 +290,7 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
         this.setIconClass('loading');
 
         // quick search
-        if (searchConfig.uid == undefined && searchConfig.text == undefined && searchConfig.documentType == undefined) {
+        if (searchConfig.DocumentUid == undefined && searchConfig.DocumentBody == undefined && searchConfig.DocumentTypeUid == undefined) {
             this.quickSearch(searchConfig);
         }
 

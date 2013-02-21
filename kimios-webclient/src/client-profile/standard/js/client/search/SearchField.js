@@ -65,10 +65,11 @@ kimios.search.SearchField = Ext.extend(Ext.form.TwinTriggerField, {
         } else {
             var tab = kimios.explorer.getActivePanel();
             tab.search({
-                name: kimios.explorer.getActivePanel().searchToolbar.criteriaButton.isSearchByName() == true ? value : undefined,
-                text: kimios.explorer.getActivePanel().searchToolbar.criteriaButton.isSearchByText() == true ? value : undefined,
-                fromUid: tab.uid,
-                fromType: tab.type
+                DocumentName: kimios.explorer.getActivePanel().searchToolbar.criteriaButton.isSearchByName() == true ? value : undefined,
+                DocumentBody: kimios.explorer.getActivePanel().searchToolbar.criteriaButton.isSearchByText() == true ? value : undefined,
+//                fromUid: tab.uid,
+//                fromType: tab.type
+                DocumentPath: tab.breadcrumbToolbar.getPath()
             });
         }
     },
