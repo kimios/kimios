@@ -30,11 +30,6 @@ kimios.menu.ToolsMenu = Ext.extend(Ext.Button,{
         this.build();
     },
   
-    //  initComponent : function(arguments){
-    //    kimios.menu.ToolsMenu.superclass.initComponent.apply(this, arguments);
-    //
-    //  },
-  
     build : function(){
         var rights = kimios.explorer.getViewport().rights;
         var simpleUser = true;

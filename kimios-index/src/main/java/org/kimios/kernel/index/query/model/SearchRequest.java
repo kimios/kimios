@@ -18,26 +18,17 @@
 package org.kimios.kernel.index.query.model;
 
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import java.util.List;
 
 /**
- *  @author Fabien Alin
- *
+ * @author Fabien Alin
  */
 
 @Entity
 @Table(name = "searches")
-@SequenceGenerator( allocationSize = 1, name = "seq", sequenceName = "search_id_sed")
-public class SearchRequest
-{
+@SequenceGenerator(allocationSize = 1, name = "seq", sequenceName = "search_id_sed")
+public class SearchRequest {
 
     @Id
     @GeneratedValue(generator = "seq", strategy = GenerationType.AUTO)
@@ -45,7 +36,7 @@ public class SearchRequest
     private Long id;
 
 
-    @Column(name = "search_name", nullable = false)
+    @Column(name = "search_name", nullable = false, unique = true)
     private String name;
 
 
@@ -69,96 +60,79 @@ public class SearchRequest
     @Column(name = "search_sort_dir", nullable = true)
     private String sortDir;
 
-    public String getCriteriasListJson()
-    {
+    public String getCriteriasListJson() {
         return criteriasListJson;
     }
 
-    public void setCriteriasListJson( String criteriasListJson )
-    {
+    public void setCriteriasListJson(String criteriasListJson) {
         this.criteriasListJson = criteriasListJson;
     }
 
-    public Long getId()
-    {
+    public Long getId() {
         return id;
     }
 
-    public void setId( Long id )
-    {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public void setName( String name )
-    {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public List<Criteria> getCriteriaList()
-    {
+    public List<Criteria> getCriteriaList() {
         return criteriaList;
     }
 
-    public void setCriteriaList( List<Criteria> criteriaList )
-    {
+    public void setCriteriaList(List<Criteria> criteriaList) {
         this.criteriaList = criteriaList;
     }
 
-    public String getOwner()
-    {
+    public String getOwner() {
         return owner;
     }
 
-    public void setOwner( String owner )
-    {
+    public void setOwner(String owner) {
         this.owner = owner;
     }
 
-    public String getOwnerSource()
-    {
+    public String getOwnerSource() {
         return ownerSource;
     }
 
-    public void setOwnerSource( String ownerSource )
-    {
+    public void setOwnerSource(String ownerSource) {
         this.ownerSource = ownerSource;
     }
 
-    public String getSortField()
-    {
+    public String getSortField() {
         return sortField;
     }
 
-    public void setSortField( String sortField )
-    {
+    public void setSortField(String sortField) {
         this.sortField = sortField;
     }
 
-    public String getSortDir()
-    {
+    public String getSortDir() {
         return sortDir;
     }
 
-    public void setSortDir( String sortDir )
-    {
+    public void setSortDir(String sortDir) {
         this.sortDir = sortDir;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "SearchRequest{" +
-            "id=" + id +
-            ", name='" + name + '\'' +
-            ", owner='" + owner + '\'' +
-            ", ownerSource='" + ownerSource + '\'' +
-            ", criteriaList=" + criteriaList +
-            ", criteriasListJson='" + criteriasListJson + '\'' +
-            '}';
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", owner='" + owner + '\'' +
+                ", ownerSource='" + ownerSource + '\'' +
+                ", criteriaList=" + criteriaList +
+                ", criteriasListJson='" + criteriasListJson + '\'' +
+                '}';
     }
 }

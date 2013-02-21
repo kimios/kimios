@@ -420,8 +420,7 @@ public class SolrSearchController
                 if (c.getFieldName().equals("DocumentName")) {
                     queries.add(QueryBuilder.documentNameQuery(c.getQuery()));
                 } else if (c.getFieldName().equals("DocumentBody")) {
-                    String bodyQuery = ClientUtils.escapeQueryChars(c.getQuery());
-                    queries.add("DocumentBody:" + bodyQuery);
+                    queries.add("DocumentBody:" + ClientUtils.escapeQueryChars(c.getQuery()));
                 } else if (c.getFieldName().equals("DocumentUid")) {
                     filterQueries.add("DocumentUid:" + c.getQuery());
                 } else if (c.getFieldName().equals("DocumentParent")) {

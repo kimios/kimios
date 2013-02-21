@@ -30,15 +30,19 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
         this.searchToolbar = new kimios.search.SearchToolbar({height: 26});
         this.contextToolbar = new Ext.Panel({
             border: false,
-            layout: 'hbox',
+            layout: 'border',
             height: 26,
             defaults: {height: 26},
             items: [
-                new Ext.Container({
-                    flex: 2,
+                new Ext.Panel({
+                    border:false,
+                    region:'center',
                     items: [this.breadcrumbToolbar]
                 }),
-                new Ext.Container({
+                new Ext.Panel({
+                    border:false,
+                    width: 242,
+                    region:'east',
                     items: [this.searchToolbar]
                 })
             ]

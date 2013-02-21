@@ -16,7 +16,7 @@
  */
 kimios.search.SearchToolbar = Ext.extend(Ext.Toolbar, {
   constructor : function(config) {
-    this.width = 276;
+    this.width = 306;
     this.criteriaButton = new kimios.search.SearchButton();
     this.searchField = new kimios.search.SearchField();
     this.items = [ this.criteriaButton, this.searchField];

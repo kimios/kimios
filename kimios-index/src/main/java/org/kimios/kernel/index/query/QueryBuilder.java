@@ -113,11 +113,10 @@ public class QueryBuilder {
             String extension = null;
             extension = query.toLowerCase().substring(query.indexOf(".") + 1);
             docName = query.toLowerCase().substring(0, query.indexOf("."));
-            documentNameQuery = "DocumentName:*" + docName.toLowerCase() + "*";
-
-            documentNameQuery += " AND DocumentExtension:" + extension + "*";
+            documentNameQuery = "DocumentName:*" + ClientUtils.escapeQueryChars(docName.toLowerCase()) + "*";
+            documentNameQuery += " AND DocumentExtension:" + ClientUtils.escapeQueryChars(extension) + "*";
         } else {
-            documentNameQuery = "DocumentName:*" + query.toLowerCase() + "*";
+            documentNameQuery = "DocumentName:*" + ClientUtils.escapeQueryChars(query.toLowerCase()) + "*";
         }
 
         log.debug("SOLR DocumentName Query: " + documentNameQuery);
@@ -125,7 +124,7 @@ public class QueryBuilder {
     }
 
     public static String documentParentQuery(String query) {
-        String documentPathQuery = "DocumentParent:" + query + "/*";
+        String documentPathQuery = "DocumentParent:" + ClientUtils.escapeQueryChars(query) + "/*";
         log.debug("SOLR DocumentParent Query: " + documentPathQuery);
         return documentPathQuery;
     }
@@ -139,8 +138,8 @@ public class QueryBuilder {
         Date rangeMax = localFormat.parse(max);
 
         localFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-        String documentPathQuery = "DocumentVersionUpdateDate:[" + (rangeMin != null ? solrFormat.format(rangeMin) : "*")
-                + " TO " + (rangeMax != null ? solrFormat.format(rangeMax) : "*") + "]";
+        String documentPathQuery = "DocumentVersionUpdateDate:[" + ClientUtils.escapeQueryChars(rangeMin != null ? solrFormat.format(rangeMin) : "*")
+                + " TO " + ClientUtils.escapeQueryChars(rangeMax != null ? solrFormat.format(rangeMax) : "*") + "]";
         log.debug("SOLR DocumentVersionUpdateDate Query: " + documentPathQuery);
         return documentPathQuery;
     }

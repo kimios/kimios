@@ -131,11 +131,11 @@ kimios.explorer.BreadcrumbToolbar = Ext.extend(Ext.Toolbar, {
             var url = '';
             for (var i = 0; i < n.length; i++) {
                 url += '/' + n[i];
-                this.add(this.pathSeparator);
+                this.add('/');
                 this.add(new Ext.Toolbar.Button({
                     text: n[i],
-                    iconCls: url.substr(1).indexOf('/') == -1 ? 'dm-entity-tab-properties-workspace' :
-                        'dm-entity-tab-properties-folder',
+//                    iconCls: url.substr(1).indexOf('/') == -1 ? 'dm-entity-tab-properties-workspace' :
+//                        'dm-entity-tab-properties-folder',
                     targetUrl: url,
                     handler: function () {
                         if (this.handleMouseEvents == true) {
