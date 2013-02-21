@@ -30,7 +30,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                     DocumentBody: this.textField.getValue(),
                     DocumentUid: this.uidField.getValue(),
                     DocumentParent: this.locationField.getValue(),
-                    DocumentTypeUid: this.documentTypeField.getValue(),
+                    DocumentTypeUid: this.documentTypeField.getValue() == -1 ? '' : this.documentTypeField.getValue(),
                     DocumentVersionUpdateDate_from: this.documentDateFromField.getValue() ? this.documentDateFromField.getValue().format('Y-m-d') : null,
                     DocumentVersionUpdateDate_to: this.documentDateToField.getValue() ? this.documentDateToField.getValue().format('Y-m-d') : null
                 }, this.form2);
@@ -61,7 +61,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                 params.DocumentBody = this.textField.getValue();
                 params.DocumentName = this.nameField.getValue();
                 params.DocumentUid = this.uidField.getValue();
-                params.DocumentTypeUid = this.documentTypeField.getValue();
+                params.DocumentTypeUid = this.documentTypeField.getValue() == -1 ? '' : this.documentTypeField.getValue();
                 params.DocumentParent = this.locationField.getValue();
                 if (this.documentDateFromField.getValue())
                     params.DocumentVersionUpdateDate_from = this.documentDateFromField.getValue().format('Y-m-d');
@@ -114,14 +114,14 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
 
         this.form1 = new kimios.FormPanel({
             region: 'west',
-            width: 390,
+            width: 380,
             autoScroll: true,
             border: false,
             margins: '5 10 5 10',
             bodyStyle: 'padding:5px;',
             labelWidth: 140,
             defaults: {
-                anchor: '100%',
+                anchor: '95%',
                 selectOnFocus: true,
                 style: 'font-size: 11px',
                 labelStyle: 'font-size: 11px;'
