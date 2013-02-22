@@ -129,18 +129,21 @@ public class QueryBuilder {
         return documentPathQuery;
     }
 
-    public static String documentUpdateDateQuery(String min, String max) throws ParseException {
+    public static String documentUpdateDateQuery(String dateFieldName, String min, String max) throws ParseException {
 
         SimpleDateFormat localFormat = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat solrFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
-        Date rangeMin = localFormat.parse(min);
-        Date rangeMax = localFormat.parse(max);
+        Date rangeMin = null;
+        Date rangeMax = null;
+
+        rangeMin = min != null ? localFormat.parse(min) : null;
+        rangeMax = max != null ? localFormat.parse(max) : null;
 
         localFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-        String documentPathQuery = "DocumentVersionUpdateDate:[" + ClientUtils.escapeQueryChars(rangeMin != null ? solrFormat.format(rangeMin) : "*")
-                + " TO " + ClientUtils.escapeQueryChars(rangeMax != null ? solrFormat.format(rangeMax) : "*") + "]";
-        log.debug("SOLR DocumentVersionUpdateDate Query: " + documentPathQuery);
+        String documentPathQuery = dateFieldName + ":[" + (rangeMin != null ? solrFormat.format(rangeMin) : "*")
+                + " TO " + (rangeMax != null ? solrFormat.format(rangeMax) : "*") + "]";
+        log.debug("SOLR {} Query: {}", dateFieldName, documentPathQuery);
         return documentPathQuery;
     }
 }
