@@ -28,8 +28,14 @@ kimios.explorer.Toolbar = Ext.extend(Ext.Toolbar, {
             toggleHandler: function (b, s) {
                 var vp = kimios.explorer.getActivePanel();
                 if (vp == null) {
-                    this.toggle(false, true);
-                    return false;
+//                    this.toggle(false, true);
+//                    return false;
+                    vp = new kimios.explorer.DMEntityGridPanel({
+                        emptyPanel:true
+                    });
+                    var centerPanel = Ext.getCmp('kimios-center-panel');
+                    centerPanel.add(vp);
+                    centerPanel.setActiveTab(vp);
                 }
                 if (s == true) {
                     vp.advancedSearchPanel.build();
@@ -38,6 +44,7 @@ kimios.explorer.Toolbar = Ext.extend(Ext.Toolbar, {
                     vp.advancedSearchPanel.hidePanel();
                 }
                 vp.doLayout();
+                vp.advancedSearchPanel.search();
             }
         });
 

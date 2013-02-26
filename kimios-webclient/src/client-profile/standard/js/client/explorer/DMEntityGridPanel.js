@@ -21,6 +21,8 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
         this.alreadyLoad = false;
         this.lockSearch = false;
         this.closable = true;
+//        this.title = config.emptyPanel == true ? kimios.lang('SearchButton') : kimios.lang('Loading');
+//        this.iconCls = config.emptyPanel == true ? 'search' : 'loading';
         this.title = kimios.lang('Loading');
         this.iconCls = 'loading';
         this.border = false;
@@ -35,14 +37,14 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
             defaults: {height: 26},
             items: [
                 new Ext.Panel({
-                    border:false,
-                    region:'center',
+                    border: false,
+                    region: 'center',
                     items: [this.breadcrumbToolbar]
                 }),
                 new Ext.Panel({
-                    border:false,
+                    border: false,
                     width: 242,
-                    region:'east',
+                    region: 'east',
                     items: [this.searchToolbar]
                 })
             ]
@@ -190,7 +192,13 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
                 }
             }
         });
-
+        this.listeners = {
+            beforeclose: function (panel) {
+                var centerPanel = Ext.getCmp('kimios-center-panel');
+                if (centerPanel.items.length <= 1)
+                    return false;
+            }
+        }
         this.items = [this.advancedSearchPanel, this.gridPanel, this.commentsPanel];
         kimios.explorer.DMEntityGridPanel.superclass.constructor.call(this, config);
     },

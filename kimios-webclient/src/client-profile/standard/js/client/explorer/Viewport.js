@@ -191,8 +191,9 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                                                 text: kimios.lang('CloseTab'),
                                                 iconCls: 'close',
                                                 handler: function () {
-
-                                                    tab.destroy();
+                                                    var centerPanel = Ext.getCmp('kimios-center-panel');
+                                                    if (centerPanel.items.length > 1)
+                                                        tab.destroy();
                                                 }
                                             }
                                         ]

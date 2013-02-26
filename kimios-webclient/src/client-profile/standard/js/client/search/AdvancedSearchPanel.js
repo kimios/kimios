@@ -16,6 +16,18 @@
  */
 kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
 
+    search:function(){
+        kimios.explorer.getActivePanel().advancedSearch({
+            DocumentName: this.nameField.getValue(),
+            DocumentBody: this.textField.getValue(),
+            DocumentUid: this.uidField.getValue(),
+            DocumentParent: this.locationField.getValue(),
+            DocumentTypeUid: this.documentTypeField.getValue() == -1 ? '' : this.documentTypeField.getValue(),
+            DocumentVersionUpdateDate_from: this.documentDateFromField.getValue() ? this.documentDateFromField.getValue().format('Y-m-d') : null,
+            DocumentVersionUpdateDate_to: this.documentDateToField.getValue() ? this.documentDateToField.getValue().format('Y-m-d') : null
+        }, this.form2);
+    },
+
     constructor: function (config) {
         var _t = this;
         this.layout = 'border';
@@ -25,15 +37,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
             text: kimios.lang('SearchEmptyText'),
             scope: this,
             handler: function () {
-                kimios.explorer.getActivePanel().advancedSearch({
-                    DocumentName: this.nameField.getValue(),
-                    DocumentBody: this.textField.getValue(),
-                    DocumentUid: this.uidField.getValue(),
-                    DocumentParent: this.locationField.getValue(),
-                    DocumentTypeUid: this.documentTypeField.getValue() == -1 ? '' : this.documentTypeField.getValue(),
-                    DocumentVersionUpdateDate_from: this.documentDateFromField.getValue() ? this.documentDateFromField.getValue().format('Y-m-d') : null,
-                    DocumentVersionUpdateDate_to: this.documentDateToField.getValue() ? this.documentDateToField.getValue().format('Y-m-d') : null
-                }, this.form2);
+                this.search();
             }
         });
 
