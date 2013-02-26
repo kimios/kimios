@@ -19,27 +19,21 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:jaxrs="http://cxf.apache.org/jaxrs"
-       xmlns:cxf="http://cxf.apache.org/core"
-       xsi:schemaLocation="
-        http://www.springframework.org/schema/beans
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
         http://cxf.apache.org/jaxrs
-        http://cxf.apache.org/schemas/jaxrs.xsd
-        http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
-        "
+        http://cxf.apache.org/schemas/jaxrs.xsd"
        default-autowire="byName">
 
 
-    <cxf:bus>
-        <cxf:inInterceptors>
-            <bean id="logInbound" class="org.apache.cxf.interceptor.LoggingInInterceptor"/>
-        </cxf:inInterceptors>
-        <cxf:features>
-            <cxf:logging/>
-        </cxf:features>
-    </cxf:bus>
-
-
+    <!--<cxf:bus>-->
+    <!--<cxf:inInterceptors>-->
+    <!--<bean id="logInbound" class="org.apache.cxf.interceptor.LoggingInInterceptor"/>-->
+    <!--</cxf:inInterceptors>-->
+    <!--<cxf:features>-->
+    <!--<cxf:logging/>-->
+    <!--</cxf:features>-->
+    <!--</cxf:bus>-->
 
 
     <jaxrs:server id="kimiosRestServer"
@@ -65,6 +59,7 @@
             <ref bean="extensionServiceBean"/>
             <ref bean="notificationServiceBean"/>
             <ref bean="searchServiceBean"/>
+            <ref bean="convertServiceBean"/>
         </jaxrs:serviceBeans>
         <jaxrs:extensionMappings>
             <entry key="json" value="application/json"/>

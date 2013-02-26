@@ -29,6 +29,8 @@ public class Config
 
     public static String DEFAULT_REPOSITORY_PATH = "dms.repository.default.path";
 
+    public static String DEFAULT_TEMPORARY_PATH = "dms.repository.tmp.path";
+
     public static String DEFAULT_RECENT_ITEMS = "dms.recentitems.limit";
 
     public static String DEFAULT_INDEX_PATH = "dms.repository.index.path";

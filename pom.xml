@@ -91,6 +91,7 @@
         <module>kimios-server-war</module>
         <module>kimios-client-api</module>
         <module>kimios-webclient</module>
+        <module>kimios-convert</module>
     </modules>
     <packaging>pom</packaging>
     <build>

@@ -16,21 +16,7 @@
  */
 package org.kimios.webservices;
 
-import org.kimios.kernel.controller.IAdministrationController;
-import org.kimios.kernel.controller.IDocumentController;
-import org.kimios.kernel.controller.IDocumentVersionController;
-import org.kimios.kernel.controller.IExtensionController;
-import org.kimios.kernel.controller.IFileTransferController;
-import org.kimios.kernel.controller.IFolderController;
-import org.kimios.kernel.controller.IPathController;
-import org.kimios.kernel.controller.IReportingController;
-import org.kimios.kernel.controller.IRuleManagementController;
-import org.kimios.kernel.controller.ISearchController;
-import org.kimios.kernel.controller.ISecurityController;
-import org.kimios.kernel.controller.IServerInformationController;
-import org.kimios.kernel.controller.IStudioController;
-import org.kimios.kernel.controller.IWorkflowController;
-import org.kimios.kernel.controller.IWorkspaceController;
+import org.kimios.kernel.controller.*;
 
 public abstract class CoreService
 {
@@ -75,6 +61,8 @@ public abstract class CoreService
     protected IServerInformationController informationController;
 
     protected IExtensionController extensionController;
+
+    protected IConvertController convertController;
 
     public IExtensionController getExtensionController()
     {
@@ -227,6 +215,16 @@ public abstract class CoreService
     public void setRuleController(IRuleManagementController ruleController)
     {
         this.ruleController = ruleController;
+    }
+
+    public IConvertController getConvertController()
+    {
+        return convertController;
+    }
+
+    public void setConvertController(IConvertController convertController)
+    {
+        this.convertController = convertController;
     }
 }
 
