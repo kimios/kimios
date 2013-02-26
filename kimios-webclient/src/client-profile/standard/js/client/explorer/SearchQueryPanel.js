@@ -19,7 +19,7 @@ kimios.explorer.SearchQueryPanel = Ext.extend(Ext.grid.GridPanel, {
     constructor: function (config) {
         this.id = 'kimios-queries-panel';
         this.title = kimios.lang('SearchTab');
-        this.iconCls = 'search';
+//        this.iconCls = 'search';
         this.autoScroll = true;
         this.stripeRows = true;
         this.hideHeaders = true;
@@ -86,7 +86,7 @@ kimios.explorer.SearchQueryPanel = Ext.extend(Ext.grid.GridPanel, {
         this.store.reload({
             scope: this,
             callback: function (records, options, success) {
-                this.setIconClass('search');
+                this.setIconClass(null);
             }
         });
     },

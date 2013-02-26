@@ -19,7 +19,7 @@ kimios.explorer.BookmarksPanel = Ext.extend(Ext.grid.GridPanel,{
   constructor : function(config) {
     this.id = 'kimios-bookmarks-panel',
     this.title = kimios.lang('BookmarksExplorer');
-    this.iconCls = 'qbookmark-cls';
+//    this.iconCls = 'qbookmark-cls';
     this.autoScroll = true;
     this.stripeRows = true;
     this.hideHeaders = true;
@@ -42,7 +42,7 @@ kimios.explorer.BookmarksPanel = Ext.extend(Ext.grid.GridPanel,{
     
         this.noContentNode = new Ext.tree.TreeNode({
       text : kimios.lang('NoBookmark'),
-      iconCls : 'qbookmark-cls',
+//      iconCls : 'qbookmark-cls',
       disabled : true
     });
         
@@ -84,7 +84,7 @@ kimios.explorer.BookmarksPanel = Ext.extend(Ext.grid.GridPanel,{
     this.store.reload({
       scope : this,
       callback : function(records, options, success){
-        this.setIconClass('qbookmark-cls');
+        this.setIconClass(null);
         if (kimios.explorer.getActivePanel().view != null){
           if (kimios.explorer.getActivePanel().searchMode == false){
             var type = kimios.explorer.getActivePanel().type;

@@ -41,7 +41,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-    <title>kimios Web Client</title>
+    <title>Kimios Web Client</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link rel="icon" type="image/png" href="<%=request.getContextPath()%>/images/kimios-favico.png"/>
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/js/ext/resources/css/ext-all.css"/>
@@ -50,6 +50,8 @@
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/StatusBar.css"/>
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/Spinner.css"/>
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/notifier.css"/>
+    <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/GroupTab.css"/>
+    <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/Portal.css"/>
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/icons" />
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/ext/adapter/ext/ext-base.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/ext/ext-all-debug.js"></script>
@@ -73,6 +75,8 @@
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/CheckColumn.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/Spinner.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/SpinnerField.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/GroupTabPanel.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/GroupTab.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/main/kimios.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/main/Cookies.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/main/record.js"></script>

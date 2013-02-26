@@ -15,14 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 kimios.explorer.ExplorerPanel = Ext.extend(kimios.util.DMEntityTree, {
-
     constructor: function (config) {
         this.id = 'kimios-dm-entity-tree-panel';
         this.withDoc = false;
         this.autoScroll = true;
         this.rootText = config.rootText;
         this.title = kimios.lang('WorkspaceExplorer');
-        this.iconCls = 'dm-entity-tab-properties-workspace';
+//        this.title = '<span style="font-size:10px;">' + kimios.lang('WorkspaceExplorer') + '</span>';
+//        this.iconCls = 'dm-entity-tab-properties-workspace';
         this.singleExpand = false;
         this.enableDD = true;
         this.ddGroup = 'grid2tree';
@@ -110,7 +110,7 @@ kimios.explorer.ExplorerPanel = Ext.extend(kimios.util.DMEntityTree, {
     refresh: function () {
         this.setIconClass('loading');
         this.getRootNode().reload(function () {
-            this.setIconClass('dm-entity-tab-properties-workspace');
+            this.setIconClass(null);
         }, this);
     },
 

@@ -17,8 +17,8 @@
 kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
 
     constructor: function (config) {
-        this.id = 'kimios-viewport',
-            this.renderTo = 'body';
+        this.id = 'kimios-viewport';
+        this.renderTo = 'body';
         this.layout = 'border';
         this.forceLayout = true;
         this.i18n = config.i18n;
@@ -75,21 +75,36 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                 this.tasksPanel = new kimios.tasks.TasksPanel();
 
                 // west
-                this.westPanel = new Ext.Panel({
+                this.westPanel = new Ext.ux.GroupTabPanel({
                     id: 'kimios-west-container',
                     region: 'west',
-                    layout: 'accordion',
-                    width: 250,
+//                    layout: 'accordion',
+//                    width: 250,
+                    width: 300,
                     split: true,
                     layoutConfig: {
                         titleCollapse: true,
                         animate: false
                     },
-                    minWidth: 50,
+                    activeGroup: 0,
+                    minWidth: 180,
                     border: true,
                     items: [
-                        this.explorerPanel, this.searchBookmarkPanel,
-                        this.bookmarksPanel, this.recentItemsPanel
+                        {
+//                            mainItem: 0,
+                            items: [this.explorerPanel]
+                        },
+                        {
+                            items: [this.searchBookmarkPanel]
+                        },
+                        {
+                            items: [this.bookmarksPanel]
+                        },
+                        {
+                            items: [this.recentItemsPanel]
+                        },{
+                            items:[new kimios.tasks.TasksPanel({})]
+                        }
                     ],
                     margins: '5 0 5 5',
                     listeners: {
@@ -104,48 +119,48 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                 });
 
                 // east
-                this.eastPanel = new Ext.Panel({
-                    id: 'kimios-east-container',
-                    region: 'east',
-                    layout: 'border',
-                    width: 280,
-                    split: true,
-                    animCollapse: false,
-                    collapseMode: 'mini',
-                    hideCollapseTool: true,
-                    minWidth: 150,
-                    border: false,
-                    collapsed: true,
-                    listeners: {
-                        scope: this,
-                        expand: function () {
-                            kimios.explorer.getToolbar().myTasksButton.toggle(true, true);
-                            this.tasksPanel.refresh();
-                            this.doLayout();
-                        },
-                        collapse: function () {
-                            kimios.explorer.getToolbar().myTasksButton.toggle(false, true);
-                            this.doLayout();
-                        }
-                    },
-                    items: [
-                        new Ext.TabPanel({
-                            region: 'center',
-                            margins: '5 5 5 0',
-                            items: [this.tasksPanel],
-                            enableTabScroll: true,
-                            activeTab: 0,
-                            plain: true
-                        })
-                    ]
-                });
+//                this.eastPanel = new Ext.Panel({
+//                    id: 'kimios-east-container',
+//                    region: 'east',
+//                    layout: 'border',
+//                    width: 280,
+//                    split: true,
+//                    animCollapse: false,
+//                    collapseMode: 'mini',
+//                    hideCollapseTool: true,
+//                    minWidth: 150,
+//                    border: false,
+//                    collapsed: true,
+//                    listeners: {
+//                        scope: this,
+//                        expand: function () {
+//                            kimios.explorer.getToolbar().myTasksButton.toggle(true, true);
+//                            this.tasksPanel.refresh();
+//                            this.doLayout();
+//                        },
+//                        collapse: function () {
+//                            kimios.explorer.getToolbar().myTasksButton.toggle(false, true);
+//                            this.doLayout();
+//                        }
+//                    },
+//                    items: [
+//                        new Ext.TabPanel({
+//                            region: 'center',
+//                            margins: '5 5 5 0',
+//                            items: [this.tasksPanel],
+//                            enableTabScroll: true,
+//                            activeTab: 0,
+//                            plain: true
+//                        })
+//                    ]
+//                });
 
                 // center
                 this.centerPanel = new Ext.Panel({
                     border: false,
                     region: 'center',
                     layout: 'border',
-                    margins: '5 0 5 0',
+                    margins: '5 5 5 0',
                     items: [
                         new Ext.TabPanel({
                             //                  // TODO Drag'n Drop Across Tab Panel
@@ -230,7 +245,8 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                 //main
                 this.mainPanel = new Ext.Container({
                     layout: 'border',
-                    items: [this.westPanel, this.eastPanel, this.centerPanel]
+//                    items: [this.westPanel, this.eastPanel, this.centerPanel]
+                    items: [this.westPanel, this.centerPanel]
                 });
                 this.topContainer.add(this.topPanel);
                 this.mainContainer.add(this.mainPanel);

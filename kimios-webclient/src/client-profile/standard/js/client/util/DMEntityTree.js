@@ -49,7 +49,7 @@ kimios.util.DMEntityTree = Ext.extend(Ext.tree.TreePanel,{
 
             return rNode;
         };
-        
+
         this.loadMask = true;
         if(config.dmEntityType) this.dmEntityType = 3;
         this.withDoc = (config.withDoc ? config.withDoc : false);

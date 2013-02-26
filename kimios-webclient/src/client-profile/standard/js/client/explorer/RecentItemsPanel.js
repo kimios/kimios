@@ -19,7 +19,7 @@ kimios.explorer.RecentItemsPanel = Ext.extend(Ext.grid.GridPanel,{
   constructor : function(config) {
     this.id = 'kimios-recent-items-panel',
     this.title = kimios.lang('RecentItems');
-    this.iconCls = 'value';
+//    this.iconCls = 'value';
     this.autoScroll = true;
     this.stripeRows = true;
     this.hideHeaders = true;
@@ -34,7 +34,7 @@ kimios.explorer.RecentItemsPanel = Ext.extend(Ext.grid.GridPanel,{
     });
         this.noContentNode = new Ext.tree.TreeNode({
       text : kimios.lang('NoRecentItem'),
-      iconCls : 'value',
+//      iconCls : 'value',
       disabled : true
     });
         
@@ -76,7 +76,7 @@ kimios.explorer.RecentItemsPanel = Ext.extend(Ext.grid.GridPanel,{
     this.store.reload({
       scope : this,
       callback : function(records, options, success){
-        this.setIconClass('value');
+        this.setIconClass(null);
       }
     });
   },

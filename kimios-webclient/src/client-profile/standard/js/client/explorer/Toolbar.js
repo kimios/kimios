@@ -52,15 +52,10 @@ kimios.explorer.Toolbar = Ext.extend(Ext.Toolbar, {
             text: kimios.lang('MyTasks'),
             iconCls: 'tasks',
             hidden: true,
-            enableToggle: true,
-            toggleHandler: function (b, s) {
+            handler: function () {
                 var vp = kimios.explorer.getViewport();
-                if (s == true) {
-                    vp.eastPanel.expand();
-                } else {
-                    vp.eastPanel.collapse();
-                }
-                vp.doLayout();
+                vp.westPanel.setActiveGroup(4);     // my tasks panel
+                vp.westPanel.activeGroup.setActiveTab(0);
             }
         });
 
