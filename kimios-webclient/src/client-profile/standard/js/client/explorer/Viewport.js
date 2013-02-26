@@ -72,7 +72,7 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                 this.searchBookmarkPanel = new kimios.explorer.SearchQueryPanel({
                     border: false
                 });
-                this.tasksPanel = new kimios.tasks.TasksPanel();
+                this.tasksPanel = new kimios.tasks.TasksPanel({});
 
                 // west
                 this.westPanel = new Ext.ux.GroupTabPanel({
@@ -80,7 +80,7 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                     region: 'west',
 //                    layout: 'accordion',
 //                    width: 250,
-                    width: 300,
+                    width: 350,
                     split: true,
                     layoutConfig: {
                         titleCollapse: true,
@@ -102,8 +102,9 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                         },
                         {
                             items: [this.recentItemsPanel]
-                        },{
-                            items:[new kimios.tasks.TasksPanel({})]
+                        },
+                        {
+                            items: [this.tasksPanel]
                         }
                     ],
                     margins: '5 0 5 5',
@@ -187,7 +188,7 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                                     //checker si l'activepanel a la recherche
                                     var panel = kimios.explorer.getActivePanel();
                                     if (panel)
-                                        kimios.explorer.getToolbar().advancedSearchButton.toggle(panel.advancedSearchPanel.isVisible(), true);
+                                        kimios.explorer.getToolbar().advancedSearchButton.toggle(panel.advancedSearchPanel && panel.advancedSearchPanel.isVisible(), true);
                                     else
                                         kimios.explorer.getToolbar().advancedSearchButton.toggle(false, true);
                                 },
