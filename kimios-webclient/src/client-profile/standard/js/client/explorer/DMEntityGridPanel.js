@@ -37,7 +37,10 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
                 new Ext.Panel({
                     border: false,
                     region: 'center',
-                    items: [this.breadcrumbToolbar]
+                    items: [new Ext.Panel({
+                        border: false,
+                        items: [this.breadcrumbToolbar]
+                    })]
                 }),
                 new Ext.Panel({
                     border: false,
@@ -47,6 +50,8 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
                 })
             ]
         });
+
+
 
         this.tbar = this.contextToolbar;
 
@@ -189,6 +194,7 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
                 }
             }
         });
+/*<<<<<<< HEAD
         this.listeners = {
             beforeclose: function (panel) {
                 var centerPanel = Ext.getCmp('kimios-center-panel');
@@ -197,9 +203,38 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
             }
         };
         this.items = [this.advancedSearchPanel, this.gridPanel, this.commentsPanel];
+=======*/
+        this.northCenterContainer = new Ext.Panel({
+             region: 'north',
+             hidden: true,
+             border: false,
+             split: true,
+             layout: 'fit',
+             height: 300
+         });
+
+        this.centerContainer = new Ext.Panel({
+               border: false,
+               region: 'center',
+               layout: 'border',
+               items: [this.gridPanel, this.northCenterContainer]
+           });
+        this.items = [this.advancedSearchPanel, this.centerContainer, this.commentsPanel ];
+
         kimios.explorer.DMEntityGridPanel.superclass.constructor.call(this, config);
     },
+    displayVirtualTree: function (virtualTreePanel){
+        this.northCenterContainer.removeAll();
+        this.northCenterContainer.add(virtualTreePanel);
+        this.northCenterContainer.setVisible(true);
+        this.doLayout();
+        this.virtualTreePanel = virtualTreePanel;
 
+        this.breadcrumbToolbar.virtualMode = true;
+        this.breadcrumbToolbar.standardMode = false;
+        this.searchToolbar.setVisible(false);
+
+    },
     initComponent: function () {
         kimios.explorer.DMEntityGridPanel.superclass.initComponent.apply(this, arguments);
 
@@ -330,18 +365,35 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
         });
     },
 
-    displayPagingToolBar: function (searchStore) {
+    displayPagingToolBar: function (searchStore, virtualTreeEnable) {
         if (searchStore) {
             this.pagingToolBar.bindStore(searchStore);
-            this.breadcrumbToolbar.disable();
+            if(virtualTreeEnable){
+                var virtualTreePanel = this.virtualTreePanel;
+                this.pagingToolBar.on('beforechange', function( pg, params ){
+                    if(virtualTreePanel && virtualTreePanel.currentPath){
+                        params.virtualPath = virtualTreePanel.currentPath;
+                    }
+                    return true;
+                });
+                this.breadcrumbToolbar.virtualMode = true;
+                this.breadcrumbToolbar.standardMode = false;
+            }
             this.pagingToolBar.setVisible(true);
             this.pagingToolBar.enable();
 
+
+
         } else {
+            this.breadcrumbToolbar.virtualMode = false;
+            this.breadcrumbToolbar.standardMode = true;
+
             this.pagingToolBar.disable();
             this.pagingToolBar.hide();
             this.breadcrumbToolbar.enable();
         }
+
+        this.breadcrumbToolbar.setPath();
 
         this.doLayout();
     },
@@ -352,6 +404,9 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
         this.pagingToolBar.hide();
         this.breadcrumbToolbar.enable();
         this.breadcrumbToolbar.show();
+
+        this.breadcrumbToolbar.virtualMode = false;
+        this.breadcrumbToolbar.standardMode = true;
     },
 
     advancedSearch: function (searchConfig, form) {

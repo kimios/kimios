@@ -98,7 +98,7 @@ public interface FileTransferService
 
     @GET
     @Path( "/downloadDocumentVersion" )
-    @Produces( MediaType.APPLICATION_OCTET_STREAM )
+    @Produces( value = {MediaType.APPLICATION_OCTET_STREAM, MediaType.APPLICATION_JSON} )
     public InputStream downloadDocumentVersion( @QueryParam("sessionId") String sessionId,
                                                 @QueryParam("transactionId") long transactionId )
             throws DMServiceException;

@@ -110,15 +110,14 @@ public class SearchController
     }
 
 
-    public SearchResponse advancedSearchDocument( String sessionId,
-                                                  List<Criteria> criteriaList, int start, int pageSize, String sort,
-                                                  String sortDir )
+    public SearchResponse advancedSearchDocument( String sessionId, List<Criteria> criteriaList, int start,
+                                                  int pageSize, String sort, String sortDir, String virtualPath )
         throws Exception
     {
         try
         {
-            return client.advancedSearchDocuments( sessionId, criteriaList, start, pageSize,
-                                                   sort, sortDir );
+            return client.advancedSearchDocuments( sessionId, criteriaList, start, pageSize, sort, sortDir,
+                                                   virtualPath );
         }
         catch ( Exception e )
         {
@@ -179,12 +178,12 @@ public class SearchController
 
 
     public SearchResponse executeSearchQuery( String sessionId, long savedQueryId, int start, int pageSize, String sort,
-                                              String sortDir )
+                                              String sortDir, String virtualPath )
         throws Exception
     {
         try
         {
-            return client.executeSearchQuery( sessionId, savedQueryId, start, pageSize, sort, sortDir );
+            return client.executeSearchQuery( sessionId, savedQueryId, start, pageSize, sort, sortDir, virtualPath );
         }
         catch ( Exception e )
         {

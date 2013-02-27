@@ -200,6 +200,31 @@ kimios = {
         });
 
     },
+    ajaxRequestWithAnswer : function(url, params, handler) {
+        kimios.mask();
+
+        var fHandler = function(resp, opt) {
+            kimios.unmask();
+            kimios.MessageBox.exception( {
+                                             exception : 'HTTP error: ' + resp.status + ' '
+                                                     + resp.statusText,
+                                             stackTrace : resp.responseText
+                                         });
+        };
+
+        var sHandler = function(resp, opt) {
+            kimios.unmask();
+            handler(resp);
+        };
+
+        Ext.Ajax.request( {
+                              url : getBackEndUrl(url),
+                              params : params,
+                              success : sHandler,
+                              failure : fHandler
+                          });
+
+    },
 
     ajaxSubmit: function (url, params, successHandler, failureHandler) {
         kimios.mask();

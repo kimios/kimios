@@ -22,6 +22,7 @@ import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.kimios.client.controller.SecurityController;
 import org.kimios.kernel.index.query.model.Criteria;
 import org.kimios.kernel.index.query.model.SearchRequest;
+import org.kimios.kernel.index.query.model.SearchResponse;
 import org.kimios.webservices.DateParamConverter;
 import org.kimios.webservices.NotificationService;
 import org.kimios.webservices.SearchService;
@@ -29,6 +30,7 @@ import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import javax.ws.rs.core.MediaType;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -45,7 +47,7 @@ public class ManualLoadingTester
     public static void main( String[] args )
         throws Exception
     {
-        Properties prop = new Properties();
+        /*Properties prop = new Properties();
         prop.setProperty( "server.url", "http://localhost:8080" );
         prop.setProperty( "service.context", "/services" );
         prop.setProperty( "temp.directory", "/tmp" );
@@ -80,41 +82,66 @@ public class ManualLoadingTester
 
          */
         //proxy.acceptRequest(sessionId, 17434, 1, "farfou", "testing", new Date(), "");
-
+           /*
         List<Criteria> criteriaList = new ArrayList<Criteria>();
 
         Criteria q = new Criteria();
-
-        q.setQuery( "My query" );
-        q.setLevel( 1 );
-        q.setFaceted( false );
-        q.setFacetRangeMin( "WHAT" );
-
-        criteriaList.add( q );
-
-        q = new Criteria();
-
-        q.setQuery( "My query2" );
-        q.setLevel( 2 );
+        /*List<String> fq = new ArrayList<String>();
+         /*
+        fq.add( "Facture_teclib" );
+        q.setFiltersValues( fq );
+        q.setLevel( 0 );
         q.setFaceted( true );
-        q.setFacetRangeMin( "NIA" );
+        q.setFieldName( "DocumentOwner" );
+        criteriaList.add( q );
+        q = new Criteria();
+        q.setQuery( null );
+        q.setLevel( 1 );
+        q.setFaceted( true );
+        q.setFieldName( "DocumentCreationDate" );
+        q.setRangeMin( "2010-01-01'T'00:00:00Z" );
+        q.setRangeMax( "2013-12-31'T'00:00:00Z" );
+        q.setDateFacetGapRange( "1" );
+        q.setDateFacetGapType( "YEAR" );
 
         criteriaList.add( q );
+        //"Facture_Fournisseur/2010-04-01T00:00:00Z TO 2010-05-01T00:00:00Z"
 
-        searchService.saveSearchQuery( sessionId, null, "Search Request Name", criteriaList, null, null );
+        searchService.saveSearchQuery( sessionId, null, "FacetedOwner", criteriaList, null, null);
+        SearchResponse response =
+            searchService.advancedSearchDocuments( sessionId, criteriaList, 0, 10, null, null, "flegastelois@teclib/2011-01-01T00:00:00Z TO 2011-01-01T00:00:00Z+1MONTH");
 
+        if ( response.getFacetsData() != null )
+        {
+            for ( Object o : response.getFacetsData().keySet() )
+            {
+
+                Date endDate = null;
+                try
+                {
+                    DateMathParser mp = new DateMathParser( TimeZone.getTimeZone( "UTC" ), Locale.getDefault() );
+                    mp.setNow( new SimpleDateFormat( "yyyy-MM-dd'T'hh:mm:ss'Z'" ).parse( o.toString() ) );
+                    endDate = mp.parseMath( "+" + q.getDateFacetGapRange() + q.getDateFacetGapType() );
+                }
+                catch ( Exception e )
+                {
+
+                }
+
+                System.out.println( " > " + o + " / " + endDate + "      =====> " + response.getFacetsData().get( o ) );
+            }
+
+        }   */
+
+       /* searchService.saveSearchQuery( sessionId, null, "Search Request Name", criteriaList, null, null );
         List<SearchRequest> srList = searchService.listSearchQueries( sessionId );
-
         for ( SearchRequest sr : srList )
         {
             System.out.println( " >" + sr );
             System.out.println( "Removing: " );
             searchService.deleteSearchQuery( sessionId, sr.getId() );
-
         }
-
-        System.out.println( " > " + searchService.listSearchQueries( sessionId ).size() );
-
+        /*System.out.println( " > " + searchService.listSearchQueries( sessionId ).size() );*/
 
     }
 }

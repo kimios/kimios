@@ -34,10 +34,12 @@ import org.kimios.kernel.exception.AccessDeniedException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.IndexException;
 import org.kimios.kernel.index.ISolrIndexManager;
+import org.kimios.kernel.index.query.FacetQueryBuilder;
 import org.kimios.kernel.index.query.QueryBuilder;
 import org.kimios.kernel.index.query.factory.*;
 import org.kimios.kernel.index.query.factory.DocumentFactory;
 import org.kimios.kernel.index.query.model.Criteria;
+import org.kimios.kernel.index.query.model.DmsSolrFields;
 import org.kimios.kernel.index.query.model.SearchRequest;
 import org.kimios.kernel.index.query.model.SearchResponse;
 import org.kimios.kernel.security.Session;
@@ -57,7 +59,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 
 /**
@@ -498,18 +502,36 @@ public class SolrSearchController
 
 
     public SearchResponse advancedSearchDocuments( Session session, List<Criteria> criteriaList, int start,
-                                                   int pageSize, String sortField, String sortDir )
+                                                   int pageSize, String sortField, String sortDir, String virtualPath )
         throws DataSourceException, ConfigException, IndexException, IOException, ParseException
     {
 
-        SolrQuery query = this.parseQueryFromListCriteria( session, start, pageSize, criteriaList, sortField, sortDir );
+        SolrQuery query =
+            this.parseQueryFromListCriteria( session, start, pageSize, criteriaList, sortField, sortDir, virtualPath );
         SearchResponse searchResponse = solrIndexManager.executeSolrQuery( query );
         return searchResponse;
 
     }
 
+
+    public SearchResponse advancedSearchDocuments( Session session, List<Criteria> criteriaList, int start,
+                                                   int pageSize, String sortField, String sortDir )
+        throws DataSourceException, ConfigException, IndexException, IOException, ParseException
+    {
+
+        return advancedSearchDocuments( session, criteriaList, start, pageSize, sortField, sortDir, null );
+    }
+
     private SolrQuery parseQueryFromListCriteria( Session session, int page, int pageSize, List<Criteria> criteriaList,
                                                   String sortField, String sortDir )
+        throws ParseException
+    {
+
+        return this.parseQueryFromListCriteria( session, page, pageSize, criteriaList, sortField, sortDir, null );
+    }
+
+    private SolrQuery parseQueryFromListCriteria( Session session, int page, int pageSize, List<Criteria> criteriaList,
+                                                  String sortField, String sortDir, String virtualPath )
         throws ParseException
     {
 
@@ -526,9 +548,102 @@ public class SolrSearchController
             String aclQuery = QueryBuilder.buildAclQuery( session );
             aclFilterQueries.add( aclQuery );
         }
+
+        boolean someFacet = false;
+
+        int requiredDepth = -1;
+        Map<Integer, String> pathIndex = new HashMap<Integer, String>();
+        if ( virtualPath != null )
+        {
+            if(virtualPath.startsWith( "/" ))
+                virtualPath = virtualPath.substring( 1 );
+            String[] vPaths = virtualPath.split( "/" );
+            for ( String p : vPaths )
+            {
+                requiredDepth++;
+                pathIndex.put( requiredDepth, p );
+            }
+        }
+
         for ( Criteria c : criteriaList )
         {
-            if ( c.getQuery() != null && c.getQuery().trim().length() > 0 || c.getRangeMin() != null
+
+            if ( c.isFaceted() )
+            {
+
+                if ( c.getLevel() != null && c.getLevel() > -1 && pathIndex.containsKey( c.getLevel() ) )
+                {
+                    /*
+                        Gen filter queries
+                     */
+                    Class fieldType = DmsSolrFields.sortFieldMapping.get( c.getFieldName() );
+                    if ( fieldType.equals( Date.class ) )
+                    {
+                        String pathDate = pathIndex.get( c.getLevel() );
+                        String dateQuery = c.getFieldName() + ":[" + pathDate + "]";
+                        filterQueries.add( dateQuery );
+                    }
+                    else if ( Number.class.isAssignableFrom( fieldType ) )
+                    {
+                        String numberPath = pathIndex.get( c.getLevel() );
+                        String numberQuery = c.getFieldName() + ":[" + numberPath +"]";
+                        filterQueries.add( numberQuery );
+                    }
+                    else if ( fieldType.equals( String.class ) )
+                    {
+                        String stringQuery = c.getFieldName() + ":" + ClientUtils.escapeQueryChars( pathIndex.get( c.getLevel() ));
+                        filterQueries.add( stringQuery );
+                    }
+                }
+                else
+                {
+                    try
+                    {
+
+                    /*
+                        Check depth
+                     */
+
+                        Class fieldType = DmsSolrFields.sortFieldMapping.get( c.getFieldName() );
+                        if ( fieldType.equals( Date.class ) )
+                        {
+                            indexQuery =
+                                FacetQueryBuilder.dateFacetBuiler( indexQuery, c.getFieldName(), c.getRangeMin(),
+                                                                   c.getRangeMax(), c.getDateFacetGapType(),
+                                                                   c.getDateFacetGapRange() );
+                        }
+                        else if ( Number.class.isAssignableFrom( fieldType ) )
+                        {
+                            indexQuery =
+                                FacetQueryBuilder.numberFacetBuiler( indexQuery, c.getFieldName(), c.getRangeMin(),
+                                                                     c.getRangeMax(), c.getFacetRangeGap() );
+                        }
+                        else if ( fieldType.equals( String.class ) )
+                        {
+                            indexQuery =
+                                FacetQueryBuilder.stringFacetBuilder( indexQuery, c.getFieldName(), c.getQuery() );
+                        }
+                        else
+                        {
+                            throw new IndexException( "UnknownFacetFieldType" );
+                        }
+
+                        someFacet = c.isFaceted();
+                    }
+                    catch ( Exception e )
+                    {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            else if ( c.getFiltersValues() != null && c.getFiltersValues().size() > 0 )
+            {
+                for ( String e : c.getFiltersValues() )
+                {
+                    filterQueries.add( c.getFieldName() + ":" + e );
+                }
+            }
+            else if ( c.getQuery() != null && c.getQuery().trim().length() > 0 || c.getRangeMin() != null
                 || c.getRangeMax() != null )
             {
                 if ( c.getFieldName().equals( "DocumentName" ) )
@@ -549,13 +664,12 @@ public class SolrSearchController
                 }
                 else if ( c.getFieldName().equals( "DocumentVersionUpdateDate" ) )
                 {
-                    queries.add( QueryBuilder.documentUpdateDateQuery( "DocumentVersionUpdateDate", c.getRangeMin(),
-                                                                       c.getRangeMax() ) );
+                    queries.add(
+                        QueryBuilder.dateQuery( "DocumentVersionUpdateDate", c.getRangeMin(), c.getRangeMax() ) );
                 }
                 else if ( c.getFieldName().equals( "DocumentCreationDate" ) )
                 {
-                    queries.add( QueryBuilder.documentUpdateDateQuery( "DocumentCreationDate", c.getRangeMin(),
-                                                                       c.getRangeMax() ) );
+                    queries.add( QueryBuilder.dateQuery( "DocumentCreationDate", c.getRangeMin(), c.getRangeMax() ) );
                 }
                 else if ( c.getFieldName().equals( "DocumentVersionHash" ) )
                 {
@@ -619,10 +733,8 @@ public class SolrSearchController
                             if ( toAdd )
                             {
                                 String metaNumberQuery =
-                                    "MetaDataNumber_" + meta.getUid() + ":[" + ( min != null ? min : "*" ) + " TO " + (
-                                        max != null
-                                            ? max
-                                            : "*" ) + "]";
+                                    QueryBuilder.numberQuery( "MetaDataNumber_" + meta.getUid(), c.getRangeMin(),
+                                                              c.getRangeMax() );
 
                                 queries.add( metaNumberQuery );
                             }
@@ -662,8 +774,8 @@ public class SolrSearchController
                                 DateFormat df = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ss'Z'" );
                                 df.setTimeZone( TimeZone.getTimeZone( "UTC" ) );
                                 String metaDateQuery =
-                                    QueryBuilder.documentUpdateDateQuery( "MetaDataDate_" + meta.getUid(),
-                                                                          c.getRangeMin(), c.getRangeMax() );
+                                    QueryBuilder.dateQuery( "MetaDataDate_" + meta.getUid(), c.getRangeMin(),
+                                                            c.getRangeMax() );
 
                                 queries.add( metaDateQuery );
                             }
@@ -678,9 +790,6 @@ public class SolrSearchController
                 }
             }
         }
-
-
-
 
         indexQuery.setFilterQueries( filterQueries.toArray( new String[]{ } ) );
         if ( sortField != null )
@@ -704,14 +813,24 @@ public class SolrSearchController
             /*
                 Convert filter queries in query, to get result
              */
-            for ( String q : filterQueries )
+
+            if ( someFacet )
             {
-                sQuery.append( "+" );
-                sQuery.append( q );
-                sQuery.append( " " );
+                sQuery.append( "*:*" );
+            }
+            else
+            {
+                for ( String q : filterQueries )
+                {
+                    sQuery.append( "+" );
+                    sQuery.append( q );
+                    sQuery.append( " " );
+                }
             }
 
-        }   else {
+        }
+        else
+        {
             filterQueries.addAll( aclFilterQueries );
             indexQuery.setFilterQueries( filterQueries.toArray( new String[]{ } ) );
 
@@ -737,6 +856,14 @@ public class SolrSearchController
                                               String sortDir )
         throws AccessDeniedException, DataSourceException, ConfigException, IndexException, IOException, ParseException
     {
+        return this.executeSearchQueryOrBrowse( session, id, start, pageSize, sortField, sortDir, null );
+    }
+
+
+    public SearchResponse executeSearchQueryOrBrowse( Session session, Long id, int start, int pageSize,
+                                                      String sortField, String sortDir, String virtualPath )
+        throws AccessDeniedException, DataSourceException, ConfigException, IndexException, IOException, ParseException
+    {
         SearchRequest searchRequest = searchRequestFactory.loadById( id );
         if ( searchRequest == null || !( searchRequest.getOwner().equals( session.getUserName() )
             && searchRequest.getOwnerSource().equals( session.getUserSource() ) ) )
@@ -748,7 +875,8 @@ public class SolrSearchController
             objectMapper.readValue( searchRequest.getCriteriasListJson(), new TypeReference<List<Criteria>>()
             {
             } );
-        SolrQuery query = this.parseQueryFromListCriteria( session, start, pageSize, criteriaList, sortField, sortDir );
+        SolrQuery query =
+            this.parseQueryFromListCriteria( session, start, pageSize, criteriaList, sortField, sortDir, virtualPath );
         SearchResponse searchResponse = this.solrIndexManager.executeSolrQuery( query );
         return searchResponse;
     }

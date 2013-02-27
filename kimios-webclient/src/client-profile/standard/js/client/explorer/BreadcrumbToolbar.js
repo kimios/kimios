@@ -20,6 +20,8 @@ kimios.explorer.BreadcrumbToolbar = Ext.extend(Ext.Toolbar, {
         this.pathSeparator = '<img src="' + srcContextPath +
             '/images/icons/16x16/select.png" border="0" align="absmiddle" alt="&nbsp;&raquo;&nbsp;"/>';
         kimios.explorer.BreadcrumbToolbar.superclass.constructor.call(this, config);
+
+        this.standardMode = true;
     },
 
     getPath: function () {
@@ -28,8 +30,95 @@ kimios.explorer.BreadcrumbToolbar = Ext.extend(Ext.Toolbar, {
 
     setPath: function (path) {
         this.currentPath = path;
-        var ap = kimios.explorer.getActivePanel();
+
         this.removeAll();
+        if(this.standardMode){
+            this.setStandardMode(path);
+        }
+        if(this.virtualMode){
+            this.setVirtualMode(path);
+        }
+        this.doLayout();
+    },
+
+    back: function (url) {
+        if(this.virtualMode){
+            this.virtualTreePanel.setPath(url);
+        } else if(this.standardMode) {
+            kimios.explorer.getTreePanel().synchronize(url);
+            var node = kimios.explorer.getTreePanel().getSelectionModel().getSelectedNode();
+            kimios.explorer.getActivePanel().loadEntity({
+                uid: node.attributes.dmEntityUid,
+                type: node.attributes.type
+            });
+        }
+    },
+
+    refreshLanguage: function () {
+        if (!this.upButton)
+            return;
+        this.upButton.setTooltip(kimios.lang('Up'));
+        this.refreshButton.setTooltip(kimios.lang('Refresh'));
+        this.newWorkspaceButton.setTooltip(kimios.lang('NewWorkspace'));
+        this.newFolderButton.setTooltip(kimios.lang('NewFolder'));
+        this.importDocumentButton.setTooltip(kimios.lang('ImportDocument'));
+        this.doLayout();
+    } ,
+
+    setVirtualMode: function(path){
+        this.virtualMode = true;
+        var ap = this.virtualTreePanel;
+        this.upButton = new Ext.Toolbar.Button({
+            disabled: path == undefined,
+            tooltip: kimios.lang('Up'),
+            iconCls: 'undo',
+            handler: function (btn, evt) {
+                btn.disable();
+                ap.setPath(ap.currentPath.substr(0, ap.lastIndexOf('/')));
+            }
+        });
+        this.refreshButton = new Ext.Toolbar.Button({
+            tooltip: kimios.lang('Refresh'),
+            iconCls: 'refresh',
+            scope: this,
+            disabled: true,
+            handler: function (btn, evt) {
+                btn.disable();
+                ap.setPath(ap.currentPath);
+            }
+        });
+
+        this.add(this.refreshButton);
+        this.add(this.upButton);
+        this.addSeparator();
+        this.add(' ');
+
+
+        var me = this;
+        if (path != undefined) {
+            var n = path.substr(1).split('/');
+            var url = '';
+            for (var i = 0; i < n.length; i++) {
+                url += '/' + n[i];
+                this.add('/');
+                this.add(new Ext.Toolbar.Button({
+                    text: n[i],
+                    targetUrl: url,
+                    handler: function () {
+                        if (this.handleMouseEvents == true) {
+                            me.back(targetUrl);
+                        }
+                    }
+                }));
+            }
+        }
+
+        this.doLayout();
+    },
+
+    setStandardMode: function(path){
+        var ap = kimios.explorer.getActivePanel();
+        this.standardMode = true;
         this.upButton = new Ext.Toolbar.Button({
             disabled: path == undefined,
             tooltip: kimios.lang('Up'),
@@ -154,27 +243,5 @@ kimios.explorer.BreadcrumbToolbar = Ext.extend(Ext.Toolbar, {
                 }));
             }
         }
-
-        this.doLayout();
-    },
-
-    back: function (url) {
-        kimios.explorer.getTreePanel().synchronize(url);
-        var node = kimios.explorer.getTreePanel().getSelectionModel().getSelectedNode();
-        kimios.explorer.getActivePanel().loadEntity({
-            uid: node.attributes.dmEntityUid,
-            type: node.attributes.type
-        });
-    },
-
-    refreshLanguage: function () {
-        if (!this.upButton)
-            return;
-        this.upButton.setTooltip(kimios.lang('Up'));
-        this.refreshButton.setTooltip(kimios.lang('Refresh'));
-        this.newWorkspaceButton.setTooltip(kimios.lang('NewWorkspace'));
-        this.newFolderButton.setTooltip(kimios.lang('NewFolder'));
-        this.importDocumentButton.setTooltip(kimios.lang('ImportDocument'));
-        this.doLayout();
     }
 });

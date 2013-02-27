@@ -21,7 +21,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 import java.util.Vector;
 
@@ -29,7 +31,9 @@ import org.apache.lucene.search.Query;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.client.solrj.response.RangeFacet;
 import org.apache.solr.client.solrj.util.ClientUtils;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
@@ -405,6 +409,46 @@ public class SolrIndexManager
 
             searchResponse.setResults( new Long( documentList.getNumFound() ).intValue() );
             searchResponse.setRows( solrDocumentFactory.getPojosFromSolrInputDocument( rsp.getResults() ) );
+            HashMap facetsData = new HashMap();
+            if ( rsp.getFacetRanges() != null )
+            {
+                for ( RangeFacet facet : rsp.getFacetRanges() )
+                {;
+                    List<RangeFacet.Count> items = facet.getCounts();
+                    for ( RangeFacet.Count fc : items )
+                    {
+                        if ( facet.getStart() instanceof Date )
+                        {
+                            facetsData.put( fc.getValue() + " TO " + fc.getValue() + facet.getGap().toString(),
+                                            new Object[]{ fc.getValue(), fc.getCount() } );
+                        }
+                        else
+                        {
+                            facetsData.put( ( fc.getValue() + " TO " + ( Long.parseLong( fc.getValue() )
+                                + ( (Number) facet.getGap() ).longValue() ) ),
+                                            new Object[]{ fc.getValue(), fc.getCount() } );
+                        }
+                    }
+                    break;
+                }
+            }
+            if ( rsp.getFacetFields() != null )
+            {
+                for ( FacetField facet : rsp.getFacetFields() )
+                {
+                    System.out.print(facet.getName() + " --> " + facet.getValueCount());
+                    List<FacetField.Count> items = facet.getValues();
+                    if(items != null){
+                        for ( FacetField.Count fc : items )
+                        {
+                            facetsData.put( fc.getName(), new Object[]{ fc.getName(), fc.getCount() } );
+                        }
+                        break;
+                    }
+
+                }
+            }
+            searchResponse.setFacetsData( facetsData );
             return searchResponse;
         }
         catch ( SolrServerException ex )

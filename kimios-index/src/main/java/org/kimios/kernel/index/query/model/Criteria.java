@@ -33,17 +33,13 @@ public class Criteria
 
     private boolean isFaceted;
 
-    private int level = 0;
+    private Integer level = 0;
 
     private List<String> filtersValues;
 
     private String facetField;
 
     private boolean isFacetRange;
-
-    private String facetRangeMin;
-
-    private String facetRangeMax;
 
     private String facetRangeGap;
 
@@ -55,6 +51,29 @@ public class Criteria
 
     private String rangeMax;
 
+    private String dateFacetGapType;
+
+    private String dateFacetGapRange;
+
+    public String getDateFacetGapType()
+    {
+        return dateFacetGapType;
+    }
+
+    public void setDateFacetGapType( String dateFacetGapType )
+    {
+        this.dateFacetGapType = dateFacetGapType;
+    }
+
+    public String getDateFacetGapRange()
+    {
+        return dateFacetGapRange;
+    }
+
+    public void setDateFacetGapRange( String dateFacetGapRange )
+    {
+        this.dateFacetGapRange = dateFacetGapRange;
+    }
 
     public String getQuery()
     {
@@ -76,12 +95,12 @@ public class Criteria
         isFaceted = faceted;
     }
 
-    public int getLevel()
+    public Integer getLevel()
     {
         return level;
     }
 
-    public void setLevel( int level )
+    public void setLevel( Integer level )
     {
         this.level = level;
     }
@@ -114,26 +133,6 @@ public class Criteria
     public void setFacetRange( boolean facetRange )
     {
         isFacetRange = facetRange;
-    }
-
-    public String getFacetRangeMin()
-    {
-        return facetRangeMin;
-    }
-
-    public void setFacetRangeMin( String facetRangeMin )
-    {
-        this.facetRangeMin = facetRangeMin;
-    }
-
-    public String getFacetRangeMax()
-    {
-        return facetRangeMax;
-    }
-
-    public void setFacetRangeMax( String facetRangeMax )
-    {
-        this.facetRangeMax = facetRangeMax;
     }
 
     public String getFacetRangeGap()
@@ -218,8 +217,6 @@ public class Criteria
             ", filtersValues=" + filtersValues +
             ", facetField='" + facetField + '\'' +
             ", isFacetRange=" + isFacetRange +
-            ", facetRangeMin='" + facetRangeMin + '\'' +
-            ", facetRangeMax='" + facetRangeMax + '\'' +
             ", facetRangeGap='" + facetRangeGap + '\'' +
             ", metaId=" + metaId +
             ", metaType=" + metaType +

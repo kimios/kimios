@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 import javax.jws.WebService;
 import java.util.List;
 
-@WebService(targetNamespace = "http://kimios.org", serviceName = "SearchService", name = "SearchService")
+@WebService( targetNamespace = "http://kimios.org", serviceName = "SearchService", name = "SearchService" )
 public class SearchServiceImpl
         extends CoreService
         implements SearchService {
@@ -70,17 +70,21 @@ public class SearchServiceImpl
         }
     }
 
-    public org.kimios.kernel.ws.pojo.DMEntity getDMentityFromPath(String sessionUid, String path)
-            throws DMServiceException {
-        try {
-            Session s = getHelper().getSession(sessionUid);
+    public org.kimios.kernel.ws.pojo.DMEntity getDMentityFromPath( String sessionUid, String path )
+        throws DMServiceException
+    {
+        try
+        {
+            Session s = getHelper().getSession( sessionUid );
             org.kimios.kernel.ws.pojo.DMEntity entity = null;
-            DMEntity r = pathController.getDMEntityFromPath(s, path);
-            entity = new org.kimios.kernel.ws.pojo.DMEntity(r.getUid(), r.getType(), r.getName(), r.getCreationDate(),
-                    r.getOwner(), r.getOwnerSource(), r.getPath());
+            DMEntity r = pathController.getDMEntityFromPath( s, path );
+            entity = new org.kimios.kernel.ws.pojo.DMEntity( r.getUid(), r.getType(), r.getName(), r.getCreationDate(),
+                                                             r.getOwner(), r.getOwnerSource(), r.getPath() );
             return entity;
-        } catch (Exception e) {
-            throw getHelper().convertException(e);
+        }
+        catch ( Exception e )
+        {
+            throw getHelper().convertException( e );
         }
     }
 
@@ -90,82 +94,103 @@ public class SearchServiceImpl
             Session s = getHelper().getSession(sessionUid);
             String r = pathController.getPathFromDMEntity(s, entityUid);
             return r;
-        } catch (Exception e) {
-            throw getHelper().convertException(e);
+        }
+        catch ( Exception e )
+        {
+            throw getHelper().convertException( e );
         }
     }
 
 
-    public SearchResponse advancedSearchDocuments(String sessionId,
-                                                  List<Criteria> criterias, int start, int pageSize, String sortField,
-                                                  String sortDir)
-            throws DMServiceException {
-        try {
-            Session s = getHelper().getSession(sessionId);
-            return searchController.advancedSearchDocuments(s, criterias, start, pageSize, sortField, sortDir);
-        } catch (Exception e) {
-            throw getHelper().convertException(e);
+    public SearchResponse advancedSearchDocuments( String sessionId, List<Criteria> criterias, int start, int pageSize,
+                                                   String sortField, String sortDir, String virtualPath )
+        throws DMServiceException
+    {
+        try
+        {
+            Session s = getHelper().getSession( sessionId );
+            return searchController.advancedSearchDocuments( s, criterias, start, pageSize, sortField, sortDir,
+                                                             virtualPath );
+        }
+        catch ( Exception e )
+        {
+            throw getHelper().convertException( e );
         }
     }
 
 
-    public void saveSearchQuery(String sessionId, Long id, String name,
-                                List<org.kimios.kernel.index.query.model.Criteria> criterias,
-                                String sortField, String sortDir)
-            throws DMServiceException {
-        try {
-            Session s = getHelper().getSession(sessionId);
-            searchController.saveSearchQuery(s, id, name, criterias, sortField, sortDir);
-        } catch (Exception e) {
-            throw getHelper().convertException(e);
+    public void saveSearchQuery( String sessionId, Long id, String name,
+                                 List<org.kimios.kernel.index.query.model.Criteria> criterias, String sortField,
+                                 String sortDir )
+        throws DMServiceException
+    {
+        try
+        {
+            Session s = getHelper().getSession( sessionId );
+            searchController.saveSearchQuery( s, id, name, criterias, sortField, sortDir );
+        }
+        catch ( Exception e )
+        {
+            throw getHelper().convertException( e );
         }
 
     }
 
-    public void deleteSearchQuery(String sessionId,
-                                  Long id)
-            throws DMServiceException {
-        try {
-            Session s = getHelper().getSession(sessionId);
-            searchController.deleteSearchQuery(s, id);
-        } catch (Exception e) {
-            throw getHelper().convertException(e);
+    public void deleteSearchQuery( String sessionId, Long id )
+        throws DMServiceException
+    {
+        try
+        {
+            Session s = getHelper().getSession( sessionId );
+            searchController.deleteSearchQuery( s, id );
+        }
+        catch ( Exception e )
+        {
+            throw getHelper().convertException( e );
         }
     }
 
-    public List<SearchRequest> listSearchQueries(String sessionId)
-            throws DMServiceException {
-        try {
-            Session s = getHelper().getSession(sessionId);
-            return searchController.listSavedSearch(s);
-        } catch (Exception e) {
-            throw getHelper().convertException(e);
+    public List<SearchRequest> listSearchQueries( String sessionId )
+        throws DMServiceException
+    {
+        try
+        {
+            Session s = getHelper().getSession( sessionId );
+            return searchController.listSavedSearch( s );
+        }
+        catch ( Exception e )
+        {
+            throw getHelper().convertException( e );
         }
     }
 
-    public SearchRequest loadSearchQuery(String sessionId, Long id)
-            throws DMServiceException {
-        try {
-            Session s = getHelper().getSession(sessionId);
-            return searchController.loadSearchQuery(s, id);
-        } catch (Exception e) {
-            throw getHelper().convertException(e);
+    public SearchRequest loadSearchQuery( String sessionId, Long id )
+        throws DMServiceException
+    {
+        try
+        {
+            Session s = getHelper().getSession( sessionId );
+            return searchController.loadSearchQuery( s, id );
+        }
+        catch ( Exception e )
+        {
+            throw getHelper().convertException( e );
         }
     }
 
-    public SearchResponse executeSearchQuery(
-            String sessionId,
-            long queryId,
-            int start,
-            int pageSize,
-            String sortField,
-            String sortDir)
-            throws DMServiceException {
-        try {
-            Session s = getHelper().getSession(sessionId);
-            return searchController.executeSearchQuery(s, queryId, start, pageSize, sortField, sortDir);
-        } catch (Exception e) {
-            throw getHelper().convertException(e);
+    public SearchResponse executeSearchQuery( String sessionId, long queryId, int start, int pageSize, String sortField,
+                                              String sortDir, String virtualPath )
+        throws DMServiceException
+    {
+        try
+        {
+            Session s = getHelper().getSession( sessionId );
+            return searchController.executeSearchQueryOrBrowse( s, queryId, start, pageSize, sortField, sortDir,
+                                                                virtualPath );
+        }
+        catch ( Exception e )
+        {
+            throw getHelper().convertException( e );
         }
     }
 }

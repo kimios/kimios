@@ -87,7 +87,8 @@ public interface SearchService
         @QueryParam( value = "start" ) @WebParam( name = "start" ) int start,
         @QueryParam( value = "pageSize" ) @WebParam( name = "pageSize" ) int pageSize,
         @QueryParam( value = "sortField" ) @WebParam( name = "sortField" ) String sortField,
-        @QueryParam( value = "sortDir" ) @WebParam( name = "sortDir" ) String sortDir )
+        @QueryParam( value = "sortDir" ) @WebParam( name = "sortDir" ) String sortDir,
+        @QueryParam( value = "virtualPath") @WebParam(name = "virtualPath") String virtualPath )
         throws DMServiceException;
 
 
@@ -100,7 +101,7 @@ public interface SearchService
                                  @QueryParam( value = "name" ) @WebParam( name = "name" ) String name,
                                  @WebParam(name = "criterias" ) List<org.kimios.kernel.index.query.model.Criteria> criterias,
                                  @QueryParam( value = "sortField" ) @WebParam( name = "sortField" ) String sortField,
-                                 @QueryParam( value = "sortDir" ) @WebParam( name = "sortDir" ) String sortDir )
+                                 @QueryParam( value = "sortDir" ) @WebParam( name = "sortDir" ) String sortDir)
 
         throws DMServiceException;
 
@@ -136,6 +137,7 @@ public interface SearchService
         @QueryParam( value = "start" ) @WebParam( name = "start" ) int start,
         @QueryParam( value = "pageSize" ) @WebParam( name = "pageSize" ) int pageSize,
         @QueryParam( value = "sortField" ) @WebParam( name = "sortField" ) String sortField,
-        @QueryParam( value = "sortDir" ) @WebParam( name = "sortDir" ) String sortDir )
+        @QueryParam( value = "sortDir" ) @WebParam( name = "sortDir" ) String sortDir,
+        @QueryParam( value = "virtualPath") @WebParam(name = "virtualPath") String virtualPath)
         throws DMServiceException;
 }

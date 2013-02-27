@@ -34,10 +34,12 @@ import java.util.TimeZone;
 /**
  * Build Solr Queries
  */
-public class QueryBuilder {
-    private static Logger log = LoggerFactory.getLogger(QueryBuilder.class);
+public class QueryBuilder
+{
+    private static Logger log = LoggerFactory.getLogger( QueryBuilder.class );
 
-    public static String buildAclQuery(Session session) {
+    public static String buildAclQuery( Session session )
+    {
 
         List<String> aclQueriesList = new ArrayList<String>();
 
@@ -47,103 +49,116 @@ public class QueryBuilder {
             Owner Query
          */
 
-        builder.append("+(DocumentOwner:");
-        builder.append(session.getUserName());
-        builder.append("@");
-        builder.append(session.getUserSource());
-        builder.append(" OR ");
+        builder.append( "+(DocumentOwner:" );
+        builder.append( session.getUserName() );
+        builder.append( "@" );
+        builder.append( session.getUserSource() );
+        builder.append( " OR " );
         /*
             Build list of possible ACL
          */
         List<DMSecurityRule> rules = new ArrayList<DMSecurityRule>();
-        rules.add(DMSecurityRule
-                .getInstance(session.getUserName(), session.getUserSource(), SecurityEntityType.USER,
-                        DMSecurityRule.READRULE));
-        rules.add(DMSecurityRule
-                .getInstance(session.getUserName(), session.getUserSource(), SecurityEntityType.USER,
-                        DMSecurityRule.WRITERULE));
-        rules.add(DMSecurityRule
-                .getInstance(session.getUserName(), session.getUserSource(), SecurityEntityType.USER,
-                        DMSecurityRule.FULLRULE));
+        rules.add( DMSecurityRule.getInstance( session.getUserName(), session.getUserSource(), SecurityEntityType.USER,
+                                               DMSecurityRule.READRULE ) );
+        rules.add( DMSecurityRule.getInstance( session.getUserName(), session.getUserSource(), SecurityEntityType.USER,
+                                               DMSecurityRule.WRITERULE ) );
+        rules.add( DMSecurityRule.getInstance( session.getUserName(), session.getUserSource(), SecurityEntityType.USER,
+                                               DMSecurityRule.FULLRULE ) );
 
-        for (Group g : session.getGroups()) {
-            rules.add(DMSecurityRule
-                    .getInstance(g.getGid(), session.getUserSource(), SecurityEntityType.GROUP,
-                            DMSecurityRule.READRULE));
-            rules.add(DMSecurityRule
-                    .getInstance(g.getGid(), session.getUserSource(),
-                            SecurityEntityType.GROUP,
-                            DMSecurityRule.WRITERULE));
-            rules.add(DMSecurityRule
-                    .getInstance(g.getGid(), session.getUserSource(),
-                            SecurityEntityType.GROUP,
-                            DMSecurityRule.FULLRULE));
+        for ( Group g : session.getGroups() )
+        {
+            rules.add( DMSecurityRule.getInstance( g.getGid(), session.getUserSource(), SecurityEntityType.GROUP,
+                                                   DMSecurityRule.READRULE ) );
+            rules.add( DMSecurityRule.getInstance( g.getGid(), session.getUserSource(), SecurityEntityType.GROUP,
+                                                   DMSecurityRule.WRITERULE ) );
+            rules.add( DMSecurityRule.getInstance( g.getGid(), session.getUserSource(), SecurityEntityType.GROUP,
+                                                   DMSecurityRule.FULLRULE ) );
         }
 
         String or = " OR ";
 
-        for (int u = 0; u < rules.size(); u++) {
-            DMSecurityRule rule = rules.get(u);
-            builder.append("DocumentACL:");
-            builder.append(ClientUtils.escapeQueryChars(rule.getRuleHash()));
-            if (u < (rules.size() - 1)) {
-                builder.append(or);
+        for ( int u = 0; u < rules.size(); u++ )
+        {
+            DMSecurityRule rule = rules.get( u );
+            builder.append( "DocumentACL:" );
+            builder.append( ClientUtils.escapeQueryChars( rule.getRuleHash() ) );
+            if ( u < ( rules.size() - 1 ) )
+            {
+                builder.append( or );
             }
         }
-        builder.append(") ");
+        builder.append( ") " );
 
-        String bldNot = "-(DocumentACL:" + ClientUtils.escapeQueryChars(DMSecurityRule
-                .getInstance(session.getUserName(), session.getUserSource(), SecurityEntityType.USER,
-                        DMSecurityRule.NOACCESS).getRuleHash());
+        String bldNot = "-(DocumentACL:" + ClientUtils.escapeQueryChars(
+            DMSecurityRule.getInstance( session.getUserName(), session.getUserSource(), SecurityEntityType.USER,
+                                        DMSecurityRule.NOACCESS ).getRuleHash() );
         bldNot += ")";
 
-        builder.append(bldNot);
+        builder.append( bldNot );
 
-        log.debug("SOLR ACL Query: " + builder.toString());
+        log.debug( "SOLR ACL Query: " + builder.toString() );
 
         return builder.toString();
     }
 
-    public static String documentNameQuery(String query) {
+    public static String documentNameQuery( String query )
+    {
 
         String documentNameQuery = "";
-        boolean fileExtSearch = query.toLowerCase().contains(".");
-        if (fileExtSearch) {
+        boolean fileExtSearch = query.toLowerCase().contains( "." );
+        if ( fileExtSearch )
+        {
             String docName = null;
             String extension = null;
-            extension = query.toLowerCase().substring(query.indexOf(".") + 1);
-            docName = query.toLowerCase().substring(0, query.indexOf("."));
-            documentNameQuery = "DocumentName:*" + ClientUtils.escapeQueryChars(docName.toLowerCase()) + "*";
-            documentNameQuery += " AND DocumentExtension:" + ClientUtils.escapeQueryChars(extension) + "*";
-        } else {
-            documentNameQuery = "DocumentName:*" + ClientUtils.escapeQueryChars(query.toLowerCase()) + "*";
+            extension = query.toLowerCase().substring( query.indexOf( "." ) + 1 );
+            docName = query.toLowerCase().substring( 0, query.indexOf( "." ) );
+            documentNameQuery = "DocumentName:*" + ClientUtils.escapeQueryChars( docName.toLowerCase() ) + "*";
+            documentNameQuery += " AND DocumentExtension:" + ClientUtils.escapeQueryChars( extension ) + "*";
+        }
+        else
+        {
+            documentNameQuery = "DocumentName:*" + ClientUtils.escapeQueryChars( query.toLowerCase() ) + "*";
         }
 
-        log.debug("SOLR DocumentName Query: " + documentNameQuery);
+        log.debug( "SOLR DocumentName Query: " + documentNameQuery );
         return documentNameQuery;
     }
 
-    public static String documentParentQuery(String query) {
-        String documentPathQuery = "DocumentParent:" + ClientUtils.escapeQueryChars(query) + "/*";
-        log.debug("SOLR DocumentParent Query: " + documentPathQuery);
+    public static String documentParentQuery( String query )
+    {
+        String documentPathQuery = "DocumentParent:" + ClientUtils.escapeQueryChars( query ) + "/*";
+        log.debug( "SOLR DocumentParent Query: " + documentPathQuery );
         return documentPathQuery;
     }
 
-    public static String documentUpdateDateQuery(String dateFieldName, String min, String max) throws ParseException {
+    public static String numberQuery( String fieldName, String rangeMin, String rangeMax )
+    {
+        String numbeQuery =
+            fieldName + ":[" + ( rangeMin != null ? rangeMin : "*" ) + " TO " + ( rangeMax != null ? rangeMax : "*" )
+                + "]";
+        return numbeQuery;
+    }
 
-        SimpleDateFormat localFormat = new SimpleDateFormat("yyyy-MM-dd");
-        SimpleDateFormat solrFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    public static String dateQuery( String dateFieldName, String min, String max )
+        throws ParseException
+    {
+
+        SimpleDateFormat localFormat = new SimpleDateFormat( "yyyy-MM-dd" );
+        localFormat.setTimeZone( TimeZone.getTimeZone( "UTC" ) );
+        SimpleDateFormat solrFormat = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ss'Z'" );
 
         Date rangeMin = null;
         Date rangeMax = null;
 
+
         rangeMin = min != null && min.trim().length() > 0 ? localFormat.parse(min) : null;
         rangeMax = max != null && max.trim().length() > 0 ? localFormat.parse(max) : null;
 
-        localFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-        String documentPathQuery = dateFieldName + ":[" + (rangeMin != null ? solrFormat.format(rangeMin) : "*")
-                + " TO " + (rangeMax != null ? solrFormat.format(rangeMax) : "*") + "]";
-        log.debug("SOLR {} Query: {}", dateFieldName, documentPathQuery);
+        String documentPathQuery =
+            dateFieldName + ":[" + ( rangeMin != null ? solrFormat.format( rangeMin ) : "*" ) + " TO " + (
+                rangeMax != null ? solrFormat.format( rangeMax ) : "*" ) + "]";
+        log.debug( "SOLR {} Query: {}", dateFieldName, documentPathQuery );
         return documentPathQuery;
     }
+
 }

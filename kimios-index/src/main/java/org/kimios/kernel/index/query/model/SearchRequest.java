@@ -30,7 +30,8 @@ import java.util.List;
         uniqueConstraints = @UniqueConstraint(columnNames = {"search_name", "owner", "owner_source"})
 )
 @SequenceGenerator(allocationSize = 1, name = "seq", sequenceName = "search_id_sed")
-public class SearchRequest {
+public class SearchRequest
+{
 
     @Id
     @GeneratedValue(generator = "seq", strategy = GenerationType.AUTO)
@@ -62,79 +63,112 @@ public class SearchRequest {
     @Column(name = "search_sort_dir", nullable = true)
     private String sortDir;
 
-    public String getCriteriasListJson() {
+    @Column( name = "search_virtual_tree", nullable = true )
+    private Boolean virtualTree;
+
+    public Boolean isVirtualTree()
+    {
+        return virtualTree;
+    }
+
+    public void setVirtualTree( Boolean virtualTree )
+    {
+        this.virtualTree = virtualTree;
+    }
+
+    public String getCriteriasListJson()
+    {
         return criteriasListJson;
     }
 
-    public void setCriteriasListJson(String criteriasListJson) {
+    public void setCriteriasListJson( String criteriasListJson )
+    {
         this.criteriasListJson = criteriasListJson;
     }
 
-    public Long getId() {
+    public Long getId()
+    {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId( Long id )
+    {
         this.id = id;
     }
 
-    public String getName() {
+    public String getName()
+    {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName( String name )
+    {
         this.name = name;
     }
 
-    public List<Criteria> getCriteriaList() {
+    public List<Criteria> getCriteriaList()
+    {
         return criteriaList;
     }
 
-    public void setCriteriaList(List<Criteria> criteriaList) {
+    public void setCriteriaList( List<Criteria> criteriaList )
+    {
         this.criteriaList = criteriaList;
     }
 
-    public String getOwner() {
+    public String getOwner()
+    {
         return owner;
     }
 
-    public void setOwner(String owner) {
+    public void setOwner( String owner )
+    {
         this.owner = owner;
     }
 
-    public String getOwnerSource() {
+    public String getOwnerSource()
+    {
         return ownerSource;
     }
 
-    public void setOwnerSource(String ownerSource) {
+    public void setOwnerSource( String ownerSource )
+    {
         this.ownerSource = ownerSource;
     }
 
-    public String getSortField() {
+    public String getSortField()
+    {
         return sortField;
     }
 
-    public void setSortField(String sortField) {
+    public void setSortField( String sortField )
+    {
         this.sortField = sortField;
     }
 
-    public String getSortDir() {
+    public String getSortDir()
+    {
         return sortDir;
     }
 
-    public void setSortDir(String sortDir) {
+    public void setSortDir( String sortDir )
+    {
         this.sortDir = sortDir;
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "SearchRequest{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", owner='" + owner + '\'' +
-                ", ownerSource='" + ownerSource + '\'' +
-                ", criteriaList=" + criteriaList +
-                ", criteriasListJson='" + criteriasListJson + '\'' +
-                '}';
+            "id=" + id +
+            ", name='" + name + '\'' +
+            ", owner='" + owner + '\'' +
+            ", ownerSource='" + ownerSource + '\'' +
+            ", criteriaList=" + criteriaList +
+            ", criteriasListJson='" + criteriasListJson + '\'' +
+            ", sortField='" + sortField + '\'' +
+            ", sortDir='" + sortDir + '\'' +
+            ", virtualTree=" + virtualTree +
+            '}';
     }
 }

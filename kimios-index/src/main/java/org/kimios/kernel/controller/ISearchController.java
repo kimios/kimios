@@ -60,9 +60,13 @@ public interface ISearchController
             SAXException;
 
 
-    public SearchResponse advancedSearchDocuments( Session session, List<Criteria> criteriaList,
-                                                   int start, int pageSize, String sortField, String sortDir )
-            throws DataSourceException, ConfigException, IndexException, IOException, ParseException;
+    public SearchResponse advancedSearchDocuments( Session session, List<Criteria> criteriaList, int start,
+                                                   int pageSize, String sortField, String sortDir )
+        throws DataSourceException, ConfigException, IndexException, IOException, ParseException;
+
+    public SearchResponse advancedSearchDocuments( Session session, List<Criteria> criteriaList, int start,
+                                                   int pageSize, String sortField, String sortDir, String virtualPath )
+        throws DataSourceException, ConfigException, IndexException, IOException, ParseException;
 
 
     public void saveSearchQuery( Session session, Long id, String name, List<Criteria> criteriaList, String sortField,
@@ -84,7 +88,11 @@ public interface ISearchController
 
     public SearchResponse executeSearchQuery( Session session, Long id, int start, int pageSize, String sortField,
                                               String sortDir )
-            throws AccessDeniedException, DataSourceException, ConfigException, IndexException, IOException, ParseException;
+        throws AccessDeniedException, DataSourceException, ConfigException, IndexException, IOException, ParseException;
+
+    public SearchResponse executeSearchQueryOrBrowse( Session session, Long id, int start, int pageSize, String sortField,
+                                                    String sortDir, String virtualPath )
+        throws AccessDeniedException, DataSourceException, ConfigException, IndexException, IOException, ParseException;
 
 
 }

@@ -298,6 +298,31 @@ kimios.store = {
             ]
         });
     },
+    getVirtualTreeCaller: function(searchParams, virtualStore, entitiesStore){
+        var baseParams = searchParams;
+        baseParams.action = 'ExecuteSaved';
+        baseParams.start = 0;
+        baseParams.limit = 10;
+
+        kimios.ajaxRequestWithAnswer('Search', baseParams, function(resp)
+        {
+            var searchRes = Ext.util.JSON.decode(resp.responseText);
+            virtualStore.loadData(searchRes);
+            entitiesStore.loadData(searchRes);
+
+        });
+    },
+    getVirtualEntityStore : function(searchParams){
+        var baseParams = searchParams;
+        baseParams.action = 'ExecuteSaved';
+        return new DmsJsonStore( {
+             url : 'Search',
+             root: 'virtualTreeRows',
+             idProperty: 'uid',
+             fields: kimios.record.SearchRecord.virtualEntityRecord,
+             baseParams : baseParams
+        });
+    },
 
     getLastMetaValuesStore: function (uid) {
         return new DmsJsonStore({

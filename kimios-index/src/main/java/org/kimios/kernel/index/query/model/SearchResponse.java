@@ -19,7 +19,9 @@ package org.kimios.kernel.index.query.model;
 
 import org.kimios.kernel.ws.pojo.Document;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Fabien Alin <fabien.alin@gmail.com>
@@ -44,9 +46,35 @@ public class SearchResponse
 
     private int results;
 
+    private boolean facetResponse;
+
     private List<Document> rows;
 
     private List<Long> documentIds;
+
+    private String virtualPath = "";
+
+    private HashMap facetsData;
+
+    public Map getFacetsData()
+    {
+        return facetsData;
+    }
+
+    public void setFacetsData( HashMap facetsData )
+    {
+        this.facetsData = facetsData;
+    }
+
+    public boolean isFacetResponse()
+    {
+        return facetResponse;
+    }
+
+    public void setFacetResponse( boolean facetResponse )
+    {
+        this.facetResponse = facetResponse;
+    }
 
     public List<Long> getDocumentIds()
     {
@@ -76,5 +104,15 @@ public class SearchResponse
     public void setRows( List<Document> rows )
     {
         this.rows = rows;
+    }
+
+    public String getVirtualPath()
+    {
+        return virtualPath;
+    }
+
+    public void setVirtualPath( String virtualPath )
+    {
+        this.virtualPath = virtualPath;
     }
 }

@@ -878,11 +878,34 @@ kimios.record = {
                 type: 'string'
             },
             {
-                name: 'criteriasListJson',
-                type: 'string'
+                name:'criteriasListJson',
+                type:'string'
+            },{
+                name: 'virtualTree',
+                type: 'boolean'
+            }
+        ]) ,
+        virtualEntityRecord: Ext.data.Record.create([
+            {
+                name:'uid',
+                type:'int'
+            }, {
+                name: 'type',
+                type: 'int'
+            },
+            {
+                name:'name',
+                type:'string'
+            },
+            {
+                name:'virtualPath',
+                type:'string'
+            },
+            {
+                name:'virtualFolderCount',
+                type:'string'
             }
         ])
-
     }
 
 };
