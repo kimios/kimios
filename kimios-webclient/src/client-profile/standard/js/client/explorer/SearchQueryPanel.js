@@ -21,7 +21,7 @@ kimios.explorer.SearchQueryPanel = Ext.extend(Ext.grid.GridPanel, {
         this.title = kimios.lang('SearchTab');
 //        this.iconCls = 'search';
         this.autoScroll = true;
-        this.stripeRows = true;
+//        this.stripeRows = true;
         this.hideHeaders = true;
 
 //    this.ddGroup = 'firstGridDDGroup';

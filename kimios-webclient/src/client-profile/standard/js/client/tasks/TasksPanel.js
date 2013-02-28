@@ -22,7 +22,7 @@ kimios.tasks.TasksPanel = Ext.extend(Ext.grid.GridPanel, {
         this.title = kimios.lang('MyTasks');
 //        this.iconCls = 'tasks';
         this.hideHeaders = true;
-        this.stripeRows = true;
+//        this.stripeRows = true;
         this.store = kimios.store.TasksStore.getMyTasksStore(false);
         this.viewConfig = {
             forceFit: true,
@@ -115,6 +115,7 @@ kimios.tasks.TasksPanel = Ext.extend(Ext.grid.GridPanel, {
         var newTitle = kimios.lang('MyTasks') + ' ' + (this.tasksCounter > 0 ? '(' + this.tasksCounter + ')' : '');
         this.setTitle(newTitle);
         kimios.explorer.getToolbar().myTasksButton.setText(newTitle);
+        this.refresh();
         this.doLayout();
     }
 });

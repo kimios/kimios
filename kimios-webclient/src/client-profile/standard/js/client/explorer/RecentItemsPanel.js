@@ -21,7 +21,7 @@ kimios.explorer.RecentItemsPanel = Ext.extend(Ext.grid.GridPanel,{
     this.title = kimios.lang('RecentItems');
 //    this.iconCls = 'value';
     this.autoScroll = true;
-    this.stripeRows = true;
+//    this.stripeRows = true;
     this.hideHeaders = true;
     
     this.store = new DmsJsonStore( {

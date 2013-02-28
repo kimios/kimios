@@ -16,7 +16,7 @@
  */
 kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
 
-    search:function(){
+    search: function () {
         kimios.explorer.getActivePanel().advancedSearch({
             DocumentName: this.nameField.getValue(),
             DocumentBody: this.textField.getValue(),
@@ -285,6 +285,8 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
     },
 
     build: function () {
+        if (!this.isVisible())
+            return;
         this.form1.removeAll();
         this.form2.removeAll();
 
@@ -482,7 +484,6 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
         ap.hidePagingToolBar();
 
 
-
         kimios.explorer.getViewport().centerPanel.doLayout();
         this.loadedMetadatas = null;
         this.locationField.setValue(null);
@@ -491,6 +492,8 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
     },
 
     refreshLanguage: function () {
+        if (!this.isVisible())
+            return;
         this.setTitle(kimios.lang('AdvancedSearch'));
         this.clearButton.setText(kimios.lang('ClearField'));
         this.submitButton.setText(kimios.lang('SearchEmptyText'));
