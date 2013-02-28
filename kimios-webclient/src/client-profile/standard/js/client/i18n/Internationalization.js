@@ -14,22 +14,22 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-kimios.i18n.Internationalization = function(config) {
-  this.lang = config.lang;
-  this.records = config.records;
-  
-  this.getLang = function(){
-    return this.lang;
-  },
+kimios.i18n.Internationalization = function (config) {
+    this.lang = config.lang;
+    this.records = config.records;
 
-  this.getValue = function(label) {
-    for (var i=0; i<this.records.length; i++){
-      var currentLabel = this.records[i].get('label');
-      var currentValue = this.records[i].get('value');
-      if (currentLabel == label) {
-        return currentValue;
-      }
-    }
-    return '(i18n label not found)';
-  };
+    this.getLang = function () {
+        return this.lang;
+    };
+
+    this.getValue = function (label) {
+        for (var i = 0; i < this.records.length; i++) {
+            var currentLabel = this.records[i].get('label');
+            var currentValue = this.records[i].get('value');
+            if (currentLabel == label) {
+                return currentValue;
+            }
+        }
+        return '[LABEL NOT FOUND]';
+    };
 };

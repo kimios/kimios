@@ -55,6 +55,14 @@ kimios.search.SearchField = Ext.extend(Ext.form.TwinTriggerField, {
     onTrigger1Click: function (event) {
         this.setValue('');
         this.focus(false, true);
+
+        var bt = kimios.explorer.getActivePanel().breadcrumbToolbar;
+        var ap = kimios.explorer.getActivePanel();
+
+        bt.enable();
+        ap.hidePagingToolBar();
+        ap.refresh();
+
     },
 
     onTrigger2Click: function (event) {
@@ -67,8 +75,8 @@ kimios.search.SearchField = Ext.extend(Ext.form.TwinTriggerField, {
             tab.search({
                 DocumentName: kimios.explorer.getActivePanel().searchToolbar.criteriaButton.isSearchByName() == true ? value : undefined,
                 DocumentBody: kimios.explorer.getActivePanel().searchToolbar.criteriaButton.isSearchByText() == true ? value : undefined,
-//                fromUid: tab.uid,
-//                fromType: tab.type
+                fromUid: tab.uid,
+                fromType: tab.type,
                 DocumentPath: tab.breadcrumbToolbar.getPath()
             });
         }

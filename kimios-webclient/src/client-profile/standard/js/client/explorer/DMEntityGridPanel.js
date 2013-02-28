@@ -63,8 +63,8 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
             pageSize: this.pagingSize,
             displayMsg: '',
             emptyMsg: '',
-            prependButtons: true
-//            hidden: true
+            prependButtons: true,
+            hidden: true
         });
 
         // hide specific refresh button
@@ -82,8 +82,7 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
             region: 'north',
             height: 260,
             hidden: true,
-            border: false,
-            tbar: this.pagingToolBar
+            border: false
         });
         this.gridPanel = new Ext.grid.GridPanel({
             region: 'center',
@@ -104,6 +103,7 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
                 forceFit: true,
                 scrollOffset: 0
             },
+            tbar: this.pagingToolBar,
             listeners: {
                 "render": {
                     scope: this,
@@ -310,7 +310,7 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
 
     quickSearch: function (searchConfig, handle) {
         var searchStore = kimios.store.getQuickSearchStore({
-            name: searchConfig.name,
+            name: searchConfig.DocumentName,
             dmEntityUid: searchConfig.fromUid,
             dmEntityType: searchConfig.fromType
         });
@@ -335,19 +335,25 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
     displayPagingToolBar: function (searchStore) {
         if (searchStore) {
             this.pagingToolBar.bindStore(searchStore);
-//            this.pagingToolBar.setVisible(true);
+            this.breadcrumbToolbar.disable();
+            this.pagingToolBar.setVisible(true);
             this.pagingToolBar.enable();
-            this.doLayout();
+
         } else {
             this.pagingToolBar.disable();
-//            this.pagingToolBar.hide();
+            this.pagingToolBar.hide();
+            this.breadcrumbToolbar.enable();
         }
+
+        this.doLayout();
     },
 
     hidePagingToolBar: function () {
         this.pagingToolBar.purgeListeners();
         this.pagingToolBar.disable();
-//        this.pagingToolBar.hide();
+        this.pagingToolBar.hide();
+        this.breadcrumbToolbar.enable();
+        this.breadcrumbToolbar.show();
     },
 
     advancedSearch: function (searchConfig, form) {

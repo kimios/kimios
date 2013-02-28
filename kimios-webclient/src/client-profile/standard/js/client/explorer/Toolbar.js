@@ -31,7 +31,7 @@ kimios.explorer.Toolbar = Ext.extend(Ext.Toolbar, {
 //                    this.toggle(false, true);
 //                    return false;
                     vp = new kimios.explorer.DMEntityGridPanel({
-                        emptyPanel:true
+                        emptyPanel: true
                     });
                     var centerPanel = Ext.getCmp('kimios-center-panel');
                     centerPanel.add(vp);
@@ -43,8 +43,13 @@ kimios.explorer.Toolbar = Ext.extend(Ext.Toolbar, {
                 } else {
                     vp.advancedSearchPanel.hidePanel();
                 }
+
+                if (vp.advancedSearchPanel.isVisible())
+                    vp.advancedSearchPanel.search();
+                else
+                    vp.refresh();
+                vp.searchToolbar.searchField.setValue('');
                 vp.doLayout();
-                vp.advancedSearchPanel.search();
             }
         });
 

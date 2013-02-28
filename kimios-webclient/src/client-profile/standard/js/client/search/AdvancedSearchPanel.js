@@ -153,8 +153,6 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
         });
         this.form2.addEvents('metafieldload');
         this.form2.on('metafieldload', function () {
-//            if (console)console.log('metafieldload event levé');
-//            console.log('criteria length: ' + this.loadedMetadatas.length);
             if (this.loadedMetadatas) {
                 for (var i = 0; i < this.loadedMetadatas.length; ++i) {
                     var criteria = this.loadedMetadatas[i];
@@ -467,8 +465,6 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
         kimios.explorer.getActivePanel().pagingToolBar.bindStore(
             kimios.explorer.getActivePanel().gridPanel.getStore(), false);
         kimios.explorer.getActivePanel().pagingToolBar.updateInfo();
-
-
     },
 
     hidePanel: function () {
@@ -480,9 +476,18 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
         kimios.explorer.getActivePanel().contextToolbar.show();
         kimios.explorer.getToolbar().advancedSearchButton.toggle(false, true);
         st.searchField.setValue(st.searchField.getValue()); // fix
+//        st.searchField.setValue('');
+
+        var ap = kimios.explorer.getActivePanel();
+        ap.hidePagingToolBar();
+
+
+
         kimios.explorer.getViewport().centerPanel.doLayout();
         this.loadedMetadatas = null;
         this.locationField.setValue(null);
+
+
     },
 
     refreshLanguage: function () {
