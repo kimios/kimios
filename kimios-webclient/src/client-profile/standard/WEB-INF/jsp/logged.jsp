@@ -51,6 +51,7 @@
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/Spinner.css"/>
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/notifier.css"/>
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/GroupTab.css"/>
+    <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/js/ext/resources/css/kimios-theme-grouptab.css"/>
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/icons"/>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/ext/adapter/ext/ext-base.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/ext/ext-all-debug.js"></script>
