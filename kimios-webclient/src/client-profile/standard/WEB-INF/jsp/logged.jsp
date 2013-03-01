@@ -41,7 +41,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-    <title>Kimios Web Client</title>
+    <title>Kimios Web Explorer</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link rel="icon" type="image/png" href="<%=request.getContextPath()%>/images/kimios-favico.png"/>
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/js/ext/resources/css/ext-all.css"/>
@@ -54,7 +54,7 @@
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/js/ext/resources/css/kimios-theme-grouptab.css"/>
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/icons"/>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/ext/adapter/ext/ext-base.js"></script>
-    <script type="text/javascript" src="<%=request.getContextPath()%>/js/ext/ext-all-debug.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/ext/ext-all.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/FileUploadField.js"></script>
     <%@include file="/WEB-INF/jsp/core/init.jsp" %>
     <script type="text/javascript" language="javascript">

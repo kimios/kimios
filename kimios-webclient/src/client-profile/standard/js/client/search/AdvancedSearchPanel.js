@@ -50,12 +50,13 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
     constructor: function (config) {
         var _t = this;
         this.layout = 'border';
-        this.bodyStyle = 'background-color:transparent;';
+        this.bodyStyle = 'background-color:#eee;';
 
         this.submitButton = new Ext.Button({
             text: kimios.lang('SearchEmptyText'),
             scope: this,
             iconCls: 'search',
+            width: 100,
             handler: function () {
                 this.search();
             }
@@ -63,6 +64,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
 
         this.saveButton = new Ext.Button({
             text: _t.searchRequestId ? kimios.lang('Update') : kimios.lang('Create'),
+            width: 100,
             scope: this,
             iconCls: 'save',
             handler: function () {
@@ -122,6 +124,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
             text: kimios.lang('ClearField'),
             scope: this,
             disabled: true,
+
             iconCls: 'del-icon',
             handler: function (btn) {
                 this.clearForm();
@@ -130,12 +133,12 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
 
         this.form1 = new kimios.FormPanel({
             region: 'west',
-            width: 380,
+            width: 360,
             autoScroll: true,
             border: false,
             margins: '5 10 5 10',
             bodyStyle: 'padding:5px;',
-            labelWidth: 140,
+            labelWidth: 120,
 
             defaults: {
                 anchor: '95%',
@@ -143,7 +146,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                 style: 'font-size: 11px',
                 labelStyle: 'font-size: 11px;'
             },
-            bodyStyle: 'background-color:transparent;',
+            bodyStyle: 'background-color:transparent;padding:10px 0 10px 10px;',
             buttonAlign: 'left',
             fbar: [this.saveButton, '->', this.clearButton, this.submitButton]
         });
@@ -153,7 +156,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
             border: false,
             margins: '5 10 5 10',
             bodyStyle: 'padding:5px;',
-            labelWidth: 140,
+            labelWidth: 120,
             autoScroll: true,
             hidden: true,
             defaults: {
@@ -163,7 +166,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                 style: 'font-size: 11px',
                 labelStyle: 'font-size: 11px;'
             },
-            bodyStyle: 'background-color:transparent;'
+            bodyStyle: 'background-color:transparent;padding:10px 10px 10px 0;'
         });
         this.form2.addEvents('metafieldload');
         this.form2.on('metafieldload', function () {

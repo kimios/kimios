@@ -78,7 +78,7 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                 this.westPanel = new Ext.ux.GroupTabPanel({
                     id: 'kimios-west-container',
                     region: 'west',
-                    width: 320,
+                    width: 340,
                     split: true,
                     layoutConfig: {
                         titleCollapse: true,

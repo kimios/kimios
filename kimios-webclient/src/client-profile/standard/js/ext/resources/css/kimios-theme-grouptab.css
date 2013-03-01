@@ -17,22 +17,23 @@
 
 
 .x-grouptabs-panel .x-grouptabs-panel-body {
-    border: 1px solid #9dd53a;
+    border: 1px solid #ddd;
 }
 
 .x-grouptabs-panel ul.x-grouptabs-strip li.x-grouptabs-strip-active {
     border: 0;
     background: white;
-    border-top: 1px solid #9dd53a;
-    border-bottom: 1px solid #9dd53a;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
 }
 
 
 .x-tab-panel-left ul.x-grouptabs-strip li.x-grouptabs-strip-active {
-    border-left: 1px solid #9dd53a;
+    border-left: 1px solid #ddd;
 }
 
 
 .x-grouptabs-panel .x-grouptabs-strip-active a.x-grouptabs-text {
-    color: #9dd53a;
+    color: #333;
+    font-weight: bold;
 }

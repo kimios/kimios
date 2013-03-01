@@ -114,23 +114,28 @@ kimios.explorer.Toolbar = Ext.extend(Ext.Toolbar, {
         this.add(' ');
         this.add(' ');
         this.add(' ');
+        this.add(' ');
+        this.add(' ');
         this.add(this.languageMenu);
+        this.add(' ');
+        this.add(' ');
         this.add(' ');
         this.add(' ');
         this.add(' ');
 
         var buttonsArray = [];
         buttonsArray.push(this.advancedSearchButton);
+        buttonsArray.push('-');
         buttonsArray.push(this.myTasksButton);
         buttonsArray.push(this.myAccountButton);
         buttonsArray.push(this.toolsMenu);
-//        buttonsArray.push('-');
+        buttonsArray.push('-');
         buttonsArray.push(this.logoutButton);
-        this.add(new Ext.ButtonGroup({
-            columns: buttonsArray.length,
-            items: buttonsArray
-        }));
-//        this.add(buttonsArray);
+//        this.add(new Ext.ButtonGroup({
+//            columns: buttonsArray.length,
+//            items: buttonsArray
+//        }));
+        this.add(buttonsArray);
 
 
         var domainsListStore = kimios.store.AdminStore.getDomainsStore();
@@ -154,13 +159,13 @@ kimios.explorer.Toolbar = Ext.extend(Ext.Toolbar, {
     },
 
     getLoggedAsString: function () {
-        var html = kimios.lang('Welcome') + ', ';
+        var html = '<span style="color:#333">' + kimios.lang('Welcome') + ', ';
 
         if (currentName != null && currentName != '' && currentName != 'null')
-            html += '<span style="font-weight:bold;">' + currentName + '</span>';
+            html += currentName;
         else
-            html += '<span style="font-weight:bold;">' + currentUser + '@' + currentSource + '</span>';
-        return html;
+            html += currentUser + '@' + currentSource;
+        return html + '</span>';
     },
 
     refreshLanguage: function (lg) {
