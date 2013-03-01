@@ -107,9 +107,10 @@ kimios.explorer.Toolbar = Ext.extend(Ext.Toolbar, {
         kimios.explorer.Toolbar.superclass.initComponent.apply(this, arguments);
         this.add('->');
         this.add(this.loggedAsLabel);
-        this.add(' ');
+        this.add(' ');this.add(' ');this.add(' ');
+        this.add(' ');this.add(' ');this.add(' ');
         this.add(this.languageMenu);
-        this.add(' ');
+        this.add(' ');this.add(' ');this.add(' ');
 
         var buttonsArray = [];
         buttonsArray.push(this.advancedSearchButton);
@@ -143,13 +144,12 @@ kimios.explorer.Toolbar = Ext.extend(Ext.Toolbar, {
     },
 
     getLoggedAsString: function () {
-        var html = '<span style="color:gray;">' + kimios.lang('Welcome') + ', ';
+        var html = kimios.lang('Welcome') + ', ';
 
         if (currentName != null && currentName != '' && currentName != 'null')
             html += currentName;
         else
             html += currentUser + '@' + currentSource;
-        html += '</span>';
         return html;
     },
 

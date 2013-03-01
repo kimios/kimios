@@ -80,39 +80,37 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
         });
         this.advancedSearchPanel = new kimios.search.AdvancedSearchPanel({
             region: 'north',
-            height: 270,
+            height: 260,
             hidden: true,
-            border: false,
-            frame: true,
-            margins: '5 5 5 5',
-            title: kimios.lang('AdvancedSearch'),
-            closable: true,
-            tools: [
-                {
-                    id: 'close',
-                    qtip: kimios.lang('Close'),
-                    handler: function () {
-                        var vp = kimios.explorer.getActivePanel();
-                        if (vp == null) {
-                            vp = new kimios.explorer.DMEntityGridPanel({
-                                emptyPanel: true
-                            });
-                            var centerPanel = Ext.getCmp('kimios-center-panel');
-                            centerPanel.add(vp);
-                            centerPanel.setActiveTab(vp);
-                        }
-                        vp.advancedSearchPanel.hidePanel();
-
-                        if (vp.advancedSearchPanel.isVisible())
-                            vp.advancedSearchPanel.search();
-                        else
-                            vp.refresh();
-                        vp.searchToolbar.searchField.setValue('');
-                        vp.doLayout();
-                        return false;
-                    }
-                }
-            ]
+            border: false
+//           , title: kimios.lang('AdvancedSearch'),
+//            closable: true,
+//            tools: [
+//                {
+//                    id: 'close',
+//                    qtip: kimios.lang('Close'),
+//                    handler: function () {
+//                        var vp = kimios.explorer.getActivePanel();
+//                        if (vp == null) {
+//                            vp = new kimios.explorer.DMEntityGridPanel({
+//                                emptyPanel: true
+//                            });
+//                            var centerPanel = Ext.getCmp('kimios-center-panel');
+//                            centerPanel.add(vp);
+//                            centerPanel.setActiveTab(vp);
+//                        }
+//                        vp.advancedSearchPanel.hidePanel();
+//
+//                        if (vp.advancedSearchPanel.isVisible())
+//                            vp.advancedSearchPanel.search();
+//                        else
+//                            vp.refresh();
+//                        vp.searchToolbar.searchField.setValue('');
+//                        vp.doLayout();
+//                        return false;
+//                    }
+//                }
+//            ]
         });
         this.gridPanel = new Ext.grid.GridPanel({
             region: 'center',

@@ -78,8 +78,6 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                 this.westPanel = new Ext.ux.GroupTabPanel({
                     id: 'kimios-west-container',
                     region: 'west',
-//                    layout: 'accordion',
-//                    width: 250,
                     width: 350,
                     split: true,
                     layoutConfig: {
@@ -91,7 +89,6 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                     border: true,
                     items: [
                         {
-//                            mainItem: 0,
                             items: [this.explorerPanel]
                         },
                         {
@@ -118,43 +115,6 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                         }
                     }
                 });
-
-                // east
-//                this.eastPanel = new Ext.Panel({
-//                    id: 'kimios-east-container',
-//                    region: 'east',
-//                    layout: 'border',
-//                    width: 280,
-//                    split: true,
-//                    animCollapse: false,
-//                    collapseMode: 'mini',
-//                    hideCollapseTool: true,
-//                    minWidth: 150,
-//                    border: false,
-//                    collapsed: true,
-//                    listeners: {
-//                        scope: this,
-//                        expand: function () {
-//                            kimios.explorer.getToolbar().myTasksButton.toggle(true, true);
-//                            this.tasksPanel.refresh();
-//                            this.doLayout();
-//                        },
-//                        collapse: function () {
-//                            kimios.explorer.getToolbar().myTasksButton.toggle(false, true);
-//                            this.doLayout();
-//                        }
-//                    },
-//                    items: [
-//                        new Ext.TabPanel({
-//                            region: 'center',
-//                            margins: '5 5 5 0',
-//                            items: [this.tasksPanel],
-//                            enableTabScroll: true,
-//                            activeTab: 0,
-//                            plain: true
-//                        })
-//                    ]
-//                });
 
                 // center
                 this.centerPanel = new Ext.Panel({
@@ -229,6 +189,7 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                             border: false,
                             width: 280,
                             tbar: new Ext.Toolbar({
+                                style: 'background-image: url(); background-color:#fff;',
                                 height: this.topContainer.height + 1, // ie fix
                                 items: ['<img style="padding:3px; height: 40px" src="' + srcContextPath + '/images/logo.png" border="0" align="absmiddle" alt="kimios" />']
                             })
@@ -237,6 +198,7 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                             border: false,
                             flex: 1,
                             tbar: new kimios.explorer.Toolbar({
+                                style: 'background-image: url(); background-color:#fff;',
                                 height: this.topContainer.height + 1 // ie fix
                             })
                         })
