@@ -73,7 +73,7 @@
     display: block;
     color: #aaa;
     font-family: tahoma, arial, sans-serif;
-    font-weight: bolder;
+    font-weight: bold;
     text-decoration: none;
 }
 .x-tab-panel-right .x-grouptabs-strip a.x-grouptabs-text {
@@ -236,3 +236,13 @@
 .x-tab-with-icon{
     border-style:none !important;
 }
+     /*
+.x-tab-panel-body{
+    -webkit-border-top-right-radius: 8px;
+    -webkit-border-bottom-right-radius: 8px;
+    -moz-border-radius-topright: 8px;
+    -moz-border-radius-bottomright: 8px;
+
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}      */

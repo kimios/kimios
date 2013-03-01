@@ -128,8 +128,12 @@ kimios.explorer.BreadcrumbToolbar = Ext.extend(Ext.Toolbar, {
         this.add(this.newWorkspaceButton);
         this.add(this.newFolderButton);
         this.add(this.importDocumentButton);
-        this.add(' ');this.add(' ');this.add(' ');
-        this.add(' ');this.add(' ');this.add(' ');
+        this.add(' ');
+        this.add(' ');
+        this.add(' ');
+        this.add(' ');
+        this.add(' ');
+        this.add(' ');
 
         if (path != undefined) {
             var n = path.substr(1).split('/');

@@ -29,7 +29,6 @@ kimios.explorer.ExplorerPanel = Ext.extend(kimios.util.DMEntityTree, {
         this.ddScroll = true;
         this.enableDragDrop = true;
         this.useArrows = true;
-
         this.listeners = {
             beforenodedrop: {
                 fn: function (e) {

@@ -29,6 +29,24 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
         this.clearButton.setDisabled(false);
     },
 
+    clearForm: function () {
+        this.searchRequestId = null;
+        this.searchRequestName = null;
+        this.saveButton.setText(
+            this.searchRequestId ? kimios.lang('Update') : kimios.lang('Create')
+        );
+        this.nameField.setValue("");
+        this.uidField.setValue("");
+        this.textField.setValue("");
+        this.locationField.setValue("");
+        this.documentTypeField.setValue("");
+        this.documentDateFromField.setValue("");
+        this.documentDateToField.setValue("");
+        this.form2.removeAll();
+        this.clearButton.setDisabled(true);
+    },
+
+
     constructor: function (config) {
         var _t = this;
         this.layout = 'border';
@@ -99,26 +117,14 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
             }
         });
 
+
         this.clearButton = new Ext.Button({
             text: kimios.lang('ClearField'),
             scope: this,
-            disabled:true,
+            disabled: true,
             iconCls: 'del-icon',
             handler: function (btn) {
-                this.searchRequestId = null;
-                this.searchRequestName = null;
-                this.saveButton.setText(
-                    this.searchRequestId ? kimios.lang('Update') : kimios.lang('Create')
-                );
-                this.nameField.setValue("");
-                this.uidField.setValue("");
-                this.textField.setValue("");
-                this.locationField.setValue("");
-                this.documentTypeField.setValue("");
-                this.documentDateFromField.setValue("");
-                this.documentDateToField.setValue("");
-                this.form2.removeAll();
-                btn.setDisabled(true);
+                this.clearForm();
             }
         });
 
@@ -477,6 +483,8 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
         kimios.explorer.getActivePanel().pagingToolBar.bindStore(
             kimios.explorer.getActivePanel().gridPanel.getStore(), false);
         kimios.explorer.getActivePanel().pagingToolBar.updateInfo();
+
+
     },
 
     hidePanel: function () {
@@ -498,7 +506,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
         this.loadedMetadatas = null;
         this.locationField.setValue(null);
 
-
+        this.clearForm();
     },
 
     refreshLanguage: function () {

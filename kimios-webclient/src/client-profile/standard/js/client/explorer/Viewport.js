@@ -28,7 +28,7 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
             border: false,
             region: 'north',
             layout: 'fit',
-            height: 49 // do not exceed 54 pixels
+            height: 64 // do not exceed 54 pixels       ; 49 origin
         });
 
         this.mainContainer = new Ext.Panel({
@@ -78,7 +78,7 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                 this.westPanel = new Ext.ux.GroupTabPanel({
                     id: 'kimios-west-container',
                     region: 'west',
-                    width: 350,
+                    width: 320,
                     split: true,
                     layoutConfig: {
                         titleCollapse: true,
@@ -189,7 +189,7 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                             border: false,
                             width: 280,
                             tbar: new Ext.Toolbar({
-                                style: 'background-image: url(); background-color:#fff;',
+                                style: 'background-image: url(); background-color:#fff;padding:8px;',
                                 height: this.topContainer.height + 1, // ie fix
                                 items: ['<img style="padding:3px; height: 40px" src="' + srcContextPath + '/images/logo.png" border="0" align="absmiddle" alt="kimios" />']
                             })
