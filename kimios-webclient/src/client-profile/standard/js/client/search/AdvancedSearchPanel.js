@@ -26,6 +26,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
             DocumentVersionUpdateDate_from: this.documentDateFromField.getValue() ? this.documentDateFromField.getValue().format('Y-m-d') : null,
             DocumentVersionUpdateDate_to: this.documentDateToField.getValue() ? this.documentDateToField.getValue().format('Y-m-d') : null
         }, this.form2);
+        this.clearButton.setDisabled(false);
     },
 
     constructor: function (config) {
@@ -36,6 +37,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
         this.submitButton = new Ext.Button({
             text: kimios.lang('SearchEmptyText'),
             scope: this,
+            iconCls: 'search',
             handler: function () {
                 this.search();
             }
@@ -44,6 +46,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
         this.saveButton = new Ext.Button({
             text: _t.searchRequestId ? kimios.lang('Update') : kimios.lang('Create'),
             scope: this,
+            iconCls: 'save',
             handler: function () {
                 var fields = this.form2.getForm().getFieldValues();
                 var obj = "({";
@@ -99,7 +102,9 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
         this.clearButton = new Ext.Button({
             text: kimios.lang('ClearField'),
             scope: this,
-            handler: function () {
+            disabled:true,
+            iconCls: 'del-icon',
+            handler: function (btn) {
                 this.searchRequestId = null;
                 this.searchRequestName = null;
                 this.saveButton.setText(
@@ -113,6 +118,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                 this.documentDateFromField.setValue("");
                 this.documentDateToField.setValue("");
                 this.form2.removeAll();
+                btn.setDisabled(true);
             }
         });
 
@@ -124,6 +130,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
             margins: '5 10 5 10',
             bodyStyle: 'padding:5px;',
             labelWidth: 140,
+
             defaults: {
                 anchor: '95%',
                 selectOnFocus: true,
@@ -131,7 +138,8 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                 labelStyle: 'font-size: 11px;'
             },
             bodyStyle: 'background-color:transparent;',
-            fbar: [this.clearButton, this.submitButton, this.saveButton]
+            buttonAlign: 'left',
+            fbar: [this.saveButton, '->', this.clearButton, this.submitButton]
         });
 
         this.form2 = new kimios.FormPanel({
@@ -261,6 +269,8 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
 
                 // to fix location field resize on loadForm
                 this.locationField.setValue(this.locationField.getValue());
+
+                this.clearButton.setDisabled(false);
             }
         });
 

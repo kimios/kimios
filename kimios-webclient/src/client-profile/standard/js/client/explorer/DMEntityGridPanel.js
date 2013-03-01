@@ -80,14 +80,44 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
         });
         this.advancedSearchPanel = new kimios.search.AdvancedSearchPanel({
             region: 'north',
-            height: 260,
+            height: 270,
             hidden: true,
-            border: false
+            border: false,
+            frame: true,
+            margins: '5 5 5 5',
+            title: kimios.lang('AdvancedSearch'),
+            closable: true,
+            tools: [
+                {
+                    id: 'close',
+                    qtip: kimios.lang('Close'),
+                    handler: function () {
+                        var vp = kimios.explorer.getActivePanel();
+                        if (vp == null) {
+                            vp = new kimios.explorer.DMEntityGridPanel({
+                                emptyPanel: true
+                            });
+                            var centerPanel = Ext.getCmp('kimios-center-panel');
+                            centerPanel.add(vp);
+                            centerPanel.setActiveTab(vp);
+                        }
+                        vp.advancedSearchPanel.hidePanel();
+
+                        if (vp.advancedSearchPanel.isVisible())
+                            vp.advancedSearchPanel.search();
+                        else
+                            vp.refresh();
+                        vp.searchToolbar.searchField.setValue('');
+                        vp.doLayout();
+                        return false;
+                    }
+                }
+            ]
         });
         this.gridPanel = new Ext.grid.GridPanel({
             region: 'center',
             border: true,
-            stripeRows: true,
+            stripeRows: false,
             margins: '-1 -1 -1 -1',
             store: kimios.store.getEntitiesStore(),
             columnLines: false,
