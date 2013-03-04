@@ -14,27 +14,17 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-kimios.search.SearchField = Ext.extend(Ext.form.TwinTriggerField, {
+kimios.search.SearchField = Ext.extend(Ext.form.TextField, {
     constructor: function (config) {
-        this.hideTrigger1 = true;
-        this.hideTrigger2 = false;
-        this.trigger1Class = 'x-form-clear-trigger';
-        this.trigger2Class = 'x-form-search-trigger';
-        this.style = 'font-size:11px;';
         this.emptyText = kimios.lang('SearchByName');
-        this.width = 180;
+        this.width = 160;
         this.selectOnFocus = true;
+        this.style = 'font-style:italic;font-size: 12px;border: 1px solid #ddd;-webkit-border-radius: 10px;-moz-border-radius: 10px;border-radius: 10px;';
         this.listeners = {
             scope: this,
             specialkey: function (field, e) {
                 if (!e || e.getKey() == e.ENTER)
                     this.onTrigger2Click(e);
-            },
-            valid: function (field, e) {
-                if (this.getRawValue() != '')
-                    this.triggers[0].show();
-                else
-                    this.triggers[0].hide();
             }
         };
         kimios.search.SearchField.superclass.constructor.call(this, config);

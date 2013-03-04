@@ -67,16 +67,23 @@ kimios.util.IconHelper = {
   },
   
   getIcon : function(type, extension){
+
+    var sTheme = (defaultTheme && defaultTheme.length > 0 ? 'themes/' +  defaultTheme : '') + '/';
+
     switch (type) {
       case 1:
-        return srcContextPath + '/images/icons/16x16/database.png';
+        return srcContextPath + '/images/' + sTheme + 'icons/16x16/database.png';
       case 2:
-        return srcContextPath + '/images/icons/16x16/folder.png';
+        return srcContextPath + '/images/' + sTheme + 'icons/16x16/folder.png';
       case 3:
         return kimios.util.IconHelper.getDocumentIcon(extension, 16);
     }
   },
-  
+
+  getIconPath : function(theme){
+     //TODO: icon switcing ?
+  },
+
   getIconClass : function(type, extension){
     switch (type) {
       case 1:
@@ -92,6 +99,21 @@ kimios.util.IconHelper = {
   },
   getIconStyle: function(extension){
       return kimios.util.IconHelper.fileIconStyle(extension.toLowerCase());
+  },
+  iconThemeSwitcher: function(themeName){
+          var i,
+                  a,
+                  links = document.getElementsByTagName("link"),
+                  len = links.length;
+          for (i = 0; i < len; i++) {
+              a = links[i];
+              if (a.getAttribute("title") && a.getAttribute("title") == themeName){
+                  a.disabled = false;
+                  break;
+              }
+          }
   }
+
+
 
 };

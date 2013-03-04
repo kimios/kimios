@@ -43,7 +43,7 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
                 }),
                 new Ext.Panel({
                     border: false,
-                    width: 242,
+                    width: 205,
                     region: 'east',
                     items: [this.searchToolbar]
                 })
@@ -82,7 +82,8 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
             region: 'north',
             height: 250,
             hidden: true,
-            border: false
+            border: false,
+
 //           , title: kimios.lang('AdvancedSearch'),
 //            closable: true,
 //            tools: [

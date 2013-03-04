@@ -15,20 +15,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 kimios.search.SearchToolbar = Ext.extend(Ext.Toolbar, {
-  constructor : function(config) {
-    this.width = 306;
-    this.criteriaButton = new kimios.search.SearchButton();
-    this.searchField = new kimios.search.SearchField();
-    this.items = [ this.criteriaButton, this.searchField];
-    kimios.search.SearchToolbar.superclass.constructor.call(this, config);
-  },
-  initComponent : function(){
-    kimios.search.SearchToolbar.superclass.initComponent.apply(this, arguments);
-    this.doLayout();
-  },
-  refreshLanguage : function(){
-    this.criteriaButton.refreshLanguage();
-    this.searchField.refreshLanguage();
-    this.doLayout();
-  }
+    constructor: function (config) {
+        this.width = 205;
+        this.criteriaButton = new kimios.search.SearchButton();
+        this.searchField = new kimios.search.SearchField();
+        this.searchButton = new Ext.Button({
+            tooltip: kimios.lang('SearchButton'),
+            iconCls: 'search',
+            scope: this,
+            handler: function (button, event) {
+                this.searchField.onTrigger2Click(event);
+            }
+        });
+        this.items = [this.criteriaButton, this.searchField, this.searchButton];
+        kimios.search.SearchToolbar.superclass.constructor.call(this, config);
+    },
+    initComponent: function () {
+        kimios.search.SearchToolbar.superclass.initComponent.apply(this, arguments);
+        this.doLayout();
+    },
+    refreshLanguage: function () {
+        this.criteriaButton.refreshLanguage();
+        this.searchField.refreshLanguage();
+        this.searchButton.setTooltip(kimios.lang('SearchButton'));
+        this.doLayout();
+    }
 });

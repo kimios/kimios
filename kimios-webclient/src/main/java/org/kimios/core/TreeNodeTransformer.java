@@ -50,8 +50,8 @@ public class TreeNodeTransformer extends AbstractTransformer {
 		getContext().writeName("extension");
 		getContext().transform(node.getExtension());
 		getContext().writeComma();
-		getContext().writeName("icon");
-		getContext().transform(node.getIcon());
+		getContext().writeName("iconCls");
+		getContext().transform(node.getIconCls());
 		getContext().writeComma();
 		getContext().writeName("owner");
 		getContext().transform(node.getOwner());

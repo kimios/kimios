@@ -61,7 +61,7 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                 kimios.ContextMenu.init();
                 this.explorerPanel = new kimios.explorer.ExplorerPanel({
                     border: false,
-                    rootText: 'kimios'
+                    rootText: 'Kimios'
                 });
                 this.bookmarksPanel = new kimios.explorer.BookmarksPanel({
                     border: false

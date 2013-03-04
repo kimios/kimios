@@ -156,8 +156,13 @@ ul.x-tab-strip-bottom {
 .x-tab-strip-top .x-tab-right, .x-tab-strip-top .x-tab-left, .x-tab-strip-top .x-tab-strip-inner {
     background-image: url();
     background-color: #fff;
+    -webkit-border-top-left-radius: 5px;
+    -webkit-border-top-right-radius: 5px;
+    -moz-border-radius-topleft: 5px;
+    -moz-border-radius-topright: 5px;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
+
 }
 
 .x-tab-strip-active .x-tab-right, .x-tab-strip-active .x-tab-left, .x-tab-strip-active .x-tab-strip-inner {
@@ -1223,9 +1228,12 @@ td.x-date-mp-sep {
 }
 
 .x-menu {
-    background-color: #fff;
-    background-image: url(../images/default/menu/menu.gif);
-    border-radius: 10px;
+    background-color: #eee;
+    border: 1px solid #ddd;
+    background-image: url();
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
 }
 
 .x-menu-floating {
@@ -1527,7 +1535,7 @@ a.x-menu-item {
 .x-window-mc {
     border-color: #ddd;
     font: normal 11px tahoma, arial, helvetica, sans-serif;
-    background-color: #e8e8e8;
+    background-color: #eee;
 }
 
 .x-window-ml {
@@ -1767,5 +1775,6 @@ body.x-body-masked .x-window-plain .x-window-mc {
     border: 1px solid #ddd;
 
     -webkit-border-bottom-left-radius: 48px;
+    -moz-border-radius-bottomleft: 10px;
     border-bottom-left-radius: 48px;
 }

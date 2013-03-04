@@ -34,6 +34,11 @@ import java.util.Calendar;
  */
 public class DMSTreeNode {
 
+
+
+    private static String WORKSPACE_CLS = "dm-entity-tab-properties-workspace";
+    private static String FOLDER_CLS = "dm-entity-tab-properties-folder";
+
 	private String contextPath;
 
 	public String getContextPath() {
@@ -44,17 +49,15 @@ public class DMSTreeNode {
 		this.contextPath = _contextPath;
 		switch (type) {
 		case 1:
-			this.icon = _contextPath + "/images/icons/16x16/database.png";
+			this.iconCls = WORKSPACE_CLS;
 			break;
 		case 2:
-			this.icon = _contextPath + "/images/ftv2folderclosed.gif";
+			this.iconCls = FOLDER_CLS;
 			break;
 		case 3:
-			this.icon = _contextPath
-					+ "/images/icons/16x16/"
-					+ (this.extension != null
+			this.iconCls = (this.extension != null
 							&& !this.extension.equalsIgnoreCase("") ? this.extension
-							: "unknown") + ".png";
+							: "unknown");
 			break;
 		}
 	}
@@ -65,7 +68,7 @@ public class DMSTreeNode {
 	private String name;
 	private String text;
 	private boolean leaf;
-	private String icon;
+	private String iconCls;
 	private String extension = "";
 	private String path;
 	private Calendar creationDate;
@@ -127,7 +130,7 @@ public class DMSTreeNode {
 		this.id = w.getUid() + "_1";
 		this.text = w.getName();
 		this.leaf = false;
-		this.icon = contextPath + "/images/icons/16x16/database.png";
+		this.iconCls = WORKSPACE_CLS;
 		this.type = 1;
 		this.uid = w.getUid();
 		this.name = w.getName();
@@ -149,7 +152,7 @@ public class DMSTreeNode {
 		this.id = f.getUid() + "_2";
 		this.text = f.getName();
 		this.leaf = false;
-		this.icon = contextPath + "/images/ftv2folderclosed.gif";
+		this.iconCls = FOLDER_CLS;
 		this.type = 2;
 		this.uid = f.getUid();
 		this.name = f.getName();
@@ -163,11 +166,9 @@ public class DMSTreeNode {
 		this.id = d.getUid() + "_3";
 		this.text = d.getName();
 		this.leaf = true;
-		this.icon = contextPath
-				+ "/images/icons/16x16/"
-				+ (d.getExtension() != null
+		this.iconCls =  (d.getExtension() != null
 						&& !d.getExtension().equalsIgnoreCase("") ? d
-						.getExtension() : "unknown") + ".png";
+						.getExtension() : "unknown");
 		this.type = 3;
 		this.uid = d.getUid();
 		this.name = d.getName();
@@ -198,12 +199,12 @@ public class DMSTreeNode {
 		this.text = name;
 	}
 
-	public String getIcon() {
-		return icon;
+	public String getIconCls() {
+		return iconCls;
 	}
 
-	public void setIcon(String icon) {
-		this.icon = icon;
+	public void setIconCls(String iconCls) {
+		this.iconCls = iconCls;
 	}
 
 	public int getType() {

@@ -51,8 +51,11 @@
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/Spinner.css"/>
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/notifier.css"/>
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/GroupTab.css"/>
-    <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/js/ext/resources/css/kimios-theme-grouptab.css"/>
+    <link rel="stylesheet" type="text/css"
+          href="<%=request.getContextPath()%>/js/ext/resources/css/kimios-theme-grouptab.css"/>
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/icons"/>
+    <link rel="stylesheet" title="kimios" type="text/css"
+          href="<%=request.getContextPath()%>/images/themes/kimios/css/icons.css"/>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/ext/adapter/ext/ext-base.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/ext/ext-all.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/FileUploadField.js"></script>
@@ -77,6 +80,7 @@
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/SpinnerField.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/GroupTabPanel.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/GroupTab.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/SearchField.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/main/kimios.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/main/Cookies.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/main/record.js"></script>
@@ -151,6 +155,10 @@
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/reporting/generic-report.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/i18n/Internationalization.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/main/run.js"></script>
+    <script type="text/javascript">
+        var defaultTheme = 'kimios';
+        new kimios.IconHelper.iconThemeSwitcher(defaultTheme);
+    </script>
 </head>
 <body>
 <div id="panel"></div>

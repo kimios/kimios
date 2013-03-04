@@ -40,6 +40,10 @@ kimios.explorer.Toolbar = Ext.extend(Ext.Toolbar, {
                 if (s == true) {
                     vp.advancedSearchPanel.build();
                     vp.advancedSearchPanel.showPanel();
+
+                    kimios.explorer.getViewport().westPanel.setActiveGroup(1);     // search requests panel
+                    kimios.explorer.getViewport().westPanel.activeGroup.setActiveTab(0);
+
                 } else {
                     vp.advancedSearchPanel.hidePanel();
                 }
@@ -49,6 +53,7 @@ kimios.explorer.Toolbar = Ext.extend(Ext.Toolbar, {
                 else
                     vp.refresh();
                 vp.searchToolbar.searchField.setValue('');
+
                 vp.doLayout();
             }
         });
@@ -110,13 +115,10 @@ kimios.explorer.Toolbar = Ext.extend(Ext.Toolbar, {
         this.add(this.loggedAsLabel);
         this.add(' ');
         this.add(' ');
-        this.add(' ');
-        this.add(' ');
-        this.add(' ');
-        this.add(' ');
-        this.add(' ');
-        this.add(' ');
+
         this.add(this.languageMenu);
+        this.add(' ');
+        this.add(' ');
         this.add(' ');
         this.add(' ');
         this.add(' ');
@@ -125,7 +127,6 @@ kimios.explorer.Toolbar = Ext.extend(Ext.Toolbar, {
 
         var buttonsArray = [];
         buttonsArray.push(this.advancedSearchButton);
-        buttonsArray.push('-');
         buttonsArray.push(this.myTasksButton);
         buttonsArray.push(this.myAccountButton);
         buttonsArray.push(this.toolsMenu);
