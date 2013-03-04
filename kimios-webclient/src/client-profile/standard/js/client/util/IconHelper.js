@@ -105,15 +105,30 @@ kimios.util.IconHelper = {
                   a,
                   links = document.getElementsByTagName("link"),
                   len = links.length;
+
+
+
+
+          var exist = false;
           for (i = 0; i < len; i++) {
               a = links[i];
               if (a.getAttribute("title") && a.getAttribute("title") == themeName){
                   a.disabled = false;
+                  exist = true;
                   break;
               }
           }
-  }
+          if(!exist){
+              var fileref=document.createElement("link")
+              fileref.setAttribute("rel", "stylesheet")
+              fileref.setAttribute("type", "text/css")
+              fileref.setAttribute("href", srcContextPath + '/images/themes/' + themeName + '/css/icons.css');
+              if (typeof fileref!="undefined")
+                  document.getElementsByTagName("head")[0].appendChild(fileref)
 
+
+      }
+  }
 
 
 };

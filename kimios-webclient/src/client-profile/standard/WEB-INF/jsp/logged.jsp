@@ -54,8 +54,6 @@
     <link rel="stylesheet" type="text/css"
           href="<%=request.getContextPath()%>/js/ext/resources/css/kimios-theme-grouptab.css"/>
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/icons"/>
-    <link rel="stylesheet" title="kimios" type="text/css"
-          href="<%=request.getContextPath()%>/images/themes/kimios/css/icons.css"/>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/ext/adapter/ext/ext-base.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/ext/ext-all.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/FileUploadField.js"></script>
@@ -156,8 +154,8 @@
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/i18n/Internationalization.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/main/run.js"></script>
     <script type="text/javascript">
-        var defaultTheme = 'kimios';
-        new kimios.IconHelper.iconThemeSwitcher(defaultTheme);
+      var defaultTheme = 'kimios';
+      new kimios.util.IconHelper.iconThemeSwitcher(defaultTheme);
     </script>
 </head>
 <body>

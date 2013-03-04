@@ -27,26 +27,37 @@
 }
 
 .ext-el-mask {
-    background-color: #ccc;
+    background-color: #fff;
 }
 
 .ext-el-mask-msg {
-    border-color: #999;
-    background-color: #ddd;
-    background-image: url(../images/gray/panel/white-top-bottom.gif);
+    border-color: #ddd;
+    background-color: #eee;
+
+    background-image: url();
     background-position: 0 -1px;
+
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
 }
 
 .ext-el-mask-msg div {
     background-color: #eee;
-    border-color: #ddd;
-    color: #222;
+    border: 0;
+    color: #333;
     font: normal 11px tahoma, arial, helvetica, sans-serif;
+
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+
 }
 
 .x-mask-loading div {
-    background-color: #fbfbfb;
+    background-color: #eee;
     background-image: url(../images/default/grid/loading.gif);
+
 }
 
 .x-item-disabled {
@@ -117,7 +128,7 @@
 }
 
 ul.x-tab-strip-top {
-    background-color: #fff;
+    background-color: #eee;
     background-image: url();
     border-bottom-color: #ddd;
 }

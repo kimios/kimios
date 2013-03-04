@@ -19,7 +19,7 @@ kimios.search.SearchField = Ext.extend(Ext.form.TextField, {
         this.emptyText = kimios.lang('SearchByName');
         this.width = 160;
         this.selectOnFocus = true;
-        this.style = 'font-style:italic;font-size: 12px;border: 1px solid #ddd;-webkit-border-radius: 10px;-moz-border-radius: 10px;border-radius: 10px;';
+        this.style = 'font-style:italic;font-size: 11px;border: 1px solid #ddd;-webkit-border-radius: 10px;-moz-border-radius: 10px;border-radius: 10px;';
         this.listeners = {
             scope: this,
             specialkey: function (field, e) {
