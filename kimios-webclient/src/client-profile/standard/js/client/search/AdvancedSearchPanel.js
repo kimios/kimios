@@ -346,14 +346,14 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
         });
         this.documentDateFromField = new Ext.form.DateField({
             name: 'DocumentVersionUpdateDate_from',
-            fieldLabel: 'Date (min)',
+            fieldLabel: kimios.lang('Date') + '&nbsp;<span style="color:gray;font-weight:bolder;font-size:.8em;">MIN</span>',
             format: 'Y-m-d',
             editable: false,
             labelSeparator: kimios.lang('LabelSeparator')
         });
         this.documentDateToField = new Ext.form.DateField({
             name: 'DocumentVersionUpdateDate_to',
-            fieldLabel: 'Date (max)',
+            fieldLabel: kimios.lang('Date') + '&nbsp;<span style="color:gray;font-weight:bolder;font-size:.8em;">MAX</span>',
             format: 'Y-m-d',
             editable: false,
             labelSeparator: kimios.lang('LabelSeparator')
@@ -395,13 +395,13 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                             //int type
                             fields.push(new Ext.form.NumberField({
                                 name: 'MetaDataNumber_' + uid + '_from',
-                                fieldLabel: name + ' (min)',
+                                fieldLabel: name + '&nbsp;<span style="color:gray;font-weight:bolder;font-size:.8em;">MIN</span>',
                                 value: value,
                                 labelSeparator: kimios.lang('LabelSeparator')
                             }));
                             fields.push(new Ext.form.NumberField({
                                 name: 'MetaDataNumber_' + uid + '_to',
-                                fieldLabel: name + ' (max)',
+                                fieldLabel: name + '&nbsp;<span style="color:gray;font-weight:bolder;font-size:.8em;">MAX</span>',
                                 value: value,
                                 labelSeparator: kimios.lang('LabelSeparator')
                             }));
@@ -410,7 +410,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                             //date type
                             fields.push(new Ext.form.DateField({
                                 name: 'MetaDataDate_' + uid + '_from',
-                                fieldLabel: name + ' (min)',
+                                fieldLabel: name + '&nbsp;<span style="color:gray;font-weight:bolder;font-size:.8em;">MIN</span>',
                                 format: 'Y-m-d',
                                 value: value,
                                 editable: false,
@@ -418,7 +418,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                             }));
                             fields.push(new Ext.form.DateField({
                                 name: 'MetaDataDate_' + uid + '_to',
-                                fieldLabel: name + ' (max)',
+                                fieldLabel: name + '&nbsp;<span style="color:gray;font-weight:bolder;font-size:.8em;">MAX</span>',
                                 format: 'Y-m-d',
                                 value: value,
                                 editable: false,

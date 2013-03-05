@@ -564,7 +564,6 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
                 menuDisabled: true,
                 renderer: function (val, metaData, record, rowIndex, colIndex, store) {
                     metaData.css = kimios.util.IconHelper.getIconClass(record.data.type, record.data.extension);
-
                 }
             },
             {

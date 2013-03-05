@@ -55,8 +55,12 @@
 }
 
 .x-mask-loading div {
-    background-color: #eee;
+    background-color: #45af43;
     background-image: url(../images/default/grid/loading.gif);
+    opacity: 0.8;
+    filter: alpha(opacity = 80);
+    color:white;
+    font-weight: bolder;
 
 }
 
@@ -150,10 +154,6 @@ ul.x-tab-strip-bottom {
     color: #333;
 }
 
-.x-tab-strip-over span.x-tab-strip-text {
-    color: #111;
-}
-
 .x-tab-strip-active span.x-tab-strip-text {
     color: #333;
     font-weight: bold;
@@ -187,19 +187,19 @@ ul.x-tab-strip-bottom {
 }
 
 .x-tab-strip-bottom .x-tab-right {
-    background-image: url(../images/gray/tabs/tab-btm-inactive-right-bg.gif);
+    background-image: url();
 }
 
 .x-tab-strip-bottom .x-tab-left {
-    background-image: url(../images/gray/tabs/tab-btm-inactive-left-bg.gif);
+    background-image: url();
 }
 
 .x-tab-strip-bottom .x-tab-strip-over .x-tab-left {
-    background-image: url(../images/gray/tabs/tab-btm-over-left-bg.gif);
+    background-image: url();
 }
 
 .x-tab-strip-bottom .x-tab-strip-over .x-tab-right {
-    background-image: url(../images/gray/tabs/tab-btm-over-right-bg.gif);
+    background-image: url();
 }
 
 .x-tab-strip-bottom .x-tab-strip-active .x-tab-right {
@@ -627,9 +627,9 @@ ul.x-tab-strip-bottom {
 }
 
 .x-grid3-row-over {
-    border-color: #ddd;
-    background-color: #efefef;
-    background-image: url(../images/default/grid/row-over.gif);
+    /*border-color: #ddd;*/
+    background-color: #90ee90;
+    background-image: url();
 }
 
 .x-grid3-resize-proxy {
@@ -700,9 +700,9 @@ td.x-grid3-hd-over .x-grid3-hd-inner, td.sort-desc .x-grid3-hd-inner, td.sort-as
 }
 
 .x-grid3-row-selected {
-    background-color: #CCCCCC !important;
+    background-color: #90ee90 !important;
     background-image: none;
-    border-color: #ACACAC;
+    border-color: #fff;
 }
 
 .x-grid3-cell-selected {
@@ -720,7 +720,7 @@ td.x-grid3-hd-over .x-grid3-hd-inner, td.sort-desc .x-grid3-hd-inner, td.sort-as
 
 .x-grid3-locked td.x-grid3-row-marker, .x-grid3-locked .x-grid3-row-selected td.x-grid3-row-marker {
     background-color: #ebeadb !important;
-    background-image: url(../images/default/grid/grid-hrow.gif) !important;
+    background-image: url() !important;
     color: #000;
     border-top-color: #fff;
     border-right-color: #6fa0df !important;
@@ -798,13 +798,13 @@ td.x-grid3-hd-over .x-grid3-hd-inner, td.sort-desc .x-grid3-hd-inner, td.sort-as
 }
 
 .x-grid3-body .x-grid3-td-row-icon {
-    background-image: url(../images/default/grid/grid3-special-col-bg.gif);
+    background-image: url();
 }
 
 .x-grid3-body .x-grid3-row-selected .x-grid3-td-numberer,
 .x-grid3-body .x-grid3-row-selected .x-grid3-td-checker,
 .x-grid3-body .x-grid3-row-selected .x-grid3-td-expander {
-    background-image: url(../images/gray/grid/grid3-special-col-sel-bg.gif);
+    background-image: url();
 }
 
 .x-grid3-check-col {
@@ -1038,11 +1038,11 @@ td.x-grid3-hd-over .x-grid3-hd-inner, td.sort-desc .x-grid3-hd-inner, td.sort-as
 }
 
 .x-tree-node .x-tree-node-over {
-    background-color: #eee;
+    background-color: #90ee90;
 }
 
 .x-tree-node .x-tree-selected {
-    background-color: #ddd;
+    background-color: #90ee90;
 }
 
 .x-tree-drop-ok-append .x-dd-drop-icon {
@@ -1111,7 +1111,7 @@ td.x-grid3-hd-over .x-grid3-hd-inner, td.sort-desc .x-grid3-hd-inner, td.sort-as
 
 .x-date-inner .x-date-selected a {
     background-image: none;
-    background-color: #D8D8D8;
+    background-color: #ddd;
     border-color: #DCDCDC;
 }
 
@@ -1135,7 +1135,7 @@ td.x-grid3-hd-over .x-grid3-hd-inner, td.sort-desc .x-grid3-hd-inner, td.sort-as
 
 .x-date-inner a:hover, .x-date-inner .x-date-disabled a:hover {
     color: #000;
-    background-color: #D8D8D8;
+    background-color: #90ee90;
 }
 
 .x-date-inner .x-date-disabled a {
@@ -1182,7 +1182,7 @@ td.x-date-mp-month a, td.x-date-mp-year a {
 
 td.x-date-mp-month a:hover, td.x-date-mp-year a:hover {
     color: #333;
-    background-color: #FDFDFD;
+    background-color: #90ee90;
 }
 
 td.x-date-mp-sel a {
@@ -1415,7 +1415,7 @@ a.x-menu-item {
 
 .x-combo-list .x-combo-selected {
     border-color: #777 !important;
-    background-color: #f0f0f0;
+    background-color: #eee;
 }
 
 .x-combo-list .x-toolbar {
@@ -1431,13 +1431,20 @@ a.x-menu-item {
 }
 
 .x-panel-header {
-    color: #333;
     font-weight: bold;
     font-size: 11px;
     font-family: tahoma, arial, verdana, sans-serif;
     border-color: #ddd;
     background-image: url();
+    color: #333;
     background-color: #eee;
+}
+
+#login-area .x-panel-header {
+    color: #fff;
+    background-color: #45af43;
+    opacity: 0.8;
+    filter: alpha(opacity = 80);
 }
 
 .x-panel-body {
@@ -1783,9 +1790,12 @@ body.x-body-masked .x-window-plain .x-window-mc {
     margin-right: auto;
     margin-top: 150px;
     width: 300px;
-    border: 1px solid #ddd;
+    border: 1px solid #45af43;
 
     -webkit-border-bottom-left-radius: 48px;
     -moz-border-radius-bottomleft: 10px;
     border-bottom-left-radius: 48px;
+
+    opacity: 0.8;
+    filter: alpha(opacity = 80);
 }
