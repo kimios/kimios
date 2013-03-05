@@ -154,7 +154,7 @@
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/i18n/Internationalization.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/main/run.js"></script>
     <script type="text/javascript">
-        var defaultTheme = 'minimalist-green';
+        var defaultTheme = 'minimalist';
         new kimios.util.IconHelper.iconThemeSwitcher(defaultTheme);
     </script>
 </head>

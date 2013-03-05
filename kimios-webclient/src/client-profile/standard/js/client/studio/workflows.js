@@ -139,7 +139,7 @@ Studio.Workflows = {
 
         var formPanel = new kimios.FormPanel({
             title: (workflowRecord ? workflowRecord.data.name : kimios.lang('NewWorkflow')),
-            iconCls: 'studio-cls-wf',
+//            iconCls: 'studio-cls-wf',
             labelWidth: 120,
             bodyStyle:'padding:5px;background-color:transparent;',
             defaults: {
@@ -260,7 +260,7 @@ Studio.Workflows = {
             enableToggle: true,
             listeners: {
                 toggle: function(button, pressed){
-                    button.setIconClass(pressed ? 'studio-wf-collapse' : 'studio-wf-expand');
+                    button.setIconClass(pressed ? 'studio-wf-expand' : 'studio-wf-expand');
                 }
             },
             handler: function(){

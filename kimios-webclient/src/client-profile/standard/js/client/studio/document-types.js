@@ -15,32 +15,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 Studio.DocumentTypes = {
-    getPanel: function(){
+    getPanel: function () {
         var treePanel = new Ext.tree.TreePanel({
             region: 'west',
             width: 200,
             split: true,
-            hideCollapseTool : true,
+            hideCollapseTool: true,
             title: kimios.lang('DocumentTypes'),
-            margins:'3 0 3 3',
-            cmargins:'3 3 3 3',
+            margins: '3 0 3 3',
+            cmargins: '3 3 3 3',
             collapsible: true,
             rootVisible: false,
             autoScroll: true,
             root: new Ext.tree.TreeNode(),
-            tools:[{
-                id:'refresh',
-                handler: function(event, toolEl, panel){
-                    documentTypesStore.reload();
+            tools: [
+                {
+                    id: 'refresh',
+                    handler: function (event, toolEl, panel) {
+                        documentTypesStore.reload();
+                    }
+                },
+                {
+                    id: 'plus',
+                    handler: function (event, toolEl, panel) {
+                        contextPanel.removeAll();
+                        contextPanel.add(Studio.DocumentTypes.getDocumentTypePanel(metaFeedsStore, contextPanel, documentTypesStore));
+                        contextPanel.doLayout();
+                    }
                 }
-            },{
-                id:'plus',
-                handler: function(event, toolEl, panel){
-                  contextPanel.removeAll();
-                  contextPanel.add(Studio.DocumentTypes.getDocumentTypePanel(metaFeedsStore, contextPanel, documentTypesStore));
-                  contextPanel.doLayout();
-                }
-            }]
+            ]
         });
 
         var contextPanel = new Ext.Panel({
@@ -53,7 +56,7 @@ Studio.DocumentTypes = {
         var node = treePanel.getRootNode();
 
         var metaFeedsStore = kimios.store.StudioStore.getMetaFeedsStore();
-        metaFeedsStore.on('load', function(){
+        metaFeedsStore.on('load', function () {
             var data = {
                 uid: -1,
                 name: kimios.lang('NoMetaFeed')
@@ -63,50 +66,53 @@ Studio.DocumentTypes = {
         });
 
         var documentTypesStore = kimios.store.StudioStore.getDocumentTypesStore();
-        documentTypesStore.on('load', function(st, documentTypesRecord){
+        documentTypesStore.on('load', function (st, documentTypesRecord) {
             metaFeedsStore.load();
 //            documentTypesStore.insert(0, new documentTypesStore.recordType({
 //                uid: -1,
 //                name: 'No Document Type'
 //            }));
-            while (node.hasChildNodes()){
+            while (node.hasChildNodes()) {
                 node.removeChild(node.item(0));
             }
-            Ext.each(documentTypesRecord, function(documentTypeRecord, ind){
+            Ext.each(documentTypesRecord, function (documentTypeRecord, ind) {
                 var documentTypeNode = new Ext.tree.TreeNode({
                     text: documentTypeRecord.data.name,
                     allowChildren: true,
                     iconCls: 'studio-cls-meta-document-type'
                 });
-                documentTypeNode.on('contextMenu', function(node, e){
+                documentTypeNode.on('contextMenu', function (node, e) {
                     node.select();
                     var contextMenu = new Ext.menu.Menu({
                         shadow: false,
-                        items: [{
-                            text: kimios.lang('Properties'),
-                            iconCls: 'qaction-properties',
-                            handler: function(){
-                            contextPanel.removeAll();
-                                contextPanel.add(Studio.DocumentTypes.getDocumentTypePanel(metaFeedsStore, contextPanel, documentTypesStore, documentTypeRecord));
-                                contextPanel.doLayout();
+                        items: [
+                            {
+                                text: kimios.lang('Properties'),
+                                iconCls: 'qaction-properties',
+                                handler: function () {
+                                    contextPanel.removeAll();
+                                    contextPanel.add(Studio.DocumentTypes.getDocumentTypePanel(metaFeedsStore, contextPanel, documentTypesStore, documentTypeRecord));
+                                    contextPanel.doLayout();
+                                }
+                            },
+                            {
+                                text: kimios.lang('Delete'),
+                                iconCls: 'trash',
+                                handler: function () {
+                                    kimios.request.StudioRequest.removeDocumentType(documentTypesStore, documentTypeRecord, contextPanel);
+                                }
                             }
-                        },{
-                            text: kimios.lang('Delete'),
-                            iconCls: 'trash',
-                            handler: function(){
-                                kimios.request.StudioRequest.removeDocumentType(documentTypesStore, documentTypeRecord, contextPanel);
-                            }
-                        }]
+                        ]
                     });
                     contextMenu.showAt(e.getXY());
                 });
-                
-                documentTypeNode.on('click', function(){
+
+                documentTypeNode.on('click', function () {
                     contextPanel.removeAll();
                     contextPanel.add(Studio.DocumentTypes.getDocumentTypePanel(metaFeedsStore, contextPanel, documentTypesStore, documentTypeRecord));
                     contextPanel.doLayout();
                 });
-                
+
                 node.appendChild(documentTypeNode);
             });
         });
@@ -115,17 +121,17 @@ Studio.DocumentTypes = {
             title: kimios.lang('DocumentTypes'),
             iconCls: 'studio-cls-meta-document-type',
             layout: 'border',
-            contextPanel : contextPanel,
+            contextPanel: contextPanel,
             items: [treePanel, contextPanel],
             border: false
         });
-        
+
         documentTypesStore.load();
         panel.doLayout();
         return panel;
     },
 
-    getDocumentTypePanel: function(metaFeedsStore, contextPanel, documentTypesStore, documentTypeRecord){
+    getDocumentTypePanel: function (metaFeedsStore, contextPanel, documentTypesStore, documentTypeRecord) {
         var metaDataStore = kimios.store.StudioStore.getUnheritedMetasStore(documentTypeRecord);
         var metaDatasGrid = Studio.DocumentTypes.getMetaDatasPanel(metaDataStore, metaFeedsStore, documentTypeRecord);
 
@@ -134,7 +140,7 @@ Studio.DocumentTypes = {
             tooltip: kimios.lang('Delete'),
             iconCls: 'trash',
             disabled: (documentTypeRecord ? false : true),
-            handler: function(){
+            handler: function () {
                 kimios.request.StudioRequest.removeDocumentType(documentTypesStore, documentTypeRecord, contextPanel);
             }
         });
@@ -143,31 +149,33 @@ Studio.DocumentTypes = {
             text: kimios.lang('Save'),
             tooltip: kimios.lang('Save'),
             iconCls: 'save',
-            handler: function(){
+            handler: function () {
                 kimios.request.StudioRequest.saveDocumentType(metaFeedsStore, Ext.getCmp('hidden-domain-uid').getValue(), Ext.getCmp('doctypefield').getValue(), Ext.getCmp('heritedFromComboBox').uid, documentTypesStore, contextPanel, metaDatasGrid.getStore(), documentTypeTextField.getValue(), documentTypeRecord);
             }
         });
 
         var formPanel = new kimios.FormPanel({
-            title: (documentTypeRecord ? documentTypeRecord.data.name : kimios.lang('New')+' '+kimios.lang('DocumentType')),
-            iconCls: 'studio-cls-meta-document-type',
-            bodyStyle:'padding:5px;background-color:transparent;',
+            title: (documentTypeRecord ? documentTypeRecord.data.name : kimios.lang('New') + ' ' + kimios.lang('DocumentType')),
+//            iconCls: 'studio-cls-meta-document-type',
+            bodyStyle: 'padding:5px;background-color:transparent;',
             labelWidth: 120,
             defaults: {
                 selectOnFocus: true,
                 style: 'font-size: 10px',
                 labelStyle: 'font-size: 10px'
             },
-            tools:[{
-                id:'refresh',
-                handler: function(event, toolEl, panel){
-                    if (documentTypeRecord){
-                        contextPanel.removeAll();
-                        contextPanel.add(Studio.DocumentTypes.getDocumentTypePanel(metaFeedsStore, contextPanel, documentTypesStore, documentTypeRecord));
-                        contextPanel.doLayout();
+            tools: [
+                {
+                    id: 'refresh',
+                    handler: function (event, toolEl, panel) {
+                        if (documentTypeRecord) {
+                            contextPanel.removeAll();
+                            contextPanel.add(Studio.DocumentTypes.getDocumentTypePanel(metaFeedsStore, contextPanel, documentTypesStore, documentTypeRecord));
+                            contextPanel.doLayout();
+                        }
                     }
                 }
-            }],
+            ],
             buttonAlign: 'left',
             bbar: [ '->', saveButton, deleteButton],
             monitorValid: true
@@ -180,7 +188,7 @@ Studio.DocumentTypes = {
         });
 
         var documentTypeTextField = new Ext.form.TextField({
-          id : 'doctypefield',
+            id: 'doctypefield',
             anchor: '100%',
             name: 'name',
             fieldLabel: kimios.lang('DocumentType'),
@@ -189,36 +197,34 @@ Studio.DocumentTypes = {
 
         var documentTypeName = '';
         var documentTypeUid = -1;
-        if (documentTypeRecord != undefined){
-      for (var i=0; i<documentTypesStore.getCount(); i++){
-        if (documentTypeRecord.data.documentTypeUid == documentTypesStore.getAt(i).data.uid){
-          documentTypeName = documentTypesStore.getAt(i).data.name;
-          documentTypeUid = documentTypesStore.getAt(i).data.uid;
-          break;
-        }
-      }
+        if (documentTypeRecord != undefined) {
+            for (var i = 0; i < documentTypesStore.getCount(); i++) {
+                if (documentTypeRecord.data.documentTypeUid == documentTypesStore.getAt(i).data.uid) {
+                    documentTypeName = documentTypesStore.getAt(i).data.name;
+                    documentTypeUid = documentTypesStore.getAt(i).data.uid;
+                    break;
+                }
+            }
         }
         var heritedFromComboBox = new kimios.form.DocumentTypeField({
-          id : 'heritedFromComboBox',
-        name: 'heritedfrom',
+            id: 'heritedFromComboBox',
+            name: 'heritedfrom',
             fieldLabel: kimios.lang('HeritedFrom'),
-            anchor : '100%',
-            forceSelection : true,
-            editable : false,
-            value : documentTypeName
-            ,
-            uid: documentTypeUid
-            ,
-            listeners : {
-            change : function( thisField, newValue, oldValue ){
-              for (var i=0; i<thisField.getStore().getCount(); i++){
-            if (newValue == thisField.getStore().getAt(i).data.uid){
-              thisField.uid = newValue;
-              break;
+            anchor: '100%',
+            forceSelection: true,
+            editable: false,
+            value: documentTypeName,
+            uid: documentTypeUid,
+            listeners: {
+                change: function (thisField, newValue, oldValue) {
+                    for (var i = 0; i < thisField.getStore().getCount(); i++) {
+                        if (newValue == thisField.getStore().getAt(i).data.uid) {
+                            thisField.uid = newValue;
+                            break;
+                        }
+                    }
+                }
             }
-          }
-            }
-          }
         });
 
         formPanel.add(hiddenField);
@@ -227,7 +233,7 @@ Studio.DocumentTypes = {
         formPanel.add(new Ext.Panel({
             anchor: '100% -52',
             border: false,
-            viewConfig : {
+            viewConfig: {
                 forceFit: true
             },
             layout: 'fit',
@@ -237,12 +243,12 @@ Studio.DocumentTypes = {
         return formPanel;
     },
 
-    getMetaDatasPanel: function(metaDataStore, metaFeedsStore, documentTypeRecord){
+    getMetaDatasPanel: function (metaDataStore, metaFeedsStore, documentTypeRecord) {
 
         var addButton = new Ext.Button({
             text: kimios.lang('Add'),
             iconCls: 'add',
-            handler : function(){
+            handler: function () {
                 var metadata = grid.getStore().recordType;
                 var p = new metadata({
                     name: '',
@@ -251,17 +257,17 @@ Studio.DocumentTypes = {
                 });
                 grid.stopEditing();
                 metaDataStore.insert(grid.getStore().getCount(), p);
-                grid.startEditing(grid.getStore().getCount()-1, 2);
+                grid.startEditing(grid.getStore().getCount() - 1, 2);
             }
         });
 
         var removeButton = new Ext.Button({
-            text:kimios.lang('Remove'),
-            iconCls:'remove',
+            text: kimios.lang('Remove'),
+            iconCls: 'remove',
             disabled: true,
-            handler: function(){
+            handler: function () {
                 var records = sm.getSelections();
-                for (var i=0; i<records.length; i++){
+                for (var i = 0; i < records.length; i++) {
                     metaDataStore.remove(records[i]);
                 }
             }
@@ -271,7 +277,7 @@ Studio.DocumentTypes = {
         var sm = new Ext.grid.CheckboxSelectionModel({
             checkOnly: true,
             listeners: {
-                selectionchange: function(sm) {
+                selectionchange: function (sm) {
                     var count = sm.getCount();
                     if (count > 0) {
                         removeButton.enable();
@@ -286,22 +292,22 @@ Studio.DocumentTypes = {
             store: new Ext.data.ArrayStore({
                 id: 0,
                 fields: [
-                'value', 'name'
+                    'value', 'name'
                 ],
                 data: [
-                [2, kimios.lang('MetaNumberValue')],
-                [3, kimios.lang('MetaDateValue')],
-                [4, kimios.lang('MetaBooleanValue')],
-                [1, kimios.lang('SearchText')+' / '+kimios.lang('MetaFeed')]
+                    [2, kimios.lang('MetaNumberValue')],
+                    [3, kimios.lang('MetaDateValue')],
+                    [4, kimios.lang('MetaBooleanValue')],
+                    [1, kimios.lang('SearchText') + ' / ' + kimios.lang('MetaFeed')]
                 ]
             }),
             displayField: 'name',
             valueField: 'value',
             typeAhead: true,
             triggerAction: 'all',
-            lazyRender:true,
+            lazyRender: true,
             mode: 'local',
-            editable:false
+            editable: false
         });
 
         var metaFeedsCombo = new Ext.form.ComboBox({
@@ -312,7 +318,7 @@ Studio.DocumentTypes = {
             triggerAction: 'all',
             lazyRender: true,
             store: metaFeedsStore,
-            editable:false
+            editable: false
         });
 
         var cm = new Ext.grid.ColumnModel({
@@ -320,73 +326,71 @@ Studio.DocumentTypes = {
                 sortable: true
             },
             columns: [
-            sm,
-            {
-                width: 16,
-                fixed: true,
-                editable: false,
-                sortable: false,
-                menuDisabled: true,
-                dataIndex: 'icon',
-                renderer: function(value, metaData, record, rowIndex, colIndex, store) {
-                    metaData.css = 'meta';
-                }
-            },{
-                id: 'name',
-                header: kimios.lang('MetaData'),
-                sortable: true,
-                dataIndex: 'name',
-                renderer: function(value, metaData, record, rowIndex, colIndex, store){
-                    if (!value){
-                        return '<span style="font-style: italic; color: red;">'+kimios.lang('MetaDataName')+'?</span>';
-                    }
-                    return value;
-                },
-                editor: new Ext.form.TextField({
-                    blankText: 'Meta Data name is required'
-                })
-            },{
-                header: kimios.lang('Type'),
-                dataIndex: 'metaType',
-                editor: metaTypeCombo,
-                renderer: function(value, metaData, record, rowIndex, colIndex, store){
-                    var metaTypeStore = metaTypeCombo.getStore();
-                    for (var i=0; i<metaTypeStore.getCount(); ++i){
-                        var typeRecord = metaTypeStore.getAt(i);
-                        if (typeRecord.data.value == value){
-                            if (value == 1){
-                                if (record.get('metaFeedUid') == -1){
-                                    return kimios.lang('SearchText');
-                                }else{
-                                    return kimios.lang('MetaFeed');
+                sm,
+                {
+                    width: 16,
+                    fixed: true,
+                    hidden: true,
+                    editable: false,
+                    sortable: false,
+                    menuDisabled: true,
+                    dataIndex: 'icon'
+                }, {
+                    id: 'name',
+                    header: kimios.lang('MetaData'),
+                    sortable: true,
+                    dataIndex: 'name',
+                    renderer: function (value, metaData, record, rowIndex, colIndex, store) {
+                        if (!value) {
+                            return '<span style="font-style: italic; color: red;">' + kimios.lang('MetaDataName') + '?</span>';
+                        }
+                        return value;
+                    },
+                    editor: new Ext.form.TextField({
+                        blankText: 'Meta Data name is required'
+                    })
+                }, {
+                    header: kimios.lang('Type'),
+                    dataIndex: 'metaType',
+                    editor: metaTypeCombo,
+                    renderer: function (value, metaData, record, rowIndex, colIndex, store) {
+                        var metaTypeStore = metaTypeCombo.getStore();
+                        for (var i = 0; i < metaTypeStore.getCount(); ++i) {
+                            var typeRecord = metaTypeStore.getAt(i);
+                            if (typeRecord.data.value == value) {
+                                if (value == 1) {
+                                    if (record.get('metaFeedUid') == -1) {
+                                        return kimios.lang('SearchText');
+                                    } else {
+                                        return kimios.lang('MetaFeed');
+                                    }
                                 }
+                                grid.doLayout();
+                                return typeRecord.data.name;
                             }
-                            grid.doLayout();
-                            return typeRecord.data.name;
                         }
+                        return '<span style="font-style: italic; color: red;">' + kimios.lang('Type') + '?</span>';
                     }
-                    return '<span style="font-style: italic; color: red;">'+kimios.lang('Type')+'?</span>';
-                }
-            },{
-                header: kimios.lang('MetaFeed'),
-                dataIndex: 'metaFeedUid',
-                disabled: true,
-                editor: metaFeedsCombo,
-                renderer: function(value, metaData, record, rowIndex, colIndex, store){
-                    var metaFeedsStore = metaFeedsCombo.getStore();
-                    for (var i=0; i<metaFeedsStore.getCount(); ++i){
-                        var metaFeedRecord = metaFeedsStore.getAt(i);
-                        if (metaFeedRecord.data.uid == value){
-                            if (record.get('metaType') == 1)
-                                return metaFeedRecord.data.name;
+                }, {
+                    header: kimios.lang('MetaFeed'),
+                    dataIndex: 'metaFeedUid',
+                    disabled: true,
+                    editor: metaFeedsCombo,
+                    renderer: function (value, metaData, record, rowIndex, colIndex, store) {
+                        var metaFeedsStore = metaFeedsCombo.getStore();
+                        for (var i = 0; i < metaFeedsStore.getCount(); ++i) {
+                            var metaFeedRecord = metaFeedsStore.getAt(i);
+                            if (metaFeedRecord.data.uid == value) {
+                                if (record.get('metaType') == 1)
+                                    return metaFeedRecord.data.name;
+                            }
                         }
+                        if (record.get('metaType') != 1)
+                            return '<span style="color: #aaa;">N/A</span>';
+                        else
+                            return '<span style="font-style: italic; color: red;">' + kimios.lang('MetaFeed') + '?</span>';
                     }
-                    if (record.get('metaType') != 1)
-                        return '<span style="color: #aaa;">N/A</span>';
-                    else
-                        return '<span style="font-style: italic; color: red;">'+kimios.lang('MetaFeed')+'?</span>';
-                }
-            }]
+                }]
         });
 
         var grid = new Ext.grid.EditorGridPanel({
@@ -398,13 +402,12 @@ Studio.DocumentTypes = {
             sm: sm,
             clicksToEdit: 1,
             viewConfig: {
-                forceFit:true,
-                scrollOffset : 0
+                forceFit: true,
+                scrollOffset: 0
             },
-            tbar: [addButton, '-', removeButton]
-            ,
+            tbar: [addButton, '-', removeButton],
             listeners: {
-                beforeedit: function(e) {
+                beforeedit: function (e) {
                     if (e.column != 4) {
                         return true;
                     }
@@ -414,9 +417,9 @@ Studio.DocumentTypes = {
                         return false;
                     }
                 },
-                afteredit: function(e){
+                afteredit: function (e) {
                     if (e.field == 'metaType') {
-                        if (e.record.get('metaType') == 1){
+                        if (e.record.get('metaType') == 1) {
                             e.record.set('metaFeedUid', -1);
                         }
                     }
@@ -426,5 +429,5 @@ Studio.DocumentTypes = {
 
         return grid;
     }
- 
+
 };

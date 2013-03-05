@@ -15,33 +15,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 Studio.MetaFeeds = {
-    getPanel: function(){
+    getPanel: function () {
         var treePanel = new Ext.tree.TreePanel({
             region: 'west',
             width: 200,
             split: true,
-            hideCollapseTool : true,
+            hideCollapseTool: true,
             title: kimios.lang('MetaFeeds'),
-            margins:'3 0 3 3',
-            cmargins:'3 3 3 3',
+            margins: '3 0 3 3',
+            cmargins: '3 3 3 3',
             rootVisible: false,
             collapsible: true,
             autoScroll: true,
             root: new Ext.tree.TreeNode(),
-            tools:[{
-                id:'refresh',
-                handler: function(event, toolEl, panel){
-                    metaFeedsStore.reload();
+            tools: [
+                {
+                    id: 'refresh',
+                    handler: function (event, toolEl, panel) {
+                        metaFeedsStore.reload();
+                    }
+                },
+                {
+                    id: 'plus',
+                    handler: function (event, toolEl, panel) {
+                        var p = Studio.MetaFeeds.getMetaFeedPanel(contextPanel, metaFeedsStore);
+                        contextPanel.removeAll();
+                        contextPanel.add(p);
+                        contextPanel.doLayout();
+                    }
                 }
-            },{
-                id:'plus',
-                handler: function(event, toolEl, panel){
-                    var p = Studio.MetaFeeds.getMetaFeedPanel(contextPanel, metaFeedsStore);
-                    contextPanel.removeAll();
-                    contextPanel.add(p);
-                    contextPanel.doLayout();
-                }
-            }]
+            ]
         });
 
         var contextPanel = new Ext.Panel({
@@ -54,54 +57,58 @@ Studio.MetaFeeds = {
         var node = treePanel.getRootNode();
 
         var metaFeedsStore = kimios.store.StudioStore.getMetaFeedsStore();
-        
-        metaFeedsStore.on('load', function(st, metaFeedsRecord){
-            while (node.hasChildNodes()){
+
+        metaFeedsStore.on('load', function (st, metaFeedsRecord) {
+            while (node.hasChildNodes()) {
                 node.removeChild(node.item(0));
             }
-            Ext.each(metaFeedsRecord, function(metaFeedRecord, ind){
+            Ext.each(metaFeedsRecord, function (metaFeedRecord, ind) {
                 var metaFeedNode = new Ext.tree.TreeNode({
                     text: metaFeedRecord.data.name,
                     allowChildren: true,
                     iconCls: 'studio-cls-meta-feed'
                 });
-                metaFeedNode.on('contextMenu', function(node, e){
+                metaFeedNode.on('contextMenu', function (node, e) {
                     node.select();
                     var contextMenu = new Ext.menu.Menu({
                         shadow: false,
-                        items: [{
-                            text: kimios.lang('MetaFeedValue'),
-                            iconCls: 'value',
-                            handler: function(){
-                                Studio.MetaFeeds.getValuesWindow(contextPanel, metaFeedRecord).show();
+                        items: [
+                            {
+                                text: kimios.lang('MetaFeedValue'),
+                                iconCls: 'metavalue',
+                                handler: function () {
+                                    Studio.MetaFeeds.getValuesWindow(contextPanel, metaFeedRecord).show();
+                                }
+                            },
+                            {
+                                text: kimios.lang('Properties'),
+                                iconCls: 'qaction-properties',
+                                handler: function () {
+                                    var p = Studio.MetaFeeds.getMetaFeedPanel(contextPanel, metaFeedsStore, metaFeedRecord);
+                                    contextPanel.removeAll();
+                                    contextPanel.add(p);
+                                    contextPanel.doLayout();
+                                }
+                            },
+                            {
+                                text: kimios.lang('Delete'),
+                                iconCls: 'trash',
+                                handler: function () {
+                                    kimios.request.StudioRequest.removeMetaFeed(metaFeedsStore, metaFeedRecord, contextPanel);
+                                }
                             }
-                        },{
-                            text: kimios.lang('Properties'),
-                            iconCls: 'qaction-properties',
-                            handler: function(){
-                                var p = Studio.MetaFeeds.getMetaFeedPanel(contextPanel, metaFeedsStore, metaFeedRecord);
-                                contextPanel.removeAll();
-                                contextPanel.add(p);
-                                contextPanel.doLayout();
-                            }
-                        },{
-                            text: kimios.lang('Delete'),
-                            iconCls: 'trash',
-                            handler: function(){
-                                kimios.request.StudioRequest.removeMetaFeed(metaFeedsStore, metaFeedRecord, contextPanel);
-                            }
-                        }]
+                        ]
                     });
                     contextMenu.showAt(e.getXY());
                 });
-                
-                metaFeedNode.on('click', function(){
-                    var p =  Studio.MetaFeeds.getMetaFeedPanel(contextPanel, metaFeedsStore, metaFeedRecord);
+
+                metaFeedNode.on('click', function () {
+                    var p = Studio.MetaFeeds.getMetaFeedPanel(contextPanel, metaFeedsStore, metaFeedRecord);
                     contextPanel.removeAll();
                     contextPanel.add(p);
                     contextPanel.doLayout();
                 });
-                
+
                 node.appendChild(metaFeedNode);
             });
         });
@@ -110,24 +117,24 @@ Studio.MetaFeeds = {
             title: kimios.lang('MetaFeeds'),
             iconCls: 'studio-cls-meta-feed',
             layout: 'border',
-            contextPanel : contextPanel,
+            contextPanel: contextPanel,
             items: [treePanel, contextPanel],
             border: false
         });
-        
+
         metaFeedsStore.load();
         panel.doLayout();
         return panel;
     },
 
-    getMetaFeedPanel: function(contextPanel, metaFeedsStore, metaFeedRecord){
+    getMetaFeedPanel: function (contextPanel, metaFeedsStore, metaFeedRecord) {
 
         var valuesButton = new Ext.Button({
             text: kimios.lang('MetaFeedValue'),
             tooltip: kimios.lang('MetaFeedValue'),
-            iconCls: 'value',
+            iconCls: 'metavalue',
             hidden: (metaFeedRecord && metaFeedRecord.data.className == 'org.kimios.kernel.dms.metafeeds.impl.Enumeration' ? false : true),
-            handler: function(){
+            handler: function () {
                 Studio.MetaFeeds.getValuesWindow(contextPanel, metaFeedRecord).show();
             }
         });
@@ -137,7 +144,7 @@ Studio.MetaFeeds = {
             tooltip: kimios.lang('Delete'),
             iconCls: 'trash',
             disabled: (metaFeedRecord ? false : true),
-            handler: function(){
+            handler: function () {
                 kimios.request.StudioRequest.removeMetaFeed(metaFeedsStore, metaFeedRecord, contextPanel);
             }
         });
@@ -146,32 +153,34 @@ Studio.MetaFeeds = {
             text: kimios.lang('Save'),
             tooltip: kimios.lang('Save'),
             iconCls: 'save',
-            handler: function(){
+            handler: function () {
                 kimios.request.StudioRequest.saveMetaFeed(Ext.getCmp('mf-classname').getValue(), Ext.getCmp('mf-name').getValue(), Ext.getCmp('hidden-mf-uid').getValue(), metaFeedsStore, contextPanel, null, metaFeedTextField.getValue(), metaFeedRecord);
             }
         });
 
         var formPanel = new kimios.FormPanel({
-            title: (metaFeedRecord ? metaFeedRecord.data.name : kimios.lang('New')+' '+kimios.lang('MetaFeed')),
-            iconCls: 'studio-cls-meta-feed',
-            bodyStyle:'padding:5px;background-color:transparent;',
+            title: (metaFeedRecord ? metaFeedRecord.data.name : kimios.lang('New') + ' ' + kimios.lang('MetaFeed')),
+//            iconCls: 'studio-cls-meta-feed',
+            bodyStyle: 'padding:5px;background-color:transparent;',
             labelWidth: 120,
             defaults: {
                 selectOnFocus: true,
                 style: 'font-size: 10px',
                 labelStyle: 'font-size: 10px'
             },
-            tools:[{
-                id:'refresh',
-                handler: function(event, toolEl, panel){
-                    if (metaFeedRecord){
-                        var p = Studio.MetaFeeds.getMetaFeedPanel(contextPanel, metaFeedsStore, metaFeedRecord);
-                        contextPanel.removeAll();
-                        contextPanel.add(p);
-                        contextPanel.doLayout();
+            tools: [
+                {
+                    id: 'refresh',
+                    handler: function (event, toolEl, panel) {
+                        if (metaFeedRecord) {
+                            var p = Studio.MetaFeeds.getMetaFeedPanel(contextPanel, metaFeedsStore, metaFeedRecord);
+                            contextPanel.removeAll();
+                            contextPanel.add(p);
+                            contextPanel.doLayout();
+                        }
                     }
                 }
-            }],
+            ],
             bbar: [valuesButton, '->', saveButton, deleteButton],
             monitorValid: true
         });
@@ -185,15 +194,15 @@ Studio.MetaFeeds = {
         var metaFeedTextField = new Ext.form.TextField({
             anchor: '100%',
             name: 'name',
-            id : 'mf-name',
+            id: 'mf-name',
             fieldLabel: kimios.lang('MetaFeed'),
             value: (metaFeedRecord ? metaFeedRecord.data.name : '')
         });
 
-        var availableMetaFeedsStore =  kimios.store.StudioStore.getAvailableMetaFeedsStore();
+        var availableMetaFeedsStore = kimios.store.StudioStore.getAvailableMetaFeedsStore();
 
         var metaFeedComboBox = new Ext.form.ComboBox({
-          id : 'mf-classname',
+            id: 'mf-classname',
             anchor: '100%',
             name: 'className',
             fieldLabel: kimios.lang('JavaClassName'),
@@ -214,22 +223,24 @@ Studio.MetaFeeds = {
         return formPanel;
     },
 
-    getValuesWindow: function(contextPanel, metaFeedRecord){
+    getValuesWindow: function (contextPanel, metaFeedRecord) {
         var window = new Ext.Window({
             title: metaFeedRecord.data.name,
             iconCls: 'studio-cls-meta-feed',
             layout: 'fit',
             width: 250,
-            border:false,
+            border: false,
             height: 300,
             maximizable: true,
             modal: true,
-            tools:[{
-                id: 'refresh',
-                handler: function(){
-                    metaFeedStore.reload();
+            tools: [
+                {
+                    id: 'refresh',
+                    handler: function () {
+                        metaFeedStore.reload();
+                    }
                 }
-            }]
+            ]
         });
 
         var metaFeedStore = kimios.store.StudioStore.getMetaFeedValuesStore(metaFeedRecord.data.uid, true);
@@ -238,7 +249,7 @@ Studio.MetaFeeds = {
             text: kimios.lang('Add'),
             iconCls: 'add',
             disabled: (metaFeedRecord && metaFeedRecord.data.className == 'org.kimios.kernel.dms.metafeeds.impl.Enumeration' ? false : true),
-            handler : function(){
+            handler: function () {
                 var metadata = grid.getStore().recordType;
                 var p = new metadata({
                     name: '',
@@ -247,17 +258,17 @@ Studio.MetaFeeds = {
                 });
                 grid.stopEditing();
                 metaFeedStore.insert(grid.getStore().getCount(), p);
-                grid.startEditing(grid.getStore().getCount()-1, 2);
+                grid.startEditing(grid.getStore().getCount() - 1, 2);
             }
         });
 
         var removeButton = new Ext.Button({
-            text:kimios.lang('Remove'),
-            iconCls:'remove',
+            text: kimios.lang('Remove'),
+            iconCls: 'remove',
             disabled: true,
-            handler: function(){
+            handler: function () {
                 var records = sm.getSelections();
-                for (var i=0; i<records.length; i++){
+                for (var i = 0; i < records.length; i++) {
                     metaFeedStore.remove(records[i]);
                 }
             }
@@ -267,8 +278,8 @@ Studio.MetaFeeds = {
             hidden: (metaFeedRecord && metaFeedRecord.data.className == 'org.kimios.kernel.dms.metafeeds.impl.Enumeration' ? false : true),
             checkOnly: true,
             listeners: {
-                selectionchange: function(sm) {
-                    if (metaFeedRecord && metaFeedRecord.data.className == 'org.kimios.kernel.dms.metafeeds.impl.Enumeration'){
+                selectionchange: function (sm) {
+                    if (metaFeedRecord && metaFeedRecord.data.className == 'org.kimios.kernel.dms.metafeeds.impl.Enumeration') {
                         var count = sm.getCount();
                         if (count > 0) {
                             removeButton.enable();
@@ -285,30 +296,28 @@ Studio.MetaFeeds = {
                 sortable: true
             },
             columns: [
-            sm,
-            {
-                width: 30,
-                fixed: true,
-                editable: false,
-                sortable: false,
-                menuDisabled: true,
-                dataIndex: 'icon',
-                align : 'center',
-                renderer: function(value, metaData, record, rowIndex, colIndex, store) {
-                    metaData.css = 'value';
-                }
-            },{
-                id: 'value',
-                sortable: true,
-                editable: (metaFeedRecord && metaFeedRecord.data.className == 'org.kimios.kernel.dms.metafeeds.impl.Enumeration' ? true : false),
-                dataIndex: 'value',
-                editor: new Ext.form.TextField(),
-                renderer: function(value, metaData, record, rowIndex, colIndex, store) {
-                    if (!value)
-                        return '<span style="font-style: italic; color: red;">?</span>';
-                    return value;
-                }
-            }]
+                sm,
+                {
+                    width: 30,
+                    fixed: true,
+                    hidden: true,
+                    editable: false,
+                    sortable: false,
+                    menuDisabled: true,
+                    dataIndex: 'icon',
+                    align: 'center'
+                }, {
+                    id: 'value',
+                    sortable: true,
+                    editable: (metaFeedRecord && metaFeedRecord.data.className == 'org.kimios.kernel.dms.metafeeds.impl.Enumeration' ? true : false),
+                    dataIndex: 'value',
+                    editor: new Ext.form.TextField(),
+                    renderer: function (value, metaData, record, rowIndex, colIndex, store) {
+                        if (!value)
+                            return '<span style="font-style: italic; color: red;">?</span>';
+                        return value;
+                    }
+                }]
         });
 
         var grid = new Ext.grid.EditorGridPanel({
@@ -320,17 +329,17 @@ Studio.MetaFeeds = {
             sm: (metaFeedRecord && metaFeedRecord.data.className == 'org.kimios.kernel.dms.metafeeds.impl.Enumeration' ? sm : null),
             clicksToEdit: 1,
             viewConfig: {
-                forceFit:true,
-                scrollOffset:0
+                forceFit: true,
+                scrollOffset: 0
             },
             hideHeaders: true,
             columnLines: false,
             tbar: [addButton, '-', removeButton],
-            bbar: ['->',new Ext.Button({
+            bbar: ['->', new Ext.Button({
                 text: kimios.lang('Save'),
                 iconCls: 'save',
                 disabled: (metaFeedRecord && metaFeedRecord.data.className == 'org.kimios.kernel.dms.metafeeds.impl.Enumeration' ? false : true),
-                handler: function(){
+                handler: function () {
                     kimios.request.StudioRequest.updateEnumerationValues(contextPanel, metaFeedRecord.data.uid, grid.getStore(), window);
                 }
             })]

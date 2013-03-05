@@ -126,16 +126,24 @@
 .delete {
     background-image: url(../icons/16x16/delete.png) !important;
     background-repeat: no-repeat;
+}
 
+.remove {
+    background-image: url(../icons/16x16/delete.png) !important;
+    background-repeat: no-repeat;
 }
 
 .trash {
     background-image: url(../icons/16x16/trash.png) !important;
     background-repeat: no-repeat;
-
 }
 
 .role-workspace {
+    background-image: url(../icons/16x16/add.png) !important;
+    background-repeat: no-repeat;
+}
+
+.add {
     background-image: url(../icons/16x16/add.png) !important;
     background-repeat: no-repeat;
 }
@@ -172,6 +180,11 @@
 
 .value {
     background-image: url(../icons/16x16/version.png) !important;
+    background-repeat: no-repeat;
+}
+
+.metavalue {
+    background-image: url(../icons/16x16/metavalue.png) !important;
     background-repeat: no-repeat;
 }
 
@@ -317,5 +330,35 @@
 
 .session {
     background-image: url(../icons/16x16/session.png) !important;
+    background-repeat: no-repeat;
+}
+
+.studio-cls-meta-document-type {
+    background-image: url(../icons/16x16/doctype.png) !important;
+    background-repeat: no-repeat;
+}
+
+.studio-cls-meta-feed {
+    background-image: url(../icons/16x16/metafeed.png) !important;
+    background-repeat: no-repeat;
+}
+
+.studio-wf-expand {
+    background-image: url(../icons/16x16/expand.png) !important;
+    background-repeat: no-repeat;
+}
+
+.studio-cls-wf-down {
+    background-image: url(../icons/16x16/arrow-down.png) !important;
+    background-repeat: no-repeat;
+}
+
+.studio-cls-wf-up {
+    background-image: url(../icons/16x16/arrow-up.png) !important;
+    background-repeat: no-repeat;
+}
+
+.studio-wf-status {
+    background-image: url(../icons/16x16/status.png) !important;
     background-repeat: no-repeat;
 }
