@@ -16,10 +16,14 @@
  */
 package org.kimios.controller;
 
+import flexjson.JSONSerializer;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -35,6 +39,10 @@ import javax.servlet.http.HttpServletResponse;
 public class CssController extends HttpServlet
 {
     StringBuilder cssContainer;
+
+
+
+    private static List<String> availablesIcons = new ArrayList<String>(  );
 
     @Override protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException
@@ -66,9 +74,12 @@ public class CssController extends HttpServlet
             List<File> pngFiles = Arrays.asList(iconsDirectory.listFiles(pngFilter));
             for (File f : pngFiles) {
 
+
+
                 String fileName = f.getName().substring(0,
                         f.getName().lastIndexOf(".")
                 );
+                availablesIcons.add( fileName );
                 cssContainer.append(
                         String.format(cssTpl, fileName, this.getServletContext().getContextPath(), fileName)
                 );
@@ -76,8 +87,15 @@ public class CssController extends HttpServlet
             }
         }
 
-        resp.setContentType("text/css");
-        resp.getWriter().write(cssContainer.toString());
+        if(req.getRequestURL().toString().endsWith( "icons" )){
+            resp.setContentType("text/css");
+            resp.getWriter().write(cssContainer.toString());
+        } else {
+            resp.setContentType( "application/json" );
+            resp.getWriter().write( new JSONSerializer()
+                                        .exclude( "class" )
+                                        .serialize( availablesIcons ) );
+        }
     }
 
     @Override protected void doPost(HttpServletRequest req, HttpServletResponse resp)

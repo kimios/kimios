@@ -78,7 +78,6 @@
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/SpinnerField.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/GroupTabPanel.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/GroupTab.js"></script>
-    <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/SearchField.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/main/kimios.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/main/Cookies.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/main/record.js"></script>
@@ -155,7 +154,8 @@
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/main/run.js"></script>
     <script type="text/javascript">
         var defaultTheme = 'minimalist-green';
-        new kimios.util.IconHelper.iconThemeSwitcher(defaultTheme);
+        kimios.util.IconHelper.iconThemeSwitcher(defaultTheme);
+        kimios.util.IconHelper.iconClassLoader();
     </script>
 </head>
 <body>

@@ -14,6 +14,8 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+var iconList = [];
 kimios.util.IconHelper = {
 
   iconIndexer : function(extension) {
@@ -55,10 +57,10 @@ kimios.util.IconHelper = {
       return style;
   },
   fileIconClass: function(extension){
-      /*
-        TODO: check css class existence
-       */
-      return extension;
+      if(iconList.indexOf(extension) > -1)
+        return extension;
+      else
+        return 'unknown';
   },
   getDocumentIcon : function(extension, size){
     if (size == null) size = 16;
@@ -67,7 +69,6 @@ kimios.util.IconHelper = {
   },
   
   getIcon : function(type, extension){
-
     var sTheme = (defaultTheme && defaultTheme.length > 0 ? 'themes/' +  defaultTheme : '') + '/';
 
     switch (type) {
@@ -79,11 +80,6 @@ kimios.util.IconHelper = {
         return kimios.util.IconHelper.getDocumentIcon(extension, 16);
     }
   },
-
-  getIconPath : function(theme){
-     //TODO: icon switcing ?
-  },
-
   getIconClass : function(type, extension){
     switch (type) {
       case 1:
@@ -91,7 +87,7 @@ kimios.util.IconHelper = {
       case 2:
         return 'dm-entity-tab-properties-folder';
       case 3:
-        if (extension == undefined) return 'unknown';
+        if (extension == undefined || extension.trim().length == 0) return 'unknown';
         return kimios.util.IconHelper.fileIconClass(extension.toLowerCase());
       default:
         return 'home';
@@ -127,8 +123,20 @@ kimios.util.IconHelper = {
                   document.getElementsByTagName("head")[0].appendChild(fileref)
 
 
+          }
+      },
+      iconClassLoader: function (){
+          Ext.Ajax.request({
+              url: srcContextPath + '/icons/list',
+              success: function(response, opts) {
+                  var obj = Ext.decode('(' + response.responseText + ')');
+                  iconList = [];
+                  for(var i in obj){
+                      iconList.push(obj[i]);
+                  }
+              },
+              failure: function(response, opts) {
+              }
+          });
       }
-  }
-
-
 };

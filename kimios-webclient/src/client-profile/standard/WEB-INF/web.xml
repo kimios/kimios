@@ -63,6 +63,10 @@
         <servlet-name>Icons</servlet-name>
         <url-pattern>/icons</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+      <servlet-name>Icons</servlet-name>
+      <url-pattern>/icons/*</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>
