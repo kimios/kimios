@@ -234,8 +234,10 @@ kimios.ContextMenu = new function () {
         this.documentMenu.add(this.getRefreshItem());
         this.documentMenu.addSeparator();
         this.documentMenu.add(this.getCommentsItem());
-        this.documentMenu.add(this.getPropertiesItem());
         if (Ext.isIE || Ext.isGecko) this.documentMenu.add(this.getGetDocumentMailLinkItem());
+        this.documentMenu.addSeparator();
+        this.documentMenu.add(this.getPropertiesItem());
+
     };
 
     this.initViewableDocumentMenu = function (config) {
@@ -253,8 +255,10 @@ kimios.ContextMenu = new function () {
         this.viewableDocumentMenu.add(this.getRefreshItem());
         this.viewableDocumentMenu.addSeparator();
         this.viewableDocumentMenu.add(this.getCommentsItem());
-        this.viewableDocumentMenu.add(this.getPropertiesItem());
         if (Ext.isIE || Ext.isGecko) this.viewableDocumentMenu.add(this.getGetDocumentMailLinkItem());
+        this.viewableDocumentMenu.addSeparator();
+        this.viewableDocumentMenu.add(this.getPropertiesItem());
+
     };
 
     this.initWorkspaceMultipleMenu = function (config) {
@@ -455,7 +459,7 @@ kimios.ContextMenu = new function () {
     this.getGetDocumentMailLinkItem = function () {
         return new Ext.menu.Item({
             text: kimios.lang('GetDocumentDownloadLink'),
-            iconCls: 'value',
+            iconCls: 'attach',
             scope: this,
             handler: function () {
                 var mailLink = fullServerUrl + kimios.util.getDocumentVersionLink(this.dmEntityPojo.uid);
@@ -730,7 +734,7 @@ kimios.ContextMenu = new function () {
     this.getRemoveBookmarkItem = function () {
         return new Ext.menu.Item({
             text: kimios.lang('RemoveBookmark'),
-            iconCls: 'del-icon',
+            iconCls: 'delete',
             scope: this,
             handler: function () {
                 kimios.request.removeBookmarks(this.dmEntityPojo.uid, this.dmEntityPojo.type);
@@ -862,7 +866,7 @@ kimios.ContextMenu = new function () {
     this.getRemoveRelatedItem = function () {
         return new Ext.menu.Item({
             text: kimios.lang('Unlink'),
-            iconCls: 'del-icon',
+            iconCls: 'delete',
             scope: this,
             handler: function () {
                 Ext.MessageBox.confirm(

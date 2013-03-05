@@ -133,7 +133,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
 
         this.form1 = new kimios.FormPanel({
             region: 'west',
-            width: 360,
+            width: 350,
             autoScroll: true,
             border: false,
             margins: '5 10 5 10',
@@ -156,7 +156,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
             border: false,
             margins: '5 10 5 10',
             bodyStyle: 'padding:5px;',
-            labelWidth: 120,
+            labelWidth: 140,
             autoScroll: true,
             hidden: true,
             defaults: {
@@ -382,7 +382,6 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                                     name: 'MetaDataString_' + uid,
                                     fieldLabel: name,
                                     value: value,
-                                    emptyText: kimios.lang('SearchText'),
                                     labelSeparator: kimios.lang('LabelSeparator')
                                 }));
                             } else {
@@ -391,7 +390,6 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                                     metaFeedUid: metaFeedUid,
                                     fieldLabel: name,
                                     value: value,
-                                    emptyText: kimios.lang('MetaFeed'),
                                     labelSeparator: kimios.lang('LabelSeparator')
                                 }));
                             }
@@ -402,14 +400,12 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                                 name: 'MetaDataNumber_' + uid + '_from',
                                 fieldLabel: name + ' (min)',
                                 value: value,
-                                emptyText: kimios.lang('MetaNumberValue'),
                                 labelSeparator: kimios.lang('LabelSeparator')
                             }));
                             fields.push(new Ext.form.NumberField({
                                 name: 'MetaDataNumber_' + uid + '_to',
                                 fieldLabel: name + ' (max)',
                                 value: value,
-                                emptyText: kimios.lang('MetaNumberValue'),
                                 labelSeparator: kimios.lang('LabelSeparator')
                             }));
                             break;
@@ -421,7 +417,6 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                                 format: 'Y-m-d',
                                 value: value,
                                 editable: false,
-                                emptyText: kimios.lang('MetaDateValue'),
                                 labelSeparator: kimios.lang('LabelSeparator')
                             }));
                             fields.push(new Ext.form.DateField({
@@ -430,7 +425,6 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                                 format: 'Y-m-d',
                                 value: value,
                                 editable: false,
-                                emptyText: kimios.lang('MetaDateValue'),
                                 labelSeparator: kimios.lang('LabelSeparator')
                             }));
                             break;
