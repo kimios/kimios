@@ -20,7 +20,7 @@ var Admin = {
         var window = new Ext.Window({
           modal : true,
             title: kimios.lang('Administration'),
-            iconCls: 'admin',
+            iconCls: 'owner',
             closable: true,
             maximizable: true,
             width:800,

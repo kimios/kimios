@@ -21,15 +21,11 @@
 .dm-entity-tab-1, .dm-entity-tab-properties-workspace {
     background-image: url(../icons/16x16/database.png) !important;
     background-repeat: no-repeat;
-    opacity: 0.6;
-    filter: alpha(opacity = 60); /* For IE8 and earlier */
 }
 
 .dm-entity-tab-2, .dm-entity-tab-properties-folder {
     background-image: url(../icons/16x16/folder.png) !important;
     background-repeat: no-repeat;
-    opacity: 0.6;
-    filter: alpha(opacity = 60); /* For IE8 and earlier */
 }
 
 .dm-entity-tab-properties-folder {
@@ -43,250 +39,283 @@
 .home {
     background-image: url(../icons/16x16/house.png) !important;
     background-repeat: no-repeat;
-    opacity: 0.6;
-    filter: alpha(opacity = 60); /* For IE8 and earlier */
 }
 
 .tasks {
     background-image: url(../icons/16x16/tasks.png) !important;
     background-repeat: no-repeat;
-    opacity: 0.6;
-    filter: alpha(opacity = 60); /* For IE8 and earlier */
 }
 
 .comment {
     background-image: url(../icons/16x16/comment.png) !important;
     background-repeat: no-repeat;
-    opacity: 0.6;
-    filter: alpha(opacity = 60); /* For IE8 and earlier */
 }
 
 .studio-cls-wf-up {
     background-image: url(../icons/16x16/upload.png) !important;
     background-repeat: no-repeat;
     background-position: bottom right;
-    opacity: 0.6;
-    filter: alpha(opacity = 60); /* For IE8 and earlier */
 }
 
 .search {
     background-image: url(../icons/16x16/search.png) !important;
     background-repeat: no-repeat;
     background-position: bottom right;
-    opacity: 0.6;
-    filter: alpha(opacity = 60); /* For IE8 and earlier */
 }
 
 .exit {
     background-image: url(../icons/16x16/logout.png) !important;
     background-repeat: no-repeat;
-    opacity: 0.6;
-    filter: alpha(opacity = 60); /* For IE8 and earlier */
 }
 
 .configure {
     background-image: url(../icons/16x16/settings.png) !important;
     background-repeat: no-repeat;
-    opacity: 0.6;
-    filter: alpha(opacity = 60); /* For IE8 and earlier */
 }
 
 .refresh {
     background-image: url(../icons/16x16/refresh.png) !important;
     background-repeat: no-repeat;
-    opacity: 0.6;
-    filter: alpha(opacity = 60); /* For IE8 and earlier */
 }
 
 .undo {
     background-image: url(../icons/16x16/back.png) !important;
     background-repeat: no-repeat;
-    opacity: 0.6;
-    filter: alpha(opacity = 60); /* For IE8 and earlier */
 }
 
 .newworkspace {
     background-image: url(../icons/16x16/workspace-add.png) !important;
     background-repeat: no-repeat;
     background-position: bottom right;
-    opacity: 0.6;
-    filter: alpha(opacity = 60); /* For IE8 and earlier */
 }
 
 .newfolder {
     background-image: url(../icons/16x16/folder-add.png) !important;
     background-repeat: no-repeat;
     background-position: bottom right;
-    opacity: 0.6;
-    filter: alpha(opacity = 60); /* For IE8 and earlier */
 }
 
 .import {
     background-image: url(../icons/16x16/upload.png) !important;
     background-repeat: no-repeat;
     background-position: bottom right;
-    opacity: 0.6;
-    filter: alpha(opacity = 60); /* For IE8 and earlier */
+
 }
 
 .owner {
     background-image: url(../icons/16x16/admin.png) !important;
     background-repeat: no-repeat;
     background-position: center right;
-    opacity: 0.6;
-    filter: alpha(opacity = 60); /* For IE8 and earlier */
 }
 
 .studio {
     background-image: url(../icons/16x16/studio.png) !important;
     background-repeat: no-repeat;
-    opacity: 0.6;
-    filter: alpha(opacity = 60); /* For IE8 and earlier */
 }
 
 .save {
     background-image: url(../icons/16x16/save.png) !important;
     background-repeat: no-repeat;
-    opacity: 0.6;
-    filter: alpha(opacity = 60); /* For IE8 and earlier */
 }
 
 .del-icon {
-    background-image: url(../icons/16x16/clear.png) !important;
+    background-image: url(../icons/16x16/cross.png) !important;
     background-repeat: no-repeat;
-    opacity: 0.6;
-    filter: alpha(opacity = 60); /* For IE8 and earlier */
 }
 
 .delete {
     background-image: url(../icons/16x16/delete.png) !important;
     background-repeat: no-repeat;
-    opacity: 0.6;
-    filter: alpha(opacity = 60); /* For IE8 and earlier */
+
 }
 
 .trash {
     background-image: url(../icons/16x16/trash.png) !important;
     background-repeat: no-repeat;
-    opacity: 0.6;
-    filter: alpha(opacity = 60); /* For IE8 and earlier */
+
 }
 
 .role-workspace {
     background-image: url(../icons/16x16/add.png) !important;
     background-repeat: no-repeat;
-    opacity: 0.6;
-    filter: alpha(opacity = 60); /* For IE8 and earlier */
 }
 
 .view {
     background-image: url(../icons/16x16/search.png) !important;
     background-repeat: no-repeat;
-    opacity: 0.6;
-    filter: alpha(opacity = 60); /* For IE8 and earlier */
 }
 
 .properties {
     background-image: url(../icons/16x16/properties.png) !important;
     background-repeat: no-repeat;
-    opacity: 0.6;
-    filter: alpha(opacity = 60); /* For IE8 and earlier */
 }
 
 .qaction-bookmarks {
     background-image: url(../icons/16x16/bookmark.png) !important;
     background-repeat: no-repeat;
-    opacity: 0.6;
-    filter: alpha(opacity = 60); /* For IE8 and earlier */
 }
 
 .move {
     background-image: url(../icons/16x16/move.png) !important;
     background-repeat: no-repeat;
-    opacity: 0.6;
-    filter: alpha(opacity = 60); /* For IE8 and earlier */
 }
 
 .txt {
     background-image: url(../icons/16x16/document.png) !important;
     background-repeat: no-repeat;
-    opacity: 0.6;
-    filter: alpha(opacity = 60); /* For IE8 and earlier */
 }
 
 .option {
     background-image: url(../icons/16x16/meta.png) !important;
     background-repeat: no-repeat;
-    opacity: 0.6;
-    filter: alpha(opacity = 60); /* For IE8 and earlier */
 }
 
 .value {
     background-image: url(../icons/16x16/version.png) !important;
     background-repeat: no-repeat;
-    opacity: 0.6;
-    filter: alpha(opacity = 60); /* For IE8 and earlier */
 }
 
 .studio-cls-wf {
     background-image: url(../icons/16x16/workflow.png) !important;
     background-repeat: no-repeat;
-    opacity: 0.6;
-    filter: alpha(opacity = 60); /* For IE8 and earlier */
 }
 
 .attach {
     background-image: url(../icons/16x16/link.png) !important;
     background-repeat: no-repeat;
-    opacity: 0.6;
-    filter: alpha(opacity = 60); /* For IE8 and earlier */
 }
 
 .reporting {
-    background-image: url(../icons/16x16/history.png) !important;
+    background-image: url(../icons/16x16/reporting.png) !important;
     background-repeat: no-repeat;
-    opacity: 0.6;
-    filter: alpha(opacity = 60); /* For IE8 and earlier */
 }
 
 .admin-group-tree-node {
-    background-image: url(../icons/16x16/security.png) !important;
+    background-image: url(../icons/16x16/users.png) !important;
     background-repeat: no-repeat;
-    opacity: 0.6;
-    filter: alpha(opacity = 60); /* For IE8 and earlier */
 }
 
 .reindex-run {
     background-image: url(../icons/16x16/download.png) !important;
     background-repeat: no-repeat;
-    opacity: 0.6;
-    filter: alpha(opacity = 60); /* For IE8 and earlier */
 }
 
 .checked-out {
     background-image: url(../icons/16x16/checkout.png) !important;
     background-repeat: no-repeat;
-    opacity: 0.6;
-    filter: alpha(opacity = 60); /* For IE8 and earlier */
 }
 
 .eye {
     background-image: url(../icons/16x16/view.png) !important;
     background-repeat: no-repeat;
-    opacity: 0.6;
-    filter: alpha(opacity = 60); /* For IE8 and earlier */
 }
 
 .accept-status {
     background-image: url(../icons/16x16/accept.png) !important;
     background-repeat: no-repeat;
-    opacity: 0.6;
-    filter: alpha(opacity = 60); /* For IE8 and earlier */
 }
 
 .reject-status {
     background-image: url(../icons/16x16/reject.png) !important;
     background-repeat: no-repeat;
-    opacity: 0.6;
-    filter: alpha(opacity = 60); /* For IE8 and earlier */
+}
+
+.admin-domain-tree-node {
+    background-image: url(../icons/16x16/domain.png) !important;
+    background-repeat: no-repeat;
+}
+
+.adminrole {
+    background-image: url(../icons/16x16/adminrole.png) !important;
+    background-repeat: no-repeat;
+}
+
+.add-user-icon {
+    background-image: url(../icons/16x16/user-add.png) !important;
+    background-repeat: no-repeat;
+}
+
+.delete-user {
+    background-image: url(../icons/16x16/user-remove.png) !important;
+    background-repeat: no-repeat;
+}
+
+.admin-acc-role {
+    background-image: url(../icons/16x16/users.png) !important;
+    background-repeat: no-repeat;
+}
+
+.qaction-properties {
+    background-image: url(../icons/16x16/properties.png) !important;
+    background-repeat: no-repeat;
+}
+
+.admin-acc-domain {
+    background-image: url(../icons/16x16/domain.png) !important;
+    background-repeat: no-repeat;
+}
+
+.admin-acc-domain-prop {
+    background-image: url(../icons/16x16/properties.png) !important;
+    background-repeat: no-repeat;
+}
+
+.admin-user-tree-node {
+    background-image: url(../icons/16x16/user.png) !important;
+    background-repeat: no-repeat;
+}
+
+.add-group-icon {
+    background-image: url(../icons/16x16/user-add.png) !important;
+    background-repeat: no-repeat;
+}
+
+.delete-group {
+    background-image: url(../icons/16x16/user-remove.png) !important;
+    background-repeat: no-repeat;
+}
+
+.user-icon {
+    background-image: url(../icons/16x16/user.png) !important;
+    background-repeat: no-repeat;
+}
+
+.group-icon {
+    background-image: url(../icons/16x16/users.png) !important;
+    background-repeat: no-repeat;
+}
+
+.specialtasks {
+    background-image: url(../icons/16x16/specialtasks.png) !important;
+    background-repeat: no-repeat;
+}
+
+.security-icon {
+    background-image: url(../icons/16x16/security.png) !important;
+    background-repeat: no-repeat;
+}
+
+.reindex {
+    background-image: url(../icons/16x16/reindex.png) !important;
+    background-repeat: no-repeat;
+}
+
+.unlock {
+    background-image: url(../icons/16x16/checkout.png) !important;
+    background-repeat: no-repeat;
+}
+
+.lock {
+    background-image: url(../icons/16x16/checkin.png) !important;
+    background-repeat: no-repeat;
+}
+
+.change-owner {
+    background-image: url(../icons/16x16/user.png) !important;
+    background-repeat: no-repeat;
+}
+
+.session {
+    background-image: url(../icons/16x16/session.png) !important;
+    background-repeat: no-repeat;
 }

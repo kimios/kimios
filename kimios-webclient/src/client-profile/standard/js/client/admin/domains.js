@@ -15,34 +15,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 Admin.Domains = {
-    
-    getPanel: function(){
+
+    getPanel: function () {
         var treePanel = new Ext.tree.TreePanel({
             region: 'west',
             width: 200,
             split: true,
             collapsible: true,
-            hideCollapseTool : true,
+            hideCollapseTool: true,
             title: kimios.lang('AuthenticationSources'),
-            margins:'3 0 3 3',
-            cmargins:'3 3 3 3',
+            margins: '3 0 3 3',
+            cmargins: '3 3 3 3',
             rootVisible: false,
             autoSize: true,
             autoScroll: true,
             root: new Ext.tree.TreeNode(),
-            tools:[{
-                id:'refresh',
-                handler: function(event, toolEl, panel){
-                    domainsListStore.reload();
-                }
-            },{
-                id:'plus',
-                handler: function(event, toolEl, panel){
-                    Admin.Domains.setContextPanel(domainsListStore, contextPanel,[
-                        Admin.Domains.getParametersPanel(contextPanel, domainsListStore)
+            tools: [
+                {
+                    id: 'refresh',
+                    handler: function (event, toolEl, panel) {
+                        domainsListStore.reload();
+                    }
+                },
+                {
+                    id: 'plus',
+                    handler: function (event, toolEl, panel) {
+                        Admin.Domains.setContextPanel(domainsListStore, contextPanel, [
+                            Admin.Domains.getParametersPanel(contextPanel, domainsListStore)
                         ], 0);
+                    }
                 }
-            }]
+            ]
         });
 
         var contextPanel = new Ext.Panel({
@@ -55,48 +58,51 @@ Admin.Domains = {
         var node = treePanel.getRootNode();
 
         var domainsListStore = kimios.store.AdminStore.getDomainsStore();
-        
 
-        domainsListStore.on('load', function(st, domainsListRecord){
-            while (node.hasChildNodes()){
+
+        domainsListStore.on('load', function (st, domainsListRecord) {
+            while (node.hasChildNodes()) {
                 node.removeChild(node.item(0));
             }
-            Ext.each(domainsListRecord, function(domainRecord, ind){
+            Ext.each(domainsListRecord, function (domainRecord, ind) {
                 var domainNode = new Ext.tree.TreeNode({
                     text: domainRecord.data.name,
                     allowChildren: true,
                     iconCls: 'admin-domain-tree-node'
                 });
-                domainNode.on('contextMenu', function(node, e){
+                domainNode.on('contextMenu', function (node, e) {
                     node.select();
                     var contextMenu = new Ext.menu.Menu({
                         shadow: false,
-                        items: [{
-                            text: kimios.lang('Properties'),
-                            iconCls: 'qaction-properties',
-                            handler: function(){
-                                Admin.Domains.setContextPanel(domainsListStore, contextPanel,[
-                                    Admin.Domains.getParametersPanel(contextPanel, domainsListStore, domainRecord),
-                                    Admin.Domains.getUsersPanel(domainRecord),
-                                    Admin.Domains.getGroupsPanel(domainRecord)
+                        items: [
+                            {
+                                text: kimios.lang('Properties'),
+                                iconCls: 'qaction-properties',
+                                handler: function () {
+                                    Admin.Domains.setContextPanel(domainsListStore, contextPanel, [
+                                        Admin.Domains.getParametersPanel(contextPanel, domainsListStore, domainRecord),
+                                        Admin.Domains.getUsersPanel(domainRecord),
+                                        Admin.Domains.getGroupsPanel(domainRecord)
                                     ], 0, domainRecord);
+                                }
+                            },
+                            {
+                                text: kimios.lang('Delete'),
+                                iconCls: 'trash',
+                                handler: function () {
+                                    kimios.request.AdminRequest.removeDomain(domainsListStore, domainRecord, contextPanel);
+                                }
                             }
-                        },{
-                            text: kimios.lang('Delete'),
-                            iconCls: 'trash',
-                            handler: function(){
-                                kimios.request.AdminRequest.removeDomain(domainsListStore, domainRecord, contextPanel);
-                            }
-                        }]
+                        ]
                     });
                     contextMenu.showAt(e.getXY());
                 });
-                domainNode.on('click', function(){
-                    Admin.Domains.setContextPanel(domainsListStore, contextPanel,[
+                domainNode.on('click', function () {
+                    Admin.Domains.setContextPanel(domainsListStore, contextPanel, [
                         Admin.Domains.getParametersPanel(contextPanel, domainsListStore, domainRecord),
                         Admin.Domains.getUsersPanel(domainRecord),
                         Admin.Domains.getGroupsPanel(domainRecord)
-                        ], 0, domainRecord);
+                    ], 0, domainRecord);
                 });
                 node.appendChild(domainNode);
             });
@@ -108,49 +114,51 @@ Admin.Domains = {
         return panel;
     },
 
-    setContextPanel: function(domainsListStore, contextPanel, subPanels, activeTab, domainRecord){
-        var tabPanel =  new Ext.TabPanel({
+    setContextPanel: function (domainsListStore, contextPanel, subPanels, activeTab, domainRecord) {
+        var tabPanel = new Ext.TabPanel({
             id: 'admin-domains-tab-panel',
             activeTab: activeTab,
             border: false,
-            bodyStyle:'background-color:transparent;'
+            bodyStyle: 'background-color:transparent;'
         });
-        for (var i=0; i<subPanels.length; i++){
+        for (var i = 0; i < subPanels.length; i++) {
             tabPanel.add(subPanels[i]);
         }
-        
+
         contextPanel.removeAll();
         contextPanel.add(new Ext.Panel({
             id: 'admin-domains-panel',
             title: (domainRecord ? domainRecord.data.name : kimios.lang('NewDomain')),
-            iconCls: 'admin-acc-domain',
+//            iconCls: 'admin-acc-domain',
             bodyStyle: 'background-color:transparent;',
             layout: 'fit',
             items: [tabPanel],
-            tools:[{
-                id:'refresh',
-                handler: function(event, toolEl, panel){
-                    if (domainRecord){
-                        Admin.Domains.setContextPanel(domainsListStore, contextPanel,[
-                            Admin.Domains.getParametersPanel(contextPanel, domainsListStore, domainRecord),
-                            Admin.Domains.getUsersPanel(domainRecord),
-                            Admin.Domains.getGroupsPanel(domainRecord)
+            tools: [
+                {
+                    id: 'refresh',
+                    handler: function (event, toolEl, panel) {
+                        if (domainRecord) {
+                            Admin.Domains.setContextPanel(domainsListStore, contextPanel, [
+                                Admin.Domains.getParametersPanel(contextPanel, domainsListStore, domainRecord),
+                                Admin.Domains.getUsersPanel(domainRecord),
+                                Admin.Domains.getGroupsPanel(domainRecord)
                             ], 0, domainRecord);
+                        }
                     }
                 }
-            }]
+            ]
         }));
-        
+
         contextPanel.doLayout();
     },
 
-    getParametersPanel: function(contextPanel, store, domainRecord){
+    getParametersPanel: function (contextPanel, store, domainRecord) {
         var deleteButton = new Ext.Button({
             text: kimios.lang('Delete'),
             tooltip: kimios.lang('Delete'),
             iconCls: 'trash',
             disabled: (domainRecord ? false : true),
-            handler: function(){
+            handler: function () {
                 kimios.request.AdminRequest.removeDomain(store, domainRecord, contextPanel);
             }
         });
@@ -159,7 +167,7 @@ Admin.Domains = {
             text: kimios.lang('Save'),
             tooltip: kimios.lang('Save'),
             iconCls: 'save',
-            handler: function(){
+            handler: function () {
                 kimios.request.AdminRequest.saveDomain(parametersPanel, store, contextPanel, parametersGrid.getStore(), domainTextField.getValue(), domainRecord);
             }
         });
@@ -189,7 +197,7 @@ Admin.Domains = {
             name: 'newName',
             fieldLabel: kimios.lang('AuthenticationSource'),
             value: (domainRecord ? domainRecord.data.name : ''),
-            disabled : (domainRecord ? true : false)
+            disabled: (domainRecord ? true : false)
         });
 
         var domainTypeStore = kimios.store.AdminStore.getDomainTypesStore();
@@ -200,7 +208,7 @@ Admin.Domains = {
             source: {},
             loadMask: true,
             hideHeaders: true,
-            viewConfig : {
+            viewConfig: {
                 forceFit: true
             }
         });
@@ -219,42 +227,42 @@ Admin.Domains = {
             store: domainTypeStore
         });
 
-        if (domainRecord){
-            var dReader =  new Ext.data.JsonReader();
+        if (domainRecord) {
+            var dReader = new Ext.data.JsonReader();
             var domainDetailsStore = new Ext.data.Store({});
-            Ext.apply(domainDetailsStore,{
+            Ext.apply(domainDetailsStore, {
                 reader: dReader,
                 proxy: new Ext.data.HttpProxy({
                     url: getBackEndUrl('Admin')
                 })
             });
             Ext.apply(domainDetailsStore, {
-                baseParams : {
+                baseParams: {
                     action: 'domainDetails',
                     className: domainRecord.data.className,
                     name: domainRecord.data.name,
                     newName: domainRecord.data.newName
                 }
             });
-            domainDetailsStore.on('load', function(st, recs){
+            domainDetailsStore.on('load', function (st, recs) {
                 parametersGrid.store.removeAll();
                 var rec = st.getAt(0);
-                rec.fields.each(function(f, ind){
+                rec.fields.each(function (f, ind) {
                     var propRecord = new Ext.grid.PropertyRecord({
                         name: f.name,
-                        value: (rec ? rec.get(f.name): '')
+                        value: (rec ? rec.get(f.name) : '')
                     });
                     parametersGrid.store.addSorted(propRecord);
                 });
             });
             parametersGrid.store.removeAll();
             domainDetailsStore.load();
-        }else{
-            classNameCombo.on('select', function(combo, record, index){
+        } else {
+            classNameCombo.on('select', function (combo, record, index) {
                 parametersGrid.store.removeAll();
                 var domainFieldsStore = kimios.store.AdminStore.getDomainFieldsStore(combo.value);
-                domainFieldsStore.on('load', function(st, recs){
-                    Ext.each(recs, function(r, ind){
+                domainFieldsStore.on('load', function (st, recs) {
+                    Ext.each(recs, function (r, ind) {
                         var propRecord = new Ext.grid.PropertyRecord({
                             name: r.data.name,
                             value: ''
@@ -269,7 +277,7 @@ Admin.Domains = {
         parametersPanel.add(classNameCombo);
         parametersPanel.add(new Ext.Panel({
             anchor: '100% -52',
-            viewConfig : {
+            viewConfig: {
                 forceFit: true
             },
             layout: 'fit',
@@ -280,24 +288,24 @@ Admin.Domains = {
         return parametersPanel;
     },
 
-    getUsersPanel: function(record){
-        var getDetailsPanel = function(ctn, sm, rowIndex, usersListStore, domainRecord, usersDetailsRecord){
+    getUsersPanel: function (record) {
+        var getDetailsPanel = function (ctn, sm, rowIndex, usersListStore, domainRecord, usersDetailsRecord) {
             var tabs = new Ext.TabPanel({
                 bodyStyle: 'background-color:transparent;',
-                border:false,
+                border: false,
                 //                id: 'admin-domains-users-details-tabs',
                 activeTab: 0,
                 enableTabScroll: true
             });
             tabs.add(getParametersTab(domainRecord, usersListStore, usersDetailsRecord, ctn, sm, rowIndex));
-            if (usersDetailsRecord){
+            if (usersDetailsRecord) {
                 tabs.add(getLinkedGroupsTab(domainRecord, usersDetailsRecord));
                 tabs.add(getAssignedRolesTab(usersDetailsRecord.data.uid, domainRecord.data.name, domainRecord.data.className));
             }
             return tabs;
         };
 
-        var getParametersTab = function(domainRecord, usersListStore, usersDetailsRecord, ctn, sm, rowIndex){
+        var getParametersTab = function (domainRecord, usersListStore, usersDetailsRecord, ctn, sm, rowIndex) {
             var uidTextField = new Ext.form.TextField({
                 fieldLabel: kimios.lang('UserUid'),
                 name: 'uid',
@@ -315,9 +323,9 @@ Admin.Domains = {
                 title: kimios.lang('User'),
                 iconCls: 'admin-user-tree-node',
                 autoScroll: true,
-                monitorValid:true,
+                monitorValid: true,
                 labelWidth: 200,
-                bodyStyle:'padding:5px;background-color:transparent;',
+                bodyStyle: 'padding:5px;background-color:transparent;',
                 defaults: {
                     anchor: '-20',
                     selectOnFocus: true,
@@ -327,40 +335,40 @@ Admin.Domains = {
                 },
                 defaultType: 'textfield',
                 items: [
-                uidTextField,
-                fullNameTextField,
-                {
-                    id : 'kimios-admin-domains-password',
-                    name: 'password',
-                    inputType: 'password',
-                    fieldLabel: kimios.lang('DMSAuthPasswordLabel')
-                },{
-                    id : 'kimios-admin-domains-password2',
-                    name: 'confirm-password',
-                    inputType: 'password',
-                    fieldLabel: kimios.lang('ConfirmNewPassword')
-                },{
-                    fieldLabel: kimios.lang('UserMail'),
-                    name: 'mail',
-                    vtype:'email',
-                    value: (usersDetailsRecord ? usersDetailsRecord.data.mail : '')
-                },{
-                    xtype:'hidden',
-                    name: 'authenticationSourceName',
-                    value: domainRecord.data.name
-                }],
-                bbar: ['->',{
+                    uidTextField,
+                    fullNameTextField,
+                    {
+                        id: 'kimios-admin-domains-password',
+                        name: 'password',
+                        inputType: 'password',
+                        fieldLabel: kimios.lang('DMSAuthPasswordLabel')
+                    }, {
+                        id: 'kimios-admin-domains-password2',
+                        name: 'confirm-password',
+                        inputType: 'password',
+                        fieldLabel: kimios.lang('ConfirmNewPassword')
+                    }, {
+                        fieldLabel: kimios.lang('UserMail'),
+                        name: 'mail',
+                        vtype: 'email',
+                        value: (usersDetailsRecord ? usersDetailsRecord.data.mail : '')
+                    }, {
+                        xtype: 'hidden',
+                        name: 'authenticationSourceName',
+                        value: domainRecord.data.name
+                    }],
+                bbar: ['->', {
                     text: kimios.lang('Save'),
                     iconCls: 'save',
-                    handler: function(){
+                    handler: function () {
                         var p1 = Ext.getCmp('kimios-admin-domains-password').getValue();
                         var p2 = Ext.getCmp('kimios-admin-domains-password2').getValue();
                         var match = p1 == p2;
                         var empty = p1 == '' || p2 == '';
-                        if (empty || !match){
+                        if (empty || !match) {
                             Ext.MessageBox.alert(kimios.lang('InvalidPassword'), kimios.lang('NoPasswordMatchJS'));
-                        }else{
-                            if (kimios.checkPassword(p1) == true){
+                        } else {
+                            if (kimios.checkPassword(p1) == true) {
                                 kimios.request.AdminRequest.saveUser(ctn, sm, rowIndex, usersListStore, form, usersDetailsRecord);
                             }
                         }
@@ -368,34 +376,34 @@ Admin.Domains = {
                 }]
             });
 
-            if (usersDetailsRecord){
+            if (usersDetailsRecord) {
                 form.add({
                     xtype: 'hidden',
                     name: 'uid',
                     value: usersDetailsRecord.data.uid
                 });
                 fullNameTextField.focus(true, true);
-            }else{
+            } else {
                 uidTextField.focus(true, true);
             }
             return form;
         };
 
-        var getLinkedGroupsTab = function(record, userRecord){
+        var getLinkedGroupsTab = function (record, userRecord) {
             var userGroupsStore = kimios.store.AdminStore.getUserGroupsStore(userRecord.data.uid, record.data.name);
 
             var addButton = new Ext.Button({
                 text: kimios.lang('Add'),
-                iconCls:'add-group-icon',
+                iconCls: 'add-group-icon',
                 disabled: (record.data.className == 'org.kimios.kernel.user.impl.HAuthenticationSource' ? false : true),
-                handler: function(){
+                handler: function () {
                     var el = new kimios.picker.SecurityEntityPicker({
                         title: kimios.lang('LinkedGroups'),
                         iconCls: 'add-group-icon',
                         entityMode: 'group',
                         lockedSourceValue: record.data.name
                     });
-                    el.on('entitySelected', function(usersRecords, groupsRecords, _pickerWindow){
+                    el.on('entitySelected', function (usersRecords, groupsRecords, _pickerWindow) {
                         kimios.request.AdminRequest.saveUserToGroup(userGroupsStore, userRecord.data.uid, groupsRecords);
                         _pickerWindow.close();
                     });
@@ -405,9 +413,9 @@ Admin.Domains = {
 
             var removeButton = new Ext.Button({
                 text: kimios.lang('Remove'),
-                iconCls:'delete-group',
+                iconCls: 'delete-group',
                 disabled: true,
-                handler: function(){
+                handler: function () {
                     kimios.request.AdminRequest.removeUserToGroup(userGroupsStore, userRecord.data.uid, sm.getSelections());
                 }
             });
@@ -415,9 +423,9 @@ Admin.Domains = {
             var sm = new Ext.grid.CheckboxSelectionModel({
                 checkOnly: true,
                 listeners: {
-                    selectionchange: function(sm) {
+                    selectionchange: function (sm) {
                         var count = sm.getCount();
-                        if (record.data.className == 'org.kimios.kernel.user.impl.HAuthenticationSource'){
+                        if (record.data.className == 'org.kimios.kernel.user.impl.HAuthenticationSource') {
                             if (count > 0) {
                                 removeButton.enable();
                             } else {
@@ -437,24 +445,24 @@ Admin.Domains = {
                     sortable: false,
                     menuDisabled: true,
                     dataIndex: 'icon',
-                    renderer: function(value, metaData, record, rowIndex, colIndex, store) {
+                    renderer: function (value, metaData, record, rowIndex, colIndex, store) {
                         metaData.css = 'admin-group-tree-node';
                     }
-                },{
-                    id:'gid',
+                }, {
+                    id: 'gid',
                     header: "#",
                     width: 80,
                     sortable: true,
                     dataIndex: 'gid',
-                    renderer: function(value, metaData, record, rowIndex, colIndex, store){
-                        return value+'&nbsp;&nbsp;<span style="color:#aaa;font-size:10px;">'+record.get('name')+'</span>';
+                    renderer: function (value, metaData, record, rowIndex, colIndex, store) {
+                        return value + '&nbsp;&nbsp;<span style="color:#aaa;font-size:10px;">' + record.get('name') + '</span>';
                     }
                 }
-                ]);
+            ]);
 
             var groupsGrid = new Ext.grid.GridPanel({
                 title: kimios.lang('LinkedGroups'),
-                iconCls: 'roles',
+                iconCls: 'group-icon',
                 autoScroll: true,
                 loadMask: true,
                 bodyStyle: 'background-color:transparent;',
@@ -463,29 +471,29 @@ Admin.Domains = {
                 cm: cm,
                 sm: sm,
                 viewConfig: {
-                    forceFit:true
+                    forceFit: true
                 },
                 hideHeaders: true,
                 columnLines: false,
-                tbar:[
-                addButton,'-',
-                removeButton
+                tbar: [
+                    addButton, '-',
+                    removeButton
                 ]
             });
-            groupsGrid.on('activate', function(){
+            groupsGrid.on('activate', function () {
                 userGroupsStore.load();
             });
             return groupsGrid;
         };
 
-        var getAssignedRolesTab = function(userName, userSource, className){
+        var getAssignedRolesTab = function (userName, userSource, className) {
             var userRolesStore = kimios.store.AdminStore.getUserRolesStore(userName, userSource);
 
             var removeButton = new Ext.Button({
                 text: kimios.lang('Remove'),
-                iconCls:'remove',
+                iconCls: 'remove',
                 disabled: true,
-                handler: function(){
+                handler: function () {
                     kimios.request.AdminRequest.removeRole(userRolesStore, rolesGrid.getSelectionModel().getSelections());
                 }
             });
@@ -493,9 +501,9 @@ Admin.Domains = {
             var sm = new Ext.grid.CheckboxSelectionModel({
                 checkOnly: true,
                 listeners: {
-                    selectionchange: function(sm) {
+                    selectionchange: function (sm) {
                         var count = sm.getCount();
-                        if (className == 'org.kimios.kernel.user.impl.HAuthenticationSource'){
+                        if (className == 'org.kimios.kernel.user.impl.HAuthenticationSource') {
                             if (count > 0) {
                                 removeButton.enable();
                             } else {
@@ -515,17 +523,17 @@ Admin.Domains = {
                     sortable: false,
                     menuDisabled: true,
                     dataIndex: 'icon',
-                    renderer: function(value, metaData, record, rowIndex, colIndex, store) {
+                    renderer: function (value, metaData, record, rowIndex, colIndex, store) {
                         metaData.css = 'admin-acc-role';
                     }
                 },
                 {
-                    id:'role',
+                    id: 'role',
                     header: kimios.lang('Roles'),
                     sortable: true,
                     dataIndex: 'role',
-                    renderer: function(value, metaData, record, rowIndex, colIndex, store) {
-                        switch (value){
+                    renderer: function (value, metaData, record, rowIndex, colIndex, store) {
+                        switch (value) {
                             case 1:
                                 return kimios.lang('WorkspaceCreator');
                             case 2:
@@ -541,7 +549,7 @@ Admin.Domains = {
                         }
                     }
                 }
-                ]);
+            ]);
 
             var rolesGrid = new Ext.grid.GridPanel({
                 title: kimios.lang('AssignedRoles'),
@@ -549,21 +557,21 @@ Admin.Domains = {
                 autoScroll: true,
                 loadMask: true,
                 bodyStyle: 'background-color:transparent;',
-                id:'admin-domains-user-roles-panel',
+                id: 'admin-domains-user-roles-panel',
                 store: userRolesStore,
                 stripeRows: true,
                 sm: sm,
                 cm: cm,
                 viewConfig: {
-                    forceFit:true
+                    forceFit: true
                 },
                 hideHeaders: true,
                 columnLines: false,
                 tbar: [
-                removeButton]
+                    removeButton]
             });
 
-            rolesGrid.on('activate', function(){
+            rolesGrid.on('activate', function () {
                 userRolesStore.load();
             });
 
@@ -573,11 +581,11 @@ Admin.Domains = {
         var usersListStore = kimios.store.AdminStore.getUsersStore(record.data.name);
 
         var addButton = new Ext.Button({
-            text:kimios.lang('Add'),
-            tooltip:kimios.lang('Add'),
-            iconCls:'add-user-icon',
+            text: kimios.lang('Add'),
+            tooltip: kimios.lang('Add'),
+            iconCls: 'add-user-icon',
             disabled: (record.data.className == 'org.kimios.kernel.user.impl.HAuthenticationSource' ? false : true),
-            handler: function(){
+            handler: function () {
                 var ctn = Ext.getCmp('admin-domains-users-details-container');
                 ctn.removeAll();
                 ctn.add(getDetailsPanel(ctn, sm, -1, usersListStore, record));
@@ -589,20 +597,20 @@ Admin.Domains = {
         });
 
         var removeButton = new Ext.Button({
-            text:kimios.lang('Remove'),
-            tooltip:kimios.lang('Remove'),
-            iconCls:'delete-user',
+            text: kimios.lang('Remove'),
+            tooltip: kimios.lang('Remove'),
+            iconCls: 'delete-user',
             disabled: true,
-            handler: function(){
+            handler: function () {
                 kimios.request.AdminRequest.removeUser(usersListStore, sm.getSelections());
             }
         });
 
         var clearButton = new Ext.Button({
-            text:kimios.lang('Clear'),
-            tooltip:kimios.lang('Clear'),
-            iconCls:'add-user-icon',
-            handler: function(){
+            text: kimios.lang('Clear'),
+            tooltip: kimios.lang('Clear'),
+            iconCls: 'add-user-icon',
+            handler: function () {
                 var ctn = Ext.getCmp('admin-domains-users-details-container');
                 ctn.add(getDetailsPanel(ctn, sm, -1, usersListStore, record));
                 ctn.getLayout().setActiveItem(0);
@@ -615,9 +623,9 @@ Admin.Domains = {
         var sm = new Ext.grid.CheckboxSelectionModel({
             //            checkOnly : true,
             listeners: {
-                selectionchange: function(sm) {
+                selectionchange: function (sm) {
                     var count = sm.getCount();
-                    if (record.data.className == 'org.kimios.kernel.user.impl.HAuthenticationSource'){
+                    if (record.data.className == 'org.kimios.kernel.user.impl.HAuthenticationSource') {
                         if (count > 0) {
                             removeButton.enable();
                         } else {
@@ -629,26 +637,26 @@ Admin.Domains = {
         });
 
         var cm = new Ext.grid.ColumnModel([
-        //            sm,
-        {
-            width: 16,
-            fixed: true,
-            editable: false,
-            sortable: false,
-            menuDisabled: true,
-            dataIndex: 'icon',
-            renderer: function(value, metaData, record, rowIndex, colIndex, store) {
-                metaData.css = 'admin-user-tree-node';
+            //            sm,
+            {
+                width: 16,
+                fixed: true,
+                editable: false,
+                sortable: false,
+                menuDisabled: true,
+                dataIndex: 'icon',
+                renderer: function (value, metaData, record, rowIndex, colIndex, store) {
+                    metaData.css = 'admin-user-tree-node';
+                }
+            },
+            {
+                id: 'uid',
+                sortable: true,
+                dataIndex: 'uid',
+                renderer: function (value, metaData, record, rowIndex, colIndex, store) {
+                    return value + '&nbsp;&nbsp;<span style="color:#aaa;font-size:10px;">' + record.get('name') + '</span>';
+                }
             }
-        },
-        {
-            id:'uid',
-            sortable: true,
-            dataIndex: 'uid',
-            renderer: function(value, metaData, record, rowIndex, colIndex, store) {
-                return value+'&nbsp;&nbsp;<span style="color:#aaa;font-size:10px;">'+record.get('name')+'</span>';
-            }
-        }
         ]);
 
         var panel = new Ext.grid.GridPanel({
@@ -661,27 +669,27 @@ Admin.Domains = {
             cm: cm,
             sm: sm,
             viewConfig: {
-                forceFit:true
+                forceFit: true
             },
             hideHeaders: true,
             columnLines: false,
             buttonAlign: 'left',
-            tbar:[
-            addButton,
-            removeButton
+            tbar: [
+                addButton,
+                removeButton
             ]
         });
 
         var p = new Ext.Panel({
-            id:'admin-domains-users-panel',
-            title:kimios.lang('Users'),
+            id: 'admin-domains-users-panel',
+            title: kimios.lang('Users'),
             iconCls: 'admin-user-tree-node',
             layout: 'border',
             bodyStyle: 'background-color:transparent;',
             items: [panel, new Ext.Panel({
                 region: 'south',
                 id: 'admin-domains-users-details-container',
-                border:false,
+                border: false,
                 animCollapse: false,
                 collapsed: true,
                 hidden: true,
@@ -690,10 +698,10 @@ Admin.Domains = {
                 }),
                 height: 175
             })],
-            listeners:{
-                activate: function(){
+            listeners: {
+                activate: function () {
                     usersListStore.load({
-                        callback: function(){
+                        callback: function () {
                             var ctn = Ext.getCmp('admin-domains-users-details-container');
                             ctn.collapse();
                             ctn.setVisible(false);
@@ -704,15 +712,15 @@ Admin.Domains = {
             }
         });
 
-        panel.on('rowclick', function(grid, rowIndex, e){
+        panel.on('rowclick', function (grid, rowIndex, e) {
             var ctn = Ext.getCmp('admin-domains-users-details-container');
-            if (sm.getSelections().length == 1){
+            if (sm.getSelections().length == 1) {
                 ctn.removeAll(); // admin infinite loop fix
                 ctn.add(getDetailsPanel(ctn, sm, rowIndex, usersListStore, record, sm.getSelected()));
                 ctn.getLayout().setActiveItem(0);
                 ctn.expand();
                 ctn.setVisible(true);
-            }else{
+            } else {
                 ctn.collapse();
                 ctn.setVisible(false);
             }
@@ -722,11 +730,11 @@ Admin.Domains = {
     },
 
 
-    getGroupsPanel: function(record){
-        var getDetailsPanel = function(ctn, sm, rowIndex, groupsListStore, domainRecord, groupsDetailsRecord){
+    getGroupsPanel: function (record) {
+        var getDetailsPanel = function (ctn, sm, rowIndex, groupsListStore, domainRecord, groupsDetailsRecord) {
             var tabs = new Ext.TabPanel({
                 bodyStyle: 'background-color: transparent;',
-                border:false,
+                border: false,
                 region: 'south',
                 activeTab: 0,
                 enableTabScroll: true
@@ -737,7 +745,7 @@ Admin.Domains = {
             return tabs;
         };
 
-        var getParametersTab = function(domainRecord, groupsListStore, groupsDetailsRecord, ctn, sm, rowIndex){
+        var getParametersTab = function (domainRecord, groupsListStore, groupsDetailsRecord, ctn, sm, rowIndex) {
             var gidTextField = new Ext.form.TextField({
                 fieldLabel: kimios.lang('GroupGid'),
                 name: 'gid',
@@ -755,9 +763,9 @@ Admin.Domains = {
                 title: kimios.lang('Group'),
                 iconCls: 'admin-group-tree-node',
                 autoScroll: true,
-                monitorValid:true,
+                monitorValid: true,
                 labelWidth: 200,
-                bodyStyle:'padding:5px;',
+                bodyStyle: 'padding:5px;',
                 defaults: {
                     anchor: '-20',
                     selectOnFocus: true,
@@ -767,50 +775,50 @@ Admin.Domains = {
                 },
                 defaultType: 'textfield',
                 items: [
-                gidTextField,
-                fullNameTextField,
-                {
-                    xtype:'hidden',
-                    name: 'authenticationSourceName',
-                    value: domainRecord.data.name
-                }],
-                bbar: ['->',{
+                    gidTextField,
+                    fullNameTextField,
+                    {
+                        xtype: 'hidden',
+                        name: 'authenticationSourceName',
+                        value: domainRecord.data.name
+                    }],
+                bbar: ['->', {
                     text: kimios.lang('Save'),
                     iconCls: 'save',
-                    handler: function(){
+                    handler: function () {
                         kimios.request.AdminRequest.saveGroup(ctn, sm, rowIndex, groupsListStore, form, groupsDetailsRecord);
                     }
                 }]
             });
 
-            if (groupsDetailsRecord){
+            if (groupsDetailsRecord) {
                 form.add({
                     xtype: 'hidden',
                     name: 'gid',
                     value: groupsDetailsRecord.data.gid
                 });
                 fullNameTextField.focus(true, true);
-            }else{
+            } else {
                 gidTextField.focus(true, true);
             }
             return form;
         };
 
-        var getLinkedUsersTab = function(record, groupRecord){
+        var getLinkedUsersTab = function (record, groupRecord) {
             var groupUsersStore = kimios.store.AdminStore.getGroupUsersStore(groupRecord.data.gid, record.data.name);
 
             var addButton = new Ext.Button({
                 text: kimios.lang('Add'),
-                iconCls:'add-user-icon',
+                iconCls: 'add-user-icon',
                 disabled: (record.data.className == 'org.kimios.kernel.user.impl.HAuthenticationSource' ? false : true),
-                handler: function(){
+                handler: function () {
                     var el = new kimios.picker.SecurityEntityPicker({
                         title: kimios.lang('LinkedUsers'),
                         iconCls: 'add-user-icon',
                         entityMode: 'user',
                         lockedSourceValue: record.data.name
                     });
-                    el.on('entitySelected', function(usersRecords, groupsRecords, _pickerWindow){
+                    el.on('entitySelected', function (usersRecords, groupsRecords, _pickerWindow) {
                         kimios.request.AdminRequest.saveGroupToUser(groupUsersStore, groupRecord.data.gid, usersRecords);
                         _pickerWindow.close();
                     });
@@ -820,19 +828,19 @@ Admin.Domains = {
 
             var removeButton = new Ext.Button({
                 text: kimios.lang('Remove'),
-                iconCls:'delete-user',
+                iconCls: 'delete-user',
                 disabled: true,
-                handler: function(){
+                handler: function () {
                     kimios.request.AdminRequest.removeGroupToUser(groupUsersStore, groupRecord.data.gid, sm.getSelections());
                 }
             });
 
             var sm = new Ext.grid.CheckboxSelectionModel({
-                checkOnly : true,
+                checkOnly: true,
                 listeners: {
-                    selectionchange: function(sm) {
+                    selectionchange: function (sm) {
                         var count = sm.getCount();
-                        if (record.data.className == 'org.kimios.kernel.user.impl.HAuthenticationSource'){
+                        if (record.data.className == 'org.kimios.kernel.user.impl.HAuthenticationSource') {
                             if (count > 0) {
                                 removeButton.enable();
                             } else {
@@ -852,23 +860,23 @@ Admin.Domains = {
                     sortable: false,
                     menuDisabled: true,
                     dataIndex: 'icon',
-                    renderer: function(value, metaData, record, rowIndex, colIndex, store) {
+                    renderer: function (value, metaData, record, rowIndex, colIndex, store) {
                         metaData.css = 'admin-user-tree-node';
                     }
-                },{
-                    id:'uid',
+                }, {
+                    id: 'uid',
                     width: 80,
                     sortable: true,
                     dataIndex: 'uid',
-                    renderer: function(value, metaData, record, rowIndex, colIndex, store){
-                        return value+'&nbsp;&nbsp;<span style="color:#aaa;font-size:10px;">'+record.get('name')+'</span>';
+                    renderer: function (value, metaData, record, rowIndex, colIndex, store) {
+                        return value + '&nbsp;&nbsp;<span style="color:#aaa;font-size:10px;">' + record.get('name') + '</span>';
                     }
                 }
-                ]);
+            ]);
 
             var usersGrid = new Ext.grid.GridPanel({
                 title: kimios.lang('LinkedUsers'),
-                iconCls: 'roles',
+                iconCls: 'user-icon',
                 autoScroll: true,
                 loadMask: true,
                 store: groupUsersStore,
@@ -876,17 +884,17 @@ Admin.Domains = {
                 cm: cm,
                 sm: sm,
                 viewConfig: {
-                    forceFit:true
+                    forceFit: true
                 },
                 hideHeaders: true,
                 columnLines: false,
-                tbar:[
-                addButton,'-',
-                removeButton
+                tbar: [
+                    addButton, '-',
+                    removeButton
                 ]
             });
 
-            usersGrid.on('activate', function(){
+            usersGrid.on('activate', function () {
                 groupUsersStore.load();
             });
 
@@ -896,11 +904,11 @@ Admin.Domains = {
         var groupsListStore = kimios.store.AdminStore.getGroupsStore(record.data.name);
 
         var addButton = new Ext.Button({
-            text:kimios.lang('Add'),
-            tooltip:kimios.lang('Add'),
-            iconCls:'add-group-icon',
+            text: kimios.lang('Add'),
+            tooltip: kimios.lang('Add'),
+            iconCls: 'add-group-icon',
             disabled: (record.data.className == 'org.kimios.kernel.user.impl.HAuthenticationSource' ? false : true),
-            handler: function(){
+            handler: function () {
                 var ctn = Ext.getCmp('admin-domains-groups-details-container');
                 ctn.add(getDetailsPanel(ctn, sm, -1, groupsListStore, record));
                 ctn.getLayout().setActiveItem(0);
@@ -911,11 +919,11 @@ Admin.Domains = {
         });
 
         var removeButton = new Ext.Button({
-            text:kimios.lang('Remove'),
-            tooltip:kimios.lang('Remove'),
-            iconCls:'delete-group',
+            text: kimios.lang('Remove'),
+            tooltip: kimios.lang('Remove'),
+            iconCls: 'delete-group',
             disabled: true,
-            handler: function(){
+            handler: function () {
                 kimios.request.AdminRequest.removeGroup(groupsListStore, sm.getSelections());
             }
         });
@@ -923,9 +931,9 @@ Admin.Domains = {
         var sm = new Ext.grid.CheckboxSelectionModel({
             //            checkOnly: true,
             listeners: {
-                selectionchange: function(sm) {
+                selectionchange: function (sm) {
                     var count = sm.getCount();
-                    if (record.data.className == 'org.kimios.kernel.user.impl.HAuthenticationSource'){
+                    if (record.data.className == 'org.kimios.kernel.user.impl.HAuthenticationSource') {
                         if (count > 0) {
                             removeButton.enable();
                         } else {
@@ -937,25 +945,27 @@ Admin.Domains = {
         });
 
         var cm = new Ext.grid.ColumnModel([
-        //            sm,
-        {
-            width: 16,
-            fixed: true,
-            editable: false,
-            sortable: false,
-            menuDisabled: true,
-            dataIndex: 'icon',
-            renderer: function(value, metaData, record, rowIndex, colIndex, store) {
-                metaData.css = 'admin-group-tree-node';
+            //            sm,
+            {
+                width: 16,
+                fixed: true,
+                editable: false,
+                sortable: false,
+                menuDisabled: true,
+                dataIndex: 'icon',
+                renderer: function (value, metaData, record, rowIndex, colIndex, store) {
+                    metaData.css = 'admin-group-tree-node';
+                }
+            },
+            {
+                id: 'gid',
+                sortable: false,
+                dataIndex: 'gid',
+                renderer: function (value, metaData, record, rowIndex, colIndex, store) {
+                    return value + '&nbsp;&nbsp;<span style="color:#aaa;font-size:10px;">' + record.get('name') + '</span>';
+                }
             }
-        }, {
-            id:'gid',
-            sortable: false,
-            dataIndex: 'gid',
-            renderer: function(value, metaData, record, rowIndex, colIndex, store) {
-                return value+'&nbsp;&nbsp;<span style="color:#aaa;font-size:10px;">'+record.get('name')+'</span>';
-            }
-        }]);
+        ]);
 
         var panel = new Ext.grid.GridPanel({
             region: 'center',
@@ -966,26 +976,26 @@ Admin.Domains = {
             cm: cm,
             sm: sm,
             viewConfig: {
-                forceFit:true
+                forceFit: true
             },
             hideHeaders: true,
             columnLines: false,
             buttonAlign: 'left',
-            tbar:[
-            addButton,
-            removeButton
+            tbar: [
+                addButton,
+                removeButton
             ]
         });
 
         var p = new Ext.Panel({
-            id:'admin-domains-groups-panel',
-            title:kimios.lang('Groups'),
+            id: 'admin-domains-groups-panel',
+            title: kimios.lang('Groups'),
             iconCls: 'admin-group-tree-node',
             layout: 'border',
             items: [panel, new Ext.Panel({
                 region: 'south',
                 id: 'admin-domains-groups-details-container',
-                border:false,
+                border: false,
                 animCollapse: false,
                 collapsed: true,
                 hidden: true,
@@ -994,10 +1004,10 @@ Admin.Domains = {
                 }),
                 height: 175
             })],
-            listeners:{
-                activate: function(){
+            listeners: {
+                activate: function () {
                     groupsListStore.load({
-                        callback: function(){
+                        callback: function () {
                             var ctn = Ext.getCmp('admin-domains-groups-details-container');
                             ctn.collapse();
                             ctn.setVisible(false);
@@ -1007,15 +1017,15 @@ Admin.Domains = {
                 }
             }
         });
-        panel.on('rowclick', function(grid, rowIndex, e){
+        panel.on('rowclick', function (grid, rowIndex, e) {
             var ctn = Ext.getCmp('admin-domains-groups-details-container');
-            if (sm.getSelections().length == 1){
+            if (sm.getSelections().length == 1) {
                 ctn.removeAll();
                 ctn.add(getDetailsPanel(ctn, sm, rowIndex, groupsListStore, record, sm.getSelected()));
                 ctn.getLayout().setActiveItem(0);
                 ctn.expand();
                 ctn.setVisible(true);
-            }else{
+            } else {
                 ctn.collapse();
                 ctn.setVisible(false);
             }

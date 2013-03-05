@@ -32,7 +32,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
     clearForm: function () {
         this.searchRequestId = null;
         this.searchRequestName = null;
-        this.saveButton.setText(
+        this.saveButton.setTooltip(
             this.searchRequestId ? kimios.lang('Update') : kimios.lang('Create')
         );
         this.nameField.setValue("");
@@ -56,15 +56,13 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
             text: kimios.lang('SearchEmptyText'),
             scope: this,
             iconCls: 'search',
-            width: 100,
             handler: function () {
                 this.search();
             }
         });
 
         this.saveButton = new Ext.Button({
-            text: _t.searchRequestId ? kimios.lang('Update') : kimios.lang('Create'),
-            width: 100,
+            tooltip: _t.searchRequestId ? kimios.lang('Update') : kimios.lang('Create'),
             scope: this,
             iconCls: 'save',
             handler: function () {
@@ -111,7 +109,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                             kimios.ajaxRequest('Search', params, function () {
                                 kimios.Info.msg(kimios.lang('SearchTab'), kimios.lang('SearchSaveDone'));
                                 Ext.getCmp('kimios-queries-panel').getStore().reload();
-                                _this.saveButton.setText(kimios.lang('Update'));
+                                _this.saveButton.setTooltip(kimios.lang('Update'));
                             });
                         }
                     },
@@ -121,11 +119,10 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
 
 
         this.clearButton = new Ext.Button({
-            text: kimios.lang('ClearField'),
+            tooltip: kimios.lang('ClearField'),
             scope: this,
             disabled: true,
-
-            iconCls: 'del-icon',
+            iconCls: 'delete',
             handler: function (btn) {
                 this.clearForm();
             }
@@ -272,7 +269,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                     }
                 }
 
-                this.saveButton.setText(
+                this.saveButton.setTooltip(
                     this.searchRequestId ? kimios.lang('Update') : kimios.lang('Create')
                 );
 
@@ -510,9 +507,9 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
         if (!this.isVisible())
             return;
         this.setTitle(kimios.lang('AdvancedSearch'));
-        this.clearButton.setText(kimios.lang('ClearField'));
+        this.clearButton.setTooltip(kimios.lang('ClearField'));
         this.submitButton.setText(kimios.lang('SearchEmptyText'));
-        this.saveButton.setText(
+        this.saveButton.setTooltip(
             this.searchRequestId ? kimios.lang('Update') : kimios.lang('Create')
         );
 

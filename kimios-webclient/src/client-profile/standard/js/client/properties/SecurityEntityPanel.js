@@ -20,7 +20,7 @@ kimios.properties.SecurityEntityPanel = Ext.extend(Ext.Panel, {
     {
         this.dmEntityPojo = config.dmEntityPojo;
         this.title = kimios.lang('SecurityEntities');
-        this.iconCls = 'admin-group-tree-node';
+        this.iconCls = 'security-icon';
         this.layout = 'border';
         this.loadingRequired = true;
         this.loaded = false;
