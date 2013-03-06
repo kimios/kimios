@@ -177,9 +177,9 @@ ul.x-tab-strip-bottom {
 }
 
 .x-tab-right {
-    border-top: 1px solid #ddd;
-    border-left: 1px solid #ddd;
-    border-right: 1px solid #ddd;
+    border-top: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
 }
 
 .x-tab-strip-bottom .x-tab-right {
@@ -1518,7 +1518,7 @@ a.x-menu-item {
 }
 
 .x-window-tl .x-window-header {
-    color: #555;
+    color: #45af43;
     font: bold 11px tahoma, arial, verdana, sans-serif;
 
 }
