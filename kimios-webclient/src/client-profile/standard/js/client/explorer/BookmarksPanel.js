@@ -17,8 +17,8 @@
 
 kimios.explorer.BookmarksPanel = Ext.extend(Ext.grid.GridPanel, {
     constructor: function (config) {
-        this.id = 'kimios-bookmarks-panel',
-            this.title = kimios.lang('BookmarksExplorer');
+        this.id = 'kimios-bookmarks-panel';
+        this.title = kimios.lang('BookmarksExplorer');
 //    this.iconCls = 'qbookmark-cls';
         this.autoScroll = true;
 //        this.stripeRows = true;
@@ -40,12 +40,6 @@ kimios.explorer.BookmarksPanel = Ext.extend(Ext.grid.GridPanel, {
             }
         });
 
-        this.noContentNode = new Ext.tree.TreeNode({
-            text: kimios.lang('NoBookmark'),
-//      iconCls : 'qbookmark-cls',
-            disabled: true
-        });
-
         this.cm = new Ext.grid.ColumnModel([
             {
                 align: 'center',
@@ -58,7 +52,10 @@ kimios.explorer.BookmarksPanel = Ext.extend(Ext.grid.GridPanel, {
                 resizable: false,
                 menuDisabled: true,
                 renderer: function (val, metaData, record, rowIndex, colIndex, store) {
-                    metaData.css = kimios.util.IconHelper.getIconClass(record.data.type, record.data.extension);
+                    if (record.data.type == 9)
+                        metaData.css = '';
+                    else
+                        metaData.css = kimios.util.IconHelper.getIconClass(record.data.type, record.data.extension);
                 }
             },
             {
@@ -88,10 +85,18 @@ kimios.explorer.BookmarksPanel = Ext.extend(Ext.grid.GridPanel, {
             scope: this,
             callback: function (records, options, success) {
                 this.setIconClass(null);
-                if (kimios.explorer.getActivePanel().view != null) {
-                    if (kimios.explorer.getActivePanel().searchMode == false) {
-                        var type = kimios.explorer.getActivePanel().type;
-                        kimios.explorer.getActivePanel().dmEntityToolbar.addToBookmarksButton.setDisabled(type != 1 && type != 2);
+                if (!records || records.length == 0) {
+                    this.store.insert(0, new Ext.data.Record({
+                        name: kimios.lang('NoBookmark'),
+                        type: 9,
+                        extension: null
+                    }));
+                } else {
+                    if (kimios.explorer.getActivePanel().view != null) {
+                        if (kimios.explorer.getActivePanel().searchMode == false) {
+                            var type = kimios.explorer.getActivePanel().type;
+                            kimios.explorer.getActivePanel().dmEntityToolbar.addToBookmarksButton.setDisabled(type != 1 && type != 2);
+                        }
                     }
                 }
             }
@@ -100,7 +105,7 @@ kimios.explorer.BookmarksPanel = Ext.extend(Ext.grid.GridPanel, {
 
     refreshLanguage: function () {
         this.setTitle(kimios.lang('BookmarksExplorer'));
-        this.noContentNode.setText(kimios.lang('NoBookmark'));
+        this.refresh();
         this.doLayout();
     },
 
@@ -112,6 +117,8 @@ kimios.explorer.BookmarksPanel = Ext.extend(Ext.grid.GridPanel, {
         }, this);
 
         this.on('rowdblclick', function (grid, rowIndex, ev) {
+            if (grid.getStore().getAt(rowIndex).data.type == 9)
+                return false;
             var selected = grid.getStore().getAt(rowIndex);
             if (selected.data.type != 3) {
                 var centerPanel = kimios.explorer.getMainPanel();
@@ -142,6 +149,8 @@ kimios.explorer.BookmarksPanel = Ext.extend(Ext.grid.GridPanel, {
 
         this.on('rowcontextmenu', function (grid, rowIndex, e) {
             e.preventDefault();
+            if (grid.getStore().getAt(rowIndex).data.type == 9)
+                return false;
             var sm = grid.getSelectionModel();
             sm.selectRow(rowIndex);
             kimios.ContextMenu.show(new kimios.DMEntityPojo(sm.getSelected().data), e, 'bookmarks');

@@ -48,7 +48,8 @@ Ext.onReady(function () {
             var login = new kimios.FormPanel({
                 i18n: i18n,
                 border: false,
-                title:i18n.getValue('DMSAuthFormTitle'),
+                title: i18n.getValue('DMSAuthFormTitle'),
+//                iconCls: 'logo-k',
                 width: 300,
                 height: 165,
                 renderTo: 'login-area',

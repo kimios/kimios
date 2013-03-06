@@ -42,7 +42,10 @@ kimios.tasks.TasksPanel = Ext.extend(Ext.grid.GridPanel, {
                 resizable: false,
                 menuDisabled: true,
                 renderer: function (val, metaData, record, rowIndex, colIndex, store) {
-                    metaData.css = kimios.util.IconHelper.getIconClass(record.data.type, record.data.extension);
+                    if (record.data.type == 9)
+                        metaData.css = '';
+                    else
+                        metaData.css = kimios.util.IconHelper.getIconClass(record.data.type, record.data.extension);
                 }
             },
             {
@@ -51,10 +54,13 @@ kimios.tasks.TasksPanel = Ext.extend(Ext.grid.GridPanel, {
                 align: 'left',
                 dataIndex: 'name',
                 renderer: function (value, meta, record) {
-                    var html = value + '<br/>';
-                    html += '<span style="font-size:10px;">' + kimios.lang('RequestedStatus') + ': ' + record.get('workflowStatusName') + '</span><br/>';
-                    html += '<span style="font-size:10px;color:gray;">' + record.get('statusUserName') + '@' + record.get('statusUserSource') + ' - ' + kimios.date(record.get('statusDate')) + '</span><br/>';
-                    return html;
+                    if (record.data.type != 9) {
+                        var html = value + '<br/>';
+                        html += '<span style="font-size:10px;">' + kimios.lang('RequestedStatus') + ': ' + record.get('workflowStatusName') + '</span><br/>';
+                        html += '<span style="font-size:10px;color:gray;">' + record.get('statusUserName') + '@' + record.get('statusUserSource') + ' - ' + kimios.date(record.get('statusDate')) + '</span><br/>';
+                        return html;
+                    } else
+                        return value;
                 }
             }
         ]);
@@ -79,10 +85,14 @@ kimios.tasks.TasksPanel = Ext.extend(Ext.grid.GridPanel, {
         }, this);
 
         this.on('rowclick', function (grid, rowIndex, e) {
+            if (grid.getStore().getAt(rowIndex).data.type == 9)
+                return false;
             this.lastSelectedRow = rowIndex;
         }, this);
 
         this.on('rowdblclick', function (grid, rowIndex, e) {
+            if (grid.getStore().getAt(rowIndex).data.type == 9)
+                return false;
             var pojo = grid.getSelectionModel().getSelected().data;
             if (kimios.isViewableExtension(pojo.extension)) {
                 kimios.viewDoc(pojo);
@@ -93,6 +103,8 @@ kimios.tasks.TasksPanel = Ext.extend(Ext.grid.GridPanel, {
 
         this.on('rowcontextmenu', function (grid, rowIndex, e) {
             e.preventDefault();
+            if (grid.getStore().getAt(rowIndex).data.type == 9)
+                return false;
             var sm = this.getSelectionModel();
             sm.selectRow(rowIndex);
             var selectedRecord = sm.getSelected();
@@ -108,7 +120,18 @@ kimios.tasks.TasksPanel = Ext.extend(Ext.grid.GridPanel, {
     refresh: function () {
         this.setIconClass('loading');
         kimios.explorer.getToolbar().myTasksButton.setIconClass('loading');
-        this.store.reload();
+        this.store.reload({
+            scope: this,
+            callback: function (records) {
+                if (!records || records.length == 0) {
+                    this.store.insert(0, new Ext.data.Record({
+                        name: kimios.lang('NoTasks'),
+                        type: 9,
+                        extension: null
+                    }));
+                }
+            }
+        });
     },
 
     refreshLanguage: function () {

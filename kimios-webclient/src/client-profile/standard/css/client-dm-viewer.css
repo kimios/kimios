@@ -21,947 +21,911 @@
 }
 
 #kimios-image-viewer {
-	height:100%;
-	overflow:auto;
-	background-color: #eee;
-	padding-left:10px;
-	padding-top:10px;
+    height: 100%;
+    overflow: auto;
+    background-color: #eee;
+    padding-left: 10px;
+    padding-top: 10px;
 }
 
 .kimios-pdf-image {
-	margin : 10px 10px 20px 0px;
-	border: 5px solid #ddd;
-	background-color: #ddd;
+    margin: 10px 10px 20px 0px;
+    border: 5px solid #ddd;
+    background-color: #ddd;
 }
 
 .kimios-pdf-title {
-	font: 24px Verdana, Arial, Helvetica, sans-serif;
-	font-weight: bold;
-	color: #ccc;
-	float: right;
-	margin-right: 10px;
+    font: 24px Verdana, Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    color: #ccc;
+    float: right;
+    margin-right: 10px;
 }
 
 .kimios-pdf-page {
-	font: 11px Verdana, Arial, Helvetica, sans-serif;
-	font-weight: bold;
-	color: #aaa;
+    font: 11px Verdana, Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    color: #aaa;
 }
 
 .kimios-pdf-label {
-	font: 10px Verdana, Arial, Helvetica, sans-serif;
-	font-weight: bold;
-	color: #333333;
-	width: 200px;
+    font: 10px Verdana, Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    color: #333333;
+    width: 200px;
 }
 
 .kimios-pdf-value {
-	font: 10px Verdana, Arial, Helvetica, sans-serif;
-	font-weight: normal;
-	color: #000000;
+    font: 10px Verdana, Arial, Helvetica, sans-serif;
+    font-weight: normal;
+    color: #000000;
 }
 
 .viewer-gallery {
-	position: relative;
-	overflow: auto;
-	padding-top: 2px;
-	padding-left: 1px;
+    position: relative;
+    overflow: auto;
+    padding-top: 2px;
+    padding-left: 1px;
 }
 
 .admin-tasks-current-session {
-	background-image: url('../images/icons/16x16/session.png')
-		!important;
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/session.png') !important;
+    background-repeat: no-repeat;
 }
 
 .home {
-	background-image: url('../images/icons/16x16/gohome.png')
-		!important;
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/gohome.png') !important;
+    background-repeat: no-repeat;
 }
 
 .bomb {
-	background-image: url('../images/icons/16x16/core.png') !important;
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/core.png') !important;
+    background-repeat: no-repeat;
 }
 
 .close {
-	background-image: url('../images/icons/16x16/fileclose.png') !important;
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/fileclose.png') !important;
+    background-repeat: no-repeat;
 }
 
 .checked-out {
-	background-image: url('../images/checked-out.gif') !important;
-	background-repeat: no-repeat;
-	background-position: center right;
+    background-image: url('../images/checked-out.gif') !important;
+    background-repeat: no-repeat;
+    background-position: center right;
 }
 
 .select {
-	background-image: url('../images/icons/16x16/button_ok.png')
-		!important;
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/button_ok.png') !important;
+    background-repeat: no-repeat;
 }
 
 .actions {
-	background-image: url(../images/action.gif) !important;
-	background-repeat: no-repeat;
+    background-image: url(../images/action.gif) !important;
+    background-repeat: no-repeat;
 }
 
 .bug {
-	background-image: url('../images/icons/16x16/bug.png') !important;
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/bug.png') !important;
+    background-repeat: no-repeat;
 }
 
 .reindex {
-	background-image: url('../images/icons/16x16/reindex.png')
-		!important;
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/reindex.png') !important;
+    background-repeat: no-repeat;
 }
 
 .reindex-run {
-	background-image: url('../images/icons/16x16/reindex_run.png')
-		!important;
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/reindex_run.png') !important;
+    background-repeat: no-repeat;
 }
 
 .exit {
-	background-image: url('../images/exit.gif') !important;
-	background-repeat: no-repeat;
+    background-image: url('../images/exit.gif') !important;
+    background-repeat: no-repeat;
 }
 
 .studio {
-	background-image: url('../images/studio.gif') !important;
-	background-repeat: no-repeat;
+    background-image: url('../images/studio.gif') !important;
+    background-repeat: no-repeat;
 }
 
 .studio-cls-wf-up {
-	background-image: url('../images/icons/16x16/up.png') !important;
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/up.png') !important;
+    background-repeat: no-repeat;
 }
 
 .studio-wf-status {
-	background-image: url('../images/icons/16x16/down_wf_arrow.png') !important;
-	background-repeat: no-repeat;
-	background-position: center right;
+    background-image: url('../images/icons/16x16/down_wf_arrow.png') !important;
+    background-repeat: no-repeat;
+    background-position: center right;
 }
 
 .remove-icons-cls {
-	background-image: url('../images/icons/16x16/cancel.png')
-		!important;
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/cancel.png') !important;
+    background-repeat: no-repeat;
 }
 
 .cancel {
-	background-image: url(../images/icons/16x16/cancel.png) !important;
-	background-repeat: no-repeat;
-	background-position: bottom right;
+    background-image: url(../images/icons/16x16/cancel.png) !important;
+    background-repeat: no-repeat;
+    background-position: bottom right;
 }
 
 .ok {
-	background-image: url(../images/icons/16x16/button_ok.png) !important;
-	background-repeat: no-repeat;
-	background-position: bottom right;
+    background-image: url(../images/icons/16x16/button_ok.png) !important;
+    background-repeat: no-repeat;
+    background-position: bottom right;
 }
 
 .studio-cls-wf-down {
-	background-image: url('../images/icons/16x16/down.png') !important;
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/down.png') !important;
+    background-repeat: no-repeat;
 }
 
 .studio-cls-meta-document-type {
-	background-image: url('../images/icons/16x16/doctype.png')
-		!important;
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/doctype.png') !important;
+    background-repeat: no-repeat;
 }
 
 .studio-cls-wf {
-	background-image: url('../images/icons/16x16/2rightarrow.png')
-		!important;
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/2rightarrow.png') !important;
+    background-repeat: no-repeat;
 }
 
 .studio-cls-meta-feed {
-	background-image: url('../images/meta-feeds.gif') !important;
-	background-repeat: no-repeat;
+    background-image: url('../images/meta-feeds.gif') !important;
+    background-repeat: no-repeat;
 }
 
 .add-user-icon {
-	background-image: url('../images/icons/16x16/add_user.png')
-		!important;
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/add_user.png') !important;
+    background-repeat: no-repeat;
 }
 
 .add-group-icon {
-	background-image: url('../images/icons/16x16/add_group.png')
-		!important;
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/add_group.png') !important;
+    background-repeat: no-repeat;
 }
 
 .del-icon {
-	background-image: url('../images/delete.gif') !important;
-	background-repeat: no-repeat;
+    background-image: url('../images/delete.gif') !important;
+    background-repeat: no-repeat;
 }
 
 .field-label-size {
-	font-size: 10px;
+    font-size: 10px;
 }
 
 .kimios-field-font {
-	font-size: 10px;
+    font-size: 10px;
 }
 
 .admin-acc-domain {
-	background-image: url(../images/icons/16x16/network.png) !important
-		;
-	background-repeat: no-repeat;
-	background-position: bottom right;
+    background-image: url(../images/icons/16x16/network.png) !important;
+    background-repeat: no-repeat;
+    background-position: bottom right;
 }
 
 .admin-acc-domain-prop {
-	background-image: url(../images/icons/16x16/domain_prop.png)
-		!important;
-	background-repeat: no-repeat;
-	background-position: bottom right;
+    background-image: url(../images/icons/16x16/domain_prop.png) !important;
+    background-repeat: no-repeat;
+    background-position: bottom right;
 }
 
 .qmain-cls {
-	background-image: url(../images/logo.png) !important;
-	background-repeat: no-repeat;
-	background-position: bottom right;
+    background-image: url(../images/logo.png) !important;
+    background-repeat: no-repeat;
+    background-position: bottom right;
 }
 
 .logo {
-	background-image: url(../images/logo.png) !important;
-	background-repeat: no-repeat;
-	background-position: bottom right;
+    background-image: url(../images/logo.png) !important;
+    background-repeat: no-repeat;
+    background-position: bottom right;
 }
 
 .little-logo {
-	background-image: url(../images/logo.png) !important;
-	background-repeat: no-repeat;
-	background-position: bottom right;
+    background-image: url(../images/logo.png) !important;
+    background-repeat: no-repeat;
+    background-position: bottom right;
 }
 
 .qsearch-cls {
-	background-image: url(../images/icons/16x16/viewmag.png) !important
-		;
-	background-repeat: no-repeat;
-	background-position: bottom right;
+    background-image: url(../images/icons/16x16/viewmag.png) !important;
+    background-repeat: no-repeat;
+    background-position: bottom right;
 }
 
 .qbookmark-cls {
-	background-image: url(../images/icons/16x16/bookmark.png)
-		!important;
-	background-repeat: no-repeat;
-	background-position: bottom right;
+    background-image: url(../images/icons/16x16/bookmark.png) !important;
+    background-repeat: no-repeat;
+    background-position: bottom right;
 }
 
 .admin {
-	background-image: url(../images/icons/16x16/roles.png) !important;
-	background-repeat: no-repeat;
-	background-position: bottom right;
+    background-image: url(../images/icons/16x16/roles.png) !important;
+    background-repeat: no-repeat;
+    background-position: bottom right;
 }
 
 .admin-acc-role {
-	background-image: url(../images/icons/16x16/role.png) !important;
-	background-repeat: no-repeat;
-	background-position: bottom right;
+    background-image: url(../images/icons/16x16/role.png) !important;
+    background-repeat: no-repeat;
+    background-position: bottom right;
 }
 
 .roles {
-	background-image: url(../images/icons/16x16/roles.png) !important;
-	background-repeat: no-repeat;
-	background-position: bottom right;
+    background-image: url(../images/icons/16x16/roles.png) !important;
+    background-repeat: no-repeat;
+    background-position: bottom right;
 }
 
 .admin-acc-task {
-	background-image: url(../images/icons/16x16/special_tasks.png)
-		!important;
-	background-repeat: no-repeat;
-	background-position: bottom right;
+    background-image: url(../images/icons/16x16/special_tasks.png) !important;
+    background-repeat: no-repeat;
+    background-position: bottom right;
 }
 
 .admin-acc-task-all {
-	background-image: url(../images/icons/16x16/special_tasks_all.png)
-		!important;
-	background-repeat: no-repeat;
-	background-position: bottom right;
+    background-image: url(../images/icons/16x16/special_tasks_all.png) !important;
+    background-repeat: no-repeat;
+    background-position: bottom right;
 }
 
 .admin-acc-close {
-	background-image: url(../images/close.gif) !important;
-	background-repeat: no-repeat;
-	background-position: bottom right;
+    background-image: url(../images/close.gif) !important;
+    background-repeat: no-repeat;
+    background-position: bottom right;
 }
 
 #dm-entity-viewer .x-panel-body {
-	font: 10px Arial, Helvetica, sans-serif;
+    font: 10px Arial, Helvetica, sans-serif;
 }
 
 .sec-viewer-thumb {
-	background: #ffffff;
+    background: #ffffff;
 }
 
 .sec-viewer-thumb img {
-	margin-right: 2px;
+    margin-right: 2px;
 }
 
 .sec-viewer-thumb-wrap hover {
-	cursor: pointer;
+    cursor: pointer;
 }
 
 .sec-viewer-thumb-wrap {
-	float: left;
-	padding: 2px;
-	border: 1px solid #FFFFFF;
+    float: left;
+    padding: 2px;
+    border: 1px solid #FFFFFF;
 }
 
 .sec-viewer-thumb-wrap span {
-	display: block;
-	overflow: hidden;
-	text-align: center;
+    display: block;
+    overflow: hidden;
+    text-align: center;
 }
 
 .sec-viewer-x-view-over {
-	border: 1px solid #dddddd;
-	background: #efefef url(../images/default/grid/row-over.gif) repeat-x
-		left top;
+    border: 1px solid #dddddd;
+    background: #efefef url(../images/default/grid/row-over.gif) repeat-x left top;
 }
 
 .sec-viewer-x-view-selected {
-	background: #eff5fb url(../images/selected.gif) no-repeat right bottom;
-	border: 1px solid #dddddd;
+    background: #eff5fb url(../images/selected.gif) no-repeat right bottom;
+    border: 1px solid #dddddd;
 }
 
 .sec-viewer-x-view-selected .thumb {
-	background: transparent;
+    background: transparent;
 }
 
 .kimios-expl-bgrd {
-	background-image: url('../images/explorer_background.png');
-	background-repeat: no-repeat;
-	background-position: bottom right;
+    background-image: url('../images/explorer_background.png');
+    background-repeat: no-repeat;
+    background-position: bottom right;
 }
 
 .kimios-folder-bgrd {
-	background-image: url('../images/48x48/folder.png');
-	background-repeat: no-repeat;
-	background-position: bottom right;
+    background-image: url('../images/48x48/folder.png');
+    background-repeat: no-repeat;
+    background-position: bottom right;
 }
 
 .kimios-workspace-bgrd {
-	background-image: url('../images/48x48/database.png');
-	background-repeat: no-repeat;
-	background-position: bottom right;
+    background-image: url('../images/48x48/database.png');
+    background-repeat: no-repeat;
+    background-position: bottom right;
 }
 
 .x-form-file-wrap {
-	position: relative;
-	height: 22px;
+    position: relative;
+    height: 22px;
 }
 
 .x-form-file-wrap .x-form-file {
-	position: absolute;
-	right: 0;
-	-moz-opacity: 0;
-	filter: alpha(opacity :       0);
-	opacity: 0;
-	z-index: 2;
-	height: 22px;
+    position: absolute;
+    right: 0;
+    -moz-opacity: 0;
+    filter: alpha(opacity:0);
+    opacity: 0;
+    z-index: 2;
+    height: 22px;
 }
 
 .x-form-file-wrap .x-form-file-btn {
-	position: absolute;
-	right: 0;
-	z-index: 1;
+    position: absolute;
+    right: 0;
+    z-index: 1;
 }
 
 .x-form-file-wrap .x-form-file-text {
-	position: absolute;
-	left: 0;
-	z-index: 3;
-	color: #777;
+    position: absolute;
+    left: 0;
+    z-index: 3;
+    color: #777;
 }
 
 /* Action Icons cls */
 
 .qaction-display {
-	background-image: url(../images/icons/16x16/14_layer_visible.png);
-	background-repeat: no-repeat;
+    background-image: url(../images/icons/16x16/14_layer_visible.png);
+    background-repeat: no-repeat;
 }
 
 .qaction-move {
-	background-image: url('../images/icons/16x16/move.png');
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/move.png');
+    background-repeat: no-repeat;
 }
 
 .qaction-newworkspace {
-	background-image: url('../images/icons/16x16/db_add.png');
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/db_add.png');
+    background-repeat: no-repeat;
 }
 
 .qaction-newfolder {
-	background-image: url('../images/icons/16x16/folder_new.png');
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/folder_new.png');
+    background-repeat: no-repeat;
 }
 
 .qaction-newdoc {
-	background-image: url('../images/icons/16x16/fileimport.png');
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/fileimport.png');
+    background-repeat: no-repeat;
 }
 
 .qaction-copy-frm-clpbrd {
-	background-image: url('../images/icons/16x16/reload.png');
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/reload.png');
+    background-repeat: no-repeat;
 }
 
 .qaction-refresh {
-	background-image: url('../images/icons/16x16/reload.png');
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/reload.png');
+    background-repeat: no-repeat;
 }
 
 .qaction-bookmarks {
-	background-image: url('../images/icons/16x16/bookmark_add.png') !important;
-	background-repeat: no-repeat;
-	background-position: bottom right;
+    background-image: url('../images/icons/16x16/bookmark_add.png') !important;
+    background-repeat: no-repeat;
+    background-position: bottom right;
 }
 
 .qaction-startwf {
-	background-image: url(../images/icons/16x16/2rightarrow.png) !important;
-	background-repeat: no-repeat;
-	background-position: bottom right;
+    background-image: url(../images/icons/16x16/2rightarrow.png) !important;
+    background-repeat: no-repeat;
+    background-position: bottom right;
 }
 
 .qaction-update {
-	background-image: url('../images/icons/16x16/up.png');
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/up.png');
+    background-repeat: no-repeat;
 }
 
 .qaction-chkout {
-	background-image:
-		url('../images/icons/16x16/agt_action_success.png');
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/agt_action_success.png');
+    background-repeat: no-repeat;
 }
 
 .qaction-delete {
-	background-image: url(../images/icons/16x16/delete.png) !important;
-	background-repeat: no-repeat;
-	background-position: bottom right;
+    background-image: url(../images/icons/16x16/delete.png) !important;
+    background-repeat: no-repeat;
+    background-position: bottom right;
 }
 
 .qaction-properties {
-	background-image: url('../images/icons/16x16/info.png') !important;
-	background-repeat: no-repeat;
-	background-position: bottom right;
+    background-image: url('../images/icons/16x16/info.png') !important;
+    background-repeat: no-repeat;
+    background-position: bottom right;
 }
 
 .qaction-exportlocal {
-	background-image: url('../images/explorer_background.png');
-	background-repeat: no-repeat;
+    background-image: url('../images/explorer_background.png');
+    background-repeat: no-repeat;
 }
 
 .qaction-cpyclbrd {
-	background-image: url('../images/explorer_background.png');
-	background-repeat: no-repeat;
+    background-image: url('../images/explorer_background.png');
+    background-repeat: no-repeat;
 }
 
 .qaction-uptoparent {
-	background-image: url('../images/explorer_background.png');
-	background-repeat: no-repeat;
+    background-image: url('../images/explorer_background.png');
+    background-repeat: no-repeat;
 }
 
 .qaction-pastclbrd {
-	background-image: url('../images/explorer_background.png');
-	background-repeat: no-repeat;
+    background-image: url('../images/explorer_background.png');
+    background-repeat: no-repeat;
 }
 
 .qaction-shortcut {
-	background-image: url('../images/explorer_background.png');
-	background-repeat: no-repeat;
+    background-image: url('../images/explorer_background.png');
+    background-repeat: no-repeat;
 }
 
 .qaction-send {
-	background-image: url('../images/explorer_background.png');
-	background-repeat: no-repeat;
+    background-image: url('../images/explorer_background.png');
+    background-repeat: no-repeat;
 }
 
 .x-grid3-td-td-icon-dm-ent {
-	padding: 0;
+    padding: 0;
 }
 
 .icon-remove {
-	background-image: url('../images/icons/16x16/delete.png')
-		! important;
+    background-image: url('../images/icons/16x16/delete.png') ! important;
 }
 
 .q-disabled-field {
-	color: black;
+    color: black;
 }
 
 /* Items viewer */
 #bookmarks-viewer .x-panel-body {
-	font: 10px Arial, Helvetica, sans-serif;
+    font: 10px Arial, Helvetica, sans-serif;
 }
 
 #bookmarks-viewer .thumb {
-	background: #ffffff;
-	padding: 3px;
+    background: #ffffff;
+    padding: 3px;
 }
 
 #bookmarks-viewer .thumb img {
-	margin-right: 2px;
+    margin-right: 2px;
 }
 
 #bookmarks-viewer .thumb-wrap {
-	float: left;
-	margin: 2px;
-	margin-right: 0;
-	padding: 2px;
+    float: left;
+    margin: 2px;
+    margin-right: 0;
+    padding: 2px;
 }
 
 #bookmarks-viewer .thumb-wrap span {
-	display: block;
-	overflow: hidden;
-	text-align: center;
+    display: block;
+    overflow: hidden;
+    text-align: center;
 }
 
-#bookmarks-viewer .x-view-over { /*border:1px solid #dddddd;*/
-	background-color: #efefef;
-	/*background: #efefef url(../images/default/grid/row-over.gif) repeat-x left top;*/
+#bookmarks-viewer .x-view-over {
+    /*border:1px solid #dddddd;*/
+    background-color: #efefef;
+    /*background: #efefef url(../images/default/grid/row-over.gif) repeat-x left top;*/
 }
 
 #bookmarks-viewer .x-view-selected {
-	background: #eff5fb;
-	/*border:1px solid #99bbe8;*/
+    background: #eff5fb;
+    /*border:1px solid #99bbe8;*/
 }
 
 #bookmarks-viewer .x-view-selected .thumb {
-	background: transparent;
+    background: transparent;
 }
 
 #recents-viewer .x-panel-body {
-	font: 10px Arial, Helvetica, sans-serif;
+    font: 10px Arial, Helvetica, sans-serif;
 }
 
 #recents-viewer .thumb {
-	background: #ffffff;
-	padding: 3px;
+    background: #ffffff;
+    padding: 3px;
 }
 
 #recents-viewer .thumb img {
-	margin-right: 2px;
+    margin-right: 2px;
 }
 
 #recents-viewer .thumb-wrap {
-	float: left;
-	margin: 2px;
-	margin-right: 0;
-	padding: 2px;
+    float: left;
+    margin: 2px;
+    margin-right: 0;
+    padding: 2px;
 }
 
 #recents-viewer .thumb-wrap span {
-	display: block;
-	overflow: hidden;
-	text-align: center;
+    display: block;
+    overflow: hidden;
+    text-align: center;
 }
 
-#recents-viewer .x-view-over { /*border:1px solid #dddddd;*/
-	background-color: #efefef;
-	/*background: #efefef url(../images/default/grid/row-over.gif) repeat-x left top;*/
+#recents-viewer .x-view-over {
+    /*border:1px solid #dddddd;*/
+    background-color: #efefef;
+    /*background: #efefef url(../images/default/grid/row-over.gif) repeat-x left top;*/
 }
 
 #recents-viewer .x-view-selected {
-	background: #eff5fb;
-	/*border:1px solid #99bbe8;*/
+    background: #eff5fb;
+    /*border:1px solid #99bbe8;*/
 }
 
 #recents-viewer .x-view-selected .thumb {
-	background: transparent;
+    background: transparent;
 }
 
 .dm-entity-tab-properties-folder {
-	background-image: url(../images/icons/16x16/folder.png) !important;
-	background-repeat: no-repeat;
-	background-position: center right;
+    background-image: url(../images/icons/16x16/folder.png) !important;
+    background-repeat: no-repeat;
+    background-position: center right;
 }
 
 .dm-entity-tab-properties-document {
-	background-image: url(../images/icons/16x16/document.png)
-		!important;
-	background-repeat: no-repeat;
-	background-position: center right;
+    background-image: url(../images/icons/16x16/document.png) !important;
+    background-repeat: no-repeat;
+    background-position: center right;
 }
 
 .dm-entity-tab-1 {
-	background-image: url(../images/icons/16x16/database.png)
-		!important;
-	background-repeat: no-repeat;
+    background-image: url(../images/icons/16x16/database.png) !important;
+    background-repeat: no-repeat;
 }
 
 .dm-entity-tab-2 {
-	background-image: url(../images/icons/16x16/folder.png) !important;
-	background-repeat: no-repeat;
+    background-image: url(../images/icons/16x16/folder.png) !important;
+    background-repeat: no-repeat;
 }
 
 .dm-entity-tab-properties-workspace {
-	background-image: url(../images/icons/16x16/database.png)
-		!important;
-	background-repeat: no-repeat;
-	background-position: center right;
+    background-image: url(../images/icons/16x16/database.png) !important;
+    background-repeat: no-repeat;
+    background-position: center right;
 }
 
 .dm-entity-tab-security {
-	background-image: url(images/bomb.png) !important;
+    background-image: url(images/bomb.png) !important;
 }
 
 .admin-domain-tree-node {
-	background-image: url(../images/icons/16x16/network.png) !important
-		;
-	background-repeat: no-repeat;
+    background-image: url(../images/icons/16x16/network.png) !important;
+    background-repeat: no-repeat;
 }
 
 .admin-user-tree-node {
-	background-image: url(../images/personal.png) !important;
-	background-repeat: no-repeat;
-	background-position: center right;
+    background-image: url(../images/personal.png) !important;
+    background-repeat: no-repeat;
+    background-position: center right;
 }
 
 .admin-group-tree-node {
-	background-image: url(../images/kdmconfig.png) !important;
-	background-repeat: no-repeat;
-	background-position: center right;
+    background-image: url(../images/kdmconfig.png) !important;
+    background-repeat: no-repeat;
+    background-position: center right;
 }
 
 .role-user-tree-node {
-	background-image: url(../images/icons/16x16/role.png) !important;
-	background-repeat: no-repeat;
+    background-image: url(../images/icons/16x16/role.png) !important;
+    background-repeat: no-repeat;
 }
 
 .special-task-tree-node {
-	background-image: url(../images/icons/16x16/blockdevice.png)
-		!important;
-	background-repeat: no-repeat;
+    background-image: url(../images/icons/16x16/blockdevice.png) !important;
+    background-repeat: no-repeat;
 }
 
 .tasks {
-	background-image: url(../images/tasks.gif) !important;
-	background-repeat: no-repeat;
+    background-image: url(../images/tasks.gif) !important;
+    background-repeat: no-repeat;
 }
 
 .accept-status {
-	background-image: url(../images/accept-status.gif) !important;
-	background-repeat: no-repeat;
+    background-image: url(../images/accept-status.gif) !important;
+    background-repeat: no-repeat;
 }
 
 .reject-status {
-	background-image: url(../images/reject-status.gif) !important;
-	background-repeat: no-repeat;
+    background-image: url(../images/reject-status.gif) !important;
+    background-repeat: no-repeat;
 }
 
 .save {
-	background-image: url(../images/icons/16x16/save.png) !important;
-	background-repeat: no-repeat;
+    background-image: url(../images/icons/16x16/save.png) !important;
+    background-repeat: no-repeat;
 }
 
 .add-domain {
-	background-image: url('../images/icons/16x16/add_domain.png')
-		!important;
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/add_domain.png') !important;
+    background-repeat: no-repeat;
 }
 
 .edit-domain {
-	background-image: url('../images/icons/16x16/edit_domain.png')
-		!important;
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/edit_domain.png') !important;
+    background-repeat: no-repeat;
 }
 
 .delete-domain {
-	background-image: url('../images/icons/16x16/delete_domain.png')
-		!important;
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/delete_domain.png') !important;
+    background-repeat: no-repeat;
 }
 
 .domains {
-	background-image: url('../images/icons/16x16/domains.png')
-		!important;
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/domains.png') !important;
+    background-repeat: no-repeat;
 }
 
 .edit-user {
-	background-image: url('../images/icons/16x16/edit_user.png')
-		!important;
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/edit_user.png') !important;
+    background-repeat: no-repeat;
 }
 
 .edit-group {
-	background-image: url('../images/icons/16x16/edit_group.png')
-		!important;
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/edit_group.png') !important;
+    background-repeat: no-repeat;
 }
 
 .delete-user {
-	background-image: url('../images/icons/16x16/delete_user.png')
-		!important;
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/delete_user.png') !important;
+    background-repeat: no-repeat;
 }
 
 .delete-group {
-	background-image: url('../images/icons/16x16/delete_group.png')
-		!important;
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/delete_group.png') !important;
+    background-repeat: no-repeat;
 }
 
 .view {
-	background-image: url('../images/icons/16x16/viewmag.png')
-		!important;
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/viewmag.png') !important;
+    background-repeat: no-repeat;
 }
 
 .trash {
-	background-image: url('../images/icons/16x16/deletelayer.png')
-		!important;
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/deletelayer.png') !important;
+    background-repeat: no-repeat;
 }
 
 .domain-details {
-	background-image: url('../images/icons/16x16/domain-details.png')
-		!important;
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/domain-details.png') !important;
+    background-repeat: no-repeat;
 }
 
 .attach {
-	background-image: url('../images/icons/16x16/attach.png')
-		!important;
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/attach.png') !important;
+    background-repeat: no-repeat;
 }
 
 .unlink-group {
-	background-image: url('../images/icons/16x16/unlink_group.png')
-		!important;
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/unlink_group.png') !important;
+    background-repeat: no-repeat;
 }
 
 .reporting {
-	background-image: url('../images/reporting.gif') !important;
-	background-repeat: no-repeat;
-	background-position: center right;
+    background-image: url('../images/reporting.gif') !important;
+    background-repeat: no-repeat;
+    background-position: center right;
 }
 
 .owner {
-	background-image: url('../images/admin.gif') !important;
-	background-repeat: no-repeat;
-	background-position: center right;
+    background-image: url('../images/admin.gif') !important;
+    background-repeat: no-repeat;
+    background-position: center right;
 }
 
 .workspace {
-	background-image: url('../images/workspace.gif') !important;
-	background-repeat: no-repeat;
+    background-image: url('../images/workspace.gif') !important;
+    background-repeat: no-repeat;
 }
 
 .role-workspace {
-	background-image: url('../images/add-workspace.gif') !important;
-	background-repeat: no-repeat;
+    background-image: url('../images/add-workspace.gif') !important;
+    background-repeat: no-repeat;
 }
 
 .configure {
-	background-image: url('../images/icons/16x16/configure.png') !important;
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/configure.png') !important;
+    background-repeat: no-repeat;
 }
 
 .q_logo_small {
-	background-image: url('../images/logo.png') !important;
-	background-repeat: no-repeat;
+    background-image: url('../images/logo.png') !important;
+    background-repeat: no-repeat;
 }
 
 .add {
-	background-image: url('../images/icons/16x16/add.gif') !important;
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/add.gif') !important;
+    background-repeat: no-repeat;
 }
 
 .undo {
-	background-image: url('../images/icons/16x16/undo.png') !important;
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/undo.png') !important;
+    background-repeat: no-repeat;
 }
 
 .refresh {
-	background-image: url('../images/icons/16x16/reload.png') !important;
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/reload.png') !important;
+    background-repeat: no-repeat;
 }
 
 .collapse {
-	background-image: url('../images/collapse.gif') !important;
-	background-repeat: no-repeat;
+    background-image: url('../images/collapse.gif') !important;
+    background-repeat: no-repeat;
 }
 
 .here {
-	background-image: url('../images/icons/16x16/help.png') !important;
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/help.png') !important;
+    background-repeat: no-repeat;
 }
 
 .meta {
-	background-image: url('../images/icons/16x16/value.png') !important;
-	background-repeat: no-repeat;
-	background-position: center right;
+    background-image: url('../images/icons/16x16/value.png') !important;
+    background-repeat: no-repeat;
+    background-position: center right;
 }
 
 .set-values {
-	background-image: url('../images/icons/16x16/viewmag.png') !important;
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/viewmag.png') !important;
+    background-repeat: no-repeat;
 }
 
 .doctypes {
-	background-image: url('../images/icons/16x16/doctypes.png') !important;
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/doctypes.png') !important;
+    background-repeat: no-repeat;
 }
 
 .doctype {
-	background-image: url('../images/icons/16x16/doctype.png')
-		!important;
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/doctype.png') !important;
+    background-repeat: no-repeat;
 }
 
 .value {
-	background-image: url('../images/icons/16x16/metadata.png') !important;
-	background-repeat: no-repeat;
-	background-position: center right;
+    background-image: url('../images/icons/16x16/metadata.png') !important;
+    background-repeat: no-repeat;
+    background-position: center right;
 }
 
 .remove {
-	background-image: url('../images/close.gif') !important;
-	background-repeat: no-repeat;
+    background-image: url('../images/close.gif') !important;
+    background-repeat: no-repeat;
 }
 
 .studio-wf-expand {
-	background-image: url('../images/expand-error.gif') !important;
-	background-repeat: no-repeat;
+    background-image: url('../images/expand-error.gif') !important;
+    background-repeat: no-repeat;
 }
 
 .studio-wf-collapse {
-	background-image: url('../images/collapse-error.gif') !important;
-	background-repeat: no-repeat;
+    background-image: url('../images/collapse-error.gif') !important;
+    background-repeat: no-repeat;
 }
 
 .login {
-	background-image: url(../images/icons/16x16/status.png) !important;
-	background-repeat: no-repeat;
+    background-image: url(../images/icons/16x16/status.png) !important;
+    background-repeat: no-repeat;
 }
 
 .msg {
-	background-image: url(../images/icons/16x16/msg.png) !important;
-	background-repeat: no-repeat;
+    background-image: url(../images/icons/16x16/msg.png) !important;
+    background-repeat: no-repeat;
 }
 
 .lock {
-	background-image: url('../images/icons/16x16/lock.png') !important;
-	background-repeat: no-repeat;
+    background-image: url('../images/icons/16x16/lock.png') !important;
+    background-repeat: no-repeat;
 }
 
 .send {
-	background-image: url(../images/icons/16x16/select.png) !important;
-	background-repeat: no-repeat;
-	background-position: center right;
+    background-image: url(../images/icons/16x16/select.png) !important;
+    background-repeat: no-repeat;
+    background-position: center right;
 }
 
 .q {
-	background-image: url(../images/kimios.gif) !important;
-	background-repeat: no-repeat;
-	background-position: bottom right;
+    background-image: url(../images/kimios.gif) !important;
+    background-repeat: no-repeat;
+    background-position: bottom right;
 }
 
 .newworkspace {
-	background-image: url(../images/icons/16x16/db_add.png) !important;
-	background-repeat: no-repeat;
-	background-position: bottom right;
+    background-image: url(../images/icons/16x16/db_add.png) !important;
+    background-repeat: no-repeat;
+    background-position: bottom right;
 }
 
 .newfolder {
-	background-image: url(../images/icons/16x16/folder_new.png) !important;
-	background-repeat: no-repeat;
-	background-position: bottom right;
+    background-image: url(../images/icons/16x16/folder_new.png) !important;
+    background-repeat: no-repeat;
+    background-position: bottom right;
 }
 
 .document {
-	background-image: url(../images/icons/16x16/fileimport.png) !important;
-	background-repeat: no-repeat;
-	background-position: bottom right;
+    background-image: url(../images/icons/16x16/fileimport.png) !important;
+    background-repeat: no-repeat;
+    background-position: bottom right;
 }
 
 .properties {
-	background-image: url(../images/icons/16x16/tabs.gif) !important;
-	background-repeat: no-repeat;
-	background-position: bottom right;
+    background-image: url(../images/icons/16x16/tabs.gif) !important;
+    background-repeat: no-repeat;
+    background-position: bottom right;
 }
 
 .option {
-	background-image: url(../images/icons/16x16/plugin.gif) !important;
-	background-repeat: no-repeat;
-	background-position: bottom right;
+    background-image: url(../images/icons/16x16/plugin.gif) !important;
+    background-repeat: no-repeat;
+    background-position: bottom right;
 }
 
 .update-wf {
-	background-image: url(../images/apply.png) !important;
-	background-repeat: no-repeat;
-	background-position: bottom right;
+    background-image: url(../images/apply.png) !important;
+    background-repeat: no-repeat;
+    background-position: bottom right;
 }
 
 .comment {
-	background-image: url(../images/icons/16x16/edit.png) !important;
-	background-repeat: no-repeat;
-	background-position: center right;
+    background-image: url(../images/icons/16x16/edit.png) !important;
+    background-repeat: no-repeat;
+    background-position: center right;
 }
 
 .lang-en {
-	background-image: url(../images/flag-en.png) !important;
-	background-repeat: no-repeat;
-	background-position: bottom right;
+    background-image: url(../images/flag-en.png) !important;
+    background-repeat: no-repeat;
+    background-position: bottom right;
 }
 
 .lang-fr {
-	background-image: url(../images/flag-fr.png) !important;
-	background-repeat: no-repeat;
-	background-position: bottom right;
+    background-image: url(../images/flag-fr.png) !important;
+    background-repeat: no-repeat;
+    background-position: bottom right;
 }
 
 .lang-de {
-	background-image: url(../images/flag-de.png) !important;
-	background-repeat: no-repeat;
-	background-position: bottom right;
+    background-image: url(../images/flag-de.png) !important;
+    background-repeat: no-repeat;
+    background-position: bottom right;
 }
 
 .lang-es {
-	background-image: url(../images/flag-es.png) !important;
-	background-repeat: no-repeat;
-	background-position: bottom right;
+    background-image: url(../images/flag-es.png) !important;
+    background-repeat: no-repeat;
+    background-position: bottom right;
 }
 
 .lang-pl {
-	background-image: url(../images/flag-pl.png) !important;
-	background-repeat: no-repeat;
-	background-position: bottom right;
+    background-image: url(../images/flag-pl.png) !important;
+    background-repeat: no-repeat;
+    background-position: bottom right;
 }
 
 .lang-jp {
-	background-image: url(../images/flag-jp.png) !important;
-	background-repeat: no-repeat;
-	background-position: bottom right;
+    background-image: url(../images/flag-jp.png) !important;
+    background-repeat: no-repeat;
+    background-position: bottom right;
 }
 
 .lang-cn {
-	background-image: url(../images/flag-cn.png) !important;
-	background-repeat: no-repeat;
-	background-position: bottom right;
+    background-image: url(../images/flag-cn.png) !important;
+    background-repeat: no-repeat;
+    background-position: bottom right;
 }
 
 .lang-it {
-	background-image: url(../images/flag-it.png) !important;
-	background-repeat: no-repeat;
-	background-position: bottom right;
+    background-image: url(../images/flag-it.png) !important;
+    background-repeat: no-repeat;
+    background-position: bottom right;
 }
 
 .eye {
-	background-image: url(../images/icons/16x16/eye.png) !important;
-	background-repeat: no-repeat;
-	background-position: bottom right;
+    background-image: url(../images/icons/16x16/eye.png) !important;
+    background-repeat: no-repeat;
+    background-position: bottom right;
 }
 
 .loading {
@@ -970,143 +934,155 @@
 }
 
 .import {
-	background-image: url(../images/icons/16x16/fileimport.png) !important;
-	background-repeat: no-repeat;
-	background-position: bottom right;
+    background-image: url(../images/icons/16x16/fileimport.png) !important;
+    background-repeat: no-repeat;
+    background-position: bottom right;
 }
 
 .bookmarks-folder {
-	background-image: url(../images/icons/16x16/bookmark_folder.png) !important;
-	background-repeat: no-repeat;
-	background-position: bottom right;
+    background-image: url(../images/icons/16x16/bookmark_folder.png) !important;
+    background-repeat: no-repeat;
+    background-position: bottom right;
 }
 
 .q {
-	background-image: url(../images/q.png) !important;
-	background-repeat: no-repeat;
-	background-position: bottom right;
+    background-image: url(../images/q.png) !important;
+    background-repeat: no-repeat;
+    background-position: bottom right;
 }
 
 .search {
-	background-image: url(../images/xmag.png) !important;
-	background-repeat: no-repeat;
-	background-position: bottom right;
+    background-image: url(../images/xmag.png) !important;
+    background-repeat: no-repeat;
+    background-position: bottom right;
 }
 
 .move {
-	background-image: url(../images/icons/16x16/move.png);
+    background-image: url(../images/icons/16x16/move.png);
 }
 
 .edit {
-	background-image: url(../images/edit.gif);
+    background-image: url(../images/edit.gif);
 }
 
 .sec {
-	background-image: url('../images/group.gif')
-		!important;
-	background-repeat: no-repeat;
+    background-image: url('../images/group.gif') !important;
+    background-repeat: no-repeat;
 }
 
 .menu-title {
     border-width: 0px;
     text-align: center;
-    margin:-2px -2px 0;
-    color:#999999;
-    font-weight:bold;
-    display:block;
-    padding:3px;
-    font-size:11px;
+    margin: -2px -2px 0;
+    color: #999999;
+    font-weight: bold;
+    display: block;
+    padding: 3px;
+    font-size: 11px;
 }
 
 .options-search-label {
-	border-width: 0px;
-	text-align: left;
-	margin:-2px -2px 0;
-	color:#999999;
-	display:block;
-	padding:3px;
-	font-size:11px;
+    border-width: 0px;
+    text-align: left;
+    margin: -2px -2px 0;
+    color: #999999;
+    display: block;
+    padding: 3px;
+    font-size: 11px;
 }
 
 .unknown {
-	background-image: url(../images/icons/16x16/unknown.png) !important;
-	background-repeat: no-repeat;
-	background-position: center right;
+    background-image: url(../images/icons/16x16/unknown.png) !important;
+    background-repeat: no-repeat;
+    background-position: center right;
 }
 
 .img {
-	background-image: url(../images/icons/16x16/img.png) !important;
-	background-repeat: no-repeat;
-	background-position: center right;
+    background-image: url(../images/icons/16x16/img.png) !important;
+    background-repeat: no-repeat;
+    background-position: center right;
 }
 
 .ooo {
-	background-image: url(../images/icons/16x16/ooo.png) !important;
-	background-repeat: no-repeat;
-	background-position: center right;
+    background-image: url(../images/icons/16x16/ooo.png) !important;
+    background-repeat: no-repeat;
+    background-position: center right;
 }
 
 .zip {
-	background-image: url(../images/icons/16x16/zip.png) !important;
-	background-repeat: no-repeat;
-	background-position: center right;
+    background-image: url(../images/icons/16x16/zip.png) !important;
+    background-repeat: no-repeat;
+    background-position: center right;
 }
 
 .pdf {
-	background-image: url(../images/icons/16x16/pdf.png) !important;
-	background-repeat: no-repeat;
-	background-position: center right;
+    background-image: url(../images/icons/16x16/pdf.png) !important;
+    background-repeat: no-repeat;
+    background-position: center right;
 }
 
 .doc {
-	background-image: url(../images/icons/16x16/doc.png) !important;
-	background-repeat: no-repeat;
-	background-position: center right;
+    background-image: url(../images/icons/16x16/doc.png) !important;
+    background-repeat: no-repeat;
+    background-position: center right;
 }
+
 .docx {
-	background-image: url(../images/icons/16x16/doc.png) !important;
-	background-repeat: no-repeat;
-	background-position: center right;
+    background-image: url(../images/icons/16x16/doc.png) !important;
+    background-repeat: no-repeat;
+    background-position: center right;
 }
+
 .xls {
-	background-image: url(../images/icons/16x16/xls.png) !important;
-	background-repeat: no-repeat;
-	background-position: center right;
+    background-image: url(../images/icons/16x16/xls.png) !important;
+    background-repeat: no-repeat;
+    background-position: center right;
 }
+
 .xlsx {
-	background-image: url(../images/icons/16x16/xls.png) !important;
-	background-repeat: no-repeat;
-	background-position: center right;
+    background-image: url(../images/icons/16x16/xls.png) !important;
+    background-repeat: no-repeat;
+    background-position: center right;
 }
 
 .vsd {
-	background-image: url(../images/icons/16x16/vsd.png) !important;
-	background-repeat: no-repeat;
-	background-position: center right;
+    background-image: url(../images/icons/16x16/vsd.png) !important;
+    background-repeat: no-repeat;
+    background-position: center right;
 }
 
 .mpp {
-	background-image: url(../images/icons/16x16/mpp.png) !important;
-	background-repeat: no-repeat;
-	background-position: center right;
+    background-image: url(../images/icons/16x16/mpp.png) !important;
+    background-repeat: no-repeat;
+    background-position: center right;
 }
+
 .ppt {
-	background-image: url(../images/icons/16x16/ppt.png) !important;
-	background-repeat: no-repeat;
-	background-position: center right;
+    background-image: url(../images/icons/16x16/ppt.png) !important;
+    background-repeat: no-repeat;
+    background-position: center right;
 }
+
 .html {
-	background-image: url(../images/icons/16x16/html.png) !important;
-	background-repeat: no-repeat;
-	background-position: center right;
+    background-image: url(../images/icons/16x16/html.png) !important;
+    background-repeat: no-repeat;
+    background-position: center right;
 }
+
 .txt {
     background-image: url(../images/icons/16x16/txt.png) !important;
     background-repeat: no-repeat;
     background-position: center right;
 }
+
 .warn {
     background-image: url(../images/exclamation.gif) !important;
+    background-repeat: no-repeat;
+    background-position: center right;
+}
+
+.logo-k {
+    background-image: url(../images/kimios-favico.png) !important;
     background-repeat: no-repeat;
     background-position: center right;
 }

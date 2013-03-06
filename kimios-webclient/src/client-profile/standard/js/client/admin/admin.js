@@ -16,16 +16,16 @@
  */
 var Admin = {
 
-    getWindow: function(){
+    getWindow: function () {
         var window = new Ext.Window({
-          modal : true,
+            modal: true,
             title: kimios.lang('Administration'),
             iconCls: 'owner',
             closable: true,
             maximizable: true,
-            width:800,
-            height:500,
-            plain:true,
+            width: 800,
+            height: 500,
+            plain: true,
             layout: 'fit'
         });
 
@@ -43,7 +43,7 @@ var Admin = {
         return window;
     },
 
-    getPanel: function(title, iconCls, treePanel, contextPanel){
+    getPanel: function (title, iconCls, treePanel, contextPanel) {
         return new Ext.Panel({
             title: title,
             iconCls: iconCls,

@@ -296,13 +296,9 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
 
             obj += "'" + key + "':'" + value + "',";
         }
-
-
     },
 
     build: function () {
-        if (!this.isVisible())
-            return;
         this.form1.removeAll();
         this.form2.removeAll();
 

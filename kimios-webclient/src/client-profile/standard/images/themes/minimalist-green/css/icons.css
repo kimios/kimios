@@ -362,3 +362,8 @@
     background-image: url(../icons/16x16/status.png) !important;
     background-repeat: no-repeat;
 }
+
+.select {
+    background-image: url(../icons/16x16/tick.png) !important;
+    background-repeat: no-repeat;
+}

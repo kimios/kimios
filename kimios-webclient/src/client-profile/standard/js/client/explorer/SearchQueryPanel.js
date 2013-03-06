@@ -40,11 +40,6 @@ kimios.explorer.SearchQueryPanel = Ext.extend(Ext.grid.GridPanel, {
             }
         });
 
-        this.noContentNode = new Ext.tree.TreeNode({
-            text: kimios.lang('NoBookmark'),
-            iconCls: 'search',
-            disabled: true
-        });
 
         this.cm = new Ext.grid.ColumnModel([
             {
@@ -58,7 +53,10 @@ kimios.explorer.SearchQueryPanel = Ext.extend(Ext.grid.GridPanel, {
                 resizable: false,
                 menuDisabled: true,
                 renderer: function (val, metaData, record, rowIndex, colIndex, store) {
-                    metaData.css = 'search';
+                    if (record.data.type == 9)
+                        metaData.css = '';
+                    else
+                        metaData.css = 'search';
                 }
             },
             {
@@ -87,13 +85,20 @@ kimios.explorer.SearchQueryPanel = Ext.extend(Ext.grid.GridPanel, {
             scope: this,
             callback: function (records, options, success) {
                 this.setIconClass(null);
+                if (!records || records.length == 0) {
+                    this.store.insert(0, new Ext.data.Record({
+                        name: kimios.lang('NoSearchRequest'),
+                        type: 9,
+                        extension: null
+                    }));
+                }
             }
         });
     },
 
     refreshLanguage: function () {
         this.setTitle(kimios.lang('SearchTab'));
-        this.noContentNode.setText(kimios.lang('NoBookmark'));
+        this.refresh();
         this.doLayout();
     },
 
@@ -105,6 +110,8 @@ kimios.explorer.SearchQueryPanel = Ext.extend(Ext.grid.GridPanel, {
         }, this);
 
         this.on('rowdblclick', function (grid, rowIndex, ev) {
+            if (grid.getStore().getAt(rowIndex).data.type == 9)
+                return false;
             var selected = grid.getStore().getAt(rowIndex);
 
             if (kimios.explorer.getActivePanel() == null) {
@@ -147,6 +154,8 @@ kimios.explorer.SearchQueryPanel = Ext.extend(Ext.grid.GridPanel, {
 
         this.on('rowcontextmenu', function (grid, rowIndex, e) {
             e.preventDefault();
+            if (grid.getStore().getAt(rowIndex).data.type == 9)
+                return false;
             var sm = grid.getSelectionModel();
             sm.selectRow(rowIndex);
             kimios.ContextMenu.show(sm.getSelected().data, e, 'searchRequests');
