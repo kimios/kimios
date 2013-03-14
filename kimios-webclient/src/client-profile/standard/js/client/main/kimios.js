@@ -15,22 +15,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 kimios = {
-    
-    defaultLanguage : 'en',
 
-    implPackage : undefined,
+    defaultLanguage: 'en',
 
-    getImplPackage : function(){
+    implPackage: undefined,
+
+    getImplPackage: function () {
         return this.implPackage;
     },
-    setImplPackage : function(impl){
+    setImplPackage: function (impl) {
         this.implPackage = impl;
     },
-    viewableExtensions : new Array('png', 'jpg', 'jpeg', 'tif', 'tiff', 'gif'),
+    viewableExtensions: new Array('png', 'jpg', 'jpeg', 'tif', 'tiff', 'gif'),
 
-    isViewableExtension : function(ext) {
+    isViewableExtension: function (ext) {
         var exts = kimios.viewableExtensions;
-        for ( var i = 0; i < exts.length; i++) {
+        for (var i = 0; i < exts.length; i++) {
             if (ext.toLowerCase() == exts[i]) {
                 return true;
             }
@@ -38,67 +38,64 @@ kimios = {
         return false;
     },
 
-    viewImg : function(pojo, links, ext) {
+    viewImg: function (pojo, links, ext) {
         var centerPanel = Ext.getCmp('kimios-center-panel');
-        var p = new kimios.util.ImageViewer( {
-            pojo : pojo,
-            links : links
+        var p = new kimios.util.ImageViewer({
+            pojo: pojo,
+            links: links
         });
         centerPanel.add(p);
         centerPanel.setActiveTab(p);
     },
-  
-    copyToClipBoard: function(dataText){
-        var cpFunction = function copyToClipboardFF(sText)
-        {
-            try
-            {
+
+    copyToClipBoard: function (dataText) {
+        var cpFunction = function copyToClipboardFF(sText) {
+            try {
                 netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
                 var gClipboardHelper =
-                Components.classes["@mozilla.org/widget/clipboardhelper;1"]
-                .getService(Components.interfaces.nsIClipboardHelper);
+                    Components.classes["@mozilla.org/widget/clipboardhelper;1"]
+                        .getService(Components.interfaces.nsIClipboardHelper);
                 gClipboardHelper.copyString(sText);
             }
-            catch (e)
-            {
+            catch (e) {
                 alert("Please Check youf Firefox security settings, to enable ClipBoard Access.");
-         
+
             }
         };
-    
-        var cpFunctionIe = function(sText){
+
+        var cpFunctionIe = function (sText) {
             window.clipboardData.setData('Text', sText);
             return false;
         };
-        if(Ext.isIE){
+        if (Ext.isIE) {
             cpFunctionIe(dataText);
-        }else if(Ext.isGecko){
+        } else if (Ext.isGecko) {
             cpFunction(dataText);
-        }else{
+        } else {
             alert("Unavailable feature.");
         }
     },
-    viewDoc : function(pojo) {
+    viewDoc: function (pojo) {
         if (pojo.extension == 'pdf') {
             kimios.mask();
-            var store = new DmsJsonStore( {
-                url : 'DocumentVersion',
-                baseParams : {
-                    action : 'pdfToImage',
-                    uid : pojo.uid
+            var store = new DmsJsonStore({
+                url: 'DocumentVersion',
+                baseParams: {
+                    action: 'pdfToImage',
+                    uid: pojo.uid
                 },
-                fields : [ 'path', 'num' ],
-                autoLoad : true
+                fields: [ 'path', 'num' ],
+                autoLoad: true
             });
-            store.on('exception', function() {
+            store.on('exception', function () {
                 kimios.unmask();
             });
-            store.on('load', function(store, record) {
+            store.on('load', function (store, record) {
                 var links = [];
-                Ext.each(record, function(rec, ind) {
-                    links.push( {
-                        num : rec.data.num,
-                        path : rec.data.path
+                Ext.each(record, function (rec, ind) {
+                    links.push({
+                        num: rec.data.num,
+                        path: rec.data.path
                     });
                 });
                 kimios.viewImg(pojo, links, 'pdf');
@@ -106,49 +103,49 @@ kimios = {
             });
         } else {
             var links = [];
-            links.push( {
-                num : 0,
-                path : kimios.util.getDocumentLink(pojo.uid)
+            links.push({
+                num: 0,
+                path: kimios.util.getDocumentLink(pojo.uid)
             });
             kimios.viewImg(pojo, links);
         }
     },
 
-    date : function(timestamp) {
+    date: function (timestamp) {
         return new Date(timestamp == null ? 0 : timestamp).format(kimios.lang('SimpleDateJSFormat'));
     },
 
-    util : {
-        setTitle : function(path) {
+    util: {
+        setTitle: function (path) {
             if (path == undefined || path == '' || path == '/')
                 document.title = 'kimios Web Client';
             else
                 document.title = 'kimios Web Client - ' + path;
         },
-        getDocumentLink : function(uid) {
+        getDocumentLink: function (uid) {
             return getBackEndUrl('DocumentVersion')
-            + '&action=GetLastVersion&uid=' + uid;
+                + '&action=GetLastVersion&uid=' + uid;
         },
-        getDocumentVersionLink : function(uid, versionUid) {
+        getDocumentVersionLink: function (uid, versionUid) {
             return getBackEndUrl('DocumentVersion')
-            + '&action=GetDocumentVersion&docUid=' + uid + '&verUid='
-            + versionUid;
+                + '&action=GetDocumentVersion&docUid=' + uid + '&verUid='
+                + versionUid;
         }
     },
 
-    ajaxRequest : function(url, params, successHandler, failureHandler) {
+    ajaxRequest: function (url, params, successHandler, failureHandler) {
         kimios.mask();
 
-        var fHandler = function(resp, opt) {
+        var fHandler = function (resp, opt) {
             kimios.unmask();
-            kimios.MessageBox.exception( {
-                exception : 'HTTP error: ' + resp.status + ' '
-                + resp.statusText,
-                stackTrace : resp.responseText
+            kimios.MessageBox.exception({
+                exception: 'HTTP error: ' + resp.status + ' '
+                    + resp.statusText,
+                stackTrace: resp.responseText
             });
         };
 
-        var sHandler = function(resp, opt) {
+        var sHandler = function (resp, opt) {
             kimios.unmask();
             if (resp.responseText == '' || resp.responseText == '{"success":true}') {
                 if (successHandler != null)
@@ -158,85 +155,85 @@ kimios = {
                 if (failureHandler) {
                     failureHandler(t);
                 } else {
-                    kimios.MessageBox.exception( {
-                        exception : t.exception,
-                        stackTrace : t.trace
+                    kimios.MessageBox.exception({
+                        exception: t.exception,
+                        stackTrace: t.trace
                     });
                 }
             }
         };
 
-        Ext.Ajax.request( {
-            url : getBackEndUrl(url),
-            params : params,
-            success : sHandler,
-            failure : fHandler
+        Ext.Ajax.request({
+            url: getBackEndUrl(url),
+            params: params,
+            success: sHandler,
+            failure: fHandler
         });
 
     },
 
-    ajaxSubmit : function(url, params, successHandler, failureHandler) {
+    ajaxSubmit: function (url, params, successHandler, failureHandler) {
         kimios.mask();
 
-        var fHandler = function(form, action) {
+        var fHandler = function (form, action) {
             kimios.unmask();
             var resp = action.response;
             if (action.failureType == Ext.form.Action.CONNECT_FAILURE) {
-                kimios.MessageBox.exception( {
-                    exception : 'HTTP error: ' + resp.status + " "
-                    + resp.statusText,
-                    stackTrace : resp.responseText
+                kimios.MessageBox.exception({
+                    exception: 'HTTP error: ' + resp.status + " "
+                        + resp.statusText,
+                    stackTrace: resp.responseText
                 });
             } else {
                 if (failureHandler)
                     failureHandler(action.result);
                 else {
-                    kimios.MessageBox.exception( {
-                        exception : action.result.exception,
-                        stackTrace : action.result.trace
+                    kimios.MessageBox.exception({
+                        exception: action.result.exception,
+                        stackTrace: action.result.trace
                     });
                 }
             }
         };
 
-        var sHandler = function(form, action) {
+        var sHandler = function (form, action) {
             kimios.unmask();
             if (successHandler)
                 successHandler(action.result);
         };
 
         return {
-            url : getBackEndUrl(url),
-            params : params,
-            success : sHandler,
-            failure : fHandler
+            url: getBackEndUrl(url),
+            params: params,
+            success: sHandler,
+            failure: fHandler
         };
     },
 
-    getToolsMenu : function() {
+    getToolsMenu: function () {
         return Ext.getCmp('kimios-tools');
     },
 
-    getLanguageMenu : function() {
+    getLanguageMenu: function () {
         return Ext.getCmp('kimios-language');
     },
 
-    getBrowserLanguage : function() {
+    getBrowserLanguage: function () {
         var lang = navigator.language ? navigator.language
-        : (navigator.userLanguage ? navigator.userLanguage
+            : (navigator.userLanguage ? navigator.userLanguage
             : kimios.defaultLanguage);
         return lang.length > 2 ? lang.substring(0, 2).toLowerCase()
-        : (lang.length == 2 ? lang : kimios.defaultLanguage);
+            : (lang.length == 2 ? lang : kimios.defaultLanguage);
     },
 
-    getLanguage : function() {
+    getLanguage: function () {
         var defaultLang = kimios.Cookies
-        .getCookie('kimios-web-client-language');
+            .getCookie('kimios-web-client-language');
         if (defaultLang == null) {
             var languages = new Array('en', 'fr', 'es', 'pl');
             var lang = kimios.getBrowserLanguage();
             var found = false;
-            for ( var len = 0; len < languages.length; len++) {
+            for (var len = 0; len < languages.length; len++) {
                 if (languages[len] == lang) {
                     found = true;
                     break;
@@ -247,69 +244,72 @@ kimios = {
         return defaultLang;
     },
 
-    lang : function(label) {
+    lang: function (label) {
         return Ext.getCmp('kimios-viewport').i18n.getValue(label);
     },
 
-    mask : function() {
+    mask: function () {
         Ext.getCmp('kimios-viewport').mask.show();
     },
 
-    unmask : function() {
+    unmask: function () {
         Ext.getCmp('kimios-viewport').mask.hide();
     },
 
-    explorer : {
-        getViewport : function() {
+    explorer: {
+        getViewport: function () {
             return Ext.getCmp('kimios-viewport');
         },
 
-        getWestPanel : function() {
+        getWestPanel: function () {
             return Ext.getCmp('kimios-west-panel');
         },
 
-        getNorthPanel : function() {
+        getNorthPanel: function () {
             return Ext.getCmp('kimios-north-panel');
         },
 
-        getToolbar : function() {
+        getToolbar: function () {
             return Ext.getCmp('kimios-toolbar');
         },
 
-        getTreePanel : function() {
+        getTreePanel: function () {
             return Ext.getCmp('kimios-dm-entity-tree-panel');
         },
 
-        getSearchRequestsPanel : function() {
+        getSearchRequestsPanel: function () {
             return Ext.getCmp('kimios-queries-panel');
         },
 
-        getBookmarksPanel : function() {
+        getBookmarksPanel: function () {
             return Ext.getCmp('kimios-bookmarks-panel');
         },
 
-        getRecentItemsPanel : function() {
+        getRecentItemsPanel: function () {
             return Ext.getCmp('kimios-recent-items-panel');
         },
 
-        getAdvancedSearchPanel : function() {
+        getAdvancedSearchPanel: function () {
             return Ext.getCmp('kimios-advanced-search-panel');
         },
 
-        getTasksPanel : function() {
+        getTasksPanel: function () {
             return Ext.getCmp('kimios-tasks-panel');
         },
+        getCartPanel: function () {
+            return Ext.getCmp('kimios-cart');
+        },
 
-        getMainPanel : function() {
+        getMainPanel: function () {
             return Ext.getCmp('kimios-center-panel');
         },
 
-        getActivePanel : function() {
+        getActivePanel: function () {
             return this.getMainPanel().getActiveTab();
         }
     },
 
-    checkPassword : function(pwd) {
+    checkPassword: function (pwd) {
         if (pwd.length < 6) {
             Ext.MessageBox.alert(kimios.lang('InvalidPassword'), kimios
                 .lang('PasswordLength'));
@@ -328,26 +328,26 @@ kimios = {
         return true;
     },
 
-    search : {},
+    search: {},
 
-    security : {},
+    security: {},
 
-    tasks : {},
+    tasks: {},
 
-    properties : {},
+    properties: {},
 
-    picker : {},
+    picker: {},
 
-    form : {},
+    form: {},
 
-    record : {},
+    record: {},
 
-    store : {},
+    store: {},
 
-    reporting : {},
+    reporting: {},
 
-    i18n : {},
+    i18n: {},
 
-    menu : {}
+    menu: {}
 };
 

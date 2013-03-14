@@ -58,6 +58,18 @@ kimios.explorer.Toolbar = Ext.extend(Ext.Toolbar, {
             }
         });
 
+        this.cartButton = new Ext.Button({
+            id: 'kimios-cart-button',
+            text: kimios.lang('Cart'),
+            iconCls: 'cart',
+//            enableToggle: true,
+            handler: function (b, s) {
+                var vp = kimios.explorer.getViewport();
+                vp.westPanel.setActiveGroup(5);     // cart panel
+                vp.westPanel.activeGroup.setActiveTab(0);
+            }
+        });
+
         this.myTasksButton = new Ext.Button({
             text: kimios.lang('MyTasks'),
             iconCls: 'tasks',
@@ -127,6 +139,7 @@ kimios.explorer.Toolbar = Ext.extend(Ext.Toolbar, {
 
         var buttonsArray = [];
         buttonsArray.push(this.advancedSearchButton);
+        buttonsArray.push(this.cartButton);
         buttonsArray.push(this.myTasksButton);
         buttonsArray.push(this.myAccountButton);
         buttonsArray.push(this.toolsMenu);

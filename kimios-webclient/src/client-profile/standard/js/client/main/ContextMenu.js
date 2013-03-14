@@ -53,6 +53,8 @@ kimios.ContextMenu = new function () {
         this.initRelatedDocumentsMenu(config);
         this.initTreeContainerMenu(config);
         this.initUnknownMenu(config);
+        this.initCartMenu(config);
+        this.initCartContainerMenu(config);
     };
 
     /**
@@ -117,6 +119,10 @@ kimios.ContextMenu = new function () {
             return this.myTasksMenu;
         }
 
+        else if (context == 'cart') {
+            return this.cartMenu;
+        }
+
         // versions
         else if (context == 'versions') {
             return this.versionsMenu;
@@ -150,6 +156,10 @@ kimios.ContextMenu = new function () {
         // tasks container
         else if (context == 'myTasksContainer') {
             return this.myTasksContainerMenu;
+        }
+
+        else if (context == 'cartContainer') {
+            return this.cartContainerMenu;
         }
 
         // tree container
@@ -235,6 +245,7 @@ kimios.ContextMenu = new function () {
         this.documentMenu.addSeparator();
         this.documentMenu.add(this.getCommentsItem());
         if (Ext.isIE || Ext.isGecko) this.documentMenu.add(this.getGetDocumentMailLinkItem());
+        this.documentMenu.add(this.getCartItem());
         this.documentMenu.addSeparator();
         this.documentMenu.add(this.getPropertiesItem());
 
@@ -256,6 +267,7 @@ kimios.ContextMenu = new function () {
         this.viewableDocumentMenu.addSeparator();
         this.viewableDocumentMenu.add(this.getCommentsItem());
         if (Ext.isIE || Ext.isGecko) this.viewableDocumentMenu.add(this.getGetDocumentMailLinkItem());
+        this.viewableDocumentMenu.add(this.getCartItem());
         this.viewableDocumentMenu.addSeparator();
         this.viewableDocumentMenu.add(this.getPropertiesItem());
 
@@ -275,6 +287,7 @@ kimios.ContextMenu = new function () {
         this.defaultMultipleMenu.add(this.getDeleteItem());
         this.defaultMultipleMenu.add(this.getAddToBookmarksItem());
         this.defaultMultipleMenu.addSeparator();
+        this.defaultMultipleMenu.add(this.getCartItem());
         this.defaultMultipleMenu.add(this.getPropertiesItem());
     };
 
@@ -289,6 +302,19 @@ kimios.ContextMenu = new function () {
         this.myTasksMenu.add(this.getRefreshItem());
         this.myTasksMenu.addSeparator();
         this.myTasksMenu.add(this.getPropertiesItem());
+    };
+
+    this.initCartMenu = function (config) {
+        this.cartMenu = new Ext.menu.Menu(config);
+        this.cartMenu.add(this.getViewDocumentItem());
+        this.cartMenu.add(this.getGetDocumentItem());
+        this.cartMenu.addSeparator();
+        this.cartMenu.add(this.getRemoveCartSimpleItem());
+        this.cartMenu.add(this.getRemoveCartItem());
+        this.cartMenu.addSeparator();
+//        this.cartMenu.add(this.getRefreshItem());
+//        this.cartMenu.addSeparator();
+        this.cartMenu.add(this.getPropertiesItem());
     };
 
     this.initSearchRequestsMenu = function (config) {
@@ -312,6 +338,12 @@ kimios.ContextMenu = new function () {
     this.initMyTasksContainerMenu = function (config) {
         this.myTasksContainerMenu = new Ext.menu.Menu(config);
         this.myTasksContainerMenu.add(this.getRefreshItem());
+    };
+
+    this.initCartContainerMenu = function (config) {
+        this.cartContainerMenu = new Ext.menu.Menu(config);
+        this.cartContainerMenu.add(this.getRemoveCartItem());
+//        this.cartContainerMenu.add(this.getRefreshItem());
     };
 
     this.initRecentItemsMenu = function (config) {
@@ -464,6 +496,32 @@ kimios.ContextMenu = new function () {
             handler: function () {
                 var mailLink = fullServerUrl + kimios.util.getDocumentVersionLink(this.dmEntityPojo.uid);
                 kimios.copyToClipBoard(mailLink);
+            }
+        });
+    };
+
+    this.getCartItem = function () {
+        return new Ext.menu.Item({
+            text: 'ZIP',
+            iconCls: 'cart',
+            scope: this,
+            handler: function () {
+                var cartWindow = Ext.getCmp('kimios-cart');
+                var cartGrid = cartWindow.cartGrid;
+                var cartStore = cartGrid.getStore();
+
+                if (this.multiple == true) {
+                    for (var i = 0; i < this.dmEntityPojo.length; ++i) {
+                        cartStore.insert(0, new Ext.data.Record(this.dmEntityPojo[i]));
+                    }
+
+                } else {
+                    cartStore.insert(0, new Ext.data.Record(this.dmEntityPojo));
+                }
+
+                var vp = kimios.explorer.getViewport();
+                vp.westPanel.setActiveGroup(5);     // cart panel
+                vp.westPanel.activeGroup.setActiveTab(0);
             }
         });
     };
@@ -666,11 +724,20 @@ kimios.ContextMenu = new function () {
             iconCls: 'qaction-bookmarks',
             scope: this,
             handler: function () {
-                if (this.multiple == true) {
-                    kimios.request.addAllToBookmarks(this.dmEntityPojo);
-                } else {
-                    kimios.request.addToBookmarks(this.dmEntityPojo.uid, this.dmEntityPojo.type);
-                }
+                Ext.MessageBox.confirm(
+                    kimios.lang('AddToBookmark'),
+                    kimios.lang('AddToBookmark') + '?',
+                    function (btn) {
+                        if (btn == 'yes') {
+                            if (this.multiple == true) {
+                                kimios.request.addAllToBookmarks(this.dmEntityPojo);
+                            } else {
+                                kimios.request.addToBookmarks(this.dmEntityPojo.uid, this.dmEntityPojo.type);
+                            }
+                        }
+                    },
+                    this
+                );
             }
         });
     };
@@ -738,6 +805,37 @@ kimios.ContextMenu = new function () {
             scope: this,
             handler: function () {
                 kimios.request.removeBookmarks(this.dmEntityPojo.uid, this.dmEntityPojo.type);
+            }
+        });
+    };
+
+    this.getRemoveCartItem = function () {
+        return new Ext.menu.Item({
+            text: kimios.lang('ClearCart'),
+            iconCls: 'trash',
+            scope: this,
+            handler: function () {
+                Ext.getCmp('kimios-cart').cartGrid.getStore().removeAll();
+            }
+        });
+    };
+
+    this.getRemoveCartSimpleItem = function () {
+        return new Ext.menu.Item({
+            text: kimios.lang('ClearCartItem'),
+            iconCls: 'delete',
+            scope: this,
+            handler: function () {
+                Ext.getCmp('kimios-cart').cartGrid.getStore().remove(
+                    Ext.getCmp('kimios-cart').cartGrid.getSelectionModel().getSelected()
+                );
+
+//                var grid = Ext.getCmp('kimios-cart').cartGrid;
+//                var store = grid.getStore();
+//                var rec = grid.getSelectionModel().getSelected();
+//                store.remove({
+//                    uid: rec.data.uid
+//                });
             }
         });
     };
@@ -898,6 +996,7 @@ kimios.ContextMenu = new function () {
                 var bookmarks = kimios.explorer.getBookmarksPanel();
                 var recentItems = kimios.explorer.getRecentItemsPanel();
                 var searchRequests = kimios.explorer.getSearchRequestsPanel();
+                var cartPanel = kimios.explorer.getCartPanel();
 
                 if (context == undefined || context == 'default'
                     || context == 'gridContainer') {
@@ -917,6 +1016,8 @@ kimios.ContextMenu = new function () {
                 } else if (context == 'myTasks'
                     || context == 'myTasksContainer') {
                     tasksPanel.refresh();
+                } else if (context == 'cart' || context == 'cartContainer') {
+                    cartPanel.refresh();
                 }
             }
         });

@@ -367,3 +367,13 @@
     background-image: url(../icons/16x16/tick.png) !important;
     background-repeat: no-repeat;
 }
+
+.cart {
+    background-image: url(../icons/16x16/cart.png) !important;
+    background-repeat: no-repeat;
+}
+
+.compress {
+    background-image: url(../icons/16x16/compress.png) !important;
+    background-repeat: no-repeat;
+}

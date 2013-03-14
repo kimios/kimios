@@ -74,6 +74,8 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                 });
                 this.tasksPanel = new kimios.tasks.TasksPanel({});
 
+                this.cartPanel = new kimios.explorer.Cart({});
+
                 // west
                 this.westPanel = new Ext.ux.GroupTabPanel({
                     id: 'kimios-west-container',
@@ -102,6 +104,9 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                         },
                         {
                             items: [this.tasksPanel]
+                        },
+                        {
+                            items: [this.cartPanel]
                         }
                     ],
                     margins: '5 0 5 5',
@@ -246,6 +251,7 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                 kimios.explorer.getBookmarksPanel().refreshLanguage();
                 kimios.explorer.getRecentItemsPanel().refreshLanguage();
                 kimios.explorer.getTasksPanel().refreshLanguage();
+                kimios.explorer.getCartPanel().refreshLanguage();
                 kimios.ContextMenu.init();
                 var mainPanel = kimios.explorer.getMainPanel();
                 for (var i = 0; i < mainPanel.items.length; i++)
