@@ -62,7 +62,7 @@ public abstract class CoreService
 
     protected IExtensionController extensionController;
 
-    protected IConvertController convertController;
+    protected IConverterController convertController;
 
     public IExtensionController getExtensionController()
     {
@@ -217,12 +217,12 @@ public abstract class CoreService
         this.ruleController = ruleController;
     }
 
-    public IConvertController getConvertController()
+    public IConverterController getConverterController()
     {
         return convertController;
     }
 
-    public void setConvertController(IConvertController convertController)
+    public void setConverterController(IConverterController convertController)
     {
         this.convertController = convertController;
     }

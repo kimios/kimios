@@ -11,7 +11,7 @@ import javax.ws.rs.core.Response;
 
 @Path("/converter")
 @WebService(targetNamespace = "http://kimios.org", serviceName = "ConverterService")
-public interface ConvertService {
+public interface ConverterService {
 
     /**
      * Get the last document version and convert to given converter class name

@@ -58,7 +58,7 @@
         <property name="searchController" ref="searchController"/>
         <property name="ruleController" ref="rulesController"/>
         <property name="extensionController" ref="extensionController"/>
-        <property name="convertController" ref="convertController"/>
+        <property name="converterController" ref="converterController"/>
     </bean>
 
     <!-- Aegis data binding -->
@@ -346,16 +346,17 @@
         </jaxws:serviceFactory>
     </jaxws:endpoint>
 
-    <bean id="convertServiceBean" class="org.kimios.webservices.impl.ConvertServiceImpl" parent="kimiosCoreService"/>
+    <bean id="converterServiceBean" class="org.kimios.webservices.impl.ConverterServiceImpl"
+          parent="kimiosCoreService"/>
     <!-- Service endpoint -->
-    <jaxws:endpoint id="convertServiceWs"
-                    implementorClass="org.kimios.webservices.impl.ConvertServiceImpl"
-                    implementor="#convertServiceBean"
-                    address="/ConvertService"
-                    endpointName="ConvertService"
+    <jaxws:endpoint id="converterServiceWs"
+                    implementorClass="org.kimios.webservices.impl.ConverterServiceImpl"
+                    implementor="#converterServiceBean"
+                    address="/ConverterService"
+                    endpointName="ConverterService"
             >
         <jaxws:binding>
-            <soap:soapBinding name="ConvertService"/>
+            <soap:soapBinding name="ConverterService"/>
         </jaxws:binding>
         <jaxws:serviceFactory>
             <ref bean="jaxws-and-aegis-service-factory"/>

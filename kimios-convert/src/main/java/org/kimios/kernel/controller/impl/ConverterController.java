@@ -1,10 +1,9 @@
 package org.kimios.kernel.controller.impl;
 
 import org.kimios.kernel.controller.AKimiosController;
-import org.kimios.kernel.controller.IConvertController;
+import org.kimios.kernel.controller.IConverterController;
 import org.kimios.kernel.converter.Converter;
 import org.kimios.kernel.converter.ConverterFactory;
-import org.kimios.kernel.converter.source.impl.DocumentVersionInputSource;
 import org.kimios.kernel.converter.source.InputSource;
 import org.kimios.kernel.converter.source.InputSourceFactory;
 import org.kimios.kernel.dms.Document;
@@ -18,9 +17,9 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConvertController extends AKimiosController implements IConvertController {
+public class ConverterController extends AKimiosController implements IConverterController {
 
-    private static Logger log = LoggerFactory.getLogger(ConvertController.class);
+    private static Logger log = LoggerFactory.getLogger(ConverterController.class);
 
     public InputSource convertDocumentVersion(Session session, Long documentVersionId, String converterImpl) throws ConverterException {
         try {

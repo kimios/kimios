@@ -6,7 +6,7 @@ import org.kimios.kernel.security.Session;
 
 import java.util.List;
 
-public interface IConvertController {
+public interface IConverterController {
 
     /**
      * Check current document access, create input source from last version of document,

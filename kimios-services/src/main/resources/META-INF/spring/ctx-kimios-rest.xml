@@ -59,7 +59,7 @@
             <ref bean="extensionServiceBean"/>
             <ref bean="notificationServiceBean"/>
             <ref bean="searchServiceBean"/>
-            <ref bean="convertServiceBean"/>
+            <ref bean="converterServiceBean"/>
         </jaxrs:serviceBeans>
         <jaxrs:extensionMappings>
             <entry key="json" value="application/json"/>

@@ -17,8 +17,8 @@
   -->
 
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee"
-        xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-        version="2.5">
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         version="2.5">
     <filter>
         <filter-name>encodingfilter</filter-name>
         <filter-class>org.kimios.core.EncodingFilter</filter-class>
@@ -55,6 +55,10 @@
         <servlet-name>Icons</servlet-name>
         <servlet-class>org.kimios.controller.CssController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>Converter</servlet-name>
+        <servlet-class>org.kimios.controller.ConverterServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Main</servlet-name>
         <url-pattern>/Main</url-pattern>
@@ -64,8 +68,12 @@
         <url-pattern>/icons</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-      <servlet-name>Icons</servlet-name>
-      <url-pattern>/icons/*</url-pattern>
+        <servlet-name>Icons</servlet-name>
+        <url-pattern>/icons/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Converter</servlet-name>
+        <url-pattern>/Converter</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>

@@ -2,7 +2,7 @@ package org.kimios.webservices.impl;
 
 import org.kimios.kernel.converter.source.InputSource;
 import org.kimios.kernel.security.Session;
-import org.kimios.webservices.ConvertService;
+import org.kimios.webservices.ConverterService;
 import org.kimios.webservices.CoreService;
 import org.kimios.webservices.DMServiceException;
 
@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConvertServiceImpl extends CoreService implements ConvertService {
+public class ConverterServiceImpl extends CoreService implements ConverterService {
 
     public Response convertDocument(String sessionId, Long documentId, String converterImpl) throws DMServiceException {
         try {

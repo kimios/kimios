@@ -69,22 +69,10 @@ kimios.explorer.Cart = Ext.extend(Ext.Panel, {
                     scope: this,
                     disabled: true,
                     handler: function () {
-
-
-                        //--------------------------------------------------------
-                        //TODO FIXME
-                        //
-                        var prefix = 'http://localhost:8780/server';  //TODO FIXME
-                        //
-                        //TODO FIXME
-                        //--------------------------------------------------------
-
-
                         var records = _this.cartGrid.getStore().getRange();
                         if (!records && records.length == 0)
                             return false;
-                        var link = prefix + '/services/rest/converter/convertDocuments' +
-                            '?sessionId=' + sessionUid;
+                        var link = srcContextPath + '/Converter?sessionId=' + sessionUid;
                         for (var i = 0; i < records.length; ++i)
                             link += '&documentId=' + records[i].data.uid;
                         link += '&converterImpl=org.kimios.kernel.converter.impl.FileToZip';
