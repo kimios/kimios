@@ -23,7 +23,8 @@
         default-autowire="byName">
 
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="locations">
+      <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"></property>
+      <property name="locations">
             <list>
                 <value>/WEB-INF/kimios.properties</value>
             </list>
