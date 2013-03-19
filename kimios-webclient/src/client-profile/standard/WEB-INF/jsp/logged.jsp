@@ -1,4 +1,5 @@
 <%@ page import="org.kimios.client.controller.SecurityController" %>
+<%@ page import="org.kimios.core.configuration.Config" %>
 <%@ page import="org.springframework.web.context.WebApplicationContext" %>
 <%@ page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
 <%@ page contentType="text/html" pageEncoding="UTF-8" %>
@@ -116,6 +117,7 @@
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/explorer/Cart.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/explorer/ExplorerPanel.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/explorer/DMEntityGridPanel.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/explorer/NewsPanel.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/explorer/CommentsPanel.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/explorer/BreadcrumbToolbar.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/explorer/BookmarksPanel.js"></script>

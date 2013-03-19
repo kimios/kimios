@@ -221,8 +221,12 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
 
                 // layout fix
                 this.doLayout();
+
+                // open news tab
+                this.initNewsTab();
+
                 // open default tab
-                this.newTab();
+//                this.newTab();
 
                 // start tasks checker thread (also used to check session)
                 this.tasksChecker = {
@@ -282,6 +286,12 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
         kimios.explorer.getViewport().recentItemsPanel.refresh();
         this.refreshGrids();
         this.doLayout();
+    },
+
+    initNewsTab: function () {
+        var newsPanel = new kimios.explorer.NewsPanel({});
+        Ext.getCmp('kimios-center-panel').add(newsPanel);
+        Ext.getCmp('kimios-center-panel').setActiveTab(newsPanel);
     },
 
     newTab: function (uid, type) {

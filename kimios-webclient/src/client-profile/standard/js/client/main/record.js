@@ -16,583 +16,601 @@
  */
 kimios.record = {
 
-    dmEntityRecord:Ext.data.Record.create([
+    newsRecord: Ext.data.Record.create([
         {
-            name:'ownerSource',
-            type:'string'
+            name: 'id',
+            type: 'long'
         },
         {
-            name:'creationDate',
-            type:'long'
+            name: 'title',
+            type: 'string'
+        },
+        {
+            name: 'content',
+            type: 'string'
+        },
+        {
+            name: 'date'
+        }
+    ]),
+
+    dmEntityRecord: Ext.data.Record.create([
+        {
+            name: 'ownerSource',
+            type: 'string'
+        },
+        {
+            name: 'creationDate',
+            type: 'long'
 
         },
         {
-            name:'updateDate',
-            type:'long',
+            name: 'updateDate',
+            type: 'long',
             sortDir: 'desc'
         },
         {
-            name:'name',
-            type:'string'
+            name: 'name',
+            type: 'string'
         },
         {
-            name:'owner',
-            type:'string'
+            name: 'owner',
+            type: 'string'
         },
         {
-            name:'uid',
-            type:'long'
+            name: 'uid',
+            type: 'long'
         },
         {
-            name:'type',
-            type:'int'
+            name: 'type',
+            type: 'int'
         },
         {
-            name:'length',
-            type:'long'
+            name: 'length',
+            type: 'long'
         },
         {
-            name:'extension',
-            type:'string'
+            name: 'extension',
+            type: 'string'
         },
         {
-            name:'checkedOut',
-            type:'boolean'
+            name: 'checkedOut',
+            type: 'boolean'
         },
         {
-            name:'checkoutDate',
-            type:'long'
+            name: 'checkoutDate',
+            type: 'long'
         },
         {
-            name:'checkoutUser',
-            type:'string'
+            name: 'checkoutUser',
+            type: 'string'
         },
         {
-            name:'checkoutUserSource',
-            type:'string'
+            name: 'checkoutUserSource',
+            type: 'string'
         },
         {
-            name:'documentTypeName',
-            type:'string'
+            name: 'documentTypeName',
+            type: 'string'
         },
         {
-            name:'documentTypeUid',
-            type:'long'
+            name: 'documentTypeUid',
+            type: 'long'
         },
         {
-            name:'outOfWorkflow',
-            type:'boolean'
+            name: 'outOfWorkflow',
+            type: 'boolean'
         },
         {
-            name:'workflowStatusName',
-            type:'string'
+            name: 'workflowStatusName',
+            type: 'string'
         },
         {
-            name:'workflowStatusUid',
-            type:'long'
+            name: 'workflowStatusUid',
+            type: 'long'
         },
         {
-            name:'path',
-            type:'string'
+            name: 'path',
+            type: 'string'
         },
         {
-            name:'parentType',
-            type:'int'
+            name: 'parentType',
+            type: 'int'
         },
         {
-            name:'parentUid',
-            type:'long'
+            name: 'parentUid',
+            type: 'long'
         },
         {
-            name:'statusUserName',
-            type:'string'
+            name: 'statusUserName',
+            type: 'string'
         },
         {
-            name:'statusUserSource',
-            type:'string'
+            name: 'statusUserSource',
+            type: 'string'
         },
         {
-            name:'statusDate',
-            type:'long'
+            name: 'statusDate',
+            type: 'long'
         },
         {
-            name:'status',
-            type:'string'
+            name: 'status',
+            type: 'string'
         }
     ]),
 
-    dmEntityVersionRecord:Ext.data.Record.create([
+    dmEntityVersionRecord: Ext.data.Record.create([
         {
-            name:'creationDate',
-            type:'string'
+            name: 'creationDate',
+            type: 'string'
         },
         {
-            name:'documentTypeName',
-            type:'string'
+            name: 'documentTypeName',
+            type: 'string'
         },
         {
-            name:'documentTypeUid',
-            type:'int'
+            name: 'documentTypeUid',
+            type: 'int'
         },
         {
-            name:'documentUid',
-            type:'int'
+            name: 'documentUid',
+            type: 'int'
         },
         {
-            name:'length',
-            type:'int'
+            name: 'length',
+            type: 'int'
         },
         {
-            name:'modificationDate',
-            type:'string'
+            name: 'modificationDate',
+            type: 'string'
         },
         {
-            name:'owner',
-            type:'string'
+            name: 'owner',
+            type: 'string'
         },
         {
-            name:'ownerSource',
-            type:'string'
+            name: 'ownerSource',
+            type: 'string'
         },
         {
-            name:'uid',
-            type:'int'
+            name: 'uid',
+            type: 'int'
         }
     ]),
 
-    securityEntityRecord:Ext.data.Record.create([
+    securityEntityRecord: Ext.data.Record.create([
         {
-            name:'dmEntityType',
-            type:'int'
+            name: 'dmEntityType',
+            type: 'int'
         },
         {
-            name:'dmEntityUid',
-            type:'int'
+            name: 'dmEntityUid',
+            type: 'int'
         },
         {
-            name:'read',
-            type:'boolean'
+            name: 'read',
+            type: 'boolean'
         },
         {
-            name:'write',
-            type:'boolean'
+            name: 'write',
+            type: 'boolean'
         },
         {
-            name:'fullAccess',
-            type:'boolean'
+            name: 'fullAccess',
+            type: 'boolean'
         },
         {
-            name:'type',
-            type:'int'
+            name: 'type',
+            type: 'int'
         },
         {
-            name:'name',
-            type:'string'
+            name: 'name',
+            type: 'string'
         },
         {
-            name:'source',
-            type:'string'
+            name: 'source',
+            type: 'string'
         },
         {
-            name:'dmEntityType',
-            type:'int'
+            name: 'dmEntityType',
+            type: 'int'
         }
     ]),
 
-    bookmarksRecord:Ext.data.Record.create([
+    bookmarksRecord: Ext.data.Record.create([
         {
-            name:'checkoutDate',
-            type:'string'
+            name: 'checkoutDate',
+            type: 'string'
         },
         {
-            name:'extension',
-            type:'string'
+            name: 'extension',
+            type: 'string'
         },
         {
-            name:'name',
-            type:'string'
+            name: 'name',
+            type: 'string'
         },
         {
-            name:'path',
-            type:'string'
+            name: 'path',
+            type: 'string'
         },
         {
-            name:'type',
-            type:'int'
+            name: 'type',
+            type: 'int'
         },
         {
-            name:'uid',
-            type:'int'
+            name: 'uid',
+            type: 'int'
         },
         {
-            name:'worklowStatusName',
-            type:'string'
+            name: 'worklowStatusName',
+            type: 'string'
         }
     ]),
 
-    documentTypeRecord:Ext.data.Record.create([
+    documentTypeRecord: Ext.data.Record.create([
         {
-            name:'name',
-            type:'string'
+            name: 'name',
+            type: 'string'
         },
         {
-            name:'uid',
-            type:'int'
+            name: 'uid',
+            type: 'int'
         },
         {
-            name:'parentType',
-            type:'int'
+            name: 'parentType',
+            type: 'int'
         }
     ]),
 
-    workflowRecord:Ext.data.Record.create([
+    workflowRecord: Ext.data.Record.create([
         {
-            name:'uid',
-            type:'int'
+            name: 'uid',
+            type: 'int'
         },
         {
-            name:'name',
-            type:'string'
+            name: 'name',
+            type: 'string'
         },
         {
-            name:'description',
-            type:'string'
+            name: 'description',
+            type: 'string'
         }
     ]),
 
-    historyRecord:Ext.data.Record.create([
+    historyRecord: Ext.data.Record.create([
         {
-            name:'date',
-            type:'long'
+            name: 'date',
+            type: 'long'
         },
         {
-            name:'dmEntityType',
-            type:'int'
+            name: 'dmEntityType',
+            type: 'int'
         },
         {
-            name:'dmEntityUid',
-            type:'long'
+            name: 'dmEntityUid',
+            type: 'long'
         },
         {
-            name:'operation',
-            type:'int'
+            name: 'operation',
+            type: 'int'
         },
         {
-            name:'uid',
-            type:'long'
+            name: 'uid',
+            type: 'long'
         },
         {
-            name:'user',
-            type:'string'
+            name: 'user',
+            type: 'string'
         },
         {
-            name:'userSource',
-            type:'string'
+            name: 'userSource',
+            type: 'string'
         }
     ]),
 
-    AdminRecord:{
+    AdminRecord: {
 
-        domainsRecord:Ext.data.Record.create([
+        domainsRecord: Ext.data.Record.create([
             {
-                name:'name',
-                type:'string'
+                name: 'name',
+                type: 'string'
             },
             {
-                name:'className',
-                type:'string'
+                name: 'className',
+                type: 'string'
             }
         ]),
 
-        usersRecord:Ext.data.Record.create([
+        usersRecord: Ext.data.Record.create([
             {
-                name:'uid',
-                type:'string'
+                name: 'uid',
+                type: 'string'
             },
             {
-                name:'name',
-                type:'string'
+                name: 'name',
+                type: 'string'
             },
             {
-                name:'source',
-                type:'string'
+                name: 'source',
+                type: 'string'
             },
             {
-                name:'mail',
-                type:'string'
+                name: 'mail',
+                type: 'string'
             },
             {
-                name:'lastLogin'
+                name: 'lastLogin'
             }
         ]),
 
-        groupsRecord:Ext.data.Record.create([
+        groupsRecord: Ext.data.Record.create([
             {
-                name:'gid',
-                type:'string'
+                name: 'gid',
+                type: 'string'
             },
             {
-                name:'name',
-                type:'string'
+                name: 'name',
+                type: 'string'
             },
             {
-                name:'source',
-                type:'string'
+                name: 'source',
+                type: 'string'
             }
         ]),
 
-        userGroupsRecord:Ext.data.Record.create([
+        userGroupsRecord: Ext.data.Record.create([
             {
-                name:'gid',
-                type:'string'
+                name: 'gid',
+                type: 'string'
             },
             {
-                name:'name',
-                type:'string'
+                name: 'name',
+                type: 'string'
             },
             {
-                name:'source',
-                type:'string'
+                name: 'source',
+                type: 'string'
             }
         ]),
 
-        groupUsersRecord:Ext.data.Record.create([
+        groupUsersRecord: Ext.data.Record.create([
             {
-                name:'uid',
-                type:'string'
+                name: 'uid',
+                type: 'string'
             },
             {
-                name:'name',
-                type:'string'
+                name: 'name',
+                type: 'string'
             },
             {
-                name:'source',
-                type:'string'
+                name: 'source',
+                type: 'string'
             }
         ]),
 
-        roleUsersRecord:Ext.data.Record.create([
+        roleUsersRecord: Ext.data.Record.create([
             {
-                name:'userName',
-                type:'string'
+                name: 'userName',
+                type: 'string'
             },
             {
-                name:'userSource',
-                type:'string'
+                name: 'userSource',
+                type: 'string'
             },
             {
-                name:'role'
+                name: 'role'
             }
         ]),
 
-        userRolesRecord:Ext.data.Record.create([
+        userRolesRecord: Ext.data.Record.create([
             {
-                name:'userName',
-                type:'string'
+                name: 'userName',
+                type: 'string'
             },
             {
-                name:'userSource',
-                type:'string'
+                name: 'userSource',
+                type: 'string'
             },
             {
-                name:'role'
+                name: 'role'
             }
         ]),
 
-        deadLockRecord:Ext.data.Record.create([
+        deadLockRecord: Ext.data.Record.create([
             {
-                name:'uid',
-                type:'int'
+                name: 'uid',
+                type: 'int'
             },
             {
-                name:'name',
-                type:'string'
+                name: 'name',
+                type: 'string'
             },
             {
-                name:'path',
-                type:'string'
+                name: 'path',
+                type: 'string'
             },
             {
-                name:'checkoutUser',
-                type:'string'
+                name: 'checkoutUser',
+                type: 'string'
             },
             {
-                name:'checkoutUserSource',
-                type:'string'
+                name: 'checkoutUserSource',
+                type: 'string'
             },
             {
-                name:'checkoutDate',
-                type:'string'
+                name: 'checkoutDate',
+                type: 'string'
             }
         ])
     },
 
-    ReportingRecord:{
-        documentHitsRecord:Ext.data.Record.create([
+    ReportingRecord: {
+        documentHitsRecord: Ext.data.Record.create([
             {
-                name:'documentName'
+                name: 'documentName'
             },
             {
-                name:'hits'
+                name: 'hits'
             },
             {
-                name:'path'
+                name: 'path'
             }
         ])
     },
 
-    StudioRecord:{
+    StudioRecord: {
 
-        documentTypeRecord:Ext.data.Record.create([
+        documentTypeRecord: Ext.data.Record.create([
             {
-                name:'uid'
+                name: 'uid'
             },
             {
-                name:'name'
+                name: 'name'
             },
             {
-                name:'documentTypeUid'
+                name: 'documentTypeUid'
             }
         ]),
 
-        metaDataRecord:Ext.data.Record.create([
+        metaDataRecord: Ext.data.Record.create([
             {
-                name:'documentTypeUid'
+                name: 'documentTypeUid'
             },
             {
-                name:'metaFeedUid'
+                name: 'metaFeedUid'
             },
             {
-                name:'metaType'
+                name: 'metaType'
             },
             {
-                name:'name'
+                name: 'name'
             },
             {
-                name:'uid'
+                name: 'uid'
             }
         ]),
 
-        metaFeedRecord:Ext.data.Record.create([
+        metaFeedRecord: Ext.data.Record.create([
             {
-                name:'uid'
+                name: 'uid'
             },
             {
-                name:'name'
+                name: 'name'
             },
             {
-                name:'className'
+                name: 'className'
             }
         ]),
 
-        workflowsRecord:Ext.data.Record.create([
+        workflowsRecord: Ext.data.Record.create([
             {
-                name:'uid'
+                name: 'uid'
             },
             {
-                name:'name'
+                name: 'name'
             },
             {
-                name:'description'
+                name: 'description'
             }
         ]),
 
-        workflowStatusRecord:Ext.data.Record.create([
+        workflowStatusRecord: Ext.data.Record.create([
             {
-                name:'uid'
+                name: 'uid'
             },
             {
-                name:'name'
+                name: 'name'
             },
             {
-                name:'successorUid'
+                name: 'successorUid'
             },
             {
-                name:'position'
+                name: 'position'
             }
         ]),
 
-        workflowStatusManagerRecord:Ext.data.Record.create([
+        workflowStatusManagerRecord: Ext.data.Record.create([
             {
-                name:'securityEntityName'
+                name: 'securityEntityName'
             },
             {
-                name:'securityEntitySource'
+                name: 'securityEntitySource'
             },
             {
-                name:'securityEntityType'
+                name: 'securityEntityType'
             },
             {
-                name:'workflowStatusUid'
+                name: 'workflowStatusUid'
             }
         ])
     },
 
-    TasksRecord:{
-        taskRecord:Ext.data.Record.create([
+    TasksRecord: {
+        taskRecord: Ext.data.Record.create([
             {
-                name:'uid',
-                type:'int'
+                name: 'uid',
+                type: 'int'
             },
             {
-                name:'name',
-                type:'string'
+                name: 'name',
+                type: 'string'
             },
             {
-                name:'workflowStatusUid',
-                type:'int'
+                name: 'workflowStatusUid',
+                type: 'int'
             },
             {
-                name:'workflowStatusName',
-                type:'string'
+                name: 'workflowStatusName',
+                type: 'string'
             },
             {
-                name:'statusUserName',
-                type:'string'
+                name: 'statusUserName',
+                type: 'string'
             },
             {
-                name:'statusUserSource',
-                type:'string'
+                name: 'statusUserSource',
+                type: 'string'
             },
             {
-                name:'statusDate',
-                type:'long'
+                name: 'statusDate',
+                type: 'long'
             },
             {
-                name:'status',
-                type:'string'
+                name: 'status',
+                type: 'string'
             },
             {
-                name:'extension',
-                type:'string'
+                name: 'extension',
+                type: 'string'
             },
             {
-                name:'type',
-                type:'int'
+                name: 'type',
+                type: 'int'
             }
         ])
     },
     SearchRecord: {
         queryRecord: Ext.data.Record.create([
             {
-                name:'id',
-                type:'int'
+                name: 'id',
+                type: 'int'
             },
             {
-                name:'name',
-                type:'string'
+                name: 'name',
+                type: 'string'
             },
             {
-                name:'owner',
-                type:'string'
+                name: 'owner',
+                type: 'string'
             },
             {
-                name:'ownerSource',
-                type:'string'
+                name: 'ownerSource',
+                type: 'string'
             },
             {
-                name:'criteriasListJson',
-                type:'string'
+                name: 'criteriasListJson',
+                type: 'string'
             }
         ])
 

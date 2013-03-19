@@ -377,3 +377,8 @@
     background-image: url(../icons/16x16/compress.png) !important;
     background-repeat: no-repeat;
 }
+
+.news {
+    background-image: url(../icons/16x16/news.png) !important;
+    background-repeat: no-repeat;
+}

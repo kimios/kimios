@@ -26,6 +26,8 @@ public class Config
 {
     public static String DM_SERVER_URL = "server.url";
 
+    public static String DM_SERVER_NEWS_URL = "server.news.url";
+
     public static String DM_SERVICE_CONTEXT = "service.context";
 
     public static String DM_TMP_FILES_PATH = "temp.directory";
