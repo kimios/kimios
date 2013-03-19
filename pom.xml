@@ -61,6 +61,7 @@
         <velocity.version>1.6.4</velocity.version>
         <javamail.version>1.4.5</javamail.version>
         <solr4j.version>3.6.1</solr4j.version>
+        <log4j.version>1.2.16</log4j.version>
         <!-- releases properties -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <KIMIOS_VERSION>1.0-SNAPSHOT</KIMIOS_VERSION>
