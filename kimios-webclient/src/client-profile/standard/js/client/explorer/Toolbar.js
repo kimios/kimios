@@ -27,7 +27,7 @@ kimios.explorer.Toolbar = Ext.extend(Ext.Toolbar, {
             enableToggle: true,
             toggleHandler: function (b, s) {
                 var vp = kimios.explorer.getActivePanel();
-                if (vp == null) {
+                if (vp == null || !vp.advancedSearchPanel) {
 //                    this.toggle(false, true);
 //                    return false;
                     vp = new kimios.explorer.DMEntityGridPanel({
@@ -52,6 +52,7 @@ kimios.explorer.Toolbar = Ext.extend(Ext.Toolbar, {
                     vp.advancedSearchPanel.search();
                 else
                     vp.refresh();
+
                 vp.searchToolbar.searchField.setValue('');
 
                 vp.doLayout();

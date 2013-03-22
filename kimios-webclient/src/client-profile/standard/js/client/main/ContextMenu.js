@@ -106,11 +106,45 @@ kimios.ContextMenu = new function () {
 
         // bookmarks
         else if (context == 'bookmarks') {
+
+            switch (dmEntityPojo.type) {
+                case 1: //workspace
+                    return this.workspaceMenu;
+                    break;
+                case 2: //folder
+                    return this.folderMenu;
+                    break;
+                case 3: //document
+                    var ext = dmEntityPojo.extension.toLowerCase();
+                    if (kimios.isViewableExtension(ext) || ext.toLowerCase() == 'pdf') {
+                        return this.viewableDocumentMenu;
+                    } else {
+                        return this.documentMenu;
+                    }
+                    break;
+            }
+
             return this.bookmarksMenu;
         }
 
         // recent items
         else if (context == 'recentItems') {
+
+            switch (dmEntityPojo.type) {
+                case 1: //workspace
+                    break;
+                case 2: //folder
+                    break;
+                case 3: //document
+                    var ext = dmEntityPojo.extension.toLowerCase();
+                    if (kimios.isViewableExtension(ext) || ext.toLowerCase() == 'pdf') {
+                        return this.viewableDocumentMenu;
+                    } else {
+                        return this.documentMenu;
+                    }
+                    break;
+            }
+
             return this.recentItemsMenu;
         }
 
@@ -328,6 +362,9 @@ kimios.ContextMenu = new function () {
 
     this.initBookmarksMenu = function (config) {
         this.bookmarksMenu = new Ext.menu.Menu(config);
+//        this.bookmarksMenu.add(this.getViewDocumentItem());
+        this.bookmarksMenu.add(this.getGetDocumentItem());
+        this.bookmarksMenu.addSeparator();
         this.bookmarksMenu.add(this.getRemoveBookmarkItem());
         this.bookmarksMenu.addSeparator();
         this.bookmarksMenu.add(this.getRefreshItem());
@@ -348,6 +385,9 @@ kimios.ContextMenu = new function () {
 
     this.initRecentItemsMenu = function (config) {
         this.recentItemsMenu = new Ext.menu.Menu(config);
+//        this.recentItemsMenu.add(this.getViewDocumentItem());
+        this.recentItemsMenu.add(this.getGetDocumentItem());
+        this.recentItemsMenu.addSeparator();
         this.recentItemsMenu.add(this.getRefreshItem());
         this.recentItemsMenu.addSeparator();
         this.recentItemsMenu.add(this.getPropertiesItem());

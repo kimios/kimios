@@ -150,12 +150,12 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                             listeners: {
                                 scope: this,
                                 tabchange: function (panel, tab) {
-                                    //checker si l'activepanel a la recherche
                                     var panel = kimios.explorer.getActivePanel();
-                                    if (panel)
+                                    if (panel && panel instanceof kimios.explorer.DMEntityGridPanel) {
                                         kimios.explorer.getToolbar().advancedSearchButton.toggle(panel.advancedSearchPanel && panel.advancedSearchPanel.isVisible(), true);
-                                    else
+                                    } else {
                                         kimios.explorer.getToolbar().advancedSearchButton.toggle(false, true);
+                                    }
                                 },
                                 contextmenu: function (panel, tab, e) {
                                     new Ext.menu.Menu({
@@ -226,7 +226,7 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                 this.initNewsTab();
 
                 // open default tab
-//                this.newTab();
+                //this.newTab();
 
                 // start tasks checker thread (also used to check session)
                 this.tasksChecker = {

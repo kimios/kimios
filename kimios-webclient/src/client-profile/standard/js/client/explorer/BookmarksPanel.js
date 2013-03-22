@@ -125,14 +125,16 @@ kimios.explorer.BookmarksPanel = Ext.extend(Ext.grid.GridPanel, {
                 var tabsCounter = centerPanel.items.length;
                 var currentTab = null;
 
-                if (tabsCounter > 0 && centerPanel.getActiveTab() instanceof kimios.explorer.DMEntityGridPanel) {
-                    currentTab = centerPanel.getActiveTab();
-
-                } else {
+//                if (tabsCounter > 0 && centerPanel.getActiveTab() instanceof kimios.explorer.DMEntityGridPanel) {
+//                    currentTab = centerPanel.getActiveTab();
+//                    if (currentTab.advancedSearchPanel.isVisible())
+//                        currentTab.advancedSearchPanel.hidePanel();
+//
+//                } else {
                     currentTab = new kimios.explorer.DMEntityGridPanel({});
                     centerPanel.add(currentTab);
                     centerPanel.setActiveTab(currentTab);
-                }
+//                }
 
                 currentTab.loadEntity({
                     uid: selected.get('uid'),

@@ -29,7 +29,13 @@ kimios.explorer.NewsPanel = Ext.extend(Ext.Panel, {
         this.html = '<iframe id="reportframe" border="0" width="100%" height="100%" ' +
             'frameborder="0" marginheight="12" marginwidth="16" scrolling="auto" ' +
             'src="' + newsUrl + '"></iframe>';
-
+        this.listeners = {
+            beforeclose: function (panel) {
+                var centerPanel = Ext.getCmp('kimios-center-panel');
+                if (centerPanel.items.length <= 1)
+                    return false;
+            }
+        };
         kimios.explorer.NewsPanel.superclass.constructor.call(this, config);
         this.setTitle(kimios.lang('News'));
         this.setIconClass('news');
