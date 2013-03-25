@@ -91,17 +91,35 @@ public class PropertiesConfigurationHolder implements ConfigurationHolder
 
     public boolean exists(String keyOrPrefix)
     {
-        return values.containsKey(keyOrPrefix);
+        return values.containsKey(keyOrPrefix) || System.getProperty(keyOrPrefix) != null || System.getenv(keyOrPrefix) != null;
     }
 
     public Object getValue(String key)
     {
-        return values.get(key);
+        Object retValues = null;
+        try {
+            String value = System.getProperty(key);
+            if (value == null) {
+                value = System.getenv(key);
+            }
+            retValues = value;
+        }
+        catch (Throwable ex) {
+            retValues = null;
+        }
+        if(retValues == null){
+            return values.get(key);
+        } else
+            return retValues;
     }
 
     public String getStringValue(String key)
     {
-        return values.get(key).toString();
+        Object val = this.getValue( key );
+        if(val != null)
+            return val.toString();
+
+        return null;
     }
 
     public List<String> getValues(String prefix)
