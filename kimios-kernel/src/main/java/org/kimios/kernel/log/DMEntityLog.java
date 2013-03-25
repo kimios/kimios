@@ -20,14 +20,18 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.ForeignKey;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.DMEntity;
 import org.kimios.kernel.dms.DMEntityImpl;
@@ -67,6 +71,11 @@ public class DMEntityLog<T extends DMEntityImpl>
 
     @Column(name = "action_parameter", nullable = true)
     protected Long actionParameter;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "dm_entity_id", updatable = false, insertable = false)
+    @ForeignKey( name = "none")
+    protected DMEntityImpl dmEntity;
 
     public long getId()
     {
@@ -148,19 +157,9 @@ public class DMEntityLog<T extends DMEntityImpl>
         this.action = action;
     }
 
-    public DMEntity getDMEntity() throws ConfigException, DataSourceException
+    public DMEntityImpl getDmEntity()
     {
-        FactoryInstantiator fc = FactoryInstantiator.getInstance();
-        switch (this.getDmEntityType()) {
-            case DMEntityType.WORKSPACE:
-                return fc.getWorkspaceFactory().getWorkspace(this.getDmEntityUid());
-            case DMEntityType.FOLDER:
-                return fc.getFolderFactory().getFolder(this.getDmEntityUid());
-            case DMEntityType.DOCUMENT:
-                return fc.getDocumentFactory().getDocument(this.getDmEntityUid());
-            default:
-                return null;
-        }
+        return dmEntity;
     }
 
     public void setDMEntity(DMEntity e)

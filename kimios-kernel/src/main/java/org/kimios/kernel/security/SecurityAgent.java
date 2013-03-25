@@ -19,6 +19,7 @@ package org.kimios.kernel.security;
 import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
+import java.util.logging.Logger;
 
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.DMEntity;
@@ -30,9 +31,12 @@ import org.kimios.kernel.dms.DocumentWorkflowStatusRequest;
 import org.kimios.kernel.dms.WorkflowStatusManager;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.user.Group;
+import org.slf4j.LoggerFactory;
 
 public class SecurityAgent
 {
+
+    private static org.slf4j.Logger log = LoggerFactory.getLogger( SecurityAgent.class );
     private static SecurityAgent instance;
 
     synchronized public static SecurityAgent getInstance()
@@ -215,8 +219,9 @@ public class SecurityAgent
             hashs.add(DMSecurityRule.getInstance(g.getGid(), g.getAuthenticationSourceName(), SecurityEntityType.GROUP,
                     DMSecurityRule.FULLRULE).getRuleHash());
         }
-        return securityFactoryInstantiator.getDMEntitySecurityFactory()
+        boolean secReturn = securityFactoryInstantiator.getDMEntitySecurityFactory()
                 .ruleExists(dm, userName, userSource, hashs, noAccessHash);
+        return secReturn;
     }
 
     public boolean isWritable(DMEntity dm, String userName, String userSource, Vector<Group> groups)

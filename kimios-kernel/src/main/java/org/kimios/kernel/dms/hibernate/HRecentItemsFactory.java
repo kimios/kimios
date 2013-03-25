@@ -39,11 +39,12 @@ public class HRecentItemsFactory extends HFactory implements RecentItemsFactory
         Long itemLimit = Long.parseLong(ConfigurationManager.getValue(Config.DEFAULT_RECENT_ITEMS));
         try {
             Vector<DMEntity> vRecents = new Vector<DMEntity>();
-            String hQuery = "SELECT new DMEntityImpl(d.dmEntityUid, d.dmEntityType) from DMEntityLog d " +
+            String hQuery = "SELECT new DMEntityImpl(d.dmEntityUid, d.dmEntityType, doc.path) from DMEntityLog d " +
+                    "left join d.dmEntity doc " +
                     " WHERE d.action in(:read,:create,:update) " +
-                    " AND (d.dmEntityUid in (select uid from DMEntityImpl)) " +
+                    " AND (doc is not null) " +
                     " AND (d.dmEntityType = :dmEntityType) " +
-                    "AND d.user like :uname AND d.userSource like :usource GROUP BY d.dmEntityUid, d.dmEntityType, d.user, d.userSource " +
+                    "AND d.user like :uname AND d.userSource like :usource GROUP BY d.dmEntityUid, d.dmEntityType, doc.path, d.user, d.userSource " +
                     "ORDER BY max(d.date) DESC ";
 
             Query qu = getSession().createQuery(hQuery);

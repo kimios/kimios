@@ -82,6 +82,13 @@ public class DMEntityImpl implements DMEntity, Serializable
         this.type = type;
     }
 
+    public DMEntityImpl(long uid, int type, String path)
+    {
+        this.uid = uid;
+        this.type = type;
+        this.path = path;
+    }
+
     @ElementCollection(fetch = FetchType.EAGER, targetClass = DMEntityAttribute.class)
     @MapKeyColumn(name = "attribute_name")
     @CollectionTable(name = "dm_entity_attributes",
