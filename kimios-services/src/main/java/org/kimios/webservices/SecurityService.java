@@ -18,10 +18,7 @@ package org.kimios.webservices;
 
 import javax.jws.WebParam;
 import javax.jws.WebService;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 
 import org.kimios.kernel.ws.pojo.AuthenticationSource;
 import org.kimios.kernel.ws.pojo.DMEntitySecurity;
@@ -85,12 +82,12 @@ public interface SecurityService
     @Produces("application/json")
     public AuthenticationSource[] getAuthenticationSources() throws DMServiceException;
 
-    @GET
+    @POST
     @Path("/startSession")
     @Produces("application/json")
-    public String startSession(@QueryParam(value = "userName") @WebParam(name = "userName") String userName,
-            @QueryParam(value = "userSource") @WebParam(name = "userSource") String userSource,
-            @QueryParam(value = "password") @WebParam(name = "password") String password) throws DMServiceException;
+    public String startSession(@FormParam(value = "userName") @WebParam(name = "userName") String userName,
+            @FormParam(value = "userSource") @WebParam(name = "userSource") String userSource,
+            @FormParam(value = "password") @WebParam(name = "password") String password) throws DMServiceException;
 
     @GET
     @Path("/isSessionAlive")
