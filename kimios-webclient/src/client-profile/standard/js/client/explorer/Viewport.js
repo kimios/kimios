@@ -97,10 +97,22 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                             items: [this.searchBookmarkPanel]
                         },
                         {
-                            items: [this.bookmarksPanel]
+                            items: [this.bookmarksPanel],
+                            listeners: {
+                                scope: this,
+                                'activate':function(){
+                                    this.bookmarksPanel.refresh();
+                                }
+                            }
                         },
                         {
-                            items: [this.recentItemsPanel]
+                            items: [this.recentItemsPanel],
+                            listeners: {
+                                scope: this,
+                                'activate':function(){
+                                    this.recentItemsPanel.refresh();
+                                }
+                            }
                         },
                         {
                             items: [this.tasksPanel]
