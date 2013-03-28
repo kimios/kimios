@@ -34,19 +34,19 @@
                 <enabled>false</enabled>
             </snapshots>
             <layout>default</layout>
-            <url>http://git.devlib.infra:8085/archiva/repository/kimios-releases</url>
+            <url>http://maven.devlib.infra/repository/kimios-releases</url>
         </repository>
         <repository>
-            <id>kimios-snapshots</id>
-            <name>kimios-snapshots</name>
+            <id>kimios-internal</id>
+            <name>kimios-internal</name>
             <releases>
-                <enabled>false</enabled>
+                <enabled>true</enabled>
             </releases>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
             <layout>default</layout>
-            <url>http://git.devlib.infra:8085/archiva/repository/kimios-snapshots</url>
+            <url>http://maven.devlib.infra/repository/kimios-internal</url>
         </repository>
     </repositories>
     <properties>
@@ -65,17 +65,17 @@
         <!-- releases properties -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <KIMIOS_VERSION>1.0-SNAPSHOT</KIMIOS_VERSION>
-        <releaseRepoUrl>http://maven.devlib.fr/archiva/repository/kimios-releases</releaseRepoUrl>
-        <snapshotRepoUrl>http://maven.devlib.fr/archiva/repository/kimios-snapshots</snapshotRepoUrl>
+        <releaseRepoUrl>http://maven.devlib.inra/repository/kimios-releases</releaseRepoUrl>
+        <snapshotRepoUrl>http://maven.devlib.infra/repository/kimios-internal</snapshotRepoUrl>
         <deployRepoUrl>${releaseRepoUrl}</deployRepoUrl>
         <releaseRepoId>kimios-releases</releaseRepoId>
-        <snapshotRepoId>kimios-snapshots</snapshotRepoId>
+        <snapshotRepoId>kimios-internal</snapshotRepoId>
         <deployRepoId>${releaseRepoId}</deployRepoId>
         <isRelease>true</isRelease>
     </properties>
     <distributionManagement>
         <snapshotRepository>
-            <id>kimios-snapshots</id>
+            <id>kimios-internal</id>
             <url>${snapshotRepoUrl}</url>
         </snapshotRepository>
         <repository>
