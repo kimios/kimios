@@ -1,25 +1,26 @@
+<%--
+
+    Kimios - Document Management System Software
+    Copyright (C) 2012-2013  DevLib'
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as
+    published by the Free Software Foundation, either version 2 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+--%>
 <%@ page import="org.kimios.client.controller.SecurityController" %>
 <%@ page import="org.kimios.core.configuration.Config" %>
 <%@ page import="org.springframework.web.context.WebApplicationContext" %>
 <%@ page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
 <%@ page contentType="text/html" pageEncoding="UTF-8" %>
-<%--
-  ~ Kimios - Document Management System Software
-  ~ Copyright (C) 2012-2013  DevLib'
-  ~
-  ~ This program is free software: you can redistribute it and/or modify
-  ~ it under the terms of the GNU Affero General Public License as
-  ~ published by the Free Software Foundation, either version 2 of the
-  ~ License, or (at your option) any later version.
-  ~
-  ~ This program is distributed in the hope that it will be useful,
-  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~ GNU Affero General Public License for more details.
-  ~ You should have received a copy of the GNU Affero General Public License
-  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  --%>
-
 <%
     String sessionUid = null;
     org.kimios.kernel.ws.pojo.User u = null;
@@ -117,7 +118,6 @@
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/explorer/Cart.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/explorer/ExplorerPanel.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/explorer/DMEntityGridPanel.js"></script>
-    <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/explorer/NewsPanel.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/explorer/CommentsPanel.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/explorer/BreadcrumbToolbar.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/explorer/BookmarksPanel.js"></script>
@@ -160,6 +160,7 @@
         kimios.util.IconHelper.iconThemeSwitcher(defaultTheme);
         kimios.util.IconHelper.iconClassLoader();
     </script>
+    <%@include file="/WEB-INF/jsp/ext.jsp" %>
 </head>
 <body>
 <div id="panel"></div>

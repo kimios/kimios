@@ -28,7 +28,7 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
             border: false,
             region: 'north',
             layout: 'fit',
-            height: 64 // do not exceed 54 pixels       ; 49 origin
+            height: 64
         });
 
         this.mainContainer = new Ext.Panel({
@@ -39,6 +39,13 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
 
         this.items = [this.topContainer, this.mainContainer];
         kimios.explorer.Viewport.superclass.constructor.call(this, config);
+    },
+
+    executeAfterBuild: function () {
+        if (this.afterBuild)
+            this.afterBuild();
+        else
+            this.newTab();
     },
 
     initComponent: function () {
@@ -97,22 +104,10 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                             items: [this.searchBookmarkPanel]
                         },
                         {
-                            items: [this.bookmarksPanel],
-                            listeners: {
-                                scope: this,
-                                'activate':function(){
-                                    this.bookmarksPanel.refresh();
-                                }
-                            }
+                            items: [this.bookmarksPanel]
                         },
                         {
-                            items: [this.recentItemsPanel],
-                            listeners: {
-                                scope: this,
-                                'activate':function(){
-                                    this.recentItemsPanel.refresh();
-                                }
-                            }
+                            items: [this.recentItemsPanel]
                         },
                         {
                             items: [this.tasksPanel]
@@ -235,10 +230,12 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                 this.doLayout();
 
                 // open news tab
-                this.initNewsTab();
+//                this.initNewsTab();
 
                 // open default tab
-                //this.newTab();
+//                this.newTab();
+
+                this.executeAfterBuild();
 
                 // start tasks checker thread (also used to check session)
                 this.tasksChecker = {
@@ -298,12 +295,6 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
         kimios.explorer.getViewport().recentItemsPanel.refresh();
         this.refreshGrids();
         this.doLayout();
-    },
-
-    initNewsTab: function () {
-        var newsPanel = new kimios.explorer.NewsPanel({});
-        Ext.getCmp('kimios-center-panel').add(newsPanel);
-        Ext.getCmp('kimios-center-panel').setActiveTab(newsPanel);
     },
 
     newTab: function (uid, type) {
