@@ -212,7 +212,6 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
 
     // Load the advanced search form with the given SearchRequest object
     loadForm: function (searchRequest) {
-//        if (console) console.log(searchRequest);
         this.documentTypeField.getStore().load({
             scope: this,
             callback: function () {
@@ -463,8 +462,8 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
         kimios.explorer.getViewport().centerPanel.doLayout();
 
         // auto set document parent
-        var path = bt.currentPath;
-        if (path) this.locationField.setValue(path);
+//        var path = bt.currentPath;
+//        if (path) this.locationField.setValue(path);
 
         // field resize bug fix
         this.locationField.setValue(this.locationField.getValue());
