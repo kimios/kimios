@@ -492,7 +492,6 @@ kimios.ContextMenu = new function () {
                 var centerPanel = Ext.getCmp('kimios-center-panel');
                 var dmEntityGridPanel = new kimios.explorer.DMEntityGridPanel({});
                 centerPanel.add(dmEntityGridPanel);
-                centerPanel.setActiveTab(dmEntityGridPanel);
                 dmEntityGridPanel.loadEntity({
                     uid: this.dmEntityPojo.uid,
                     type: this.dmEntityPojo.type
