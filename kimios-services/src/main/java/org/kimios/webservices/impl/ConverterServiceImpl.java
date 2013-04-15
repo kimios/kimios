@@ -6,11 +6,13 @@ import org.kimios.webservices.ConverterService;
 import org.kimios.webservices.CoreService;
 import org.kimios.webservices.DMServiceException;
 
+import javax.jws.WebService;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@WebService(targetNamespace = "http://kimios.org", serviceName = "ConverterService")
 public class ConverterServiceImpl extends CoreService implements ConverterService {
 
     public Response convertDocument(String sessionId, Long documentId, String converterImpl) throws DMServiceException {
