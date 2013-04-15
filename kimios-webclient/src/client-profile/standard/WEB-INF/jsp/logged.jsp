@@ -17,7 +17,6 @@
 
 --%>
 <%@ page import="org.kimios.client.controller.SecurityController" %>
-<%@ page import="org.kimios.core.configuration.Config" %>
 <%@ page import="org.springframework.web.context.WebApplicationContext" %>
 <%@ page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
 <%@ page contentType="text/html" pageEncoding="UTF-8" %>
@@ -156,7 +155,7 @@
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/i18n/Internationalization.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/main/run.js"></script>
     <script type="text/javascript">
-        var defaultTheme = 'minimalist-green';
+        var defaultTheme = 'final';
         kimios.util.IconHelper.iconThemeSwitcher(defaultTheme);
         kimios.util.IconHelper.iconClassLoader();
     </script>

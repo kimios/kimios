@@ -17,7 +17,39 @@
 --%>
 
 <html>
+
+<head>
+    <title>Kimios - Open Source Document Management System</title>
+    <link rel="icon" type="image/png" href="<%=request.getContextPath()%>/images/kimios-favico.png"/>
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background-color: red;
+            font-family: arial !important;
+        }
+    </style>
+</head>
+
 <body>
-<h2>Kimios - Open Source Document Management System</h2>
+
+<img alt="Kimios - Open Source Document Management System"
+     src="<%=request.getContextPath()%>/images/logo.png"/>
+
+<br/>
+
+<iframe id="iframe" class="iframe"
+        src="<%=request.getContextPath()%>/services"></iframe>
+
 </body>
 </html>
