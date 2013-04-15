@@ -62,7 +62,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
         });
 
         this.saveButton = new Ext.Button({
-            tooltip: _t.searchRequestId ? kimios.lang('Update') : kimios.lang('Create'),
+            text: _t.searchRequestId ? kimios.lang('Update') : kimios.lang('Create'),
             scope: this,
             iconCls: 'save',
             handler: function () {
@@ -117,9 +117,8 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
             }
         });
 
-
         this.clearButton = new Ext.Button({
-            tooltip: kimios.lang('ClearField'),
+            text: kimios.lang('ClearField'),
             scope: this,
             disabled: true,
             iconCls: 'delete',
@@ -136,7 +135,6 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
             margins: '5 10 5 10',
             bodyStyle: 'padding:5px;',
             labelWidth: 120,
-
             defaults: {
                 anchor: '95%',
                 selectOnFocus: true,
