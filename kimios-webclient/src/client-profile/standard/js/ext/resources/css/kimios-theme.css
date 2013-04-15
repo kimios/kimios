@@ -623,9 +623,12 @@ ul.x-tab-strip-bottom {
 }
 
 .x-grid3-row-over {
-    /*border-color: #ddd;*/
-    background-color: #90ee90;
+    background-color: #eee;
     background-image: url();
+
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    border-radius: 8px;
 }
 
 .x-grid3-resize-proxy {
@@ -696,9 +699,12 @@ td.x-grid3-hd-over .x-grid3-hd-inner, td.sort-desc .x-grid3-hd-inner, td.sort-as
 }
 
 .x-grid3-row-selected {
-    background-color: #90ee90 !important;
+    background-color: #ddd !important;
     background-image: none;
-    border-color: #fff;
+    border: 1px solid white;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    border-radius: 8px;
 }
 
 .x-grid3-cell-selected {
@@ -1033,12 +1039,19 @@ td.x-grid3-hd-over .x-grid3-hd-inner, td.sort-desc .x-grid3-hd-inner, td.sort-as
     border-color: gray;
 }
 
+/*Tree node selected*/
 .x-tree-node .x-tree-node-over {
-    background-color: #90ee90;
+    background-color: #eee;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
 }
 
 .x-tree-node .x-tree-selected {
-    background-color: #90ee90;
+    background-color: #ddd;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
 }
 
 .x-tree-drop-ok-append .x-dd-drop-icon {
@@ -1129,9 +1142,13 @@ td.x-grid3-hd-over .x-grid3-hd-inner, td.sort-desc .x-grid3-hd-inner, td.sort-as
     background: #D8D8D8 url(../images/gray/panel/white-top-bottom.gif) 0 -2px;
 }
 
+/* Date picker */
 .x-date-inner a:hover, .x-date-inner .x-date-disabled a:hover {
     color: #000;
-    background-color: #90ee90;
+    background-color: #ddd;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
 }
 
 .x-date-inner .x-date-disabled a {
@@ -1438,9 +1455,9 @@ a.x-menu-item {
 
 #login-area .x-panel-header {
     color: #ffffff;
-    background-color: #45af43;
+    background-color: #86af53;
     /*background-color: #fff;*/
-    border-bottom: 1px solid #45af43;
+    border-bottom: 1px solid #86af53;
 }
 
 .x-panel-body {
@@ -1518,8 +1535,8 @@ a.x-menu-item {
 }
 
 .x-window-tl .x-window-header {
-    color: #45af43;
-    font: bold 11px tahoma, arial, verdana, sans-serif;
+    color: #333;
+    font: bold 10px tahoma, arial, verdana, sans-serif;
 
 }
 

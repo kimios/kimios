@@ -49,14 +49,12 @@ Ext.onReady(function () {
                 i18n: i18n,
                 border: false,
                 title: i18n.getValue('DMSAuthFormTitle'),
-//                iconCls: 'logo-k',
                 width: 300,
                 height: 165,
                 renderTo: 'login-area',
                 defaultType: 'textfield',
                 monitorValid: true,
                 bodyStyle: 'padding:15px 20px 10px 20px;',
-//                bodyStyle: 'padding:30px;',
                 labelWidth: 110,
                 defaults: {
                     selectOnFocus: true,
@@ -130,23 +128,6 @@ Ext.onReady(function () {
             comboSources.on('specialkey', function (field, e) {
                 dmsLogin(e);
             });
-
-//            var win = new Ext.Window({
-//                title: i18n.getValue('DMSAuthFormTitle'),
-//                layout: 'fit',
-//                width: 250,
-//                height: 170,
-//                closable: false,
-//                resizable: false,
-//                border: false,
-//                items: [login],
-//                listeners: {
-//                    show: function () {
-//                        usernameField.focus(false, 250);
-//                    }
-//                }
-//            });
-//            win.show();
         }
     });
 });

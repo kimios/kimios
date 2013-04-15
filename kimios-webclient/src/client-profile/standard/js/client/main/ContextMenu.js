@@ -541,7 +541,7 @@ kimios.ContextMenu = new function () {
 
     this.getCartItem = function () {
         return new Ext.menu.Item({
-            text: 'ZIP',
+            text: kimios.lang('AddToZIP'),
             iconCls: 'cart',
             scope: this,
             handler: function () {

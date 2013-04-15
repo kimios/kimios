@@ -64,7 +64,7 @@ kimios.explorer.Cart = Ext.extend(Ext.Panel, {
                 '->',
                 {
                     id: 'kimios-cart-compress-button',
-                    text: 'ZIP',
+                    text: kimios.lang('ZIP'),
                     iconCls: 'compress',
                     scope: this,
                     disabled: true,
