@@ -662,12 +662,12 @@ kimios.ContextMenu = new function () {
 
     this.getUpdateCurrentVersionItem = function () {
         return new Ext.menu.Item({
-            text: kimios.lang('UpdateCurrentVersion'),
+            text: kimios.lang('CreateNewVersion'),
             iconCls: 'studio-cls-wf-up',
             scope: this,
             handler: function () {
                 new kimios.UploaderWindow({
-                    context: 'updateCurrentVersion',
+                    context: 'createNewVersion',
                     dmEntityPojo: this.dmEntityPojo
                 }).show();
             }

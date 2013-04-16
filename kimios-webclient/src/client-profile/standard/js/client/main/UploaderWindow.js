@@ -131,7 +131,7 @@ kimios.UploaderWindow = Ext.extend(Ext.Window, {
             availableActionsButtons.push(cancelCheckedOutButton);
             availableActionsButtons.push('->');
             availableActionsButtons.push(createNewVersionButton);
-            availableActionsButtons.push(updateCurrentVersionButton);
+//            availableActionsButtons.push(updateCurrentVersionButton);
         }
 
         var formPanel = new kimios.FormPanel({
