@@ -22,34 +22,70 @@
     <title>Kimios - Open Source Document Management System</title>
     <link rel="icon" type="image/png" href="<%=request.getContextPath()%>/images/kimios-favico.png"/>
     <style type="text/css">
-        * {
-            margin: 0;
-            padding: 0;
+        #servicesList {
+            padding: 16px 16px 16px 16px;
+            border: 1px solid #dddddd;
+            background-color: #eeeeee;
         }
 
-        html, body {
-            height: 100%;
-        }
-
-        iframe {
-            width: 100%;
-            height: 100%;
+        #servicesList * {
+            font-size: 12px;
+            font-family: arial, helvetica;
             border: none;
-            background-color: red;
-            font-family: arial !important;
+        }
+
+        #servicesList .heading {
+            font-size: 14px;
+            font-weight: bolder;
+            color: #333;
+            text-decoration: underline;
+        }
+
+        #servicesList .porttypename {
+            font-size: 12px;
+            font-weight: bold;
         }
     </style>
+    <script type="text/javascript">
+        var http = false;
+        if (navigator.appName == "Microsoft Internet Explorer") {
+            http = new ActiveXObject("Microsoft.XMLHTTP");
+        } else {
+            http = new XMLHttpRequest();
+        }
+        function loadServicesList() {
+            http.abort();
+            http.open("GET", "<%=request.getContextPath()%>/services", true);
+            http.onreadystatechange = function () {
+                if (http.readyState == 4) {
+                    document.getElementById('servicesList').innerHTML = http.responseText;
+                }
+            }
+            http.send(null);
+        }
+        //        var applyStyle = function () {
+        //            var iframe = document.getElementById('iframe');
+        //            var doc = iframe.contentWindow || iframe.contentDocument;
+        //            if (doc.document) {
+        //                doc = doc.document;
+        //            }
+        //            doc.body.style.fontSize = "12px";
+        //            doc.body.style.fontFamily = "Verdana, Tahoma, Arial";
+        //
+        //        }
+    </script>
 </head>
 
-<body>
+<body onload="loadServicesList()">
 
-<img alt="Kimios - Open Source Document Management System"
-     src="<%=request.getContextPath()%>/images/logo.png"/>
+<div align="center">
 
-<br/>
+    <img alt="Kimios - Open Source Document Management System"
+         src="images/logo.png" style="margin: 10px 0 20px 0; height: 40px;border:none;"/>
 
-<iframe id="iframe" class="iframe"
-        src="<%=request.getContextPath()%>/services"></iframe>
+</div>
+
+<div id="servicesList"></div>
 
 </body>
 </html>
