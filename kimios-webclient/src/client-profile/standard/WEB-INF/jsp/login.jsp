@@ -85,7 +85,7 @@
         }
     </style>
 </head>
-<body>
+<body style="background-color: white">
 <div align="center"><br/><br/><img src="images/logo.png" style="height: 50px"/></div>
 </body>
 </html>

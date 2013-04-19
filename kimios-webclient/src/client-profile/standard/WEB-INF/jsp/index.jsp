@@ -93,7 +93,7 @@
         }
     </style>
 </head>
-<body>
+<body style="background-color: white">
 <div align="center"><br/><br/><img src="images/logo.png" class="logo-login-page"/></div>
 <div id="login-area"></div>
 </body>
