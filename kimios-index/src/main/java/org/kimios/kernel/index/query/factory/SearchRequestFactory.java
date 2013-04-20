@@ -18,8 +18,10 @@
 package org.kimios.kernel.index.query.factory;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
+import org.kimios.kernel.index.query.model.Criteria;
 import org.kimios.kernel.index.query.model.SearchRequest;
 
 import java.util.List;
@@ -61,11 +63,26 @@ public class SearchRequestFactory extends HFactory {
     }
 
     public SearchRequest loadById(Long id) {
-        String query = "from SearchRequest fetch all properties where id = :id";
-        return (SearchRequest) getSession()
-                .createQuery(query)
-                .setLong("id", id)
-                .uniqueResult();
+        try{
+            ObjectMapper objectMapper = new ObjectMapper();
+
+
+            String query = "from SearchRequest fetch all properties where id = :id";
+            SearchRequest searchRequest = (SearchRequest) getSession()
+                    .createQuery(query)
+                    .setLong("id", id)
+                    .uniqueResult();
+
+
+            List<Criteria> criteriaList = objectMapper.readValue(
+                searchRequest.getCriteriasListJson(),
+                new TypeReference<List<Criteria>>(){});
+                searchRequest.setCriteriaList(criteriaList);
+
+            return searchRequest;
+        }catch ( Exception ex ){
+            throw new DataSourceException( ex );
+        }
     }
 
     public void deleteSearchRequest(long id){
