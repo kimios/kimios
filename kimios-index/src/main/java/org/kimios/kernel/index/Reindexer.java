@@ -54,10 +54,19 @@ public class Reindexer implements Runnable
     {
         try {
 
-            new TransactionHelper().startNew(null);
             reindexProgression = 0;
             int indexed = 0;
 
+            /*
+
+
+                    Delete items
+
+
+             */
+
+            indexManager.deleteByQuery( "*:*" );
+            new TransactionHelper().startNew(null);
             List<DMEntity> entities =
                     FactoryInstantiator.getInstance()
                             .getDmEntityFactory()

@@ -16,14 +16,14 @@
  */
 package org.kimios.kernel.index;
 
-import java.util.List;
-
 import org.apache.solr.client.solrj.SolrQuery;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.DMEntity;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.IndexException;
 import org.kimios.kernel.index.query.model.SearchResponse;
+
+import java.util.List;
 
 /**
  * Solr Index Manager Interface
@@ -36,4 +36,7 @@ public interface ISolrIndexManager
 
     public void indexDocumentList( List<DMEntity> documentEntities )
         throws IndexException, DataSourceException, ConfigException;
+
+    public void deleteByQuery( String query )
+        throws IndexException;
 }

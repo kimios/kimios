@@ -414,6 +414,20 @@ public class SolrIndexManager
         }
     }
 
+    public void deleteByQuery( String query )
+        throws IndexException
+    {
+        try
+        {
+            this.solr.deleteByQuery( query );
+            this.solr.commit();
+        }
+        catch ( Exception ex )
+        {
+            throw new IndexException( ex, ex.getMessage() );
+        }
+    }
+
     public void updatePath( String oldPath, String newPath )
         throws IndexException
     {
