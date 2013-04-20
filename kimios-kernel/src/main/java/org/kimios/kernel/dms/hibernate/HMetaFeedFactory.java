@@ -16,13 +16,13 @@
  */
 package org.kimios.kernel.dms.hibernate;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Order;
 import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.dms.MetaFeedBean;
 import org.kimios.kernel.dms.MetaFeedFactory;
 import org.kimios.kernel.dms.MetaFeedImpl;
 import org.kimios.kernel.exception.DataSourceException;
@@ -57,36 +57,14 @@ public class HMetaFeedFactory extends HFactory implements MetaFeedFactory
         }
     }
 
-    public Vector<MetaFeedImpl> getMetaFeeds() throws ConfigException,
+    public List<MetaFeedImpl> getMetaFeeds() throws ConfigException,
             DataSourceException
     {
         try {
             List<MetaFeedImpl> lMfb = (List<MetaFeedImpl>) getSession().createCriteria(MetaFeedImpl.class)
                     .addOrder(Order.asc("name"))
                     .list();
-            Vector<MetaFeedImpl> v = new Vector<MetaFeedImpl>();
-            for (MetaFeedImpl a : lMfb) {
-                MetaFeedImpl source = null;
-                try {
-                    source = (MetaFeedImpl) Class.forName(a.getJavaClass()).newInstance();
-                } catch (ClassNotFoundException cnfe) {
-                    log.error("Cannot instantiate meta feed class :" + cnfe.getMessage());
-                } catch (IllegalAccessException iae) {
-                    log.error("Cannot instantiate meta feed class :" + iae.getMessage());
-                } catch (InstantiationException ie) {
-                    log.error("Cannot instantiate meta feed class :" + ie.getMessage());
-                }
-                if (source == null) {
-                    source = new MetaFeedBean();
-                    source.setJavaClass("Cannot instantiate [" + a.getJavaClass() + "]");
-                } else {
-                    source.setJavaClass(a.getJavaClass());
-                }
-                source.setUid(a.getUid());
-                source.setName(a.getName());
-                v.add(source);
-            }
-            return v;
+            return lMfb;
         } catch (HibernateException e) {
             throw new DataSourceException(e);
         }

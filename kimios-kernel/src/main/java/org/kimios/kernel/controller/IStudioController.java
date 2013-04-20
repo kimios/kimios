@@ -85,7 +85,7 @@ public interface IStudioController
     /**
      * Return the meta feed list
      */
-    public Vector<MetaFeedImpl> getMetaFeeds(Session session)
+    public List<MetaFeedImpl> getMetaFeeds(Session session)
             throws AccessDeniedException, ConfigException, DataSourceException;
 
     /**

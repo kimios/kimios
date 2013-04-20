@@ -16,6 +16,7 @@
  */
 package org.kimios.kernel.dms;
 
+import java.util.List;
 import java.util.Vector;
 
 import org.kimios.exceptions.ConfigException;
@@ -25,7 +26,7 @@ public interface MetaFeedFactory
 {
     public MetaFeedImpl getMetaFeed(long uid) throws ConfigException, DataSourceException;
 
-    public Vector<MetaFeedImpl> getMetaFeeds() throws ConfigException, DataSourceException;
+    public List<MetaFeedImpl> getMetaFeeds() throws ConfigException, DataSourceException;
 
     public long saveMetaFeed(MetaFeedImpl metaFeed) throws ConfigException, DataSourceException;
 

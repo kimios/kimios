@@ -159,10 +159,11 @@ public class StudioServiceImpl extends CoreService implements StudioService {
 
             Session session = getHelper().getSession(sessionId);
 
-            Vector<MetaFeedImpl> v = studioController.getMetaFeeds(session);
+            List<MetaFeedImpl> v = studioController.getMetaFeeds(session);
             MetaFeed[] r = new MetaFeed[v.size()];
-            for (int i = 0; i < v.size(); i++)
-                r[i] = v.elementAt(i).toPojo();
+            int i = 0;
+            for(MetaFeedImpl m: v)
+                r[i++] = m.toPojo();
 
             return r;
         } catch (Exception e) {

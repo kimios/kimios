@@ -268,7 +268,7 @@ public class StudioController extends AKimiosController implements IStudioContro
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IStudioController#getMetaFeeds(org.kimios.kernel.security.Session)
     */
-    public Vector<MetaFeedImpl> getMetaFeeds(Session session)
+    public List<MetaFeedImpl> getMetaFeeds(Session session)
             throws AccessDeniedException, ConfigException, DataSourceException
     {
         if (securityFactoryInstantiator.getRoleFactory()

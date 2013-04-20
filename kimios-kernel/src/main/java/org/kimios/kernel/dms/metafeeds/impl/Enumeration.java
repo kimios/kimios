@@ -54,16 +54,6 @@ public class Enumeration extends MetaFeedImpl
 
     public List<String> getValues()
     {
-        /*try {
-            EnumerationValueFactory ef = FactoryInstantiator.getInstance().getEnumerationValueFactory();
-            return ef.getValues(this.uid);
-        } catch (ConfigException ce) {
-            ce.printStackTrace();
-            return new Vector<String>();
-        } catch (DataSourceException dbe) {
-            dbe.printStackTrace();
-            return new Vector<String>();
-        }*/
         return values;
     }
 
