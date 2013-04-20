@@ -698,19 +698,11 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     public List<Document> getMyCheckedOutDocuments(Session session)
             throws ConfigException, DataSourceException, AccessDeniedException
     {
-        List<Document> docs = dmsFactoryInstantiator.getDocumentFactory().getDocuments();
+        List<Document> docs = dmsFactoryInstantiator.getDocumentFactory().getLockedDocuments( session.getUserName(),
+                                                                                              session.getUserSource());
         docs = getSecurityAgent()
                 .areReadable(docs, session.getUserName(), session.getUserSource(), session.getGroups());
-        List<Document> checkedOutDocs = new ArrayList<Document>();
-        for (Document doc : docs) {
-            if (doc.isCheckedOut()
-                    && doc.getCheckoutLock().getUser().equals(session.getUserName())
-                    && doc.getCheckoutLock().getUserSource().equals(session.getUserSource()))
-            {
-                checkedOutDocs.add(doc);
-            }
-        }
-        return checkedOutDocs;
+        return docs;
     }
 
     public List<org.kimios.kernel.ws.pojo.Document> getDocumentsPojos(Session session, long folderUid)

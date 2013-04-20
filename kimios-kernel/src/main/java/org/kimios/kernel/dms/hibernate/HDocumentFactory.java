@@ -108,6 +108,27 @@ public class HDocumentFactory extends HFactory implements DocumentFactory
         }
     }
 
+    public List<Document> getLockedDocuments(String owner, String ownerSource) throws ConfigException,
+        DataSourceException
+    {
+        try {
+
+            String query = "select d from Document d join d.lock lc where lc.user = :owner "
+                + "and lc.userSource = :ownerSource order by d.name asc";
+
+            List<Document> fList = getSession().createQuery( query )
+                .setString( "owner", owner )
+                .setString( "ownerSource", ownerSource )
+                .list();
+
+            return fList;
+        } catch (ObjectNotFoundException e) {
+            return null;
+        } catch (HibernateException e) {
+            throw new DataSourceException(e, e.getMessage());
+        }
+    }
+
     public List<Document> getDocuments(Folder f) throws ConfigException,
             DataSourceException
     {

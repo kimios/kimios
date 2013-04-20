@@ -42,6 +42,9 @@ public interface DocumentFactory
 
     public List<Document> getExpiredDocuments(String sourceWorkspace, Date date);
 
+    public List<Document> getLockedDocuments(String owner, String ownerSource) throws ConfigException,
+        DataSourceException;
+
     public void addRelatedDocument(Document d, Document relatadDocument) throws ConfigException, DataSourceException;
 
     public void removeRelatedDocument(Document d, Document toRemove) throws ConfigException, DataSourceException;
