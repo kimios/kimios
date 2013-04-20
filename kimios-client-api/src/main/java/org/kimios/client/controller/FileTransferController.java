@@ -36,7 +36,12 @@ import org.kimios.webservices.DocumentVersionService;
 import org.kimios.webservices.FileTransferService;
 
 import javax.ws.rs.core.MediaType;
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -305,8 +310,42 @@ public class FileTransferController
             {
                 in = fin;
             }
+
             DataTransaction transaction = client.startUploadTransaction( sessionId, documentId, isCompressed );
-            doSendChunk( sessionId, transaction, in, chunkSize );
+
+            if ( restMode )
+            {
+
+                Client upClient = WebClient.client( client );
+                WebClient wcl = WebClient.fromClient( upClient );
+
+                MessageDigest md5 = MessageDigest.getInstance( "MD5" );
+                MessageDigest sha1 = MessageDigest.getInstance( "SHA-1" );
+                List<MessageDigest> digests = new ArrayList<MessageDigest>();
+                digests.add( md5 );
+                digests.add( sha1 );
+
+                HashInputStream hashStream = new HashInputStream( digests, in );
+                Attachment file = new Attachment( "document", hashStream, new ContentDisposition(
+                    "attachment;filename=" + documentId + "_" + sessionId ) );
+
+                MultipartBody uploadBody = new MultipartBody( file );
+
+                wcl.type( MediaType.MULTIPART_FORM_DATA_TYPE ).to(
+                    upClient.getCurrentURI().toString() + "/filetransfer/uploadDocument", false ).query( "sessionId",
+                                                                                                         sessionId ).query(
+                    "transactionId", transaction.getUid() ).post( uploadBody );
+
+                String hashMD5 = HashCalculator.buildHexaString( md5.digest() ).replaceAll( " ", "" );
+                String hashSHA = HashCalculator.buildHexaString( sha1.digest() ).replaceAll( " ", "" );
+
+                client.endUploadTransaction( sessionId, transaction.getUid(), hashMD5, hashSHA );
+
+            }
+            else
+            {
+                doSendChunk( sessionId, transaction, in, chunkSize );
+            }
         }
         catch ( Exception e )
         {
