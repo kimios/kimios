@@ -265,6 +265,7 @@ public class HDocumentFactory extends HFactory implements DocumentFactory
         }
     }
 
+
     public List<org.kimios.kernel.ws.pojo.Document> getDocumentsPojosFromIds(List<Long> listIds)
             throws ConfigException, DataSourceException
     {
@@ -284,6 +285,26 @@ public class HDocumentFactory extends HFactory implements DocumentFactory
             return new ArrayList<org.kimios.kernel.ws.pojo.Document>();
         }
     }
+
+    public List<org.kimios.kernel.ws.pojo.Document> getDocumentsPojosFromIdsWithoutSort(List<Long> listIds)
+        throws ConfigException, DataSourceException
+    {
+        List<org.kimios.kernel.ws.pojo.Document> lists = null;
+        if (listIds.size() > 0) {
+            try {
+                String query = "from DocumentPojo where uid in (:listIds)";
+                lists = getSession().createQuery(query)
+                    .setParameterList("listIds", listIds)
+                    .list();
+                return lists;
+            } catch (HibernateException he) {
+                throw new DataSourceException(he, he.getMessage());
+            }
+        } else {
+            return new ArrayList<org.kimios.kernel.ws.pojo.Document>();
+        }
+    }
+
 
     public List<Document> getDocumentSince(Calendar since, String excludePath)
     {
