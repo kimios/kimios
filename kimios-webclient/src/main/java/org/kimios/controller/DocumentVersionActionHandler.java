@@ -166,7 +166,7 @@ public class DocumentVersionActionHandler extends Controller
         DocumentVersion dv = documentVersionController.getDocumentVersion(sessionUid,
                 Long.parseLong(parameters.get("verUid")));
         resp.setContentLength((int) dv.getLength());
-        fileTransferController.downloadFileVersion(sessionUid, dv.getUid(), resp.getOutputStream(), true);
+        fileTransferController.downloadFileVersion(sessionUid, dv.getUid(), resp.getOutputStream(), false);
         resp.getOutputStream().flush();
         resp.getOutputStream().close();
     }

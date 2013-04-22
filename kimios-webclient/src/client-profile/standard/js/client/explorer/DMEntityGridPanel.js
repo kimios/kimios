@@ -356,6 +356,9 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
     advancedSearch: function (searchConfig, form) {
 
         // search by document body
+
+
+
         if (form == undefined) {
             var searchStore = kimios.store.getAdvancedSearchStore(searchConfig);
             this.gridPanel.reconfigure(searchStore, this.gridPanel.getColumnModel());

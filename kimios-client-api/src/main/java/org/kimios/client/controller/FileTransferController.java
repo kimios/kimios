@@ -387,7 +387,7 @@ public class FileTransferController
                     tmpFileName = FileCompressionHelper.getTempFilePath( temporaryFilesPath, "dl" + sessionId );
                     tmp = new BufferedOutputStream( new FileOutputStream( temporaryFilesPath + tmpFileName ) );
 
-                    IOUtils.copyLarge( client.downloadDocumentVersion( sessionId, documentVersionId ), tmp );
+                    IOUtils.copyLarge( client.downloadDocumentVersion( sessionId, transac.getUid() ), tmp );
 
                     InputStream inFull = new FileInputStream( temporaryFilesPath + tmpFileName );
 
