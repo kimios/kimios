@@ -121,8 +121,6 @@ public class UploadManager extends Controller {
         while (t.hasNext()) {
 
             FileItemStream st = t.next();
-            log.info(st.toString());
-
             if (st.isFormField()) {
                 String tmpVal = Streams.asString(st.openStream(), "UTF-8");
                 log.debug(st.getFieldName() + " --> " + tmpVal);
