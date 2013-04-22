@@ -17,7 +17,6 @@
 package org.kimios.controller;
 
 import flexjson.JSONSerializer;
-import flexjson.transformer.DateTransformer;
 import org.kimios.core.wrappers.DMEntity;
 import org.kimios.kernel.index.query.model.Criteria;
 import org.kimios.kernel.index.query.model.SearchRequest;
@@ -184,9 +183,8 @@ public class SearchControllerWeb
             it.add(new DMEntity(d));
         }
         String jsonResp =
-                new JSONSerializer().exclude("class").transform(new DateTransformer("MM/dd/yyyy hh:mm:ss"),
-                        "creationDate").transform(
-                        new DateTransformer("MM/dd/yyyy hh:mm:ss"), "checkoutDate").serialize(it);
+                new JSONSerializer().exclude("class")
+                    .serialize(it);
         String fullResp = "{\"total\":" + searchResponse.getResults() + ",\"list\":" + jsonResp + "}";
         return fullResp;
     }

@@ -52,6 +52,8 @@ public class DMEntity {
     private long length;
     private String path;
     private Date updateDate;
+    private Date lastVersionCreationDate;
+    private Date lastVersionUpdateDate;
     
     public DMEntity(Workspace w){
         this.type = DMEntity.WORKSPACE;
@@ -98,6 +100,9 @@ public class DMEntity {
         this.documentTypeUid = d.getDocumentTypeUid() != null ? d.getDocumentTypeUid() : 0;
         this.length = d.getLength();
         this.path = d.getPath();
+
+        this.lastVersionCreationDate = d.getVersionCreationDate().getTime();
+        this.lastVersionUpdateDate = d.getVersionUpdateDate().getTime();
     }
 
     public String getOwnerSource() {
@@ -266,6 +271,26 @@ public class DMEntity {
 
     public void setUpdateDate(Date updateDate) {
         this.updateDate = updateDate;
+    }
+
+    public Date getLastVersionCreationDate()
+    {
+        return lastVersionCreationDate;
+    }
+
+    public void setLastVersionCreationDate( Date lastVersionCreationDate )
+    {
+        this.lastVersionCreationDate = lastVersionCreationDate;
+    }
+
+    public Date getLastVersionUpdateDate()
+    {
+        return lastVersionUpdateDate;
+    }
+
+    public void setLastVersionUpdateDate( Date lastVersionUpdateDate )
+    {
+        this.lastVersionUpdateDate = lastVersionUpdateDate;
     }
 }
 

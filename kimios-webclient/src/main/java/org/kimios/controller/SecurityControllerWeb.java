@@ -18,7 +18,6 @@ package org.kimios.controller;
 
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
-import flexjson.transformer.DateTransformer;
 import org.kimios.kernel.ws.pojo.*;
 import org.kimios.core.DMEntitySecurityTransformer;
 import org.kimios.core.GroupUserTransformer;
@@ -97,7 +96,6 @@ public class SecurityControllerWeb extends Controller {
 
     if (jsonResp == null)
       jsonResp = new JSONSerializer()
-        .transform(new DateTransformer("MM/dd/yyyy hh:mm:ss"), Date.class)
         .transform(new DMEntitySecurityTransformer(), DMEntitySecurity.class)
         .transform(new GroupUserTransformer(), User.class, Group.class)
         .exclude("*.class").serialize(res);

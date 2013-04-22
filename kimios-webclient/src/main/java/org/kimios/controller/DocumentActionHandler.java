@@ -38,7 +38,6 @@ import org.kimios.kernel.ws.pojo.MetaValue;
 
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
-import flexjson.transformer.DateTransformer;
 
 /**
  * @author Farf
@@ -244,7 +243,7 @@ public class DocumentActionHandler
             relDocs.add( new DMEntity( d ) );
         }
         String jsonResp =
-            new JSONSerializer().transform( new DateTransformer( "MM/dd/yyyy hh:mm:ss" ), "creationDate" ).exclude(
+            new JSONSerializer().exclude(
                 "class" ).serialize( relDocs );
         return jsonResp;
     }
