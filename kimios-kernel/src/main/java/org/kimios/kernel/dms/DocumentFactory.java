@@ -57,7 +57,5 @@ public interface DocumentFactory
     public List<org.kimios.kernel.ws.pojo.Document> getDocumentsPojosFromIds(List<Long> listIds)
             throws ConfigException, DataSourceException;
 
-    public List<org.kimios.kernel.ws.pojo.Document> getDocumentsPojosFromIdsWithoutSort(List<Long> listIds)
-        throws ConfigException, DataSourceException;
 }
 

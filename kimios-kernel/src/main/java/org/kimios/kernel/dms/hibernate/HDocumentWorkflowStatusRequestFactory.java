@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.hibernate.Criteria;
+import org.hibernate.FlushMode;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -42,6 +43,7 @@ public class HDocumentWorkflowStatusRequestFactory extends HFactory implements
     {
         try {
             getSession().delete(request);
+            getSession().flush();
         } catch (HibernateException he) {
             throw he;
         }
@@ -126,6 +128,7 @@ public class HDocumentWorkflowStatusRequestFactory extends HFactory implements
             } catch (java.text.ParseException e) {
             }
             getSession().save(request);
+            getSession().flush();
         } catch (HibernateException he) {
             throw he;
         }

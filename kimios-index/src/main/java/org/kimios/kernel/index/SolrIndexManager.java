@@ -39,11 +39,16 @@ import org.kimios.kernel.controller.IPathController;
 import org.kimios.kernel.dms.DMEntity;
 import org.kimios.kernel.dms.Document;
 import org.kimios.kernel.dms.DocumentVersion;
+import org.kimios.kernel.dms.DocumentWorkflowStatus;
+import org.kimios.kernel.dms.DocumentWorkflowStatusRequest;
 import org.kimios.kernel.dms.FactoryInstantiator;
+import org.kimios.kernel.dms.Lock;
 import org.kimios.kernel.dms.MetaType;
 import org.kimios.kernel.dms.MetaValue;
+import org.kimios.kernel.dms.WorkflowStatus;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.IndexException;
+import org.kimios.kernel.index.query.factory.DocumentFactory;
 import org.kimios.kernel.index.query.model.SearchResponse;
 import org.kimios.kernel.security.DMEntityACL;
 import org.slf4j.Logger;
@@ -59,6 +64,18 @@ public class SolrIndexManager
     private Thread reindexThread = null;
 
     private IPathController pathController;
+
+    private org.kimios.kernel.index.query.factory.DocumentFactory solrDocumentFactory;
+
+    public DocumentFactory getSolrDocumentFactory()
+    {
+        return solrDocumentFactory;
+    }
+
+    public void setSolrDocumentFactory( DocumentFactory solrDocumentFactory )
+    {
+        this.solrDocumentFactory = solrDocumentFactory;
+    }
 
     public SolrIndexManager( SolrServer solr )
     {
@@ -144,6 +161,7 @@ public class SolrIndexManager
         SolrInputDocument doc = new SolrInputDocument();
         doc.addField( "DocumentUid", document.getUid() );
         doc.addField( "DocumentName", document.getName().toLowerCase() );
+        doc.addField( "DocumentNameDisplayed", document.getName() );
         doc.addField( "DocumentNameAnalysed", document.getName() );
         if ( document.getExtension() != null )
         {
@@ -152,7 +170,9 @@ public class SolrIndexManager
         doc.addField( "DocumentOwner", document.getOwner() + "@" + document.getOwnerSource() );
         doc.addField( "DocumentOwnerId", document.getOwner() );
         doc.addField( "DocumentOwnerSource", document.getOwnerSource() );
+        doc.addField( "DocumentPath", document.getPath() );
         doc.addField( "DocumentParent", document.getFolder().getPath() + "/" );
+        doc.addField( "DocumentParentId", document.getFolder().getUid() );
         DocumentVersion version =
             FactoryInstantiator.getInstance().getDocumentVersionFactory().getLastDocumentVersion( document );
 
@@ -172,6 +192,37 @@ public class SolrIndexManager
         doc.addField( "DocumentVersionLength", version.getLength() );
         doc.addField( "DocumentVersionHash", version.getHashMD5() + ":" + version.getHashSHA1() );
 
+        Lock lock = document.getCheckoutLock();
+
+        doc.addField( "DocumentCheckout", lock != null );
+
+        if(lock != null){
+            doc.addField( "DocumentCheckoutOwnerId", lock.getUser());
+            doc.addField( "DocumentCheckoutOwnerSource", lock.getUserSource());
+            doc.addField( "DocumentCheckoutDate", lock.getDate());
+        }
+        // DocumentOutWorkflow
+
+
+        DocumentWorkflowStatusRequest req = FactoryInstantiator.getInstance().getDocumentWorkflowStatusRequestFactory()
+            .getLastPendingRequest( document );
+        DocumentWorkflowStatus st = FactoryInstantiator.getInstance()
+            .getDocumentWorkflowStatusFactory().getLastDocumentWorkflowStatus( document.getUid() );
+        boolean outOfWorkflow = true;
+        if(req != null){
+            outOfWorkflow = false;
+        }
+        if(st != null){
+
+            WorkflowStatus stOrg = FactoryInstantiator.getInstance().getWorkflowStatusFactory()
+                .getWorkflowStatus( st.getWorkflowStatusUid() );
+            doc.addField( "DocumentWorkflowStatusName", stOrg.getName());
+            doc.addField( "DocumentWorkflowStatusUid", st.getWorkflowStatusUid() );
+            if(stOrg.getSuccessorUid() == null){
+                outOfWorkflow = true;
+            }
+        }
+        doc.addField( "DocumentOutWorkflow", outOfWorkflow );
         if ( version.getDocumentType() != null )
         {
             log.info( "Document Type Found for version" );
@@ -348,6 +399,7 @@ public class SolrIndexManager
             }
             SearchResponse searchResponse = new SearchResponse( list );
             searchResponse.setResults( new Long( documentList.getNumFound() ).intValue() );
+            searchResponse.setRows( solrDocumentFactory.getPojosFromSolrInputDocument( rsp.getResults() ) );
             return searchResponse;
         }
         catch ( SolrServerException ex )

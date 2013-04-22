@@ -24,16 +24,22 @@ import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.ISearchController;
 import org.kimios.kernel.dms.*;
+import org.kimios.kernel.dms.DMEntity;
+import org.kimios.kernel.dms.Document;
+import org.kimios.kernel.dms.DocumentType;
+import org.kimios.kernel.dms.Meta;
 import org.kimios.kernel.exception.AccessDeniedException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.IndexException;
 import org.kimios.kernel.index.ISolrIndexManager;
 import org.kimios.kernel.index.query.QueryBuilder;
-import org.kimios.kernel.index.query.factory.SearchRequestFactory;
+import org.kimios.kernel.index.query.factory.*;
+import org.kimios.kernel.index.query.factory.DocumentFactory;
 import org.kimios.kernel.index.query.model.Criteria;
 import org.kimios.kernel.index.query.model.SearchRequest;
 import org.kimios.kernel.index.query.model.SearchResponse;
 import org.kimios.kernel.security.Session;
+import org.kimios.kernel.ws.pojo.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
@@ -135,9 +141,6 @@ public class SolrSearchController
         throws IndexException, DataSourceException, ConfigException
     {
         SearchResponse searchResponse = quickSearchIds( session, query, entity, start, pageSize, sortField, sortDir );
-        List<org.kimios.kernel.ws.pojo.Document> documents =
-            dmsFactoryInstantiator.getDocumentFactory().getDocumentsPojosFromIdsWithoutSort( searchResponse.getDocumentIds() );
-        searchResponse.setRows( documents );
         return searchResponse;
     }
 
@@ -456,9 +459,6 @@ public class SolrSearchController
 
         SolrQuery query = this.parseQueryFromListCriteria( session, start, pageSize, criteriaList, sortField, sortDir );
         SearchResponse searchResponse = solrIndexManager.executeSolrQuery( query );
-        List<org.kimios.kernel.ws.pojo.Document> documents =
-            dmsFactoryInstantiator.getDocumentFactory().getDocumentsPojosFromIdsWithoutSort( searchResponse.getDocumentIds() );
-        searchResponse.setRows( documents );
         return searchResponse;
 
     }
@@ -701,9 +701,6 @@ public class SolrSearchController
             } );
         SolrQuery query = this.parseQueryFromListCriteria( session, start, pageSize, criteriaList, sortField, sortDir );
         SearchResponse searchResponse = this.solrIndexManager.executeSolrQuery( query );
-        List<org.kimios.kernel.ws.pojo.Document> documents =
-            dmsFactoryInstantiator.getDocumentFactory().getDocumentsPojosFromIdsWithoutSort( searchResponse.getDocumentIds() );
-        searchResponse.setRows( documents );
         return searchResponse;
     }
 }

@@ -33,6 +33,7 @@ import org.kimios.kernel.events.annotations.DmsEventName;
 import org.kimios.kernel.events.annotations.DmsEventOccur;
 import org.kimios.kernel.filetransfer.DataTransfer;
 import org.kimios.kernel.index.AbstractIndexManager;
+import org.kimios.kernel.index.IndexManager;
 import org.kimios.kernel.security.DMEntityACL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -192,6 +193,71 @@ public class SolrIndexer extends GenericEventHandler
             }
         } catch (Exception e) {
             log.error("Exception during index update : ", e);
+        }
+    }
+
+    @DmsEvent(eventName = { DmsEventName.DOCUMENT_CHECKOUT }, when = DmsEventOccur.AFTER)
+    public void documentCheckout(Object[] obj, Object retour, EventContext ctx) throws Exception
+    {
+        log.debug("Indexing document update: " + (Long) obj[1]);
+        Document doc = FactoryInstantiator.getInstance()
+            .getDocumentFactory().getDocument((Long) obj[1]);
+        try {
+            indexManager.indexDocument(doc);
+        } catch (Exception e) {
+            log.error(" index action Exception on Document " + doc.getUid(), e);
+        }
+    }
+
+    @DmsEvent(eventName = { DmsEventName.DOCUMENT_CHECKIN }, when = DmsEventOccur.AFTER)
+    public void documentCheckin(Object[] obj, Object retour, EventContext ctx) throws Exception
+    {
+        log.debug("Indexing document update: " + (Long) obj[1]);
+        Document doc = FactoryInstantiator.getInstance()
+            .getDocumentFactory().getDocument((Long) obj[1]);
+        try {
+            indexManager.indexDocument(doc);
+        } catch (Exception e) {
+            log.error(" index action Exception on Document " + doc.getUid(), e);
+        }
+    }
+
+    @DmsEvent( eventName = {DmsEventName.WORKFLOW_STATUS_REQUEST_CREATE}, when = DmsEventOccur.AFTER)
+    public void documentWorkflowCreate(Object[] obj, Object retour, EventContext ctx) throws Exception
+    {
+        log.debug("Indexing document update: " + (Long) obj[1]);
+        Document doc = FactoryInstantiator.getInstance()
+            .getDocumentFactory().getDocument((Long) obj[1]);
+        try {
+            indexManager.indexDocument(doc);
+        } catch (Exception e) {
+            log.error(" index action Exception on Document " + doc.getUid(), e);
+        }
+    }
+
+    @DmsEvent( eventName = {DmsEventName.WORKFLOW_STATUS_REQUEST_ACCEPT}, when = DmsEventOccur.AFTER)
+    public void documentWorkflowUpdate(Object[] obj, Object retour, EventContext ctx) throws Exception
+    {
+        log.debug("Indexing document update: " + (Long) obj[1]);
+        Document doc = FactoryInstantiator.getInstance()
+            .getDocumentFactory().getDocument((Long) obj[1]);
+        try {
+            indexManager.indexDocument(doc);
+        } catch (Exception e) {
+            log.error(" index action Exception on Document " + doc.getUid(), e);
+        }
+    }
+
+    @DmsEvent( eventName = {DmsEventName.WORKFLOW_CANCEL}, when = DmsEventOccur.AFTER)
+    public void documentWorkflowCancel(Object[] obj, Object retour, EventContext ctx) throws Exception
+    {
+        log.debug("Indexing document update: " + (Long) obj[1]);
+        Document doc = FactoryInstantiator.getInstance()
+            .getDocumentFactory().getDocument((Long) obj[1]);
+        try {
+            indexManager.indexDocument(doc);
+        } catch (Exception e) {
+            log.error(" index action Exception on Document " + doc.getUid(), e);
         }
     }
 }

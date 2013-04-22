@@ -94,6 +94,7 @@ public class HDocumentWorkflowStatusFactory extends HFactory implements
     {
         try {
             getSession().save(dws);
+            getSession().flush();
         } catch (HibernateException he) {
             throw he;
         }
