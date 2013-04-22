@@ -137,8 +137,8 @@ public class QueryBuilder {
         Date rangeMin = null;
         Date rangeMax = null;
 
-        rangeMin = min != null ? localFormat.parse(min) : null;
-        rangeMax = max != null ? localFormat.parse(max) : null;
+        rangeMin = min != null && min.trim().length() > 0 ? localFormat.parse(min) : null;
+        rangeMax = max != null && max.trim().length() > 0 ? localFormat.parse(max) : null;
 
         localFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         String documentPathQuery = dateFieldName + ":[" + (rangeMin != null ? solrFormat.format(rangeMin) : "*")
