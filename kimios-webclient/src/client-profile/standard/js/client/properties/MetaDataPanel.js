@@ -241,6 +241,7 @@ kimios.properties.MetaDataPanel = Ext.extend(Ext.Panel, {
         });
       case 3:
         //date type
+
         return new Ext.form.DateField({
           name : uid,
           fieldLabel : name,

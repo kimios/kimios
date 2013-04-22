@@ -167,37 +167,11 @@ public class DocumentActionHandler
     {
         DocumentVersion dv = documentVersionController.getDocumentVersion( sessionUid, Long.parseLong(
             parameters.get( "versionUid" ) ) );
-        List<Meta> metaValues = new ArrayList<Meta>();
-        org.kimios.kernel.ws.pojo.Meta[] mServ =
-            documentVersionController.getMetas( sessionUid, dv.getDocumentTypeUid() );
-        List<MetaValue> values = documentVersionController.getMetaValues( sessionUid, dv.getUid() );
-        List<org.kimios.kernel.ws.pojo.Meta> toRemove = new ArrayList<org.kimios.kernel.ws.pojo.Meta>();
-        for ( MetaValue mValue : values )
-        {
-            log.info( mValue.getMeta().getName() + " --> " + mValue.getValue() );
-            metaValues.add( new Meta( mValue.getMetaId(), mValue.getMeta().getName(), mValue.getValue(),
-                                      mValue.getMeta().getMetaType(), mValue.getMeta().getMetaFeedUid() ) );
-            for ( org.kimios.kernel.ws.pojo.Meta meta : mServ )
-            {
-                if ( mValue.getMeta().getUid() == meta.getUid() )
-                {
-                    toRemove.add( meta );
-                    break;
-                }
-            }
-        }
-        for ( org.kimios.kernel.ws.pojo.Meta m : mServ )
-        {
-            if ( !toRemove.contains( m ) )
-            {
-                metaValues.add( new Meta( m.getUid(), m.getName(), null, m.getMetaType(), m.getMetaFeedUid() ) );
-            }
-        }
+        List<Meta> metaValues = loadVersionMetaValues( dv );
         String jsonResp = "{'documentTypeUid':" + dv.getDocumentTypeUid() + ",'metaValues':";
         jsonResp += new JSONSerializer().transform( new DateTranformerExt(
             InternationalizationManager.getSingleValue( parameters.get( "selected_lang" ), "SimpleDateForm" ) ),
                                                     Date.class ).serialize( metaValues ) + "}";
-
         return jsonResp;
     }
 
@@ -206,17 +180,37 @@ public class DocumentActionHandler
     {
         org.kimios.kernel.ws.pojo.Document doc =
             documentController.getDocument( sessionUid, Long.parseLong( parameters.get( "uid" ) ) );
+
         DocumentVersion docVersion = documentVersionController.getLastDocumenVersion( sessionUid, doc.getUid() );
-        DocumentVersion dv = documentVersionController.getDocumentVersion( sessionUid, docVersion.getUid() );
+
+
+
+        List<Meta> items = loadVersionMetaValues( docVersion );
+
+        return "{'lastMetaValues':" + new JSONSerializer().transform( new DateTranformerExt(
+            InternationalizationManager.getSingleValue( parameters.get( "selected_lang" ), "SimpleDateForm" ) ),
+                                                                      Date.class ).serialize( items ) + "}";
+
+    }
+
+    private List<Meta> loadVersionMetaValues(DocumentVersion docVersion)
+        throws Exception
+    {
         List<Meta> metaValues = new ArrayList<Meta>();
         org.kimios.kernel.ws.pojo.Meta[] mServ =
-            documentVersionController.getMetas( sessionUid, dv.getDocumentTypeUid() );
-        List<MetaValue> values = documentVersionController.getMetaValues( sessionUid, dv.getUid() );
+            documentVersionController.getMetas( sessionUid, docVersion.getDocumentTypeUid() );
+        List<MetaValue> values = documentVersionController.getMetaValues( sessionUid, docVersion.getUid() );
         List<org.kimios.kernel.ws.pojo.Meta> toRemove = new ArrayList<org.kimios.kernel.ws.pojo.Meta>();
         for ( MetaValue mValue : values )
         {
-            log.info( mValue.getMeta().getName() + " --> " + mValue.getValue() );
-            metaValues.add( new Meta( mValue.getMetaId(), mValue.getMeta().getName(), mValue.getValue(),
+            log.debug( mValue.getMeta().getName() + " --> " + mValue.getValue() );
+            Object value = null;
+            if(mValue.getMeta().getMetaType() == 3 && mValue.getValue() != null){
+                value = new Date( (Long)mValue.getValue() );
+            } else {
+                value = mValue.getValue();
+            }
+            metaValues.add( new Meta( mValue.getMetaId(), mValue.getMeta().getName(), value,
                                       mValue.getMeta().getMetaType(), mValue.getMeta().getMetaFeedUid() ) );
             for ( org.kimios.kernel.ws.pojo.Meta meta : mServ )
             {
@@ -234,9 +228,9 @@ public class DocumentActionHandler
                 metaValues.add( new Meta( m.getUid(), m.getName(), null, m.getMetaType(), m.getMetaFeedUid() ) );
             }
         }
-        return "{'lastMetaValues':" + new JSONSerializer().transform( new DateTranformerExt(
-            InternationalizationManager.getSingleValue( parameters.get( "selected_lang" ), "SimpleDateForm" ) ),
-                                                                      Date.class ).serialize( metaValues ) + "}";
+
+
+        return metaValues;
     }
 
     private String relatedDocuments()
@@ -328,7 +322,6 @@ public class DocumentActionHandler
         Map<org.kimios.kernel.ws.pojo.Meta, String> mMetasValues =
             DMEntitySecuritiesParser.parseMetasValuesFromJson( sessionUid, metaValues, documentVersionController );
         String xmlMeta = XMLGenerators.getMetaDatasDocumentXMLDescriptor( mMetasValues, "yyyy-MM-dd" );
-        log.info( "XML STREAM > " + xmlMeta );
         documentVersionController.updateDocumentVersion( sessionUid, d.getUid(), docType, xmlMeta );
     }
 

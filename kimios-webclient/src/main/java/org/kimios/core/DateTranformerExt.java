@@ -27,20 +27,8 @@ import java.text.SimpleDateFormat;
 import java.text.ParseException;
 import java.lang.reflect.Type;
 
-/**
- * Created by IntelliJ IDEA.
- * User: farf
- * Date: 4/30/12
- * Time: 3:15 PM
- * To change this template use File | Settings | File Templates.
- */
 public class DateTranformerExt  extends AbstractTransformer implements ObjectFactory {
 
-/**
- * User: brandongoodin
- * Date: Dec 12, 2007
- * Time: 11:20:39 PM
- */
     SimpleDateFormat simpleDateFormatter;
 
     public DateTranformerExt(String dateFormat) {
