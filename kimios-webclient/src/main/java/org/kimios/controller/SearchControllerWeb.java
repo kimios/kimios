@@ -45,7 +45,7 @@ public class SearchControllerWeb
     static {
         sortFieldMapping.put("name", "DocumentName");
         sortFieldMapping.put("creationDate", "DocumentCreationDate");
-        sortFieldMapping.put("updateDate", "DocumentVersionUpdateDate");
+        sortFieldMapping.put("lastVersionUpdateDate", "DocumentVersionUpdateDate");
         sortFieldMapping.put("uid", "DocumentUid");
         sortFieldMapping.put("extension", "DocumentExtension");
         sortFieldMapping.put("owner", "DocumentOwner");

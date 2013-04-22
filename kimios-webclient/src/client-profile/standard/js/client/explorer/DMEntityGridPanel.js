@@ -579,7 +579,7 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
             },
             {
                 header: kimios.lang('UpdateDate'),
-                dataIndex: 'updateDate',
+                dataIndex: 'lastVersionUpdateDate',
                 width: 120,
                 fixed: true,
                 readOnly: true,
