@@ -140,8 +140,15 @@ public class GenericLDAPUserFactory extends GenericLDAPFactory implements UserFa
                             search = "(&(objectClass=" + source.getUsersObjectClassValue() + ")(distinguishedName=" +
                                     cn + "))";
                         } else {
-                            search = "(&(objectClass=" + source.getUsersObjectClassValue() + ")(" +
+
+                            if (this.source.getSchemaFullCnUserGroupMatching().equals("true")) {
+                                search = "(&(objectClass=" + source.getUsersObjectClassValue() + ")(" + cn.substring(0,
+                                                                                                                     (cn.indexOf(","))
+                                ) + "))";
+                            } else {
+                                search = "(&(objectClass=" + source.getUsersObjectClassValue() + ")(" +
                                     source.getUsersIdKey() + "=" + cn + "))";
+                            }
                         }
                         List<SearchResult> r2 = this.search(search, SecurityEntityType.USER);
                         for (SearchResult sr2 : r2) {

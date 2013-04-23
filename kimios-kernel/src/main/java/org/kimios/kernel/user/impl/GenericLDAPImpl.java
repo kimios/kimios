@@ -77,6 +77,8 @@ public class GenericLDAPImpl extends AuthenticationSourceImpl
 
     private String groupMemberKey;
 
+    private String schemaFullCnUserGroupMatching;
+
     @Override
     public GroupFactory getGroupFactory() throws DataSourceException, ConfigException
     {
@@ -192,6 +194,16 @@ public class GenericLDAPImpl extends AuthenticationSourceImpl
     public String getUserGroupMemberOfKey()
     {
         return userGroupMemberOfKey;
+    }
+
+    public String getSchemaFullCnUserGroupMatching()
+    {
+        return schemaFullCnUserGroupMatching;
+    }
+
+    public void setSchemaFullCnUserGroupMatching(String schemaFullCnUserGroupMatching)
+    {
+        this.schemaFullCnUserGroupMatching = schemaFullCnUserGroupMatching;
     }
 }
 

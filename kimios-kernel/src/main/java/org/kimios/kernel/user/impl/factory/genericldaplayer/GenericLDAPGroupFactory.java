@@ -119,11 +119,19 @@ public class GenericLDAPGroupFactory extends GenericLDAPFactory implements Group
                     }
                 }
             } else {
-                // classic ldap
-                r = this.search(
-                        "(&(objectClass=" + source.getGroupsObjectClassValue() + ")(" + source.getGroupsMemberKey() +
-                                "=" + userUid + "))",
-                        SecurityEntityType.GROUP);
+                if (this.source.getSchemaFullCnUserGroupMatching().equals("true")) {
+
+                    String searchQuery =
+                        this.source.getUsersIdKey() + "=" + userUid + "," + this.source.getUsersDn();
+
+                    r = this.search("(&(objectClass=" + source.getGroupsObjectClassValue() + ")(" +
+                                        source.getGroupsMemberKey() + "=" + searchQuery + "))",
+                                    SecurityEntityType.GROUP);
+                } else {
+                    r = this.search("(&(objectClass=" + source.getGroupsObjectClassValue() + ")(" +
+                                        source.getGroupsMemberKey() + "=" + userUid + "))",
+                                    SecurityEntityType.GROUP);
+                }
 
                 for (SearchResult sr : r) {
                     Attributes attrs = sr.getAttributes();
