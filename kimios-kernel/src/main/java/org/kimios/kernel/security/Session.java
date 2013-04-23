@@ -26,6 +26,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.kimios.kernel.user.Group;
 
@@ -50,8 +51,12 @@ public class Session implements Serializable
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastUse;
 
+
+    @Transient
     private Vector<Group> groups;
 
+
+    @Transient
     private String metaDatas;
 
     public Session()
