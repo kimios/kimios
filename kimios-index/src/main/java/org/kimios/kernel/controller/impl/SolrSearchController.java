@@ -549,7 +549,7 @@ public class SolrSearchController
                         {
 
                             String metaStringQuery = "MetaDataString_" + meta.getUid() + ":*" +
-                                ClientUtils.escapeQueryChars( c.getQuery() ) + "*";
+                                ClientUtils.escapeQueryChars( c.getQuery().toLowerCase() ) + "*";
                             queries.add( metaStringQuery );
                         }
                         if ( meta.getMetaType() == MetaType.NUMBER )
