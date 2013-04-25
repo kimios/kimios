@@ -135,6 +135,8 @@ kimios.explorer.ExplorerPanel = Ext.extend(kimios.util.DMEntityTree, {
             if (tab.advancedSearchPanel.isVisible())
                 tab.advancedSearchPanel.hidePanel();
 
+            kimios.explorer.getActivePanel().searchToolbar.searchField.isSearchMode = false;
+            kimios.explorer.getActivePanel().advancedSearchPanel.isSearchMode = false;
             tab.searchToolbar.searchField.setValue('');
 
             tab.loadEntity({

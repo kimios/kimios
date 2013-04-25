@@ -15,8 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
+    isSearchMode: false,
 
     search: function () {
+        this.isSearchMode = true;
         kimios.explorer.getActivePanel().advancedSearch({
             DocumentName: this.nameField.getValue(),
             DocumentBody: this.textField.getValue(),
@@ -450,6 +452,9 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
     },
 
     showPanel: function () {
+        kimios.explorer.getActivePanel().searchToolbar.searchField.isSearchMode = false;
+        kimios.explorer.getActivePanel().advancedSearchPanel.isSearchMode = true;
+
         this.setVisible(true);
         var st = kimios.explorer.getActivePanel().searchToolbar;
         var bt = kimios.explorer.getActivePanel().breadcrumbToolbar;
@@ -475,6 +480,10 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
     },
 
     hidePanel: function () {
+        kimios.explorer.getActivePanel().searchToolbar.searchField.isSearchMode = true;
+        kimios.explorer.getActivePanel().advancedSearchPanel.isSearchMode = false;
+
+
         this.setVisible(false);
         var st = kimios.explorer.getActivePanel().searchToolbar;
         var bt = kimios.explorer.getActivePanel().breadcrumbToolbar;

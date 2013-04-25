@@ -49,6 +49,7 @@ kimios.properties.PropertiesPanel = Ext.extend(Ext.TabPanel, {
             scope:this,
             hidden:true,
             handler:function (btn) {
+                btn.setDisabled(true);
                 if (this.multipleMode == false) {
                     var entityName = this.dmEntityPanel.nameField.getValue();
                     if (entityName == null || entityName == '') {

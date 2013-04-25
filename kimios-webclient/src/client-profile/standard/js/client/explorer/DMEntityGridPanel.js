@@ -358,7 +358,6 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
         // search by document body
 
 
-
         if (form == undefined) {
             var searchStore = kimios.store.getAdvancedSearchStore(searchConfig);
             this.gridPanel.reconfigure(searchStore, this.gridPanel.getColumnModel());
@@ -438,52 +437,65 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
     },
 
     loadEntity: function (entityConfig) {
-        // if configuration is not specified, keep the last values
-        if (entityConfig != null) {
-            this.uid = entityConfig.uid;
-            this.type = entityConfig.type;
-        }
-        if (this.lockSearch == true) {
-            this.gridPanel.reconfigure(kimios.store.getEntitiesStore(), this.gridPanel.getColumnModel());
-            this.lockSearch = false;
-        }
-        this.setIconClass('loading');
+        var tab = kimios.explorer.getActivePanel();
 
-        this.hidePagingToolBar();
-        // load home (root node)
-        if (this.uid == undefined && this.type == undefined) {
-            this.name = kimios.explorer.getTreePanel().getRootNode().text;
-            this.path = undefined;
-            this.setTitle(this.name);
-            this.breadcrumbToolbar.setPath(this.path);
-            this.loadEntities();
-        }
-        // load another sub-node
-        else {
-            // get the current entity properties
-            this.entityStore.load({
-                scope: this,
-                params: {
-                    dmEntityUid: this.uid,
-                    dmEntityType: this.type
-                },
-                callback: function (records, options, success) {
-                    if (records[0] != undefined) {
-                        this.name = records[0].data.name;
-                        this.path = records[0].data.path;
-                        this.owner = records[0].data.owner;
-                        this.ownerSource = records[0].data.ownerSource;
-                        this.creationDate = records[0].data.creationDate;
-                        this.setTitle(this.name);
-                        this.breadcrumbToolbar.setPath(this.path);
-                        this.loadEntities();
+        if (tab.searchToolbar.searchField.isSearchMode == true) {
+//            console.log('quick');
+            tab.searchToolbar.searchField.onTrigger2Click();
+
+        } else if (tab.advancedSearchPanel.isSearchMode == true) {
+//            console.log('advanced');
+            tab.advancedSearchPanel.search();
+
+        } else {
+
+            // if configuration is not specified, keep the last values
+            if (entityConfig != null) {
+                this.uid = entityConfig.uid;
+                this.type = entityConfig.type;
+            }
+            if (this.lockSearch == true) {
+                this.gridPanel.reconfigure(kimios.store.getEntitiesStore(), this.gridPanel.getColumnModel());
+                this.lockSearch = false;
+            }
+            this.setIconClass('loading');
+
+            this.hidePagingToolBar();
+            // load home (root node)
+            if (this.uid == undefined && this.type == undefined) {
+                this.name = kimios.explorer.getTreePanel().getRootNode().text;
+                this.path = undefined;
+                this.setTitle(this.name);
+                this.breadcrumbToolbar.setPath(this.path);
+                this.loadEntities();
+            }
+            // load another sub-node
+            else {
+                // get the current entity properties
+                this.entityStore.load({
+                    scope: this,
+                    params: {
+                        dmEntityUid: this.uid,
+                        dmEntityType: this.type
+                    },
+                    callback: function (records, options, success) {
+                        if (records[0] != undefined) {
+                            this.name = records[0].data.name;
+                            this.path = records[0].data.path;
+                            this.owner = records[0].data.owner;
+                            this.ownerSource = records[0].data.ownerSource;
+                            this.creationDate = records[0].data.creationDate;
+                            this.setTitle(this.name);
+                            this.breadcrumbToolbar.setPath(this.path);
+                            this.loadEntities();
+                        }
                     }
-                }
-            });
-            // close tab corresponding to deleted entity
-            this.entityStore.on('exception', function () {
-                this.destroy();
-            }, this);
+                });
+                // close tab corresponding to deleted entity
+                this.entityStore.on('exception', function () {
+                    this.destroy();
+                }, this);
+            }
         }
     },
 

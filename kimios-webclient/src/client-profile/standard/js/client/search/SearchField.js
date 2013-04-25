@@ -16,6 +16,7 @@
  */
 kimios.search.SearchField = Ext.extend(Ext.form.TextField, {
     constructor: function (config) {
+        this.isSearchMode = false;
         this.emptyText = kimios.lang('SearchByName');
         this.width = 160;
         this.selectOnFocus = true;
@@ -43,6 +44,7 @@ kimios.search.SearchField = Ext.extend(Ext.form.TextField, {
     },
 
     onTrigger1Click: function (event) {
+        this.isSearchMode = false;
         this.setValue('');
         this.focus(false, true);
 
@@ -59,8 +61,10 @@ kimios.search.SearchField = Ext.extend(Ext.form.TextField, {
         var value = this.getRawValue();
         var tab = kimios.explorer.getActivePanel();
         if (value == '') {
+            this.isSearchMode = false;
             tab.loadEntity();
         } else {
+            this.isSearchMode = true;
             var tab = kimios.explorer.getActivePanel();
             tab.search({
                 DocumentName: kimios.explorer.getActivePanel().searchToolbar.criteriaButton.isSearchByName() == true ? value : undefined,
@@ -73,6 +77,7 @@ kimios.search.SearchField = Ext.extend(Ext.form.TextField, {
     },
 
     clearSearch: function () {
+        this.isSearchMode = false;
         this.setValue('');
     },
 
