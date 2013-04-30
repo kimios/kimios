@@ -23,6 +23,10 @@
     <groupId>org.kimios</groupId>
     <artifactId>kimios</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <scm>
+      <connection>scm:git:ssh://git@gitlab.devlib.infra/org-kimios/kimios.git</connection>
+      <developerConnection>scm:git:ssh://git@gitlab.devlib.infra/org-kimios/kimios.git</developerConnection>
+    </scm>
     <repositories>
         <repository>
             <id>kimios-releases</id>
@@ -112,6 +116,14 @@
                 <configuration>
                     <updateReleaseInfo>true</updateReleaseInfo>
                 </configuration>
+            </plugin>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-release-plugin</artifactId>
+              <version>2.4.1</version>
+              <configuration>
+                <tagNameFormat>v@{project.version}</tagNameFormat>
+              </configuration>
             </plugin>
         </plugins>
     </build>
