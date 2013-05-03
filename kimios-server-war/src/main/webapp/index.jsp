@@ -20,7 +20,7 @@
 
 <head>
     <title>Kimios - Open Source Document Management System</title>
-    <link rel="icon" type="image/png" href="<%=request.getContextPath()%>/images/kimios-favico.png"/>
+    <link rel="shortcut icon" type="image/png" href="<%=request.getContextPath()%>/images/kimios-favico.ico"/>
     <style type="text/css">
         #servicesList {
             padding: 16px 16px 16px 16px;
