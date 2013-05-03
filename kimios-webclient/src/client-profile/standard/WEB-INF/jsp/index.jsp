@@ -86,7 +86,7 @@
             src="<%=request.getContextPath()%>/js/client/security/login.js"></script>
     <style rel="stylesheet" type="text/css">
         body {
-            background-image: url(<%=request.getContextPath()%>/images/explorer_background.png);
+            /*background-image: url(<%=request.getContextPath()%>/images/explorer_background.png);*/
             background-repeat: no-repeat;
             background-attachment: fixed;
             background-position: right bottom;

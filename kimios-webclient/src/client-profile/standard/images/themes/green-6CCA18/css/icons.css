@@ -1,0 +1,384 @@
+/*
+ * Kimios - Document Management System Software
+ * Copyright (C) 2012-2013  DevLib'
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 2 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/*
+    Onglets
+*/
+.dm-entity-tab-1, .dm-entity-tab-properties-workspace {
+    background-image: url(../icons/16x16/database.png) !important;
+    background-repeat: no-repeat;
+}
+
+.dm-entity-tab-2, .dm-entity-tab-properties-folder {
+    background-image: url(../icons/16x16/folder.png) !important;
+    background-repeat: no-repeat;
+}
+
+.dm-entity-tab-properties-folder {
+    background-position: center right;
+}
+
+.dm-entity-tab-properties-workspace {
+    background-position: center right;
+}
+
+.home {
+    background-image: url(../icons/16x16/house.png) !important;
+    background-repeat: no-repeat;
+}
+
+.tasks {
+    background-image: url(../icons/16x16/tasks.png) !important;
+    background-repeat: no-repeat;
+}
+
+.comment {
+    background-image: url(../icons/16x16/comment.png) !important;
+    background-repeat: no-repeat;
+}
+
+.studio-cls-wf-up {
+    background-image: url(../icons/16x16/upload.png) !important;
+    background-repeat: no-repeat;
+    background-position: bottom right;
+}
+
+.search {
+    background-image: url(../icons/16x16/search.png) !important;
+    background-repeat: no-repeat;
+    background-position: bottom right;
+}
+
+.exit {
+    background-image: url(../icons/16x16/logout.png) !important;
+    background-repeat: no-repeat;
+}
+
+.configure {
+    background-image: url(../icons/16x16/settings.png) !important;
+    background-repeat: no-repeat;
+}
+
+.refresh {
+    background-image: url(../icons/16x16/refresh.png) !important;
+    background-repeat: no-repeat;
+}
+
+.undo {
+    background-image: url(../icons/16x16/back.png) !important;
+    background-repeat: no-repeat;
+}
+
+.newworkspace {
+    background-image: url(../icons/16x16/workspace-add.png) !important;
+    background-repeat: no-repeat;
+    background-position: bottom right;
+}
+
+.newfolder {
+    background-image: url(../icons/16x16/folder-add.png) !important;
+    background-repeat: no-repeat;
+    background-position: bottom right;
+}
+
+.import {
+    background-image: url(../icons/16x16/upload.png) !important;
+    background-repeat: no-repeat;
+    background-position: bottom right;
+
+}
+
+.owner {
+    background-image: url(../icons/16x16/admin.png) !important;
+    background-repeat: no-repeat;
+    background-position: center right;
+}
+
+.studio {
+    background-image: url(../icons/16x16/studio.png) !important;
+    background-repeat: no-repeat;
+}
+
+.save {
+    background-image: url(../icons/16x16/save.png) !important;
+    background-repeat: no-repeat;
+}
+
+.del-icon {
+    background-image: url(../icons/16x16/cross.png) !important;
+    background-repeat: no-repeat;
+}
+
+.delete {
+    background-image: url(../icons/16x16/delete.png) !important;
+    background-repeat: no-repeat;
+}
+
+.remove {
+    background-image: url(../icons/16x16/delete.png) !important;
+    background-repeat: no-repeat;
+}
+
+.trash {
+    background-image: url(../icons/16x16/trash.png) !important;
+    background-repeat: no-repeat;
+}
+
+.role-workspace {
+    background-image: url(../icons/16x16/add.png) !important;
+    background-repeat: no-repeat;
+}
+
+.add {
+    background-image: url(../icons/16x16/add.png) !important;
+    background-repeat: no-repeat;
+}
+
+.view {
+    background-image: url(../icons/16x16/search.png) !important;
+    background-repeat: no-repeat;
+}
+
+.properties {
+    background-image: url(../icons/16x16/properties.png) !important;
+    background-repeat: no-repeat;
+}
+
+.qaction-bookmarks {
+    background-image: url(../icons/16x16/bookmark.png) !important;
+    background-repeat: no-repeat;
+}
+
+.move {
+    background-image: url(../icons/16x16/move.png) !important;
+    background-repeat: no-repeat;
+}
+
+.txt {
+    background-image: url(../icons/16x16/document.png) !important;
+    background-repeat: no-repeat;
+}
+
+.option {
+    background-image: url(../icons/16x16/meta.png) !important;
+    background-repeat: no-repeat;
+}
+
+.value {
+    background-image: url(../icons/16x16/version.png) !important;
+    background-repeat: no-repeat;
+}
+
+.metavalue {
+    background-image: url(../icons/16x16/metavalue.png) !important;
+    background-repeat: no-repeat;
+}
+
+.studio-cls-wf {
+    background-image: url(../icons/16x16/workflow.png) !important;
+    background-repeat: no-repeat;
+}
+
+.attach {
+    background-image: url(../icons/16x16/link.png) !important;
+    background-repeat: no-repeat;
+}
+
+.reporting {
+    background-image: url(../icons/16x16/reporting.png) !important;
+    background-repeat: no-repeat;
+}
+
+.admin-group-tree-node {
+    background-image: url(../icons/16x16/users.png) !important;
+    background-repeat: no-repeat;
+}
+
+.reindex-run {
+    background-image: url(../icons/16x16/download.png) !important;
+    background-repeat: no-repeat;
+}
+
+.checked-out {
+    background-image: url(../icons/16x16/checkout.png) !important;
+    background-repeat: no-repeat;
+}
+
+.eye {
+    background-image: url(../icons/16x16/view.png) !important;
+    background-repeat: no-repeat;
+}
+
+.accept-status {
+    background-image: url(../icons/16x16/accept.png) !important;
+    background-repeat: no-repeat;
+}
+
+.reject-status {
+    background-image: url(../icons/16x16/reject.png) !important;
+    background-repeat: no-repeat;
+}
+
+.admin-domain-tree-node {
+    background-image: url(../icons/16x16/domain.png) !important;
+    background-repeat: no-repeat;
+}
+
+.adminrole {
+    background-image: url(../icons/16x16/adminrole.png) !important;
+    background-repeat: no-repeat;
+}
+
+.add-user-icon {
+    background-image: url(../icons/16x16/user-add.png) !important;
+    background-repeat: no-repeat;
+}
+
+.delete-user {
+    background-image: url(../icons/16x16/user-remove.png) !important;
+    background-repeat: no-repeat;
+}
+
+.admin-acc-role {
+    background-image: url(../icons/16x16/users.png) !important;
+    background-repeat: no-repeat;
+}
+
+.qaction-properties {
+    background-image: url(../icons/16x16/properties.png) !important;
+    background-repeat: no-repeat;
+}
+
+.admin-acc-domain {
+    background-image: url(../icons/16x16/domain.png) !important;
+    background-repeat: no-repeat;
+}
+
+.admin-acc-domain-prop {
+    background-image: url(../icons/16x16/properties.png) !important;
+    background-repeat: no-repeat;
+}
+
+.admin-user-tree-node {
+    background-image: url(../icons/16x16/user.png) !important;
+    background-repeat: no-repeat;
+}
+
+.add-group-icon {
+    background-image: url(../icons/16x16/user-add.png) !important;
+    background-repeat: no-repeat;
+}
+
+.delete-group {
+    background-image: url(../icons/16x16/user-remove.png) !important;
+    background-repeat: no-repeat;
+}
+
+.user-icon {
+    background-image: url(../icons/16x16/user.png) !important;
+    background-repeat: no-repeat;
+}
+
+.group-icon {
+    background-image: url(../icons/16x16/users.png) !important;
+    background-repeat: no-repeat;
+}
+
+.specialtasks {
+    background-image: url(../icons/16x16/specialtasks.png) !important;
+    background-repeat: no-repeat;
+}
+
+.security-icon {
+    background-image: url(../icons/16x16/security.png) !important;
+    background-repeat: no-repeat;
+}
+
+.reindex {
+    background-image: url(../icons/16x16/reindex.png) !important;
+    background-repeat: no-repeat;
+}
+
+.unlock {
+    background-image: url(../icons/16x16/checkout.png) !important;
+    background-repeat: no-repeat;
+}
+
+.lock {
+    background-image: url(../icons/16x16/checkin.png) !important;
+    background-repeat: no-repeat;
+}
+
+.change-owner {
+    background-image: url(../icons/16x16/user.png) !important;
+    background-repeat: no-repeat;
+}
+
+.session {
+    background-image: url(../icons/16x16/session.png) !important;
+    background-repeat: no-repeat;
+}
+
+.studio-cls-meta-document-type {
+    background-image: url(../icons/16x16/doctype.png) !important;
+    background-repeat: no-repeat;
+}
+
+.studio-cls-meta-feed {
+    background-image: url(../icons/16x16/metafeed.png) !important;
+    background-repeat: no-repeat;
+}
+
+.studio-wf-expand {
+    background-image: url(../icons/16x16/expand.png) !important;
+    background-repeat: no-repeat;
+}
+
+.studio-cls-wf-down {
+    background-image: url(../icons/16x16/arrow-down.png) !important;
+    background-repeat: no-repeat;
+}
+
+.studio-cls-wf-up {
+    background-image: url(../icons/16x16/arrow-up.png) !important;
+    background-repeat: no-repeat;
+}
+
+.studio-wf-status {
+    background-image: url(../icons/16x16/status.png) !important;
+    background-repeat: no-repeat;
+}
+
+.select {
+    background-image: url(../icons/16x16/tick.png) !important;
+    background-repeat: no-repeat;
+}
+
+.cart {
+    background-image: url(../icons/16x16/cart.png) !important;
+    background-repeat: no-repeat;
+}
+
+.compress {
+    background-image: url(../icons/16x16/compress.png) !important;
+    background-repeat: no-repeat;
+}
+
+.news {
+    background-image: url(../icons/16x16/news.png) !important;
+    background-repeat: no-repeat;
+}
