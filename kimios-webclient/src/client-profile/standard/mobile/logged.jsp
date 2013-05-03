@@ -121,11 +121,16 @@
         parentUid = ((Folder) dm).getParentUid();
     } else
         path = "/";
+
+
+    String activeTheme = "green-6CCA18";
+
 %>
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0a2/jquery.mobile-1.0a2.min.css"/>
+  <link rel="shortcut icon" type="image/png" href="<%=request.getContextPath()%>/images/kimios-favico.ico"/>
+  <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0a2/jquery.mobile-1.0a2.min.css"/>
     <script src="http://code.jquery.com/jquery-1.4.4.min.js"></script>
     <script src="http://code.jquery.com/mobile/1.0a2/jquery.mobile-1.0a2.min.js"></script>
     <title>kimios Mobile</title>
@@ -163,24 +168,24 @@
                     if (dm == null) {
                         Workspace[] ww = workspaceController.getWorkspaces(sessionUid);
                         for (Workspace w : ww) {
-                            out.write("<li><img src=\"" + request.getContextPath() + "/images/icons/16x16/database.png\" alt=\"" + w.getName() + "\" class=\"ui-li-icon\" /><a href=\"" + request.getContextPath() + "/mobile/logged.jsp?uid=" + w.getUid() + "\">" + w.getName() + "</a></li>");
+                            out.write("<li><img src=\"" + request.getContextPath() + "/images/themes/" + activeTheme + "/icons/16x16/database.png\" alt=\"" + w.getName() + "\" class=\"ui-li-icon\" /><a href=\"" + request.getContextPath() + "/mobile/logged.jsp?uid=" + w.getUid() + "\">" + w.getName() + "</a></li>");
                             count++;
                         }
                     } else if (dm instanceof Workspace) {
                         Folder[] ff = folderController.getFolders(sessionUid, ((Workspace) dm).getUid(), 1);
                         for (Folder f : ff) {
-                            out.write("<li><img src=\"" + request.getContextPath() + "/images/icons/16x16/folder.png\" alt=\"" + f.getName() + "\" class=\"ui-li-icon\" /><a href=\"" + request.getContextPath() + "/mobile/logged.jsp?uid=" + f.getUid() + "\">" + f.getName() + "</a></li>");
+                            out.write("<li><img src=\"" + request.getContextPath() + "/images/themes/" + activeTheme + "/icons/16x16/folder.png\" alt=\"" + f.getName() + "\" class=\"ui-li-icon\" /><a href=\"" + request.getContextPath() + "/mobile/logged.jsp?uid=" + f.getUid() + "\">" + f.getName() + "</a></li>");
                             count++;
                         }
                     } else if (dm instanceof Folder) {
                         Folder[] ff = folderController.getFolders(sessionUid, ((Folder) dm).getUid(), 2);
                         for (Folder f : ff) {
-                            out.write("<li><img src=\"" + request.getContextPath() + "/images/icons/16x16/folder.png\" alt=\"" + f.getName() + "\" class=\"ui-li-icon\" /><a href=\"" + request.getContextPath() + "/mobile/logged.jsp?uid=" + f.getUid() + "\">" + f.getName() + "</a></li>");
+                            out.write("<li><img src=\"" + request.getContextPath() + "/images/themes/" + activeTheme + "/icons/16x16/folder.png\" alt=\"" + f.getName() + "\" class=\"ui-li-icon\" /><a href=\"" + request.getContextPath() + "/mobile/logged.jsp?uid=" + f.getUid() + "\">" + f.getName() + "</a></li>");
                             count++;
                         }
                         Document[] dd = documentController.getDocuments(sessionUid, ((Folder) dm).getUid());
                         for (Document d : dd) {
-                            out.write("<li><img src=\"" + request.getContextPath() + "/images/icons/16x16/" + getNormalizedExtension(d.getExtension()) + ".png\" alt=\"" + d.getName() + "." + d.getExtension() + "\" class=\"ui-li-icon\" /><a href=\"" + request.getContextPath() + "/mobile/download.jsp?uid=" + d.getUid() + "\" rel=\"external\" target=\"_blank\">" + d.getName() + "." + d.getExtension() + "</a></li>");
+                            out.write("<li><img src=\"" + request.getContextPath() + "/images/fileicons/" + getNormalizedExtension(d.getExtension()) + ".png\" alt=\"" + d.getName() + "." + d.getExtension() + "\" class=\"ui-li-icon\" /><a href=\"" + request.getContextPath() + "/mobile/download.jsp?uid=" + d.getUid() + "\" rel=\"external\" target=\"_blank\">" + d.getName() + "." + d.getExtension() + "</a></li>");
                             count++;
                         }
                     }

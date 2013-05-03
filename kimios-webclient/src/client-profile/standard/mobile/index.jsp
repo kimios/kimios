@@ -36,10 +36,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0a2/jquery.mobile-1.0a2.min.css"/>
+  <link rel="icon" type="image/png" href="<%=request.getContextPath()%>/images/kimios-favico.png"/>
+  <link rel="stylesheet" href="http://code.jquery.com/mobile/1.0a2/jquery.mobile-1.0a2.min.css"/>
     <script src="http://code.jquery.com/jquery-1.4.4.min.js"></script>
     <script src="http://code.jquery.com/mobile/1.0a2/jquery.mobile-1.0a2.min.js"></script>
-    <title>kimios for Mobile</title>
+    <title>Kimios - Mobile Browser</title>
     <style type="text/css">
         div.error-div {
             color: red;

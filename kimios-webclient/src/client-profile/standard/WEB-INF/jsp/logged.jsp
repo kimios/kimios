@@ -45,7 +45,7 @@
     <title>Kimios Web Explorer</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=9">
-    <link rel="icon" type="image/png" href="<%=request.getContextPath()%>/images/kimios-favico.png"/>
+    <link rel="shortcut icon" type="image/png" href="<%=request.getContextPath()%>/images/kimios-favico.ico"/>
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/js/ext/resources/css/ext-all.css"/>
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/js/ext/resources/css/kimios-theme.css"/>
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/client-dm-viewer.css"/>
