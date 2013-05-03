@@ -204,7 +204,7 @@
 
     </dependencies>
     <build>
-        <finalName>kimios</finalName>
+        <finalName>kimios-${project.version}</finalName>
         <!-- copy template kimios configuration file before war packaging -->
         <plugins>
             <plugin>
