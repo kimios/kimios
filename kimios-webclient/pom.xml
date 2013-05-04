@@ -171,8 +171,29 @@
     </build>
     <profiles>
         <profile>
+          <id>general</id>
+          <build>
+            <resources>
+              <resource>
+                <directory>src/main/resources</directory>
+              </resource>
+              <resource>
+                <directory>src/client-settings/general</directory>
+              </resource>
+            </resources>
+          </build>
+        </profile>
+        <profile>
             <id>dev</id>
             <build>
+                <resources>
+                  <resource>
+                    <directory>src/main/resources</directory>
+                  </resource>
+                  <resource>
+                    <directory>src/client-settings/dev</directory>
+                  </resource>
+                </resources>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>

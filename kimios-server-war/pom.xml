@@ -328,6 +328,11 @@
                 <filters>
                     <filter>${project.basedir}/profiles/env-dev.properties</filter>
                 </filters>
+                <resources>
+                  <resource>
+                    <directory>profiles/dev</directory>
+                  </resource>
+                </resources>
             </build>
         </profile>
         <profile>
@@ -339,6 +344,11 @@
                 <filters>
                     <filter>${project.basedir}/profiles/env.properties</filter>
                 </filters>
+                <resources>
+                  <resource>
+                    <directory>profiles/general</directory>
+                  </resource>
+                </resources>
             </build>
         </profile>
     </profiles>
