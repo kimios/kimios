@@ -38,6 +38,10 @@ public class FileCleaner {
      */
     public void cleanTemporaryFiles(File tmpFilesPath) {
         log.info("Cleaning " + tmpFilesPath.getPath() + " ... ");
+        if(!tmpFilesPath.exists()){
+            tmpFilesPath.mkdirs();
+            return;
+        }
         File[] files = tmpFilesPath.listFiles();
 
         if (files == null || files.length == 0) {
