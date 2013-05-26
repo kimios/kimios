@@ -379,6 +379,15 @@ public class FileTransferController
                 if ( !isCompressed )
                 {
                     IOUtils.copyLarge( client.downloadDocumentVersion( sessionId, transac.getUid() ), os );
+
+                    try{
+
+                        os.flush();
+                        os.close();
+
+                    }  catch ( Exception  e){
+
+                    }
                 }
                 else
                 {

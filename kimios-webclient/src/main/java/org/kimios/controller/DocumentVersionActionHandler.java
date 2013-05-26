@@ -108,17 +108,23 @@ public class DocumentVersionActionHandler extends Controller
             if (!pdfFile.exists()) {
                 fileTransferController
                         .downloadFileVersion(sessionUid, dv.getUid(), new FileOutputStream(pdfPath), false);
+
             }
-            List<Map<String, String>> imgPaths =
-                    PdfToImage.convert(doc.getUid(), dv.getUid(), pdfPath, dv.getHashMd5(), dv.getHashSha());
+            List<Map<String, String>> imgPaths = new ArrayList<Map<String, String>>(  );
+
+            Map<String, String> items = new HashMap<String, String>(  );
+            items.put( "num", "0" );
+            items.put( "path", pdfPath );
+            imgPaths.add( items );
+            /*imgPaths = PdfToImage.convert(doc.getUid(), dv.getUid(), pdfPath, dv.getHashMd5(), dv.getHashSha());*/
             return new JSONSerializer().serialize(imgPaths);
         } catch (Exception e) {
             return "{\"success\":false,\"exception\":\"" + e.getMessage() + "\"}";
         } finally {
-            boolean deleted = pdfFile.delete();
+            /*boolean deleted = pdfFile.delete();
             if (!deleted) {
                 pdfFile.deleteOnExit();
-            }
+            }*/
         }
     }
 
@@ -131,8 +137,11 @@ public class DocumentVersionActionHandler extends Controller
             imgPath = parameters.get("path");
             String filename = imgPath.substring(imgPath.lastIndexOf('/')).substring(1);
             int length = (int) (new File(imgPath).length());
-            resp.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
-            resp.setContentType("image/png");
+            resp.setHeader("Content-Disposition", "inline; filename=\"" + filename + "\"");
+            if(filename.endsWith( "pdf")){
+                resp.setContentType( "application/pdf" );
+            } else
+                resp.setContentType("image/png");
             resp.setContentLength(length);
             String temporaryFilesPath = ConfigurationManager.getValue(Config.DM_TMP_FILES_PATH);
             int transferChunkSize = Integer.parseInt(ConfigurationManager.getValue(Config.DM_CHUNK_SIZE));

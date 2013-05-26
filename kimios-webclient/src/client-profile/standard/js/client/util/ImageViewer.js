@@ -60,6 +60,11 @@ kimios.util.ImageViewer = Ext.extend(Ext.Panel, {
                this.closeButton
                ]
     });
+
+
+    //
+
+
     
     var html = '<div id="kimios-image-viewer">';
     html += '<span class="kimios-pdf-title">'+config.pojo.name+'</span>';
@@ -71,12 +76,29 @@ kimios.util.ImageViewer = Ext.extend(Ext.Panel, {
     html += '<tr><td class="kimios-pdf-label">'+kimios.lang('Author')+kimios.lang('LabelSeparator')+'&nbsp;</td><td class="kimios-pdf-value">'+config.pojo.owner+'@'+config.pojo.ownerSource+'</td></tr>';
     html += '<tr><td class="kimios-pdf-label">'+kimios.lang('CreationDate')+kimios.lang('LabelSeparator')+'&nbsp;</td><td class="kimios-pdf-value">'+kimios.date(config.pojo.creationDate)+'</td></tr>';
     html += '</table>';
-    if (config.pojo.extension == 'pdf'){
+    if (config.pojo.extension == 'pdf' || config.pojo.extension == 'PDF'){
       html += '<br />';
-      for (var i=0; i<config.links.length; i++){
+      /*for (var i=0; i<config.links.length; i++){
         html += '<span class="kimios-pdf-page">'+kimios.lang('PDFPage')+' '+config.links[i].num+'</span><br/>';
         html += '<img class="kimios-pdf-image" alt="'+kimios.lang('Wait')+' ('+config.links[i].num+'/'+config.links.length+')" src="'+getBackEndUrl('DocumentVersion') + '&action=getTemporaryFile&uid='+config.pojo.uid+'&path='+config.links[i].path+'"><br />';
-      }
+      }*/
+        for (var i=0; i<config.links.length; i++){
+
+
+            var href=  getBackEndUrl('DocumentVersion') + '&action=getTemporaryFile&uid='+config.pojo.uid+'&path='+config.links[i].path;
+
+            var width = '100%';
+            var height = '100%';
+            var type = 'application/pdf';
+
+
+
+            html += '<object width="' + width + '" height="' + height + '" data="' + href + '" type="' + type + '">';
+            //html += '<param name="Src" value="' + href + '" />';
+            //html += '<embed width="' + width + '" height="' + height + '" type="' + type + '" href="' + href + '" src="'+ href + '" />';
+            html += '</object>';
+
+        }
     }else{
       html += '<img class="kimios-pdf-image" alt="'+kimios.lang('Wait')+'" src="'+config.links[0].path+'"><br />';
     }

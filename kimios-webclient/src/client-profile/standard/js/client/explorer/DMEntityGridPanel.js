@@ -272,7 +272,9 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
                     if (kimios.isViewableExtension(selected.data.extension)) {
                         kimios.viewDoc(selected.data);
                     } else {
-                        window.location.href = kimios.util.getDocumentLink(selected.data.uid);
+                        //window.location.href = kimios.util.getDocumentLink(selected.data.uid);
+                        kimios.util.getDocumentDownloadFrame(function(){alert('Document Unavailable. Please Contact you administrator')},
+                                                             kimios.util.getDocumentLink(selected.data.uid));
                     }
                 } else {
                     this.loadEntity({

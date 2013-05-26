@@ -26,7 +26,7 @@ kimios = {
     setImplPackage: function (impl) {
         this.implPackage = impl;
     },
-    viewableExtensions: new Array('png', 'jpg', 'jpeg', 'tif', 'tiff', 'gif'),
+    viewableExtensions: new Array('png', 'jpg', 'jpeg', 'tif', 'tiff', 'gif', 'pdf', 'PDF'),
 
     isViewableExtension: function (ext) {
         var exts = kimios.viewableExtensions;
@@ -76,7 +76,7 @@ kimios = {
         }
     },
     viewDoc: function (pojo) {
-        if (pojo.extension == 'pdf') {
+        if (pojo.extension == 'pdf' || pojo.extension == 'PDF') {
             kimios.mask();
             var store = new DmsJsonStore({
                 url: 'DocumentVersion',
@@ -130,6 +130,15 @@ kimios = {
             return getBackEndUrl('DocumentVersion')
                 + '&action=GetDocumentVersion&docUid=' + uid + '&verUid='
                 + versionUid;
+        },
+        getDocumentDownloadFrame: function(handler, url){
+            var iframe = Ext.DomHelper.createDom({tag: 'iframe'});
+            var elem = new Ext.Element(iframe, false);
+            if(handler)
+                elem.addListener('load', handler);
+
+            elem.set('src', url);
+            Ext.getBody().appendChild(elem);
         }
     },
 
