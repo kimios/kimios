@@ -47,7 +47,7 @@ kimios.picker.SecurityEntityPicker = Ext.extend(Ext.util.Observable, {
     {
 
         var title = (this.title ? this.title : 'No title');
-        var icon = (this.iconCls ? this.iconCls : 'q_logo_small');
+        var icon = (this.iconCls ? this.iconCls : 'admin-group-tree-node');
 
         var domainCombo = new Ext.form.ComboBox({
             name:'name',
