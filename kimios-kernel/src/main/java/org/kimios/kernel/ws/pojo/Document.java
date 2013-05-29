@@ -375,4 +375,33 @@ public class Document implements Serializable
     {
         this.versionUpdateDate = versionUpdateDate;
     }
+
+    @Override
+    public String toString()
+    {
+        return "Document{" +
+            "uid=" + uid +
+            ", name='" + name + '\'' +
+            ", owner='" + owner + '\'' +
+            ", ownerSource='" + ownerSource + '\'' +
+            ", creationDate=" + creationDate +
+            ", updateDate=" + updateDate +
+            ", versionCreationDate=" + versionCreationDate +
+            ", versionUpdateDate=" + versionUpdateDate +
+            ", folderUid=" + folderUid +
+            ", mimeType='" + mimeType + '\'' +
+            ", extension='" + extension + '\'' +
+            ", checkedOut=" + checkedOut +
+            ", checkoutUser='" + checkoutUser + '\'' +
+            ", checkoutUserSource='" + checkoutUserSource + '\'' +
+            ", checkoutDate=" + checkoutDate +
+            ", length=" + length +
+            ", workflowStatusUid=" + workflowStatusUid +
+            ", workflowStatusName='" + workflowStatusName + '\'' +
+            ", isOutOfWorkflow=" + isOutOfWorkflow +
+            ", documentTypeName='" + documentTypeName + '\'' +
+            ", documentTypeUid=" + documentTypeUid +
+            ", path='" + path + '\'' +
+            '}';
+    }
 }

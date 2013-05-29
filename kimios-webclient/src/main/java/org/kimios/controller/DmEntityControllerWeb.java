@@ -143,7 +143,7 @@ public class DmEntityControllerWeb extends Controller
                         try {
                             qNodes.add(new DMEntity(d));
                         } catch (Exception e) {
-
+                            log.error( "Error on pojo convert", e);
                         }
                     }
                 }
