@@ -131,14 +131,28 @@ kimios = {
                 + '&action=GetDocumentVersion&docUid=' + uid + '&verUid='
                 + versionUid;
         },
-        getDocumentDownloadFrame: function(handler, url){
-            var iframe = Ext.DomHelper.createDom({tag: 'iframe'});
-            var elem = new Ext.Element(iframe, false);
-            if(handler)
-                elem.addListener('load', handler);
+        download: function(url){
 
-            elem.set('src', url);
-            Ext.getBody().appendChild(elem);
+            if(!kimios.util.kdliframe){
+                kimios.util.kdliframe = Ext.DomHelper.createDom(
+                        {
+                            tag: 'iframe',
+                            id: 'kdl-iframe'
+
+                        });
+                var first = true;
+                var elem = new Ext.Element(kimios.util.kdliframe, false);
+                elem.addListener('load', function(){
+                    if(!first || (Ext.isIE || Ext.isGecko || Ext.isGecko2 || Ext.isGecko3)){
+                        alert('An error happend with Document Access. Please contact your administrator');
+                    }
+                    first = false;
+                });
+                Ext.getBody().appendChild(elem);
+            }
+
+            var it = Ext.get(kimios.util.kdliframe);
+            kimios.util.kdliframe.setAttribute('src', url);
         }
     },
 

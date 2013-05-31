@@ -518,9 +518,13 @@ kimios.ContextMenu = new function () {
             scope: this,
             handler: function () {
                 if (this.context == 'versions') {
-                    window.location.href = kimios.util.getDocumentVersionLink(this.dmEntityPojo.uid, this.dmEntityPojo.versionUid);
+                    kimios.util.download(
+                            kimios.util.getDocumentVersionLink(this.dmEntityPojo.uid, this.dmEntityPojo.versionUid)
+                    );
                 } else {
-                    window.location.href = kimios.util.getDocumentLink(this.dmEntityPojo.uid);
+                    kimios.util.download(
+                            kimios.util.getDocumentLink(this.dmEntityPojo.uid)
+                    );
                 }
             }
         });
