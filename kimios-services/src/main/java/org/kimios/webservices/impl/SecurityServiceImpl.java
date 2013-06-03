@@ -21,6 +21,7 @@ import java.util.Vector;
 
 import javax.jws.WebService;
 
+import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.kimios.kernel.security.Session;
 import org.kimios.kernel.user.AuthenticationSource;
 import org.kimios.kernel.user.Group;
