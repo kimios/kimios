@@ -23,6 +23,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
+import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.kimios.kernel.ws.pojo.Workspace;
 
 /**
@@ -30,6 +31,7 @@ import org.kimios.kernel.ws.pojo.Workspace;
  */
 @Path("/workspace")
 @WebService(targetNamespace = "http://kimios.org", serviceName = "WorkspaceService")
+@CrossOriginResourceSharing(allowAllOrigins = true)
 public interface WorkspaceService
 {
     @GET

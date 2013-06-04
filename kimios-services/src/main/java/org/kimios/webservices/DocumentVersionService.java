@@ -26,6 +26,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
+import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.kimios.kernel.ws.pojo.DocumentComment;
 import org.kimios.kernel.ws.pojo.DocumentVersion;
 import org.kimios.kernel.ws.pojo.Meta;
@@ -35,6 +36,7 @@ import org.kimios.kernel.ws.pojo.Meta;
  */
 @Path("/document-version")
 @WebService(targetNamespace = "http://kimios.org", serviceName = "DocumentVersionService")
+@CrossOriginResourceSharing(allowAllOrigins = true)
 public interface DocumentVersionService
 {
     @GET

@@ -17,6 +17,14 @@
 package org.kimios.webservices;
 
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
+import javax.jws.WebParam;
+import javax.jws.WebService;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+
+import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.kimios.kernel.ws.pojo.Bookmark;
 import org.kimios.kernel.ws.pojo.Document;
 import org.kimios.kernel.ws.pojo.SymbolicLink;
@@ -34,7 +42,8 @@ import java.io.InputStream;
  */
 @Path("/document")
 @WebService(targetNamespace = "http://kimios.org", serviceName = "DocumentService")
-public interface DocumentService {
+@CrossOriginResourceSharing(allowAllOrigins = true)
+public interface DocumentService
     @GET
     @Path("/getDocument")
     @Produces("application/json")
