@@ -43,7 +43,7 @@ public class Enumeration extends MetaFeedImpl
     @ElementCollection(fetch = FetchType.EAGER)
     @Fetch(FetchMode.SUBSELECT)
     @CollectionTable(name = "enumeration_value",
-            joinColumns = @JoinColumn(name = "enumeration_id"), uniqueConstraints =
+                     joinColumns = @JoinColumn(name = "enumeration_id"), uniqueConstraints =
     @UniqueConstraint(columnNames = { "enumeration_id", "enumeration_value" }))
     @Column(name = "enumeration_value")
     private List<String> values = new ArrayList<String>();
@@ -61,13 +61,10 @@ public class Enumeration extends MetaFeedImpl
     public String[] search(String criteria) throws MetaFeedSearchException
     {
         try {
-            //Vector<String> values = FactoryInstantiator.getInstance().getEnumerationValueFactory().getValues(this.uid);
             Vector<String> v = new Vector<String>();
-
-            Pattern pattern = Pattern.compile("^" + criteria + "$");
             for (String res : values) {
-                Matcher mtch = pattern.matcher(res);
-                if (mtch.groupCount() > 0) {
+                if (res.toLowerCase().contains( criteria.toLowerCase() )
+                    || criteria.trim().length() == 0) {
                     v.add(res);
                 }
             }
