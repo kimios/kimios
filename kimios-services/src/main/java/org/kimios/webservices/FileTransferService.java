@@ -21,6 +21,7 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
@@ -98,7 +99,14 @@ public interface FileTransferService
     @Produces( MediaType.APPLICATION_OCTET_STREAM )
     public InputStream downloadDocumentVersion( @QueryParam("sessionId") String sessionId,
                                                 @QueryParam("transactionId") long transactionId )
-        throws DMServiceException;
+            throws DMServiceException;
+
+    @GET
+    @Path( "/downloadDocument" )
+    @Produces( MediaType.APPLICATION_OCTET_STREAM )
+    public Response downloadDocument( @QueryParam("sessionId") String sessionId,
+                                                @QueryParam("transactionId") long transactionId )
+            throws DMServiceException;
 
 
 }

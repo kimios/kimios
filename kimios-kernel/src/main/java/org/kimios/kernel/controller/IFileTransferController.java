@@ -30,6 +30,7 @@ import org.kimios.kernel.exception.RepositoryException;
 import org.kimios.kernel.exception.TransferIntegrityException;
 import org.kimios.kernel.filetransfer.DataTransfer;
 import org.kimios.kernel.security.Session;
+import org.kimios.kernel.ws.pojo.DocumentWrapper;
 
 public interface IFileTransferController
 {
@@ -80,5 +81,11 @@ public interface IFileTransferController
         Get document version stream for direct version read
     */
     public InputStream getDocumentVersionStream( Session session, long transactionId )
-        throws ConfigException, AccessDeniedException, DataSourceException, IOException;
+            throws ConfigException, AccessDeniedException, DataSourceException, IOException;
+
+    /*
+      Get document version stream for direct version read
+  */
+    public DocumentWrapper getDocumentVersionWrapper( Session session, long transactionId )
+            throws ConfigException, AccessDeniedException, DataSourceException, IOException;
 }
