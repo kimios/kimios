@@ -21,14 +21,14 @@
     <parent>
         <artifactId>kimios</artifactId>
         <groupId>org.kimios</groupId>
-        <version>1.0</version>
+        <version>1.1-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.kimios</groupId>
     <artifactId>kimios-convert</artifactId>
-    <version>1.0</version>
+    <version>1.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>kimios-convert</name>
