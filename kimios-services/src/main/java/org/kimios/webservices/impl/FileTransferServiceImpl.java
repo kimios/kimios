@@ -152,18 +152,19 @@ public class FileTransferServiceImpl
 
             Session session = getHelper().getSession(sessionId);
             DocumentWrapper dw = transferController.getDocumentVersionWrapper(session, transactionId);
-
             Response.ResponseBuilder response = Response.ok((Object) new File(dw.getStoragePath()));
-
             response.header("Content-Description", "File Transfer");
-            response.header("Content-Type", "application/octet-stream");
-//            response.header("Content-Type", "application/force-download");
+            response.header("Content-Type", dw.getContentType());
             response.header("Content-Transfer-Encoding", "binary");
             response.header("Expires", "0");
             response.header("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
             response.header("Pragma", "public");
             response.header("Content-Length", dw.getLength());
             response.header("Content-Disposition", "attachment; filename=\"" + dw.getFilename() + "\"");
+
+            System.out.println(">>>>>> Content-Type: " + dw.getContentType());
+            System.out.println(">>>>>> Content-Length: " + dw.getLength());
+
             return response.build();
 
 
