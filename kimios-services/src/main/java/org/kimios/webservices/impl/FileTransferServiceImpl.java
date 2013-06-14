@@ -161,10 +161,6 @@ public class FileTransferServiceImpl
             response.header("Pragma", "public");
             response.header("Content-Length", dw.getLength());
             response.header("Content-Disposition", "attachment; filename=\"" + dw.getFilename() + "\"");
-
-            System.out.println(">>>>>> Content-Type: " + dw.getContentType());
-            System.out.println(">>>>>> Content-Length: " + dw.getLength());
-
             return response.build();
 
 
