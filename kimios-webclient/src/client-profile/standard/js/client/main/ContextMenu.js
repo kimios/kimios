@@ -106,24 +106,6 @@ kimios.ContextMenu = new function () {
 
         // bookmarks
         else if (context == 'bookmarks') {
-
-            switch (dmEntityPojo.type) {
-                case 1: //workspace
-                    return this.workspaceMenu;
-                    break;
-                case 2: //folder
-                    return this.folderMenu;
-                    break;
-                case 3: //document
-                    var ext = dmEntityPojo.extension.toLowerCase();
-                    if (kimios.isViewableExtension(ext) || ext.toLowerCase() == 'pdf') {
-                        return this.viewableDocumentMenu;
-                    } else {
-                        return this.documentMenu;
-                    }
-                    break;
-            }
-
             return this.bookmarksMenu;
         }
 
