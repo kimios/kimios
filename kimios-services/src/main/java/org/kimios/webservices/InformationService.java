@@ -16,6 +16,8 @@
  */
 package org.kimios.webservices;
 
+import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
+
 import java.util.Date;
 
 import javax.jws.WebParam;
@@ -30,6 +32,7 @@ import javax.ws.rs.QueryParam;
  */
 @Path("/information")
 @WebService(targetNamespace = "http://kimios.org", serviceName = "InformationService")
+@CrossOriginResourceSharing(allowAllOrigins = true)
 public interface InformationService
 {
     @GET

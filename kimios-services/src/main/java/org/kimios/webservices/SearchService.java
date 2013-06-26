@@ -22,6 +22,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
+import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.kimios.kernel.index.query.model.SearchRequest;
 import org.kimios.kernel.index.query.model.SearchResponse;
 import org.kimios.kernel.ws.pojo.DMEntity;
@@ -34,6 +35,7 @@ import java.util.List;
  */
 @Path( "/search" )
 @WebService( targetNamespace = "http://kimios.org", serviceName = "SearchService" )
+@CrossOriginResourceSharing(allowAllOrigins = true)
 public interface SearchService
 {
     @GET

@@ -25,6 +25,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
+import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.kimios.kernel.ws.pojo.DocumentWorkflowStatusRequest;
 import org.kimios.kernel.ws.pojo.WorkflowStatus;
 
@@ -34,6 +35,7 @@ import org.kimios.kernel.ws.pojo.WorkflowStatus;
  */
 @Path("/notification")
 @WebService(targetNamespace = "http://kimios.org", serviceName = "NotificationService")
+@CrossOriginResourceSharing(allowAllOrigins = true)
 public interface NotificationService
 {
     @GET

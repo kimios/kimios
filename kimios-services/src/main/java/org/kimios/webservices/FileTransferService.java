@@ -25,6 +25,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
+import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.kimios.kernel.ws.pojo.DataTransaction;
 
 import java.io.InputStream;
@@ -34,6 +35,7 @@ import java.io.InputStream;
  */
 @Path("/filetransfer")
 @WebService(targetNamespace = "http://kimios.org", serviceName = "FileTransferService")
+@CrossOriginResourceSharing(allowAllOrigins = true)
 public interface FileTransferService
 {
     @GET

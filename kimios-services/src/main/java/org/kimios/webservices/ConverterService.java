@@ -1,5 +1,7 @@
 package org.kimios.webservices;
 
+import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
+
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.ws.rs.GET;
@@ -11,6 +13,7 @@ import javax.ws.rs.core.Response;
 
 @Path("/converter")
 @WebService(targetNamespace = "http://kimios.org", serviceName = "ConverterService")
+@CrossOriginResourceSharing(allowAllOrigins = true)
 public interface ConverterService {
 
     /**

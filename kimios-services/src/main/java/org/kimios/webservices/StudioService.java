@@ -23,6 +23,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
+import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.kimios.kernel.ws.pojo.DocumentType;
 import org.kimios.kernel.ws.pojo.MetaFeed;
 import org.kimios.kernel.ws.pojo.Workflow;
@@ -35,6 +36,7 @@ import org.kimios.kernel.ws.pojo.WorkflowStatusManager;
  */
 @Path("/studio")
 @WebService(targetNamespace = "http://kimios.org", serviceName = "StudioService")
+@CrossOriginResourceSharing(allowAllOrigins = true)
 public interface StudioService
 {
     @GET
