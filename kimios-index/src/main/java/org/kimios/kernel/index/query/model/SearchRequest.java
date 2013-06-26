@@ -26,7 +26,9 @@ import java.util.List;
  */
 
 @Entity
-@Table(name = "searches")
+@Table(name = "searches",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"search_name", "owner", "owner_source"})
+)
 @SequenceGenerator(allocationSize = 1, name = "seq", sequenceName = "search_id_sed")
 public class SearchRequest {
 
@@ -36,7 +38,7 @@ public class SearchRequest {
     private Long id;
 
 
-    @Column(name = "search_name", nullable = false, unique = true)
+    @Column(name = "search_name", nullable = false)
     private String name;
 
 
