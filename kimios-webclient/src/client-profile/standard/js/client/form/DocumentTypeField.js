@@ -45,5 +45,10 @@ kimios.form.DocumentTypeField = Ext.extend(Ext.form.ComboBox, {
                 name: kimios.lang('NoDocumentType')
             }));
         }, this);
+
+        // force combo to reload
+        this.on('expand', function (combo) {
+            this.store.load({});
+        }, this);
     }
 });
