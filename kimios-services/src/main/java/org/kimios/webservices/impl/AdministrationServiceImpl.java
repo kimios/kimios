@@ -370,7 +370,7 @@ public class AdministrationServiceImpl extends CoreService implements Administra
 
             session = getHelper().getSession(sessionUid);
 
-            administrationController.reindex(session, path);
+            searchManagementController.reindex(session, path);
         } catch (Exception ex) {
             throw getHelper().convertException(ex);
         }
@@ -384,7 +384,7 @@ public class AdministrationServiceImpl extends CoreService implements Administra
 
             session = getHelper().getSession(sessionUid);
 
-            int progress = administrationController.getReindexProgress(session);
+            int progress = searchManagementController.getReindexProgress(session);
 
             return progress;
         } catch (Exception ex) {

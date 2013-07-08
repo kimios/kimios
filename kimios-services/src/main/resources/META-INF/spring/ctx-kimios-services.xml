@@ -56,6 +56,7 @@
         <property name="reportingController" ref="reportingController"/>
         <property name="administrationController" ref="administrationController"/>
         <property name="searchController" ref="searchController"/>
+        <property name="searchManagementController" ref="searchManagementController" />
         <property name="ruleController" ref="rulesController"/>
         <property name="extensionController" ref="extensionController"/>
         <property name="converterController" ref="converterController"/>

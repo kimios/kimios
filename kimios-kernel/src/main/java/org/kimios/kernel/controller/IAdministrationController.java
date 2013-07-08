@@ -201,20 +201,6 @@ public interface IAdministrationController
             ConfigException, DataSourceException;
 
     /* (non-Javadoc)
-    * @see org.kimios.kernel.controller.impl.IAdministrationController#reindex(org.kimios.kernel.security.Session, java.lang.String)
-    */
-    public void reindex(Session session, String path)
-            throws AccessDeniedException, IndexException, ConfigException,
-            DataSourceException;
-
-    /* (non-Javadoc)
-    * @see org.kimios.kernel.controller.impl.IAdministrationController#getReindexProgress(org.kimios.kernel.security.Session)
-    */
-    public int getReindexProgress(Session session)
-            throws AccessDeniedException, IndexException, ConfigException,
-            DataSourceException;
-
-    /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IAdministrationController#getCheckedOutDocuments(org.kimios.kernel.security.Session)
     */
     public List<Document> getCheckedOutDocuments(Session session)

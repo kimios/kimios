@@ -23,8 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.kimios.kernel.dms.metafeeds.MetaFeedManager;
-import org.kimios.kernel.index.FiltersMapper;
 import org.kimios.kernel.system.DmsModule;
 import org.kimios.kernel.system.RepositoryCleaner;
 import org.kimios.utils.configuration.ConfigurationManager;

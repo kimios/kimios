@@ -14,23 +14,21 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kimios.kernel.index.filters;
+package org.kimios.kernel.index.filters.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.hssf.extractor.ExcelExtractor;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.kimios.kernel.index.IndexFilter;
 
-public class ExcelXFilter implements IndexFilter
+public class ExcelFilter implements IndexFilter
 {
     public String getBody(InputStream in) throws IOException
     {
-        XWPFDocument doc = new XWPFDocument(in);
-        XWPFWordExtractor ex = new XWPFWordExtractor(doc);
-        String text = ex.getText();
-        return text;
+        ExcelExtractor extractor = new ExcelExtractor(new HSSFWorkbook(in));
+        return new String(extractor.getText().getBytes("UTF-8"), "UTF-8");
     }
 }
 

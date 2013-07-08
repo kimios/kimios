@@ -14,28 +14,22 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kimios.kernel.index.filters;
+package org.kimios.kernel.index.filters.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.pdfbox.cos.COSDocument;
-import org.apache.pdfbox.pdfparser.PDFParser;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.util.PDFTextStripper;
+import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.kimios.kernel.index.IndexFilter;
 
-public class PDFFilter implements IndexFilter
+public class WordFilter implements IndexFilter
 {
     public String getBody(InputStream in) throws IOException
     {
-        PDFParser parser = new PDFParser(in);
-        parser.parse();
-        COSDocument cosDoc = parser.getDocument();
-        PDDocument pDDoc = new PDDocument(cosDoc);
-        String out = new PDFTextStripper().getText(pDDoc);
-        pDDoc.close();
-        return out;
+
+        WordExtractor extractor = new WordExtractor(in);
+        String tmp = new String(extractor.getText().getBytes("UTF-8"), "UTF-8");
+        return tmp;
     }
 }
 

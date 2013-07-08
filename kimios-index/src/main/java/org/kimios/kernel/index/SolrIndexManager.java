@@ -27,8 +27,10 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.Vector;
 
+
 import org.apache.lucene.search.Query;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrResponse;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.FacetField;
@@ -38,6 +40,7 @@ import org.apache.solr.client.solrj.util.ClientUtils;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
+import org.apache.solr.common.util.SimpleOrderedMap;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.controller.IPathController;
 import org.kimios.kernel.dms.DMEntity;
@@ -52,11 +55,13 @@ import org.kimios.kernel.dms.MetaValue;
 import org.kimios.kernel.dms.WorkflowStatus;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.IndexException;
+import org.kimios.kernel.index.filters.impl.GlobalFilter;
 import org.kimios.kernel.index.query.factory.DocumentFactory;
 import org.kimios.kernel.index.query.model.SearchResponse;
 import org.kimios.kernel.security.DMEntityACL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 public class SolrIndexManager
     implements ISolrIndexManager
@@ -201,29 +206,34 @@ public class SolrIndexManager
 
         doc.addField( "DocumentCheckout", lock != null );
 
-        if(lock != null){
-            doc.addField( "DocumentCheckoutOwnerId", lock.getUser());
-            doc.addField( "DocumentCheckoutOwnerSource", lock.getUserSource());
-            doc.addField( "DocumentCheckoutDate", lock.getDate());
+        if ( lock != null )
+        {
+            doc.addField( "DocumentCheckoutOwnerId", lock.getUser() );
+            doc.addField( "DocumentCheckoutOwnerSource", lock.getUserSource() );
+            doc.addField( "DocumentCheckoutDate", lock.getDate() );
         }
         // DocumentOutWorkflow
 
-
-        DocumentWorkflowStatusRequest req = FactoryInstantiator.getInstance().getDocumentWorkflowStatusRequestFactory()
-            .getLastPendingRequest( document );
-        DocumentWorkflowStatus st = FactoryInstantiator.getInstance()
-            .getDocumentWorkflowStatusFactory().getLastDocumentWorkflowStatus( document.getUid() );
+        DocumentWorkflowStatusRequest req =
+            FactoryInstantiator.getInstance().getDocumentWorkflowStatusRequestFactory().getLastPendingRequest(
+                document );
+        DocumentWorkflowStatus st =
+            FactoryInstantiator.getInstance().getDocumentWorkflowStatusFactory().getLastDocumentWorkflowStatus(
+                document.getUid() );
         boolean outOfWorkflow = true;
-        if(req != null){
+        if ( req != null )
+        {
             outOfWorkflow = false;
         }
-        if(st != null){
+        if ( st != null )
+        {
 
-            WorkflowStatus stOrg = FactoryInstantiator.getInstance().getWorkflowStatusFactory()
-                .getWorkflowStatus( st.getWorkflowStatusUid() );
-            doc.addField( "DocumentWorkflowStatusName", stOrg.getName());
+            WorkflowStatus stOrg = FactoryInstantiator.getInstance().getWorkflowStatusFactory().getWorkflowStatus(
+                st.getWorkflowStatusUid() );
+            doc.addField( "DocumentWorkflowStatusName", stOrg.getName() );
             doc.addField( "DocumentWorkflowStatusUid", st.getWorkflowStatusUid() );
-            if(stOrg.getSuccessorUid() == null){
+            if ( stOrg.getSuccessorUid() == null )
+            {
                 outOfWorkflow = true;
             }
         }
@@ -271,16 +281,12 @@ public class SolrIndexManager
         if(document.getAddOnDatas() != null)
             doc.addField("DocumentRawAddonDatas", document.getAddOnDatas());
         Object body = null;
+        Map<String, Object> metaDatas = null;
         try
         {
-            IndexFilter filter = FiltersMapper.getInstance().getFiltersFor( document.getExtension() );
-            log.debug(
-                document.getExtension() + " --> " + ( filter != null ? filter.getClass().getName() : "No filter" ) );
-            if ( filter != null )
-            {
-                body = filter.getBody( version.getInputStream() );
-                log.debug( (String) body );
-            }
+            GlobalFilter globalFilter = new GlobalFilter();
+            body = globalFilter.getFileBody( document, version.getInputStream() );
+            metaDatas = globalFilter.getMetaDatas();
         }
         catch ( Throwable ex )
         {
@@ -293,6 +299,13 @@ public class SolrIndexManager
         if ( body instanceof String )
         {
             doc.addField( "DocumentBody", (String) body );
+        }
+        if ( metaDatas != null )
+        {
+            for ( String mKey : metaDatas.keySet() )
+            {
+                doc.addField( "FileMetaData_" + mKey, metaDatas.get( mKey ) );
+            }
         }
 
         List<DMEntityACL> acls =
@@ -567,6 +580,32 @@ public class SolrIndexManager
         {
             throw new IndexException( ex, ex.getMessage() );
         }
+    }
+
+    public List<String> filterFields()
+    {
+
+        try
+        {
+            SolrQuery query = new SolrQuery();
+            query.setQueryType( "luke" );
+            query.setQuery( "numTerms=0" );
+            SolrResponse response = solr.query( query );
+            SimpleOrderedMap items = (SimpleOrderedMap) response.getResponse().get( "fields" );
+            List<String> fieldList = new ArrayList<String>();
+            for ( int u = 0; u < items.size(); u++ )
+            {
+                fieldList.add( items.getName( u ) );
+            }
+
+            return fieldList;
+        }
+        catch ( Exception e )
+        {
+            throw new IndexException( e, e.getMessage() );
+        }
+
+
     }
 
     public IPathController getPathController()

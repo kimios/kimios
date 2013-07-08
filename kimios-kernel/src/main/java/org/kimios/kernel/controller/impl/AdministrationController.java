@@ -496,36 +496,6 @@ public class AdministrationController extends AKimiosController implements IAdmi
     }
 
     /* (non-Javadoc)
-    * @see org.kimios.kernel.controller.impl.IAdministrationController#reindex(org.kimios.kernel.security.Session, java.lang.String)
-    */
-    public void reindex(Session session, String path)
-            throws AccessDeniedException, IndexException, ConfigException, DataSourceException
-    {
-        if (securityFactoryInstantiator.getRoleFactory()
-                .getRole(Role.ADMIN, session.getUserName(), session.getUserSource()) != null)
-        {
-            indexManager.reindex(path);
-        } else {
-            throw new AccessDeniedException();
-        }
-    }
-
-    /* (non-Javadoc)
-    * @see org.kimios.kernel.controller.impl.IAdministrationController#getReindexProgress(org.kimios.kernel.security.Session)
-    */
-    public int getReindexProgress(Session session)
-            throws AccessDeniedException, IndexException, ConfigException, DataSourceException
-    {
-        if (securityFactoryInstantiator.getRoleFactory()
-                .getRole(Role.ADMIN, session.getUserName(), session.getUserSource()) != null)
-        {
-            return indexManager.getReindexProgression();
-        } else {
-            throw new AccessDeniedException();
-        }
-    }
-
-    /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IAdministrationController#getCheckedOutDocuments(org.kimios.kernel.security.Session)
     */
     /* (non-Javadoc)

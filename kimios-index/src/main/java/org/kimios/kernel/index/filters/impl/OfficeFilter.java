@@ -14,22 +14,30 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kimios.kernel.index.filters;
+package org.kimios.kernel.index.filters.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.poi.hwpf.extractor.WordExtractor;
+import org.apache.poi.POITextExtractor;
+import org.apache.poi.extractor.ExtractorFactory;
 import org.kimios.kernel.index.IndexFilter;
 
-public class WordFilter implements IndexFilter
+public class OfficeFilter implements IndexFilter
 {
     public String getBody(InputStream in) throws IOException
     {
 
-        WordExtractor extractor = new WordExtractor(in);
-        String tmp = new String(extractor.getText().getBytes("UTF-8"), "UTF-8");
-        return tmp;
+        try {
+            POITextExtractor ex = ExtractorFactory.createExtractor(in);
+            if (ex != null) {
+                return ex.getText();
+            } else {
+                throw new IOException("No Extractor Found");
+            }
+        } catch (Exception e) {
+            throw new IOException(e);
+        }
     }
 }
 

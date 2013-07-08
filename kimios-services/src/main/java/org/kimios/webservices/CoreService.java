@@ -48,6 +48,8 @@ public abstract class CoreService
 
     protected ISearchController searchController;
 
+    protected ISearchManagementController searchManagementController;
+
     protected IAdministrationController administrationController;
 
     protected IPathController pathController;
@@ -225,6 +227,16 @@ public abstract class CoreService
     public void setConverterController(IConverterController convertController)
     {
         this.convertController = convertController;
+    }
+
+    public ISearchManagementController getSearchManagementController()
+    {
+        return searchManagementController;
+    }
+
+    public void setSearchManagementController( ISearchManagementController searchManagementController )
+    {
+        this.searchManagementController = searchManagementController;
     }
 }
 

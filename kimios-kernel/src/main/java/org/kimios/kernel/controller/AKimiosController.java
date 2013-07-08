@@ -26,8 +26,6 @@ public abstract class AKimiosController implements DmsController
 
     protected IACLUpdater aclUpdater;
 
-    protected AbstractIndexManager indexManager;
-
     protected org.kimios.kernel.dms.FactoryInstantiator dmsFactoryInstantiator;
 
     protected org.kimios.kernel.security.FactoryInstantiator securityFactoryInstantiator;
@@ -125,14 +123,5 @@ public abstract class AKimiosController implements DmsController
         this.aclUpdater = aclUpdater;
     }
 
-    public AbstractIndexManager getIndexManager()
-    {
-        return indexManager;
-    }
-
-    public void setIndexManager(AbstractIndexManager indexManager)
-    {
-        this.indexManager = indexManager;
-    }
 }
 

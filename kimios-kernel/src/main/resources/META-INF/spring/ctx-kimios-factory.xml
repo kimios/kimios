@@ -165,7 +165,6 @@
         <property name="transferFactoryInstantiator" ref="transferfi"></property>
         <property name="securityAgent" ref="securityAgent"/>
         <property name="aclUpdater" ref="aclUpdater"/>
-        <property name="indexManager" ref="indexManagerSolr"/>
     </bean>
 
     <bean id="sessionManager" class="org.kimios.kernel.security.SessionManager" factory-method="getInstance"
@@ -225,11 +224,6 @@
             depends-on="sessionFactory,eventHandlerManager">
         <property name="sessionManager" ref="sessionManager"/>
     </bean>
-
-
-    <!-- index filter mapping -->
-    <bean class="org.kimios.kernel.index.FiltersMapper" factory-method="getInstance"
-            init-method="loadFiltersMapping"/>
 
     <!-- meta feeds manager -->
     <bean class="org.kimios.kernel.dms.metafeeds.MetaFeedManager" init-method="init"/>

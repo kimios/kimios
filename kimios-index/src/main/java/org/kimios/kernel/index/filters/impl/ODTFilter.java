@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kimios.kernel.index.filters;
+package org.kimios.kernel.index.filters.impl;
 
 import java.io.File;
 import java.io.FileOutputStream;

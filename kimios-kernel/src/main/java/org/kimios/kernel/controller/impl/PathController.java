@@ -27,9 +27,16 @@ import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.PathException;
 import org.kimios.kernel.security.SecurityAgent;
 import org.kimios.kernel.security.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PathController extends AKimiosController implements IPathController
 {
+
+
+
+    private static Logger logger = LoggerFactory.getLogger(IPathController.class);
+
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IPathController#getDMEntityFromPath(org.kimios.kernel.security.Session, java.lang.String)
     */
@@ -55,8 +62,7 @@ public class PathController extends AKimiosController implements IPathController
         try {
             dm = dmsFactoryInstantiator.getDmEntityFactory().getEntity(path);
         } catch (Exception ex) {
-            System.err.println("An error occured while retrieving path " + path);
-            ex.printStackTrace();
+            logger.error("An error occured while retrieving path " + path, ex);
         }
         if (dm != null) {
             if (!SecurityAgent.getInstance()
@@ -66,7 +72,7 @@ public class PathController extends AKimiosController implements IPathController
             }
             return dm;
         } else {
-            System.err.println("No entry found at the given path : " + path);
+            logger.error("No entry found at the given path : " + path);
             throw new PathException("No entry found at the given path : " + path);
         }
     }

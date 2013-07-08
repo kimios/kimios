@@ -25,22 +25,22 @@
     <file-extension>DOC</file-extension>
     <file-extension>DOCX</file-extension>
     <file-extension>VSD</file-extension>
-    <filter-class>org.kimios.kernel.index.filters.OfficeFilter</filter-class>
+    <filter-class>org.kimios.kernel.index.filters.impl.OfficeFilter</filter-class>
   </filter>
   <filter>
       <file-extension>ODT</file-extension>
       <file-extension>ODS</file-extension>
       <file-extension>ODP</file-extension>
-      <filter-class>org.kimios.kernel.index.filters.ODTFilter</filter-class>
+      <filter-class>org.kimios.kernel.index.filters.impl.ODTFilter</filter-class>
   </filter>
   <filter>
     <file-extension>TXT</file-extension>
     <file-extension>XML</file-extension>
     <file-extension>HTML</file-extension>
-    <filter-class>org.kimios.kernel.index.filters.TXTFilter</filter-class>
+    <filter-class>org.kimios.kernel.index.filters.impl.TXTFilter</filter-class>
   </filter>
   <filter>
     <file-extension>PDF</file-extension>
-    <filter-class>org.kimios.kernel.index.filters.PDFFilter</filter-class>
+    <filter-class>org.kimios.kernel.index.filters.impl.PDFFilter</filter-class>
   </filter>
 </index-filters>

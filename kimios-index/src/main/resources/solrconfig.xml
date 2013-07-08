@@ -99,6 +99,10 @@
 
     </query>
 
+
+
+    <requestHandler name="luke" class="org.apache.solr.handler.admin.LukeRequestHandler" />
+
     <requestDispatcher handleSelect="true">
         <requestParsers enableRemoteStreaming="true"
                 multipartUploadLimitInKB="2048000"/>

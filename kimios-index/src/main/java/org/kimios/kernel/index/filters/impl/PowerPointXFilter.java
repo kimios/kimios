@@ -14,22 +14,23 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kimios.kernel.index.filters;
+package org.kimios.kernel.index.filters.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringWriter;
 
-import org.apache.commons.io.IOUtils;
+import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.kimios.kernel.index.IndexFilter;
 
-public class TXTFilter implements IndexFilter
+public class PowerPointXFilter implements IndexFilter
 {
     public String getBody(InputStream in) throws IOException
     {
-        StringWriter writer = new StringWriter();
-        IOUtils.copy(in, writer);
-        return writer.toString();
+        XWPFDocument doc = new XWPFDocument(in);
+        XWPFWordExtractor ex = new XWPFWordExtractor(doc);
+        String text = ex.getText();
+        return text;
     }
 }
 

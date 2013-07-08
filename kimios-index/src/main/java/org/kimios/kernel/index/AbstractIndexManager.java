@@ -31,7 +31,6 @@ import org.kimios.kernel.security.DMEntityACL;
  * @author Fabien Alin (Farf) <fabien.alin@gmail.com>
  *
  *         Abstract Class handling main index features.
- * @see IndexManager
  */
 public interface AbstractIndexManager
 {

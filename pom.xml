@@ -89,6 +89,7 @@
     <modules>
         <module>kimios-utils</module>
         <module>kimios-exceptions</module>
+        <module>kimios-test</module>
         <module>kimios-kernel</module>
         <module>kimios-index</module>
         <module>kimios-services</module>
