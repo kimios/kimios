@@ -56,6 +56,7 @@ public class ExtensionController extends AKimiosController implements IExtension
             throw new AccessDeniedException();
         }
         DMEntityAttribute attribute = new DMEntityAttribute();
+        attribute.setName(attributeName);
         attribute.setValue(attributeValue);
         attribute.setIndexed(indexed);
         ((DMEntityImpl) entity).getAttributes().put(attributeName, attribute);
