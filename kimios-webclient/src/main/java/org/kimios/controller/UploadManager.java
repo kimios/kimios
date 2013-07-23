@@ -185,7 +185,7 @@ public class UploadManager extends Controller {
                     }
                     if (documentTypeUid > 0) {
                         Map<Meta, String> mMetasValues = DMEntitySecuritiesParser.parseMetasValuesFromJson(sessionUid, metaValues, documentVersionController);
-                        String xmlMeta = XMLGenerators.getMetaDatasDocumentXMLDescriptor(mMetasValues, "MM/dd/yyyy");
+                        String xmlMeta = XMLGenerators.getMetaDatasDocumentXMLDescriptor(mMetasValues, "yyyy-MM-dd");
                         documentVersionController.updateDocumentVersion(sessionUid, docUid, documentTypeUid, xmlMeta);
                     }
                 } else {
