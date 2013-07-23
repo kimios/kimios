@@ -89,6 +89,7 @@ public class StudioController extends AKimiosController implements IStudioContro
             String docTypeName = root.getAttribute("name");
             long parentUid = Long.parseLong(root.getAttribute("document-type-uid"));
             Vector<Meta> metas = this.getMetasFromXml(xmlStream, docTypeUid);
+
             DocumentType t = new DocumentType(-1, docTypeName,
                     dmsFactoryInstantiator.getDocumentTypeFactory().getDocumentType(parentUid));
             dmsFactoryInstantiator.getDocumentTypeFactory().saveDocumentType(t);
@@ -208,11 +209,16 @@ public class StudioController extends AKimiosController implements IStudioContro
                 if (list.item(i).getNodeName().equalsIgnoreCase("meta")) {
                     MetaFeedImpl feed = dmsFactoryInstantiator.getMetaFeedFactory().getMetaFeed(
                             Long.parseLong(list.item(i).getAttributes().getNamedItem("meta_feed").getTextContent()));
-                    v.add(new Meta(Long.parseLong(list.item(i).getAttributes().getNamedItem("uid").getTextContent()),
+                    v.add(
+                            new Meta(Long.parseLong(list.item(i).getAttributes().getNamedItem("uid").getTextContent()),
                             list.item(i).getAttributes()
                                     .getNamedItem("name").getTextContent(), docTypeUid, feed,
                             Integer.parseInt(list.item(i).getAttributes().getNamedItem("meta_type")
-                                    .getTextContent())));
+                                    .getTextContent()), Boolean.parseBoolean(list.item(i).getAttributes()
+                                    .getNamedItem("mandatory").getTextContent()))
+                    );
+
+
                 }
             }
             return v;

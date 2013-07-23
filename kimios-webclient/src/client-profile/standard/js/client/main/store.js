@@ -288,6 +288,10 @@ kimios.store = {
                 {
                     name: 'metaFeedUid',
                     type: 'int'
+                },
+                {
+                    name: 'mandatory',
+                    type: 'boolean'
                 }
             ]
         });
@@ -321,6 +325,10 @@ kimios.store = {
                 {
                     name: 'metaFeedUid',
                     type: 'int'
+                },
+                {
+                    name: 'mandatory',
+                    type: 'boolean'
                 }
             ]
         });
@@ -353,6 +361,10 @@ kimios.store = {
                 {
                     name: 'metaFeedUid',
                     type: 'int'
+                },
+                {
+                    name: 'mandatory',
+                    type: 'boolean'
                 }
             ],
             autoLoad: true

@@ -210,7 +210,7 @@ public class DocumentActionHandler
                 value = mValue.getValue();
             }
             metaValues.add( new Meta( mValue.getMetaId(), mValue.getMeta().getName(), value,
-                                      mValue.getMeta().getMetaType(), mValue.getMeta().getMetaFeedUid() ) );
+                                      mValue.getMeta().getMetaType(), mValue.getMeta().getMetaFeedUid(), mValue.getMeta().isMandatory() ) );
             for ( org.kimios.kernel.ws.pojo.Meta meta : mServ )
             {
                 if ( mValue.getMeta().getUid() == meta.getUid() )

@@ -61,9 +61,9 @@ public class DMEntitySecuritiesParser {
             long uid = Long.parseLong(it.get("uid").toString());
             Meta meta = versionController.getMeta(sessionUid, uid);
             String mValue = "";
-            if(meta.getMetaType() == 3){
-                mValue = (it.get("value").toString().length() > 0 ? it.get("value").toString().substring(0, 10) : "");
-            }else
+//            if(meta.getMetaType() == 3){
+//                mValue = (it.get("value").toString().length() > 0 ? it.get("value").toString().substring(0, 10) : "");
+//            }else
                 mValue = it.get("value").toString();
             mMetasValues.put(meta, mValue);
         }

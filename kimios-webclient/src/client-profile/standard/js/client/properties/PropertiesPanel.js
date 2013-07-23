@@ -15,10 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 kimios.properties.PropertiesPanel = Ext.extend(Ext.TabPanel, {
-    getWindow:function () {
+    getWindow: function () {
         return this.window;
     },
-    constructor:function (config) {
+    constructor: function (config) {
         this.window = config.window;
         this.dmEntityPojo = config.dmEntityPojo;
 
@@ -45,16 +45,16 @@ kimios.properties.PropertiesPanel = Ext.extend(Ext.TabPanel, {
         this.border = false;
 
         this.saveButton = new Ext.Button({
-            text:kimios.lang('Save'),
-            scope:this,
-            hidden:true,
-            handler:function (btn) {
-                btn.setDisabled(true);
+            text: kimios.lang('Save'),
+            scope: this,
+            hidden: true,
+            handler: function (btn) {
+//                btn.setDisabled(true);
                 if (this.multipleMode == false) {
                     var entityName = this.dmEntityPanel.nameField.getValue();
                     if (entityName == null || entityName == '') {
                         kimios.MessageBox.exception({
-                            exception:kimios.lang('DocumentNameEmptyJS')
+                            exception: kimios.lang('DocumentNameEmptyJS')
                         });
                         return;
                     }
@@ -105,9 +105,9 @@ kimios.properties.PropertiesPanel = Ext.extend(Ext.TabPanel, {
         });
 
         this.cancelButton = new Ext.Button({
-            text:kimios.lang('Close'),
-            scope:this,
-            handler:function (btn) {
+            text: kimios.lang('Close'),
+            scope: this,
+            handler: function (btn) {
                 btn.disable();
                 if (this.window != undefined)
                     this.window.close();
@@ -125,7 +125,7 @@ kimios.properties.PropertiesPanel = Ext.extend(Ext.TabPanel, {
         kimios.properties.PropertiesPanel.superclass.constructor.call(this, config);
     },
 
-    setPojo:function (pojo) {
+    setPojo: function (pojo) {
         this.dmEntityPojo = pojo;
         this.setActiveTab(0);
         for (var i = 0; i < this.items.length; i++) {
@@ -133,7 +133,7 @@ kimios.properties.PropertiesPanel = Ext.extend(Ext.TabPanel, {
         }
     },
 
-    forceLoad:function (i) {
+    forceLoad: function (i) {
         if (i == undefined) i = 0;
         var tab = this.items.get(i);
 
@@ -158,7 +158,7 @@ kimios.properties.PropertiesPanel = Ext.extend(Ext.TabPanel, {
         }
     },
 
-    initComponent:function () {
+    initComponent: function () {
         kimios.properties.PropertiesPanel.superclass.initComponent.apply(this, arguments);
 
         var title = '';
@@ -169,22 +169,22 @@ kimios.properties.PropertiesPanel = Ext.extend(Ext.TabPanel, {
 
             // add entity tab
             this.dmEntityPanel = new kimios.properties.DMEntityPanel({
-                dmEntityPojo:this.dmEntityPojo,
-                propertiesPanel:this
+                dmEntityPojo: this.dmEntityPojo,
+                propertiesPanel: this
             });
             this.add(this.dmEntityPanel);
 
             // add meta data tab
             if (this.dmEntityPojo.type == 3) {
                 this.metaDataPanel = new kimios.properties.MetaDataPanel({
-                    dmEntityPojo:this.dmEntityPojo
+                    dmEntityPojo: this.dmEntityPojo
                 });
                 this.add(this.metaDataPanel);
             }
 
             // add security tab
             this.securityEntityPanel = new kimios.properties.SecurityEntityPanel({
-                dmEntityPojo:this.dmEntityPojo
+                dmEntityPojo: this.dmEntityPojo
             });
             this.add(this.securityEntityPanel);
 
@@ -216,9 +216,9 @@ kimios.properties.PropertiesPanel = Ext.extend(Ext.TabPanel, {
 
                         // add entity tab
                         this.dmEntityPanel = new kimios.properties.DMEntityPanel({
-                            dmEntityPojo:this.dmEntityPojo,
-                            propertiesPanel:this,
-                            readOnly:write == false && fullAccess == false
+                            dmEntityPojo: this.dmEntityPojo,
+                            propertiesPanel: this,
+                            readOnly: write == false && fullAccess == false
                         });
                         this.add(this.dmEntityPanel);
 
@@ -227,23 +227,23 @@ kimios.properties.PropertiesPanel = Ext.extend(Ext.TabPanel, {
 
                             // add meta data tab
                             this.metaDataPanel = new kimios.properties.MetaDataPanel({
-                                dmEntityPojo:this.dmEntityPojo,
-                                readOnly:write == false && fullAccess == false
+                                dmEntityPojo: this.dmEntityPojo,
+                                readOnly: write == false && fullAccess == false
                             });
                             this.add(this.metaDataPanel);
 
                             if (this.window != undefined) {
                                 // add versions tab
                                 this.versionsPanel = new kimios.properties.VersionsPanel({
-                                    dmEntityPojo:this.dmEntityPojo,
-                                    readOnly:write == false && fullAccess == false
+                                    dmEntityPojo: this.dmEntityPojo,
+                                    readOnly: write == false && fullAccess == false
                                 });
                                 this.add(this.versionsPanel);
 
                                 // add workflow tab
                                 this.workflowPanel = new kimios.properties.WorkflowPanel({
-                                    dmEntityPojo:this.dmEntityPojo,
-                                    readOnly:write == false && fullAccess == false
+                                    dmEntityPojo: this.dmEntityPojo,
+                                    readOnly: write == false && fullAccess == false
                                 });
                                 this.add(this.workflowPanel);
 
@@ -256,21 +256,21 @@ kimios.properties.PropertiesPanel = Ext.extend(Ext.TabPanel, {
 
                                 // add related documents tab
                                 this.relatedDocumentsPanel = new kimios.properties.RelatedDocumentsPanel({
-                                    dmEntityPojo:this.dmEntityPojo,
-                                    readOnly:write == false && fullAccess == false
+                                    dmEntityPojo: this.dmEntityPojo,
+                                    readOnly: write == false && fullAccess == false
                                 });
                                 this.add(this.relatedDocumentsPanel);
 
                                 // add history tab
                                 this.historyPanel = new kimios.properties.HistoryPanel({
-                                    dmEntityPojo:this.dmEntityPojo
+                                    dmEntityPojo: this.dmEntityPojo
                                 });
                                 this.add(this.historyPanel);
 
                                 // add security tab
                                 if (this.ownerMode == true || fullAccess == true) {
                                     this.securityEntityPanel = new kimios.properties.SecurityEntityPanel({
-                                        dmEntityPojo:this.dmEntityPojo
+                                        dmEntityPojo: this.dmEntityPojo
                                     });
                                     this.add(this.securityEntityPanel);
                                 }
@@ -280,7 +280,7 @@ kimios.properties.PropertiesPanel = Ext.extend(Ext.TabPanel, {
                             if (this.window != undefined) {
                                 if (this.ownerMode == true || fullAccess == true) {
                                     this.securityEntityPanel = new kimios.properties.SecurityEntityPanel({
-                                        dmEntityPojo:this.dmEntityPojo
+                                        dmEntityPojo: this.dmEntityPojo
                                     });
                                     this.add(this.securityEntityPanel);
                                 }
@@ -293,15 +293,15 @@ kimios.properties.PropertiesPanel = Ext.extend(Ext.TabPanel, {
                     else {
                         // add meta data tab
                         this.metaDataPanel = new kimios.properties.MetaDataPanel({
-                            dmEntityPojo:this.dmEntityPojo,
-                            readOnly:write == false && fullAccess == false
+                            dmEntityPojo: this.dmEntityPojo,
+                            readOnly: write == false && fullAccess == false
                         });
                         this.add(this.metaDataPanel);
 
                         // add comments tab
                         this.commentsPanel = new kimios.properties.CommentsPanel({
-                            dmEntityPojo:this.dmEntityPojo,
-                            readOnly:write == false && fullAccess == false
+                            dmEntityPojo: this.dmEntityPojo,
+                            readOnly: write == false && fullAccess == false
                         });
                         this.add(this.commentsPanel);
                         this.saveButton.setVisible(false);
@@ -330,7 +330,7 @@ kimios.properties.PropertiesPanel = Ext.extend(Ext.TabPanel, {
                     if (needMeta) {
                         // add meta data tab
                         this.metaDataPanel = new kimios.properties.MetaDataPanel({
-                            dmEntityPojo:this.dmEntityPojo
+                            dmEntityPojo: this.dmEntityPojo
                         });
                         this.add(this.metaDataPanel);
                     }
@@ -338,7 +338,7 @@ kimios.properties.PropertiesPanel = Ext.extend(Ext.TabPanel, {
                     // add security tab
                     if (this.ownerMode == true || fullAccess == true) {
                         this.securityEntityPanel = new kimios.properties.SecurityEntityPanel({
-                            dmEntityPojo:this.dmEntityPojo
+                            dmEntityPojo: this.dmEntityPojo
                         });
                         this.add(this.securityEntityPanel);
                     }
@@ -352,7 +352,7 @@ kimios.properties.PropertiesPanel = Ext.extend(Ext.TabPanel, {
         }
     },
 
-    createDMEntity:function () {
+    createDMEntity: function () {
         var prop = this;
         switch (this.dmEntityPojo.type) {
             case 1:
@@ -386,26 +386,32 @@ kimios.properties.PropertiesPanel = Ext.extend(Ext.TabPanel, {
                 break;
             case 3:
                 //newDocument, form, name, parentUid, isSecurityInherited, securityDatas, documentTypeUid, metaValues
-                kimios.request.uploadDocument(
-                    true,
-                    this.dmEntityPanel, // need to pass the form as parameter (to update it with data fields)
-                    this.dmEntityPanel.nameField.getValue(),
-                    this.dmEntityPojo.parentUid,
-                    this.dmEntityPanel.inheritedPermissionsField.getValue(),
-                    this.securityEntityPanel.getJsonSecurityValues(),
-                    this.metaDataPanel.documentTypeUid,
-                    this.metaDataPanel.getJsonMetaValues(),
-                    function () {
-                        kimios.Info.msg(kimios.lang('Document'), kimios.lang('AddDocumentOK'));
-                        kimios.explorer.getViewport().refreshGrids();
-                        if (prop.window != undefined)
-                            prop.window.close();
-                    }
-                );
+                if (this.metaDataPanel.checkMandatory() == false) {
+                    kimios.MessageBox.exception({
+                        exception: kimios.lang('MandatoryFieldRequired')
+                    });
+                } else {
+                    kimios.request.uploadDocument(
+                        true,
+                        this.dmEntityPanel, // need to pass the form as parameter (to update it with data fields)
+                        this.dmEntityPanel.nameField.getValue(),
+                        this.dmEntityPojo.parentUid,
+                        this.dmEntityPanel.inheritedPermissionsField.getValue(),
+                        this.securityEntityPanel.getJsonSecurityValues(),
+                        this.metaDataPanel.documentTypeUid,
+                        this.metaDataPanel.getJsonMetaValues(),
+                        function () {
+                            kimios.Info.msg(kimios.lang('Document'), kimios.lang('AddDocumentOK'));
+                            kimios.explorer.getViewport().refreshGrids();
+                            if (prop.window != undefined)
+                                prop.window.close();
+                        }
+                    );
+                }
         }
     },
 
-    updateDMEntity:function () {
+    updateDMEntity: function () {
         var prop = this;
         switch (this.dmEntityPojo.type) {
             case 1:
@@ -437,36 +443,48 @@ kimios.properties.PropertiesPanel = Ext.extend(Ext.TabPanel, {
                     }, this.window != undefined && this.securityEntityPanel != undefined);
                 break;
             case 3:
-                kimios.request.updateDocument(
-                    this.dmEntityPanel.uidField.getValue(),
-                    this.dmEntityPanel.nameField.getValue(),
-                    this.metaDataPanel.documentTypeUid,
-                    this.metaDataPanel.getJsonMetaValues(),
-                    this.window != undefined ? (this.securityEntityPanel != undefined ? this.securityEntityPanel.getJsonSecurityValues() : undefined) : undefined,
-                    this.newVersion,
-                    function () {
-                        kimios.Info.msg(kimios.lang('Document'), kimios.lang('UpdateDocumentOK'));
-                        kimios.explorer.getViewport().refreshGrids();
-                        if (prop.window != undefined)
-                            prop.window.close();
-                    }, this.window != undefined && this.securityEntityPanel != undefined);
+                if (this.metaDataPanel.checkMandatory() == false) {
+                    kimios.MessageBox.exception({
+                        exception: kimios.lang('MandatoryFieldRequired')
+                    });
+                } else {
+                    kimios.request.updateDocument(
+                        this.dmEntityPanel.uidField.getValue(),
+                        this.dmEntityPanel.nameField.getValue(),
+                        this.metaDataPanel.documentTypeUid,
+                        this.metaDataPanel.getJsonMetaValues(),
+                        this.window != undefined ? (this.securityEntityPanel != undefined ? this.securityEntityPanel.getJsonSecurityValues() : undefined) : undefined,
+                        this.newVersion,
+                        function () {
+                            kimios.Info.msg(kimios.lang('Document'), kimios.lang('UpdateDocumentOK'));
+                            kimios.explorer.getViewport().refreshGrids();
+                            if (prop.window != undefined)
+                                prop.window.close();
+                        }, this.window != undefined && this.securityEntityPanel != undefined);
+                }
         }
     },
 
-    updateDMEntities:function (changeSecurity) {
+    updateDMEntities: function (changeSecurity) {
         var prop = this;
-        kimios.request.updateEntities(
-            this.dmEntityPojo,
-            this.securityEntityPanel.getJsonSecurityValues(),
-            this.securityEntityPanel.isRecursiveSecurity(),
-            this.metaDataPanel == undefined ? undefined : this.metaDataPanel.documentTypeUid,
-            this.metaDataPanel == undefined ? undefined : this.metaDataPanel.getJsonMetaValues(),
-            function () {
-                kimios.Info.msg(kimios.lang('Entities'), kimios.lang('Update') + ' ' + kimios.lang('Completed'));
-                kimios.explorer.getViewport().refreshGrids();
-                kimios.explorer.getTreePanel().refresh();
-                if (prop.window != undefined)
-                    prop.window.close();
-            }, changeSecurity);
+        if (this.metaDataPanel.checkMandatory() == false) {
+            kimios.MessageBox.exception({
+                exception: kimios.lang('MandatoryFieldRequired')
+            });
+        } else {
+            kimios.request.updateEntities(
+                this.dmEntityPojo,
+                this.securityEntityPanel.getJsonSecurityValues(),
+                this.securityEntityPanel.isRecursiveSecurity(),
+                this.metaDataPanel == undefined ? undefined : this.metaDataPanel.documentTypeUid,
+                this.metaDataPanel == undefined ? undefined : this.metaDataPanel.getJsonMetaValues(),
+                function () {
+                    kimios.Info.msg(kimios.lang('Entities'), kimios.lang('Update') + ' ' + kimios.lang('Completed'));
+                    kimios.explorer.getViewport().refreshGrids();
+                    kimios.explorer.getTreePanel().refresh();
+                    if (prop.window != undefined)
+                        prop.window.close();
+                }, changeSecurity);
+        }
     }
 });

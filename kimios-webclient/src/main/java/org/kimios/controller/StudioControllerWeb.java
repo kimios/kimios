@@ -200,7 +200,7 @@ public class StudioControllerWeb extends Controller {
     }
 
     /**
-     * @see #searchMetaFeedValues(parameters)
+     * @see #searchMetaFeedValues(java.util.Map)
      * @deprecated
      */
     private String getMetaFeedValues(Map<String, String> parameters) throws Exception {
@@ -258,6 +258,7 @@ public class StudioControllerWeb extends Controller {
                 meta.setMetaFeedUid(((Integer)metaDatas.get("metaFeedUid")).longValue());
             }
             meta.setDocumentTypeUid(docType.getUid());
+            meta.setMandatory((Boolean) metaDatas.get("mandatory"));
             metas.add(meta);
         }
         String xmlStream = XMLGenerators.getDocumentTypeXMLDescriptor(docType, metas);
@@ -288,6 +289,7 @@ public class StudioControllerWeb extends Controller {
                 meta.setMetaFeedUid(((Integer) metaDatas.get("metaFeedUid")).longValue());
             }
             meta.setDocumentTypeUid(docType.getUid());
+            meta.setMandatory((Boolean) metaDatas.get("mandatory"));
             metas.add(meta);
         }
         String xmlStream = XMLGenerators.getDocumentTypeXMLDescriptor(docType, metas);

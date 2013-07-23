@@ -16,57 +16,34 @@
  */
 package org.kimios.kernel.controller.impl;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Vector;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.IDocumentVersionController;
-import org.kimios.kernel.dms.Document;
-import org.kimios.kernel.dms.DocumentComment;
-import org.kimios.kernel.dms.DocumentFactory;
-import org.kimios.kernel.dms.DocumentType;
-import org.kimios.kernel.dms.DocumentTypeFactory;
-import org.kimios.kernel.dms.DocumentVersion;
-import org.kimios.kernel.dms.FactoryInstantiator;
-import org.kimios.kernel.dms.Meta;
-import org.kimios.kernel.dms.MetaBooleanValue;
-import org.kimios.kernel.dms.MetaDateValue;
-import org.kimios.kernel.dms.MetaFactory;
-import org.kimios.kernel.dms.MetaNumberValue;
-import org.kimios.kernel.dms.MetaStringValue;
-import org.kimios.kernel.dms.MetaType;
-import org.kimios.kernel.dms.MetaValue;
-import org.kimios.kernel.dms.MetaValueFactory;
+import org.kimios.kernel.dms.*;
 import org.kimios.kernel.events.EventContext;
-import org.kimios.kernel.exception.AccessDeniedException;
-import org.kimios.kernel.exception.CheckoutViolationException;
-import org.kimios.kernel.exception.DataSourceException;
-import org.kimios.kernel.exception.RepositoryException;
-import org.kimios.kernel.exception.XMLException;
+import org.kimios.kernel.exception.*;
 import org.kimios.kernel.repositories.RepositoryManager;
 import org.kimios.kernel.security.Session;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.NodeList;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.util.Date;
+import java.util.List;
+import java.util.Vector;
+
 /**
  * @author Fabien Alin
  */
-public class DocumentVersionController extends AKimiosController implements IDocumentVersionController
-{
+public class DocumentVersionController extends AKimiosController implements IDocumentVersionController {
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IDocumentVersionController#getDocumentVersion(org.kimios.kernel.security.Session, long)
     */
     public DocumentVersion getDocumentVersion(Session session, long documentVersionUid) throws ConfigException,
-            DataSourceException, AccessDeniedException
-    {
+            DataSourceException, AccessDeniedException {
         DocumentVersion dv = dmsFactoryInstantiator.getDocumentVersionFactory().getDocumentVersion(documentVersionUid);
         if (getSecurityAgent()
-                .isReadable(dv.getDocument(), session.getUserName(), session.getUserSource(), session.getGroups()))
-        {
+                .isReadable(dv.getDocument(), session.getUserName(), session.getUserSource(), session.getGroups())) {
             return dv;
         } else {
             throw new AccessDeniedException();
@@ -77,8 +54,7 @@ public class DocumentVersionController extends AKimiosController implements IDoc
     * @see org.kimios.kernel.controller.impl.IDocumentVersionController#createDocumentVersion(org.kimios.kernel.security.Session, long)
     */
     public long createDocumentVersion(Session session, long documentUid)
-            throws CheckoutViolationException, ConfigException, DataSourceException, AccessDeniedException
-    {
+            throws CheckoutViolationException, ConfigException, DataSourceException, AccessDeniedException {
         DocumentFactory docFactory = dmsFactoryInstantiator.getDocumentFactory();
         Document d = docFactory.getDocument(documentUid);
         DocumentVersion dv =
@@ -97,8 +73,7 @@ public class DocumentVersionController extends AKimiosController implements IDoc
     */
     public long createDocumentVersionFromLatest(Session session, long documentUid)
             throws CheckoutViolationException, ConfigException, DataSourceException, AccessDeniedException,
-            RepositoryException
-    {
+            RepositoryException {
         Document doc = dmsFactoryInstantiator.getDocumentFactory().getDocument(documentUid);
         DocumentVersion dv = this.getLastDocumentVersion(session, documentUid);
         DocumentVersion newVersion =
@@ -154,8 +129,7 @@ public class DocumentVersionController extends AKimiosController implements IDoc
     * @see org.kimios.kernel.controller.impl.IDocumentVersionController#updateDocumentVersion(org.kimios.kernel.security.Session, long, long)
     */
     public void updateDocumentVersion(Session session, long documentUid, long documentTypeUid, String xmlStream) throws
-            XMLException, CheckoutViolationException, ConfigException, DataSourceException, AccessDeniedException
-    {
+            XMLException, CheckoutViolationException, ConfigException, DataSourceException, AccessDeniedException {
         DocumentTypeFactory typeFactory = dmsFactoryInstantiator.getDocumentTypeFactory();
         Document d = dmsFactoryInstantiator.getDocumentFactory().getDocument(documentUid);
         DocumentVersion dv = dmsFactoryInstantiator.getDocumentVersionFactory().getLastDocumentVersion(d);
@@ -191,6 +165,33 @@ public class DocumentVersionController extends AKimiosController implements IDoc
                 MetaValueFactory fact = dmsFactoryInstantiator.getMetaValueFactory();
                 Vector<MetaValue> vNewMetas = getMetaValuesFromXML(xmlStream, dv.getUid());
                 List<MetaValue> vMetas = fact.getMetaValues(dv);
+
+                for (MetaValue m : vNewMetas) {
+                    if (m.getMeta().isMandatory()) {
+                        if (m.getValue() == null) {
+                            throw new AccessDeniedException();
+                        }
+
+                        switch (m.getMeta().getMetaType()) {
+                            case MetaType.BOOLEAN:
+                                // do nothing: never undefined (true if checked, else false)
+                                break;
+                            case MetaType.DATE:
+                                if (String.valueOf(m.getValue()).isEmpty() || String.valueOf(m.getValue()).length() < 1)
+                                    throw new AccessDeniedException();
+                                break;
+                            case MetaType.NUMBER:
+                                if ((Double) m.getValue() == 0)
+                                    throw new AccessDeniedException();
+                                break;
+                            case MetaType.STRING:
+                                if (((String) m.getValue()).isEmpty() || ((String) m.getValue()).length() < 1)
+                                    throw new AccessDeniedException();
+                                break;
+                        }
+                    }
+                }
+
                 for (MetaValue m : vMetas) {
                     fact.deleteMetaValue(m);
                 }
@@ -212,8 +213,7 @@ public class DocumentVersionController extends AKimiosController implements IDoc
     * @see org.kimios.kernel.controller.impl.IDocumentVersionController#deleteDocumentVersion(org.kimios.kernel.security.Session, long)
     */
     public void deleteDocumentVersion(long documentVersionUid)
-            throws CheckoutViolationException, ConfigException, DataSourceException, AccessDeniedException
-    {
+            throws CheckoutViolationException, ConfigException, DataSourceException, AccessDeniedException {
         DocumentVersion dv = dmsFactoryInstantiator.getDocumentVersionFactory().getDocumentVersion(documentVersionUid);
         dmsFactoryInstantiator.getDocumentVersionFactory().deleteDocumentVersion(dv);
     }
@@ -222,12 +222,10 @@ public class DocumentVersionController extends AKimiosController implements IDoc
     * @see org.kimios.kernel.controller.impl.IDocumentVersionController#getMetaValue(org.kimios.kernel.security.Session, long, long)
     */
     public Object getMetaValue(Session session, long documentVersionUid, long metaUid)
-            throws ConfigException, DataSourceException, AccessDeniedException
-    {
+            throws ConfigException, DataSourceException, AccessDeniedException {
         DocumentVersion dv = dmsFactoryInstantiator.getDocumentVersionFactory().getDocumentVersion(documentVersionUid);
         if (getSecurityAgent()
-                .isReadable(dv.getDocument(), session.getUserName(), session.getUserSource(), session.getGroups()))
-        {
+                .isReadable(dv.getDocument(), session.getUserName(), session.getUserSource(), session.getGroups())) {
             Meta m = dmsFactoryInstantiator.getMetaFactory().getMeta(metaUid);
             MetaValue mv = dmsFactoryInstantiator.getMetaValueFactory().getMetaValue(dv, m);
             if (mv == null) {
@@ -244,8 +242,7 @@ public class DocumentVersionController extends AKimiosController implements IDoc
      * Convenience method to generate meta list from an xml descriptor
      */
     private Vector<MetaValue> getMetaValuesFromXML(String xmlStream, long uid)
-            throws XMLException, DataSourceException, ConfigException
-    {
+            throws XMLException, DataSourceException, ConfigException {
         DocumentVersion dv = dmsFactoryInstantiator.getDocumentVersionFactory().getDocumentVersion(uid);
         Vector<MetaValue> v = new Vector<MetaValue>();
         if (dv != null) {
@@ -259,8 +256,8 @@ public class DocumentVersionController extends AKimiosController implements IDoc
                         long metaUid =
                                 Long.parseLong(list.item(i).getAttributes().getNamedItem("uid").getTextContent());
                         Meta m = dmsFactoryInstantiator.getMetaFactory().getMeta(metaUid);
-                        LoggerFactory.getLogger( DocumentVersionController.class )
-                            .info( "Parsed VALUE " + list.item( i ).getTextContent() );
+                        LoggerFactory.getLogger(DocumentVersionController.class)
+                                .info("Parsed VALUE " + list.item(i).getTextContent());
                         MetaValue mv = toMetaValue(m.getMetaType(), dv, m, list.item(i).getTextContent());
                         if (mv != null) {
                             v.add(mv);
@@ -277,8 +274,7 @@ public class DocumentVersionController extends AKimiosController implements IDoc
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IDocumentVersionController#toMetaValue(int, org.kimios.kernel.dms.DocumentVersion, long, java.lang.String)
     */
-    public MetaValue toMetaValue(int metaType, DocumentVersion version, Meta meta, String metaValue)
-    {
+    public MetaValue toMetaValue(int metaType, DocumentVersion version, Meta meta, String metaValue) {
         MetaValue metaV = null;
         switch (metaType) {
             case MetaType.BOOLEAN:
@@ -293,6 +289,8 @@ public class DocumentVersionController extends AKimiosController implements IDoc
                             version,
                             meta,
                             new Date(Long.parseLong(metaValue)));
+                } else {
+                    metaV = new MetaDateValue(version, meta, null);
                 }
 
                 break;
@@ -316,12 +314,10 @@ public class DocumentVersionController extends AKimiosController implements IDoc
     * @see org.kimios.kernel.controller.impl.IDocumentVersionController#updateMetasValue(org.kimios.kernel.security.Session, long, java.lang.String)
     */
     public void updateMetasValue(Session session, long uid, String xmlStream)
-            throws XMLException, AccessDeniedException, ConfigException, DataSourceException
-    {
+            throws XMLException, AccessDeniedException, ConfigException, DataSourceException {
         DocumentVersion dv = dmsFactoryInstantiator.getDocumentVersionFactory().getDocumentVersion(uid);
         if (getSecurityAgent()
-                .isWritable(dv.getDocument(), session.getUserName(), session.getUserSource(), session.getGroups()))
-        {
+                .isWritable(dv.getDocument(), session.getUserName(), session.getUserSource(), session.getGroups())) {
             MetaValueFactory fact = dmsFactoryInstantiator.getMetaValueFactory();
             Vector<MetaValue> vNewMetas = getMetaValuesFromXML(xmlStream, uid);
             List<MetaValue> vMetas = fact.getMetaValues(dv);
@@ -342,8 +338,7 @@ public class DocumentVersionController extends AKimiosController implements IDoc
     * @see org.kimios.kernel.controller.impl.IDocumentVersionController#getDocumentVersions(org.kimios.kernel.security.Session, long)
     */
     public Vector<DocumentVersion> getDocumentVersions(Session session, long documentUid)
-            throws ConfigException, DataSourceException
-    {
+            throws ConfigException, DataSourceException {
         DocumentFactory docFactory = dmsFactoryInstantiator.getDocumentFactory();
         Document d = docFactory.getDocument(documentUid);
         Vector<DocumentVersion> vVersions = new Vector<DocumentVersion>();
@@ -357,8 +352,7 @@ public class DocumentVersionController extends AKimiosController implements IDoc
     * @see org.kimios.kernel.controller.impl.IDocumentVersionController#getLastDocumentVersion(org.kimios.kernel.security.Session, long)
     */
     public DocumentVersion getLastDocumentVersion(Session session, long documentUid)
-            throws AccessDeniedException, ConfigException, DataSourceException
-    {
+            throws AccessDeniedException, ConfigException, DataSourceException {
         Document d = dmsFactoryInstantiator.getDocumentFactory().getDocument(documentUid);
         if (getSecurityAgent().isReadable(d, session.getUserName(), session.getUserSource(), session.getGroups())) {
             DocumentVersion dv = dmsFactoryInstantiator.getDocumentVersionFactory().getLastDocumentVersion(d);
@@ -372,8 +366,7 @@ public class DocumentVersionController extends AKimiosController implements IDoc
     * @see org.kimios.kernel.controller.impl.IDocumentVersionController#getDocumentComment(org.kimios.kernel.security.Session, long)
     */
     public DocumentComment getDocumentComment(Session session, long uid)
-            throws AccessDeniedException, ConfigException, DataSourceException
-    {
+            throws AccessDeniedException, ConfigException, DataSourceException {
         DocumentComment comment = dmsFactoryInstantiator.getDocumentCommentFactory().getDocumentComment(uid);
         Document d = comment.getDocumentVersion().getDocument();
         if (getSecurityAgent().isReadable(d, session.getUserName(), session.getUserSource(), session.getGroups())) {
@@ -387,12 +380,10 @@ public class DocumentVersionController extends AKimiosController implements IDoc
     * @see org.kimios.kernel.controller.impl.IDocumentVersionController#getDocumentComments(org.kimios.kernel.security.Session, long)
     */
     public Vector<DocumentComment> getDocumentComments(Session session, long documentVersionUid)
-            throws AccessDeniedException, ConfigException, DataSourceException
-    {
+            throws AccessDeniedException, ConfigException, DataSourceException {
         DocumentVersion dv = dmsFactoryInstantiator.getDocumentVersionFactory().getDocumentVersion(documentVersionUid);
         if (getSecurityAgent()
-                .isReadable(dv.getDocument(), session.getUserName(), session.getUserSource(), session.getGroups()))
-        {
+                .isReadable(dv.getDocument(), session.getUserName(), session.getUserSource(), session.getGroups())) {
             return dmsFactoryInstantiator.getDocumentCommentFactory().getDocumentComments(documentVersionUid);
         } else {
             throw new AccessDeniedException();
@@ -403,12 +394,10 @@ public class DocumentVersionController extends AKimiosController implements IDoc
     * @see org.kimios.kernel.controller.impl.IDocumentVersionController#createDocumentComment(org.kimios.kernel.security.Session, long, java.lang.String)
     */
     public long createDocumentComment(Session session, long documentVersionUid, String comment)
-            throws AccessDeniedException, ConfigException, DataSourceException
-    {
+            throws AccessDeniedException, ConfigException, DataSourceException {
         DocumentVersion dv = dmsFactoryInstantiator.getDocumentVersionFactory().getDocumentVersion(documentVersionUid);
         if (getSecurityAgent()
-                .isWritable(dv.getDocument(), session.getUserName(), session.getUserSource(), session.getGroups()))
-        {
+                .isWritable(dv.getDocument(), session.getUserName(), session.getUserSource(), session.getGroups())) {
             DocumentComment dc =
                     new DocumentComment(-1, documentVersionUid, session.getUserName(), session.getUserSource(), comment,
                             new Date());
@@ -423,16 +412,14 @@ public class DocumentVersionController extends AKimiosController implements IDoc
     * @see org.kimios.kernel.controller.impl.IDocumentVersionController#updateDocumentComment(org.kimios.kernel.security.Session, long, long, java.lang.String)
     */
     public void updateDocumentComment(Session session, long documentVersionUid, long commentUid, String newComment)
-            throws AccessDeniedException, ConfigException, DataSourceException
-    {
+            throws AccessDeniedException, ConfigException, DataSourceException {
         DocumentVersion dv = dmsFactoryInstantiator.getDocumentVersionFactory().getDocumentVersion(documentVersionUid);
         DocumentComment dc = dmsFactoryInstantiator.getDocumentCommentFactory().getDocumentComment(commentUid);
         if (getSecurityAgent()
                 .isWritable(dv.getDocument(), session.getUserName(), session.getUserSource(), session.getGroups()) &&
                 session.getUserName().equals(dc.getAuthorName()) &&
                 session.getUserSource().equals(dc.getAuthorSource()) ||
-                getSecurityAgent().isAdmin(session.getUserName(), session.getUserSource()))
-        {
+                getSecurityAgent().isAdmin(session.getUserName(), session.getUserSource())) {
             dc.setDate(new Date());
             dc.setComment(newComment);
             dmsFactoryInstantiator.getDocumentCommentFactory().updateDocumentComment(dc);
@@ -445,8 +432,7 @@ public class DocumentVersionController extends AKimiosController implements IDoc
     * @see org.kimios.kernel.controller.impl.IDocumentVersionController#deleteDocumentComment(org.kimios.kernel.security.Session, long)
     */
     public void deleteDocumentComment(Session session, long commentUid)
-            throws AccessDeniedException, ConfigException, DataSourceException
-    {
+            throws AccessDeniedException, ConfigException, DataSourceException {
         DocumentComment comment = dmsFactoryInstantiator.getDocumentCommentFactory().getDocumentComment(commentUid);
         DocumentVersion dv =
                 dmsFactoryInstantiator.getDocumentVersionFactory().getDocumentVersion(comment.getDocumentVersionUid());
@@ -454,8 +440,7 @@ public class DocumentVersionController extends AKimiosController implements IDoc
                 .isWritable(dv.getDocument(), session.getUserName(), session.getUserSource(), session.getGroups()) &&
                 session.getUserName().equals(comment.getAuthorName()) &&
                 session.getUserSource().equals(comment.getAuthorSource()) ||
-                getSecurityAgent().isAdmin(session.getUserName(), session.getUserSource()))
-        {
+                getSecurityAgent().isAdmin(session.getUserName(), session.getUserSource())) {
             dmsFactoryInstantiator.getDocumentCommentFactory().deleteDocumentComment(comment);
         } else {
             throw new AccessDeniedException();
@@ -466,8 +451,7 @@ public class DocumentVersionController extends AKimiosController implements IDoc
     * @see org.kimios.kernel.controller.impl.IDocumentVersionController#getMetas(org.kimios.kernel.security.Session, long)
     */
     public Vector<Meta> getMetas(Session session, long documentTypeUid)
-            throws AccessDeniedException, ConfigException, DataSourceException
-    {
+            throws AccessDeniedException, ConfigException, DataSourceException {
         MetaFactory mf = dmsFactoryInstantiator.getMetaFactory();
         DocumentType dt = dmsFactoryInstantiator.getDocumentTypeFactory().getDocumentType(documentTypeUid);
         if (dt != null) {
@@ -481,8 +465,7 @@ public class DocumentVersionController extends AKimiosController implements IDoc
     * @see org.kimios.kernel.controller.impl.IDocumentVersionController#getMeta(org.kimios.kernel.security.Session, long)
     */
     public Meta getMeta(Session session, long metaUid)
-            throws AccessDeniedException, ConfigException, DataSourceException
-    {
+            throws AccessDeniedException, ConfigException, DataSourceException {
         Meta m = dmsFactoryInstantiator.getMetaFactory().getMeta(metaUid);
         return m;
     }
@@ -491,8 +474,7 @@ public class DocumentVersionController extends AKimiosController implements IDoc
     * @see org.kimios.kernel.controller.impl.IDocumentVersionController#getUnheritedMetas(org.kimios.kernel.security.Session, long)
     */
     public Vector<Meta> getUnheritedMetas(Session session, long documentTypeUid)
-            throws AccessDeniedException, ConfigException, DataSourceException
-    {
+            throws AccessDeniedException, ConfigException, DataSourceException {
         MetaFactory mf = dmsFactoryInstantiator.getMetaFactory();
         DocumentType dt = dmsFactoryInstantiator.getDocumentTypeFactory().getDocumentType(documentTypeUid);
         if (dt != null) {
@@ -507,8 +489,7 @@ public class DocumentVersionController extends AKimiosController implements IDoc
     */
     @Deprecated
     public DocumentVersion getDocumentVersion(Session session, String hashMD5, String hashSHA)
-            throws AccessDeniedException, ConfigException, DataSourceException
-    {
+            throws AccessDeniedException, ConfigException, DataSourceException {
         return null;
     }
 
@@ -516,20 +497,17 @@ public class DocumentVersionController extends AKimiosController implements IDoc
     * @see org.kimios.kernel.controller.impl.IDocumentVersionController#getDocumentTypeByName(org.kimios.kernel.security.Session, java.lang.String)
     */
     public DocumentType getDocumentTypeByName(Session session, String name)
-            throws AccessDeniedException, ConfigException, DataSourceException
-    {
+            throws AccessDeniedException, ConfigException, DataSourceException {
         DocumentTypeFactory dtf = dmsFactoryInstantiator.getDocumentTypeFactory();
         return dtf.getDocumentTypeByName(name);
     }
 
     public void updateDocumentVersionInformation(Session session, long documentVersionUid)
             throws ConfigException, DataSourceException, AccessDeniedException,
-            RepositoryException
-    {
+            RepositoryException {
         DocumentVersion dv = dmsFactoryInstantiator.getDocumentVersionFactory().getDocumentVersion(documentVersionUid);
         if (getSecurityAgent()
-                .isReadable(dv.getDocument(), session.getUserName(), session.getUserSource(), session.getGroups()))
-        {
+                .isReadable(dv.getDocument(), session.getUserName(), session.getUserSource(), session.getGroups())) {
             dv.updateVersionInformation();
         } else {
             throw new AccessDeniedException();
@@ -537,12 +515,10 @@ public class DocumentVersionController extends AKimiosController implements IDoc
     }
 
     public List<MetaValue> getMetaValues(Session session, long documentVersionId)
-            throws ConfigException, DataSourceException, AccessDeniedException
-    {
+            throws ConfigException, DataSourceException, AccessDeniedException {
         DocumentVersion dv = dmsFactoryInstantiator.getDocumentVersionFactory().getDocumentVersion(documentVersionId);
         if (getSecurityAgent()
-                .isReadable(dv.getDocument(), session.getUserName(), session.getUserSource(), session.getGroups()))
-        {
+                .isReadable(dv.getDocument(), session.getUserName(), session.getUserSource(), session.getGroups())) {
             List<MetaValue> items = dmsFactoryInstantiator.getMetaValueFactory().getMetaValues(dv);
             return items;
         } else {
@@ -550,8 +526,7 @@ public class DocumentVersionController extends AKimiosController implements IDoc
         }
     }
 
-    public List<DocumentVersion> getOprhansDocumentVersion()
-    {
+    public List<DocumentVersion> getOprhansDocumentVersion() {
         return FactoryInstantiator.getInstance().getDocumentVersionFactory().getVersionsToDelete();
     }
 }

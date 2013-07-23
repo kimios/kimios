@@ -17,22 +17,23 @@
   -->
 
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
-  <xsd:element name="document-type">
-    <xsd:complexType>
-      <xsd:sequence>
-        <xsd:element minOccurs="0" maxOccurs="unbounded" ref="meta"/>
-      </xsd:sequence>
-      <xsd:attribute name="document-type-uid" use="required" type="xsd:long"/>
-      <xsd:attribute name="name" use="required" type="xsd:string"/>
-      <xsd:attribute name="uid" use="optional" type="xsd:long"/>
-    </xsd:complexType>
-  </xsd:element>
-  <xsd:element name="meta">
-    <xsd:complexType>
-      <xsd:attribute name="meta_feed" use="required" type="xsd:integer"/>
-      <xsd:attribute name="meta_type" use="required" type="xsd:integer"/>
-      <xsd:attribute name="name" use="required" type="xsd:string"/>
-      <xsd:attribute name="uid" use="required" type="xsd:long"/>
-    </xsd:complexType>
-  </xsd:element>
+    <xsd:element name="document-type">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element minOccurs="0" maxOccurs="unbounded" ref="meta"/>
+            </xsd:sequence>
+            <xsd:attribute name="document-type-uid" use="required" type="xsd:long"/>
+            <xsd:attribute name="name" use="required" type="xsd:string"/>
+            <xsd:attribute name="uid" use="optional" type="xsd:long"/>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="meta">
+        <xsd:complexType>
+            <xsd:attribute name="meta_feed" use="required" type="xsd:integer"/>
+            <xsd:attribute name="meta_type" use="required" type="xsd:integer"/>
+            <xsd:attribute name="name" use="required" type="xsd:string"/>
+            <xsd:attribute name="uid" use="required" type="xsd:long"/>
+            <xsd:attribute name="mandatory" use="required" type="xsd:boolean"/>
+        </xsd:complexType>
+    </xsd:element>
 </xsd:schema>

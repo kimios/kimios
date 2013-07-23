@@ -22,13 +22,8 @@
 package org.kimios.core.wrappers;
 
 import org.kimios.client.controller.DocumentVersionController;
-import org.kimios.client.controller.*;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
- *
  * @author Fabien Alin
  */
 public class Meta {
@@ -37,6 +32,7 @@ public class Meta {
     private Object value;
     private long uid;
     private Long metaFeedUid;
+    private boolean mandatory = false;
 
     private String sessionUid;
 
@@ -48,27 +44,27 @@ public class Meta {
         this.sessionUid = sessionUid;
     }
 
-    public long getUid(){
+    public long getUid() {
         return this.uid;
     }
-    
-    public void setMetaFeedUid(Long metaFeedUid){
+
+    public void setMetaFeedUid(Long metaFeedUid) {
         this.metaFeedUid = metaFeedUid;
     }
-    
-    public Long getMetaFeedUid(){
+
+    public Long getMetaFeedUid() {
         return this.metaFeedUid;
     }
-    
-    public void setUid(long id){
+
+    public void setUid(long id) {
         this.uid = id;
     }
 
     public Object getValue() {
         return value;
     }
-    
-    public void setValue(Object value){
+
+    public void setValue(Object value) {
         this.value = value;
     }
 
@@ -87,21 +83,37 @@ public class Meta {
     public void setType(int type) {
         this.type = type;
     }
-    
-    public Meta(long uid, String name, String value, int type){
-      this(uid, name, value, type, new Long(-1));
+
+    public boolean isMandatory() {
+        return mandatory;
     }
 
+    public void setMandatory(boolean mandatory) {
+        this.mandatory = mandatory;
+    }
 
-    public Meta(long uid, String name, Object value, int type, Long metaFeedUid){
+    public Meta(long uid, String name, String value, int type) {
+        this(uid, name, value, type, new Long(-1));
+    }
+
+    public Meta(long uid, String name, Object value, int type, Long metaFeedUid) {
         this.uid = uid;
         this.name = name;
         this.value = value;
         this.type = type;
         this.metaFeedUid = metaFeedUid;
     }
-    
-    public Meta(org.kimios.kernel.ws.pojo.Meta m, long docVersion, String sessionUid, DocumentVersionController versionController) throws Exception{
+
+    public Meta(long uid, String name, Object value, int type, Long metaFeedUid, boolean mandatory) {
+        this.uid = uid;
+        this.name = name;
+        this.value = value;
+        this.type = type;
+        this.metaFeedUid = metaFeedUid;
+        this.mandatory = mandatory;
+    }
+
+    public Meta(org.kimios.kernel.ws.pojo.Meta m, long docVersion, String sessionUid, DocumentVersionController versionController) throws Exception {
         this.sessionUid = sessionUid;
         /*switch(m.getMetaType()){
             case 1:
@@ -118,13 +130,14 @@ public class Meta {
                 this.value = versionController.getMetaBooleanValue(sessionUid, docVersion, m.getUid());
                 break;
         } */
-        
+
         this.name = m.getName();
         this.uid = m.getUid();
         this.type = m.getMetaType();
         this.metaFeedUid = m.getMetaFeedUid();
+        this.mandatory = m.isMandatory();
     }
-    
-    
+
+
 }
 

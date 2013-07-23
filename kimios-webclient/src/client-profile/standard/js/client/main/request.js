@@ -915,7 +915,8 @@ kimios.request = {
                     uid: rec.get('uid'),
                     name: rec.get('name'),
                     metaType: rec.get('metaType'),
-                    metaFeedUid: rec.get('metaFeedUid')
+                    metaFeedUid: rec.get('metaFeedUid'),
+                    mandatory: rec.get('mandatory')
                 });
             }
 

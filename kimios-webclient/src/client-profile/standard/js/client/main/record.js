@@ -49,15 +49,15 @@ kimios.record = {
             type: 'long',
             sortDir: 'desc'
         },
-       {
-           name: 'lastVersionCreationDate',
-           type: 'long'
+        {
+            name: 'lastVersionCreationDate',
+            type: 'long'
 
-       },
-       {
-           name: 'lastVersionUpdateDate',
-           type: 'long'
-       },
+        },
+        {
+            name: 'lastVersionUpdateDate',
+            type: 'long'
+        },
         {
             name: 'name',
             type: 'string'
@@ -497,6 +497,10 @@ kimios.record = {
             },
             {
                 name: 'uid'
+            },
+            {
+                name: 'mandatory',
+                type: 'boolean'
             }
         ]),
 

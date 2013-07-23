@@ -150,7 +150,15 @@ Studio.DocumentTypes = {
             tooltip: kimios.lang('Save'),
             iconCls: 'save',
             handler: function () {
-                kimios.request.StudioRequest.saveDocumentType(metaFeedsStore, Ext.getCmp('hidden-domain-uid').getValue(), Ext.getCmp('doctypefield').getValue(), Ext.getCmp('heritedFromComboBox').uid, documentTypesStore, contextPanel, metaDatasGrid.getStore(), documentTypeTextField.getValue(), documentTypeRecord);
+                kimios.request.StudioRequest.saveDocumentType(
+                    metaFeedsStore, Ext.getCmp('hidden-domain-uid').getValue(),
+                    Ext.getCmp('doctypefield').getValue(),
+                    Ext.getCmp('heritedFromComboBox').uid,
+                    documentTypesStore,
+                    contextPanel,
+                    metaDatasGrid.getStore(),
+                    documentTypeTextField.getValue(),
+                    documentTypeRecord);
             }
         });
 
@@ -310,6 +318,16 @@ Studio.DocumentTypes = {
             editable: false
         });
 
+        var mandatoryCombo = new Ext.ux.grid.CheckColumn({
+            header: kimios.lang('Mandatory'),
+            dataIndex: 'mandatory',
+            sortable: true,
+            hideable: false,
+            width: 80,
+            menuDisabled: true,
+            fixed: true
+        });
+
         var metaFeedsCombo = new Ext.form.ComboBox({
             name: 'metaFeedUid',
             displayField: 'name',
@@ -390,7 +408,8 @@ Studio.DocumentTypes = {
                         else
                             return '<span style="font-style: italic; color: red;">' + kimios.lang('MetaFeed') + '?</span>';
                     }
-                }]
+                },
+                mandatoryCombo]
         });
 
         var grid = new Ext.grid.EditorGridPanel({
@@ -401,6 +420,7 @@ Studio.DocumentTypes = {
             cm: cm,
             sm: sm,
             clicksToEdit: 1,
+            plugins: [mandatoryCombo],
             viewConfig: {
                 forceFit: true,
                 scrollOffset: 0
