@@ -16,31 +16,23 @@
  */
 package org.kimios.kernel.dms.hibernate;
 
-import java.util.List;
-
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.dms.DMEntity;
-import org.kimios.kernel.dms.DMEntityFactory;
-import org.kimios.kernel.dms.DMEntityImpl;
-import org.kimios.kernel.dms.DMEntityType;
-import org.kimios.kernel.dms.Document;
-import org.kimios.kernel.dms.FactoryInstantiator;
-import org.kimios.kernel.dms.Folder;
+import org.kimios.kernel.dms.*;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HDMEntityFactory extends HFactory implements DMEntityFactory
-{
+import java.util.List;
+
+public class HDMEntityFactory extends HFactory implements DMEntityFactory {
     private static Logger log = LoggerFactory.getLogger(DMEntityFactory.class);
 
-    public DMEntity getEntity(long dmEntityUid) throws ConfigException, DataSourceException
-    {
+    public DMEntity getEntity(long dmEntityUid) throws ConfigException, DataSourceException {
         try {
             return (DMEntity) getSession().createCriteria(DMEntityImpl.class)
                     .add(Restrictions.eq("uid", new Long(dmEntityUid)))
@@ -50,8 +42,7 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory
         }
     }
 
-    public DMEntity getEntity(long dmEntityUid, int dmEntityType) throws ConfigException, DataSourceException
-    {
+    public DMEntity getEntity(long dmEntityUid, int dmEntityType) throws ConfigException, DataSourceException {
         try {
             return (DMEntity) getSession().createCriteria(DMEntityImpl.class)
                     .add(Restrictions.eq("uid", dmEntityUid))
@@ -62,8 +53,7 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory
         }
     }
 
-    public DMEntity getEntity(String path) throws ConfigException, DataSourceException
-    {
+    public DMEntity getEntity(String path) throws ConfigException, DataSourceException {
         try {
             Criteria c = getSession().createCriteria(DMEntityImpl.class)
                     .add(Restrictions.like("path", path, MatchMode.EXACT));
@@ -73,8 +63,7 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory
         }
     }
 
-    public List<DMEntity> getEntities(String path) throws ConfigException, DataSourceException
-    {
+    public List<DMEntity> getEntities(String path) throws ConfigException, DataSourceException {
         try {
             String finalPath = path != null ? path : "";
             if (finalPath.endsWith("/")) {
@@ -91,8 +80,7 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory
         }
     }
 
-    public List<DMEntityImpl> getEntitiesImpl(String path) throws ConfigException, DataSourceException
-    {
+    public List<DMEntityImpl> getEntitiesImpl(String path) throws ConfigException, DataSourceException {
         try {
             String finalPath = path != null ? path : "";
             if (finalPath.endsWith("/")) {
@@ -110,8 +98,7 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory
     }
 
     public List<DMEntity> getEntitiesByPathAndType(String path, int dmEntityType)
-            throws ConfigException, DataSourceException
-    {
+            throws ConfigException, DataSourceException {
         try {
             String finalPath = path != null ? path : "";
             if (finalPath.endsWith("/")) {
@@ -129,8 +116,7 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory
         }
     }
 
-    public void deteteEntities(String path) throws ConfigException, DataSourceException
-    {
+    public void deteteEntities(String path) throws ConfigException, DataSourceException {
         try {
             /*
                 Update versions
@@ -147,12 +133,22 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory
             FactoryInstantiator.getInstance().getMetaValueFactory().cleanMetaValues();
 
             String cleanRelatedDocuments =
-                    "delete from related_documents where document_id in (select dm_entity_id from dm_entity " +
-                            "where dm_entity_path like :pathExact or dm_entity_path like :pathExt and dm_entity_type = 3) " +
-                            "or related_document_id in (select dm_entity_id from dm_entity " +
-                            "where dm_entity_path like :pathExact or dm_entity_path like :pathExt and dm_entity_type = 3)";
+                    "DELETE FROM related_documents WHERE document_id IN (SELECT dm_entity_id FROM dm_entity " +
+                            "WHERE dm_entity_path LIKE :pathExact OR dm_entity_path LIKE :pathExt AND dm_entity_type = 3) " +
+                            "OR related_document_id IN (SELECT dm_entity_id FROM dm_entity " +
+                            "WHERE dm_entity_path LIKE :pathExact OR dm_entity_path LIKE :pathExt AND dm_entity_type = 3)";
 
             getSession().createSQLQuery(cleanRelatedDocuments)
+                    .setString("pathExact", path)
+                    .setString("pathExt", path + "/%")
+                    .executeUpdate();
+
+            String cleanAttributes =
+                    "DELETE FROM dm_entity_attributes " +
+                            "WHERE dm_entity_id IN " +
+                            "(SELECT dm_entity_id FROM dm_entity WHERE dm_entity_path LIKE :pathExact OR dm_entity_path LIKE :pathExt)";
+
+            getSession().createSQLQuery(cleanAttributes)
                     .setString("pathExact", path)
                     .setString("pathExt", path + "/%")
                     .executeUpdate();
@@ -167,8 +163,7 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory
     }
 
     public void updateEntity(DMEntityImpl entity) throws ConfigException,
-            DataSourceException
-    {
+            DataSourceException {
         try {
             getSession().update(entity);
         } catch (HibernateException e) {
@@ -176,8 +171,7 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory
         }
     }
 
-    public void generatePath(DMEntity entity) throws ConfigException, DataSourceException
-    {
+    public void generatePath(DMEntity entity) throws ConfigException, DataSourceException {
 
         DMEntity p = entity;
         StringBuilder path = new StringBuilder();
@@ -228,8 +222,7 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory
         entity.setPath(path.toString());
     }
 
-    public void updatePath(DMEntity entity, String newName) throws ConfigException, DataSourceException
-    {
+    public void updatePath(DMEntity entity, String newName) throws ConfigException, DataSourceException {
         DMEntity p = entity;
         String oldPath = p.getPath();
         /*
