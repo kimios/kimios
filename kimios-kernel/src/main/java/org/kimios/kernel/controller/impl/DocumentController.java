@@ -16,32 +16,12 @@
  */
 package org.kimios.kernel.controller.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
-
 import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.controller.AKimiosController;
-import org.kimios.kernel.controller.IDocumentController;
-import org.kimios.kernel.controller.IFolderController;
-import org.kimios.kernel.controller.IWorkspaceController;
+import org.kimios.kernel.controller.*;
 import org.kimios.kernel.controller.utils.PathUtils;
-import org.kimios.kernel.dms.Bookmark;
-import org.kimios.kernel.dms.DMEntity;
-import org.kimios.kernel.dms.DMEntityType;
-import org.kimios.kernel.dms.Document;
-import org.kimios.kernel.dms.Folder;
-import org.kimios.kernel.dms.Lock;
-import org.kimios.kernel.dms.SymbolicLink;
-import org.kimios.kernel.dms.WorkflowStatus;
-import org.kimios.kernel.exception.AccessDeniedException;
-import org.kimios.kernel.exception.CheckoutViolationException;
-import org.kimios.kernel.exception.DataSourceException;
-import org.kimios.kernel.exception.NamingException;
-import org.kimios.kernel.exception.PathException;
+import org.kimios.kernel.dms.*;
+import org.kimios.kernel.exception.*;
+import org.kimios.kernel.filetransfer.DataTransfer;
 import org.kimios.kernel.log.DMEntityLog;
 import org.kimios.kernel.security.DMEntitySecurity;
 import org.kimios.kernel.security.DMEntitySecurityFactory;
@@ -49,44 +29,72 @@ import org.kimios.kernel.security.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DocumentController extends AKimiosController implements IDocumentController
-{
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
+
+public class DocumentController extends AKimiosController implements IDocumentController {
     private static Logger log = LoggerFactory.getLogger(DocumentController.class);
 
     IWorkspaceController wksCtrl;
 
     IFolderController fldCtrl;
 
-    public IWorkspaceController getWksCtrl()
-    {
+    ISecurityController secCtrl;
+
+    IDocumentVersionController vrsCtrl;
+
+    IFileTransferController ftCtrl;
+
+
+    public IWorkspaceController getWksCtrl() {
         return wksCtrl;
     }
 
-    public void setWksCtrl(IWorkspaceController wksCtrl)
-    {
+    public void setWksCtrl(IWorkspaceController wksCtrl) {
         this.wksCtrl = wksCtrl;
     }
 
-    public IFolderController getFldCtrl()
-    {
+    public IFolderController getFldCtrl() {
         return fldCtrl;
     }
 
-    public void setFldCtrl(IFolderController fldCtrl)
-    {
+    public void setFldCtrl(IFolderController fldCtrl) {
         this.fldCtrl = fldCtrl;
+    }
+
+    public ISecurityController getSecCtrl() {
+        return secCtrl;
+    }
+
+    public void setSecCtrl(ISecurityController secCtrl) {
+        this.secCtrl = secCtrl;
+    }
+
+    public IDocumentVersionController getVrsCtrl() {
+        return vrsCtrl;
+    }
+
+    public void setVrsCtrl(IDocumentVersionController vrsCtrl) {
+        this.vrsCtrl = vrsCtrl;
+    }
+
+    public IFileTransferController getFtCtrl() {
+        return ftCtrl;
+    }
+
+    public void setFtCtrl(IFileTransferController ftCtrl) {
+        this.ftCtrl = ftCtrl;
     }
 
     /**
      * Get a document from its uid
      */
     public Document getDocument(Session session, long uid)
-            throws DataSourceException, ConfigException, AccessDeniedException
-    {
+            throws DataSourceException, ConfigException, AccessDeniedException {
         Document d = dmsFactoryInstantiator.getDocumentFactory().getDocument(uid);
         if (d == null ||
-                !getSecurityAgent().isReadable(d, session.getUserName(), session.getUserSource(), session.getGroups()))
-        {
+                !getSecurityAgent().isReadable(d, session.getUserName(), session.getUserSource(), session.getGroups())) {
             throw new AccessDeniedException();
         }
         return d;
@@ -97,13 +105,11 @@ public class DocumentController extends AKimiosController implements IDocumentCo
      */
     public Document getDocument(Session session, String name, String extension, long folderUid)
             throws DataSourceException, ConfigException,
-            AccessDeniedException
-    {
+            AccessDeniedException {
         Document d = dmsFactoryInstantiator.getDocumentFactory()
                 .getDocument(name, extension, dmsFactoryInstantiator.getFolderFactory().getFolder(folderUid));
         if (d == null ||
-                !getSecurityAgent().isReadable(d, session.getUserName(), session.getUserSource(), session.getGroups()))
-        {
+                !getSecurityAgent().isReadable(d, session.getUserName(), session.getUserSource(), session.getGroups())) {
             throw new AccessDeniedException();
         }
 
@@ -111,7 +117,6 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     }
 
     /**
-     *
      * @param session
      * @return
      * @throws ConfigException
@@ -119,8 +124,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
      * @throws AccessDeniedException
      */
     public List<Document> getDocuments(Session session)
-            throws ConfigException, DataSourceException, AccessDeniedException
-    {
+            throws ConfigException, DataSourceException, AccessDeniedException {
         List<Document> d = dmsFactoryInstantiator.getDocumentFactory().getDocuments();
         return getSecurityAgent().areReadable(d, session.getUserName(), session.getUserSource(), session.getGroups());
     }
@@ -129,12 +133,10 @@ public class DocumentController extends AKimiosController implements IDocumentCo
      * Get children documents from a parent folder
      */
     public List<Document> getDocuments(Session session, long folderUid)
-            throws ConfigException, DataSourceException, AccessDeniedException
-    {
+            throws ConfigException, DataSourceException, AccessDeniedException {
         Folder folder = dmsFactoryInstantiator.getFolderFactory().getFolder(folderUid);
         if (!getSecurityAgent()
-                .isReadable(folder, session.getUserName(), session.getUserSource(), session.getGroups()))
-        {
+                .isReadable(folder, session.getUserName(), session.getUserSource(), session.getGroups())) {
             throw new AccessDeniedException();
         }
         List<Document> d = dmsFactoryInstantiator.getDocumentFactory().getDocuments(folder);
@@ -145,9 +147,8 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     * @see org.kimios.kernel.controller.impl.IDocumentController#createDocument(org.kimios.kernel.security.Session, java.lang.String, java.lang.String, java.lang.String, java.lang.String, long, boolean)
     */
     public long createDocument(Session s, String name, String extension, String mimeType, long folderUid,
-            boolean isSecurityInherited)
-            throws NamingException, ConfigException, DataSourceException, AccessDeniedException
-    {
+                               boolean isSecurityInherited)
+            throws NamingException, ConfigException, DataSourceException, AccessDeniedException {
         name.trim();
         PathUtils.validDmEntityName(name);
         Folder parent = dmsFactoryInstantiator.getFolderFactory().getFolder(folderUid);
@@ -181,8 +182,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     }
 
     public long createDocument(Session s, String path, boolean isSecurityInherited)
-            throws NamingException, ConfigException, DataSourceException, AccessDeniedException, PathException
-    {
+            throws NamingException, ConfigException, DataSourceException, AccessDeniedException, PathException {
         String targetPath = path;
         if (path.startsWith("/")) {
             targetPath = path.substring(1);
@@ -227,8 +227,34 @@ public class DocumentController extends AKimiosController implements IDocumentCo
         return -1;
     }
 
-    private DMEntity getDmEntity(String path)
-    {
+    public long createDocumentWithProperties(Session s, String name, String extension, String mimeType, long folderUid,
+                                             boolean isSecurityInherited, String securitiesXmlStream,
+                                             boolean isRecursive, long documentTypeId, String metasXmlStream,
+                                             InputStream documentStream, String hashMd5, String hashSha1)
+            throws NamingException, ConfigException, DataSourceException, AccessDeniedException {
+
+        try {
+            long documentId = createDocument(s, name, extension, mimeType, folderUid, isSecurityInherited);
+
+            if (!isSecurityInherited)
+                secCtrl.updateDMEntitySecurities(s, documentId, DMEntityType.DOCUMENT, securitiesXmlStream, isRecursive);
+
+            long versionId = vrsCtrl.createDocumentVersion(s, documentId);
+            DataTransfer dt = ftCtrl.startUploadTransaction(s, documentId, false);
+
+            ftCtrl.uploadDocument(s, dt.getUid(), documentStream, hashMd5, hashSha1);
+
+            if (documentId > 0)
+                vrsCtrl.updateDocumentVersion(s, documentId, documentTypeId, metasXmlStream);
+
+            return documentId;
+
+        } catch (IOException e) {
+            throw new AccessDeniedException();
+        }
+    }
+
+    private DMEntity getDmEntity(String path) {
         try {
             return dmsFactoryInstantiator.getDmEntityFactory().getEntity(path);
         } catch (Exception ex) {
@@ -241,8 +267,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     */
     public void updateDocument(Session s, long uid, long folderUid, String name, String extension, String mimeType)
             throws NamingException,
-            CheckoutViolationException, AccessDeniedException, ConfigException, DataSourceException
-    {
+            CheckoutViolationException, AccessDeniedException, ConfigException, DataSourceException {
         name = name.trim();
         PathUtils.validDmEntityName(name);
         Folder parent = dmsFactoryInstantiator.getFolderFactory().getFolder(folderUid);
@@ -273,8 +298,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     * @see org.kimios.kernel.controller.impl.IDocumentController#deleteDocument(org.kimios.kernel.security.Session, long)
     */
     public void deleteDocument(Session s, long uid)
-            throws CheckoutViolationException, AccessDeniedException, ConfigException, DataSourceException
-    {
+            throws CheckoutViolationException, AccessDeniedException, ConfigException, DataSourceException {
         Document d = dmsFactoryInstantiator.getDocumentFactory().getDocument(uid);
         Lock lock = d.getCheckoutLock();
         if (lock != null) {
@@ -283,8 +307,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
             }
         }
         if (getSecurityAgent().isWritable(d, s.getUserName(), s.getUserSource(), s.getGroups()) &&
-                getSecurityAgent().isWritable(d.getFolder(), s.getUserName(), s.getUserSource(), s.getGroups()))
-        {
+                getSecurityAgent().isWritable(d.getFolder(), s.getUserName(), s.getUserSource(), s.getGroups())) {
             dmsFactoryInstantiator.getDocumentFactory().deleteDocument(d);
         } else {
             throw new AccessDeniedException();
@@ -295,8 +318,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     * @see org.kimios.kernel.controller.impl.IDocumentController#checkoutDocument(org.kimios.kernel.security.Session, long)
     */
     public void checkoutDocument(Session s, long uid)
-            throws CheckoutViolationException, AccessDeniedException, ConfigException, DataSourceException
-    {
+            throws CheckoutViolationException, AccessDeniedException, ConfigException, DataSourceException {
         Document d = dmsFactoryInstantiator.getDocumentFactory().getDocument(uid);
         if (getSecurityAgent().isWritable(d, s.getUserName(), s.getUserSource(), s.getGroups())) {
             dmsFactoryInstantiator.getLockFactory().checkout(
@@ -312,8 +334,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     * @see org.kimios.kernel.controller.impl.IDocumentController#checkinDocument(org.kimios.kernel.security.Session, long)
     */
     public void checkinDocument(Session s, long uid)
-            throws CheckoutViolationException, AccessDeniedException, ConfigException, DataSourceException
-    {
+            throws CheckoutViolationException, AccessDeniedException, ConfigException, DataSourceException {
         Document d = dmsFactoryInstantiator.getDocumentFactory().getDocument(uid);
         if (getSecurityAgent().isWritable(d, s.getUserName(), s.getUserSource(), s.getGroups())) {
             dmsFactoryInstantiator.getLockFactory().checkin(
@@ -329,8 +350,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
      * List related document of the document specified by its uid
      */
     public List<Document> getRelatedDocuments(Session session, long uid)
-            throws AccessDeniedException, ConfigException, DataSourceException
-    {
+            throws AccessDeniedException, ConfigException, DataSourceException {
         Document d = dmsFactoryInstantiator.getDocumentFactory().getDocument(uid);
         if (getSecurityAgent().isReadable(d, session.getUserName(), session.getUserSource(), session.getGroups())) {
             List<Document> relDocs = dmsFactoryInstantiator.getDocumentFactory().getRelatedDocuments(d);
@@ -345,13 +365,11 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     * @see org.kimios.kernel.controller.impl.IDocumentController#addRelatedDocument(org.kimios.kernel.security.Session, long, long)
     */
     public void addRelatedDocument(Session s, long uid, long relatedDocumentUid)
-            throws AccessDeniedException, ConfigException, DataSourceException
-    {
+            throws AccessDeniedException, ConfigException, DataSourceException {
         Document d = dmsFactoryInstantiator.getDocumentFactory().getDocument(uid);
         Document relatedDoc = dmsFactoryInstantiator.getDocumentFactory().getDocument(relatedDocumentUid);
         if (getSecurityAgent().isWritable(d, s.getUserName(), s.getUserSource(), s.getGroups()) &&
-                getSecurityAgent().isWritable(relatedDoc, s.getUserName(), s.getUserSource(), s.getGroups()))
-        {
+                getSecurityAgent().isWritable(relatedDoc, s.getUserName(), s.getUserSource(), s.getGroups())) {
             if (!relatedDoc.getRelatedDocuments().contains(d) && !d.getRelatedDocuments().contains(relatedDoc)) {
                 dmsFactoryInstantiator.getDocumentFactory().addRelatedDocument(d, relatedDoc);
                 Map<String, Object> args = new HashMap<String, Object>();
@@ -368,13 +386,11 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     * @see org.kimios.kernel.controller.impl.IDocumentController#removeRelatedDocument(org.kimios.kernel.security.Session, long, long)
     */
     public void removeRelatedDocument(Session s, long uid, long relatedDocumentUid)
-            throws AccessDeniedException, ConfigException, DataSourceException
-    {
+            throws AccessDeniedException, ConfigException, DataSourceException {
         Document d = dmsFactoryInstantiator.getDocumentFactory().getDocument(uid);
         Document relatedDoc = dmsFactoryInstantiator.getDocumentFactory().getDocument(relatedDocumentUid);
         if (getSecurityAgent().isWritable(d, s.getUserName(), s.getUserSource(), s.getGroups()) &&
-                getSecurityAgent().isWritable(relatedDoc, s.getUserName(), s.getUserSource(), s.getGroups()))
-        {
+                getSecurityAgent().isWritable(relatedDoc, s.getUserName(), s.getUserSource(), s.getGroups())) {
             if (d.getRelatedDocuments().contains(relatedDoc) || relatedDoc.getRelatedDocuments().contains(d)) {
                 dmsFactoryInstantiator.getDocumentFactory().removeRelatedDocument(d, relatedDoc);
                 Map<String, Object> args = new HashMap<String, Object>();
@@ -390,8 +406,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     /**
      * Get the bookmarks list of the given user
      */
-    public Vector<Bookmark> getBookmarks(Session session) throws DataSourceException, ConfigException
-    {
+    public Vector<Bookmark> getBookmarks(Session session) throws DataSourceException, ConfigException {
         Vector<DMEntity> bl = dmsFactoryInstantiator.getBookmarkFactory()
                 .getBookmarks(session.getUserName(), session.getUserSource());
         Vector<Bookmark> vBookmarks = new Vector<Bookmark>();
@@ -407,8 +422,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     * @see org.kimios.kernel.controller.impl.IDocumentController#addBookmark(org.kimios.kernel.security.Session, long, int)
     */
     public void addBookmark(Session session, long dmEntityUid, int dmEntityType)
-            throws AccessDeniedException, DataSourceException, ConfigException
-    {
+            throws AccessDeniedException, DataSourceException, ConfigException {
         DMEntity d = dmsFactoryInstantiator.getDmEntityFactory().getEntity(dmEntityUid);
         if (getSecurityAgent().isReadable(d, session.getUserName(), session.getUserSource(), session.getGroups())) {
             dmsFactoryInstantiator.getBookmarkFactory()
@@ -422,8 +436,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     * @see org.kimios.kernel.controller.impl.IDocumentController#removeBoomark(org.kimios.kernel.security.Session, long, int)
     */
     public void removeBoomark(Session session, long dmEntityUid, int dmEntityType)
-            throws AccessDeniedException, DataSourceException, ConfigException
-    {
+            throws AccessDeniedException, DataSourceException, ConfigException {
         DMEntity d = dmsFactoryInstantiator.getDmEntityFactory().getEntity(dmEntityUid);
         if (getSecurityAgent().isReadable(d, session.getUserName(), session.getUserSource(), session.getGroups())) {
             dmsFactoryInstantiator.getBookmarkFactory()
@@ -436,8 +449,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     /**
      * Get the last consulted items for the given user
      */
-    public Vector<Bookmark> getRecentItems(Session session) throws DataSourceException, ConfigException
-    {
+    public Vector<Bookmark> getRecentItems(Session session) throws DataSourceException, ConfigException {
         Vector<DMEntity> ri = dmsFactoryInstantiator.getRecentItemFactory()
                 .getRecentItems(session.getUserName(), session.getUserSource());
         Vector<Bookmark> vBookmarks = new Vector<Bookmark>();
@@ -454,8 +466,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
      */
     public Vector<SymbolicLink> getChildSymbolicLinks(Session session, long parentUid, int parentType)
             throws DataSourceException, ConfigException,
-            AccessDeniedException
-    {
+            AccessDeniedException {
         DMEntity parent = null;
         switch (parentType) {
             case DMEntityType.WORKSPACE:
@@ -468,8 +479,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                 break;
         }
         if (!getSecurityAgent()
-                .isReadable(parent, session.getUserName(), session.getUserSource(), session.getGroups()))
-        {
+                .isReadable(parent, session.getUserName(), session.getUserSource(), session.getGroups())) {
             throw new AccessDeniedException();
         }
         return dmsFactoryInstantiator.getSymbolicLinkFactory().getChildSymbolicLinks(parent);
@@ -480,8 +490,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
      */
     public Vector<SymbolicLink> getSymbolicLinkCreated(Session session, long targetUid, int targetType)
             throws DataSourceException, ConfigException,
-            AccessDeniedException
-    {
+            AccessDeniedException {
         DMEntity target = null;
         switch (targetType) {
             case DMEntityType.FOLDER:
@@ -494,8 +503,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                 break;
         }
         if (!getSecurityAgent()
-                .isReadable(target, session.getUserName(), session.getUserSource(), session.getGroups()))
-        {
+                .isReadable(target, session.getUserName(), session.getUserSource(), session.getGroups())) {
             throw new AccessDeniedException();
         }
         return dmsFactoryInstantiator.getSymbolicLinkFactory().getSymbolicLinks(target);
@@ -505,9 +513,8 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     * @see org.kimios.kernel.controller.impl.IDocumentController#addSymbolicLink(org.kimios.kernel.security.Session, java.lang.String, long, int, long, int)
     */
     public void addSymbolicLink(Session session, String name, long dmEntityUid, int dmEntityType, long parentUid,
-            int parentType) throws AccessDeniedException,
-            DataSourceException, ConfigException
-    {
+                                int parentType) throws AccessDeniedException,
+            DataSourceException, ConfigException {
         DMEntity parent = null;
         switch (parentType) {
             case DMEntityType.WORKSPACE:
@@ -520,8 +527,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                 break;
         }
         if (!getSecurityAgent()
-                .isWritable(parent, session.getUserName(), session.getUserSource(), session.getGroups()))
-        {
+                .isWritable(parent, session.getUserName(), session.getUserSource(), session.getGroups())) {
             throw new AccessDeniedException();
         }
         DMEntity toLink = null;
@@ -536,8 +542,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                 break;
         }
         if (!getSecurityAgent()
-                .isReadable(toLink, session.getUserName(), session.getUserSource(), session.getGroups()))
-        {
+                .isReadable(toLink, session.getUserName(), session.getUserSource(), session.getGroups())) {
             throw new AccessDeniedException();
         }
         SymbolicLink sl = new SymbolicLink();
@@ -557,8 +562,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     */
     public void removeSymbolicLink(Session session, long dmEntityUid, int dmEntityType, long parentUid, int parentType)
             throws AccessDeniedException,
-            DataSourceException, ConfigException
-    {
+            DataSourceException, ConfigException {
         SymbolicLink key = dmsFactoryInstantiator.getSymbolicLinkFactory()
                 .getSymbolicLink(dmEntityUid, dmEntityType, parentUid, parentType);
         DMEntity parent = null;
@@ -573,8 +577,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                 break;
         }
         if (!getSecurityAgent()
-                .isWritable(parent, session.getUserName(), session.getUserSource(), session.getGroups()))
-        {
+                .isWritable(parent, session.getUserName(), session.getUserSource(), session.getGroups())) {
             throw new AccessDeniedException();
         }
         DMEntity linked = null;
@@ -589,8 +592,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                 break;
         }
         if (!getSecurityAgent()
-                .isReadable(linked, session.getUserName(), session.getUserSource(), session.getGroups()))
-        {
+                .isReadable(linked, session.getUserName(), session.getUserSource(), session.getGroups())) {
             throw new AccessDeniedException();
         }
         dmsFactoryInstantiator.getSymbolicLinkFactory().removeSymbolicLink(key);
@@ -600,9 +602,8 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     * @see org.kimios.kernel.controller.impl.IDocumentController#updateSymbolicLink(org.kimios.kernel.security.Session, long, int, long, int, java.lang.String, long, int)
     */
     public void updateSymbolicLink(Session session, long dmEntityUid, int dmEntityType, long parentUid, int parentType,
-            String newName, long newParentUid,
-            int newParentType) throws AccessDeniedException, DataSourceException, ConfigException
-    {
+                                   String newName, long newParentUid,
+                                   int newParentType) throws AccessDeniedException, DataSourceException, ConfigException {
         SymbolicLink key = dmsFactoryInstantiator.getSymbolicLinkFactory()
                 .getSymbolicLink(dmEntityUid, dmEntityType, parentUid, parentType);
         DMEntity parent = null;
@@ -617,8 +618,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                 break;
         }
         if (!getSecurityAgent()
-                .isWritable(parent, session.getUserName(), session.getUserSource(), session.getGroups()))
-        {
+                .isWritable(parent, session.getUserName(), session.getUserSource(), session.getGroups())) {
             throw new AccessDeniedException();
         }
         DMEntity linked = null;
@@ -633,8 +633,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                 break;
         }
         if (!getSecurityAgent()
-                .isReadable(linked, session.getUserName(), session.getUserSource(), session.getGroups()))
-        {
+                .isReadable(linked, session.getUserName(), session.getUserSource(), session.getGroups())) {
             throw new AccessDeniedException();
         }
         DMEntity newp = null;
@@ -650,8 +649,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                     break;
             }
             if (!getSecurityAgent()
-                    .isWritable(newp, session.getUserName(), session.getUserSource(), session.getGroups()))
-            {
+                    .isWritable(newp, session.getUserName(), session.getUserSource(), session.getGroups())) {
                 throw new AccessDeniedException();
             }
         }
@@ -665,8 +663,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
      * Return the log recorded for a given document
      */
     public Vector<DMEntityLog<Document>> getDocumentLog(Session s, long documentUid)
-            throws AccessDeniedException, ConfigException, DataSourceException
-    {
+            throws AccessDeniedException, ConfigException, DataSourceException {
         Document d = dmsFactoryInstantiator.getDocumentFactory().getDocument(documentUid);
         if (getSecurityAgent().isReadable(d, s.getUserName(), s.getUserSource(), s.getGroups())) {
             return logFactoryInstantiator.getEntityLogFactory().getLogs(d);
@@ -679,8 +676,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
      * Return the last workflow status for a given document
      */
     public WorkflowStatus getLastWorkflowStatus(Session session, long documentUid)
-            throws AccessDeniedException, ConfigException, DataSourceException
-    {
+            throws AccessDeniedException, ConfigException, DataSourceException {
         Document d = dmsFactoryInstantiator.getDocumentFactory().getDocument(documentUid);
         if (getSecurityAgent().isReadable(d, session.getUserName(), session.getUserSource(), session.getGroups())) {
             long wfsUid =
@@ -696,44 +692,38 @@ public class DocumentController extends AKimiosController implements IDocumentCo
      * Return the checked out documents for the current user
      */
     public List<Document> getMyCheckedOutDocuments(Session session)
-            throws ConfigException, DataSourceException, AccessDeniedException
-    {
-        List<Document> docs = dmsFactoryInstantiator.getDocumentFactory().getLockedDocuments( session.getUserName(),
-                                                                                              session.getUserSource());
+            throws ConfigException, DataSourceException, AccessDeniedException {
+        List<Document> docs = dmsFactoryInstantiator.getDocumentFactory().getLockedDocuments(session.getUserName(),
+                session.getUserSource());
         docs = getSecurityAgent()
                 .areReadable(docs, session.getUserName(), session.getUserSource(), session.getGroups());
         return docs;
     }
 
     public List<org.kimios.kernel.ws.pojo.Document> getDocumentsPojos(Session session, long folderUid)
-            throws AccessDeniedException, ConfigException, DataSourceException
-    {
+            throws AccessDeniedException, ConfigException, DataSourceException {
         List<Document> docs = this.getDocuments(session, folderUid);
         return dmsFactoryInstantiator.getDocumentFactory().getDocumentsPojos(docs);
     }
 
     public List<org.kimios.kernel.ws.pojo.Document> convertToPojos(Session session, List<Document> docs)
-            throws ConfigException, DataSourceException
-    {
+            throws ConfigException, DataSourceException {
         return dmsFactoryInstantiator.getDocumentFactory().getDocumentsPojos(docs);
     }
 
     public List<org.kimios.kernel.ws.pojo.Document> convertToPojosFromIds(Session session, List<Long> docsIds)
-            throws ConfigException, DataSourceException
-    {
+            throws ConfigException, DataSourceException {
         return dmsFactoryInstantiator.getDocumentFactory().getDocumentsPojosFromIds(docsIds);
     }
 
     public List<org.kimios.kernel.ws.pojo.Document> getRelatedDocumentsPojos(Session session, long documentUid)
-            throws AccessDeniedException, ConfigException, DataSourceException
-    {
+            throws AccessDeniedException, ConfigException, DataSourceException {
         List<Document> docs = this.getRelatedDocuments(session, documentUid);
         return dmsFactoryInstantiator.getDocumentFactory().getDocumentsPojos(docs);
     }
 
     public org.kimios.kernel.ws.pojo.Document getDocumentPojo(Document document)
-            throws AccessDeniedException, ConfigException, DataSourceException
-    {
+            throws AccessDeniedException, ConfigException, DataSourceException {
         return document.toPojo();
     }
 }

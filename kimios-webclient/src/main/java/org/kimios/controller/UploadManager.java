@@ -29,11 +29,14 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.kimios.client.controller.helpers.DMEntityType;
+import org.kimios.client.controller.helpers.StringTools;
 import org.kimios.client.controller.helpers.XMLGenerators;
 import org.kimios.core.configuration.Config;
-import org.kimios.utils.configuration.ConfigurationManager;
+import org.kimios.kernel.ws.pojo.DMEntitySecurity;
 import org.kimios.kernel.ws.pojo.Document;
 import org.kimios.kernel.ws.pojo.Meta;
+import org.kimios.utils.configuration.ConfigurationManager;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -42,6 +45,7 @@ import java.io.InputStream;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Vector;
 
 /**
  * @author Fabien Alin
@@ -100,6 +104,7 @@ public class UploadManager extends Controller {
 
 
     private String startUploadFile(HttpServletRequest req) throws Exception {
+
         DiskFileItemFactory fp = new DiskFileItemFactory();
         fp.setRepository(new File(ConfigurationManager.getValue(Config.DM_TMP_FILES_PATH)));
         ServletFileUpload sfu = new ServletFileUpload(fp);
@@ -113,6 +118,7 @@ public class UploadManager extends Controller {
         String action = "";
         String documentUid = ""; //used for import
         String newVersion = "";
+        boolean isRecursive = false;
         boolean isSecurityInherited = false;
         long folderUid = 0;
         String mimeType = "";
@@ -155,13 +161,52 @@ public class UploadManager extends Controller {
                 if (st.getFieldName().equalsIgnoreCase("inheritedPermissions")) {
                     isSecurityInherited = (tmpVal != null && tmpVal.equalsIgnoreCase("on"));
                 }
+                if (st.getFieldName().equalsIgnoreCase("isRecursive")) {
+                    isRecursive = (tmpVal != null && tmpVal.equalsIgnoreCase("on"));
+                }
             } else {
                 InputStream in = st.openStream();
                 mimeType = st.getContentType();
                 extension = st.getName().substring(st.getName().lastIndexOf('.') + 1);
                 int transferChunkSize = Integer.parseInt(ConfigurationManager.getValue(Config.DM_CHUNK_SIZE));
 
-                if (action.equalsIgnoreCase("AddDocument")) {
+                if (action.equalsIgnoreCase("AddDocumentWithProperties")) {
+
+                    // Security Entities
+                    Vector<DMEntitySecurity> des;
+                    if (sec != null && !sec.isEmpty()) {
+                        des = DMEntitySecuritiesParser.parseFromJson(sec, -1, DMEntityType.DOCUMENT); // -1: unused in DMEntitySecurityUtil
+                    } else {
+                        des = new Vector<DMEntitySecurity>();
+                    }
+                    String securitiesXml = "<security-rules dmEntityId=\"-1\" dmEntityTye=\"3\">\r\n";    // -1: unused in DMEntitySecurityUtil
+                    for (int i = 0; i < des.size(); i++) {
+                        securitiesXml += "\t<rule " +
+                                "security-entity-type=\"" + des.elementAt(i).getType() + "\" " +
+                                "security-entity-uid=\"" + StringTools.magicDoubleQuotes(des.elementAt(i).getName()) + "\" " +
+                                "security-entity-source=\"" + StringTools.magicDoubleQuotes(des.elementAt(i).getSource())
+                                + "\" " +
+                                "read=\"" + des.elementAt(i).isRead() + "\" " +
+                                "write=\"" + des.elementAt(i).isWrite() + "\" " +
+                                "full=\"" + des.elementAt(i).isFullAccess() + "\" />\r\n";
+                    }
+                    securitiesXml += "</security-rules>";
+
+                    // Meta Datas
+                    Map<Meta, String> mapMetasValues = DMEntitySecuritiesParser.parseMetasValuesFromJson(sessionUid, metaValues, documentVersionController);
+                    String metaXml = XMLGenerators.getMetaDatasDocumentXMLDescriptor(mapMetasValues, "yyyy-MM-dd");
+
+                    long documentTypeId = -1;
+                    try {
+                        documentTypeId = Long.parseLong(docTypeUid);
+                    } catch (NumberFormatException nfe) {
+                    }
+
+                    documentController.createDocumentWithProperties(sessionUid, name, extension, mimeType, folderUid,
+                            isSecurityInherited, securitiesXml, isRecursive, documentTypeId, metaXml, in);
+
+
+                } else if (action.equalsIgnoreCase("AddDocument")) {
                     Document d = new Document();
                     d.setCreationDate(Calendar.getInstance());
                     d.setExtension(extension);

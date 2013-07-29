@@ -181,6 +181,9 @@
     <bean id="documentController" class="org.kimios.kernel.controller.impl.DocumentController" parent="kimiosCoreCtrl">
         <property name="wksCtrl" ref="workspaceController"/>
         <property name="fldCtrl" ref="folderController"/>
+        <property name="secCtrl" ref="securityController"/>
+        <property name="vrsCtrl" ref="documentVersionController"/>
+        <property name="ftCtrl" ref="fileTransferController"/>
     </bean>
     <bean id="documentVersionController" class="org.kimios.kernel.controller.impl.DocumentVersionController"
             parent="kimiosCoreCtrl">

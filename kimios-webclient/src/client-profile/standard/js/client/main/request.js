@@ -32,6 +32,15 @@ kimios.request = {
         }
     },
 
+    uploadDocumentWithProperties: function (form, name, parentUid, isSecurityInherited, securityDatas, documentTypeUid, metaValues, handle) {
+        var uploader = new DmsSimpleUpload();
+        uploader.uploadFile(form.parent, form, 'AddDocumentWithProperties', isSecurityInherited, securityDatas, parentUid, {
+            documentTypeUid: documentTypeUid,
+            metaValues: metaValues
+        });
+        uploader.on('finished', handle, this);
+    },
+
     newWorkspace: function (name, sec, handle) {
         kimios.ajaxRequest('Workspace', {
             action: 'NewWorkspace',

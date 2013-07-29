@@ -391,6 +391,23 @@ kimios.properties.PropertiesPanel = Ext.extend(Ext.TabPanel, {
                         exception: kimios.lang('MandatoryFieldRequired')
                     });
                 } else {
+                    kimios.request.uploadDocumentWithProperties(
+                        this.dmEntityPanel, // need to pass the form as parameter (to update it with data fields)
+                        this.dmEntityPanel.nameField.getValue(),
+                        this.dmEntityPojo.parentUid,
+                        this.dmEntityPanel.inheritedPermissionsField.getValue(),
+                        this.securityEntityPanel.getJsonSecurityValues(),
+                        this.metaDataPanel.documentTypeUid,
+                        this.metaDataPanel.getJsonMetaValues(),
+                        function () {
+                            kimios.Info.msg(kimios.lang('Document'), kimios.lang('AddDocumentOK'));
+                            kimios.explorer.getViewport().refreshGrids();
+                            if (prop.window != undefined)
+                                prop.window.close();
+                        }
+                    );
+
+                    /*
                     kimios.request.uploadDocument(
                         true,
                         this.dmEntityPanel, // need to pass the form as parameter (to update it with data fields)
@@ -407,6 +424,7 @@ kimios.properties.PropertiesPanel = Ext.extend(Ext.TabPanel, {
                                 prop.window.close();
                         }
                     );
+                    */
                 }
         }
     },
