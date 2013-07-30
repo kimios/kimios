@@ -16,8 +16,6 @@
  */
 package org.kimios.client.controller;
 
-import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.kimios.client.exception.AccessDeniedException;
 import org.kimios.client.exception.ConfigException;
 import org.kimios.client.exception.DMSException;
@@ -98,13 +96,10 @@ public class DocumentController {
     public void createDocumentWithProperties(String sessionId, String name, String extension, String mimeType,
                                              long folderUid, boolean isSecurityInherited, String securitiesXmlStream,
                                              boolean isRecursive, long documentTypeId, String metasXmlStream,
-                                             InputStream documentStream) throws Exception {
+                                             String hashMD5, String hashSHA1, InputStream documentStream) throws Exception {
         try {
-            String hashMD5 = Hex.encodeHexString(DigestUtils.md5(documentStream));
-            String hashSHA1 = Hex.encodeHexString(DigestUtils.sha(documentStream));
-
-             client.createDocumentWithProperties(sessionId, name, extension, mimeType, folderUid, isSecurityInherited,
-                    securitiesXmlStream, isRecursive, documentTypeId, metasXmlStream, documentStream, hashMD5, hashSHA1);
+            client.createDocumentWithProperties(sessionId, name, extension, mimeType, folderUid, isSecurityInherited,
+                    securitiesXmlStream, isRecursive, documentTypeId, metasXmlStream, hashMD5, hashSHA1, documentStream);
 
         } catch (Exception e) {
             throw new ExceptionHelper().convertException(e);

@@ -16,38 +16,20 @@
  */
 package org.kimios.kernel.dms;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.RandomAccessFile;
-import java.io.Serializable;
-import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.RepositoryException;
 import org.kimios.kernel.repositories.RepositoryManager;
 import org.kimios.kernel.utils.HashCalculator;
 
+import javax.persistence.*;
+import java.io.*;
+import java.util.Date;
+
 @Entity
 @Table(name = "document_version")
 @SequenceGenerator(name = "seq", sequenceName = "doc_version_id_seq", allocationSize = 1)
-public class DocumentVersion implements Serializable
-{
+public class DocumentVersion implements Serializable {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq")
@@ -90,13 +72,11 @@ public class DocumentVersion implements Serializable
     @Column(name = "hash_sha1")
     private String hashSHA1;
 
-    public DocumentVersion()
-    {
+    public DocumentVersion() {
     }
 
     public DocumentVersion(long uid, String author, String authorSource, Date creationDate, Date modificationDate,
-            Long documentUid, long length, DocumentType documentType)
-    {
+                           Long documentUid, long length, DocumentType documentType) {
         this.uid = uid;
         this.author = author;
         this.authorSource = authorSource;
@@ -107,73 +87,59 @@ public class DocumentVersion implements Serializable
         this.documentType = documentType;
     }
 
-    public String getAuthorSource()
-    {
+    public String getAuthorSource() {
         return authorSource;
     }
 
-    public void setAuthorSource(String authorSource)
-    {
+    public void setAuthorSource(String authorSource) {
         this.authorSource = authorSource;
     }
 
-    public long getLength()
-    {
+    public long getLength() {
         return length;
     }
 
-    public void setLength(long length)
-    {
+    public void setLength(long length) {
         this.length = length;
     }
 
-    public Date getModificationDate()
-    {
+    public Date getModificationDate() {
         return modificationDate;
     }
 
-    public void setModificationDate(Date modificationDate)
-    {
+    public void setModificationDate(Date modificationDate) {
         this.modificationDate = modificationDate;
     }
 
-    public String getAuthor()
-    {
+    public String getAuthor() {
         return author;
     }
 
-    public void setAuthor(String author)
-    {
+    public void setAuthor(String author) {
         this.author = author;
     }
 
-    public Date getCreationDate()
-    {
+    public Date getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(Date creationDate)
-    {
+    public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
 
-    public long getDocumentUid()
-    {
+    public long getDocumentUid() {
         return documentUid;
     }
 
-    public void setDocumentUid(Long documentUid)
-    {
+    public void setDocumentUid(Long documentUid) {
         this.documentUid = documentUid;
     }
 
-    public Document getDocument()
-    {
+    public Document getDocument() {
         return this.document;
     }
 
-    public void setDocument(Document document)
-    {
+    public void setDocument(Document document) {
         if (document != null) {
             this.documentUid = document.getUid();
         } else {
@@ -182,80 +148,65 @@ public class DocumentVersion implements Serializable
         this.document = document;
     }
 
-    public String getStoragePath()
-    {
+    public String getStoragePath() {
         return storagePath;
     }
 
-    public void setStoragePath(String storagePath)
-    {
+    public void setStoragePath(String storagePath) {
         this.storagePath = storagePath;
     }
 
-    public long getUid()
-    {
+    public long getUid() {
         return uid;
     }
 
-    public void setUid(long uid)
-    {
+    public void setUid(long uid) {
         this.uid = uid;
     }
 
-    public String getHashMD5()
-    {
+    public String getHashMD5() {
         return hashMD5;
     }
 
-    public void setHashMD5(String hashMD5)
-    {
+    public void setHashMD5(String hashMD5) {
         this.hashMD5 = hashMD5;
     }
 
-    public String getHashSHA1()
-    {
+    public String getHashSHA1() {
         return hashSHA1;
     }
 
-    public void setHashSHA1(String hashSHA1)
-    {
+    public void setHashSHA1(String hashSHA1) {
         this.hashSHA1 = hashSHA1;
     }
 
     @Transient
-    public InputStream getInputStream() throws ConfigException, RepositoryException, IOException
-    {
+    public InputStream getInputStream() throws ConfigException, RepositoryException, IOException {
         return RepositoryManager.accessVersionStream(this);
     }
 
-    public RandomAccessFile getRandomAccessFile(String mode) throws Exception
-    {
+    public RandomAccessFile getRandomAccessFile(String mode) throws Exception {
         return RepositoryManager.randomAccessFile(this, mode);
     }
 
-    public DocumentType getDocumentType()
-    {
+    public DocumentType getDocumentType() {
         return documentType;
     }
 
-    public void setDocumentType(DocumentType documentType)
-    {
+    public void setDocumentType(DocumentType documentType) {
         this.documentType = documentType;
     }
 
-    public void initRepositoryStorage() throws Exception
-    {
+    public void initRepositoryStorage() throws Exception {
         RepositoryManager.initRepositoryStorage(this);
     }
 
-    public void writeData(InputStream in) throws DataSourceException, ConfigException, RepositoryException
-    {
+    public void writeData(InputStream in) throws DataSourceException, ConfigException, RepositoryException {
         RepositoryManager.writeVersion(this, in);
         FactoryInstantiator.getInstance().getDocumentVersionFactory().updateDocumentVersion(this);
     }
 
-    public void updateVersionInformation() throws DataSourceException, ConfigException, RepositoryException
-    {
+    public void updateVersionInformation() throws DataSourceException, ConfigException, RepositoryException {
         try {
             InputStream fis =
                     RepositoryManager.accessVersionStream(this);
@@ -275,13 +226,11 @@ public class DocumentVersion implements Serializable
         }
     }
 
-    public OutputStream getOutputStream() throws Exception
-    {
+    public OutputStream getOutputStream() throws Exception {
         return RepositoryManager.accessOutputStreamVersion(this);
     }
 
-    public org.kimios.kernel.ws.pojo.DocumentVersion toPojo() throws Exception
-    {
+    public org.kimios.kernel.ws.pojo.DocumentVersion toPojo() throws Exception {
         long docTypeUid = -1;
         String docTypeName = "";
         if (this.getDocumentType() != null) {
@@ -294,8 +243,7 @@ public class DocumentVersion implements Serializable
                 this.hashSHA1);
     }
 
-    public boolean equals(Object o)
-    {
+    public boolean equals(Object o) {
         try {
             if (o instanceof DocumentVersion) {
                 DocumentVersion new_name = (DocumentVersion) o;
@@ -306,6 +254,24 @@ public class DocumentVersion implements Serializable
         } catch (Exception e) {
             return false;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "DocumentVersion{" +
+                "uid=" + uid +
+                ", author='" + author + '\'' +
+                ", authorSource='" + authorSource + '\'' +
+                ", creationDate=" + creationDate +
+                ", modificationDate=" + modificationDate +
+                ", documentUid=" + documentUid +
+                ", document=" + document +
+                ", storagePath='" + storagePath + '\'' +
+                ", length=" + length +
+                ", documentType=" + documentType +
+                ", hashMD5='" + hashMD5 + '\'' +
+                ", hashSHA1='" + hashSHA1 + '\'' +
+                '}';
     }
 }
 

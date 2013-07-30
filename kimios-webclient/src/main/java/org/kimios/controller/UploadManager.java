@@ -29,9 +29,7 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
 import org.apache.commons.lang.StringEscapeUtils;
-import org.kimios.client.controller.helpers.DMEntityType;
-import org.kimios.client.controller.helpers.StringTools;
-import org.kimios.client.controller.helpers.XMLGenerators;
+import org.kimios.client.controller.helpers.*;
 import org.kimios.core.configuration.Config;
 import org.kimios.kernel.ws.pojo.DMEntitySecurity;
 import org.kimios.kernel.ws.pojo.Document;
@@ -40,12 +38,9 @@ import org.kimios.utils.configuration.ConfigurationManager;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.InputStream;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Vector;
+import java.io.*;
+import java.security.MessageDigest;
+import java.util.*;
 
 /**
  * @author Fabien Alin
@@ -166,31 +161,43 @@ public class UploadManager extends Controller {
                 }
             } else {
                 InputStream in = st.openStream();
+
                 mimeType = st.getContentType();
                 extension = st.getName().substring(st.getName().lastIndexOf('.') + 1);
                 int transferChunkSize = Integer.parseInt(ConfigurationManager.getValue(Config.DM_CHUNK_SIZE));
 
                 if (action.equalsIgnoreCase("AddDocumentWithProperties")) {
 
+                    MessageDigest md5 = MessageDigest.getInstance("MD5");
+                    MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
+
+                    List<MessageDigest> digests = new ArrayList<MessageDigest>();
+                    digests.add(md5);
+                    digests.add(sha1);
+                    InputStream hIn = new HashInputStream(digests, in);
+
+                    String filename = fp.getRepository() + "/" + new Date();
+                    OutputStream out = new FileOutputStream(filename);
+
+                    int read = 0;
+                    byte[] bytes = new byte[1024];
+                    while ((read = hIn.read(bytes)) != -1)
+                        out.write(bytes, 0, read);
+                    out.close();
+
+                    HashCalculator hc = new HashCalculator("MD5");
+                    String hashMD5 = HashCalculator.buildHexaString(md5.digest()).replaceAll(" ", "");
+                    hc.setAlgorithm("SHA-1");
+                    String hashSHA1 = HashCalculator.buildHexaString(sha1.digest()).replaceAll(" ", "");
+
                     // Security Entities
                     Vector<DMEntitySecurity> des;
                     if (sec != null && !sec.isEmpty()) {
-                        des = DMEntitySecuritiesParser.parseFromJson(sec, -1, DMEntityType.DOCUMENT); // -1: unused in DMEntitySecurityUtil
+                        des = DMEntitySecuritiesParser.parseFromJson(sec, -1, DMEntityType.DOCUMENT);
                     } else {
                         des = new Vector<DMEntitySecurity>();
                     }
-                    String securitiesXml = "<security-rules dmEntityId=\"-1\" dmEntityTye=\"3\">\r\n";    // -1: unused in DMEntitySecurityUtil
-                    for (int i = 0; i < des.size(); i++) {
-                        securitiesXml += "\t<rule " +
-                                "security-entity-type=\"" + des.elementAt(i).getType() + "\" " +
-                                "security-entity-uid=\"" + StringTools.magicDoubleQuotes(des.elementAt(i).getName()) + "\" " +
-                                "security-entity-source=\"" + StringTools.magicDoubleQuotes(des.elementAt(i).getSource())
-                                + "\" " +
-                                "read=\"" + des.elementAt(i).isRead() + "\" " +
-                                "write=\"" + des.elementAt(i).isWrite() + "\" " +
-                                "full=\"" + des.elementAt(i).isFullAccess() + "\" />\r\n";
-                    }
-                    securitiesXml += "</security-rules>";
+                    String securitiesXml = getSecurityEntities(des);
 
                     // Meta Datas
                     Map<Meta, String> mapMetasValues = DMEntitySecuritiesParser.parseMetasValuesFromJson(sessionUid, metaValues, documentVersionController);
@@ -202,8 +209,10 @@ public class UploadManager extends Controller {
                     } catch (NumberFormatException nfe) {
                     }
 
+                    in = new FileInputStream(filename);
+
                     documentController.createDocumentWithProperties(sessionUid, name, extension, mimeType, folderUid,
-                            isSecurityInherited, securitiesXml, isRecursive, documentTypeId, metaXml, in);
+                            isSecurityInherited, securitiesXml, isRecursive, documentTypeId, metaXml, hashMD5, hashSHA1, in);
 
 
                 } else if (action.equalsIgnoreCase("AddDocument")) {
@@ -249,6 +258,22 @@ public class UploadManager extends Controller {
             }
         }
         return "{success: true}";
+    }
+
+    private String getSecurityEntities(Vector<DMEntitySecurity> des) {
+        String securitiesXml = "<security-rules dmEntityId=\"-1\" dmEntityTye=\"3\">\r\n";    // -1: unused in DMEntitySecurityUtil
+        for (int i = 0; i < des.size(); i++) {
+            securitiesXml += "\t<rule " +
+                    "security-entity-type=\"" + des.elementAt(i).getType() + "\" " +
+                    "security-entity-uid=\"" + StringTools.magicDoubleQuotes(des.elementAt(i).getName()) + "\" " +
+                    "security-entity-source=\"" + StringTools.magicDoubleQuotes(des.elementAt(i).getSource())
+                    + "\" " +
+                    "read=\"" + des.elementAt(i).isRead() + "\" " +
+                    "write=\"" + des.elementAt(i).isWrite() + "\" " +
+                    "full=\"" + des.elementAt(i).isFullAccess() + "\" />\r\n";
+        }
+        securitiesXml += "</security-rules>";
+        return securitiesXml;
     }
 
     private String progress(HttpServletRequest req) throws Exception {

@@ -16,7 +16,6 @@
  */
 package org.kimios.webservices.impl;
 
-import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.kimios.kernel.dms.Bookmark;
 import org.kimios.kernel.dms.SymbolicLink;
 import org.kimios.kernel.security.Session;
@@ -26,10 +25,7 @@ import org.kimios.webservices.CoreService;
 import org.kimios.webservices.DMServiceException;
 import org.kimios.webservices.DocumentService;
 
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
 import javax.jws.WebService;
-import javax.ws.rs.QueryParam;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Vector;
@@ -133,24 +129,14 @@ public class DocumentServiceImpl extends CoreService implements DocumentService 
      * @return
      * @throws DMServiceException
      */
-    @WebMethod(exclude = true)
-    public void createDocumentWithProperties(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
-                                             @QueryParam(value = "name") @WebParam(name = "name") String name,
-                                             @QueryParam(value = "extension") @WebParam(name = "extension") String extension,
-                                             @QueryParam(value = "mimeType") @WebParam(name = "mimeType") String mimeType,
-                                             @QueryParam(value = "folderId") @WebParam(name = "folderId") long folderUid,
-                                             @QueryParam(value = "isSecurityInherited") @WebParam(name = "isSecurityInherited") boolean isSecurityInherited,
-                                             @QueryParam(value = "securitiesXmlStream") @WebParam(name = "securitiesXmlStream") String securitiesXmlStream,
-                                             @QueryParam(value = "isRecursive") @WebParam(name = "isRecursive") boolean isRecursive,
-                                             @QueryParam(value = "documentTypeId") @WebParam(name = "documentTypeId") long documentTypeId,
-                                             @QueryParam(value = "metasXmlStream") @WebParam(name = "metasXmlStream") String metasXmlStream,
-                                             @Multipart(value = "documentStream") InputStream documentStream,
-                                             @Multipart(value = "md5", required = false) String hashMd5,
-                                             @Multipart(value = "sha1", required = false) String hashSha1) throws DMServiceException {
+    public void createDocumentWithProperties(String sessionId, String name, String extension, String mimeType, long folderUid,
+                                             boolean isSecurityInherited, String securitiesXmlStream, boolean isRecursive,
+                                             long documentTypeId, String metasXmlStream, String hashMd5, String hashSha1,
+                                             InputStream documentStream) throws DMServiceException {
 
         try {
             Session session = getHelper().getSession(sessionId);
-             documentController.createDocumentWithProperties(session, name, extension, mimeType, folderUid,
+            documentController.createDocumentWithProperties(session, name, extension, mimeType, folderUid,
                     isSecurityInherited, securitiesXmlStream, isRecursive, documentTypeId, metasXmlStream,
                     documentStream, hashMd5, hashSha1);
         } catch (Exception e) {
