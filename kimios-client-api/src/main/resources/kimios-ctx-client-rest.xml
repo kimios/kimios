@@ -19,18 +19,15 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:jaxrs="http://cxf.apache.org/jaxrs"
-       xmlns:cxf="http://cxf.apache.org/core"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
         http://cxf.apache.org/jaxrs
-        http://cxf.apache.org/schemas/jaxrs.xsd
-        http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
-        "
+        http://cxf.apache.org/schemas/jaxrs.xsd"
        default-autowire="byName">
 
 
-
-    <jaxrs:client threadSafe="true"  id="administrationService" serviceClass="org.kimios.webservices.AdministrationService"
+    <jaxrs:client threadSafe="true" id="administrationService"
+                  serviceClass="org.kimios.webservices.AdministrationService"
                   address="${server.url}${service.context}/rest/">
         <jaxrs:providers>
             <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
@@ -68,13 +65,15 @@
         <jaxrs:providers>
             <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
             <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
+            <bean id="uploadMessageBodyWriter" class="org.kimios.client.controller.helpers.UploadMessageBodyWriter"/>
         </jaxrs:providers>
         <jaxrs:headers>
             <entry key="Accept" value="application/json"/>
         </jaxrs:headers>
     </jaxrs:client>
 
-    <jaxrs:client threadSafe="true" id="documentVersionService" serviceClass="org.kimios.webservices.DocumentVersionService"
+    <jaxrs:client threadSafe="true" id="documentVersionService"
+                  serviceClass="org.kimios.webservices.DocumentVersionService"
                   address="${server.url}${service.context}/rest/">
         <jaxrs:providers>
             <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
@@ -109,11 +108,11 @@
 
     <jaxrs:client threadSafe="true" id="workflowService" serviceClass="org.kimios.webservices.NotificationService"
                   name="workflowService"
-                  address="${server.url}${service.context}/rest/" bus="cxf" >
+                  address="${server.url}${service.context}/rest/" bus="cxf">
         <jaxrs:providers>
             <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
             <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
-            <bean class="org.kimios.webservices.DateParamConverter" />
+            <bean class="org.kimios.webservices.DateParamConverter"/>
         </jaxrs:providers>
         <jaxrs:headers>
             <entry key="Accept" value="application/json"/>
@@ -226,7 +225,7 @@
     </bean>
 
     <bean id="fileTransferController" class="org.kimios.client.controller.FileTransferController">
-        <property name="restMode" value="true" />
+        <property name="restMode" value="true"/>
         <property name="temporaryFilesPath" value="${temp.directory}"/>
         <property name="chunkSize" value="${transfer.chunksize}"/>
         <property name="client" ref="fileTransferService"/>
@@ -251,7 +250,7 @@
     </bean>
 
     <bean id="workflowController" class="org.kimios.client.controller.WorkflowController">
-        <property name="restMode" value="true" />
+        <property name="restMode" value="true"/>
         <property name="client" ref="workflowService"/>
     </bean>
 

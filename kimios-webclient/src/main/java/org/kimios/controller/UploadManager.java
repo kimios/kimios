@@ -168,27 +168,27 @@ public class UploadManager extends Controller {
 
                 if (action.equalsIgnoreCase("AddDocumentWithProperties")) {
 
-                    MessageDigest md5 = MessageDigest.getInstance("MD5");
-                    MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
+//                    MessageDigest md5 = MessageDigest.getInstance("MD5");
+//                    MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
+//
+//                    List<MessageDigest> digests = new ArrayList<MessageDigest>();
+//                    digests.add(md5);
+//                    digests.add(sha1);
+//                    InputStream hIn = new HashInputStream(digests, in);
 
-                    List<MessageDigest> digests = new ArrayList<MessageDigest>();
-                    digests.add(md5);
-                    digests.add(sha1);
-                    InputStream hIn = new HashInputStream(digests, in);
+//                    String filename = fp.getRepository() + "/" + new Date();
+//                    OutputStream out = new FileOutputStream(filename);
 
-                    String filename = fp.getRepository() + "/" + new Date();
-                    OutputStream out = new FileOutputStream(filename);
+//                    int read = 0;
+//                    byte[] bytes = new byte[1024];
+//                    while ((read = hIn.read(bytes)) != -1)
+//                        out.write(bytes, 0, read);
+//                    out.close();
 
-                    int read = 0;
-                    byte[] bytes = new byte[1024];
-                    while ((read = hIn.read(bytes)) != -1)
-                        out.write(bytes, 0, read);
-                    out.close();
-
-                    HashCalculator hc = new HashCalculator("MD5");
-                    String hashMD5 = HashCalculator.buildHexaString(md5.digest()).replaceAll(" ", "");
-                    hc.setAlgorithm("SHA-1");
-                    String hashSHA1 = HashCalculator.buildHexaString(sha1.digest()).replaceAll(" ", "");
+//                    HashCalculator hc = new HashCalculator("MD5");
+//                    String hashMD5 = HashCalculator.buildHexaString(md5.digest()).replaceAll(" ", "");
+//                    hc.setAlgorithm("SHA-1");
+//                    String hashSHA1 = HashCalculator.buildHexaString(sha1.digest()).replaceAll(" ", "");
 
                     // Security Entities
                     Vector<DMEntitySecurity> des;
@@ -209,10 +209,10 @@ public class UploadManager extends Controller {
                     } catch (NumberFormatException nfe) {
                     }
 
-                    in = new FileInputStream(filename);
+//                    in = new FileInputStream(filename);
 
                     documentController.createDocumentWithProperties(sessionUid, name, extension, mimeType, folderUid,
-                            isSecurityInherited, securitiesXml, isRecursive, documentTypeId, metaXml, hashMD5, hashSHA1, in);
+                            isSecurityInherited, securitiesXml, isRecursive, documentTypeId, metaXml, in);
 
 
                 } else if (action.equalsIgnoreCase("AddDocument")) {

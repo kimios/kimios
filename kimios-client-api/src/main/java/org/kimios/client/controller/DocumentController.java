@@ -16,6 +16,9 @@
  */
 package org.kimios.client.controller;
 
+import org.apache.cxf.jaxrs.client.Client;
+import org.apache.cxf.jaxrs.client.WebClient;
+import org.kimios.client.controller.helpers.FileUploadBean;
 import org.kimios.client.exception.AccessDeniedException;
 import org.kimios.client.exception.ConfigException;
 import org.kimios.client.exception.DMSException;
@@ -25,6 +28,7 @@ import org.kimios.kernel.ws.pojo.Document;
 import org.kimios.kernel.ws.pojo.SymbolicLink;
 import org.kimios.webservices.DocumentService;
 
+import javax.ws.rs.core.MediaType;
 import java.io.InputStream;
 
 /**
@@ -96,10 +100,46 @@ public class DocumentController {
     public void createDocumentWithProperties(String sessionId, String name, String extension, String mimeType,
                                              long folderUid, boolean isSecurityInherited, String securitiesXmlStream,
                                              boolean isRecursive, long documentTypeId, String metasXmlStream,
-                                             String hashMD5, String hashSHA1, InputStream documentStream) throws Exception {
+                                             InputStream inputStream) throws Exception {
         try {
-            client.createDocumentWithProperties(sessionId, name, extension, mimeType, folderUid, isSecurityInherited,
-                    securitiesXmlStream, isRecursive, documentTypeId, metasXmlStream, hashMD5, hashSHA1, documentStream);
+//            client.createDocumentWithProperties(sessionId, name, extension, mimeType, folderUid, isSecurityInherited,
+//                    securitiesXmlStream, isRecursive, documentTypeId, metasXmlStream, hashMD5, hashSHA1, documentStream);
+
+            FileUploadBean bean = new FileUploadBean(inputStream);
+
+            Client upClient = WebClient.client(client);
+            WebClient wcl = WebClient.fromClient(upClient);
+
+//            MessageDigest md5 = MessageDigest.getInstance("MD5");
+//            MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
+//            List<MessageDigest> digests = new ArrayList<MessageDigest>();
+//            digests.add(md5);
+//            digests.add(sha1);
+
+//            HashInputStream hashStream = new HashInputStream(digests, in);
+
+//            Attachment file = new Attachment("document", hashStream,
+//                    new ContentDisposition("attachment;filename=" + documentId + "_" + sessionId));
+
+//            MultipartBody uploadBody = new MultipartBody( file );
+
+            wcl.type(MediaType.MULTIPART_FORM_DATA_TYPE)
+                    .to(upClient.getCurrentURI().toString() + "/document/createDocumentWithProperties", false)
+                    .query("sessionId", sessionId)
+                    .query("name", name)
+                    .query("extension", extension)
+                    .query("mimeType", mimeType)
+                    .query("folderUid", folderUid)
+                    .query("isSecurityInherited", isSecurityInherited)
+                    .query("securitiesXmlStream", securitiesXmlStream)
+                    .query("isRecursive", isRecursive)
+                    .query("documentTypeId", documentTypeId)
+                    .query("metasXmlStream", metasXmlStream)
+                    .post(bean);
+
+//            String hashMD5 = HashCalculator.buildHexaString(md5.digest()).replaceAll( " ", "" );
+//            String hashSHA = HashCalculator.buildHexaString( sha1.digest() ).replaceAll( " ", "" );
+
 
         } catch (Exception e) {
             throw new ExceptionHelper().convertException(e);
