@@ -10,11 +10,12 @@ import java.io.IOException;
 import java.security.MessageDigest;
 
 /**
- * Created with IntelliJ IDEA.
- * User: farf
- * Date: 8/1/13
- * Time: 12:38 PM
- * To change this template use File | Settings | File Templates.
+ *
+ *  @author Fabien Alin <f@devlib.fr>
+ *
+ *  Custom inpustream, with content built on demand, based on HashInputstream (@see HashInputStream)
+ *
+ *
  */
 public class FutureInputstream
     extends ByteArrayInputStream
