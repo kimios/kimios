@@ -131,8 +131,8 @@ public class DocumentServiceImpl extends CoreService implements DocumentService 
      */
     public void createDocumentWithProperties(String sessionId, String name, String extension, String mimeType, long folderUid,
                                              boolean isSecurityInherited, String securitiesXmlStream, boolean isRecursive,
-                                             long documentTypeId, String metasXmlStream, String hashMd5, String hashSha1,
-                                             InputStream documentStream) throws DMServiceException {
+                                             long documentTypeId, String metasXmlStream, InputStream documentStream,
+                                             String hashMd5, String hashSha1) throws DMServiceException {
 
         try {
             Session session = getHelper().getSession(sessionId);

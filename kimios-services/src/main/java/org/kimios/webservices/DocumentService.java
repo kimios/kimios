@@ -82,9 +82,9 @@ public interface DocumentService {
             @QueryParam(value = "isRecursive") @WebParam(name = "isRecursive") boolean isRecursive,
             @QueryParam(value = "documentTypeId") @WebParam(name = "documentTypeId") long documentTypeId,
             @QueryParam(value = "metasXmlStream") @WebParam(name = "metasXmlStream") String metasXmlStream,
+            @Multipart(value = "document") InputStream documentStream,
             @Multipart(value = "md5") String hashMd5,
-            @Multipart(value = "sha1") String hashSha1,
-            @Multipart(value = "document") InputStream documentStream) throws DMServiceException;
+            @Multipart(value = "sha1") String hashSha1) throws DMServiceException;
 
     @GET
     @Path("/updateDocument")

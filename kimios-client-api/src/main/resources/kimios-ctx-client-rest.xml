@@ -65,7 +65,6 @@
         <jaxrs:providers>
             <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
             <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
-            <bean id="uploadMessageBodyWriter" class="org.kimios.client.controller.helpers.UploadMessageBodyWriter"/>
         </jaxrs:providers>
         <jaxrs:headers>
             <entry key="Accept" value="application/json"/>

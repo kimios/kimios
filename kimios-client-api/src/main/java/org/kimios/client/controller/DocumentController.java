@@ -18,7 +18,11 @@ package org.kimios.client.controller;
 
 import org.apache.cxf.jaxrs.client.Client;
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.kimios.client.controller.helpers.FileUploadBean;
+import org.apache.cxf.jaxrs.ext.multipart.Attachment;
+import org.apache.cxf.jaxrs.ext.multipart.InputStreamDataSource;
+import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
+import org.kimios.client.controller.helpers.FutureInputstream;
+import org.kimios.client.controller.helpers.HashInputStream;
 import org.kimios.client.exception.AccessDeniedException;
 import org.kimios.client.exception.ConfigException;
 import org.kimios.client.exception.DMSException;
@@ -28,8 +32,14 @@ import org.kimios.kernel.ws.pojo.Document;
 import org.kimios.kernel.ws.pojo.SymbolicLink;
 import org.kimios.webservices.DocumentService;
 
+import javax.activation.DataHandler;
 import javax.ws.rs.core.MediaType;
+import java.io.IOException;
 import java.io.InputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * DocumentController is used to manage and get information about DMSs
@@ -105,23 +115,35 @@ public class DocumentController {
 //            client.createDocumentWithProperties(sessionId, name, extension, mimeType, folderUid, isSecurityInherited,
 //                    securitiesXmlStream, isRecursive, documentTypeId, metasXmlStream, hashMD5, hashSHA1, documentStream);
 
-            FileUploadBean bean = new FileUploadBean(inputStream);
-
             Client upClient = WebClient.client(client);
             WebClient wcl = WebClient.fromClient(upClient);
 
-//            MessageDigest md5 = MessageDigest.getInstance("MD5");
-//            MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
-//            List<MessageDigest> digests = new ArrayList<MessageDigest>();
-//            digests.add(md5);
-//            digests.add(sha1);
+            MessageDigest md5 = null;
+            MessageDigest sha1 = null;
+            try {
+                md5 = MessageDigest.getInstance("MD5");
+                sha1 = MessageDigest.getInstance("SHA-1");
 
-//            HashInputStream hashStream = new HashInputStream(digests, in);
+            } catch (NoSuchAlgorithmException nsae) {
+                nsae.printStackTrace();
+                throw new IOException(nsae);
+            }
 
-//            Attachment file = new Attachment("document", hashStream,
-//                    new ContentDisposition("attachment;filename=" + documentId + "_" + sessionId));
+            List<MessageDigest> digests = new ArrayList<MessageDigest>();
+            digests.add(md5);
+            digests.add(sha1);
 
-//            MultipartBody uploadBody = new MultipartBody( file );
+            HashInputStream hashInputStream = new HashInputStream(digests, inputStream);
+            List<Attachment> attachments = new ArrayList<Attachment>();
+            Attachment documentAttachment = new Attachment("document", new DataHandler(new InputStreamDataSource(hashInputStream, "application/octet-stream")), null);
+            Attachment md5Attachment = new Attachment("md5", new FutureInputstream("MD5", hashInputStream), null);
+            Attachment sha1Attachment = new Attachment("sha1", new FutureInputstream("SHA-1", hashInputStream), null);
+
+            attachments.add(documentAttachment);
+            attachments.add(md5Attachment);
+            attachments.add(sha1Attachment);
+
+            MultipartBody multipartBody = new MultipartBody(attachments);
 
             wcl.type(MediaType.MULTIPART_FORM_DATA_TYPE)
                     .to(upClient.getCurrentURI().toString() + "/document/createDocumentWithProperties", false)
@@ -129,16 +151,13 @@ public class DocumentController {
                     .query("name", name)
                     .query("extension", extension)
                     .query("mimeType", mimeType)
-                    .query("folderUid", folderUid)
+                    .query("folderId", folderUid)
                     .query("isSecurityInherited", isSecurityInherited)
                     .query("securitiesXmlStream", securitiesXmlStream)
                     .query("isRecursive", isRecursive)
                     .query("documentTypeId", documentTypeId)
                     .query("metasXmlStream", metasXmlStream)
-                    .post(bean);
-
-//            String hashMD5 = HashCalculator.buildHexaString(md5.digest()).replaceAll( " ", "" );
-//            String hashSHA = HashCalculator.buildHexaString( sha1.digest() ).replaceAll( " ", "" );
+                    .post(multipartBody);
 
 
         } catch (Exception e) {
