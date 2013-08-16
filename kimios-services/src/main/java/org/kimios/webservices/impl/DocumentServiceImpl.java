@@ -267,16 +267,15 @@ public class DocumentServiceImpl extends CoreService implements DocumentService 
     /**
      * @param sessionId
      * @param parentId
-     * @param parentType
      * @return
      * @throws DMServiceException
      */
-    public org.kimios.kernel.ws.pojo.SymbolicLink[] getChildSymbolicLinks(String sessionId, long parentId,
-                                                                          int parentType) throws DMServiceException {
+    public org.kimios.kernel.ws.pojo.SymbolicLink[] getChildSymbolicLinks(String sessionId, long parentId)
+            throws DMServiceException {
 
         try {
             Session session = getHelper().getSession(sessionId);
-            Vector<SymbolicLink> vSym = documentController.getChildSymbolicLinks(session, parentId, parentType);
+            Vector<SymbolicLink> vSym = documentController.getChildSymbolicLinks(session, parentId);
             org.kimios.kernel.ws.pojo.SymbolicLink[] pojos = new org.kimios.kernel.ws.pojo.SymbolicLink[vSym.size()];
             int i = 0;
             for (SymbolicLink sl : vSym) {
@@ -292,16 +291,15 @@ public class DocumentServiceImpl extends CoreService implements DocumentService 
     /**
      * @param sessionId
      * @param targetId
-     * @param targetType
      * @return
      * @throws DMServiceException
      */
-    public org.kimios.kernel.ws.pojo.SymbolicLink[] getSymbolicLinksCreated(String sessionId, long targetId,
-                                                                            int targetType) throws DMServiceException {
+    public org.kimios.kernel.ws.pojo.SymbolicLink[] getSymbolicLinksCreated(String sessionId, long targetId)
+            throws DMServiceException {
 
         try {
             Session session = getHelper().getSession(sessionId);
-            Vector<SymbolicLink> vSym = documentController.getSymbolicLinkCreated(session, targetId, targetType);
+            Vector<SymbolicLink> vSym = documentController.getSymbolicLinkCreated(session, targetId);
             org.kimios.kernel.ws.pojo.SymbolicLink[] pojos = new org.kimios.kernel.ws.pojo.SymbolicLink[vSym.size()];
             int i = 0;
             for (SymbolicLink sl : vSym) {
@@ -318,40 +316,17 @@ public class DocumentServiceImpl extends CoreService implements DocumentService 
      * @param sessionId
      * @param name
      * @param dmEntityId
-     * @param dmEntityType
      * @param parentId
-     * @param parentType
      * @throws DMServiceException
      */
-    public void addSymbolicLink(String sessionId, String name, long dmEntityId, int dmEntityType, long parentId,
-                                int parentType) throws DMServiceException {
-
-        try {
-
-            Session session = getHelper().getSession(sessionId);
-
-            documentController.addSymbolicLink(session, name, dmEntityId, dmEntityType, parentId, parentType);
-        } catch (Exception e) {
-            throw getHelper().convertException(e);
-        }
-    }
-
-    /**
-     * @param sessionId
-     * @param dmEntityId
-     * @param dmEntityType
-     * @param parentId
-     * @param parentType
-     * @throws DMServiceException
-     */
-    public void removeSymbolicLink(String sessionId, long dmEntityId, int dmEntityType, long parentId, int parentType)
+    public void addSymbolicLink(String sessionId, String name, long dmEntityId, long parentId)
             throws DMServiceException {
 
         try {
 
             Session session = getHelper().getSession(sessionId);
 
-            documentController.removeSymbolicLink(session, dmEntityId, dmEntityType, parentId, parentType);
+            documentController.addSymbolicLink(session, name, dmEntityId, parentId);
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }
@@ -360,21 +335,37 @@ public class DocumentServiceImpl extends CoreService implements DocumentService 
     /**
      * @param sessionId
      * @param dmEntityId
-     * @param dmEntityType
      * @param parentId
-     * @param parentType
-     * @param newParentId
-     * @param newParentType
      * @throws DMServiceException
      */
-    public void updateSymbolicLink(String sessionId, long dmEntityId, int dmEntityType, long parentId, int parentType,
-                                   long newParentId, int newParentType) throws DMServiceException {
+    public void removeSymbolicLink(String sessionId, long dmEntityId, long parentId)
+            throws DMServiceException {
 
         try {
 
             Session session = getHelper().getSession(sessionId);
 
-            documentController.removeSymbolicLink(session, dmEntityId, dmEntityType, parentId, parentType);
+            documentController.removeSymbolicLink(session, dmEntityId, parentId);
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
+
+    /**
+     * @param sessionId
+     * @param dmEntityId
+     * @param parentId
+     * @param newParentId
+     * @throws DMServiceException
+     */
+    public void updateSymbolicLink(String sessionId, long dmEntityId, long parentId, long newParentId)
+            throws DMServiceException {
+
+        try {
+
+            Session session = getHelper().getSession(sessionId);
+
+            documentController.removeSymbolicLink(session, dmEntityId, parentId);
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }
@@ -408,16 +399,15 @@ public class DocumentServiceImpl extends CoreService implements DocumentService 
     /**
      * @param sessionId
      * @param dmEntityId
-     * @param dmEntityType
      * @throws DMServiceException
      */
-    public void addBookmark(String sessionId, long dmEntityId, int dmEntityType) throws DMServiceException {
+    public void addBookmark(String sessionId, long dmEntityId) throws DMServiceException {
 
         try {
 
             Session session = getHelper().getSession(sessionId);
 
-            documentController.addBookmark(session, dmEntityId, dmEntityType);
+            documentController.addBookmark(session, dmEntityId);
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }
@@ -426,16 +416,15 @@ public class DocumentServiceImpl extends CoreService implements DocumentService 
     /**
      * @param sessionId
      * @param dmEntityId
-     * @param dmEntityType
      * @throws DMServiceException
      */
-    public void removeBookmark(String sessionId, long dmEntityId, int dmEntityType) throws DMServiceException {
+    public void removeBookmark(String sessionId, long dmEntityId) throws DMServiceException {
 
         try {
 
             Session session = getHelper().getSession(sessionId);
 
-            documentController.removeBoomark(session, dmEntityId, dmEntityType);
+            documentController.removeBoomark(session, dmEntityId);
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }

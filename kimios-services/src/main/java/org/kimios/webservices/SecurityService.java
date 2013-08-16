@@ -38,8 +38,7 @@ public interface SecurityService
     @Produces("application/json")
     public DMEntitySecurity[] getDMEntitySecurities(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
-            @QueryParam(value = "dmEntityId") @WebParam(name = "dmEntityId") long dmEntityId,
-            @QueryParam(value = "dmEntityType") @WebParam(name = "dmEntityType") int dmEntityType)
+            @QueryParam(value = "dmEntityId") @WebParam(name = "dmEntityId") long dmEntityId)
             throws DMServiceException;
 
     @GET
@@ -48,7 +47,6 @@ public interface SecurityService
     public void updateDMEntitySecurities(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "dmEntityId") @WebParam(name = "dmEntityId") long dmEntityId,
-            @QueryParam(value = "dmEntityType") @WebParam(name = "dmEntityType") int dmEntityType,
             @QueryParam(value = "xmlStream") @WebParam(name = "xmlStream") String xmlStream,
             @QueryParam(value = "isRecursive") @WebParam(name = "isRecursive") boolean isRecursive)
             throws DMServiceException;
@@ -57,24 +55,21 @@ public interface SecurityService
     @Path("/canRead")
     @Produces("application/json")
     public boolean canRead(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
-            @QueryParam(value = "dmEntityId") @WebParam(name = "dmEntityId") long dmEntityId,
-            @QueryParam(value = "dmEntityType") @WebParam(name = "dmEntityType") int dmEntityType)
+            @QueryParam(value = "dmEntityId") @WebParam(name = "dmEntityId") long dmEntityId)
             throws DMServiceException;
 
     @GET
     @Path("/canWrite")
     @Produces("application/json")
     public boolean canWrite(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
-            @QueryParam(value = "dmEntityId") @WebParam(name = "dmEntityId") long dmEntityId,
-            @QueryParam(value = "dmEntityType") @WebParam(name = "dmEntityType") int dmEntityType)
+            @QueryParam(value = "dmEntityId") @WebParam(name = "dmEntityId") long dmEntityId)
             throws DMServiceException;
 
     @GET
     @Path("/hasFullAccess")
     @Produces("application/json")
     public boolean hasFullAccess(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
-            @QueryParam(value = "dmEntityId") @WebParam(name = "dmEntityId") long dmEntityId,
-            @QueryParam(value = "dmEntityType") @WebParam(name = "dmEntityType") int dmEntityType)
+            @QueryParam(value = "dmEntityId") @WebParam(name = "dmEntityId") long dmEntityId)
             throws DMServiceException;
 
     @GET

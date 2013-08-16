@@ -43,8 +43,6 @@ public interface SearchService
         @QueryParam( value = "sessionId" ) @WebParam( name = "sessionId" ) String sessionUid,
         @QueryParam( value = "query" ) @WebParam( name = "query" ) String query,
         @QueryParam( value = "dmEntityId" ) @WebParam( name = "dmEntityId" ) long dmEntityId,
-        @QueryParam( value = "dmEntityType" ) @WebParam(
-            name = "dmEntityType" ) int dmEntityType,
         @QueryParam( value = "start" ) @WebParam( name = "start" ) int start,
         @QueryParam( value = "pageSize" ) @WebParam( name = "pageSize" ) int pageSize,
         @QueryParam( value = "sortField" ) @WebParam( name = "sortField" ) String sortField,
@@ -57,9 +55,7 @@ public interface SearchService
     public List<Document> advancedSearch(
         @QueryParam( value = "sessionId" ) @WebParam( name = "sessionId" ) String sessionId,
         @QueryParam( value = "xmlStream" ) @WebParam( name = "xmlStream" ) String xmlStream,
-        @QueryParam( value = "dmEntityId" ) @WebParam( name = "dmEntityId" ) long dmEntityId,
-        @QueryParam( value = "dmEntityType" ) @WebParam(
-            name = "dmEntityType" ) int dmEntityType )
+        @QueryParam( value = "dmEntityId" ) @WebParam( name = "dmEntityId" ) long dmEntityId)
         throws DMServiceException;
 
     @GET
@@ -75,8 +71,7 @@ public interface SearchService
     @Produces( "application/json" )
     public String getPathFromDMEntity(
         @QueryParam( value = "sessionId" ) @WebParam( name = "sessionId" ) String sessionId,
-        @QueryParam( value = "entityId" ) @WebParam( name = "entityId" ) long entityId,
-        @QueryParam( value = "entityType" ) @WebParam( name = "entityType" ) int entityType )
+        @QueryParam( value = "entityId" ) @WebParam( name = "entityId" ) long entityId)
         throws DMServiceException;
 
 

@@ -262,7 +262,6 @@ public interface AdministrationService
     @Produces("application/json")
     public void changeOwnership(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "dmEntityId") @WebParam(name = "dmEntityId") long dmEntityId,
-            @QueryParam(value = "dmEntityType") @WebParam(name = "dmEntityType") int dmEntityType,
             @QueryParam(value = "userName") @WebParam(name = "userName") String userName,
             @QueryParam(value = "userSource") @WebParam(name = "userSource") String userSource)
             throws DMServiceException;

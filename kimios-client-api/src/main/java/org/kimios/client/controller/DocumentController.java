@@ -220,7 +220,7 @@ public class DocumentController {
     public void addBookmark(String sessionId, long dmEntityId, int dmEntityType)
             throws Exception, DMSException, ConfigException, AccessDeniedException {
         try {
-            client.addBookmark(sessionId, dmEntityId, dmEntityType);
+            client.addBookmark(sessionId, dmEntityId);
         } catch (Exception e) {
             throw new ExceptionHelper().convertException(e);
         }
@@ -232,7 +232,7 @@ public class DocumentController {
     public void removeBookmark(String sessionId, long dmEntityId, int dmEntityType)
             throws Exception, DMSException, ConfigException, AccessDeniedException {
         try {
-            client.removeBookmark(sessionId, dmEntityId, dmEntityType);
+            client.removeBookmark(sessionId, dmEntityId);
         } catch (Exception e) {
             throw new ExceptionHelper().convertException(e);
         }
@@ -304,7 +304,7 @@ public class DocumentController {
     public SymbolicLink[] getChildSymbolicLinks(String sessionId, long parentId, int parentType)
             throws Exception, DMSException, ConfigException, AccessDeniedException {
         try {
-            return client.getChildSymbolicLinks(sessionId, parentId, parentType);
+            return client.getChildSymbolicLinks(sessionId, parentId);
         } catch (Exception e) {
             throw new ExceptionHelper().convertException(e);
         }
@@ -316,7 +316,7 @@ public class DocumentController {
     public SymbolicLink[] getSymbolicLinksCreated(String sessionId, long dmEntityId, int dmEntityType)
             throws Exception {
         try {
-            return client.getSymbolicLinksCreated(sessionId, dmEntityId, dmEntityType);
+            return client.getSymbolicLinksCreated(sessionId, dmEntityId);
         } catch (Exception e) {
             throw new ExceptionHelper().convertException(e);
         }
@@ -326,7 +326,7 @@ public class DocumentController {
                                    String name)
             throws Exception {
         try {
-            client.addSymbolicLink(sessionId, name, targetId, targetType, parentId, parentType);
+            client.addSymbolicLink(sessionId, name, targetId, parentId);
         } catch (Exception e) {
             throw new ExceptionHelper().convertException(e);
         }
@@ -339,8 +339,7 @@ public class DocumentController {
                                    long newParentId, int newParentType, String name)
             throws Exception {
         try {
-            client.updateSymbolicLink(sessionId, targetId, targetType, parentId, parentType, newParentId,
-                    newParentType);
+            client.updateSymbolicLink(sessionId, targetId, parentId, newParentId);
         } catch (Exception e) {
             throw new ExceptionHelper().convertException(e);
         }

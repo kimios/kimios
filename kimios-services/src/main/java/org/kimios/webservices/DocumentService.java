@@ -142,16 +142,14 @@ public interface DocumentService {
     @Produces("application/json")
     public SymbolicLink[] getChildSymbolicLinks(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
-            @QueryParam(value = "parentId") @WebParam(name = "parentId") long parentUid,
-            @QueryParam(value = "parentType") @WebParam(name = "parentType") int parentType) throws DMServiceException;
+            @QueryParam(value = "parentId") @WebParam(name = "parentId") long parentUid) throws DMServiceException;
 
     @GET
     @Path("/getSymbolicLinksCreated")
     @Produces("application/json")
     public SymbolicLink[] getSymbolicLinksCreated(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
-            @QueryParam(value = "targetId") @WebParam(name = "targetId") long targetUid,
-            @QueryParam(value = "targetType") @WebParam(name = "targetType") int targetType) throws DMServiceException;
+            @QueryParam(value = "targetId") @WebParam(name = "targetId") long targetUid) throws DMServiceException;
 
     @GET
     @Path("/addSymbolicLink")
@@ -159,29 +157,24 @@ public interface DocumentService {
     public void addSymbolicLink(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
                                 @QueryParam(value = "name") @WebParam(name = "name") String name,
                                 @QueryParam(value = "dmEntityId") @WebParam(name = "dmEntityId") long dmEntityUid,
-                                @QueryParam(value = "dmEntityType") @WebParam(name = "dmEntityType") int dmEntityType,
-                                @QueryParam(value = "parentId") @WebParam(name = "parentId") long parentUid,
-                                @QueryParam(value = "parentType") @WebParam(name = "parentType") int parentType) throws DMServiceException;
+                                @QueryParam(value = "parentId") @WebParam(name = "parentId") long parentUid)
+            throws DMServiceException;
 
     @GET
     @Path("/removeSymbolicLink")
     @Produces("application/json")
     public void removeSymbolicLink(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
                                    @QueryParam(value = "dmEntityId") @WebParam(name = "dmEntityId") long dmEntityUid,
-                                   @QueryParam(value = "dmEntityType") @WebParam(name = "dmEntityType") int dmEntityType,
-                                   @QueryParam(value = "parentId") @WebParam(name = "parentId") long parentUid,
-                                   @QueryParam(value = "parentType") @WebParam(name = "parentType") int parentType) throws DMServiceException;
+                                   @QueryParam(value = "parentId") @WebParam(name = "parentId") long parentUid)
+            throws DMServiceException;
 
     @GET
     @Path("/updateSymbolicLink")
     @Produces("application/json")
     public void updateSymbolicLink(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
                                    @QueryParam(value = "dmEntityId") @WebParam(name = "dmEntityId") long dmEntityUid,
-                                   @QueryParam(value = "dmEntityType") @WebParam(name = "dmEntityType") int dmEntityType,
                                    @QueryParam(value = "parentId") @WebParam(name = "parentId") long parentUid,
-                                   @QueryParam(value = "parentType") @WebParam(name = "parentType") int parentType,
-                                   @QueryParam(value = "newParentId") @WebParam(name = "newParentId") long newParentUid,
-                                   @QueryParam(value = "newParentType") @WebParam(name = "newParentType") int newParentType)
+                                   @QueryParam(value = "newParentId") @WebParam(name = "newParentId") long newParentUid)
             throws DMServiceException;
 
     @GET
@@ -194,16 +187,14 @@ public interface DocumentService {
     @Path("/addBookmark")
     @Produces("application/json")
     public void addBookmark(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
-                            @QueryParam(value = "dmEntityId") @WebParam(name = "dmEntityId") long dmEntityUid,
-                            @QueryParam(value = "dmEntityType") @WebParam(name = "dmEntityType") int dmEntityType)
+                            @QueryParam(value = "dmEntityId") @WebParam(name = "dmEntityId") long dmEntityUid)
             throws DMServiceException;
 
     @GET
     @Path("/removeBookmark")
     @Produces("application/json")
     public void removeBookmark(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
-                               @QueryParam(value = "dmEntityId") @WebParam(name = "dmEntityId") long dmEntityUid,
-                               @QueryParam(value = "dmEntityType") @WebParam(name = "dmEntityType") int dmEntityType)
+                               @QueryParam(value = "dmEntityId") @WebParam(name = "dmEntityId") long dmEntityUid)
             throws DMServiceException;
 
     @GET

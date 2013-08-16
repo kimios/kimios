@@ -229,8 +229,7 @@ public interface IAdministrationController
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IAdministrationController#changeOwnership(org.kimios.kernel.security.Session, long, int, java.lang.String, java.lang.String)
     */
-    public void changeOwnership(Session session, long dmEntityUid,
-            int dmEntityType, String userName, String userSource)
+    public void changeOwnership(Session session, long dmEntityUid, String userName, String userSource)
             throws AccessDeniedException, ConfigException, DataSourceException;
 
     /* (non-Javadoc)

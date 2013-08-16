@@ -53,7 +53,7 @@ public class SearchController
     {
         try
         {
-            return client.quickSearch( sessionId, query, dmEntityId, dmEntityType, start, pageSize, sort, sortDir );
+            return client.quickSearch( sessionId, query, dmEntityId, start, pageSize, sort, sortDir );
         }
         catch ( Exception e )
         {
@@ -69,7 +69,7 @@ public class SearchController
     {
         try
         {
-            return client.advancedSearch( sessionId, xmlStream, dmEntityId, dmEntityType );
+            return client.advancedSearch( sessionId, xmlStream, dmEntityId );
         }
         catch ( Exception e )
         {
@@ -85,7 +85,7 @@ public class SearchController
     {
         try
         {
-            return client.getPathFromDMEntity( sessionId, dmEntityId, dmEntityType );
+            return client.getPathFromDMEntity( sessionId, dmEntityId );
         }
         catch ( Exception e )
         {

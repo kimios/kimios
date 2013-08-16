@@ -115,7 +115,6 @@ public class ContextBuilder
             fold.setUid(-1);
             fold.setName(mi.getArguments()[1] != null ? mi.getArguments()[1].toString() : "");
             fold.setParentUid((Long) mi.getArguments()[2]);
-            fold.setParentType((Integer) mi.getArguments()[3]);
             FactoryInstantiator.getInstance().getDmEntityFactory().generatePath(fold);
             ctx.setEntity(fold);
         }

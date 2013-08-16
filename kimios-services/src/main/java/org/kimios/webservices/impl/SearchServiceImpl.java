@@ -41,25 +41,13 @@ public class SearchServiceImpl
         implements SearchService {
     private static Logger log = LoggerFactory.getLogger(SearchService.class);
 
-    public SearchResponse quickSearch(String sessionUid, String query, long dmEntityUid, int dmEntityType, int start,
+    public SearchResponse quickSearch(String sessionUid, String query, long dmEntityUid, int start,
                                       int pageSize, String sortField, String sortDir)
             throws DMServiceException {
         try {
             Session s = getHelper().getSession(sessionUid);
-            DMEntity entity = null;
-            switch (dmEntityType) {
-                case DMEntityType.WORKSPACE:
-                    entity = new Workspace(dmEntityUid, "", "", "", null);
-                    break;
-                case DMEntityType.FOLDER:
-                    entity = new Folder(dmEntityUid, "", "", "", null, -1, -1);
-                    break;
-            }
-            if (entity != null) {
-                return searchController.quickSearchPojos(s, query, entity, start, pageSize, sortField, sortDir);
-            } else {
-                return searchController.quickSearchPojos(s, query, null, start, pageSize, sortField, sortDir);
-            }
+            return searchController.quickSearchPojos(s, query, dmEntityUid, start, pageSize, sortField, sortDir);
+
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }
@@ -71,20 +59,12 @@ public class SearchServiceImpl
      * @return
      * @throws DMServiceException
      */
-    public List<Document> advancedSearch(String sessionUid, String xmlStream, long dmEntityUid, int dmEntityType)
+    public List<Document> advancedSearch(String sessionUid, String xmlStream, long dmEntityUid)
             throws DMServiceException {
         try {
             Session s = getHelper().getSession(sessionUid);
-            DMEntity entity = null;
-            switch (dmEntityType) {
-                case DMEntityType.WORKSPACE:
-                    entity = new Workspace(dmEntityUid, "", "", "", null);
-                    break;
-                case DMEntityType.FOLDER:
-                    entity = new Folder(dmEntityUid, "", "", "", null, -1, -1);
-                    break;
-            }
-            return searchController.advancedSearchPojos(s, xmlStream, entity);
+            return searchController.advancedSearchPojos(s, xmlStream, dmEntityUid);
+
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }
@@ -104,11 +84,11 @@ public class SearchServiceImpl
         }
     }
 
-    public String getPathFromDMEntity(String sessionUid, long entityUid, int entityType)
+    public String getPathFromDMEntity(String sessionUid, long entityUid)
             throws DMServiceException {
         try {
             Session s = getHelper().getSession(sessionUid);
-            String r = pathController.getPathFromDMEntity(s, entityUid, entityType);
+            String r = pathController.getPathFromDMEntity(s, entityUid);
             return r;
         } catch (Exception e) {
             throw getHelper().convertException(e);

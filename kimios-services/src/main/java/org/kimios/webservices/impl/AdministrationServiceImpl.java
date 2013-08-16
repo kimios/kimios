@@ -438,7 +438,7 @@ public class AdministrationServiceImpl extends CoreService implements Administra
      * @param userSource
      * @throws DMServiceException
      */
-    public void changeOwnership(String sessionUid, long dmEntityUid, int dmEntityType, String userName,
+    public void changeOwnership(String sessionUid, long dmEntityUid, String userName,
             String userSource) throws DMServiceException
     {
 
@@ -446,7 +446,7 @@ public class AdministrationServiceImpl extends CoreService implements Administra
 
             org.kimios.kernel.security.Session session = getHelper().getSession(sessionUid);
 
-            administrationController.changeOwnership(session, dmEntityUid, dmEntityType, userName, userSource);
+            administrationController.changeOwnership(session, dmEntityUid, userName, userSource);
         } catch (Exception e) {
 
             throw getHelper().convertException(e);

@@ -152,7 +152,7 @@ public class SecurityController
     {
         try
         {
-            return client.canRead( sessionId, dmEntityId, dmEntityType );
+            return client.canRead( sessionId, dmEntityId );
         }
         catch ( Exception e )
         {
@@ -168,7 +168,7 @@ public class SecurityController
     {
         try
         {
-            return client.canWrite( sessionId, dmEntityId, dmEntityType );
+            return client.canWrite( sessionId, dmEntityId );
         }
         catch ( Exception e )
         {
@@ -184,7 +184,7 @@ public class SecurityController
     {
         try
         {
-            return client.hasFullAccess( sessionId, dmEntityId, dmEntityType );
+            return client.hasFullAccess( sessionId, dmEntityId );
         }
         catch ( Exception e )
         {
@@ -280,7 +280,7 @@ public class SecurityController
     {
         try
         {
-            return client.getDMEntitySecurities( sessionId, dmEntityId, dmEntityType );
+            return client.getDMEntitySecurities( sessionId, dmEntityId );
         }
         catch ( Exception e )
         {
@@ -312,7 +312,7 @@ public class SecurityController
             }
             xmlStream += "</security-rules>";
             des = null;
-            client.updateDMEntitySecurities( sessionId, dmEntityId, dmEntityType, xmlStream, isRecursive );
+            client.updateDMEntitySecurities( sessionId, dmEntityId, xmlStream, isRecursive );
         }
         catch ( Exception e )
         {

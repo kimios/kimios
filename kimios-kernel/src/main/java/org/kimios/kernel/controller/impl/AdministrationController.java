@@ -26,11 +26,7 @@ import java.util.Vector;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.IAdministrationController;
-import org.kimios.kernel.dms.DMEntityType;
-import org.kimios.kernel.dms.Document;
-import org.kimios.kernel.dms.Folder;
-import org.kimios.kernel.dms.Lock;
-import org.kimios.kernel.dms.Workspace;
+import org.kimios.kernel.dms.*;
 import org.kimios.kernel.exception.AccessDeniedException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.IndexException;
@@ -582,7 +578,7 @@ public class AdministrationController extends AKimiosController implements IAdmi
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IAdministrationController#changeOwnership(org.kimios.kernel.security.Session, long, int, java.lang.String, java.lang.String)
     */
-    public void changeOwnership(Session session, long dmEntityUid, int dmEntityType, String userName, String userSource)
+    public void changeOwnership(Session session, long dmEntityUid, String userName, String userSource)
             throws AccessDeniedException,
             ConfigException, DataSourceException
     {
@@ -591,7 +587,8 @@ public class AdministrationController extends AKimiosController implements IAdmi
         {
             throw new AccessDeniedException();
         }
-        switch (dmEntityType) {
+        DMEntity entity = dmsFactoryInstantiator.getDmEntityFactory().getEntity(dmEntityUid);
+        switch (entity.getType()) {
             case DMEntityType.WORKSPACE:
                 Workspace w = dmsFactoryInstantiator.getWorkspaceFactory().getWorkspace(dmEntityUid);
                 if (w != null) {

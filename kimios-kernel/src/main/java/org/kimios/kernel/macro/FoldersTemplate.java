@@ -113,7 +113,7 @@ public class FoldersTemplate extends MacroImpl
                 }
                 reader.close();
                 for (String path : paths) {
-                    folderController.createFolder(session, path, entity.getUid(), entity.getType(), true);
+                    folderController.createFolder(session, path, entity.getUid(), true);
                 }
             }
         } catch (Exception ex) {

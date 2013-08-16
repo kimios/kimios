@@ -159,14 +159,14 @@ public interface IDocumentController {
     /**
      * Create a new bookmark for the given user
      */
-    public void addBookmark(Session session, long dmEntityUid, int dmEntityType)
+    public void addBookmark(Session session, long dmEntityUid)
             throws AccessDeniedException, DataSourceException, ConfigException;
 
     /**
      * Remove a bookmark for the given user
      */
-    public void removeBoomark(Session session, long dmEntityUid,
-                              int dmEntityType) throws AccessDeniedException, DataSourceException, ConfigException;
+    public void removeBoomark(Session session, long dmEntityUid)
+            throws AccessDeniedException, DataSourceException, ConfigException;
 
     /**
      * Get the last consulted items for the given user
@@ -177,29 +177,25 @@ public interface IDocumentController {
     /**
      * Get the symbolic links created in workspace or folder (not recursive)
      */
-    public Vector<SymbolicLink> getChildSymbolicLinks(Session session,
-                                                      long parentUid, int parentType) throws DataSourceException,
+    public Vector<SymbolicLink> getChildSymbolicLinks(Session session, long parentUid) throws DataSourceException,
             ConfigException, AccessDeniedException;
 
     /**
      * Get the symbolic links created for a specific target
      */
-    public Vector<SymbolicLink> getSymbolicLinkCreated(Session session,
-                                                       long targetUid, int targetType) throws DataSourceException,
+    public Vector<SymbolicLink> getSymbolicLinkCreated(Session session, long targetUid) throws DataSourceException,
             ConfigException, AccessDeniedException;
 
     /**
      * Create a new symbolic link for a given entity, in a given entity
      */
-    public void addSymbolicLink(Session session, String name, long dmEntityUid,
-                                int dmEntityType, long parentUid, int parentType)
+    public void addSymbolicLink(Session session, String name, long dmEntityUid, long parentUid)
             throws AccessDeniedException, DataSourceException, ConfigException;
 
     /**
      * Remove a symbolic link existing in a specific entity
      */
-    public void removeSymbolicLink(Session session, long dmEntityUid,
-                                   int dmEntityType, long parentUid, int parentType)
+    public void removeSymbolicLink(Session session, long dmEntityUid, long parentUid)
             throws AccessDeniedException, DataSourceException, ConfigException;
 
     /**

@@ -45,11 +45,11 @@ public class FolderServiceImpl extends CoreService implements FolderService
         }
     }
 
-    public Folder[] getFolders(String sessionUid, long parentUid, int parentType) throws DMServiceException
+    public Folder[] getFolders(String sessionUid, long parentUid) throws DMServiceException
     {
         try {
             Session session = getHelper().getSession(sessionUid);
-            List<org.kimios.kernel.dms.Folder> v = folderController.getFolders(session, parentUid, parentType);
+            List<org.kimios.kernel.dms.Folder> v = folderController.getFolders(session, parentUid);
             Folder[] r = new Folder[v.size()];
             int i = 0;
             for (org.kimios.kernel.dms.Folder it : v) {
@@ -62,24 +62,24 @@ public class FolderServiceImpl extends CoreService implements FolderService
         }
     }
 
-    public long createFolder(String sessionUid, String name, long parentUid, int parentType,
-            boolean isSecurityInherited) throws DMServiceException
+    public long createFolder(String sessionUid, String name, long parentUid, boolean isSecurityInherited)
+            throws DMServiceException
     {
         try {
             Session session = getHelper().getSession(sessionUid);
-            long uid = folderController.createFolder(session, name, parentUid, parentType, isSecurityInherited);
+            long uid = folderController.createFolder(session, name, parentUid, isSecurityInherited);
             return uid;
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }
     }
 
-    public void updateFolder(String sessionUid, long folderUid, String name, long parentUid, int parentType)
+    public void updateFolder(String sessionUid, long folderUid, String name, long parentUid)
             throws DMServiceException
     {
         try {
             Session session = getHelper().getSession(sessionUid);
-            folderController.updateFolder(session, folderUid, name, parentUid, parentType);
+            folderController.updateFolder(session, folderUid, name, parentUid);
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }

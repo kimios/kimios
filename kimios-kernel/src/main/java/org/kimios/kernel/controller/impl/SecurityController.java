@@ -52,12 +52,13 @@ public class SecurityController extends AKimiosController implements ISecurityCo
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.ISecurityController#getDMEntitySecurityies(org.kimios.kernel.security.Session, long, int)
     */
-    public List<DMEntitySecurity> getDMEntitySecurityies(Session session, long dmEntityUid, int dmEntityType)
+    public List<DMEntitySecurity> getDMEntitySecurityies(Session session, long dmEntityUid)
             throws ConfigException,
             DataSourceException
     {
         Vector<DMEntitySecurity> v = new Vector<DMEntitySecurity>();
-        DMEntity entity = this.getDMEntity(dmEntityUid, dmEntityType);
+        DMEntity entity = this.getDMEntity(dmEntityUid);
+
         if (entity != null) {
             v = securityFactoryInstantiator.getDMEntitySecurityFactory().getDMEntitySecurities(entity);
         }
@@ -67,11 +68,11 @@ public class SecurityController extends AKimiosController implements ISecurityCo
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.ISecurityController#updateDMEntitySecurities(org.kimios.kernel.security.Session, long, int, java.lang.String, boolean)
     */
-    public void updateDMEntitySecurities(Session session, long dmEntityUid, int dmEntityType, String xmlStream,
+    public void updateDMEntitySecurities(Session session, long dmEntityUid, String xmlStream,
             boolean isRecursive) throws AccessDeniedException, ConfigException, DataSourceException,
             XMLException
     {
-        DMEntity entity = this.getDMEntity(dmEntityUid, dmEntityType);
+        DMEntity entity = this.getDMEntity(dmEntityUid);
         if (entity != null) {
             if (getSecurityAgent()
                     .isFullAccess(entity, session.getUserName(), session.getUserSource(), session.getGroups()))
@@ -111,30 +112,18 @@ public class SecurityController extends AKimiosController implements ISecurityCo
     /**
      * Convenience method to get dmEntity from dmEntityUid and dmEntityType (workspace, folder and document)
      */
-    private DMEntity getDMEntity(long dmEntityUid, int dmEntityType) throws ConfigException, DataSourceException
+    private DMEntity getDMEntity(long dmEntityUid) throws ConfigException, DataSourceException
     {
-        DMEntity entity = null;
-        switch (dmEntityType) {
-            case DMEntityType.WORKSPACE:
-                entity = dmsFactoryInstantiator.getWorkspaceFactory().getWorkspace(dmEntityUid);
-                break;
-            case DMEntityType.FOLDER:
-                entity = dmsFactoryInstantiator.getFolderFactory().getFolder(dmEntityUid);
-                break;
-            case DMEntityType.DOCUMENT:
-                entity = dmsFactoryInstantiator.getDocumentFactory().getDocument(dmEntityUid);
-                break;
-        }
-        return entity;
+        return dmsFactoryInstantiator.getDmEntityFactory().getEntity(dmEntityUid);
     }
 
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.ISecurityController#canRead(org.kimios.kernel.security.Session, long, int)
     */
-    public boolean canRead(Session session, long dmEntityUid, int dmEntityType)
+    public boolean canRead(Session session, long dmEntityUid)
             throws ConfigException, DataSourceException
     {
-        DMEntity entity = this.getDMEntity(dmEntityUid, dmEntityType);
+        DMEntity entity = this.getDMEntity(dmEntityUid);
         return getSecurityAgent()
                 .isReadable(entity, session.getUserName(), session.getUserSource(), session.getGroups());
     }
@@ -142,10 +131,10 @@ public class SecurityController extends AKimiosController implements ISecurityCo
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.ISecurityController#canWrite(org.kimios.kernel.security.Session, long, int)
     */
-    public boolean canWrite(Session session, long dmEntityUid, int dmEntityType)
+    public boolean canWrite(Session session, long dmEntityUid)
             throws ConfigException, DataSourceException
     {
-        DMEntity entity = this.getDMEntity(dmEntityUid, dmEntityType);
+        DMEntity entity = this.getDMEntity(dmEntityUid);
         return getSecurityAgent()
                 .isWritable(entity, session.getUserName(), session.getUserSource(), session.getGroups());
     }
@@ -153,10 +142,10 @@ public class SecurityController extends AKimiosController implements ISecurityCo
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.ISecurityController#hasFullAccess(org.kimios.kernel.security.Session, long, int)
     */
-    public boolean hasFullAccess(Session session, long dmEntityUid, int dmEntityType)
+    public boolean hasFullAccess(Session session, long dmEntityUid)
             throws ConfigException, DataSourceException
     {
-        DMEntity entity = this.getDMEntity(dmEntityUid, dmEntityType);
+        DMEntity entity = this.getDMEntity(dmEntityUid);
         return getSecurityAgent()
                 .isFullAccess(entity, session.getUserName(), session.getUserSource(), session.getGroups());
     }

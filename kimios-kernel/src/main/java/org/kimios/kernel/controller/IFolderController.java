@@ -16,9 +16,6 @@
  */
 package org.kimios.kernel.controller;
 
-import java.util.List;
-import java.util.Vector;
-
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.Folder;
 import org.kimios.kernel.events.annotations.DmsEvent;
@@ -30,8 +27,10 @@ import org.kimios.kernel.exception.TreeException;
 import org.kimios.kernel.log.DMEntityLog;
 import org.kimios.kernel.security.Session;
 
-public interface IFolderController
-{
+import java.util.List;
+import java.util.Vector;
+
+public interface IFolderController {
     /**
      * Get folder for a given id
      */
@@ -41,39 +40,34 @@ public interface IFolderController
     /**
      * Get folder for a given name and parent (workspace or folder)
      */
-    public Folder getFolder(Session session, String name, long parentUid,
-            int parentType) throws ConfigException, DataSourceException,
-            AccessDeniedException;
+    public Folder getFolder(Session session, String name, long parentUid, int parentType)
+            throws ConfigException, DataSourceException, AccessDeniedException;
 
     /**
      * Get folder for a given parent (workspace or folder)
      */
-    public List<Folder> getFolders(Session session, long parentUid,
-            int parentType) throws ConfigException, DataSourceException,
-            AccessDeniedException;
+    public List<Folder> getFolders(Session session, long parentUid)
+            throws ConfigException, DataSourceException, AccessDeniedException;
 
     /**
      * Create a new folder in a given parent (workspace or folder)
      */
-    @DmsEvent(eventName = { DmsEventName.FOLDER_CREATE })
-    public long createFolder(Session session, String name, long parentUid,
-            int parentType, boolean isSecurityInherited)
+    @DmsEvent(eventName = {DmsEventName.FOLDER_CREATE})
+    public long createFolder(Session session, String name, long parentUid, boolean isSecurityInherited)
             throws NamingException, ConfigException, DataSourceException,
             AccessDeniedException;
 
     /**
      * Update folder (for name and/or parent change) for a given id
      */
-    @DmsEvent(eventName = { DmsEventName.FOLDER_UPDATE })
-    public void updateFolder(Session session, long folderUid, String name,
-            long parentUid, int parentType) throws NamingException,
-            TreeException, AccessDeniedException, ConfigException,
-            DataSourceException;
+    @DmsEvent(eventName = {DmsEventName.FOLDER_UPDATE})
+    public void updateFolder(Session session, long folderUid, String name, long parentUid)
+            throws NamingException, TreeException, AccessDeniedException, ConfigException, DataSourceException;
 
     /**
      * Remove folder of given id
      */
-    @DmsEvent(eventName = { DmsEventName.FOLDER_DELETE })
+    @DmsEvent(eventName = {DmsEventName.FOLDER_DELETE})
     public boolean deleteFolder(Session session, long folderUid)
             throws AccessDeniedException, ConfigException, DataSourceException;
 

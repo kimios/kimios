@@ -494,7 +494,7 @@ public class AdministrationController
     {
         try
         {
-            client.changeOwnership( sessionId, dmEntityId, dmEntityType, userName, userSource );
+            client.changeOwnership( sessionId, dmEntityId, userName, userSource );
         }
         catch ( Exception e )
         {

@@ -24,10 +24,7 @@ import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.IFolderController;
 import org.kimios.kernel.controller.utils.PathUtils;
-import org.kimios.kernel.dms.DMEntityImpl;
-import org.kimios.kernel.dms.DMEntityType;
-import org.kimios.kernel.dms.Folder;
-import org.kimios.kernel.dms.Workspace;
+import org.kimios.kernel.dms.*;
 import org.kimios.kernel.events.EventContext;
 import org.kimios.kernel.exception.AccessDeniedException;
 import org.kimios.kernel.exception.DataSourceException;
@@ -88,11 +85,12 @@ public class FolderController extends AKimiosController implements IFolderContro
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IFolderController#getFolders(org.kimios.kernel.security.Session, long, int)
     */
-    public List<Folder> getFolders(Session session, long parentUid, int parentType)
+    public List<Folder> getFolders(Session session, long parentUid)
             throws ConfigException, DataSourceException, AccessDeniedException
     {
         List<Folder> folders = new Vector<Folder>();
-        switch (parentType) {
+        DMEntity entity = dmsFactoryInstantiator.getDmEntityFactory().getEntity(parentUid);
+        switch (entity.getType()) {
             case DMEntityType.WORKSPACE:
                 Workspace par = dmsFactoryInstantiator.getWorkspaceFactory().getWorkspace(parentUid);
                 folders = dmsFactoryInstantiator.getFolderFactory().getFolders(par);
@@ -109,27 +107,28 @@ public class FolderController extends AKimiosController implements IFolderContro
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IFolderController#createFolder(org.kimios.kernel.security.Session, java.lang.String, long, int, boolean)
     */
-    public long createFolder(Session session, String name, long parentUid, int parentType, boolean isSecurityInherited)
+    public long createFolder(Session session, String name, long parentUid, boolean isSecurityInherited)
             throws NamingException, ConfigException, DataSourceException, AccessDeniedException
     {
         name = name.trim();
         PathUtils.validDmEntityName(name);
-        DMEntityImpl parent = null;
-        if (parentType == DMEntityType.WORKSPACE) {
+        DMEntityImpl parent = (DMEntityImpl) dmsFactoryInstantiator.getDmEntityFactory().getEntity(parentUid);
+        if (parent.getType() == DMEntityType.WORKSPACE) {
             parent = dmsFactoryInstantiator.getWorkspaceFactory().getWorkspace(parentUid);
             if (dmsFactoryInstantiator.getFolderFactory().getFolder(name, (Workspace) parent) != null) {
                 throw new NamingException("A folder named \"" + name + "\" already exists at the specified location.");
             }
         }
-        if (parentType == DMEntityType.FOLDER) {
+        if (parent.getType() == DMEntityType.FOLDER) {
             parent = dmsFactoryInstantiator.getFolderFactory().getFolder(parentUid);
             if (dmsFactoryInstantiator.getFolderFactory().getFolder(name, (Folder) parent) != null) {
                 throw new NamingException("A folder named \"" + name + "\" already exists at the specified location.");
             }
         }
+
         Date creationDate = new Date();
         Folder f = new Folder(-1, name, session.getUserName(), session.getUserSource(), creationDate, parentUid,
-                parentType);
+                parent.getType());
         f.setUpdateDate(creationDate);
 
         log.info("Dm Entity " + parent.toString());
@@ -166,20 +165,20 @@ public class FolderController extends AKimiosController implements IFolderContro
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IFolderController#updateFolder(org.kimios.kernel.security.Session, long, java.lang.String, long, int)
     */
-    public void updateFolder(Session session, long folderUid, String name, long parentUid, int parentType)
+    public void updateFolder(Session session, long folderUid, String name, long parentUid)
             throws NamingException, TreeException, AccessDeniedException, ConfigException, DataSourceException
     {
         name = name.trim();
         PathUtils.validDmEntityName(name);
-        DMEntityImpl parent = null;
-        if (parentType == DMEntityType.WORKSPACE) {
+        DMEntityImpl parent = (DMEntityImpl) dmsFactoryInstantiator.getDmEntityFactory().getEntity(parentUid);
+        if (parent.getType() == DMEntityType.WORKSPACE) {
             parent = dmsFactoryInstantiator.getWorkspaceFactory().getWorkspace(parentUid);
             Folder test = dmsFactoryInstantiator.getFolderFactory().getFolder(name, (Workspace) parent);
             if (test != null && test.getUid() != folderUid) {
                 throw new NamingException("A folder named \"" + name + "\" already exists at the specified location.");
             }
         }
-        if (parentType == DMEntityType.FOLDER) {
+        if (parent.getType() == DMEntityType.FOLDER) {
             parent = dmsFactoryInstantiator.getFolderFactory().getFolder(parentUid);
             Folder test = dmsFactoryInstantiator.getFolderFactory().getFolder(name, (Folder) parent);
             if (test != null && test.getUid() != folderUid) {
@@ -204,7 +203,7 @@ public class FolderController extends AKimiosController implements IFolderContro
         }
         if (proceed) {
             folder.setParentUid(parentUid);
-            folder.setParentType(parentType);
+            folder.setParentType(parent.getType());
             folder.setParent((DMEntityImpl) dmsFactoryInstantiator.getDmEntityFactory().getEntity(parentUid));
             if (folder.getParentType() == DMEntityType.WORKSPACE || (folder.getUid() != folder.getParentUid())) {
                 log.debug("Preparing to move: updating path (current: " + folder.getPath() + ")");

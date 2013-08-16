@@ -50,7 +50,7 @@ public class FolderController
     {
         try
         {
-            return client.getFolders( sessionId, w.getUid(), 1 );
+            return client.getFolders( sessionId, w.getUid());
         }
         catch ( Exception e )
         {
@@ -66,7 +66,7 @@ public class FolderController
     {
         try
         {
-            return client.getFolders( sessionId, f.getUid(), 2 );
+            return client.getFolders( sessionId, f.getUid() );
         }
         catch ( Exception e )
         {
@@ -82,7 +82,7 @@ public class FolderController
     {
         try
         {
-            return client.getFolders( sessionId, parentId, parentType );
+            return client.getFolders( sessionId, parentId );
         }
         catch ( Exception e )
         {
@@ -114,8 +114,7 @@ public class FolderController
     {
         try
         {
-            return client.createFolder( sessionId, f.getName(), f.getParentUid(), f.getParentType(),
-                                        isSecurityInherited );
+            return client.createFolder( sessionId, f.getName(), f.getParentUid(), isSecurityInherited );
         }
         catch ( Exception e )
         {
@@ -131,7 +130,7 @@ public class FolderController
     {
         try
         {
-            client.updateFolder( sessionId, f.getUid(), f.getName(), f.getParentUid(), f.getParentType() );
+            client.updateFolder( sessionId, f.getUid(), f.getName(), f.getParentUid() );
         }
         catch ( Exception e )
         {

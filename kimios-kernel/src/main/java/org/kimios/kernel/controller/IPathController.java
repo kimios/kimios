@@ -31,10 +31,12 @@ public interface IPathController
             throws PathException, ConfigException, DataSourceException,
             AccessDeniedException;
 
-    public String getPathFromDMEntity(Session session, long dmEntityUid,
-            int dmEntityType) throws ConfigException, DataSourceException,
-            AccessDeniedException;
+    public String getPathFromDMEntity(Session session, long dmEntityUid)
+            throws ConfigException, DataSourceException, AccessDeniedException;
 
     public List<DMEntity> getDMEntitiesByPathAndType(String path, int dmEntityType)
+            throws ConfigException, DataSourceException, AccessDeniedException;
+
+    public List<DMEntity> getDMEntitiesByPath(String path)
             throws ConfigException, DataSourceException, AccessDeniedException;
 }

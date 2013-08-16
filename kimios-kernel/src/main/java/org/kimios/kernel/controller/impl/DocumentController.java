@@ -217,7 +217,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                 } else if (i < chunks.length - 1) {//a folder
                     DMEntity dm = this.getDmEntity(tmpPath);
                     if (dm == null) {//must create
-                        long uid = fldCtrl.createFolder(s, chunks[i], parentUid, parentType, isSecurityInherited);
+                        long uid = fldCtrl.createFolder(s, chunks[i], parentUid, isSecurityInherited);
                         parentUid = uid;
                         parentType = DMEntityType.FOLDER;
                     } else {
@@ -277,7 +277,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
 
 
             if (!isSecurityInherited)
-                secCtrl.updateDMEntitySecurities(s, documentId, DMEntityType.DOCUMENT, securitiesXmlStream, isRecursive);
+                secCtrl.updateDMEntitySecurities(s, documentId, securitiesXmlStream, isRecursive);
 
 
             long versionId = vrsCtrl.createDocumentVersion(s, documentId);
@@ -563,7 +563,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IDocumentController#addBookmark(org.kimios.kernel.security.Session, long, int)
     */
-    public void addBookmark(Session session, long dmEntityUid, int dmEntityType)
+    public void addBookmark(Session session, long dmEntityUid)
             throws AccessDeniedException, DataSourceException, ConfigException {
         DMEntity d = dmsFactoryInstantiator.getDmEntityFactory().getEntity(dmEntityUid);
         if (getSecurityAgent().isReadable(d, session.getUserName(), session.getUserSource(), session.getGroups())) {
@@ -577,7 +577,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IDocumentController#removeBoomark(org.kimios.kernel.security.Session, long, int)
     */
-    public void removeBoomark(Session session, long dmEntityUid, int dmEntityType)
+    public void removeBoomark(Session session, long dmEntityUid)
             throws AccessDeniedException, DataSourceException, ConfigException {
         DMEntity d = dmsFactoryInstantiator.getDmEntityFactory().getEntity(dmEntityUid);
         if (getSecurityAgent().isReadable(d, session.getUserName(), session.getUserSource(), session.getGroups())) {
@@ -606,20 +606,10 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     /**
      * Get the symbolic links created in workspace or folder (not recursive)
      */
-    public Vector<SymbolicLink> getChildSymbolicLinks(Session session, long parentUid, int parentType)
+    public Vector<SymbolicLink> getChildSymbolicLinks(Session session, long parentUid)
             throws DataSourceException, ConfigException,
             AccessDeniedException {
-        DMEntity parent = null;
-        switch (parentType) {
-            case DMEntityType.WORKSPACE:
-                parent = dmsFactoryInstantiator.getWorkspaceFactory().getWorkspace(parentUid);
-                break;
-            case DMEntityType.FOLDER:
-                parent = dmsFactoryInstantiator.getFolderFactory().getFolder(parentUid);
-                break;
-            default:
-                break;
-        }
+        DMEntity parent = dmsFactoryInstantiator.getDmEntityFactory().getEntity(parentUid);
         if (!getSecurityAgent()
                 .isReadable(parent, session.getUserName(), session.getUserSource(), session.getGroups())) {
             throw new AccessDeniedException();
@@ -630,20 +620,10 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     /**
      * Get the symbolic links created for a specific target
      */
-    public Vector<SymbolicLink> getSymbolicLinkCreated(Session session, long targetUid, int targetType)
+    public Vector<SymbolicLink> getSymbolicLinkCreated(Session session, long targetUid)
             throws DataSourceException, ConfigException,
             AccessDeniedException {
-        DMEntity target = null;
-        switch (targetType) {
-            case DMEntityType.FOLDER:
-                target = dmsFactoryInstantiator.getFolderFactory().getFolder(targetUid);
-                break;
-            case DMEntityType.DOCUMENT:
-                target = dmsFactoryInstantiator.getDocumentFactory().getDocument(targetUid);
-                break;
-            default:
-                break;
-        }
+        DMEntity target = dmsFactoryInstantiator.getDmEntityFactory().getEntity(targetUid);
         if (!getSecurityAgent()
                 .isReadable(target, session.getUserName(), session.getUserSource(), session.getGroups())) {
             throw new AccessDeniedException();
@@ -654,43 +634,23 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IDocumentController#addSymbolicLink(org.kimios.kernel.security.Session, java.lang.String, long, int, long, int)
     */
-    public void addSymbolicLink(Session session, String name, long dmEntityUid, int dmEntityType, long parentUid,
-                                int parentType) throws AccessDeniedException,
+    public void addSymbolicLink(Session session, String name, long dmEntityUid, long parentUid)
+            throws AccessDeniedException,
             DataSourceException, ConfigException {
-        DMEntity parent = null;
-        switch (parentType) {
-            case DMEntityType.WORKSPACE:
-                parent = dmsFactoryInstantiator.getWorkspaceFactory().getWorkspace(parentUid);
-                break;
-            case DMEntityType.FOLDER:
-                parent = dmsFactoryInstantiator.getFolderFactory().getFolder(parentUid);
-                break;
-            default:
-                break;
-        }
+        DMEntity parent = dmsFactoryInstantiator.getDmEntityFactory().getEntity(parentUid);
         if (!getSecurityAgent()
                 .isWritable(parent, session.getUserName(), session.getUserSource(), session.getGroups())) {
             throw new AccessDeniedException();
         }
-        DMEntity toLink = null;
-        switch (dmEntityType) {
-            case DMEntityType.FOLDER:
-                toLink = dmsFactoryInstantiator.getFolderFactory().getFolder(dmEntityUid);
-                break;
-            case DMEntityType.DOCUMENT:
-                toLink = dmsFactoryInstantiator.getDocumentFactory().getDocument(dmEntityUid);
-                break;
-            default:
-                break;
-        }
+        DMEntity toLink = dmsFactoryInstantiator.getDmEntityFactory().getEntity(dmEntityUid);
         if (!getSecurityAgent()
                 .isReadable(toLink, session.getUserName(), session.getUserSource(), session.getGroups())) {
             throw new AccessDeniedException();
         }
         SymbolicLink sl = new SymbolicLink();
-        sl.setDmEntityType(dmEntityType);
+        sl.setDmEntityType(toLink.getType());
         sl.setDmEntityUid(dmEntityUid);
-        sl.setParentType(parentType);
+        sl.setParentType(parent.getType());
         sl.setParentUid(parentUid);
         sl.setCreationDate(new Date());
         sl.setOwner(session.getUserName());
@@ -702,41 +662,24 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IDocumentController#removeSymbolicLink(org.kimios.kernel.security.Session, long, int, long, int)
     */
-    public void removeSymbolicLink(Session session, long dmEntityUid, int dmEntityType, long parentUid, int parentType)
+    public void removeSymbolicLink(Session session, long dmEntityUid, long parentUid)
             throws AccessDeniedException,
             DataSourceException, ConfigException {
-        SymbolicLink key = dmsFactoryInstantiator.getSymbolicLinkFactory()
-                .getSymbolicLink(dmEntityUid, dmEntityType, parentUid, parentType);
-        DMEntity parent = null;
-        switch (parentType) {
-            case DMEntityType.WORKSPACE:
-                parent = dmsFactoryInstantiator.getWorkspaceFactory().getWorkspace(parentUid);
-                break;
-            case DMEntityType.FOLDER:
-                parent = dmsFactoryInstantiator.getFolderFactory().getFolder(parentUid);
-                break;
-            default:
-                break;
-        }
+
+        DMEntity parent = dmsFactoryInstantiator.getDmEntityFactory().getEntity(parentUid);
         if (!getSecurityAgent()
                 .isWritable(parent, session.getUserName(), session.getUserSource(), session.getGroups())) {
             throw new AccessDeniedException();
         }
-        DMEntity linked = null;
-        switch (dmEntityType) {
-            case DMEntityType.FOLDER:
-                linked = dmsFactoryInstantiator.getFolderFactory().getFolder(dmEntityUid);
-                break;
-            case DMEntityType.DOCUMENT:
-                linked = dmsFactoryInstantiator.getDocumentFactory().getDocument(dmEntityUid);
-                break;
-            default:
-                break;
-        }
+        DMEntity linked = dmsFactoryInstantiator.getDmEntityFactory().getEntity(dmEntityUid);
         if (!getSecurityAgent()
                 .isReadable(linked, session.getUserName(), session.getUserSource(), session.getGroups())) {
             throw new AccessDeniedException();
         }
+
+        SymbolicLink key = dmsFactoryInstantiator.getSymbolicLinkFactory()
+                .getSymbolicLink(dmEntityUid, linked.getType(), parentUid, parent.getType());
+
         dmsFactoryInstantiator.getSymbolicLinkFactory().removeSymbolicLink(key);
     }
 

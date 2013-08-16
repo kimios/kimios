@@ -33,13 +33,13 @@ import org.kimios.webservices.SecurityService;
 @WebService(targetNamespace = "http://kimios.org", serviceName = "SecurityService", name = "SecurityService")
 public class SecurityServiceImpl extends CoreService implements SecurityService
 {
-    public DMEntitySecurity[] getDMEntitySecurities(String sessionId, long dmEntityId, int dmEntityType) throws
+    public DMEntitySecurity[] getDMEntitySecurities(String sessionId, long dmEntityId) throws
             DMServiceException
     {
         try {
             Session session = getHelper().getSession(sessionId);
             List<org.kimios.kernel.security.DMEntitySecurity> v =
-                    securityController.getDMEntitySecurityies(session, dmEntityId, dmEntityType);
+                    securityController.getDMEntitySecurityies(session, dmEntityId);
             DMEntitySecurity[] r = new DMEntitySecurity[v.size()];
             for (int i = 0; i < v.size(); i++) {
                 r[i] = v.get(i).toPojo();
@@ -50,36 +50,36 @@ public class SecurityServiceImpl extends CoreService implements SecurityService
         }
     }
 
-    public void updateDMEntitySecurities(String sessionId, long dmEntityId, int dmEntityType, String xmlStream,
-            boolean isRecursive) throws DMServiceException
+    public void updateDMEntitySecurities(String sessionId, long dmEntityId, String xmlStream, boolean isRecursive)
+            throws DMServiceException
     {
         try {
             Session session = getHelper().getSession(sessionId);
-            securityController.updateDMEntitySecurities(session, dmEntityId, dmEntityType, xmlStream, isRecursive);
+            securityController.updateDMEntitySecurities(session, dmEntityId, xmlStream, isRecursive);
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }
     }
 
-    public boolean canRead(String sessionId, long dmEntityId, int dmEntityType) throws DMServiceException
+    public boolean canRead(String sessionId, long dmEntityId) throws DMServiceException
     {
         try {
             Session session = getHelper().getSession(sessionId);
-            boolean val = securityController.canRead(session, dmEntityId, dmEntityType);
+            boolean val = securityController.canRead(session, dmEntityId);
             return val;
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }
     }
 
-    public boolean canWrite(String sessionId, long dmEntityId, int dmEntityType) throws DMServiceException
+    public boolean canWrite(String sessionId, long dmEntityId) throws DMServiceException
     {
 
         try {
 
             Session session = getHelper().getSession(sessionId);
 
-            boolean val = securityController.canWrite(session, dmEntityId, dmEntityType);
+            boolean val = securityController.canWrite(session, dmEntityId);
 
             return val;
         } catch (Exception e) {
@@ -87,14 +87,14 @@ public class SecurityServiceImpl extends CoreService implements SecurityService
         }
     }
 
-    public boolean hasFullAccess(String sessionId, long dmEntityId, int dmEntityType) throws DMServiceException
+    public boolean hasFullAccess(String sessionId, long dmEntityId) throws DMServiceException
     {
 
         try {
 
             Session session = getHelper().getSession(sessionId);
 
-            boolean val = securityController.hasFullAccess(session, dmEntityId, dmEntityType);
+            boolean val = securityController.hasFullAccess(session, dmEntityId);
 
             return val;
         } catch (Exception e) {

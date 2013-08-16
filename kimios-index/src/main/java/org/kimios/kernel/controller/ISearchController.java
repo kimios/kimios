@@ -43,25 +43,21 @@ public interface ISearchController
                                             String sortField, String sortDir )
         throws IndexException, DataSourceException, ConfigException;
 
-    /**
-     * @param session
-     * @param xmlStream
-     * @return
-     * @throws DataSourceException
-     * @throws ConfigException
-     * @throws IndexException
-     * @throws java.io.IOException
-     * @throws javax.xml.parsers.ParserConfigurationException
-     *
-     * @throws org.xml.sax.SAXException
-     */
+    public SearchResponse quickSearchPojos( Session session, String query, long dmEntityUid, int start, int pageSize,
+                                            String sortField, String sortDir )
+            throws IndexException, DataSourceException, ConfigException;
+
     public List<org.kimios.kernel.dms.Document> advancedSearch( Session session, String xmlStream, DMEntity entity )
         throws DataSourceException, ConfigException, IndexException, IOException, ParserConfigurationException,
         SAXException;
 
     public List<Document> advancedSearchPojos( Session session, String xmlStream, DMEntity entity )
-        throws DataSourceException, ConfigException, IndexException, IOException, ParserConfigurationException,
-        SAXException;
+            throws DataSourceException, ConfigException, IndexException, IOException, ParserConfigurationException,
+            SAXException;
+
+    public List<Document> advancedSearchPojos( Session session, String xmlStream, long dmEntityUid )
+            throws DataSourceException, ConfigException, IndexException, IOException, ParserConfigurationException,
+            SAXException;
 
 
     public SearchResponse advancedSearchDocuments( Session session, List<Criteria> criteriaList,

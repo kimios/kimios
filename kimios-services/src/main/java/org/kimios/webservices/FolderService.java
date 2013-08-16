@@ -43,8 +43,7 @@ public interface FolderService
     @Path("/getFolders")
     @Produces("application/json")
     public Folder[] getFolders(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
-            @QueryParam(value = "parentId") @WebParam(name = "parentId") long parentId,
-            @QueryParam(value = "parentType") @WebParam(name = "parentType") int parentType) throws DMServiceException;
+            @QueryParam(value = "parentId") @WebParam(name = "parentId") long parentId) throws DMServiceException;
 
     @GET
     @Path("/createFolder")
@@ -52,7 +51,6 @@ public interface FolderService
     public long createFolder(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "name") @WebParam(name = "name") String name,
             @QueryParam(value = "parentId") @WebParam(name = "parentId") long parentId,
-            @QueryParam(value = "parentType") @WebParam(name = "parentType") int parentType,
             @QueryParam(value = "isSecurityInherited") @WebParam(name = "isSecurityInherited")
             boolean isSecurityInherited) throws DMServiceException;
 
@@ -62,8 +60,7 @@ public interface FolderService
     public void updateFolder(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "folderId") @WebParam(name = "folderId") long folderId,
             @QueryParam(value = "name") @WebParam(name = "name") String name,
-            @QueryParam(value = "parentId") @WebParam(name = "parentId") long parentId,
-            @QueryParam(value = "parentType") @WebParam(name = "parentType") int parentType) throws DMServiceException;
+            @QueryParam(value = "parentId") @WebParam(name = "parentId") long parentId) throws DMServiceException;
 
     @GET
     @Path("/deleteFolder")

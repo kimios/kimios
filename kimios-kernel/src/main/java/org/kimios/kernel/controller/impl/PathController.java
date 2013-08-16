@@ -74,11 +74,11 @@ public class PathController extends AKimiosController implements IPathController
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IPathController#getPathFromDMEntity(org.kimios.kernel.security.Session, long, int)
     */
-    public String getPathFromDMEntity(Session session, long dmEntityUid, int dmEntityType)
+    public String getPathFromDMEntity(Session session, long dmEntityUid)
             throws ConfigException, DataSourceException, AccessDeniedException
     {
         DMEntity d = null;
-        d = dmsFactoryInstantiator.getDmEntityFactory().getEntity(dmEntityUid, dmEntityType);
+        d = dmsFactoryInstantiator.getDmEntityFactory().getEntity(dmEntityUid);
         if (d != null && SecurityAgent.getInstance()
                 .isReadable(d, session.getUserName(), session.getUserSource(), session.getGroups()))
         {
@@ -93,6 +93,12 @@ public class PathController extends AKimiosController implements IPathController
     {
 
         return dmsFactoryInstantiator.getDmEntityFactory().getEntitiesByPathAndType(path, dmEntityType);
+    }
+
+    public List<DMEntity> getDMEntitiesByPath(String path)
+            throws ConfigException, DataSourceException, AccessDeniedException
+    {
+        return dmsFactoryInstantiator.getDmEntityFactory().getEntities(path);
     }
 }
 

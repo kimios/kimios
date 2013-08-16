@@ -27,7 +27,9 @@ import org.kimios.kernel.dms.*;
 import org.kimios.kernel.dms.DMEntity;
 import org.kimios.kernel.dms.Document;
 import org.kimios.kernel.dms.DocumentType;
+import org.kimios.kernel.dms.Folder;
 import org.kimios.kernel.dms.Meta;
+import org.kimios.kernel.dms.Workspace;
 import org.kimios.kernel.exception.AccessDeniedException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.IndexException;
@@ -144,6 +146,26 @@ public class SolrSearchController
         return searchResponse;
     }
 
+    public SearchResponse quickSearchPojos( Session session, String query, long dmEntityUid, int start, int pageSize,
+                                            String sortField, String sortDir )
+            throws IndexException, DataSourceException, ConfigException
+    {
+        DMEntity e = dmsFactoryInstantiator.getDmEntityFactory().getEntity(dmEntityUid);
+        DMEntity entity = null;
+        switch (e.getType()) {
+            case DMEntityType.WORKSPACE:
+                entity = new Workspace(dmEntityUid, "", "", "", null);
+                break;
+            case DMEntityType.FOLDER:
+                entity = new Folder(dmEntityUid, "", "", "", null, -1, -1);
+                break;
+        }
+        if (entity != null) {
+            return quickSearchPojos(session, query, entity, start, pageSize, sortField, sortDir);
+        } else {
+            return quickSearchPojos(session, query, null, start, pageSize, sortField, sortDir);
+        }
+    }
 
     @Deprecated
     public List<Document> advancedSearch( Session session, String xmlStream, DMEntity entity )
@@ -158,9 +180,30 @@ public class SolrSearchController
     @Deprecated
     public List<org.kimios.kernel.ws.pojo.Document> advancedSearchPojos( Session session, String xmlStream,
                                                                          DMEntity entity )
-        throws DataSourceException, ConfigException, IndexException, IOException, ParserConfigurationException,
-        SAXException
+            throws DataSourceException, ConfigException, IndexException, IOException, ParserConfigurationException,
+            SAXException
     {
+        SearchResponse searchResponse = this.advancedSearchIds( session, xmlStream, entity, null, null );
+        return dmsFactoryInstantiator.getDocumentFactory().getDocumentsPojosFromIds( searchResponse.getDocumentIds() );
+    }
+
+    @Deprecated
+    public List<org.kimios.kernel.ws.pojo.Document> advancedSearchPojos( Session session, String xmlStream,
+                                                                         long dmEntityUid)
+            throws DataSourceException, ConfigException, IndexException, IOException, ParserConfigurationException,
+            SAXException
+    {
+        DMEntity e = dmsFactoryInstantiator.getDmEntityFactory().getEntity(dmEntityUid);
+        DMEntity entity = null;
+        switch (e.getType()) {
+            case DMEntityType.WORKSPACE:
+                entity = new Workspace(dmEntityUid, "", "", "", null);
+                break;
+            case DMEntityType.FOLDER:
+                entity = new Folder(dmEntityUid, "", "", "", null, -1, -1);
+                break;
+        }
+
         SearchResponse searchResponse = this.advancedSearchIds( session, xmlStream, entity, null, null );
         return dmsFactoryInstantiator.getDocumentFactory().getDocumentsPojosFromIds( searchResponse.getDocumentIds() );
     }

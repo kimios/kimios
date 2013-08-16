@@ -36,36 +36,34 @@ public interface ISecurityController
     /**
      * Get the matrix of rights for a given entity (workspace, folder, or document)
      */
-    public List<DMEntitySecurity> getDMEntitySecurityies(Session session,
-            long dmEntityUid, int dmEntityType) throws ConfigException,
-            DataSourceException;
+    public List<DMEntitySecurity> getDMEntitySecurityies(Session session, long dmEntityUid)
+            throws ConfigException, DataSourceException;
 
     /**
      * Update rights for a given entity from an xml descriptor
      */
     @DmsEvent(eventName = { DmsEventName.ENTITY_ACL_UPDATE })
-    public void updateDMEntitySecurities(Session session, long dmEntityUid,
-            int dmEntityType, String xmlStream, boolean isRecursive)
+    public void updateDMEntitySecurities(Session session, long dmEntityUid, String xmlStream, boolean isRecursive)
             throws AccessDeniedException, ConfigException, DataSourceException,
             XMLException;
 
     /**
      * Can given user read the given entity ?
      */
-    public boolean canRead(Session session, long dmEntityUid, int dmEntityType)
+    public boolean canRead(Session session, long dmEntityUid)
             throws ConfigException, DataSourceException;
 
     /**
      * Can the given user write on the given entity ?
      */
-    public boolean canWrite(Session session, long dmEntityUid, int dmEntityType)
+    public boolean canWrite(Session session, long dmEntityUid)
             throws ConfigException, DataSourceException;
 
     /**
      * Can the given user update rights of the given entity ?
      */
-    public boolean hasFullAccess(Session session, long dmEntityUid,
-            int dmEntityType) throws ConfigException, DataSourceException;
+    public boolean hasFullAccess(Session session, long dmEntityUid)
+            throws ConfigException, DataSourceException;
 
     /**
      * Return registered authentication sources list
