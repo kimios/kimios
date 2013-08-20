@@ -232,11 +232,21 @@ public class AdministrationController
      */
     public void createUser( String sessionId, String uid, String userName, String mail, String password,
                             String authenticationSourceName )
+            throws Exception
+    {
+       createUser(sessionId, uid, userName, mail, password, authenticationSourceName, true);
+    }
+
+    /**
+     * Add an user to a DMS Authentication Source
+     */
+    public void createUser( String sessionId, String uid, String userName, String mail, String password,
+                            String authenticationSourceName, boolean enabled )
         throws Exception
     {
         try
         {
-            client.createUser( sessionId, uid, userName, mail, password, authenticationSourceName );
+            client.createUser( sessionId, uid, userName, mail, password, authenticationSourceName, enabled );
         }
         catch ( Exception e )
         {
@@ -249,11 +259,21 @@ public class AdministrationController
      */
     public void updateUser( String sessionId, String uid, String userName, String mail, String password,
                             String authenticationSourceName )
+            throws Exception
+    {
+        updateUser(sessionId, uid, userName, mail, password, authenticationSourceName, true);
+    }
+
+    /**
+     * Update user information in a DMS Authentication source
+     */
+    public void updateUser( String sessionId, String uid, String userName, String mail, String password,
+                            String authenticationSourceName, boolean enabled )
         throws Exception
     {
         try
         {
-            client.updateUser( sessionId, uid, userName, mail, password, authenticationSourceName );
+            client.updateUser( sessionId, uid, userName, mail, password, authenticationSourceName, enabled );
         }
         catch ( Exception e )
         {

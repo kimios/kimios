@@ -31,11 +31,19 @@ public class User
 
     private String mail;
 
+    private boolean enabled;
+
     public User()
     {
+        this(null, null, null, null, null, true);
     }
 
     public User(String uid, String name, String source, Date lastLogin, String mail)
+    {
+        this(uid, name, source, lastLogin, mail, true);
+    }
+
+    public User(String uid, String name, String source, Date lastLogin, String mail, boolean enabled)
     {
         this.uid = uid;
         this.name = name;
@@ -45,6 +53,7 @@ public class User
             this.lastLogin.setTime(lastLogin);
         }
         this.mail = mail;
+        this.enabled = enabled;
     }
 
     public Calendar getLastLogin()
@@ -95,6 +104,16 @@ public class User
     public void setUid(String uid)
     {
         this.uid = uid;
+    }
+
+    public boolean isEnabled()
+    {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled)
+    {
+        this.enabled = enabled;
     }
 }
 

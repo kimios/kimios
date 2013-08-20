@@ -91,6 +91,9 @@ public class User implements SecurityEntity, Serializable
     @Column(name = "attribute_value")
     private Map<String, String> attributes = new HashMap<java.lang.String, java.lang.String>();
 
+    @Column(name = "user_enabled", nullable = false)
+    private boolean enabled = true;
+
     public Map<String, String> getAttributes()
     {
         return attributes;
@@ -107,11 +110,17 @@ public class User implements SecurityEntity, Serializable
 
     public User(String uid, String name, Date lastLogin, String mail, String authenticationSourceName)
     {
+        this(uid, name, lastLogin, mail, authenticationSourceName, true);
+    }
+
+    public User(String uid, String name, Date lastLogin, String mail, String authenticationSourceName, boolean enabled)
+    {
         this.uid = uid;
         this.name = name;
         this.lastLogin = lastLogin;
         this.mail = mail;
         this.authenticationSourceName = authenticationSourceName;
+        this.enabled = enabled;
     }
 
     public String getAuthenticationSourceName()
@@ -206,7 +215,17 @@ public class User implements SecurityEntity, Serializable
     public org.kimios.kernel.ws.pojo.User toPojo()
     {
         return new org.kimios.kernel.ws.pojo.User(this.uid, this.name, this.authenticationSourceName, this.lastLogin,
-                this.mail);
+                this.mail, this.enabled);
+    }
+
+    public boolean isEnabled()
+    {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled)
+    {
+        this.enabled = enabled;
     }
 }
 

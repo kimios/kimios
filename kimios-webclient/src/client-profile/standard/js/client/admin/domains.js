@@ -289,7 +289,10 @@ Admin.Domains = {
     },
 
     getUsersPanel: function (record) {
+
+
         var getDetailsPanel = function (ctn, sm, rowIndex, usersListStore, domainRecord, usersDetailsRecord) {
+
             var tabs = new Ext.TabPanel({
                 bodyStyle: 'background-color:transparent;',
                 border: false,
@@ -356,6 +359,12 @@ Admin.Domains = {
                         xtype: 'hidden',
                         name: 'authenticationSourceName',
                         value: domainRecord.data.name
+                    }, {
+                        fieldLabel: kimios.lang('UserEnabled'),
+                        xtype: 'checkbox',
+                        name: 'enabled',
+                        disabled: (record.data.className == 'org.kimios.kernel.user.impl.HAuthenticationSource' ? false : true),
+                        checked: (usersDetailsRecord ? usersDetailsRecord.data.enabled : 'false')
                     }],
                 bbar: ['->', {
                     text: kimios.lang('Save'),
@@ -637,7 +646,6 @@ Admin.Domains = {
         });
 
         var cm = new Ext.grid.ColumnModel([
-            //            sm,
             {
                 width: 16,
                 fixed: true,
@@ -655,6 +663,18 @@ Admin.Domains = {
                 dataIndex: 'uid',
                 renderer: function (value, metaData, record, rowIndex, colIndex, store) {
                     return value + '&nbsp;&nbsp;<span style="color:#aaa;font-size:10px;">' + record.get('name') + '</span>';
+                }
+            },
+            {
+                width: 20,
+                fixed: true,
+                editable: false,
+                sortable: false,
+                menuDisabled: true,
+                dataIndex: 'enabled',
+                renderer: function (enabled, metaData) {
+                    if (enabled)
+                        metaData.css = 'asterisk';
                 }
             }
         ]);
@@ -696,12 +716,12 @@ Admin.Domains = {
                 layout: new Ext.layout.CardLayout({
                     layoutOnCardChange: true
                 }),
-                height: 175
+                height: 210
             })],
             listeners: {
                 activate: function () {
                     usersListStore.load({
-                        callback: function () {
+                        callback: function (a, b) {
                             var ctn = Ext.getCmp('admin-domains-users-details-container');
                             ctn.collapse();
                             ctn.setVisible(false);

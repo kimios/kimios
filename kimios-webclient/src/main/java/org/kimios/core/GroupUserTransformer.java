@@ -23,42 +23,45 @@ import org.kimios.kernel.ws.pojo.User;
 
 public class GroupUserTransformer extends AbstractTransformer {
 
-	public void transform(Object arg0) {
-		if (arg0 instanceof User) {
-			User sec = (User) arg0;
-			// Write out the fields
-			getContext().writeOpenObject();
-			getContext().writeName("uid");
-			getContext().transform(sec.getUid());
-			getContext().writeComma();
-			getContext().writeName("name");
-			getContext().transform(sec.getName());
-			getContext().writeComma();
-			getContext().writeName("mail");
-			getContext().transform(sec.getMail());
-			getContext().writeComma();
-			getContext().writeName("source");
-			getContext().transform(sec.getSource());
-			getContext().writeComma();
-			getContext().writeName("lastLogin");
-			getContext().transform(
-					sec.getLastLogin() != null ? sec.getLastLogin().getTime()
-							: null);
-			getContext().writeCloseObject();
-		} else if (arg0 instanceof Group) {
-			getContext().writeOpenObject();
-			Group sec = (Group) arg0;
-			// Write out the fields
-			getContext().writeName("gid");
-			getContext().transform(sec.getGid());
-			getContext().writeComma();
-			getContext().writeName("name");
-			getContext().transform(sec.getName());
-			getContext().writeComma();
-			getContext().writeName("source");
-			getContext().transform(sec.getSource());
-			getContext().writeCloseObject();
-		}
-	}
+    public void transform(Object arg0) {
+        if (arg0 instanceof User) {
+            User sec = (User) arg0;
+            // Write out the fields
+            getContext().writeOpenObject();
+            getContext().writeName("uid");
+            getContext().transform(sec.getUid());
+            getContext().writeComma();
+            getContext().writeName("name");
+            getContext().transform(sec.getName());
+            getContext().writeComma();
+            getContext().writeName("mail");
+            getContext().transform(sec.getMail());
+            getContext().writeComma();
+            getContext().writeName("source");
+            getContext().transform(sec.getSource());
+            getContext().writeComma();
+            getContext().writeName("enabled");
+            getContext().transform(sec.isEnabled());
+            getContext().writeComma();
+            getContext().writeName("lastLogin");
+            getContext().transform(
+                    sec.getLastLogin() != null ? sec.getLastLogin().getTime()
+                            : null);
+            getContext().writeCloseObject();
+        } else if (arg0 instanceof Group) {
+            getContext().writeOpenObject();
+            Group sec = (Group) arg0;
+            // Write out the fields
+            getContext().writeName("gid");
+            getContext().transform(sec.getGid());
+            getContext().writeComma();
+            getContext().writeName("name");
+            getContext().transform(sec.getName());
+            getContext().writeComma();
+            getContext().writeName("source");
+            getContext().transform(sec.getSource());
+            getContext().writeCloseObject();
+        }
+    }
 
 }

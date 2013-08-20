@@ -42,6 +42,9 @@
         <property name="password">
             <column name="user_password"></column>
         </property>
+        <property name="enabled">
+            <column name="user_enabled" not-null="true" default="true"></column>
+        </property>
         <map name="attributes" table="user_attributes">
             <key>
                 <column name="user_id"></column>

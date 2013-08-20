@@ -89,19 +89,26 @@ public class HUserFactory implements UserFactory
                     .setString("authname", this.getAuth().getName())
                     .uniqueResult();
 
-            if (u != null) {
-                Date lDate = new Date();
-                String query = "update User set lastLogin=:ldate where uid=:uid AND authenticationSourceName=:authname";
-                HFactoryImpl.getInstance()
-                        .getSession().createQuery(query)
-                        .setString("uid", uid)
-                        .setString("authname", this.getAuth().getName())
-                        .setDate("ldate", lDate)
-                        .executeUpdate();
-                return true;
-            } else {
+            if (u == null) {
+                log.debug("Unable to authenticate user: \"" + uid + "\" is unknown");
                 return false;
             }
+
+            if (!((User) u).isEnabled()) {
+                log.debug("Unable to authenticate user: \"" + uid + "\" is disabled");
+                return false;
+            }
+
+            Date lDate = new Date();
+            String query = "update User set lastLogin=:ldate where uid=:uid AND authenticationSourceName=:authname";
+            HFactoryImpl.getInstance()
+                    .getSession().createQuery(query)
+                    .setString("uid", uid)
+                    .setString("authname", this.getAuth().getName())
+                    .setDate("ldate", lDate)
+                    .executeUpdate();
+            return true;
+
         } catch (HibernateException e) {
             throw new DataSourceException(e, e.getMessage());
         }

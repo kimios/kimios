@@ -115,7 +115,7 @@ public interface IAdministrationController
     */
     @DmsEvent(eventName = { DmsEventName.USER_CREATE })
     public void createUser(Session session, String uid, String userName,
-            String mail, String password, String authenticationSourceName)
+            String mail, String password, String authenticationSourceName, boolean enabled)
             throws AccessDeniedException, ConfigException, DataSourceException;
 
     /* (non-Javadoc)
@@ -123,7 +123,7 @@ public interface IAdministrationController
     */
 
     public void updateUser(Session session, String uid, String userName,
-            String mail, String password, String authenticationSourceName)
+            String mail, String password, String authenticationSourceName, boolean enabled)
             throws AccessDeniedException, ConfigException, DataSourceException;
 
     /* (non-Javadoc)

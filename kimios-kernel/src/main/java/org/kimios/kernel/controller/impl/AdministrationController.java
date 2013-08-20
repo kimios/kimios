@@ -262,7 +262,7 @@ public class AdministrationController extends AKimiosController implements IAdmi
     * @see org.kimios.kernel.controller.impl.IAdministrationController#createUser(org.kimios.kernel.security.Session, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
     */
     public void createUser(Session session, String uid, String userName, String mail, String password,
-            String authenticationSourceName)
+            String authenticationSourceName, boolean enabled)
             throws AccessDeniedException, ConfigException, DataSourceException
     {
         if (securityFactoryInstantiator.getRoleFactory()
@@ -273,7 +273,7 @@ public class AdministrationController extends AKimiosController implements IAdmi
         UserFactory f = authFactoryInstantiator.getAuthenticationSourceFactory()
                 .getAuthenticationSource(authenticationSourceName)
                 .getUserFactory();
-        f.saveUser(new org.kimios.kernel.user.User(uid, userName, new Date(), mail, authenticationSourceName),
+        f.saveUser(new org.kimios.kernel.user.User(uid, userName, new Date(), mail, authenticationSourceName, enabled),
                 password);
     }
 
@@ -281,7 +281,7 @@ public class AdministrationController extends AKimiosController implements IAdmi
     * @see org.kimios.kernel.controller.impl.IAdministrationController#updateUser(org.kimios.kernel.security.Session, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
     */
     public void updateUser(Session session, String uid, String userName, String mail, String password,
-            String authenticationSourceName)
+            String authenticationSourceName, boolean enabled)
             throws AccessDeniedException, ConfigException, DataSourceException
     {
         boolean isHimself =
@@ -298,6 +298,7 @@ public class AdministrationController extends AKimiosController implements IAdmi
         u.setMail(mail);
         u.setUid(uid);
         u.setName(userName);
+        u.setEnabled(enabled);
         f.updateUser(u, password);
     }
 

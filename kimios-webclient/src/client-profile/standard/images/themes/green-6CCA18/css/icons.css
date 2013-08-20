@@ -382,3 +382,9 @@
     background-image: url(../icons/16x16/news.png) !important;
     background-repeat: no-repeat;
 }
+
+.asterisk {
+    background-image: url(../icons/16x16/flag.png) !important;
+    background-repeat: no-repeat;
+    background-position: center center;
+}

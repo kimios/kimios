@@ -350,6 +350,10 @@ kimios.record = {
             },
             {
                 name: 'lastLogin'
+            },
+            {
+                name: 'enabled',
+                type: 'boolean'
             }
         ]),
 

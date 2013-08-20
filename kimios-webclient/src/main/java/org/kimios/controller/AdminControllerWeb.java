@@ -16,36 +16,27 @@
  */
 package org.kimios.controller;
 
+import flexjson.JSONDeserializer;
+import flexjson.JSONSerializer;
+import org.kimios.client.controller.helpers.AuthenticationSourceUtil;
+import org.kimios.core.DateHelper;
+import org.kimios.core.GroupUserTransformer;
+import org.kimios.kernel.ws.pojo.*;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.kimios.client.controller.helpers.AuthenticationSourceUtil;
-import org.kimios.core.DateHelper;
-import org.kimios.core.GroupUserTransformer;
-import org.kimios.kernel.ws.pojo.AuthenticationSource;
-import org.kimios.kernel.ws.pojo.Document;
-import org.kimios.kernel.ws.pojo.Group;
-import org.kimios.kernel.ws.pojo.Role;
-import org.kimios.kernel.ws.pojo.Session;
-import org.kimios.kernel.ws.pojo.User;
-
-import flexjson.JSONDeserializer;
-import flexjson.JSONSerializer;
-
 /**
  * @author Fabien Alin
  */
-public class AdminControllerWeb extends Controller
-{
-    public AdminControllerWeb(Map<String, String> parameters)
-    {
+public class AdminControllerWeb extends Controller {
+    public AdminControllerWeb(Map<String, String> parameters) {
         super(parameters);
     }
 
-    public String execute() throws Exception
-    {
+    public String execute() throws Exception {
         if (action.equalsIgnoreCase("domains")) {
             return getDomains(parameters);
         }
@@ -148,32 +139,28 @@ public class AdminControllerWeb extends Controller
         return "{\"success\":false,\"exception\":\"Unknown action\"}";
     }
 
-    private String roles(Map<String, String> parameters) throws Exception
-    {
+    private String roles(Map<String, String> parameters) throws Exception {
         Role[] items = administrationController.getRoles(sessionUid,
                 Integer.parseInt(parameters.get("roleId")));
         String resp = "{list:" + new JSONSerializer().serialize(items) + "}";
         return resp;
     }
 
-    private String userRoles(Map<String, String> parameters) throws Exception
-    {
+    private String userRoles(Map<String, String> parameters) throws Exception {
         Role[] items = administrationController.getRoles(sessionUid,
                 parameters.get("userName"), parameters.get("userSource"));
         String resp = "{list:" + new JSONSerializer().serialize(items) + "}";
         return resp;
     }
 
-    private String createRole(Map<String, String> parameters) throws Exception
-    {
+    private String createRole(Map<String, String> parameters) throws Exception {
         administrationController.createRole(sessionUid,
                 Integer.parseInt(parameters.get("roleId")),
                 parameters.get("uid"), parameters.get("source"));
         return "{\"success\":true}";
     }
 
-    private String deleteRole(Map<String, String> parameters) throws Exception
-    {
+    private String deleteRole(Map<String, String> parameters) throws Exception {
         administrationController.deleteRole(sessionUid,
                 Integer.parseInt(parameters.get("roleId")),
                 parameters.get("uid"), parameters.get("source"));
@@ -181,8 +168,7 @@ public class AdminControllerWeb extends Controller
     }
 
     private String addUserToGroup(Map<String, String> parameters)
-            throws Exception
-    {
+            throws Exception {
         administrationController.addUserToGroup(sessionUid,
                 parameters.get("uid"), parameters.get("gid"),
                 parameters.get("authenticationSourceName"));
@@ -190,16 +176,14 @@ public class AdminControllerWeb extends Controller
     }
 
     private String removeUserFromGroup(Map<String, String> parameters)
-            throws Exception
-    {
+            throws Exception {
         administrationController.removeUserFromGroup(sessionUid,
                 parameters.get("uid"), parameters.get("gid"),
                 parameters.get("authenticationSourceName"));
         return "";
     }
 
-    private String usersGroups(Map<String, String> parameters) throws Exception
-    {
+    private String usersGroups(Map<String, String> parameters) throws Exception {
         Group[] grps = administrationController.getGroups(sessionUid,
                 parameters.get("uid"),
                 parameters.get("authenticationSourceName"));
@@ -207,8 +191,7 @@ public class AdminControllerWeb extends Controller
                 User.class, Group.class).serialize(grps);
     }
 
-    private String groupsUsers(Map<String, String> parameters) throws Exception
-    {
+    private String groupsUsers(Map<String, String> parameters) throws Exception {
         User[] users = administrationController.getUsers(sessionUid,
                 parameters.get("gid"),
                 parameters.get("authenticationSourceName"));
@@ -217,8 +200,7 @@ public class AdminControllerWeb extends Controller
     }
 
     private String deleteAuthenticationSource(Map<String, String> parameters)
-            throws Exception
-    {
+            throws Exception {
         String name = parameters.get("authenticationSourceName");
         administrationController.deleteAuthenticationSource(sessionUid,
                 name);
@@ -226,8 +208,7 @@ public class AdminControllerWeb extends Controller
     }
 
     private String getDomainTypeList(Map<String, String> parameters)
-            throws Exception
-    {
+            throws Exception {
         String xml = administrationController.getAvailableAuthenticationSource(sessionUid);
         List<String> list = AuthenticationSourceUtil.getAvailable(xml);
         String json = new String("{impl:[");
@@ -242,8 +223,7 @@ public class AdminControllerWeb extends Controller
     }
 
     private String getDomainFields(Map<String, String> parameters)
-            throws Exception
-    {
+            throws Exception {
         String typeName = parameters.get("className");
         String xmlParams = administrationController.getAvailableAuthenticationSourceParams(sessionUid, typeName);
         List<String> fields = AuthenticationSourceUtil.getAvailableParams(xmlParams);
@@ -259,8 +239,7 @@ public class AdminControllerWeb extends Controller
     }
 
     private String getDomainFieldsDesc(Map<String, String> parameters)
-            throws Exception
-    {
+            throws Exception {
         String typeName = parameters.get("className");
         String authName = parameters.get("name");
 
@@ -281,16 +260,14 @@ public class AdminControllerWeb extends Controller
         return metaDatas;
     }
 
-    private String getDomains(Map<String, String> parameters) throws Exception
-    {
+    private String getDomains(Map<String, String> parameters) throws Exception {
         AuthenticationSource[] items = securityController.getAuthenticationSources();
         String jsonResp = new JSONSerializer().serialize(items);
         return jsonResp;
     }
 
     private String getDomainDetails(Map<String, String> parameters)
-            throws Exception
-    {
+            throws Exception {
         String typeName = parameters.get("className");
         String authName = parameters.get("name");
 
@@ -319,8 +296,7 @@ public class AdminControllerWeb extends Controller
     }
 
     private String createDomainDetails(Map<String, String> parameters)
-            throws Exception
-    {
+            throws Exception {
         AuthenticationSourceUtil util = new AuthenticationSourceUtil(
                 parameters.get("newName"));
         ArrayList<Map<String, String>> l =
@@ -335,8 +311,7 @@ public class AdminControllerWeb extends Controller
     }
 
     private String updateDetails(Map<String, String> parameters)
-            throws Exception
-    {
+            throws Exception {
         AuthenticationSourceUtil util = new AuthenticationSourceUtil(
                 parameters.get("name"));
         util.changeName(parameters.get("newName"));
@@ -352,23 +327,30 @@ public class AdminControllerWeb extends Controller
     }
 
     private String createUser(Map<String, String> parameters)
-            throws Exception
-    {
-        administrationController.createUser(sessionUid,
-                parameters.get("uid"), parameters.get("name"),
-                parameters.get("mail"), parameters.get("password"),
-                parameters.get("authenticationSourceName"));
-        return "{\"success\":true}";
+            throws Exception {
+        try {
+            boolean enabled = parameters.get("enabled") != null && parameters.get("enabled").equals("on") ? true : false;
+            administrationController.createUser(sessionUid,
+                    parameters.get("uid"), parameters.get("name"),
+                    parameters.get("mail"), parameters.get("password"),
+                    parameters.get("authenticationSourceName"),
+                    enabled);
+            return "{\"success\":true}";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "{\"success\":false,\"exception\":\"" + e.getMessage() + "\"}";
+        }
     }
 
     private String updateUser(Map<String, String> parameters)
-            throws Exception
-    {
+            throws Exception {
         try {
+            boolean enabled = parameters.get("enabled") != null && parameters.get("enabled").equals("on") ? true : false;
             administrationController.updateUser(sessionUid,
                     parameters.get("uid"), parameters.get("name"),
                     parameters.get("mail"), parameters.get("password"),
-                    parameters.get("authenticationSourceName"));
+                    parameters.get("authenticationSourceName"),
+                    enabled);
             return "{\"success\":true}";
         } catch (Exception e) {
             e.printStackTrace();
@@ -377,8 +359,7 @@ public class AdminControllerWeb extends Controller
     }
 
     private String deleteUser(Map<String, String> parameters)
-            throws Exception
-    {
+            throws Exception {
         administrationController.deleteUser(sessionUid,
                 parameters.get("uid"),
                 parameters.get("authenticationSourceName"));
@@ -386,8 +367,7 @@ public class AdminControllerWeb extends Controller
     }
 
     private String createGroup(Map<String, String> parameters)
-            throws Exception
-    {
+            throws Exception {
         administrationController.createGroup(sessionUid,
                 parameters.get("gid"), parameters.get("name"),
                 parameters.get("authenticationSourceName"));
@@ -395,8 +375,7 @@ public class AdminControllerWeb extends Controller
     }
 
     private String updateGroup(Map<String, String> parameters)
-            throws Exception
-    {
+            throws Exception {
         administrationController.updateGroup(sessionUid,
                 parameters.get("gid"), parameters.get("name"),
                 parameters.get("authenticationSourceName"));
@@ -404,28 +383,24 @@ public class AdminControllerWeb extends Controller
     }
 
     private String deleteGroup(Map<String, String> parameters)
-            throws Exception
-    {
+            throws Exception {
         administrationController.deleteGroup(sessionUid,
                 parameters.get("gid"),
                 parameters.get("authenticationSourceName"));
         return "";
     }
 
-    private String getConnectedUsers() throws Exception
-    {
+    private String getConnectedUsers() throws Exception {
         return new JSONSerializer().serialize(administrationController.getConnectedUsers(sessionUid));
     }
 
-    private String getSessions(Map<String, String> parameters) throws Exception
-    {
+    private String getSessions(Map<String, String> parameters) throws Exception {
         String userName = parameters.get("userName");
         String userSource = parameters.get("userSource");
         List<Map<String, Object>> sessions = new ArrayList<Map<String, Object>>();
 
         for (Session s : administrationController.getEnabledSessions(
-                sessionUid, userName, userSource))
-        {
+                sessionUid, userName, userSource)) {
             Map<String, Object> session = new HashMap<String, Object>();
             session.put("lastUse", DateHelper.convert(s.getLastUse()));
             session.put("metaDatas", s.getMetaDatas());
@@ -439,8 +414,7 @@ public class AdminControllerWeb extends Controller
     }
 
     private String disconnectUser(Map<String, String> parameters)
-            throws Exception
-    {
+            throws Exception {
         Session[] sessions = administrationController.getEnabledSessions(
                 sessionUid, parameters.get("userName"),
                 parameters.get("userSource"));
@@ -454,15 +428,13 @@ public class AdminControllerWeb extends Controller
     }
 
     private String eraseSessions(Map<String, String> parameters)
-            throws Exception
-    {
+            throws Exception {
         administrationController.removeEnabledSession(sessionUid,
                 parameters.get("sessionUidToRemove"));
         return "{\"success\":true}";
     }
 
-    private String getDeadLock() throws Exception
-    {
+    private String getDeadLock() throws Exception {
         List<Map<String, Object>> documents = new ArrayList<Map<String, Object>>();
         for (Document doc : administrationController.getCheckedOutDocuments(sessionUid)) {
             Map<String, Object> document = new HashMap<String, Object>();
@@ -499,28 +471,24 @@ public class AdminControllerWeb extends Controller
     }
 
     private String clearDeadLock(Map<String, String> parameters)
-            throws Exception
-    {
+            throws Exception {
         administrationController.clearLock(sessionUid,
                 Long.parseLong(String.valueOf(parameters.get("documentUid"))));
         return "{\"success\":true}";
     }
 
-    private String reindex() throws Exception
-    {
+    private String reindex() throws Exception {
         administrationController.reIndex(sessionUid, "/");
         return "{\"success\":true}";
     }
 
-    private String getReindexProgress() throws Exception
-    {
+    private String getReindexProgress() throws Exception {
         return "[{\"percent\":\""
                 + administrationController.getReIndexProgress(sessionUid)
                 + "\"}]";
     }
 
-    private String changeOwner(Map<String, String> parameters) throws Exception
-    {
+    private String changeOwner(Map<String, String> parameters) throws Exception {
         long dmEntityUid = Long.parseLong(parameters.get("dmEntityUid"));
         int dmEntityType = Integer.parseInt(parameters.get("dmEntityType"));
         String userName = parameters.get("userName");

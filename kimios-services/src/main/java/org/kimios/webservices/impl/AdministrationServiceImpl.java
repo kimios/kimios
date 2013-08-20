@@ -182,26 +182,28 @@ public class AdministrationServiceImpl extends CoreService implements Administra
     }
 
     public void createUser(String sessionUid, String uid, String userName, String mail, String password,
-            String authenticationSourceName)
+            String authenticationSourceName, boolean enabled)
             throws DMServiceException
     {
 
         try {
             org.kimios.kernel.security.Session session = getHelper().getSession(sessionUid);
-            administrationController.createUser(session, uid, userName, mail, password, authenticationSourceName);
+            administrationController.createUser(session, uid, userName, mail, password, authenticationSourceName,
+                    enabled);
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }
     }
 
     public void updateUser(String sessionUid, String uid, String userName, String mail, String password,
-            String authenticationSourceName)
+            String authenticationSourceName, boolean enabled)
             throws DMServiceException
     {
 
         try {
             org.kimios.kernel.security.Session session = getHelper().getSession(sessionUid);
-            administrationController.updateUser(session, uid, userName, mail, password, authenticationSourceName);
+            administrationController.updateUser(session, uid, userName, mail, password, authenticationSourceName,
+                    enabled);
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }

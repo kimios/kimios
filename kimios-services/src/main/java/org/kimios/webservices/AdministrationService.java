@@ -134,7 +134,8 @@ public interface AdministrationService
             @QueryParam(value = "mail") @WebParam(name = "mail") String mail,
             @QueryParam(value = "password") @WebParam(name = "password") String password,
             @QueryParam(value = "authenticationSourceName") @WebParam(name = "authenticationSourceName")
-            String authenticationSourceName)
+            String authenticationSourceName,
+            @QueryParam(value = "enabled") @WebParam(name = "enabled") boolean enabled)
             throws DMServiceException;
 
     @GET
@@ -146,7 +147,8 @@ public interface AdministrationService
             @QueryParam(value = "mail") @WebParam(name = "mail") String mail,
             @QueryParam(value = "password") @WebParam(name = "password") String password,
             @QueryParam(value = "authenticationSourceName") @WebParam(name = "authenticationSourceName")
-            String authenticationSourceName)
+            String authenticationSourceName,
+            @QueryParam(value = "enabled") @WebParam(name = "enabled") boolean enabled)
             throws DMServiceException;
 
     @GET
