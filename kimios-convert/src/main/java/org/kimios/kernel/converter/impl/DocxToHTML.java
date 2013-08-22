@@ -33,7 +33,7 @@ public class DocxToHTML extends ConverterImpl {
             // Copy given resource to temporary repository
             sourcePath = temporaryRepository + "/" + source.getName() + "_" +
                     FileNameGenerator.generate() + "." + source.getType();
-            IOUtils.copyLarge(source.getStream(), new FileOutputStream(sourcePath));
+            IOUtils.copyLarge(source.getInputStream(), new FileOutputStream(sourcePath));
 
             // Convert file located to sourcePath into HTML web content
             String targetPath = temporaryRepository + "/" +

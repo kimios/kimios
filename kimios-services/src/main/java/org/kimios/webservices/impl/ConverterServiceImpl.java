@@ -66,7 +66,7 @@ public class ConverterServiceImpl extends CoreService implements ConverterServic
     // private
 
     private Response wrapResponse(InputSource source) throws IOException {
-        return Response.ok(source.getStream()).header(
+        return Response.ok(source.getInputStream()).header(
                 "Content-Disposition",
                 "attachment; filename=\"" + source.getHumanName() + "\"")
                 .build();

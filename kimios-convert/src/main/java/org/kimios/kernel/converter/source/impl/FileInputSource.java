@@ -22,7 +22,7 @@ public class FileInputSource extends InputSourceImpl {
         this.file = new File(path);
     }
 
-    public InputStream getStream() throws MethodNotImplemented, FileNotFoundException {
+    public InputStream getInputStream() throws MethodNotImplemented, FileNotFoundException {
         return new FileInputStream(file);
     }
 

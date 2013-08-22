@@ -290,6 +290,7 @@ kimios.ContextMenu = new function () {
         this.viewableDocumentMenu = new Ext.menu.Menu(config);
         this.viewableDocumentMenu.add(this.getViewDocumentItem());
         this.viewableDocumentMenu.add(this.getGetDocumentItem());
+        this.viewableDocumentMenu.add(this.getBarcodeDocumentItem());
         this.viewableDocumentMenu.addSeparator();
         this.viewableDocumentMenu.add(this.getUpdateCurrentVersionItem());
         this.viewableDocumentMenu.add(this.getCheckInCheckOutItem());
@@ -537,6 +538,17 @@ kimios.ContextMenu = new function () {
             scope: this,
             handler: function () {
                 kimios.viewDoc(this.dmEntityPojo);
+            }
+        });
+    };
+
+    this.getBarcodeDocumentItem = function () {
+        return new Ext.menu.Item({
+            text: kimios.lang('WithBarcode'),
+            iconCls: 'barcode',
+            scope: this,
+            handler: function () {
+                kimios.barcode(this.dmEntityPojo);
             }
         });
     };

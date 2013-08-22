@@ -44,7 +44,7 @@ public class PDFMerger extends ConverterImpl {
                 // Copy given resource to temporary repository
                 String sourcePath = temporaryRepository + "/" + sources.get(i).getName() + "_" +
                         FileNameGenerator.generate() + sources.get(i).getType();
-                IOUtils.copyLarge(sources.get(i).getStream(), new FileOutputStream(sourcePath));
+                IOUtils.copyLarge(sources.get(i).getInputStream(), new FileOutputStream(sourcePath));
                 filesToDelete.add(sourcePath);
 
                 // Add given data to merged PDF

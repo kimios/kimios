@@ -31,7 +31,7 @@ public class FileToZip extends ConverterImpl {
             // Copy given resource to temporary repository
             sourcePath = temporaryRepository + "/" + source.getName() + "_" +
                     FileNameGenerator.generate() + "." + source.getType();
-            IOUtils.copyLarge(source.getStream(), new FileOutputStream(sourcePath));
+            IOUtils.copyLarge(source.getInputStream(), new FileOutputStream(sourcePath));
 
             // Add given data to zip file
             String targetPath = temporaryRepository + "/" +
@@ -76,7 +76,7 @@ public class FileToZip extends ConverterImpl {
                 // Copy given resource to temporary repository
                 String sourcePath = temporaryRepository + "/" + sources.get(i).getName() + "_" +
                         FileNameGenerator.generate() + "." + sources.get(i).getType();
-                IOUtils.copyLarge(sources.get(i).getStream(), new FileOutputStream(sourcePath));
+                IOUtils.copyLarge(sources.get(i).getInputStream(), new FileOutputStream(sourcePath));
                 filesToDelete.add(sourcePath);
 
                 // Add given data to zip file

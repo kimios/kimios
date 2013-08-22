@@ -7,7 +7,7 @@ import java.io.InputStream;
 
 public interface InputSource {
 
-    InputStream getStream() throws MethodNotImplemented, IOException;
+    InputStream getInputStream() throws MethodNotImplemented, IOException;
 
     String getType() throws MethodNotImplemented;
 

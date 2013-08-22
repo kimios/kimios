@@ -1,6 +1,7 @@
 package org.kimios.kernel.converter;
 
 import org.kimios.kernel.converter.exception.ConverterNotFound;
+import org.kimios.kernel.converter.impl.BarcodeTransformer;
 import org.kimios.kernel.converter.impl.DocToHTML;
 import org.kimios.kernel.converter.impl.FileToZip;
 import org.kimios.kernel.converter.impl.PDFMerger;
@@ -34,6 +35,10 @@ public class ConverterFactory {
 
             if (className.equals("html")) {
                 return new DocToHTML();
+            }
+
+            if (className.equals("barcode")) {
+                return new BarcodeTransformer();
             }
 
             throw new ConverterNotFound(e);

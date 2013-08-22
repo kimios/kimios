@@ -110,6 +110,12 @@ kimios = {
             kimios.viewImg(pojo, links);
         }
     },
+    barcode: function (pojo) {
+        if (pojo.extension == 'pdf' || pojo.extension == 'PDF') {
+            window.location.href = srcContextPath + '/Converter?sessionId=' + sessionUid + '&documentId=' + pojo.uid +
+                '&converterImpl=org.kimios.kernel.converter.impl.BarcodeTransformer';
+        }
+    },
 
     date: function (timestamp) {
         return new Date(timestamp == null ? 0 : timestamp).format(kimios.lang('SimpleDateJSFormat'));
@@ -131,19 +137,19 @@ kimios = {
                 + '&action=GetDocumentVersion&docUid=' + uid + '&verUid='
                 + versionUid;
         },
-        download: function(url){
+        download: function (url) {
 
-            if(!kimios.util.kdliframe){
+            if (!kimios.util.kdliframe) {
                 kimios.util.kdliframe = Ext.DomHelper.createDom(
-                        {
-                            tag: 'iframe',
-                            id: 'kdl-iframe'
+                    {
+                        tag: 'iframe',
+                        id: 'kdl-iframe'
 
-                        });
+                    });
                 var first = true;
                 var elem = new Ext.Element(kimios.util.kdliframe, false);
-                elem.addListener('load', function(){
-                    if(!first || (Ext.isIE || Ext.isGecko || Ext.isGecko2 || Ext.isGecko3)){
+                elem.addListener('load', function () {
+                    if (!first || (Ext.isIE || Ext.isGecko || Ext.isGecko2 || Ext.isGecko3)) {
                         alert('An error happend with Document Access. Please contact your administrator');
                     }
                     first = false;

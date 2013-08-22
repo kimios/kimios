@@ -390,3 +390,8 @@
     background-repeat: no-repeat;
     background-position: center center;
 }
+
+.barcode {
+    background-image: url(../icons/16x16/expand.png) !important;
+    background-repeat: no-repeat;
+}

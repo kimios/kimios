@@ -15,7 +15,7 @@ public class DocumentVersionInputSource extends InputSourceImpl {
         this.version = version;
     }
 
-    public InputStream getStream() throws MethodNotImplemented, IOException {
+    public InputStream getInputStream() throws MethodNotImplemented, IOException {
         return RepositoryManager.accessVersionStream(version);
     }
 
