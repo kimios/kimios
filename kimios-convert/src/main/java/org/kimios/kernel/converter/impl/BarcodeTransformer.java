@@ -32,6 +32,7 @@ public class BarcodeTransformer extends ConverterImpl {
 
     @Override
     public InputSource convertInputSources(List<InputSource> sources) throws ConverterException {
+        String qrcodeFilename=null;
         try {
 
             // get the pdf source
@@ -51,7 +52,7 @@ public class BarcodeTransformer extends ConverterImpl {
             // get metadatas, generate qrcode and write it to temporary repository
 
             String qrcodeData = buildQrcodeData((DocumentVersionInputSource) sourcePdf);
-            String qrcodeFilename = temporaryRepository + "/QRCode_" + FileNameGenerator.generate() + ".png";
+            qrcodeFilename = temporaryRepository + "/QRCode_" + FileNameGenerator.generate() + ".png";
             BitMatrix matrix = generateMatrix(qrcodeData, 100);
             writeImage(qrcodeFilename, "png", matrix);
 
@@ -65,7 +66,7 @@ public class BarcodeTransformer extends ConverterImpl {
             stamper.close();
 
             InputSource result = InputSourceFactory.getInputSource(targetPath);
-            result.setHumanName("PDF_QRCode_" + FileNameGenerator.generate() + ".pdf");
+            result.setHumanName("PDF_QRCode_" + FileNameGenerator.getTime() + ".pdf");
             return result;
 
         } catch (WriterException e) {
@@ -79,6 +80,9 @@ public class BarcodeTransformer extends ConverterImpl {
         } catch (DocumentException e) {
             e.printStackTrace();
             throw new ConverterException(e);
+
+        } finally {
+            new File(qrcodeFilename).delete();
         }
 
     }
