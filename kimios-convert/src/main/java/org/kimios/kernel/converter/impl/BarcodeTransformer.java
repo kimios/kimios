@@ -32,7 +32,7 @@ public class BarcodeTransformer extends ConverterImpl {
 
     @Override
     public InputSource convertInputSources(List<InputSource> sources) throws ConverterException {
-        String qrcodeFilename=null;
+        String qrcodeFilename = null;
         try {
 
             // get the pdf source
@@ -93,15 +93,14 @@ public class BarcodeTransformer extends ConverterImpl {
         buffer.append("DocumentId=").append(version.getDocumentUid()).append(QRCODE_DATA_DELIMITER);
         buffer.append("VersionId=").append(version.getUid()).append(QRCODE_DATA_DELIMITER);
         buffer.append("Length=").append(version.getLength()).append(QRCODE_DATA_DELIMITER);
-        buffer.append("Author=").append(version.getAuthor() + "@" + version.getAuthorSource()).append(QRCODE_DATA_DELIMITER);
+        buffer.append("Author=").append(version.getAuthor()).append("@").append(version.getAuthorSource()).append(QRCODE_DATA_DELIMITER);
         buffer.append("CreateDate=").append(version.getCreationDate()).append(QRCODE_DATA_DELIMITER);
         buffer.append("UpdateDate=").append(version.getModificationDate()).append(QRCODE_DATA_DELIMITER);
         return buffer.toString();
     }
 
     private static BitMatrix generateMatrix(String data, int size) throws WriterException {
-        BitMatrix bitMatrix = new QRCodeWriter().encode(data, BarcodeFormat.QR_CODE, size, size);
-        return bitMatrix;
+        return new QRCodeWriter().encode(data, BarcodeFormat.QR_CODE, size, size);
     }
 
     private static void writeImage(String outputFileName, String imageFormat, BitMatrix bitMatrix) throws IOException {

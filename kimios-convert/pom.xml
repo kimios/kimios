@@ -134,21 +134,11 @@
             <scope>compile</scope>
         </dependency>
 
-
-        <!--<dependency>-->
-            <!--<groupId>com.lowagie</groupId>-->
-            <!--<artifactId>itext</artifactId>-->
-            <!--<version>2.0.7</version>-->
-        <!--</dependency>-->
-
         <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>itextpdf</artifactId>
             <version>5.0.6</version>
         </dependency>
-
-
-
 
         <!-- zxing -->
         <dependency>
@@ -161,6 +151,12 @@
             <groupId>com.google.zxing</groupId>
             <artifactId>javase</artifactId>
             <version>2.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>1.8.2</version>
         </dependency>
 
         <!-- for Docx handling only -->
