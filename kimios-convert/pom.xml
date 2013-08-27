@@ -134,12 +134,6 @@
             <scope>compile</scope>
         </dependency>
 
-        <dependency>
-            <groupId>com.itextpdf</groupId>
-            <artifactId>itextpdf</artifactId>
-            <version>5.0.6</version>
-        </dependency>
-
         <!-- zxing -->
         <dependency>
             <groupId>com.google.zxing</groupId>
@@ -157,6 +151,12 @@
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox</artifactId>
             <version>1.8.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>itextpdf</artifactId>
+            <version>5.0.6</version>
         </dependency>
 
         <!-- for Docx handling only -->

@@ -1,4 +1,4 @@
-package org.kimios.kernel.test;
+package org.kimios.core;
 
 import java.io.File;
 

@@ -1,4 +1,4 @@
-package org.kimios.kernel.test;
+package org.kimios.core;
 
 import com.google.zxing.*;
 import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
@@ -26,11 +26,17 @@ public class QRUtil {
     }
 
     private static Result readQrCode(InputStream in) throws IOException, NotFoundException, FormatException, ChecksumException {
-        BufferedImageLuminanceSource image = new BufferedImageLuminanceSource(ImageIO.read(in));
-        HybridBinarizer binarizer = new HybridBinarizer(image);
-        BinaryBitmap binaryBitmap = new BinaryBitmap(binarizer);
-        return new QRCodeReader().decode(binaryBitmap);
+        try {
+            BufferedImageLuminanceSource image = new BufferedImageLuminanceSource(ImageIO.read(in));
+            HybridBinarizer binarizer = new HybridBinarizer(image);
+            BinaryBitmap binaryBitmap = new BinaryBitmap(binarizer);
+            return new QRCodeReader().decode(binaryBitmap);
 //        return new MultiFormatReader().decode(binaryBitmap);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 }

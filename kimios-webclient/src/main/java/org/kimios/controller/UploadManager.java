@@ -29,7 +29,11 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
 import org.apache.commons.lang.StringEscapeUtils;
-import org.kimios.client.controller.helpers.*;
+import org.kimios.client.controller.helpers.DMEntityType;
+import org.kimios.client.controller.helpers.StringTools;
+import org.kimios.client.controller.helpers.XMLGenerators;
+import org.kimios.core.PDFUtil;
+import org.kimios.core.QRUtil;
 import org.kimios.core.configuration.Config;
 import org.kimios.kernel.ws.pojo.DMEntitySecurity;
 import org.kimios.kernel.ws.pojo.Document;
@@ -38,9 +42,12 @@ import org.kimios.utils.configuration.ConfigurationManager;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.security.MessageDigest;
-import java.util.*;
+import java.io.File;
+import java.io.InputStream;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Vector;
 
 /**
  * @author Fabien Alin
@@ -187,11 +194,64 @@ public class UploadManager extends Controller {
                     } catch (NumberFormatException nfe) {
                     }
 
-                    documentController.createDocumentWithProperties(sessionUid, name, extension, mimeType, folderUid,
-                            isSecurityInherited, securitiesXml, isRecursive, documentTypeId, metaXml, in);
+
+                    log.debug("Scanning QR Code for " + name + "...");
+
+                    /*
+                    // update
+                    documentController.checkoutDocument(sessionUid, Long.parseLong(documentUid));
+                        fileTransferController.uploadFileNewVersion(sessionUid, Long.parseLong(documentUid), in, false);
+                        documentController.checkinDocument(sessionUid, Long.parseLong(documentUid));
+                     */
+
+                    String tmpPath = null;
+                    String data = null;
+                    try {
+                        tmpPath = PDFUtil.toImage(in); // convert pdf to image
+                        data = QRUtil.scan(tmpPath); // read qr code from image
+                    } finally {
+                        new File(tmpPath).delete();
+                    }
+
+
+                    if (data != null) {
+                        log.info("QR Code has been recognized");
+                        long docId = -1;
+                        String[] splited = data.split("\n");
+                        for (String s : splited) {
+                            String[] map = s.split("=");
+                            String key = map[0];
+                            String val = map[1];
+
+                            if (key.equals("DocumentId")) {
+                                docId = Long.parseLong(val);
+                                break;
+                            }
+                        }
+                        // TODO versionId to update here
+
+                        Document d = documentController.getDocument(sessionUid, docId);
+
+                        log.info("DocID from QR Code: " + docId + " -- id doc: " + d.getUid());
+//                        DocumentVersion dv = documentVersionController.getDocumentVersion(sessionUid, docId);
+
+//                        documentVersionController.updateDocumentVersion().updateDocument(sessionUid, doc);
+                        documentController.checkoutDocument(sessionUid, d.getUid());
+                        fileTransferController.uploadFileNewVersion(sessionUid, d.getUid(), in, false);
+                        documentController.checkinDocument(sessionUid, d.getUid());
+
+                        // Notifier user
+
+                    } else {
+                        documentController.createDocumentWithProperties(sessionUid, name, extension, mimeType, folderUid,
+                                isSecurityInherited, securitiesXml, isRecursive, documentTypeId, metaXml, in);
+                    }
 
 
                 } else if (action.equalsIgnoreCase("AddDocument")) {
+                    /*
+                    TODO Check QR Code
+                     */
                     Document d = new Document();
                     d.setCreationDate(Calendar.getInstance());
                     d.setExtension(extension);
