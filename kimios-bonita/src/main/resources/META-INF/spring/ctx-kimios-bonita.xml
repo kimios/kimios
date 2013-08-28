@@ -31,6 +31,7 @@
         <property name="bonitaHome" value="/tmp/bonita_home"/>
         <property name="bonitaApplicationName" value="bonita"/>
         <property name="bonitaServerUrl" value="http://localhost:8080"/>
+        <property name="bonitaKimiosRoleName" value="kimios"/>
         <property name="validDomainsToSynchronize">
             <value>kimios</value>
             <!--<value>myAD</value>-->

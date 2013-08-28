@@ -18,6 +18,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 public class BonitaUsersSynchronizer {
 
@@ -26,6 +27,7 @@ public class BonitaUsersSynchronizer {
     private String bonitaHome;
     private String bonitaApplicationName;
     private String bonitaServerUrl;
+    private String bonitaKimiosRoleName;
     private List<String> validDomainsToSynchronize;
 
     private static Logger log = LoggerFactory.getLogger(BonitaUsersSynchronizer.class);
@@ -36,59 +38,111 @@ public class BonitaUsersSynchronizer {
         APISession session = loginAPI.login(bonitaUserName, bonitaUserPassword);
         IdentityAPI identityAPI = TenantAPIAccessor.getIdentityAPI(session);
 
-        for (String domainName : validDomainsToSynchronize) {
+        Role role;
+        try {
+            role = identityAPI.getRoleByName("kimios");
+        } catch (RoleNotFoundException e) {
+            role = identityAPI.createRole(new RoleCreator("kimios"));
+        }
 
+        for (String domainName : validDomainsToSynchronize) {
             AuthenticationSource source = FactoryInstantiator.getInstance().getAuthenticationSourceFactory().getAuthenticationSource(domainName);
 
-            // for each users
+            // groups synchronisation
+//
+//            log.info("Groups synchronisation...");
+//            GroupFactory groupFactory = source.getGroupFactory();
+//            List<Group> groups = groupFactory.getGroups();
+//            for (Group g : groups) {
+//                String groupName = g.getGid() + "@" + g.getAuthenticationSourceName();
+//
+//                try {
+//                    // check existing group
+//                    org.bonitasoft.engine.identity.Group bGroup = identityAPI.getGroupByPath("/" + groupName);
+//                    log.info("Group " + groupName + " already exists, updating...");
+//                    GroupUpdater groupUpdater = new GroupUpdater();
+//                    groupUpdater.updateName(groupName);
+//                    groupUpdater.updateDisplayName(g.getName());
+//                    groupUpdater.updateDescription(g.getName());
+//                    identityAPI.updateGroup(bGroup.getId(), groupUpdater);
+//
+//                } catch (GroupNotFoundException e) {
+//                    // if not exists
+//                    log.info("Group " + groupName + " not found, creating...");
+//                    GroupCreator groupCreator = new GroupCreator(groupName);
+//                    groupCreator.setDisplayName(g.getName());
+//                    groupCreator.setDescription(g.getName());
+//                    groupCreator.setDescription(g.getName());
+//                    groupCreator.setParentPath("/");
+//                    identityAPI.createGroup(groupCreator);
+//                }
+//            }
+
+            // users synchronisation
+
             log.info("Users synchronisation...");
             UserFactory userFactory = source.getUserFactory();
             List<User> users = userFactory.getUsers();
             for (User u : users) {
                 String userName = u.getUid() + "@" + u.getAuthenticationSourceName();
-
+                org.bonitasoft.engine.identity.User bUser;
                 try {
                     // check existing user
-                    org.bonitasoft.engine.identity.User bUser = identityAPI.getUserByUserName(userName);
-                    log.info("User " + userName + " already exists, update...");
+                    bUser = identityAPI.getUserByUserName(userName);
+                    log.info("User " + userName + " already exists, updating...");
                     UserUpdater userUpdater = new UserUpdater();
                     userUpdater.setFirstName(u.getName());
                     userUpdater.setLastName(u.getName());
                     ContactDataUpdater contact = new ContactDataUpdater();
                     contact.setEmail(u.getMail());
                     userUpdater.setPersonalContactData(contact);
+                    userUpdater.setProfessionalContactData(contact);
                     identityAPI.updateUser(bUser.getId(), userUpdater);
 
                 } catch (UserNotFoundException unfe) {
                     // if not exists
-                    log.info("User " + userName + " not found, create...");
-                    identityAPI.createUser(userName, u.getPassword(), u.getName(), u.getName());
+                    log.info("User " + userName + " not found, creating...");
+                    UserCreator userCreator = new UserCreator(userName, u.getPassword());
+                    userCreator.setFirstName(u.getName());
+                    userCreator.setLastName(u.getName());
+                    ContactDataCreator contact = new ContactDataCreator();
+                    contact.setEmail(u.getMail());
+                    userCreator.setPersonalContactData(contact);
+                    userCreator.setProfessionalContactData(contact);
+                    bUser = identityAPI.createUser(userCreator);
 
                 }
-            }
 
-            // for each groups
-            log.info("Groups synchronisation...");
-            GroupFactory groupFactory = source.getGroupFactory();
-            List<Group> groups = groupFactory.getGroups();
-            for (Group g : groups) {
-                String groupName = g.getGid() + "@" + g.getAuthenticationSourceName();
+                Set<Group> linkedGroups = u.getGroups();
+                for (Group g : linkedGroups) {
+                    String groupName = g.getGid() + "@" + g.getAuthenticationSourceName();
+                    org.bonitasoft.engine.identity.Group bGroup;
+                    try {
+                        // check existing group
+                        bGroup = identityAPI.getGroupByPath("/" + groupName);
+                        log.info("Group " + groupName + " already exists, updating...");
+                        GroupUpdater groupUpdater = new GroupUpdater();
+                        groupUpdater.updateName(groupName);
+                        groupUpdater.updateDisplayName(g.getName());
+                        groupUpdater.updateDescription(g.getName());
+                        identityAPI.updateGroup(bGroup.getId(), groupUpdater);
 
-                try {
-                    // check existing group
-                    org.bonitasoft.engine.identity.Group bGroup = identityAPI.getGroupByPath("/" + groupName);
-                    log.info("Group " + groupName + " already exists, ignored");
-                    GroupUpdater groupUpdater = new GroupUpdater();
-                    groupUpdater.updateName(groupName);
-                    groupUpdater.updateDisplayName(groupName);
-                    groupUpdater.updateDescription(g.getName());
-                    identityAPI.updateGroup(bGroup.getId(), groupUpdater);
+                    } catch (GroupNotFoundException e) {
+                        // if not exists
+                        log.info("Group " + groupName + " not found, creating...");
+                        GroupCreator groupCreator = new GroupCreator(groupName);
+                        groupCreator.setDisplayName(g.getName());
+                        groupCreator.setDescription(g.getName());
+                        groupCreator.setDescription(g.getName());
+                        groupCreator.setParentPath("/");
+                        bGroup = identityAPI.createGroup(groupCreator);
 
-                } catch (GroupNotFoundException e) {
-                    // if not exists
-                    log.info("Group " + groupName + " not found, it will be created...");
-                    identityAPI.createGroup(groupName, "/");
+                    }
+
+                    identityAPI.addUserMembership(bUser.getId(), bGroup.getId(), role.getId());
+
                 }
+
             }
         }
 
