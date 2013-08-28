@@ -40,9 +40,9 @@ public class BonitaUsersSynchronizer {
 
         Role role;
         try {
-            role = identityAPI.getRoleByName("kimios");
+            role = identityAPI.getRoleByName(bonitaKimiosRoleName);
         } catch (RoleNotFoundException e) {
-            role = identityAPI.createRole(new RoleCreator("kimios"));
+            role = identityAPI.createRole(new RoleCreator(bonitaKimiosRoleName));
         }
 
         for (String domainName : validDomainsToSynchronize) {
@@ -226,4 +226,11 @@ public class BonitaUsersSynchronizer {
         this.validDomainsToSynchronize = domainsToSynchronize;
     }
 
+    public String getBonitaKimiosRoleName() {
+        return bonitaKimiosRoleName;
+    }
+
+    public void setBonitaKimiosRoleName(String bonitaKimiosRoleName) {
+        this.bonitaKimiosRoleName = bonitaKimiosRoleName;
+    }
 }
