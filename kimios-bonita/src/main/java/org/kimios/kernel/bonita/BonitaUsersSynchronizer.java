@@ -2,10 +2,15 @@ package org.kimios.kernel.bonita;
 
 import org.bonitasoft.engine.api.IdentityAPI;
 import org.bonitasoft.engine.api.LoginAPI;
+import org.bonitasoft.engine.api.ProfileAPI;
 import org.bonitasoft.engine.api.TenantAPIAccessor;
 import org.bonitasoft.engine.exception.*;
 import org.bonitasoft.engine.identity.*;
 import org.bonitasoft.engine.platform.LoginException;
+import org.bonitasoft.engine.profile.Profile;
+import org.bonitasoft.engine.search.SearchOptions;
+import org.bonitasoft.engine.search.SearchResult;
+import org.bonitasoft.engine.search.impl.SearchOptionsImpl;
 import org.bonitasoft.engine.session.APISession;
 import org.kimios.kernel.user.*;
 import org.kimios.kernel.user.Group;
@@ -29,6 +34,7 @@ public class BonitaUsersSynchronizer {
     private String bonitaApplicationName;
     private String bonitaServerUrl;
     private String bonitaKimiosRoleName;
+    private String bonitaProfileUsers;
     private List<String> validDomainsToSynchronize;
 
     private static Logger log = LoggerFactory.getLogger(BonitaUsersSynchronizer.class);
@@ -38,6 +44,7 @@ public class BonitaUsersSynchronizer {
         LoginAPI loginAPI = TenantAPIAccessor.getLoginAPI();
         APISession session = loginAPI.login(bonitaUserName, bonitaUserPassword);
         IdentityAPI identityAPI = TenantAPIAccessor.getIdentityAPI(session);
+        ProfileAPI profileAPI = TenantAPIAccessor.getProfileAPI(session);
 
         Role role;
         try {
@@ -154,6 +161,31 @@ public class BonitaUsersSynchronizer {
                         identityAPI.addUserMembership(bUser.getId(), bGroup.getId(), role.getId());
                         log.info("Add user membership: " + bUser.getUserName() + " - " + bGroup.getIconName() + " - " + role.getId());
                     }
+
+                    // TODO wtf ???
+
+                    SearchOptions opts = new SearchOptionsImpl(Integer.MIN_VALUE, Integer.MAX_VALUE);
+                    try {
+                        SearchResult<Profile> result = profileAPI.searchProfiles(opts);
+                        List<Profile> profiles = result.getResult();
+                        for (Profile profile : profiles) {
+
+                            if (profile.getName().equals(bonitaProfileUsers)) {
+                                log.info("Creating profile member...");
+                                try {
+                                    profileAPI.createProfileMember(profile.getId(), bUser.getId(), bGroup.getId(), role.getId());
+                                    log.info("Profile member created for user: "+userName);
+
+                                } catch (AlreadyExistsException aee) {
+                                    log.info("Profile already exists");
+                                }
+                                break;
+                            }
+                        }
+
+                    } catch (SearchException e) {
+                        e.printStackTrace();
+                    }
                 }
 
             }
@@ -245,5 +277,13 @@ public class BonitaUsersSynchronizer {
 
     public void setBonitaKimiosRoleName(String bonitaKimiosRoleName) {
         this.bonitaKimiosRoleName = bonitaKimiosRoleName;
+    }
+
+    public String getBonitaProfileUsers() {
+        return bonitaProfileUsers;
+    }
+
+    public void setBonitaProfileUsers(String bonitaProfileUsers) {
+        this.bonitaProfileUsers = bonitaProfileUsers;
     }
 }
