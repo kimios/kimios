@@ -33,10 +33,12 @@
         <property name="bonitaServerUrl" value="http://localhost:8080"/>
         <property name="bonitaKimiosRoleName" value="kimios"/>
         <property name="validDomainsToSynchronize">
-            <value>kimios</value>
-            <!--<value>myAD</value>-->
-            <!--<value>myLDAP</value>-->
-            <!--<value>...</value>-->
+            <list>
+                <value>kimios</value>
+                <!--<value>myAD</value>-->
+                <!--<value>myLDAP</value>-->
+                <!--<value>...</value>-->
+            </list>
         </property>
 
     </bean>
