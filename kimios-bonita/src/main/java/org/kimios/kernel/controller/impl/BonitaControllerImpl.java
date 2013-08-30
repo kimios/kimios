@@ -15,9 +15,9 @@ import org.bonitasoft.engine.platform.LogoutException;
 import org.bonitasoft.engine.session.APISession;
 import org.bonitasoft.engine.session.SessionNotFoundException;
 import org.kimios.kernel.bonita.BonitaSettings;
-import org.kimios.kernel.bonita.pojo.ProcessWrapper;
-import org.kimios.kernel.bonita.pojo.TaskWrapper;
-import org.kimios.kernel.controller.IBonitaController;
+import org.kimios.webservices.pojo.ProcessWrapper;
+import org.kimios.webservices.pojo.TaskWrapper;
+import org.kimios.kernel.controller.BonitaController;
 import org.kimios.kernel.security.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class BonitaControllerImpl implements IBonitaController {
+public class BonitaControllerImpl implements BonitaController {
 
     private static Logger log = LoggerFactory.getLogger(BonitaControllerImpl.class);
 
@@ -78,6 +78,9 @@ public class BonitaControllerImpl implements IBonitaController {
         List<TaskWrapper> wrappers = new ArrayList<TaskWrapper>();
 
         for (HumanTaskInstance t : pendingTasks) {
+
+//            processAPI.getTask
+
 
             TaskWrapper wrapper = new TaskWrapper(t);
             log.info(wrapper.toString());

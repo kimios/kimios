@@ -40,6 +40,13 @@
 
         <dependency>
             <groupId>org.kimios</groupId>
+            <artifactId>kimios-services</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.kimios</groupId>
             <artifactId>kimios-exceptions</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
@@ -89,5 +96,34 @@
         </dependency>
 
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.2</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>interfaces</classifier>
+                            <includes>
+                                <include>org/kimios/webservices/*</include>
+                                <include>org/kimios/webservices/pojo/*</include>
+                            </includes>
+                            <excludes>
+                                <exclude>org/kimios/webservices/impl/*</exclude>
+                                <exclude>org/kimios/controller/*</exclude>
+                                <exclude>org/kimios/bonita/*</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

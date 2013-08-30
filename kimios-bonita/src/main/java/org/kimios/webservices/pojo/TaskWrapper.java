@@ -1,4 +1,4 @@
-package org.kimios.kernel.bonita.pojo;
+package org.kimios.webservices.pojo;
 
 import org.bonitasoft.engine.bpm.flownode.HumanTaskInstance;
 

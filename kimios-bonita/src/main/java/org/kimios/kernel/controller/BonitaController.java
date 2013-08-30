@@ -6,14 +6,14 @@ import org.bonitasoft.engine.exception.UnknownAPITypeException;
 import org.bonitasoft.engine.platform.LoginException;
 import org.bonitasoft.engine.platform.LogoutException;
 import org.bonitasoft.engine.session.SessionNotFoundException;
-import org.kimios.kernel.bonita.pojo.ProcessWrapper;
-import org.kimios.kernel.bonita.pojo.TaskWrapper;
+import org.kimios.webservices.pojo.ProcessWrapper;
+import org.kimios.webservices.pojo.TaskWrapper;
 import org.kimios.kernel.security.Session;
 
 import java.io.IOException;
 import java.util.List;
 
-public interface IBonitaController {
+public interface BonitaController {
 
     List<ProcessWrapper> getProcesses(Session session) throws LoginException, ServerAPIException,
             BonitaHomeNotSetException, UnknownAPITypeException, IOException, LogoutException, SessionNotFoundException;
