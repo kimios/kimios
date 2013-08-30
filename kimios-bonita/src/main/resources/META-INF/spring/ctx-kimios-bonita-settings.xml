@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Kimios - Document Management System Software
+  ~ Copyright (C) 2012-2013  DevLib'
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 2 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    <bean id="bonitaSettings" name="bonitaSettings" class="org.kimios.kernel.bonita.BonitaSettings">
+
+        <property name="bonitaUserName" value="install"/>
+        <property name="bonitaUserPassword" value="install"/>
+        <property name="bonitaHome" value="/tmp/bonita_home"/>
+        <property name="bonitaApplicationName" value="bonita"/>
+        <property name="bonitaServerUrl" value="http://localhost:8080"/>
+        <property name="bonitaKimiosRoleName" value="kimios"/>
+        <property name="bonitaProfileUsers" value="User"/>
+        <property name="validDomainsToSynchronize">
+            <list>
+                <value>kimios</value>
+            </list>
+        </property>
+
+    </bean>
+
+</beans>

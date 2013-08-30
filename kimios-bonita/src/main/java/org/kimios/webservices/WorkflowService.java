@@ -9,7 +9,7 @@ import javax.ws.rs.*;
 public interface WorkflowService {
 
 //    @GET
-//    @Path("/getTasks")
+//    @Path("/getPendingTasks")
 //    @Produces("application/json")
-//    void getTasks(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId);
+//    void getPendingTasks(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId);
 }

@@ -26,21 +26,7 @@
     <bean id="bonitaUsersSynchronizer" name="bonitaUsersSynchronizer"
           class="org.kimios.kernel.bonita.BonitaUsersSynchronizer">
 
-        <property name="bonitaUserName" value="install"/>
-        <property name="bonitaUserPassword" value="install"/>
-        <property name="bonitaHome" value="/tmp/bonita_home"/>
-        <property name="bonitaApplicationName" value="bonita"/>
-        <property name="bonitaServerUrl" value="http://localhost:8080"/>
-        <property name="bonitaKimiosRoleName" value="kimios"/>
-        <property name="bonitaProfileUsers" value="User"/>
-        <property name="validDomainsToSynchronize">
-            <list>
-                <value>kimios</value>
-                <!--<value>myAD</value>-->
-                <!--<value>myLDAP</value>-->
-                <!--<value>...</value>-->
-            </list>
-        </property>
+        <property name="bonitaCfg" ref="bonitaSettings"/>
 
     </bean>
 
@@ -71,9 +57,9 @@
 
 
     <aop:config>
-        <aop:pointcut id="bonitaUsersCtrl"
+        <aop:pointcut id="bonitaUsersCtrlTx"
                       expression="execution(* org.kimios.kernel.bonita.BonitaUsersSynchronizer.*(..))"/>
-        <aop:advisor advice-ref="txAdvice" pointcut-ref="bonitaUsersCtrl"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="bonitaUsersCtrlTx"/>
     </aop:config>
 
 </beans>

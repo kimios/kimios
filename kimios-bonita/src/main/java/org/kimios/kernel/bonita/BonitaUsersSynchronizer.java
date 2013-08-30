@@ -18,42 +18,34 @@ import org.kimios.kernel.user.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
-import java.util.Properties;
 import java.util.UUID;
 
 public class BonitaUsersSynchronizer {
 
-    private String bonitaUserName;
-    private String bonitaUserPassword;
-    private String bonitaHome;
-    private String bonitaApplicationName;
-    private String bonitaServerUrl;
-    private String bonitaKimiosRoleName;
-    private String bonitaProfileUsers;
-    private List<String> validDomainsToSynchronize;
+    private BonitaSettings bonitaCfg;
 
     private static Logger log = LoggerFactory.getLogger(BonitaUsersSynchronizer.class);
 
     public void synchronize() throws BonitaHomeNotSetException, ServerAPIException, UnknownAPITypeException, LoginException, CreationException, IOException, UpdateException {
-        initializeBonitaClientConfiguration();
+
+        bonitaCfg.init();
+
         LoginAPI loginAPI = TenantAPIAccessor.getLoginAPI();
-        APISession session = loginAPI.login(bonitaUserName, bonitaUserPassword);
+        APISession session = loginAPI.login(bonitaCfg.getBonitaUserName(), bonitaCfg.getBonitaUserPassword());
         IdentityAPI identityAPI = TenantAPIAccessor.getIdentityAPI(session);
         ProfileAPI profileAPI = TenantAPIAccessor.getProfileAPI(session);
 
         Role role;
         try {
-            role = identityAPI.getRoleByName(bonitaKimiosRoleName);
+            role = identityAPI.getRoleByName(bonitaCfg.getBonitaKimiosRoleName());
         } catch (RoleNotFoundException e) {
-            role = identityAPI.createRole(new RoleCreator(bonitaKimiosRoleName));
+            role = identityAPI.createRole(new RoleCreator(bonitaCfg.getBonitaKimiosRoleName()));
         }
 
-        for (String domainName : validDomainsToSynchronize) {
+        for (String domainName : bonitaCfg.getValidDomainsToSynchronize()) {
             AuthenticationSource source = FactoryInstantiator.getInstance().getAuthenticationSourceFactory().getAuthenticationSource(domainName);
 
             // groups synchronisation
@@ -129,7 +121,7 @@ public class BonitaUsersSynchronizer {
                     List<Profile> profiles = result.getResult();
                     for (Profile profile : profiles) {
 
-                        if (profile.getName().equals(bonitaProfileUsers)) {
+                        if (profile.getName().equals(bonitaCfg.getBonitaProfileUsers())) {
                             log.info("Creating profile member...");
                             try {
                                 profileAPI.createProfileMember(profile.getId(), bUser.getId(), new Long(-1), new Long(-1));
@@ -198,96 +190,11 @@ public class BonitaUsersSynchronizer {
         log.info("Synchronisation done.");
     }
 
-    private void initializeBonitaClientConfiguration() throws IOException {
-        File homeFolder = null;
-        if (System.getProperty("bonita.home") == null) {
-            // create a bonita home that is for application 'myClientExample' and on localhost:8080
-            homeFolder = new File(bonitaHome);
-            homeFolder.mkdirs();
-            File file = new File(homeFolder, "client");
-            file.mkdir();
-            file = new File(file, "conf");
-            file.mkdir();
-            file = new File(file, "bonita-client.properties");
-            file.createNewFile();
-            final Properties properties = new Properties();
-            properties.put("application.name", bonitaApplicationName);
-            properties.put("org.bonitasoft.engine.api-type", "HTTP");
-            properties.put("server.url", bonitaServerUrl);
-            properties.put("org.bonitasoft.engine.api-type.parameters", "server.url,application.name");
-
-            final FileWriter writer = new FileWriter(file);
-            try {
-                properties.store(writer, "Server configuration");
-            } finally {
-                writer.close();
-            }
-            System.out.println("Using server configuration " + properties);
-            System.setProperty("bonita.home", homeFolder.getAbsolutePath());
-        }
+    public BonitaSettings getBonitaCfg() {
+        return bonitaCfg;
     }
 
-    public String getBonitaUserName() {
-        return bonitaUserName;
-    }
-
-    public void setBonitaUserName(String bonitaUserName) {
-        this.bonitaUserName = bonitaUserName;
-    }
-
-    public String getBonitaUserPassword() {
-        return bonitaUserPassword;
-    }
-
-    public void setBonitaUserPassword(String bonitaUserPassword) {
-        this.bonitaUserPassword = bonitaUserPassword;
-    }
-
-    public String getBonitaHome() {
-        return bonitaHome;
-    }
-
-    public void setBonitaHome(String bonitaHome) {
-        this.bonitaHome = bonitaHome;
-    }
-
-    public String getBonitaApplicationName() {
-        return bonitaApplicationName;
-    }
-
-    public void setBonitaApplicationName(String bonitaApplicationName) {
-        this.bonitaApplicationName = bonitaApplicationName;
-    }
-
-    public String getBonitaServerUrl() {
-        return bonitaServerUrl;
-    }
-
-    public void setBonitaServerUrl(String bonitaServerUrl) {
-        this.bonitaServerUrl = bonitaServerUrl;
-    }
-
-    public List<String> getValidDomainsToSynchronize() {
-        return validDomainsToSynchronize;
-    }
-
-    public void setValidDomainsToSynchronize(List<String> domainsToSynchronize) {
-        this.validDomainsToSynchronize = domainsToSynchronize;
-    }
-
-    public String getBonitaKimiosRoleName() {
-        return bonitaKimiosRoleName;
-    }
-
-    public void setBonitaKimiosRoleName(String bonitaKimiosRoleName) {
-        this.bonitaKimiosRoleName = bonitaKimiosRoleName;
-    }
-
-    public String getBonitaProfileUsers() {
-        return bonitaProfileUsers;
-    }
-
-    public void setBonitaProfileUsers(String bonitaProfileUsers) {
-        this.bonitaProfileUsers = bonitaProfileUsers;
+    public void setBonitaCfg(BonitaSettings bonitaCfg) {
+        this.bonitaCfg = bonitaCfg;
     }
 }
