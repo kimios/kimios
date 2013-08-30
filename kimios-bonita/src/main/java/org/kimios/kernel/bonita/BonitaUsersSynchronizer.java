@@ -63,16 +63,16 @@ public class BonitaUsersSynchronizer {
             List<Group> groups = groupFactory.getGroups();
             for (Group g : groups) {
                 String groupName = g.getGid() + "@" + g.getAuthenticationSourceName();
-
+                org.bonitasoft.engine.identity.Group bGroup;
                 try {
                     // check existing group
-                    org.bonitasoft.engine.identity.Group bGroup = identityAPI.getGroupByPath("/" + groupName);
+                    bGroup = identityAPI.getGroupByPath("/" + groupName);
                     log.info("Group " + groupName + " already exists, updating...");
                     GroupUpdater groupUpdater = new GroupUpdater();
                     groupUpdater.updateName(groupName);
                     groupUpdater.updateDisplayName(g.getName());
                     groupUpdater.updateDescription(g.getName());
-                    identityAPI.updateGroup(bGroup.getId(), groupUpdater);
+                    bGroup = identityAPI.updateGroup(bGroup.getId(), groupUpdater);
 
                 } catch (GroupNotFoundException e) {
                     // if not exists
@@ -80,9 +80,9 @@ public class BonitaUsersSynchronizer {
                     GroupCreator groupCreator = new GroupCreator(groupName);
                     groupCreator.setDisplayName(g.getName());
                     groupCreator.setDescription(g.getName());
-                    groupCreator.setDescription(g.getName());
-                    groupCreator.setParentPath("/");
-                    identityAPI.createGroup(groupCreator);
+                    groupCreator.setParentPath(null);
+                    bGroup = identityAPI.createGroup(groupCreator);
+
                 }
             }
 
@@ -121,6 +121,35 @@ public class BonitaUsersSynchronizer {
 
                 }
 
+                // Set profile
+
+                SearchOptions opts = new SearchOptionsImpl(Integer.MIN_VALUE, Integer.MAX_VALUE);
+                try {
+                    SearchResult<Profile> result = profileAPI.searchProfiles(opts);
+                    List<Profile> profiles = result.getResult();
+                    for (Profile profile : profiles) {
+
+                        if (profile.getName().equals(bonitaProfileUsers)) {
+                            log.info("Creating profile member...");
+                            try {
+                                profileAPI.createProfileMember(profile.getId(), bUser.getId(), new Long(-1), new Long(-1));
+                                log.info("Profile member created for user: " + userName);
+                            } catch (AlreadyExistsException aee) {
+                                log.info("Profile already exists: " + aee.getMessage());
+
+                            } catch (CreationException ce) {
+                                log.info("Profile already exists: " + ce.getMessage());
+                            }
+                            break;
+                        }
+                    }
+
+                } catch (SearchException e) {
+                    e.printStackTrace();
+                }
+
+                // groups to user
+
                 Collection<Group> linkedGroups = source.getGroupFactory().getGroups(u.getUid());
                 for (Group g : linkedGroups) {
                     String groupName = g.getGid() + "@" + g.getAuthenticationSourceName();
@@ -143,10 +172,11 @@ public class BonitaUsersSynchronizer {
                         groupCreator.setDescription(g.getName());
                         groupCreator.setParentPath(null);
                         bGroup = identityAPI.createGroup(groupCreator);
-
                     }
 
-                    // Check existing user membership
+
+                    // set group to user by creating user membership
+
                     boolean needCreate = true;
                     List<UserMembership> memberships = identityAPI.getUserMemberships(bUser.getId(), Integer.MIN_VALUE, Integer.MAX_VALUE, UserMembershipCriterion.ASSIGNED_DATE_ASC);
                     for (UserMembership membership : memberships) {
@@ -161,33 +191,7 @@ public class BonitaUsersSynchronizer {
                         identityAPI.addUserMembership(bUser.getId(), bGroup.getId(), role.getId());
                         log.info("Add user membership: " + bUser.getUserName() + " - " + bGroup.getIconName() + " - " + role.getId());
                     }
-
-                    // TODO wtf ???
-
-                    SearchOptions opts = new SearchOptionsImpl(Integer.MIN_VALUE, Integer.MAX_VALUE);
-                    try {
-                        SearchResult<Profile> result = profileAPI.searchProfiles(opts);
-                        List<Profile> profiles = result.getResult();
-                        for (Profile profile : profiles) {
-
-                            if (profile.getName().equals(bonitaProfileUsers)) {
-                                log.info("Creating profile member...");
-                                try {
-                                    profileAPI.createProfileMember(profile.getId(), bUser.getId(), bGroup.getId(), role.getId());
-                                    log.info("Profile member created for user: "+userName);
-
-                                } catch (AlreadyExistsException aee) {
-                                    log.info("Profile already exists");
-                                }
-                                break;
-                            }
-                        }
-
-                    } catch (SearchException e) {
-                        e.printStackTrace();
-                    }
                 }
-
             }
         }
 
