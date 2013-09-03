@@ -38,6 +38,7 @@ kimios.ContextMenu = new function () {
         this.initWorkspaceMultipleMenu(config);
         this.initDefaultMultipleMenu(config);
         this.initMyTasksMenu(config);
+        this.initMyBonitaTasksMenu(config);
         this.initSearchRequestsMenu(config);
         this.initSearchRequestsContainerMenu(config);
         this.initBookmarksMenu(config);
@@ -47,6 +48,7 @@ kimios.ContextMenu = new function () {
         this.initGridMenu(config);
         this.initWGridMenu(config);
         this.initMyTasksContainerMenu(config);
+        this.initMyBonitaTasksContainerMenu(config);
         this.initVersionsMenu(config);
         this.initCommentsMenu(config);
         this.initCommentsContainerMenu(config);
@@ -135,6 +137,11 @@ kimios.ContextMenu = new function () {
             return this.myTasksMenu;
         }
 
+        // bonita tasks
+        else if (context == 'myBonitaTasks') {
+            return this.myBonitaTasksMenu;
+        }
+
         else if (context == 'cart') {
             return this.cartMenu;
         }
@@ -172,6 +179,11 @@ kimios.ContextMenu = new function () {
         // tasks container
         else if (context == 'myTasksContainer') {
             return this.myTasksContainerMenu;
+        }
+
+        // bonita tasks container
+        else if (context == 'myBonitaTasksContainer') {
+            return this.myBonitaTasksContainerMenu;
         }
 
         else if (context == 'cartContainer') {
@@ -252,7 +264,8 @@ kimios.ContextMenu = new function () {
         this.documentMenu.addSeparator();
         this.documentMenu.add(this.getUpdateCurrentVersionItem());
         this.documentMenu.add(this.getCheckInCheckOutItem());
-        this.documentMenu.add(this.getStartWorkflowItem());
+//        this.documentMenu.add(this.getStartWorkflowItem());
+        this.documentMenu.add(this.getStartProcessItem());
         this.documentMenu.add(this.getMoveItem());
         this.documentMenu.add(this.getDeleteItem());
         this.documentMenu.add(this.getAddToBookmarksItem());
@@ -274,7 +287,8 @@ kimios.ContextMenu = new function () {
         this.viewableDocumentMenu.addSeparator();
         this.viewableDocumentMenu.add(this.getUpdateCurrentVersionItem());
         this.viewableDocumentMenu.add(this.getCheckInCheckOutItem());
-        this.viewableDocumentMenu.add(this.getStartWorkflowItem());
+//        this.viewableDocumentMenu.add(this.getStartWorkflowItem());
+        this.viewableDocumentMenu.add(this.getStartProcessItem());
         this.viewableDocumentMenu.add(this.getMoveItem());
         this.viewableDocumentMenu.add(this.getDeleteItem());
         this.viewableDocumentMenu.add(this.getAddToBookmarksItem());
@@ -320,6 +334,13 @@ kimios.ContextMenu = new function () {
         this.myTasksMenu.add(this.getPropertiesItem());
     };
 
+    this.initMyBonitaTasksMenu = function (config) {
+        this.myBonitaTasksMenu = new Ext.menu.Menu(config);
+        this.myBonitaTasksMenu.add(this.getCheckBonitaTask());
+        this.myBonitaTasksMenu.addSeparator();
+        this.myBonitaTasksMenu.add(this.getRefreshItem());
+    };
+
     this.initCartMenu = function (config) {
         this.cartMenu = new Ext.menu.Menu(config);
         this.cartMenu.add(this.getViewDocumentItem());
@@ -357,6 +378,11 @@ kimios.ContextMenu = new function () {
     this.initMyTasksContainerMenu = function (config) {
         this.myTasksContainerMenu = new Ext.menu.Menu(config);
         this.myTasksContainerMenu.add(this.getRefreshItem());
+    };
+
+    this.initMyBonitaTasksContainerMenu = function (config) {
+        this.myBonitaTasksContainerMenu = new Ext.menu.Menu(config);
+        this.myBonitaTasksContainerMenu.add(this.getRefreshItem());
     };
 
     this.initCartContainerMenu = function (config) {
@@ -501,11 +527,11 @@ kimios.ContextMenu = new function () {
             handler: function () {
                 if (this.context == 'versions') {
                     kimios.util.download(
-                            kimios.util.getDocumentVersionLink(this.dmEntityPojo.uid, this.dmEntityPojo.versionUid)
+                        kimios.util.getDocumentVersionLink(this.dmEntityPojo.uid, this.dmEntityPojo.versionUid)
                     );
                 } else {
                     kimios.util.download(
-                            kimios.util.getDocumentLink(this.dmEntityPojo.uid)
+                        kimios.util.getDocumentLink(this.dmEntityPojo.uid)
                     );
                 }
             }
@@ -687,6 +713,19 @@ kimios.ContextMenu = new function () {
                 new kimios.picker.WorkflowPicker({
                     documentUid: this.dmEntityPojo.uid,
                     documentType: this.dmEntityPojo.type
+                }).show();
+            }
+        });
+    };
+
+    this.getStartProcessItem = function () {
+        return new Ext.menu.Item({
+            text: kimios.lang('StartWorkflow'),
+            iconCls: 'studio-cls-wf',
+            scope: this,
+            handler: function () {
+                new kimios.picker.BonitaPicker({
+                    documentUid: this.dmEntityPojo.uid
                 }).show();
             }
         });
@@ -1007,6 +1046,46 @@ kimios.ContextMenu = new function () {
             }});
     };
 
+    this.getCheckBonitaTask = function () {
+        return new Ext.menu.Item({
+            text: kimios.lang('AcceptStatus'),
+            iconCls: 'accept-status',
+            scope: this,
+            handler: function (btn, evt) {
+                var context = this.context;
+                var tasksPanel = kimios.explorer.getTasksPanel();
+                var activePanel = kimios.explorer.getActivePanel();
+
+                var url = this.dmEntityPojo.url;
+
+                var iframe = new Ext.Window({
+                    width: 640,
+                    height: 480,
+                    layout: 'fit',
+                    border: false,
+                    title: kimios.lang('WorkflowStatus'),
+                    maximizable: true,
+                    modal: true,
+                    items: [
+                        {
+                            html: '<iframe id="reportframe" border="0" width="100%" height="100%" ' +
+                                'frameborder="0" marginheight="12" marginwidth="16" scrolling="auto" ' +
+                                'src="' + url + '"></iframe>'
+                        }
+                    ],
+                    fbar: [
+                        {
+                            text: kimios.lang('Close'),
+                            handler: function () {
+                                iframe.close();
+                            }
+                        }
+                    ]
+                }).show();
+            }
+        });
+    }
+
     this.getRefreshItem = function () {
         return new Ext.menu.Item({
             text: kimios.lang('Refresh'),
@@ -1040,6 +1119,9 @@ kimios.ContextMenu = new function () {
                     activePanel.loadEntity();
                 } else if (context == 'myTasks'
                     || context == 'myTasksContainer') {
+                    tasksPanel.refresh();
+                } else if (context == 'myBonitaTasks'
+                    || context == 'myBonitaTasksContainer') {
                     tasksPanel.refresh();
                 } else if (context == 'cart' || context == 'cartContainer') {
                     cartPanel.refresh();

@@ -196,6 +196,18 @@
     </jaxrs:client>
 
 
+    <jaxrs:client threadSafe="true" id="bonitaService" serviceClass="org.kimios.webservices.BonitaService"
+                  address="${server.url}${service.context}/rest/">
+        <jaxrs:providers>
+            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
+        </jaxrs:providers>
+        <jaxrs:headers>
+            <entry key="Accept" value="application/json"/>
+        </jaxrs:headers>
+    </jaxrs:client>
+
+
     <bean id="administrationController" class="org.kimios.client.controller.AdministrationController">
         <property name="client" ref="administrationService"/>
     </bean>
@@ -255,5 +267,9 @@
 
     <bean id="ruleController" class="org.kimios.client.controller.RuleController">
         <property name="client" ref="ruleService"/>
+    </bean>
+
+    <bean id="bonitaController" class="org.kimios.client.controller.BonitaController">
+        <property name="client" ref="bonitaService"/>
     </bean>
 </beans>

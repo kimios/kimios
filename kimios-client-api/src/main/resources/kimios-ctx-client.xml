@@ -159,7 +159,14 @@
     </jaxws:client>
 
     <jaxws:client id="ruleService" serviceClass="org.kimios.webservices.RuleService"
-            address="${server.url}${service.context}/RuleService">
+                  address="${server.url}${service.context}/RuleService">
+        <jaxws:dataBinding>
+            <ref bean="aegisBean"/>
+        </jaxws:dataBinding>
+    </jaxws:client>
+
+    <jaxws:client id="bonitaService" serviceClass="org.kimios.webservices.BonitaService"
+                  address="${server.url}${service.context}/BonitaService">
         <jaxws:dataBinding>
             <ref bean="aegisBean"/>
         </jaxws:dataBinding>
@@ -223,5 +230,9 @@
 
     <bean id="ruleController" class="org.kimios.client.controller.RuleController">
         <property name="client" ref="ruleService"/>
+    </bean>
+
+    <bean id="bonitaController" class="org.kimios.client.controller.BonitaController">
+        <property name="client" ref="bonitaService"/>
     </bean>
 </beans>

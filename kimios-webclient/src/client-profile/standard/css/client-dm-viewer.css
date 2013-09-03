@@ -1075,14 +1075,14 @@
     background-position: center right;
 }
 
-.warn {
-    background-image: url(../images/exclamation.gif) !important;
-    background-repeat: no-repeat;
-    background-position: center right;
-}
-
 .logo-k {
     background-image: url(../images/kimios-favico.png) !important;
     background-repeat: no-repeat;
     background-position: center right;
+}
+
+.warn {
+    background-image: url(../images/exclamation.gif) !important;
+    background-repeat: no-repeat;
+    background-position: center center;
 }

@@ -1,10 +1,12 @@
 package org.kimios.webservices.impl;
 
 
+import org.bonitasoft.engine.bpm.process.ProcessInstance;
 import org.kimios.kernel.controller.BonitaController;
 import org.kimios.webservices.BonitaService;
 import org.kimios.webservices.DMServiceException;
 import org.kimios.webservices.ServiceHelper;
+import org.kimios.webservices.pojo.ProcessInstanceWrapper;
 import org.kimios.webservices.pojo.ProcessWrapper;
 import org.kimios.webservices.pojo.TaskWrapper;
 
@@ -37,4 +39,12 @@ public class BonitaServiceImpl implements BonitaService {
             throw new DMServiceException(e.getMessage(), e);
         }
     }
+//
+//    public ProcessInstanceWrapper startProcess(String sessionId, Long documentId, Long processId) throws DMServiceException {
+//        try {
+//            return controller.startProcess(helper.getSession(sessionId), documentId, processId);
+//        } catch (Exception e) {
+//            throw new DMServiceException(e.getMessage(), e);
+//        }
+//    }
 }

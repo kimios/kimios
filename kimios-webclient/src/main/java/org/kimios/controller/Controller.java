@@ -57,6 +57,7 @@ public abstract class Controller {
     protected static FileTransferController fileTransferController;
     protected static ExtensionController extensionController;
     protected static RuleController ruleController;
+    protected static BonitaController bonitaController;
 
     public static void init(ServletContext servletContext) {
         WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext);
@@ -104,6 +105,9 @@ public abstract class Controller {
         }
         if (ruleController == null) {
             ruleController = (RuleController) wac.getBean("ruleController");
+        }
+        if (bonitaController == null) {
+            bonitaController = (BonitaController) wac.getBean("bonitaController");
         }
 
 

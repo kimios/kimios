@@ -87,4 +87,8 @@
         <property name="client" ref="ruleServiceBean"/>
     </bean>
 
+    <bean id="bonitaController" class="org.kimios.client.controller.BonitaController">
+        <property name="client" ref="bonitaServiceBean"/>
+    </bean>
+
 </beans>

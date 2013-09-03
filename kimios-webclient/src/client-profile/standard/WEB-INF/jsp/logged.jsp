@@ -101,6 +101,7 @@
             src="<%=request.getContextPath()%>/js/client/picker/SecurityEntityPicker.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/picker/DMEntityPicker.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/picker/WorkflowPicker.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/picker/BonitaPicker.js"></script>
     <script type="text/javascript"
             src="<%=request.getContextPath()%>/js/client/form/AuthenticationSourceField.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/form/ActionTypeField.js"></script>
@@ -109,6 +110,7 @@
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/form/DMEntityField.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/form/MetaFeedField.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/form/WorkflowField.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/form/ProcessField.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/form/WorkflowStatusField.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/util/DMEntityTree.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/util/IconHelper.js"></script>
@@ -141,6 +143,7 @@
     <script type="text/javascript"
             src="<%=request.getContextPath()%>/js/client/properties/SecurityEntityPanel.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/tasks/TasksPanel.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/tasks/BonitaTasksPanel.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/studio/studio.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/studio/document-types.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/studio/meta-feeds.js"></script>

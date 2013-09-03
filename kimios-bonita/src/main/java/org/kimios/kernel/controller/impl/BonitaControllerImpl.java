@@ -5,6 +5,7 @@ import org.bonitasoft.engine.api.ProcessAPI;
 import org.bonitasoft.engine.api.TenantAPIAccessor;
 import org.bonitasoft.engine.bpm.flownode.ActivityInstanceCriterion;
 import org.bonitasoft.engine.bpm.flownode.HumanTaskInstance;
+import org.bonitasoft.engine.bpm.process.ProcessDefinitionNotFoundException;
 import org.bonitasoft.engine.bpm.process.ProcessDeploymentInfo;
 import org.bonitasoft.engine.bpm.process.ProcessDeploymentInfoCriterion;
 import org.bonitasoft.engine.exception.BonitaHomeNotSetException;
@@ -15,10 +16,12 @@ import org.bonitasoft.engine.platform.LogoutException;
 import org.bonitasoft.engine.session.APISession;
 import org.bonitasoft.engine.session.SessionNotFoundException;
 import org.kimios.kernel.bonita.BonitaSettings;
-import org.kimios.webservices.pojo.ProcessWrapper;
-import org.kimios.webservices.pojo.TaskWrapper;
 import org.kimios.kernel.controller.BonitaController;
 import org.kimios.kernel.security.Session;
+import org.kimios.webservices.factory.ProcessWrapperFactory;
+import org.kimios.webservices.factory.TaskWrapperFactory;
+import org.kimios.webservices.pojo.ProcessWrapper;
+import org.kimios.webservices.pojo.TaskWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,18 +47,24 @@ public class BonitaControllerImpl implements BonitaController {
         List<ProcessDeploymentInfo> processes = processAPI.getProcessDeploymentInfos(
                 Integer.MIN_VALUE, Integer.MAX_VALUE, ProcessDeploymentInfoCriterion.DEFAULT);
 
-        log.info(processes.size() + " processes found");
-
         Set<Long> actorsId = new HashSet<Long>();
         actorsId.add(apiSession.getUserId());
 
         List<ProcessWrapper> wrappers = new ArrayList<ProcessWrapper>();
 
         for (ProcessDeploymentInfo p : processes) {
-
             if (processAPI.isAllowedToStartProcess(p.getProcessId(), actorsId)) {
-                ProcessWrapper wrapper = new ProcessWrapper(p);
+                ProcessWrapper wrapper = ProcessWrapperFactory.createProcessWrapper(p);
+
+                wrapper.setUrl(bonitaCfg.getBonitaServerUrl() + "/" + bonitaCfg.getBonitaApplicationName() + "/console/" +
+                        "homepage?__kb=" + session.getUid() + "&ui=form&locale=en#form=" + p.getName() + "--" +
+                        p.getVersion() + "$entry&process=" + p.getProcessId() +
+                        "&autoInstantiate=false&user=" + apiSession.getUserId() + "&mode=form");
+
+                // TODO add document ID to url
+
                 log.info(wrapper.toString());
+
                 wrappers.add(wrapper);
             }
         }
@@ -65,7 +74,7 @@ public class BonitaControllerImpl implements BonitaController {
     }
 
     public List<TaskWrapper> getPendingTasks(Session session) throws BonitaHomeNotSetException, ServerAPIException,
-            UnknownAPITypeException, IOException, LoginException, LogoutException, SessionNotFoundException {
+            UnknownAPITypeException, IOException, LoginException, LogoutException, SessionNotFoundException, ProcessDefinitionNotFoundException {
 
         APISession apiSession = login(session);
         ProcessAPI processAPI = TenantAPIAccessor.getProcessAPI(apiSession);
@@ -73,24 +82,40 @@ public class BonitaControllerImpl implements BonitaController {
         List<HumanTaskInstance> pendingTasks = processAPI.getPendingHumanTaskInstances(
                 apiSession.getUserId(), Integer.MIN_VALUE, Integer.MAX_VALUE, ActivityInstanceCriterion.PRIORITY_ASC);
 
-        log.info(pendingTasks.size() + " tasks found");
-
         List<TaskWrapper> wrappers = new ArrayList<TaskWrapper>();
 
         for (HumanTaskInstance t : pendingTasks) {
+            TaskWrapper wrapper = TaskWrapperFactory.createTaskWrapper(t);
+            ProcessDeploymentInfo p = processAPI.getProcessDeploymentInfo(t.getProcessDefinitionId());
 
-//            processAPI.getTask
+            wrapper.setUrl(bonitaCfg.getBonitaServerUrl() + "/" + bonitaCfg.getBonitaApplicationName() + "/console/" +
+                    "homepage?__kb=" + session.getUid() + "&ui=form&locale=en#form=" + p.getName() + "--" + p.getVersion() +
+                    "--" + t.getName() + "$entry&task=" +
+                    t.getId() + "&mode=form");
 
-
-            TaskWrapper wrapper = new TaskWrapper(t);
             log.info(wrapper.toString());
             wrappers.add(wrapper);
         }
 
         logout(apiSession);
         return wrappers;
-
     }
+
+//    public ProcessInstanceWrapper startProcess(Session session, Long documentId, Long processId)
+//            throws LoginException, ServerAPIException, BonitaHomeNotSetException, UnknownAPITypeException, IOException,
+//            ProcessDefinitionNotFoundException, ProcessExecutionException, ProcessActivationException, LogoutException,
+//            SessionNotFoundException {
+//
+//        log.info("startProcess: " + documentId + " -- " + processId);
+//
+//        APISession apiSession = login(session);
+//        ProcessAPI processAPI = TenantAPIAccessor.getProcessAPI(apiSession);
+////        processAPI.getProcessDat
+//        ProcessInstance pInstance = processAPI.startProcess(processId);
+//        ProcessInstanceWrapper pInstanceWrapper = ProcessInstanceWrapperFactory.createProcessInstanceWrapper(pInstance);
+//        logout(apiSession);
+//        return pInstanceWrapper;
+//    }
 
     private APISession login(Session session) throws IOException, BonitaHomeNotSetException, ServerAPIException, UnknownAPITypeException, LoginException {
         try {

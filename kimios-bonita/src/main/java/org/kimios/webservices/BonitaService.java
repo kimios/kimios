@@ -1,14 +1,12 @@
 package org.kimios.webservices;
 
+import org.kimios.webservices.pojo.ProcessInstanceWrapper;
 import org.kimios.webservices.pojo.ProcessWrapper;
 import org.kimios.webservices.pojo.TaskWrapper;
 
 import javax.jws.WebParam;
 import javax.jws.WebService;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import java.util.List;
 
 @Path("/bonita")
@@ -24,5 +22,14 @@ public interface BonitaService {
     @Path("/getPendingTasks")
     @Produces("application/json")
     List<TaskWrapper> getPendingTasks(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId) throws DMServiceException;
+
+//    @GET
+//    @Path("/startProcess")
+//    @Produces("application/json")
+//    ProcessInstanceWrapper startProcess(
+//            @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+//            @QueryParam(value = "documentId") @WebParam(name = "documentId") Long documentId,
+//            @QueryParam(value = "processId") @WebParam(name = "processId") Long processId
+//    ) throws DMServiceException;
 
 }

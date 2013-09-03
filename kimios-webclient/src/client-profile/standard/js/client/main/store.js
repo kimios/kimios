@@ -16,7 +16,9 @@
  */
 DmsJsonStore = Ext.extend(Ext.data.JsonStore, {
     constructor: function (config) {
-        if (config && config.url) {
+        if (config.normalMode == undefined)
+            config.normalMode = false;
+        if (config && config.url && config.normalMode == false) {
             config.url = getBackEndUrl(config.url);
         }
         var successHandler = null;
@@ -859,6 +861,21 @@ kimios.store = {
             });
         },
 
+        getProcessesStore: function (autoLoad) {
+            return new DmsJsonStore({
+                url: 'Studio',
+                baseParams: {
+                    action: 'processes'
+                },
+                fields: kimios.record.BonitaRecord.processRecord,
+                autoLoad: (autoLoad ? autoLoad : false),
+                sortInfo: {
+                    field: 'name',
+                    direction: 'ASC'
+                }
+            });
+        },
+
         getWorkflowStatusStore: function (workflowRecord, autoLoad) {
             return new DmsJsonStore({
                 url: 'Studio',
@@ -931,6 +948,21 @@ kimios.store = {
                     direction: 'DESC'
                 }
             });
+        },
+        getMyBonitaTasksStore:function(autoLoad){
+            return new DmsJsonStore({
+                url: 'Workflow',
+                baseParams: {
+                    action: 'getMyBonitaTasks'
+                },
+                fields: kimios.record.BonitaRecord.taskRecord,
+                autoLoad: (autoLoad ? autoLoad : false),
+                sortInfo: {
+                    field: 'expectedEndDate',
+                    direction: 'DESC'
+                }
+            });
         }
+
     }
 };

@@ -562,7 +562,180 @@ kimios.record = {
             }
         ])
     },
+    BonitaRecord: {
+        processRecord: Ext.data.Record.create([
+            {
+                name: 'id',
+                type: 'long'
+            },
+            {
+                name: 'processId',
+                type: 'long'
+            },
+            {
+                name: 'name',
+                type: 'string'
+            },
+            {
+                name: 'description',
+                type: 'string'
+            },
+            {
+                name: 'activationState',
+                type: 'string'
+            },
+            {
+                name: 'configurationState',
+                type: 'string'
+            },
+            {
+                name: 'deployedBy',
+                type: 'long'
+            },
+            {
+                name: 'deploymentDate',
+                type: 'long'
+            },
+            {
+                name: 'displayName',
+                type: 'string'
+            },
+            {
+                name: 'displayDescription',
+                type: 'string'
+            },
+            {
+                name: 'iconPath',
+                type: 'string'
+            },
+            {
+                name: 'lastUpdateDate',
+                type: 'long'
+            },
+            {
+                name: 'version',
+                type: 'string'
+            },
+            {
+                name: 'url',
+                type: 'string'
+            }
+        ]),
 
+        processInstanceRecord: Ext.data.Record.create([
+            //TODO
+            /*
+             private Long id;
+             private String name;
+             private Long calledId;
+             private String description;
+             private Date endDate;
+             private Date lastUpdate;
+             private Long processDefinitionId;
+             private Long rootProcessInstanceId;
+             private Date startDate;
+             private Long startBy;
+             private String state;
+             private String stringIndex1;
+             private String stringIndex2;
+             private String stringIndex3;
+             private String stringIndex4;
+             private String stringIndex5;
+             */
+        ]),
+
+        taskRecord: Ext.data.Record.create([
+            {
+                name: 'id',
+                type: 'long'
+            },
+            {
+                name: 'name',
+                type: 'string'
+            },
+            {
+                name: 'description',
+                type: 'string'
+            },
+            {
+                name: 'actorId',
+                type: 'long'
+            },
+            {
+                name: 'assigneeId',
+                type: 'long'
+            },
+            {
+                name: 'claimedDate',
+                type: 'long'
+            },
+            {
+                name: 'expectedEndDate',
+                type: 'long'
+            },
+            {
+                name: 'priority',
+                type: 'string'
+            },
+            {
+                name: 'displayDescription',
+                type: 'string'
+            },
+            {
+                name: 'displayName',
+                type: 'string'
+            },
+            {
+                name: 'executedBy',
+                type: 'long'
+            },
+            {
+                name: 'flownodeDefinitionId',
+                type: 'long'
+            },
+            {
+                name: 'lastUpdateDate',
+                type: 'long'
+            },
+            {
+                name: 'parentContainerId',
+                type: 'long'
+            },
+            {
+                name: 'parentProcessInstanceId',
+                type: 'long'
+            },
+            {
+                name: 'reachedStateDate',
+                type: 'long'
+            },
+            {
+                name: 'rootContainerId',
+                type: 'long'
+            },
+            {
+                name: 'state',
+                type: 'string'
+            },
+            {
+                name: 'stateCategory',
+                type: 'string'
+            },
+            {
+                name: 'type',
+                type: 'string'
+            },
+            {
+                name: 'processDefinitionId',
+                type: 'long'
+            },
+            {
+                name: 'url',
+                type: 'string'
+            }
+        ])
+
+    },
     TasksRecord: {
         taskRecord: Ext.data.Record.create([
             {

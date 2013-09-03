@@ -18,7 +18,7 @@ kimios.tasks.TasksPanel = Ext.extend(Ext.grid.GridPanel, {
 
     constructor: function (config) {
         this.tasksCounter = 0;
-        this.id = 'kimios-tasks-panel';
+        this.id = 'kimios-tasks-panel-old';       //TODO change to re-enable
         this.title = kimios.lang('MyTasks');
 //        this.iconCls = 'tasks';
         this.hideHeaders = true;

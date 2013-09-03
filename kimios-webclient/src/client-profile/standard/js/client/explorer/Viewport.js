@@ -79,7 +79,14 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                 this.searchBookmarkPanel = new kimios.explorer.SearchQueryPanel({
                     border: false
                 });
-                this.tasksPanel = new kimios.tasks.TasksPanel({});
+
+
+
+//                this.tasksPanel = new kimios.tasks.TasksPanel({});
+                this.tasksPanel = new kimios.tasks.BonitaTasksPanel({});
+
+
+
 
                 this.cartPanel = new kimios.explorer.Cart({});
 

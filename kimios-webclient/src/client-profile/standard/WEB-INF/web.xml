@@ -42,7 +42,7 @@
     </filter-mapping>
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>WEB-INF/kimios-ctx-client-setup.xml classpath*:/kimios-ctx-client-rest.xml</param-value>
+        <param-value>WEB-INF/kimios-ctx-client-setup.xml classpath*:/kimios-ctx-client.xml</param-value>
     </context-param>
     <listener>
         <listener-class>org.kimios.core.CoreListener</listener-class>

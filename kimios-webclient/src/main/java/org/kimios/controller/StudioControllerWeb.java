@@ -27,10 +27,10 @@ import com.thoughtworks.xstream.io.json.JsonWriter;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
-
 import org.kimios.client.controller.helpers.WorkflowStatusDefinition;
 import org.kimios.client.controller.helpers.XMLGenerators;
 import org.kimios.kernel.ws.pojo.*;
+import org.kimios.webservices.pojo.ProcessWrapper;
 
 import java.io.Writer;
 import java.util.*;
@@ -51,6 +51,9 @@ public class StudioControllerWeb extends Controller {
         }
         if (action.equals("workflows")) {
             return workflowsList();
+        }
+        if (action.equals("processes")) {
+            return processesList();
         }
         if (action.equals("metaFeeds")) {
             return metaFeedsList();
@@ -142,6 +145,13 @@ public class StudioControllerWeb extends Controller {
     private String workflowsList() throws Exception {
         Workflow[] list = studioController.getWorkflows(sessionUid);
         String jsonResp = new JSONSerializer().exclude("class").serialize(list);
+
+        return jsonResp;
+    }
+
+    private String processesList() throws Exception {
+        List<ProcessWrapper> list = bonitaController.getProcesses(sessionUid);
+        String jsonResp = new JSONSerializer().serialize(list);
         return jsonResp;
     }
 
@@ -255,7 +265,7 @@ public class StudioControllerWeb extends Controller {
             if (String.valueOf(metaDatas.get("metaFeedUid")).isEmpty()) {
                 meta.setMetaFeedUid(-1L);
             } else {
-                meta.setMetaFeedUid(((Integer)metaDatas.get("metaFeedUid")).longValue());
+                meta.setMetaFeedUid(((Integer) metaDatas.get("metaFeedUid")).longValue());
             }
             meta.setDocumentTypeUid(docType.getUid());
             meta.setMandatory((Boolean) metaDatas.get("mandatory"));
