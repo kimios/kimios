@@ -58,7 +58,7 @@ kimios.tasks.BonitaTasksPanel = Ext.extend(Ext.grid.GridPanel, {
             {
                 align: 'center',
                 readOnly: true,
-                width: 32,
+                width: 16,
                 hidden: false,
                 sortable: false,
                 hideable: false,
@@ -71,6 +71,15 @@ kimios.tasks.BonitaTasksPanel = Ext.extend(Ext.grid.GridPanel, {
                     }
 
                 }
+            }             ,
+            {
+                readOnly: true,
+                width: 32,
+                sortable: false,
+                hideable: false,
+                fixed: true,
+                resizable: false,
+                menuDisabled: true
             }
 //            ,
 //            {

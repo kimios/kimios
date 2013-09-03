@@ -72,10 +72,12 @@ kimios.picker.BonitaPicker = Ext.extend(Ext.util.Observable, {
                     title: kimios.lang('Workflow'),
                     modal: true,
                     maximizable: true,
+                    autoScroll:true,
                     items: [
                         {
                             html: '<iframe id="reportframe" border="0" width="100%" height="100%" ' +
                                 'frameborder="0" marginheight="12" marginwidth="16" scrolling="auto" ' +
+                                'style="padding: 16px" ' +
                                 'src="' + url + '"></iframe>'
                         }
                     ],

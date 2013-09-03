@@ -1066,10 +1066,12 @@ kimios.ContextMenu = new function () {
                     title: kimios.lang('WorkflowStatus'),
                     maximizable: true,
                     modal: true,
+                    autoScroll:true,
                     items: [
                         {
                             html: '<iframe id="reportframe" border="0" width="100%" height="100%" ' +
                                 'frameborder="0" marginheight="12" marginwidth="16" scrolling="auto" ' +
+                                'style="padding: 16px" ' +
                                 'src="' + url + '"></iframe>'
                         }
                     ],
