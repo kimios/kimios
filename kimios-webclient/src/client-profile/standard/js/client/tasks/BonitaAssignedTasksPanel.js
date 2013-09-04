@@ -20,9 +20,7 @@ kimios.tasks.BonitaAssignedTasksPanel = Ext.extend(Ext.grid.GridPanel, {
         this.tasksCounter = 0;
         this.id = 'kimios-assigned-tasks-panel';
         this.title = kimios.lang('BonitaAssignedTasks');
-//        this.iconCls = 'tasks';
         this.hideHeaders = true;
-        this.stripeRows = true;
         this.store = kimios.store.TasksStore.getBonitaAssignedTasksStore(false);
         this.viewConfig = {
             forceFit: true,
@@ -32,29 +30,6 @@ kimios.tasks.BonitaAssignedTasksPanel = Ext.extend(Ext.grid.GridPanel, {
         this.sm = new Ext.grid.RowSelectionModel({singleSelect: true});
         this.cm = new Ext.grid.ColumnModel([
 
-            {
-                sortable: false,
-                menuDisabled: true,
-                align: 'left',
-                flex: 1,
-                dataIndex: 'name',
-                renderer: function (value, meta, record) {
-                    var state = record.data.state;
-                    var date = kimios.date(record.data.expectedEndDate);
-
-                    var html = '';
-
-                    if (state == 'failed') {
-                        html = '<span style="color:red;">' + value;
-                        html += '<br/><span style="font-size:10px;">' + date + '</span></span>';
-                    } else {
-                        html = value;
-                        html += '<br/><span style="font-size:10px;color:#666;">' + date + '</span>';
-                    }
-
-                    return html;
-                }
-            }  ,
             {
                 align: 'center',
                 readOnly: true,
@@ -69,17 +44,53 @@ kimios.tasks.BonitaAssignedTasksPanel = Ext.extend(Ext.grid.GridPanel, {
                     if (record.data.state == 'failed') {
                         metaData.css = 'reject-status';
                     }
+                    else{
+                        metaData.css = 'accept-status';
+                    }
 
                 }
             },
             {
-                readOnly: true,
-                width: 32,
+                sortable: false,
+                menuDisabled: true,
+                align: 'left',
+                flex: 1,
+                dataIndex: 'name',
+                renderer: function (value, meta, record) {
+                    var state = record.data.state;
+                    var date = kimios.date(record.data.expectedEndDate);
+
+                    var html = '';
+
+                    if (state == 'failed') {
+                        html = '<span style="color:red;">' + value;
+//                        html += '<br/><span style="font-size:10px;">' + date + '</span></span>';
+                        html += '</span>';
+                    } else {
+                        html = value;
+//                        html += '<br/><span style="font-size:10px;color:#666;">' + date + '</span>';
+                    }
+
+                    return html;
+                }
+            },
+            {
+                width: 120,
+                align: 'center',
                 sortable: false,
                 hideable: false,
                 fixed: true,
                 resizable: false,
-                menuDisabled: true
+                menuDisabled: true,
+                dataIndex: 'expectedEndDate',
+                renderer: function (value, meta, record) {
+                    var state = record.data.state;
+                    if (state == 'failed')
+                        return '<span style="color:red;">' + kimios.date(value) + '</span>';
+                    else
+                        return kimios.date(value);
+
+                }
             }
 
         ]);
@@ -342,22 +353,6 @@ kimios.tasks.BonitaAssignedTasksPanel = Ext.extend(Ext.grid.GridPanel, {
                     handler: function () {
                         kimios.ajaxRequest('Workflow', {
                                 action: 'releaseTask',
-                                taskId: task.id
-                            },
-                            function () {
-                                Ext.getCmp('kimios-tasks-panel').refresh();
-                                Ext.getCmp('kimios-assigned-tasks-panel').refresh();
-                            }
-                        );
-                        Ext.getCmp('BonitaAssignedTaskWindowID').close();
-                    }
-                },
-                {
-                    text: kimios.lang('BonitaHide'),
-                    iconCls: 'delete',
-                    handler: function () {
-                        kimios.ajaxRequest('Workflow', {
-                                action: 'hideTask',
                                 taskId: task.id
                             },
                             function () {

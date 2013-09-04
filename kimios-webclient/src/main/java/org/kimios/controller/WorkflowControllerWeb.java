@@ -221,13 +221,17 @@ public class WorkflowControllerWeb extends Controller {
 
     private String getBonitaPendingTasks() throws Exception {
 
-        List<TaskWrapper> tasks = bonitaController.getPendingTasks(sessionUid, Integer.MIN_VALUE, Integer.MAX_VALUE);
+        List<TaskWrapper> tasks = bonitaController.getPendingTasks(sessionUid,
+                parameters.get("start") != null ? Integer.parseInt(parameters.get("start")) : Integer.MIN_VALUE,
+                parameters.get("limit") != null ? Integer.parseInt(parameters.get("limit")) : Integer.MAX_VALUE);
         return new JSONSerializer().serialize(tasks);
     }
 
     private String getBonitaAssignedTasks() throws Exception {
 
-        List<TaskWrapper> tasks = bonitaController.getAssignedTasks(sessionUid, Integer.MIN_VALUE, Integer.MAX_VALUE);
+        List<TaskWrapper> tasks = bonitaController.getAssignedTasks(sessionUid,
+                parameters.get("start") != null ? Integer.parseInt(parameters.get("start")) : Integer.MIN_VALUE,
+                parameters.get("limit") != null ? Integer.parseInt(parameters.get("limit")) : Integer.MAX_VALUE);
         return new JSONSerializer().serialize(tasks);
     }
 
