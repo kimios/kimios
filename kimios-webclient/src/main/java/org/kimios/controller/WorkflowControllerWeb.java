@@ -21,7 +21,6 @@ import flexjson.transformer.IterableTransformer;
 import org.kimios.kernel.ws.pojo.Document;
 import org.kimios.kernel.ws.pojo.DocumentWorkflowStatusRequest;
 import org.kimios.kernel.ws.pojo.WorkflowStatus;
-import org.kimios.webservices.pojo.ProcessInstanceWrapper;
 import org.kimios.webservices.pojo.TaskWrapper;
 
 import java.util.*;
@@ -40,9 +39,22 @@ public class WorkflowControllerWeb extends Controller {
         if (action.equals("getMyTasks")) {
             return getMyTasks();
         }
-        if (action.equals("getMyBonitaTasks")) {
-            return getMyBonitaTasks();
+        if (action.equals("getBonitaPendingTasks")) {
+            return getBonitaPendingTasks();
         }
+        if (action.equals("getBonitaAssignedTasks")) {
+            return getBonitaAssignedTasks();
+        }
+        if (action.equals("takeTask")) {
+            return takeTask();
+        }
+        if (action.equals("releaseTask")) {
+            return releaseTask();
+        }
+        if (action.equals("hideTask")) {
+            return hideTask();
+        }
+
         if (action.equals("getWorkflowStatusRequests")) {
             return getWorkflowStatusRequests(parameters);
         }
@@ -158,11 +170,6 @@ public class WorkflowControllerWeb extends Controller {
                 .transform(new IterableTransformer(), Collection.class)
                 .exclude("*.class").serialize(myTasksMapList);
     }
-    private String getMyBonitaTasks() throws Exception {
-
-        List<TaskWrapper> tasks = bonitaController.getPendingTasks(sessionUid);
-        return new JSONSerializer().serialize(tasks);
-    }
 
     private String getStatusStr(int statusType) {
         switch (statusType) {
@@ -212,12 +219,30 @@ public class WorkflowControllerWeb extends Controller {
         return "";
     }
 
-//    private String startProcessRequest(Map<String, String> parameters)
-//            throws Exception {
-//        ProcessInstanceWrapper processInstanceWrapper = bonitaController.startProcess(
-//                sessionUid,
-//                Long.parseLong(parameters.get("documentId")),
-//                Long.parseLong(parameters.get("processId")));
-//        return new JSONSerializer().serialize(processInstanceWrapper);
-//    }
+    private String getBonitaPendingTasks() throws Exception {
+
+        List<TaskWrapper> tasks = bonitaController.getPendingTasks(sessionUid, Integer.MIN_VALUE, Integer.MAX_VALUE);
+        return new JSONSerializer().serialize(tasks);
+    }
+
+    private String getBonitaAssignedTasks() throws Exception {
+
+        List<TaskWrapper> tasks = bonitaController.getAssignedTasks(sessionUid, Integer.MIN_VALUE, Integer.MAX_VALUE);
+        return new JSONSerializer().serialize(tasks);
+    }
+
+    private String takeTask() throws Exception {
+        bonitaController.takeTask(sessionUid, Long.parseLong(parameters.get("taskId")));
+        return "";
+    }
+
+    private String releaseTask() throws Exception {
+        bonitaController.releaseTask(sessionUid, Long.parseLong(parameters.get("taskId")));
+        return "";
+    }
+
+    private String hideTask() throws Exception {
+        bonitaController.hideTask(sessionUid, Long.parseLong(parameters.get("taskId")));
+        return "";
+    }
 }

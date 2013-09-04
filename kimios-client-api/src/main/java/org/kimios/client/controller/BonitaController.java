@@ -5,7 +5,6 @@ import org.kimios.client.exception.ConfigException;
 import org.kimios.client.exception.DMSException;
 import org.kimios.client.exception.ExceptionHelper;
 import org.kimios.webservices.BonitaService;
-import org.kimios.webservices.pojo.ProcessInstanceWrapper;
 import org.kimios.webservices.pojo.ProcessWrapper;
 import org.kimios.webservices.pojo.TaskWrapper;
 
@@ -33,22 +32,46 @@ public class BonitaController {
         }
     }
 
-    public List<TaskWrapper> getPendingTasks(String sessionId) throws Exception {
+    public List<TaskWrapper> getPendingTasks(String sessionId, int min, int max) throws Exception {
         try {
-            return client.getPendingTasks(sessionId);
+            return client.getPendingTasks(sessionId, min, max);
 
         } catch (Exception e) {
             throw new ExceptionHelper().convertException(e);
         }
     }
 
-//    public ProcessInstanceWrapper startProcess(String sessionId, Long documentId, Long processId) throws Exception {
-//        try {
-//            return client.startProcess(sessionId, documentId, processId);
-//
-//        } catch (Exception e) {
-//            throw new ExceptionHelper().convertException(e);
-//        }
-//    }
+    public List<TaskWrapper> getAssignedTasks(String sessionId, int min, int max) throws Exception {
+        try {
+            return client.getAssignedTasks(sessionId, min, max);
+
+        } catch (Exception e) {
+            throw new ExceptionHelper().convertException(e);
+        }
+    }
+
+    public void takeTask(String sessionId, Long taskId) throws Exception {
+        try {
+            client.takeTask(sessionId, taskId);
+        } catch (Exception e) {
+            throw new ExceptionHelper().convertException(e);
+        }
+    }
+
+    public void releaseTask(String sessionId, Long taskId) throws Exception {
+        try {
+            client.releaseTask(sessionId, taskId);
+        } catch (Exception e) {
+            throw new ExceptionHelper().convertException(e);
+        }
+    }
+
+    public void hideTask(String sessionId, Long taskId) throws Exception {
+        try {
+            client.hideTask(sessionId, taskId);
+        } catch (Exception e) {
+            throw new ExceptionHelper().convertException(e);
+        }
+    }
 
 }

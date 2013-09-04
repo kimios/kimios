@@ -84,6 +84,7 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
 
 //                this.tasksPanel = new kimios.tasks.TasksPanel({});
                 this.tasksPanel = new kimios.tasks.BonitaTasksPanel({});
+                this.tasksAssignedPanel = new kimios.tasks.BonitaAssignedTasksPanel({});
 
 
 
@@ -118,6 +119,9 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                         },
                         {
                             items: [this.tasksPanel]
+                        },
+                        {
+                            items: [this.tasksAssignedPanel]
                         },
                         {
                             items: [this.cartPanel]
@@ -247,7 +251,8 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                 // start tasks checker thread (also used to check session)
                 this.tasksChecker = {
                     run: function () {
-                        kimios.explorer.getTasksPanel().refresh();
+                        Ext.getCmp('kimios-tasks-panel').refresh();
+                        Ext.getCmp('kimios-assigned-tasks-panel').refresh();
                     },
                     interval: (this.checkSession * 1000)
                 };
@@ -270,7 +275,8 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                 kimios.explorer.getSearchRequestsPanel().refreshLanguage();
                 kimios.explorer.getBookmarksPanel().refreshLanguage();
                 kimios.explorer.getRecentItemsPanel().refreshLanguage();
-                kimios.explorer.getTasksPanel().refreshLanguage();
+                Ext.getCmp('kimios-tasks-panel').refreshLanguage();
+                Ext.getCmp('kimios-assigned-tasks-panel').refreshLanguage();
                 kimios.explorer.getCartPanel().refreshLanguage();
                 kimios.ContextMenu.init();
                 var mainPanel = kimios.explorer.getMainPanel();

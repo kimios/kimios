@@ -732,6 +732,9 @@ kimios.record = {
             {
                 name: 'url',
                 type: 'string'
+            },
+            {
+                name: 'processWrapper'
             }
         ])
 

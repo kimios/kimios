@@ -949,11 +949,25 @@ kimios.store = {
                 }
             });
         },
-        getMyBonitaTasksStore:function(autoLoad){
+        getBonitaPendingTasksStore: function (autoLoad) {
             return new DmsJsonStore({
                 url: 'Workflow',
                 baseParams: {
-                    action: 'getMyBonitaTasks'
+                    action: 'getBonitaPendingTasks'
+                },
+                fields: kimios.record.BonitaRecord.taskRecord,
+                autoLoad: (autoLoad ? autoLoad : false),
+                sortInfo: {
+                    field: 'expectedEndDate',
+                    direction: 'DESC'
+                }
+            });
+        },
+        getBonitaAssignedTasksStore: function (autoLoad) {
+            return new DmsJsonStore({
+                url: 'Workflow',
+                baseParams: {
+                    action: 'getBonitaAssignedTasks'
                 },
                 fields: kimios.record.BonitaRecord.taskRecord,
                 autoLoad: (autoLoad ? autoLoad : false),

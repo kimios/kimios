@@ -14,16 +14,16 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-kimios.tasks.BonitaTasksPanel = Ext.extend(Ext.grid.GridPanel, {
+kimios.tasks.BonitaAssignedTasksPanel = Ext.extend(Ext.grid.GridPanel, {
 
     constructor: function (config) {
         this.tasksCounter = 0;
-        this.id = 'kimios-tasks-panel';
-        this.title = kimios.lang('BonitaPendingTasks');
+        this.id = 'kimios-assigned-tasks-panel';
+        this.title = kimios.lang('BonitaAssignedTasks');
 //        this.iconCls = 'tasks';
         this.hideHeaders = true;
         this.stripeRows = true;
-        this.store = kimios.store.TasksStore.getBonitaPendingTasksStore(false);
+        this.store = kimios.store.TasksStore.getBonitaAssignedTasksStore(false);
         this.viewConfig = {
             forceFit: true,
             scrollOffset: 0
@@ -84,16 +84,16 @@ kimios.tasks.BonitaTasksPanel = Ext.extend(Ext.grid.GridPanel, {
 
         ]);
 
-        kimios.tasks.BonitaTasksPanel.superclass.constructor.call(this, config);
+        kimios.tasks.BonitaAssignedTasksPanel.superclass.constructor.call(this, config);
     },
 
     initComponent: function () {
-        kimios.tasks.BonitaTasksPanel.superclass.initComponent.apply(this, arguments);
+        kimios.tasks.BonitaAssignedTasksPanel.superclass.initComponent.apply(this, arguments);
 
         this.store.on('load', function (store, records, options) {
             this.tasksCounter = records.length;
-            var newTitle = kimios.lang('BonitaPendingTasks') + ' ' + (this.tasksCounter > 0 ? '(' + this.tasksCounter + ')' : '');
-            var tasksButton = kimios.explorer.getToolbar().myTasksButton;
+            var newTitle = kimios.lang('BonitaAssignedTasks') + ' ' + (this.tasksCounter > 0 ? '(' + this.tasksCounter + ')' : '');
+            var tasksButton = kimios.explorer.getToolbar().myAssignedTasksButton;
             this.setTitle(newTitle);
             tasksButton.setText(newTitle);
             this.setIconClass(null);
@@ -113,18 +113,18 @@ kimios.tasks.BonitaTasksPanel = Ext.extend(Ext.grid.GridPanel, {
             var sm = this.getSelectionModel();
             sm.selectRow(rowIndex);
             var selectedRecord = sm.getSelected();
-            kimios.ContextMenu.show(selectedRecord.data, e, 'myBonitaTasks');
+            kimios.ContextMenu.show(selectedRecord.data, e, 'myBonitaAssignedTasks');
         });
 
         this.on('containercontextmenu', function (grid, e) {
             e.preventDefault();
-            kimios.ContextMenu.show(new kimios.DMEntityPojo({}), e, 'myBonitaTasksContainer');
+            kimios.ContextMenu.show(new kimios.DMEntityPojo({}), e, 'myBonitaAssignedTasksContainer');
         }, this);
     },
 
     refresh: function () {
         this.setIconClass('loading');
-        kimios.explorer.getToolbar().myTasksButton.setIconClass('loading');
+        kimios.explorer.getToolbar().myAssignedTasksButton.setIconClass('loading');
         this.store.reload({
             scope: this,
             callback: function (records) {
@@ -140,9 +140,9 @@ kimios.tasks.BonitaTasksPanel = Ext.extend(Ext.grid.GridPanel, {
     },
 
     refreshLanguage: function () {
-        var newTitle = kimios.lang('BonitaPendingTasks') + ' ' + (this.tasksCounter > 0 ? '(' + this.tasksCounter + ')' : '');
+        var newTitle = kimios.lang('BonitaAssignedTasks') + ' ' + (this.tasksCounter > 0 ? '(' + this.tasksCounter + ')' : '');
         this.setTitle(newTitle);
-        kimios.explorer.getToolbar().myTasksButton.setText(newTitle);
+        kimios.explorer.getToolbar().myAssignedTasksButton.setText(newTitle);
         this.refresh();
         this.doLayout();
     },
@@ -226,7 +226,7 @@ kimios.tasks.BonitaTasksPanel = Ext.extend(Ext.grid.GridPanel, {
         });
 
         return new Ext.Window({
-            id: 'BonitaTaskWindowID',
+            id: 'BonitaAssignedTaskWindowID',
             width: 500,
             height: 485,
             layout: 'fit',
@@ -300,7 +300,7 @@ kimios.tasks.BonitaTasksPanel = Ext.extend(Ext.grid.GridPanel, {
                     text: kimios.lang('BonitaDoIt'),
                     iconCls: 'studio-cls-wf',
                     handler: function () {
-                        Ext.getCmp('BonitaTaskWindowID').close();
+                        Ext.getCmp('BonitaAssignedTaskWindowID').close();
 
                         var url = task.url;
 
@@ -335,12 +335,13 @@ kimios.tasks.BonitaTasksPanel = Ext.extend(Ext.grid.GridPanel, {
                         }).show();
                     }
                 },
+
                 {
-                    text: kimios.lang('BonitaTake'),
-                    iconCls: 'studio-cls-wf-down',
+                    text: kimios.lang('BonitaRelease'),
+                    iconCls: 'studio-wf-expand',
                     handler: function () {
                         kimios.ajaxRequest('Workflow', {
-                                action: 'takeTask',
+                                action: 'releaseTask',
                                 taskId: task.id
                             },
                             function () {
@@ -348,10 +349,9 @@ kimios.tasks.BonitaTasksPanel = Ext.extend(Ext.grid.GridPanel, {
                                 Ext.getCmp('kimios-assigned-tasks-panel').refresh();
                             }
                         );
-                        Ext.getCmp('BonitaTaskWindowID').close();
+                        Ext.getCmp('BonitaAssignedTaskWindowID').close();
                     }
                 },
-
                 {
                     text: kimios.lang('BonitaHide'),
                     iconCls: 'delete',
@@ -365,13 +365,13 @@ kimios.tasks.BonitaTasksPanel = Ext.extend(Ext.grid.GridPanel, {
                                 Ext.getCmp('kimios-assigned-tasks-panel').refresh();
                             }
                         );
-                        Ext.getCmp('BonitaTaskWindowID').close();
+                        Ext.getCmp('BonitaAssignedTaskWindowID').close();
                     }
                 },
                 {
                     text: kimios.lang('Close'),
                     handler: function () {
-                        Ext.getCmp('BonitaTaskWindowID').close();
+                        Ext.getCmp('BonitaAssignedTaskWindowID').close();
                     }
                 }
             ]

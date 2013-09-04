@@ -28,6 +28,8 @@ public class TaskWrapper {
 
     private String url;
 
+    private ProcessWrapper processWrapper;
+
     @Override
     public String toString() {
         return "TaskWrapper{" +
@@ -53,6 +55,7 @@ public class TaskWrapper {
                 ", type='" + type + '\'' +
                 ", processDefinitionId=" + processDefinitionId +
                 ", url='" + url + '\'' +
+                ", processWrapper=" + processWrapper +
                 '}';
     }
 
@@ -230,5 +233,13 @@ public class TaskWrapper {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public ProcessWrapper getProcessWrapper() {
+        return processWrapper;
+    }
+
+    public void setProcessWrapper(ProcessWrapper processWrapper) {
+        this.processWrapper = processWrapper;
     }
 }

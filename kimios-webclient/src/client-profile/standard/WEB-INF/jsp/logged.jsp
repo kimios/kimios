@@ -144,6 +144,7 @@
             src="<%=request.getContextPath()%>/js/client/properties/SecurityEntityPanel.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/tasks/TasksPanel.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/tasks/BonitaTasksPanel.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/tasks/BonitaAssignedTasksPanel.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/studio/studio.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/studio/document-types.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/studio/meta-feeds.js"></script>

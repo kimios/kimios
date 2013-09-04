@@ -20,39 +20,10 @@ kimios.picker.BonitaPicker = Ext.extend(Ext.util.Observable, {
     constructor: function (config) {
         this.documentUid = config.documentUid;
 
-        this.startButton = new Ext.Button({
-            text: kimios.lang('StartWorkflow'),
-            iconCls: 'qaction-startwf',
-            disabled: true,
-            handler: function () {
-//                kimios.request.startWorkflow(
-//                    this.documentUid,
-//                    this.statusField.getValue()
-//                );
-//                this.window.close();
-            },
-            scope: this
-        });
-
         this.workflowField = new kimios.form.ProcessField({
             name: 'workflowUid'
         });
 
-//        this.backButton = new Ext.Button({
-//            scope : this,
-//            text : kimios.lang('BackLabel'),
-//            iconCls : 'x-tbar-page-prev',
-//            disabled : true,
-//            handler : function(){
-//                this.step -= 1;
-//                this.window.setTitle(kimios.lang('StartWorkflow'));
-//                this.backButton.disable();
-//                this.form.remove(this.statusField);
-//                this.workflowField.enable();
-//                this.form.doLayout();
-//            }
-//        });
-//
         this.nextButton = new Ext.Button({
             scope: this,
             text: kimios.lang('StartWorkflow'),
@@ -72,6 +43,7 @@ kimios.picker.BonitaPicker = Ext.extend(Ext.util.Observable, {
                     title: kimios.lang('Workflow'),
                     modal: true,
                     maximizable: true,
+                    closable:false,
                     autoScroll:true,
                     items: [
                         {
@@ -86,6 +58,8 @@ kimios.picker.BonitaPicker = Ext.extend(Ext.util.Observable, {
                             text: kimios.lang('Close'),
                             handler: function () {
                                 iframe.close();
+                                Ext.getCmp('kimios-tasks-panel').refresh();
+                                Ext.getCmp('kimios-assigned-tasks-panel').refresh();
                             }
                         }
                     ]
@@ -129,22 +103,5 @@ kimios.picker.BonitaPicker = Ext.extend(Ext.util.Observable, {
 
     show: function () {
         this.window.show();
-        /*
-         // check if document is already involved in a workflow
-         var checkStore = kimios.store.getEntityStore(this.documentUid, this.documentType);
-         checkStore.load({
-         scope : this,
-         callback : function(records, options, success){
-         if (records[0].data.outOfWorkflow == true){
-         this.window.show();
-         }else{
-         Ext.MessageBox.alert(
-         'Workflow',
-         kimios.lang('DocumentAlreadyInAWorkflow')
-         );
-         }
-         }
-         });
-         */
     }
 });

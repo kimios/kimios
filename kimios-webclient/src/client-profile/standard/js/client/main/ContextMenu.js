@@ -39,6 +39,7 @@ kimios.ContextMenu = new function () {
         this.initDefaultMultipleMenu(config);
         this.initMyTasksMenu(config);
         this.initMyBonitaTasksMenu(config);
+        this.initMyBonitaAssignedTasksMenu(config);
         this.initSearchRequestsMenu(config);
         this.initSearchRequestsContainerMenu(config);
         this.initBookmarksMenu(config);
@@ -140,6 +141,11 @@ kimios.ContextMenu = new function () {
         // bonita tasks
         else if (context == 'myBonitaTasks') {
             return this.myBonitaTasksMenu;
+        }
+
+        // bonita tasks
+        else if (context == 'myBonitaAssignedTasks') {
+            return this.myBonitaAssignedTasksMenu;
         }
 
         else if (context == 'cart') {
@@ -338,7 +344,23 @@ kimios.ContextMenu = new function () {
         this.myBonitaTasksMenu = new Ext.menu.Menu(config);
         this.myBonitaTasksMenu.add(this.getCheckBonitaTask());
         this.myBonitaTasksMenu.addSeparator();
+        this.myBonitaTasksMenu.add(this.getTakeBonitaTask());
+        this.myBonitaTasksMenu.add(this.getHideBonitaTask());
+        this.myBonitaTasksMenu.addSeparator();
         this.myBonitaTasksMenu.add(this.getRefreshItem());
+        this.myBonitaTasksMenu.addSeparator();
+        this.myBonitaTasksMenu.add(this.getPropertiesBonitaTask());
+    };
+
+    this.initMyBonitaAssignedTasksMenu = function (config) {
+        this.myBonitaAssignedTasksMenu = new Ext.menu.Menu(config);
+        this.myBonitaAssignedTasksMenu.add(this.getCheckBonitaTask());
+        this.myBonitaAssignedTasksMenu.addSeparator();
+        this.myBonitaAssignedTasksMenu.add(this.getReleaseBonitaTask());
+        this.myBonitaAssignedTasksMenu.addSeparator();
+        this.myBonitaAssignedTasksMenu.add(this.getRefreshItem());
+        this.myBonitaAssignedTasksMenu.addSeparator();
+        this.myBonitaAssignedTasksMenu.add(this.getPropertiesBonitaTask());
     };
 
     this.initCartMenu = function (config) {
@@ -1048,8 +1070,8 @@ kimios.ContextMenu = new function () {
 
     this.getCheckBonitaTask = function () {
         return new Ext.menu.Item({
-            text: kimios.lang('AcceptStatus'),
-            iconCls: 'accept-status',
+            text: kimios.lang('BonitaDoIt'),
+            iconCls: 'studio-cls-wf',
             scope: this,
             handler: function (btn, evt) {
                 var context = this.context;
@@ -1066,7 +1088,7 @@ kimios.ContextMenu = new function () {
                     title: kimios.lang('WorkflowStatus'),
                     maximizable: true,
                     modal: true,
-                    autoScroll:true,
+                    autoScroll: true,
                     items: [
                         {
                             html: '<iframe id="reportframe" border="0" width="100%" height="100%" ' +
@@ -1080,10 +1102,89 @@ kimios.ContextMenu = new function () {
                             text: kimios.lang('Close'),
                             handler: function () {
                                 iframe.close();
+                                Ext.getCmp('kimios-tasks-panel').refresh();
+                                Ext.getCmp('kimios-assigned-tasks-panel').refresh();
                             }
                         }
                     ]
                 }).show();
+            }
+        });
+    }
+
+    this.getTakeBonitaTask = function () {
+        return new Ext.menu.Item({
+            text: kimios.lang('BonitaTake'),
+            iconCls: 'studio-cls-wf-down',
+            scope: this,
+            handler: function (btn, evt) {
+
+                kimios.ajaxRequest('Workflow', {
+                        action: 'takeTask',
+                        taskId: this.dmEntityPojo.id
+                    },
+                    function () {
+                        Ext.getCmp('kimios-tasks-panel').refresh();
+                        Ext.getCmp('kimios-assigned-tasks-panel').refresh();
+                    }
+                );
+
+            }
+        });
+    }
+
+    this.getReleaseBonitaTask = function () {
+        return new Ext.menu.Item({
+            text: kimios.lang('BonitaRelease'),
+            iconCls: 'studio-wf-expand',
+            scope: this,
+            handler: function (btn, evt) {
+
+                kimios.ajaxRequest('Workflow', {
+                        action: 'releaseTask',
+                        taskId: this.dmEntityPojo.id
+                    },
+                    function () {
+                        Ext.getCmp('kimios-tasks-panel').refresh();
+                        Ext.getCmp('kimios-assigned-tasks-panel').refresh();
+                    }
+                );
+            }
+        });
+    }
+
+    this.getHideBonitaTask = function () {
+        return new Ext.menu.Item({
+            text: kimios.lang('BonitaHide'),
+            iconCls: 'delete',
+            scope: this,
+            handler: function (btn, evt) {
+
+                kimios.ajaxRequest('Workflow', {
+                        action: 'hideTask',
+                        taskId: this.dmEntityPojo.id
+                    },
+                    function () {
+                        Ext.getCmp('kimios-tasks-panel').refresh();
+                        Ext.getCmp('kimios-assigned-tasks-panel').refresh();
+                    }
+                );
+            }
+        });
+    }
+
+    this.getPropertiesBonitaTask = function () {
+        return new Ext.menu.Item({
+            text: kimios.lang('TaskProperties'),
+            iconCls: 'properties',
+            scope: this,
+            handler: function (btn, evt) {
+                if (this.context = 'myBonitaTasks') {
+                    Ext.getCmp('kimios-tasks-panel').getTaskWindow(this.dmEntityPojo).show();
+                } else if (this.context = 'myBonitaAssignedTasks') {
+                    Ext.getCmp('kimios-assigned-tasks-panel').getTaskWindow(this.dmEntityPojo).show();
+                }
+
             }
         });
     }
@@ -1097,7 +1198,8 @@ kimios.ContextMenu = new function () {
                 var context = this.context;
                 var toolbar = kimios.explorer.getToolbar();
                 var treePanel = kimios.explorer.getTreePanel();
-                var tasksPanel = kimios.explorer.getTasksPanel();
+                var tasksPanel = Ext.getCmp('kimios-tasks-panel');
+                var assignedTasksPanel = Ext.getCmp('kimios-assigned-tasks-panel');
                 var activePanel = kimios.explorer.getActivePanel();
                 var bookmarks = kimios.explorer.getBookmarksPanel();
                 var recentItems = kimios.explorer.getRecentItemsPanel();
@@ -1122,9 +1224,13 @@ kimios.ContextMenu = new function () {
                 } else if (context == 'myTasks'
                     || context == 'myTasksContainer') {
                     tasksPanel.refresh();
+                    assignedTasksPanel.refresh();
                 } else if (context == 'myBonitaTasks'
                     || context == 'myBonitaTasksContainer') {
                     tasksPanel.refresh();
+                } else if (context == 'myBonitaAssignedTasks'
+                    || context == 'myBonitaAssignedTasksContainer') {
+                    assignedTasksPanel.refresh();
                 } else if (context == 'cart' || context == 'cartContainer') {
                     cartPanel.refresh();
                 }
