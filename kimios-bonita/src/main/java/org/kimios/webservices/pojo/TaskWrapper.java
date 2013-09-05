@@ -1,14 +1,13 @@
 package org.kimios.webservices.pojo;
 
 import java.util.Date;
+import java.util.List;
 
 public class TaskWrapper {
 
     private Long id;
     private String name;
     private String description;
-    private Long actorId;
-    private Long assigneeId;
     private Date claimedDate;
     private Date expectedEndDate;
     private String priority;
@@ -26,9 +25,19 @@ public class TaskWrapper {
     private String type;
     private Long processDefinitionId;
 
+    // direct url to Task
+
     private String url;
 
+    // references to Process and Comments
+
     private ProcessWrapper processWrapper;
+    private List<CommentWrapper> commentWrappers;
+
+    // associated users
+
+    private UserWrapper actor;
+    private UserWrapper assignee;
 
     @Override
     public String toString() {
@@ -36,8 +45,8 @@ public class TaskWrapper {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", actorId=" + actorId +
-                ", assigneeId=" + assigneeId +
+                ", actor=" + actor +
+                ", assignee=" + assignee +
                 ", claimedDate=" + claimedDate +
                 ", expectedEndDate=" + expectedEndDate +
                 ", priority='" + priority + '\'' +
@@ -56,6 +65,7 @@ public class TaskWrapper {
                 ", processDefinitionId=" + processDefinitionId +
                 ", url='" + url + '\'' +
                 ", processWrapper=" + processWrapper +
+                ", commentWrappers=" + commentWrappers +
                 '}';
     }
 
@@ -83,20 +93,20 @@ public class TaskWrapper {
         this.description = description;
     }
 
-    public Long getActorId() {
-        return actorId;
+    public UserWrapper getActor() {
+        return actor;
     }
 
-    public void setActorId(Long actorId) {
-        this.actorId = actorId;
+    public void setActor(UserWrapper actor) {
+        this.actor = actor;
     }
 
-    public Long getAssigneeId() {
-        return assigneeId;
+    public UserWrapper getAssignee() {
+        return assignee;
     }
 
-    public void setAssigneeId(Long assigneeId) {
-        this.assigneeId = assigneeId;
+    public void setAssignee(UserWrapper assignee) {
+        this.assignee = assignee;
     }
 
     public Date getClaimedDate() {
@@ -241,5 +251,13 @@ public class TaskWrapper {
 
     public void setProcessWrapper(ProcessWrapper processWrapper) {
         this.processWrapper = processWrapper;
+    }
+
+    public List<CommentWrapper> getCommentWrappers() {
+        return commentWrappers;
+    }
+
+    public void setCommentWrappers(List<CommentWrapper> commentWrappers) {
+        this.commentWrappers = commentWrappers;
     }
 }

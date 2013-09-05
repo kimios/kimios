@@ -1179,9 +1179,10 @@ kimios.ContextMenu = new function () {
             iconCls: 'properties',
             scope: this,
             handler: function (btn, evt) {
-                if (this.context = 'myBonitaTasks') {
+                console.log(this.context);
+                if (this.context == 'myBonitaTasks') {
                     Ext.getCmp('kimios-tasks-panel').getTaskWindow(this.dmEntityPojo).show();
-                } else if (this.context = 'myBonitaAssignedTasks') {
+                } else if (this.context == 'myBonitaAssignedTasks') {
                     Ext.getCmp('kimios-assigned-tasks-panel').getTaskWindow(this.dmEntityPojo).show();
                 }
 

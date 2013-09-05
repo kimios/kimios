@@ -80,15 +80,8 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                     border: false
                 });
 
-
-
-//                this.tasksPanel = new kimios.tasks.TasksPanel({});
                 this.tasksPanel = new kimios.tasks.BonitaTasksPanel({});
                 this.tasksAssignedPanel = new kimios.tasks.BonitaAssignedTasksPanel({});
-
-
-
-
                 this.cartPanel = new kimios.explorer.Cart({});
 
                 // west

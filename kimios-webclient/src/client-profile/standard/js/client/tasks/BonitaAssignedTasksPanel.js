@@ -44,7 +44,7 @@ kimios.tasks.BonitaAssignedTasksPanel = Ext.extend(Ext.grid.GridPanel, {
                     if (record.data.state == 'failed') {
                         metaData.css = 'reject-status';
                     }
-                    else{
+                    else {
                         metaData.css = 'accept-status';
                     }
 
@@ -75,8 +75,8 @@ kimios.tasks.BonitaAssignedTasksPanel = Ext.extend(Ext.grid.GridPanel, {
                 }
             },
             {
-                width: 120,
-                align: 'center',
+                width: 135,
+                align: 'left',
                 sortable: false,
                 hideable: false,
                 fixed: true,
@@ -161,16 +161,32 @@ kimios.tasks.BonitaAssignedTasksPanel = Ext.extend(Ext.grid.GridPanel, {
     getTaskWindow: function (myTask) {
         var task = null;
         var process = null;
+        var comments = null;
+        var actor = null;
+        var assignee = null;
 
         if (myTask == undefined) {
             task = this.dmEntityPojo;
             process = this.dmEntityPojo.processWrapper;
+            comments = this.dmEntityPojo.commentWrappers;
+            actor = this.dmEntityPojo.actor;
+            assignee = this.dmEntityPojo.assignee;
         } else {
             task = myTask;
             process = myTask.processWrapper;
+            comments = myTask.commentWrappers;
+            actor = myTask.actor;
+            assignee = myTask.assignee;
         }
 
         /* task fields */
+
+        this.assignedToField = new Ext.form.DisplayField({
+            name: 'apps',
+            anchor: '100%',
+            fieldLabel: 'Assigned to',
+            value: assignee.userName
+        });
 
         this.appsField = new Ext.form.DisplayField({
             name: 'apps',
@@ -236,6 +252,10 @@ kimios.tasks.BonitaAssignedTasksPanel = Ext.extend(Ext.grid.GridPanel, {
             value: task.description ? task.description : 'No description'
         });
 
+        console.log(actor);
+        console.log(assignee);
+        console.log(comments);
+
         return new Ext.Window({
             id: 'BonitaAssignedTaskWindowID',
             width: 500,
@@ -267,6 +287,7 @@ kimios.tasks.BonitaAssignedTasksPanel = Ext.extend(Ext.grid.GridPanel, {
                             },
                             bodyStyle: 'padding:3px;background-color:transparent;',
                             items: [
+                                this.assignedToField,
                                 this.appsField,
                                 this.versionField,
                                 this.caseField,

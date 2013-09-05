@@ -1,10 +1,12 @@
 package org.kimios.webservices.impl;
 
 
+import org.bonitasoft.engine.bpm.comment.Comment;
 import org.kimios.kernel.controller.BonitaController;
 import org.kimios.webservices.BonitaService;
 import org.kimios.webservices.DMServiceException;
 import org.kimios.webservices.ServiceHelper;
+import org.kimios.webservices.pojo.CommentWrapper;
 import org.kimios.webservices.pojo.ProcessWrapper;
 import org.kimios.webservices.pojo.TaskWrapper;
 
@@ -65,6 +67,22 @@ public class BonitaServiceImpl implements BonitaService {
     public void hideTask(String sessionId, Long taskId) throws DMServiceException {
         try {
             controller.hideTask(helper.getSession(sessionId), taskId);
+        } catch (Exception e) {
+            throw new DMServiceException(e.getMessage(), e);
+        }
+    }
+
+    public CommentWrapper addComment(String sessionId, Long taskId, String comment) throws DMServiceException {
+        try {
+            return controller.addComment(helper.getSession(sessionId), taskId, comment);
+        } catch (Exception e) {
+            throw new DMServiceException(e.getMessage(), e);
+        }
+    }
+
+    public List<CommentWrapper> getComments(String sessionId, Long taskId) throws DMServiceException {
+        try {
+            return controller.getComments(helper.getSession(sessionId), taskId);
         } catch (Exception e) {
             throw new DMServiceException(e.getMessage(), e);
         }

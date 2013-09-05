@@ -658,14 +658,6 @@ kimios.record = {
                 type: 'string'
             },
             {
-                name: 'actorId',
-                type: 'long'
-            },
-            {
-                name: 'assigneeId',
-                type: 'long'
-            },
-            {
                 name: 'claimedDate',
                 type: 'long'
             },
@@ -734,7 +726,42 @@ kimios.record = {
                 type: 'string'
             },
             {
-                name: 'processWrapper'
+                name: 'actor' // UserWrapper
+            },
+            {
+                name: 'assignee' // UserWrapper
+            },
+            {
+                name: 'processWrapper' // ProcessWrapper
+            },
+            {
+                name: 'commentWrappers' // List<CommentWrapper>
+            }
+        ]),
+
+        commentRecord: Ext.data.Record.create([
+            {
+                name: 'id',
+                type: 'long'
+            },
+            {
+                name: 'content',
+                type: 'string'
+            },
+            {
+                name: 'postDate',
+                type: 'long'
+            },
+            {
+                name: 'processInstanceId',
+                type: 'long'
+            },
+            {
+                name: 'tenantId',
+                type: 'long'
+            },
+            {
+                name: 'userWrapper' // UserWrapper
             }
         ])
 

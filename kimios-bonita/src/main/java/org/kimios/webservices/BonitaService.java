@@ -1,5 +1,6 @@
 package org.kimios.webservices;
 
+import org.kimios.webservices.pojo.CommentWrapper;
 import org.kimios.webservices.pojo.ProcessWrapper;
 import org.kimios.webservices.pojo.TaskWrapper;
 
@@ -16,14 +17,14 @@ import java.util.List;
 public interface BonitaService {
 
     @GET
-    @Path("/getProcesses")
+    @Path("/processes/getProcesses")
     @Produces("application/json")
     List<ProcessWrapper> getProcesses(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId)
             throws DMServiceException;
 
     @GET
-    @Path("/getPendingTasks")
+    @Path("/processes/getPendingTasks")
     @Produces("application/json")
     List<TaskWrapper> getPendingTasks(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -32,7 +33,7 @@ public interface BonitaService {
     ) throws DMServiceException;
 
     @GET
-    @Path("/getAssignedTasks")
+    @Path("/tasks/getAssignedTasks")
     @Produces("application/json")
     List<TaskWrapper> getAssignedTasks(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -41,7 +42,7 @@ public interface BonitaService {
     ) throws DMServiceException;
 
     @GET
-    @Path("/task/take")
+    @Path("/tasks/takeTask")
     @Produces("application/json")
     void takeTask(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -49,7 +50,7 @@ public interface BonitaService {
     ) throws DMServiceException;
 
     @GET
-    @Path("/task/release")
+    @Path("/tasks/releaseTask")
     @Produces("application/json")
     void releaseTask(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -57,9 +58,26 @@ public interface BonitaService {
     ) throws DMServiceException;
 
     @GET
-    @Path("/task/hide")
+    @Path("/tasks/hideTask")
     @Produces("application/json")
     void hideTask(
+            @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+            @QueryParam(value = "taskId") @WebParam(name = "taskId") Long taskId
+    ) throws DMServiceException;
+
+    @GET
+    @Path("/tasks/addComment")
+    @Produces("application/json")
+    public CommentWrapper addComment(
+            @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+            @QueryParam(value = "taskId") @WebParam(name = "taskId") Long taskId,
+            @QueryParam(value = "comment") @WebParam(name = "comment") String comment
+    ) throws DMServiceException;
+
+    @GET
+    @Path("/tasks/getComments")
+    @Produces("application/json")
+    public List<CommentWrapper> getComments(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "taskId") @WebParam(name = "taskId") Long taskId
     ) throws DMServiceException;

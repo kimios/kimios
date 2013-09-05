@@ -21,6 +21,7 @@ import flexjson.transformer.IterableTransformer;
 import org.kimios.kernel.ws.pojo.Document;
 import org.kimios.kernel.ws.pojo.DocumentWorkflowStatusRequest;
 import org.kimios.kernel.ws.pojo.WorkflowStatus;
+import org.kimios.webservices.pojo.CommentWrapper;
 import org.kimios.webservices.pojo.TaskWrapper;
 
 import java.util.*;
@@ -53,6 +54,12 @@ public class WorkflowControllerWeb extends Controller {
         }
         if (action.equals("hideTask")) {
             return hideTask();
+        }
+        if (action.equals("addCommment")) {
+            return addComment();
+        }
+        if (action.equals("getComments")) {
+            return getComments();
         }
 
         if (action.equals("getWorkflowStatusRequests")) {
@@ -224,7 +231,7 @@ public class WorkflowControllerWeb extends Controller {
         List<TaskWrapper> tasks = bonitaController.getPendingTasks(sessionUid,
                 parameters.get("start") != null ? Integer.parseInt(parameters.get("start")) : Integer.MIN_VALUE,
                 parameters.get("limit") != null ? Integer.parseInt(parameters.get("limit")) : Integer.MAX_VALUE);
-        return new JSONSerializer().serialize(tasks);
+        return new JSONSerializer().deepSerialize(tasks);
     }
 
     private String getBonitaAssignedTasks() throws Exception {
@@ -248,5 +255,21 @@ public class WorkflowControllerWeb extends Controller {
     private String hideTask() throws Exception {
         bonitaController.hideTask(sessionUid, Long.parseLong(parameters.get("taskId")));
         return "";
+    }
+
+    private String addComment() throws Exception {
+        return new JSONSerializer().serialize(
+                bonitaController.addComment(
+                        sessionUid,
+                        Long.parseLong(parameters.get("taskId")),
+                        parameters.get("comment")));
+    }
+
+    private String getComments() throws Exception {
+        return new JSONSerializer().serialize(
+                bonitaController.getComments(
+                        sessionUid,
+                        Long.parseLong(parameters.get("taskId")))
+        );
     }
 }

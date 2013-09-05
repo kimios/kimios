@@ -1,17 +1,20 @@
-package org.kimios.webservices.factory;
+package org.kimios.webservices.impl.factory;
 
+import org.bonitasoft.engine.api.IdentityAPI;
 import org.bonitasoft.engine.bpm.flownode.HumanTaskInstance;
+import org.bonitasoft.engine.identity.UserNotFoundException;
 import org.kimios.webservices.pojo.TaskWrapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TaskWrapperFactory {
+    private static Logger log = LoggerFactory.getLogger(TaskWrapperFactory.class);
 
-    public static TaskWrapper createTaskWrapper(HumanTaskInstance task) {
+    public static TaskWrapper createTaskWrapper(HumanTaskInstance task, IdentityAPI identityAPI) throws UserNotFoundException {
         TaskWrapper wrapper = new TaskWrapper();
         wrapper.setId(task.getId());
         wrapper.setName(task.getName());
         wrapper.setDescription(task.getDescription());
-        wrapper.setActorId(task.getActorId());
-        wrapper.setAssigneeId(task.getAssigneeId());
         wrapper.setClaimedDate(task.getClaimedDate());
         wrapper.setExpectedEndDate(task.getExpectedEndDate());
         wrapper.setPriority(task.getPriority() != null ? task.getPriority().name() : null);
@@ -28,6 +31,16 @@ public class TaskWrapperFactory {
         wrapper.setState(task.getState());
         wrapper.setStateCategory(task.getStateCategory() != null ? task.getStateCategory().name() : null);
         wrapper.setType(task.getType() != null ? task.getType().name() : null);
+
+        log.info("assignee: " + task.getAssigneeId());
+        log.info("actor: " + task.getActorId());
+
+        if (task.getActorId() > 1)
+            wrapper.setActor(UserWrapperFactory.createUserWrapper(identityAPI.getUser(task.getActorId())));
+
+        if (task.getAssigneeId() > 1)
+            wrapper.setAssignee(UserWrapperFactory.createUserWrapper(identityAPI.getUser(task.getAssigneeId())));
+
         return wrapper;
     }
 

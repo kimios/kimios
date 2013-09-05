@@ -28,16 +28,16 @@ kimios.tasks.BonitaTasksPanel = Ext.extend(Ext.grid.GridPanel, {
         };
         this.columnLines = false;
         this.sm = new Ext.grid.RowSelectionModel({singleSelect: true});
-        this.tbar = [
-            new Ext.PagingToolbar({
-                store: this.store,
-                displayInfo: true,
-                pageSize: 10,
-                displayMsg: '',
-                emptyMsg: '',
-                prependButtons: true
-            })
-        ];
+//        this.tbar = [
+//            new Ext.PagingToolbar({
+//                store: this.store,
+//                displayInfo: true,
+//                pageSize: 5,
+//                displayMsg: '',
+//                emptyMsg: '',
+//                prependButtons: true
+//            })
+//        ];
 
         this.cm = new Ext.grid.ColumnModel([
             {
@@ -85,8 +85,8 @@ kimios.tasks.BonitaTasksPanel = Ext.extend(Ext.grid.GridPanel, {
                 }
             },
             {
-                width: 120,
-                align: 'center',
+                width: 135,
+                align: 'left',
                 sortable: false,
                 hideable: false,
                 fixed: true,
@@ -146,10 +146,10 @@ kimios.tasks.BonitaTasksPanel = Ext.extend(Ext.grid.GridPanel, {
         this.setIconClass('loading');
         kimios.explorer.getToolbar().myTasksButton.setIconClass('loading');
         this.store.reload({
-            params: {
-                start: 0,
-                limit: 10
-            },
+//            params: {
+//                start: 0,
+//                limit: 5
+//            },
             scope: this,
             callback: function (records) {
 //                if (!records || records.length == 0) {
@@ -174,13 +174,22 @@ kimios.tasks.BonitaTasksPanel = Ext.extend(Ext.grid.GridPanel, {
     getTaskWindow: function (myTask) {
         var task = null;
         var process = null;
+        var comments = null;
+        var actor = null;
+        var assignee = null;
 
         if (myTask == undefined) {
             task = this.dmEntityPojo;
             process = this.dmEntityPojo.processWrapper;
+            comments = this.dmEntityPojo.commentWrappers;
+            actor = this.dmEntityPojo.actor;
+            assignee = this.dmEntityPojo.assignee;
         } else {
             task = myTask;
             process = myTask.processWrapper;
+            comments = myTask.commentWrappers;
+            actor = myTask.actor;
+            assignee = myTask.assignee;
         }
 
         /* task fields */
@@ -249,6 +258,25 @@ kimios.tasks.BonitaTasksPanel = Ext.extend(Ext.grid.GridPanel, {
             value: task.description ? task.description : 'No description'
         });
 
+        /*
+         id
+         content
+         postDate
+         processInstanceId
+         tenantId
+         userWrapper
+         */
+
+//        this.commentsField = new Ext.form.DisplayField({
+//            anchor: '100%',
+//            fieldLabel: 'Comments',
+//            value: task.come ? task.description : 'No description'
+//        });
+
+        console.log(actor);
+        console.log(assignee);
+        console.log(comments);
+
         return new Ext.Window({
             id: 'BonitaTaskWindowID',
             width: 500,
@@ -316,6 +344,22 @@ kimios.tasks.BonitaTasksPanel = Ext.extend(Ext.grid.GridPanel, {
                                 this.descriptionField
                             ]
                         })
+//                        ,
+//
+//                        // comments
+//                        new Ext.form.FieldSet({
+//                            title: 'Comments',
+//                            layout: 'form',
+//                            collapsible: false,
+//                            defaults: {
+//                                style: 'font-size: 11px',
+//                                labelStyle: 'font-size: 11px;font-weight:bold;'
+//                            },
+//                            bodyStyle: 'padding:3px;background-color:transparent;',
+//                            items: [
+//                                this.descriptionField
+//                            ]
+//                        })
                     ]
                 })
             ],

@@ -1,4 +1,4 @@
-package org.kimios.webservices.factory;
+package org.kimios.webservices.impl.factory;
 
 import org.bonitasoft.engine.bpm.process.ProcessDeploymentInfo;
 import org.kimios.webservices.pojo.ProcessWrapper;

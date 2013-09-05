@@ -1,18 +1,20 @@
 package org.kimios.kernel.controller.impl;
 
+import org.bonitasoft.engine.api.IdentityAPI;
 import org.bonitasoft.engine.api.LoginAPI;
 import org.bonitasoft.engine.api.ProcessAPI;
 import org.bonitasoft.engine.api.TenantAPIAccessor;
+import org.bonitasoft.engine.bpm.comment.Comment;
 import org.bonitasoft.engine.bpm.flownode.ActivityInstanceCriterion;
 import org.bonitasoft.engine.bpm.flownode.ActivityInstanceNotFoundException;
 import org.bonitasoft.engine.bpm.flownode.HumanTaskInstance;
-import org.bonitasoft.engine.bpm.process.ProcessDefinitionNotFoundException;
 import org.bonitasoft.engine.bpm.process.ProcessDeploymentInfo;
 import org.bonitasoft.engine.bpm.process.ProcessDeploymentInfoCriterion;
 import org.bonitasoft.engine.exception.BonitaHomeNotSetException;
 import org.bonitasoft.engine.exception.ServerAPIException;
 import org.bonitasoft.engine.exception.UnknownAPITypeException;
 import org.bonitasoft.engine.exception.UpdateException;
+import org.bonitasoft.engine.identity.UserNotFoundException;
 import org.bonitasoft.engine.platform.LoginException;
 import org.bonitasoft.engine.platform.LogoutException;
 import org.bonitasoft.engine.session.APISession;
@@ -20,8 +22,10 @@ import org.bonitasoft.engine.session.SessionNotFoundException;
 import org.kimios.kernel.bonita.BonitaSettings;
 import org.kimios.kernel.controller.BonitaController;
 import org.kimios.kernel.security.Session;
-import org.kimios.webservices.factory.ProcessWrapperFactory;
-import org.kimios.webservices.factory.TaskWrapperFactory;
+import org.kimios.webservices.impl.factory.CommentWrapperFactory;
+import org.kimios.webservices.impl.factory.ProcessWrapperFactory;
+import org.kimios.webservices.impl.factory.TaskWrapperFactory;
+import org.kimios.webservices.pojo.CommentWrapper;
 import org.kimios.webservices.pojo.ProcessWrapper;
 import org.kimios.webservices.pojo.TaskWrapper;
 import org.slf4j.Logger;
@@ -46,95 +50,63 @@ public class BonitaControllerImpl implements BonitaController {
         APISession apiSession = login(session);
         ProcessAPI processAPI = TenantAPIAccessor.getProcessAPI(apiSession);
 
-        List<ProcessDeploymentInfo> processes = processAPI.getProcessDeploymentInfos(
-                Integer.MIN_VALUE, Integer.MAX_VALUE, ProcessDeploymentInfoCriterion.DEFAULT);
-
         Set<Long> actorsId = new HashSet<Long>();
         actorsId.add(apiSession.getUserId());
+
+        List<ProcessDeploymentInfo> processes = processAPI.getStartableProcessDeploymentInfosForActors(actorsId,
+                Integer.MIN_VALUE, Integer.MAX_VALUE, ProcessDeploymentInfoCriterion.DEFAULT);
+
+        log.info(processes.size() + " processes found");
 
         List<ProcessWrapper> wrappers = new ArrayList<ProcessWrapper>();
 
         for (ProcessDeploymentInfo p : processes) {
-            if (processAPI.isAllowedToStartProcess(p.getProcessId(), actorsId)) {
-                ProcessWrapper wrapper = ProcessWrapperFactory.createProcessWrapper(p);
+            ProcessWrapper wrapper = ProcessWrapperFactory.createProcessWrapper(p);
 
-                wrapper.setUrl(bonitaCfg.getBonitaServerUrl() + "/" + bonitaCfg.getBonitaApplicationName() + "/console/" +
-                        "homepage?__kb=" + session.getUid() + "&ui=form&locale=en#form=" + p.getName() + "--" +
-                        p.getVersion() + "$entry&process=" + p.getProcessId() +
-                        "&autoInstantiate=false&user=" + apiSession.getUserId() + "&mode=form");
+            wrapper.setUrl(bonitaCfg.getBonitaServerUrl() + "/" + bonitaCfg.getBonitaApplicationName() + "/console/" +
+                    "homepage?__kb=" + session.getUid() + "&ui=form&locale=en#form=" + p.getName() + "--" +
+                    p.getVersion() + "$entry&process=" + p.getProcessId() +
+                    "&autoInstantiate=false&user=" + apiSession.getUserId() + "&mode=form");
 
-                // TODO add document ID to url
+            // TODO add document ID to url
 
-                log.info(wrapper.toString());
+            log.info(wrapper.toString());
 
-                wrappers.add(wrapper);
-            }
+            wrappers.add(wrapper);
         }
 
         logout(apiSession);
         return wrappers;
     }
 
-    public List<TaskWrapper> getPendingTasks(Session session, int min, int max) throws BonitaHomeNotSetException, ServerAPIException,
-            UnknownAPITypeException, IOException, LoginException, LogoutException, SessionNotFoundException, ProcessDefinitionNotFoundException {
+    public List<TaskWrapper> getPendingTasks(Session session, int min, int max) throws Exception {
 
         APISession apiSession = login(session);
         ProcessAPI processAPI = TenantAPIAccessor.getProcessAPI(apiSession);
+        IdentityAPI identityAPI = TenantAPIAccessor.getIdentityAPI(apiSession);
 
         List<HumanTaskInstance> pendingTasks = processAPI.getPendingHumanTaskInstances(
                 apiSession.getUserId(), min, max, ActivityInstanceCriterion.PRIORITY_ASC);
 
-        List<TaskWrapper> wrappers = new ArrayList<TaskWrapper>();
-
-        for (HumanTaskInstance t : pendingTasks) {
-
-            TaskWrapper wrapper = TaskWrapperFactory.createTaskWrapper(t);
-            ProcessDeploymentInfo p = processAPI.getProcessDeploymentInfo(t.getProcessDefinitionId());
-
-            wrapper.setUrl(bonitaCfg.getBonitaServerUrl() + "/" + bonitaCfg.getBonitaApplicationName() + "/console/" +
-                    "homepage?__kb=" + session.getUid() + "&ui=form&locale=en#form=" + p.getName() + "--" + p.getVersion() +
-                    "--" + t.getName() + "$entry&task=" +
-                    t.getId() + "&mode=form");
-
-            wrapper.setProcessWrapper(ProcessWrapperFactory.createProcessWrapper(p));
-
-            log.info(wrapper.toString());
-            wrappers.add(wrapper);
-        }
+        List<TaskWrapper> taskWrappers = getTaskWrappers(session, processAPI, identityAPI, pendingTasks);
 
         logout(apiSession);
-        return wrappers;
+        return taskWrappers;
     }
 
-    public List<TaskWrapper> getAssignedTasks(Session session, int min, int max) throws BonitaHomeNotSetException, ServerAPIException,
-            UnknownAPITypeException, IOException, LoginException, LogoutException, SessionNotFoundException, ProcessDefinitionNotFoundException {
+    public List<TaskWrapper> getAssignedTasks(Session session, int min, int max) throws Exception {
 
         APISession apiSession = login(session);
         ProcessAPI processAPI = TenantAPIAccessor.getProcessAPI(apiSession);
+        IdentityAPI identityAPI = TenantAPIAccessor.getIdentityAPI(apiSession);
 
-        List<HumanTaskInstance> pendingTasks = processAPI.getAssignedHumanTaskInstances(
+        List<HumanTaskInstance> assignedTasks = processAPI.getAssignedHumanTaskInstances(
                 apiSession.getUserId(), min, max, ActivityInstanceCriterion.PRIORITY_ASC);
 
-        List<TaskWrapper> wrappers = new ArrayList<TaskWrapper>();
-
-        for (HumanTaskInstance t : pendingTasks) {
-
-            TaskWrapper wrapper = TaskWrapperFactory.createTaskWrapper(t);
-            ProcessDeploymentInfo p = processAPI.getProcessDeploymentInfo(t.getProcessDefinitionId());
-
-            wrapper.setUrl(bonitaCfg.getBonitaServerUrl() + "/" + bonitaCfg.getBonitaApplicationName() + "/console/" +
-                    "homepage?__kb=" + session.getUid() + "&ui=form&locale=en#form=" + p.getName() + "--" + p.getVersion() +
-                    "--" + t.getName() + "$entry&task=" +
-                    t.getId() + "&mode=form");
-
-            wrapper.setProcessWrapper(ProcessWrapperFactory.createProcessWrapper(p));
-
-            log.info(wrapper.toString());
-            wrappers.add(wrapper);
-        }
+        List<TaskWrapper> taskWrappers = getTaskWrappers(session, processAPI, identityAPI, assignedTasks);
 
         logout(apiSession);
-        return wrappers;
+        return taskWrappers;
     }
 
     public void takeTask(Session session, Long taskId) throws LoginException, ServerAPIException,
@@ -169,6 +141,91 @@ public class BonitaControllerImpl implements BonitaController {
         processAPI.hideTasks(apiSession.getUserId(), taskId);
 
         logout(apiSession);
+    }
+
+    public CommentWrapper addComment(Session session, Long taskId, String comment) throws LoginException, ServerAPIException, BonitaHomeNotSetException, UnknownAPITypeException, IOException, LogoutException, SessionNotFoundException, ActivityInstanceNotFoundException, UserNotFoundException {
+
+        APISession apiSession = login(session);
+        ProcessAPI processAPI = TenantAPIAccessor.getProcessAPI(apiSession);
+        IdentityAPI identityAPI = TenantAPIAccessor.getIdentityAPI(apiSession);
+
+        HumanTaskInstance task = processAPI.getHumanTaskInstance(taskId); //TODO activityInstanceId?
+
+        log.info("Adding comment: " + comment);
+        Comment submitted = processAPI.addComment(task.getParentProcessInstanceId(), comment);
+
+        logout(apiSession);
+
+        return CommentWrapperFactory.createCommentWrapper(submitted, identityAPI);
+    }
+
+    public List<CommentWrapper> getComments(Session session, Long taskId) throws LoginException, ServerAPIException, BonitaHomeNotSetException, UnknownAPITypeException, IOException, ActivityInstanceNotFoundException, LogoutException, SessionNotFoundException, UserNotFoundException {
+        APISession apiSession = login(session);
+        ProcessAPI processAPI = TenantAPIAccessor.getProcessAPI(apiSession);
+        IdentityAPI identityAPI = TenantAPIAccessor.getIdentityAPI(apiSession);
+
+
+        HumanTaskInstance task = processAPI.getHumanTaskInstance(taskId); //TODO activityInstanceId?
+
+        List<Comment> comments = processAPI.getComments(task.getParentProcessInstanceId());
+
+        log.info(comments.size() + " comments found");
+
+        logout(apiSession);
+
+        List<CommentWrapper> wrappers = new ArrayList<CommentWrapper>();
+        for (Comment c : comments) {
+            wrappers.add(CommentWrapperFactory.createCommentWrapper(c, identityAPI));
+        }
+
+        return wrappers;
+
+    }
+
+    private List<TaskWrapper> getTaskWrappers(Session session, ProcessAPI processAPI, IdentityAPI identityAPI, List<HumanTaskInstance> tasks) throws Exception {
+        try {
+            List<TaskWrapper> wrappers = new ArrayList<TaskWrapper>();
+
+            log.info(tasks.size() + " tasks found");
+
+            for (HumanTaskInstance t : tasks) {
+
+                TaskWrapper wrapper = TaskWrapperFactory.createTaskWrapper(t, identityAPI);
+
+                // Add process to current task
+                ProcessDeploymentInfo p = processAPI.getProcessDeploymentInfo(t.getProcessDefinitionId());
+                wrapper.setProcessWrapper(ProcessWrapperFactory.createProcessWrapper(p));
+
+                // Set direct url to task
+                wrapper.setUrl(bonitaCfg.getBonitaServerUrl() + "/" + bonitaCfg.getBonitaApplicationName() + "/console/" +
+                        "homepage?__kb=" + session.getUid() + "&ui=form&locale=en#form=" + p.getName() + "--" + p.getVersion() +
+                        "--" + t.getName() + "$entry&task=" + t.getId() + "&mode=form");
+
+                // Add comments to current task
+                List<CommentWrapper> commentWrappers = new ArrayList<CommentWrapper>();
+                List<Comment> comments = processAPI.getComments(t.getParentProcessInstanceId());
+                log.info(comments.size() + " comments found");
+                for (Comment c : comments) {
+                    commentWrappers.add(CommentWrapperFactory.createCommentWrapper(c, identityAPI));
+                }
+                wrapper.setCommentWrappers(commentWrappers);
+
+                log.info(wrapper.toString());
+                wrappers.add(wrapper);
+            }
+
+            return wrappers;
+        } catch (Exception e) {
+
+
+            log.info("  >>>>>>>>>>> exception in getTaskWrappers <<<<<<<<<<<<<<");
+            log.error("Exception !!! "+e.getMessage()+ " -- "+e.getClass().toString(), e.getCause());
+            e.printStackTrace();
+            throw e;
+
+
+        }
+
     }
 
     private APISession login(Session session) throws IOException, BonitaHomeNotSetException, ServerAPIException, UnknownAPITypeException, LoginException {

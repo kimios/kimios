@@ -5,6 +5,7 @@ import org.kimios.client.exception.ConfigException;
 import org.kimios.client.exception.DMSException;
 import org.kimios.client.exception.ExceptionHelper;
 import org.kimios.webservices.BonitaService;
+import org.kimios.webservices.pojo.CommentWrapper;
 import org.kimios.webservices.pojo.ProcessWrapper;
 import org.kimios.webservices.pojo.TaskWrapper;
 
@@ -69,6 +70,22 @@ public class BonitaController {
     public void hideTask(String sessionId, Long taskId) throws Exception {
         try {
             client.hideTask(sessionId, taskId);
+        } catch (Exception e) {
+            throw new ExceptionHelper().convertException(e);
+        }
+    }
+
+    public CommentWrapper addComment(String sessionId, Long taskId, String comment) throws Exception {
+        try {
+            return client.addComment(sessionId, taskId, comment);
+        } catch (Exception e) {
+            throw new ExceptionHelper().convertException(e);
+        }
+    }
+
+    public List<CommentWrapper> getComments(String sessionId, Long taskId) throws Exception {
+        try {
+            return client.getComments(sessionId, taskId);
         } catch (Exception e) {
             throw new ExceptionHelper().convertException(e);
         }
