@@ -183,48 +183,38 @@ public class BonitaControllerImpl implements BonitaController {
     }
 
     private List<TaskWrapper> getTaskWrappers(Session session, ProcessAPI processAPI, IdentityAPI identityAPI, List<HumanTaskInstance> tasks) throws Exception {
-        try {
-            List<TaskWrapper> wrappers = new ArrayList<TaskWrapper>();
 
-            log.info(tasks.size() + " tasks found");
+        List<TaskWrapper> wrappers = new ArrayList<TaskWrapper>();
 
-            for (HumanTaskInstance t : tasks) {
+        log.info(tasks.size() + " tasks found");
 
-                TaskWrapper wrapper = TaskWrapperFactory.createTaskWrapper(t, identityAPI);
+        for (HumanTaskInstance t : tasks) {
 
-                // Add process to current task
-                ProcessDeploymentInfo p = processAPI.getProcessDeploymentInfo(t.getProcessDefinitionId());
-                wrapper.setProcessWrapper(ProcessWrapperFactory.createProcessWrapper(p));
+            TaskWrapper wrapper = TaskWrapperFactory.createTaskWrapper(t, identityAPI);
 
-                // Set direct url to task
-                wrapper.setUrl(bonitaCfg.getBonitaServerUrl() + "/" + bonitaCfg.getBonitaApplicationName() + "/console/" +
-                        "homepage?__kb=" + session.getUid() + "&ui=form&locale=en#form=" + p.getName() + "--" + p.getVersion() +
-                        "--" + t.getName() + "$entry&task=" + t.getId() + "&mode=form");
+            // Add process to current task
+            ProcessDeploymentInfo p = processAPI.getProcessDeploymentInfo(t.getProcessDefinitionId());
+            wrapper.setProcessWrapper(ProcessWrapperFactory.createProcessWrapper(p));
 
-                // Add comments to current task
-                List<CommentWrapper> commentWrappers = new ArrayList<CommentWrapper>();
-                List<Comment> comments = processAPI.getComments(t.getParentProcessInstanceId());
-                log.info(comments.size() + " comments found");
-                for (Comment c : comments) {
-                    commentWrappers.add(CommentWrapperFactory.createCommentWrapper(c, identityAPI));
-                }
-                wrapper.setCommentWrappers(commentWrappers);
+            // Set direct url to task
+            wrapper.setUrl(bonitaCfg.getBonitaServerUrl() + "/" + bonitaCfg.getBonitaApplicationName() + "/console/" +
+                    "homepage?__kb=" + session.getUid() + "&ui=form&locale=en#form=" + p.getName() + "--" + p.getVersion() +
+                    "--" + t.getName() + "$entry&task=" + t.getId() + "&mode=form");
 
-                log.info(wrapper.toString());
-                wrappers.add(wrapper);
+            // Add comments to current task
+            List<CommentWrapper> commentWrappers = new ArrayList<CommentWrapper>();
+            List<Comment> comments = processAPI.getComments(t.getParentProcessInstanceId());
+            log.info(comments.size() + " comments found");
+            for (Comment c : comments) {
+                commentWrappers.add(CommentWrapperFactory.createCommentWrapper(c, identityAPI));
             }
+            wrapper.setCommentWrappers(commentWrappers);
 
-            return wrappers;
-        } catch (Exception e) {
-
-
-            log.info("  >>>>>>>>>>> exception in getTaskWrappers <<<<<<<<<<<<<<");
-            log.error("Exception !!! "+e.getMessage()+ " -- "+e.getClass().toString(), e.getCause());
-            e.printStackTrace();
-            throw e;
-
-
+            log.info(wrapper.toString());
+            wrappers.add(wrapper);
         }
+
+        return wrappers;
 
     }
 
