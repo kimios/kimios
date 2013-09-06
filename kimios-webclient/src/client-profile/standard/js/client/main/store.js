@@ -976,6 +976,21 @@ kimios.store = {
                     direction: 'DESC'
                 }
             });
+        },
+        getBonitaCommentsStore: function (autoLoad, taskId) {
+            return new DmsJsonStore({
+                url: 'Workflow',
+                baseParams: {
+                    action: 'getComments',
+                    taskId: taskId
+                },
+                fields: kimios.record.BonitaRecord.commentRecord,
+                autoLoad: (autoLoad ? autoLoad : false),
+                sortInfo: {
+                    field: 'id',
+                    direction: 'DESC'
+                }
+            });
         }
 
     }

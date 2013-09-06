@@ -55,7 +55,7 @@ public class WorkflowControllerWeb extends Controller {
         if (action.equals("hideTask")) {
             return hideTask();
         }
-        if (action.equals("addCommment")) {
+        if (action.equals("addComment")) {
             return addComment();
         }
         if (action.equals("getComments")) {
@@ -239,7 +239,7 @@ public class WorkflowControllerWeb extends Controller {
         List<TaskWrapper> tasks = bonitaController.getAssignedTasks(sessionUid,
                 parameters.get("start") != null ? Integer.parseInt(parameters.get("start")) : Integer.MIN_VALUE,
                 parameters.get("limit") != null ? Integer.parseInt(parameters.get("limit")) : Integer.MAX_VALUE);
-        return new JSONSerializer().serialize(tasks);
+        return new JSONSerializer().deepSerialize(tasks);
     }
 
     private String takeTask() throws Exception {

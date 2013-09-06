@@ -149,14 +149,17 @@ public class BonitaControllerImpl implements BonitaController {
         ProcessAPI processAPI = TenantAPIAccessor.getProcessAPI(apiSession);
         IdentityAPI identityAPI = TenantAPIAccessor.getIdentityAPI(apiSession);
 
-        HumanTaskInstance task = processAPI.getHumanTaskInstance(taskId); //TODO activityInstanceId?
+        log.info("taskId: " + taskId);
+        HumanTaskInstance task = processAPI.getHumanTaskInstance(taskId);
 
         log.info("Adding comment: " + comment);
         Comment submitted = processAPI.addComment(task.getParentProcessInstanceId(), comment);
 
+        CommentWrapper c = CommentWrapperFactory.createCommentWrapper(submitted, identityAPI);
+
         logout(apiSession);
 
-        return CommentWrapperFactory.createCommentWrapper(submitted, identityAPI);
+        return c;
     }
 
     public List<CommentWrapper> getComments(Session session, Long taskId) throws LoginException, ServerAPIException, BonitaHomeNotSetException, UnknownAPITypeException, IOException, ActivityInstanceNotFoundException, LogoutException, SessionNotFoundException, UserNotFoundException {
@@ -164,22 +167,21 @@ public class BonitaControllerImpl implements BonitaController {
         ProcessAPI processAPI = TenantAPIAccessor.getProcessAPI(apiSession);
         IdentityAPI identityAPI = TenantAPIAccessor.getIdentityAPI(apiSession);
 
-
-        HumanTaskInstance task = processAPI.getHumanTaskInstance(taskId); //TODO activityInstanceId?
+        log.info("taskId: " + taskId);
+        HumanTaskInstance task = processAPI.getHumanTaskInstance(taskId);
 
         List<Comment> comments = processAPI.getComments(task.getParentProcessInstanceId());
 
         log.info(comments.size() + " comments found");
-
-        logout(apiSession);
 
         List<CommentWrapper> wrappers = new ArrayList<CommentWrapper>();
         for (Comment c : comments) {
             wrappers.add(CommentWrapperFactory.createCommentWrapper(c, identityAPI));
         }
 
-        return wrappers;
+        logout(apiSession);
 
+        return wrappers;
     }
 
     private List<TaskWrapper> getTaskWrappers(Session session, ProcessAPI processAPI, IdentityAPI identityAPI, List<HumanTaskInstance> tasks) throws Exception {

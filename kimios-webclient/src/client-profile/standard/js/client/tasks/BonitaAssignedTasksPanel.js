@@ -225,25 +225,25 @@ kimios.tasks.BonitaAssignedTasksPanel = Ext.extend(Ext.grid.GridPanel, {
         this.expectedEndDateField = new Ext.form.DisplayField({
             anchor: '100%',
             fieldLabel: 'Due date',
-            value: kimios.date(task.expectedEndDate)
+            value: task.expectedEndDate > 0 ? kimios.date(task.expectedEndDate) : ''
         });
 
         this.lastUpdateDateField = new Ext.form.DisplayField({
             anchor: '100%',
             fieldLabel: 'Last update date',
-            value: kimios.date(task.lastUpdateDate)
+            value: task.lastUpdateDate > 0 ? kimios.date(task.lastUpdateDate) : ''
         });
 
         this.claimedField = new Ext.form.DisplayField({
             anchor: '100%',
             fieldLabel: 'Claimed date',
-            value: kimios.date(task.claimedDate)
+            value: task.claimedDate > 0 ? kimios.date(task.claimedDate) : ''
         });
 
         this.reachedStateField = new Ext.form.DisplayField({
             anchor: '100%',
             fieldLabel: 'Reached state date',
-            value: kimios.date(task.reachedStateDate)
+            value: task.reachedStateDate > 0 ? kimios.date(task.reachedStateDate) : ''
         });
 
         this.descriptionField = new Ext.form.DisplayField({
@@ -252,26 +252,24 @@ kimios.tasks.BonitaAssignedTasksPanel = Ext.extend(Ext.grid.GridPanel, {
             value: task.description ? task.description : 'No description'
         });
 
-        console.log(actor);
-        console.log(assignee);
-        console.log(comments);
-
         return new Ext.Window({
             id: 'BonitaAssignedTaskWindowID',
-            width: 500,
-            height: 485,
-            layout: 'fit',
-            border: false,
+            width: 640,
+            height: 460,
+            layout: 'border',
+            border: true,
             title: task.name,
             iconCls: 'accept-status',
             maximizable: true,
             modal: true,
-            autoScroll: true,
             items: [
                 new kimios.FormPanel({
                     bodyStyle: 'padding:10px;background-color:transparent;',
-                    labelWidth: 200,
                     autoScroll: true,
+                    labelWidth: 140,
+                    border: false,
+                    width: 315,
+                    region: 'west',
                     defaults: {
                         style: 'font-size: 11px',
                         labelStyle: 'font-size: 11px;font-weight:bold;'
@@ -280,7 +278,7 @@ kimios.tasks.BonitaAssignedTasksPanel = Ext.extend(Ext.grid.GridPanel, {
                         new Ext.form.FieldSet({
                             title: 'Task Details',
                             layout: 'form',
-                            collapsible: false,
+                            collapsible: true,
                             defaults: {
                                 style: 'font-size: 11px',
                                 labelStyle: 'font-size: 11px;font-weight:bold;'
@@ -292,13 +290,14 @@ kimios.tasks.BonitaAssignedTasksPanel = Ext.extend(Ext.grid.GridPanel, {
                                 this.versionField,
                                 this.caseField,
                                 this.stateField,
-                                this.priorityField
+                                this.priorityField,
+                                this.descriptionField
                             ]
                         }),
                         new Ext.form.FieldSet({
                             title: 'Task Dates',
                             layout: 'form',
-                            collapsible: false,
+                            collapsible: true,
                             defaults: {
                                 style: 'font-size: 11px',
                                 labelStyle: 'font-size: 11px;font-weight:bold;'
@@ -310,22 +309,17 @@ kimios.tasks.BonitaAssignedTasksPanel = Ext.extend(Ext.grid.GridPanel, {
                                 this.claimedField,
                                 this.reachedStateField
                             ]
-                        }),
-                        new Ext.form.FieldSet({
-                            title: 'Others',
-                            layout: 'form',
-                            collapsible: false,
-                            defaults: {
-                                style: 'font-size: 11px',
-                                labelStyle: 'font-size: 11px;font-weight:bold;'
-                            },
-                            bodyStyle: 'padding:3px;background-color:transparent;',
-                            items: [
-                                this.descriptionField
-                            ]
                         })
                     ]
+                }),
+                new kimios.tasks.CommentsPanel({
+                    taskId: task.id,
+                    comments:comments,
+                    bodyStyle: 'background-color:transparent;',
+                    border: false,
+                    region: 'center'
                 })
+
             ],
             fbar: [
                 {
@@ -338,10 +332,10 @@ kimios.tasks.BonitaAssignedTasksPanel = Ext.extend(Ext.grid.GridPanel, {
 
                         var iframe = new Ext.Window({
                             width: 640,
-                            height: 480,
+                            height: 460,
                             layout: 'fit',
-                            border: false,
-                            title: kimios.lang('WorkflowStatus'),
+                            title: task.name,
+                            iconCls: 'accept-status',
                             maximizable: true,
                             closable: false,
                             modal: true,
@@ -350,7 +344,6 @@ kimios.tasks.BonitaAssignedTasksPanel = Ext.extend(Ext.grid.GridPanel, {
                                 {
                                     html: '<iframe id="reportframe" border="0" width="100%" height="100%" ' +
                                         'frameborder="0" marginheight="12" marginwidth="16" scrolling="auto" ' +
-                                        'style="padding: 16px" ' +
                                         'src="' + url + '"></iframe>'
                                 }
                             ],
