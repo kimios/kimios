@@ -66,32 +66,32 @@ kimios.explorer.Toolbar = Ext.extend(Ext.Toolbar, {
 //            enableToggle: true,
             handler: function (b, s) {
                 var vp = kimios.explorer.getViewport();
-                vp.westPanel.setActiveGroup(6);     // cart panel
+                vp.westPanel.setActiveGroup(4);     // cart panel
                 vp.westPanel.activeGroup.setActiveTab(0);
             }
         });
 
         this.myTasksButton = new Ext.Button({
-            text: kimios.lang('BonitaPendingTasks'),
+            text: kimios.lang('MyTasks'),
             iconCls: 'tasks',
             hidden: true,
-            handler: function () {
-                var vp = kimios.explorer.getViewport();
-                vp.westPanel.setActiveGroup(4);     // my tasks panel
-                vp.westPanel.activeGroup.setActiveTab(0);
-            }
-        });
-
-        this.myAssignedTasksButton = new Ext.Button({
-            text: kimios.lang('BonitaAssignedTasks'),
-            iconCls: 'tasks',
-            hidden: true,
+            pending: 0,
+            assigned: 0,
             handler: function () {
                 var vp = kimios.explorer.getViewport();
                 vp.westPanel.setActiveGroup(5);     // my tasks panel
                 vp.westPanel.activeGroup.setActiveTab(0);
+            },
+            refresh: function (p, a) {
+                if (p != undefined) this.pending = p;
+                if (a != undefined) this.assigned = a;
+                if (this.pending == 0 && this.assigned == 0)
+                    this.setText(kimios.lang('MyTasks'));
+                else
+                    this.setText(kimios.lang('MyTasks') + ' (' + (this.pending + this.assigned) + ')');
             }
         });
+
 
         this.logoutButton = new Ext.Button({
             tooltip: kimios.lang('Logout'),
@@ -153,7 +153,6 @@ kimios.explorer.Toolbar = Ext.extend(Ext.Toolbar, {
         buttonsArray.push(this.advancedSearchButton);
         buttonsArray.push(this.cartButton);
         buttonsArray.push(this.myTasksButton);
-        buttonsArray.push(this.myAssignedTasksButton);
         buttonsArray.push(this.myAccountButton);
         buttonsArray.push(this.toolsMenu);
         buttonsArray.push('-');
@@ -177,7 +176,6 @@ kimios.explorer.Toolbar = Ext.extend(Ext.Toolbar, {
                 }
                 var isVisible = kimios.getImplPackage() == 'org.kimios.kernel.user.impl.HAuthenticationSource';
                 this.myTasksButton.setVisible(true);
-                this.myAssignedTasksButton.setVisible(true);
                 this.myAccountButton.setVisible(isVisible);
                 this.toolsMenu.setVisible(!Ext.getCmp('kimios-tools').simpleUser);
                 this.logoutButton.setVisible(true);
@@ -200,8 +198,7 @@ kimios.explorer.Toolbar = Ext.extend(Ext.Toolbar, {
         this.languageMenu.refreshLanguage();
         this.toolsMenu.refreshLanguage();
         this.advancedSearchButton.setText(kimios.lang('SearchButton'));
-        this.myTasksButton.setText(kimios.lang('BonitaPendingTasks'));
-        this.myAssignedTasksButton.setText(kimios.lang('BonitaAssignedTasks'));
+        this.myTasksButton.setText(kimios.lang('MyTasks'));
         this.myAccountButton.setText(kimios.lang('MyAccount'));
         this.logoutButton.setTooltip(kimios.lang('Logout'));
         this.loggedAsLabel.setValue(lg != undefined ? lg : this.getLoggedAsString());

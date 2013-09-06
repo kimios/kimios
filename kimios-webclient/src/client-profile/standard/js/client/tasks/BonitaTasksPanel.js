@@ -110,16 +110,25 @@ kimios.tasks.BonitaTasksPanel = Ext.extend(Ext.grid.GridPanel, {
     initComponent: function () {
         kimios.tasks.BonitaTasksPanel.superclass.initComponent.apply(this, arguments);
 
+        this.store.on('beforeload', function (store, records, options) {
+            kimios.explorer.getToolbar().myTasksButton.setIconClass('loading');
+            Ext.getCmp('bonitaTabPanelId').setIconClass('loading');
+//            Ext.getCmp('bonitaTabPanelId').setIconClass('loading');
+
+        }, this);
+
         this.store.on('load', function (store, records, options) {
+
             this.tasksCounter = records.length;
-            var newTitle = kimios.lang('BonitaPendingTasks') + ' ' + (this.tasksCounter > 0 ? '(' + this.tasksCounter + ')' : '');
-            var tasksButton = kimios.explorer.getToolbar().myTasksButton;
-            this.setTitle(newTitle);
-            tasksButton.setText(newTitle);
-            this.setIconClass(null);
-            tasksButton.setIconClass('tasks');
-            if (this.lastSelectedRow != undefined)
-                this.getSelectionModel().selectRow(this.lastSelectedRow);
+
+            this.setTitle(kimios.lang('BonitaPendingTasks') + ' ' + (this.tasksCounter > 0 ? '(' + this.tasksCounter + ')' : ''));
+
+            Ext.getCmp('bonitaTabPanelId').refresh(this.tasksCounter, undefined);
+            Ext.getCmp('bonitaTabPanelId').setIconClass(undefined);
+
+            kimios.explorer.getToolbar().myTasksButton.refresh(this.tasksCounter, undefined);
+            kimios.explorer.getToolbar().myTasksButton.setIconClass('tasks');
+
             kimios.explorer.getToolbar().doLayout(); // My Tasks button GUI fix
         }, this);
 
@@ -143,30 +152,13 @@ kimios.tasks.BonitaTasksPanel = Ext.extend(Ext.grid.GridPanel, {
     },
 
     refresh: function () {
-        this.setIconClass('loading');
-        kimios.explorer.getToolbar().myTasksButton.setIconClass('loading');
+
         this.store.reload({
-//            params: {
-//                start: 0,
-//                limit: 5
-//            },
-            scope: this,
-            callback: function (records) {
-//                if (!records || records.length == 0) {
-//                    this.store.insert(0, new Ext.data.Record({
-//                        name: kimios.lang('NoTasks'),
-//                        type: 9,
-//                        extension: null
-//                    }));
-//                }
-            }
+            scope: this
         });
     },
 
     refreshLanguage: function () {
-        var newTitle = kimios.lang('BonitaPendingTasks') + ' ' + (this.tasksCounter > 0 ? '(' + this.tasksCounter + ')' : '');
-        this.setTitle(newTitle);
-        kimios.explorer.getToolbar().myTasksButton.setText(newTitle);
         this.refresh();
         this.doLayout();
     },

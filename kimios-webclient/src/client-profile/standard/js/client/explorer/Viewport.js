@@ -82,6 +82,10 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
 
                 this.tasksPanel = new kimios.tasks.BonitaTasksPanel({});
                 this.tasksAssignedPanel = new kimios.tasks.BonitaAssignedTasksPanel({});
+
+                var tasksPendingPanel = this.tasksPanel;
+                var tasksAssignedPanel = this.tasksAssignedPanel;
+
                 this.cartPanel = new kimios.explorer.Cart({});
 
                 // west
@@ -111,13 +115,33 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                             items: [this.recentItemsPanel]
                         },
                         {
-                            items: [this.tasksPanel]
-                        },
-                        {
-                            items: [this.tasksAssignedPanel]
-                        },
-                        {
                             items: [this.cartPanel]
+                        },
+                        {
+                            border: false,
+                            items: [
+                                new Ext.TabPanel({
+                                    id: 'bonitaTabPanelId',
+                                    title: kimios.lang('MyTasks'),
+                                    activeTab: 0,
+                                    pending: 0,
+                                    assigned: 0,
+                                    items: [
+                                        tasksPendingPanel,
+                                        tasksAssignedPanel
+                                    ],
+                                    refresh: function (p, a) {
+                                        if (p != undefined) this.pending = p;
+                                        if (a != undefined) this.assigned = a;
+                                        if (this.pending == 0 && this.assigned == 0)
+                                            this.setTitle(kimios.lang('MyTasks'));
+                                        else
+                                            this.setTitle(kimios.lang('MyTasks') + ' (' + (this.pending + this.assigned) + ')<br/><div style="font-size:.9em;font-weight:normal;"> ' +
+                                                this.pending + ' ' + kimios.lang('BonitaPendingTasks') + '<br/>' +
+                                                this.assigned + ' ' + kimios.lang('BonitaAssignedTasks') + '</div>');
+                                    }
+                                })
+                            ]
                         }
                     ],
                     margins: '5 0 5 5',
