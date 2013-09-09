@@ -2,7 +2,7 @@ package org.kimios.webservices;
 
 import org.kimios.webservices.pojo.CommentWrapper;
 import org.kimios.webservices.pojo.ProcessWrapper;
-import org.kimios.webservices.pojo.TaskWrapper;
+import org.kimios.webservices.pojo.TasksResponse;
 
 import javax.jws.WebParam;
 import javax.jws.WebService;
@@ -26,19 +26,19 @@ public interface BonitaService {
     @GET
     @Path("/processes/getPendingTasks")
     @Produces("application/json")
-    List<TaskWrapper> getPendingTasks(
+    TasksResponse getPendingTasks(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
-            @QueryParam(value = "min") @WebParam(name = "min") int min,
-            @QueryParam(value = "max") @WebParam(name = "max") int max
+            @QueryParam(value = "start") @WebParam(name = "start") int start,
+            @QueryParam(value = "limit") @WebParam(name = "limit") int limit
     ) throws DMServiceException;
 
     @GET
     @Path("/tasks/getAssignedTasks")
     @Produces("application/json")
-    List<TaskWrapper> getAssignedTasks(
+    TasksResponse getAssignedTasks(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
-            @QueryParam(value = "min") @WebParam(name = "min") int min,
-            @QueryParam(value = "max") @WebParam(name = "max") int max
+            @QueryParam(value = "start") @WebParam(name = "start") int start,
+            @QueryParam(value = "limit") @WebParam(name = "limit") int limit
     ) throws DMServiceException;
 
     @GET
@@ -68,7 +68,7 @@ public interface BonitaService {
     @GET
     @Path("/tasks/addComment")
     @Produces("application/json")
-    public CommentWrapper addComment(
+    CommentWrapper addComment(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "taskId") @WebParam(name = "taskId") Long taskId,
             @QueryParam(value = "comment") @WebParam(name = "comment") String comment
@@ -77,7 +77,7 @@ public interface BonitaService {
     @GET
     @Path("/tasks/getComments")
     @Produces("application/json")
-    public List<CommentWrapper> getComments(
+    List<CommentWrapper> getComments(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "taskId") @WebParam(name = "taskId") Long taskId
     ) throws DMServiceException;

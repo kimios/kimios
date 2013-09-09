@@ -1,14 +1,13 @@
 package org.kimios.webservices.impl;
 
 
-import org.bonitasoft.engine.bpm.comment.Comment;
 import org.kimios.kernel.controller.BonitaController;
 import org.kimios.webservices.BonitaService;
 import org.kimios.webservices.DMServiceException;
 import org.kimios.webservices.ServiceHelper;
 import org.kimios.webservices.pojo.CommentWrapper;
 import org.kimios.webservices.pojo.ProcessWrapper;
-import org.kimios.webservices.pojo.TaskWrapper;
+import org.kimios.webservices.pojo.TasksResponse;
 
 import javax.jws.WebService;
 import java.util.List;
@@ -32,17 +31,17 @@ public class BonitaServiceImpl implements BonitaService {
         }
     }
 
-    public List<TaskWrapper> getPendingTasks(String sessionId, int min, int max) throws DMServiceException {
+    public TasksResponse getPendingTasks(String sessionId, int start, int limit) throws DMServiceException {
         try {
-            return controller.getPendingTasks(helper.getSession(sessionId), min, max);
+            return controller.getPendingTasks(helper.getSession(sessionId), start, limit);
         } catch (Exception e) {
             throw new DMServiceException(e.getMessage(), e);
         }
     }
 
-    public List<TaskWrapper> getAssignedTasks(String sessionId, int min, int max) throws DMServiceException {
+    public TasksResponse getAssignedTasks(String sessionId, int start, int limit) throws DMServiceException {
         try {
-            return controller.getAssignedTasks(helper.getSession(sessionId), min, max);
+            return controller.getAssignedTasks(helper.getSession(sessionId), start, limit);
         } catch (Exception e) {
             throw new DMServiceException(e.getMessage(), e);
         }

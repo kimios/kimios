@@ -1,8 +1,6 @@
 package org.kimios.kernel.controller;
 
-import org.bonitasoft.engine.bpm.comment.Comment;
 import org.bonitasoft.engine.bpm.flownode.ActivityInstanceNotFoundException;
-import org.bonitasoft.engine.bpm.process.ProcessDefinitionNotFoundException;
 import org.bonitasoft.engine.exception.BonitaHomeNotSetException;
 import org.bonitasoft.engine.exception.ServerAPIException;
 import org.bonitasoft.engine.exception.UnknownAPITypeException;
@@ -14,7 +12,7 @@ import org.bonitasoft.engine.session.SessionNotFoundException;
 import org.kimios.kernel.security.Session;
 import org.kimios.webservices.pojo.CommentWrapper;
 import org.kimios.webservices.pojo.ProcessWrapper;
-import org.kimios.webservices.pojo.TaskWrapper;
+import org.kimios.webservices.pojo.TasksResponse;
 
 import java.io.IOException;
 import java.util.List;
@@ -24,9 +22,9 @@ public interface BonitaController {
     List<ProcessWrapper> getProcesses(Session session) throws LoginException, ServerAPIException,
             BonitaHomeNotSetException, UnknownAPITypeException, IOException, LogoutException, SessionNotFoundException;
 
-    List<TaskWrapper> getPendingTasks(Session session, int min, int max) throws Exception;
+    TasksResponse getPendingTasks(Session session, int start, int limit) throws Exception;
 
-    List<TaskWrapper> getAssignedTasks(Session session, int min, int max) throws Exception;
+    TasksResponse getAssignedTasks(Session session, int start, int limit) throws Exception;
 
     void takeTask(Session session, Long taskId) throws LoginException, ServerAPIException, BonitaHomeNotSetException,
             UnknownAPITypeException, IOException, LogoutException, SessionNotFoundException, UpdateException;

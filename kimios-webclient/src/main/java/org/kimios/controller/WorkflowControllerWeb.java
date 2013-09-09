@@ -23,6 +23,7 @@ import org.kimios.kernel.ws.pojo.DocumentWorkflowStatusRequest;
 import org.kimios.kernel.ws.pojo.WorkflowStatus;
 import org.kimios.webservices.pojo.CommentWrapper;
 import org.kimios.webservices.pojo.TaskWrapper;
+import org.kimios.webservices.pojo.TasksResponse;
 
 import java.util.*;
 
@@ -228,18 +229,18 @@ public class WorkflowControllerWeb extends Controller {
 
     private String getBonitaPendingTasks() throws Exception {
 
-        List<TaskWrapper> tasks = bonitaController.getPendingTasks(sessionUid,
+        TasksResponse response = bonitaController.getPendingTasks(sessionUid,
                 parameters.get("start") != null ? Integer.parseInt(parameters.get("start")) : Integer.MIN_VALUE,
                 parameters.get("limit") != null ? Integer.parseInt(parameters.get("limit")) : Integer.MAX_VALUE);
-        return new JSONSerializer().deepSerialize(tasks);
+        return new JSONSerializer().deepSerialize(response);
     }
 
     private String getBonitaAssignedTasks() throws Exception {
 
-        List<TaskWrapper> tasks = bonitaController.getAssignedTasks(sessionUid,
+        TasksResponse response = bonitaController.getAssignedTasks(sessionUid,
                 parameters.get("start") != null ? Integer.parseInt(parameters.get("start")) : Integer.MIN_VALUE,
                 parameters.get("limit") != null ? Integer.parseInt(parameters.get("limit")) : Integer.MAX_VALUE);
-        return new JSONSerializer().deepSerialize(tasks);
+        return new JSONSerializer().deepSerialize(response);
     }
 
     private String takeTask() throws Exception {

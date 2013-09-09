@@ -8,6 +8,7 @@ import org.kimios.webservices.BonitaService;
 import org.kimios.webservices.pojo.CommentWrapper;
 import org.kimios.webservices.pojo.ProcessWrapper;
 import org.kimios.webservices.pojo.TaskWrapper;
+import org.kimios.webservices.pojo.TasksResponse;
 
 import java.util.List;
 
@@ -33,7 +34,7 @@ public class BonitaController {
         }
     }
 
-    public List<TaskWrapper> getPendingTasks(String sessionId, int min, int max) throws Exception {
+    public TasksResponse getPendingTasks(String sessionId, int min, int max) throws Exception {
         try {
             return client.getPendingTasks(sessionId, min, max);
 
@@ -42,7 +43,7 @@ public class BonitaController {
         }
     }
 
-    public List<TaskWrapper> getAssignedTasks(String sessionId, int min, int max) throws Exception {
+    public TasksResponse getAssignedTasks(String sessionId, int min, int max) throws Exception {
         try {
             return client.getAssignedTasks(sessionId, min, max);
 

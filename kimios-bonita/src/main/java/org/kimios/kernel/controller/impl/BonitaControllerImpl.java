@@ -28,6 +28,7 @@ import org.kimios.webservices.impl.factory.TaskWrapperFactory;
 import org.kimios.webservices.pojo.CommentWrapper;
 import org.kimios.webservices.pojo.ProcessWrapper;
 import org.kimios.webservices.pojo.TaskWrapper;
+import org.kimios.webservices.pojo.TasksResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,34 +80,40 @@ public class BonitaControllerImpl implements BonitaController {
         return wrappers;
     }
 
-    public List<TaskWrapper> getPendingTasks(Session session, int min, int max) throws Exception {
+    public TasksResponse getPendingTasks(Session session, int start, int limit) throws Exception {
 
         APISession apiSession = login(session);
         ProcessAPI processAPI = TenantAPIAccessor.getProcessAPI(apiSession);
         IdentityAPI identityAPI = TenantAPIAccessor.getIdentityAPI(apiSession);
 
         List<HumanTaskInstance> pendingTasks = processAPI.getPendingHumanTaskInstances(
-                apiSession.getUserId(), min, max, ActivityInstanceCriterion.PRIORITY_ASC);
+                apiSession.getUserId(), start, limit, ActivityInstanceCriterion.PRIORITY_ASC);
+
+        long count = processAPI.getNumberOfPendingHumanTaskInstances(apiSession.getUserId());
 
         List<TaskWrapper> taskWrappers = getTaskWrappers(session, processAPI, identityAPI, pendingTasks);
 
         logout(apiSession);
-        return taskWrappers;
+
+        return new TasksResponse(taskWrappers, count);
     }
 
-    public List<TaskWrapper> getAssignedTasks(Session session, int min, int max) throws Exception {
+    public TasksResponse getAssignedTasks(Session session, int start, int limit) throws Exception {
 
         APISession apiSession = login(session);
         ProcessAPI processAPI = TenantAPIAccessor.getProcessAPI(apiSession);
         IdentityAPI identityAPI = TenantAPIAccessor.getIdentityAPI(apiSession);
 
         List<HumanTaskInstance> assignedTasks = processAPI.getAssignedHumanTaskInstances(
-                apiSession.getUserId(), min, max, ActivityInstanceCriterion.PRIORITY_ASC);
+                apiSession.getUserId(), start, limit, ActivityInstanceCriterion.PRIORITY_ASC);
+
+        long count = processAPI.getNumberOfAssignedHumanTaskInstances(apiSession.getUserId());
 
         List<TaskWrapper> taskWrappers = getTaskWrappers(session, processAPI, identityAPI, assignedTasks);
 
         logout(apiSession);
-        return taskWrappers;
+
+        return new TasksResponse(taskWrappers, count);
     }
 
     public void takeTask(Session session, Long taskId) throws LoginException, ServerAPIException,
@@ -203,14 +210,14 @@ public class BonitaControllerImpl implements BonitaController {
                     "homepage?__kb=" + session.getUid() + "&ui=form&locale=en#form=" + p.getName() + "--" + p.getVersion() +
                     "--" + t.getName() + "$entry&task=" + t.getId() + "&mode=form");
 
-            // Add comments to current task
-            List<CommentWrapper> commentWrappers = new ArrayList<CommentWrapper>();
-            List<Comment> comments = processAPI.getComments(t.getParentProcessInstanceId());
-            log.info(comments.size() + " comments found");
-            for (Comment c : comments) {
-                commentWrappers.add(CommentWrapperFactory.createCommentWrapper(c, identityAPI));
-            }
-            wrapper.setCommentWrappers(commentWrappers);
+//            // Add comments to current task
+//            List<CommentWrapper> commentWrappers = new ArrayList<CommentWrapper>();
+//            List<Comment> comments = processAPI.getComments(t.getParentProcessInstanceId());
+//            log.info(comments.size() + " comments found");
+//            for (Comment c : comments) {
+//                commentWrappers.add(CommentWrapperFactory.createCommentWrapper(c, identityAPI));
+//            }
+//            wrapper.setCommentWrappers(commentWrappers);
 
             log.info(wrapper.toString());
             wrappers.add(wrapper);

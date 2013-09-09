@@ -226,11 +226,13 @@
 .accept-status {
     background-image: url(../icons/16x16/accept.png) !important;
     background-repeat: no-repeat;
+    background-position: center center;
 }
 
 .reject-status {
     background-image: url(../icons/16x16/reject.png) !important;
     background-repeat: no-repeat;
+    background-position: center center;
 }
 
 .admin-domain-tree-node {

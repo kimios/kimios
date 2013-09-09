@@ -949,12 +949,16 @@ kimios.store = {
                 }
             });
         },
-        getBonitaPendingTasksStore: function (autoLoad) {
+        getBonitaPendingTasksStore: function (autoLoad, pageSize) {
             return new DmsJsonStore({
                 url: 'Workflow',
                 baseParams: {
-                    action: 'getBonitaPendingTasks'
+                    action: 'getBonitaPendingTasks',
+                    start: 0,
+                    limit: pageSize
                 },
+                root: 'tasks',
+                totalProperty: 'totalProperty',
                 fields: kimios.record.BonitaRecord.taskRecord,
                 autoLoad: (autoLoad ? autoLoad : false),
                 sortInfo: {
@@ -963,12 +967,16 @@ kimios.store = {
                 }
             });
         },
-        getBonitaAssignedTasksStore: function (autoLoad) {
+        getBonitaAssignedTasksStore: function (autoLoad, pageSize) {
             return new DmsJsonStore({
                 url: 'Workflow',
                 baseParams: {
-                    action: 'getBonitaAssignedTasks'
+                    action: 'getBonitaAssignedTasks',
+                    start: 0,
+                    limit: pageSize
                 },
+                root: 'tasks',
+                totalProperty: 'totalProperty',
                 fields: kimios.record.BonitaRecord.taskRecord,
                 autoLoad: (autoLoad ? autoLoad : false),
                 sortInfo: {
