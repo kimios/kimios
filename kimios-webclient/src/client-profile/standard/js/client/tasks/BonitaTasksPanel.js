@@ -113,7 +113,7 @@ kimios.tasks.BonitaTasksPanel = Ext.extend(Ext.grid.GridPanel, {
             kimios.explorer.getToolbar().myTasksButton.refresh(this.tasksCounter, undefined);
             kimios.explorer.getToolbar().myTasksButton.setIconClass('tasks');
 
-            if (records.length == 0) {
+            if (records.length == 0 && records.length != 0) {
                 Ext.getCmp('kimios-tasks-panel-pbar').moveLast();
             }
 
