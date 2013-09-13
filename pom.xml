@@ -97,6 +97,7 @@
         <module>kimios-webclient</module>
         <module>kimios-convert</module>
         <module>kimios-bonita</module>
+        <module>kimios-home</module>
     </modules>
     <packaging>pom</packaging>
     <build>

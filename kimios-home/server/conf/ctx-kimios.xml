@@ -19,31 +19,57 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
-    <bean  id="propertyConfigurer"
-            class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"></property>
-        <property name="location">
-            <value>/WEB-INF/conf/kimios.properties</value>
+    <!-- Load the standard Kimios Spring Configuration files -->
+    <import resource="classpath*:/META-INF/spring/ctx-kimios*.xml" />
+
+    <!--<import resource="datasource/${datastdaource.mode}/ctx-kimios-ds.xml"/>  -->
+
+
+    <!-- Data Source -->
+    <bean id="kimiosDataSource" class="com.atomikos.jdbc.nonxa.AtomikosNonXADataSourceBean">
+        <property name="uniqueResourceName" value="jdbc/dms"/>
+        <property name="maxPoolSize" value="100"/>
+        <property name="minPoolSize" value="20"/>
+        <property name="maxIdleTime" value="1000"/>
+        <property name="driverClassName">
+            <value>${jdbc.driver}</value>
+        </property>
+        <property name="url">
+            <value>${jdbc.url}</value>
+        </property>
+        <property name="user">
+            <value>${jdbc.user}</value>
+        </property>
+        <property name="password">
+            <value>${jdbc.password}</value>
+        </property>
+        <property name="testQuery">
+            <value>select 1;</value>
         </property>
     </bean>
 
-    <import resource="datasource/${datasource.mode}/ctx-kimios-ds.xml"/>
+    <!-- JNDI Data Source Settings Example :
 
-    <bean id="configurationManager" class="org.kimios.utils.configuration.ConfigurationManager">
-        <property name="holder">
-            <bean class="org.kimios.utils.configuration.PropertiesConfigurationHolder">
-                <property name="values">
-                    <bean id="myProperties"
-                            class="org.springframework.beans.factory.config.PropertiesFactoryBean">
-                        <property name="location" value="/WEB-INF/conf/kimios.properties"/>
-                    </bean>
-                </property>
-            </bean>
-        </property>
+      JNDI Sping Bean
+      <bean id="kimiosDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName" value="${jdbc.jndids}" />
     </bean>
 
+    Tomcat JNDI Setup Example (inside webappDir/META-INF/context.xml
+
+   <Context ...>
+    <Resource name="jdbc/dms" auth="Container" type="com.atomikos.jdbc.nonxa.AtomikosNonXADataSourceBean"
+          factory="org.apache.naming.factory.BeanFactory"
+          driverClassName="org.postgresql.Driver"
+          uniqueResourceName="jdbc/dms"
+          user="postgres" password="farfou" url="jdbc:postgresql://localhost:5432/kimios-test"
+      maxPoolSize="50" minPoolSize="30" maxIdleTime="1000" readOnly="true" />
+    <Transaction name="UserTransaction" factory="com.atomikos.icatch.jta.UserTransactionFactory" />
+  </Context>
+    -->
 
 
+    <!-- Initialize Transaction Manager -->
     <bean id="userTransactionService"
             class="com.atomikos.icatch.config.UserTransactionServiceImp"
             init-method="init" destroy-method="shutdownForce">

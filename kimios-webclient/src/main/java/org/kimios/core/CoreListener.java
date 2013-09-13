@@ -54,7 +54,7 @@ public class CoreListener extends ContextLoader implements ServletContextListene
                Check config file exist
             */
             String settingsPath =
-                    event.getServletContext().getRealPath("/WEB-INF/kimios.properties");
+                    System.getProperty("kimios.home") + "/client/conf/kimios.properties";
             File f = new File(settingsPath);
             if (!f.exists()) {
                 /*

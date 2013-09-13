@@ -19,8 +19,12 @@
         id="kimios-server">
     <display-name>kimios server</display-name>
     <context-param>
-        <param-name>contextConfigLocation</param-name>
-        <param-value>/WEB-INF/conf/ctx-kimios*.xml classpath*:/META-INF/spring/ctx-kimios*.xml</param-value>
+        <param-name>contextClass</param-name>
+        <param-value>org.kimios.utils.spring.KimiosWebApplicationContext</param-value>
+    </context-param>
+    <context-param>
+        <param-name>kimios.app.settings</param-name>
+        <param-value>server</param-value>
     </context-param>
     <context-param>
         <param-name>service-list-stylesheet</param-name>

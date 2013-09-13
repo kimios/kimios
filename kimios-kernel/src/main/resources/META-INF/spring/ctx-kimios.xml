@@ -24,6 +24,26 @@
       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
+
+    <bean id="propertyConfigurer" class="org.kimios.utils.spring.PropertiesHolderPropertyPlaceholderConfiguer">
+        <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"></property>
+        <property name="locations">
+            <list>
+                <value>${kimios.home}/server/conf/kimios.properties</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="configurationManager" class="org.kimios.utils.configuration.ConfigurationManager">
+        <property name="holder">
+            <bean class="org.kimios.utils.configuration.SpringPropertiesConfigurationHolder">
+                <constructor-arg ref="propertyConfigurer" />
+            </bean>
+        </property>
+    </bean>
+
+
+
     <tx:advice id="txAdvice" transaction-manager="transactionManager">
         <tx:attributes>
             <tx:method read-only="true" name="reindex" timeout="3600000"/>

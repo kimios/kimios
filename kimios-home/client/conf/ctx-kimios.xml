@@ -22,27 +22,7 @@
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
         default-autowire="byName">
 
-    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-      <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"></property>
-      <property name="locations">
-            <list>
-                <value>/WEB-INF/kimios.properties</value>
-            </list>
-        </property>
-    </bean>
+    <import resource="classpath*:/kimios-ctx-client-setup.xml" />
 
-    <bean id="configurationManager" class="org.kimios.utils.configuration.ConfigurationManager">
-        <property name="holder">
-            <bean class="org.kimios.utils.configuration.PropertiesConfigurationHolder">
-                <property name="values">
-                    <bean id="myProperties"
-                            class="org.springframework.beans.factory.config.PropertiesFactoryBean">
-                        <property name="location" value="/WEB-INF/kimios.properties"/>
-                    </bean>
-                </property>
-            </bean>
-        </property>
-    </bean>
-
-
+    <import resource="classpath*:/kimios-ctx-client-rest.xml" />
 </beans>

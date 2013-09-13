@@ -22,9 +22,21 @@
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
        default-autowire="byName">
 
-    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="location">
-            <value>kimios.properties</value>
+    <bean id="propertyConfiguer" class="org.kimios.utils.spring.PropertiesHolderPropertyPlaceholderConfiguer">
+        <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"></property>
+        <property name="locations">
+            <list>
+                <value>${kimios.home}/client/conf/kimios.properties</value>
+            </list>
+        </property>
+    </bean>
+
+
+    <bean id="configurationManager" class="org.kimios.utils.configuration.ConfigurationManager">
+        <property name="holder">
+            <bean id="configurationHolder" class="org.kimios.utils.configuration.SpringPropertiesConfigurationHolder">
+                <constructor-arg ref="propertyConfiguer" />
+            </bean>
         </property>
     </bean>
 
