@@ -16,28 +16,17 @@
  */
 package org.kimios.kernel.ws.pojo;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 
-public class Folder
+public class Folder extends DMEntity implements Serializable
 {
-    private long uid;
 
-    private String name;
-
-    private String owner;
-
-    private String ownerSource;
-
-    private Calendar creationDate;
-
-    private Calendar updateDate;
 
     private long parentUid;
 
     private int parentType;
-
-    private String path;
 
     public Folder()
     {
@@ -47,17 +36,9 @@ public class Folder
     public Folder(long uid, String name, String owner, String ownerSource,
             Date creationDate, Date updateDate, long parentUid, int parentType, String path)
     {
-        this.uid = uid;
-        this.name = name;
-        this.owner = owner;
-        this.ownerSource = ownerSource;
-        this.creationDate = Calendar.getInstance();
-        this.creationDate.setTime(creationDate);
-        this.updateDate = Calendar.getInstance();
-        this.updateDate.setTime(updateDate);
+        super(uid, 2, name, owner, ownerSource, creationDate, updateDate, path);
         this.parentUid = parentUid;
         this.parentType = parentType;
-        this.path = path;
     }
 
     public Calendar getCreationDate()
@@ -148,6 +129,11 @@ public class Folder
     public void setUpdateDate(Calendar updateDate)
     {
         this.updateDate = updateDate;
+    }
+
+    @Override
+    public int getType() {
+        return 2;
     }
 }
 

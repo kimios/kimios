@@ -16,24 +16,27 @@
  */
 package org.kimios.kernel.ws.pojo;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 
-public class DMEntity
+public class DMEntity implements Serializable
 {
-    private long uid;
+    protected long uid;
 
-    private int type;
+    protected int type;
 
-    private String name;
+    protected String name;
 
-    private Calendar creationDate;
+    protected Calendar creationDate;
 
-    private String owner;
+    protected Calendar updateDate;
 
-    private String ownerSource;
+    protected String owner;
 
-    private String path;
+    protected String ownerSource;
+
+    protected String path;
 
     public DMEntity()
     {
@@ -47,6 +50,22 @@ public class DMEntity
         this.name = name;
         this.creationDate = Calendar.getInstance();
         this.creationDate.setTime(creationDate);
+        this.owner = owner;
+        this.ownerSource = ownerSource;
+        this.path = path;
+    }
+
+    public DMEntity(long uid, int type, String name,
+                    String owner, String ownerSource, Date creationDate,
+                    Date updateDate, String path)
+    {
+        this.uid = uid;
+        this.type = type;
+        this.name = name;
+        this.creationDate = Calendar.getInstance();
+        this.creationDate.setTime(creationDate);
+        this.updateDate = Calendar.getInstance();
+        this.updateDate.setTime(updateDate);
         this.owner = owner;
         this.ownerSource = ownerSource;
         this.path = path;
@@ -90,6 +109,14 @@ public class DMEntity
     public void setCreationDate(Calendar creationDate)
     {
         this.creationDate = creationDate;
+    }
+
+    public Calendar getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(Calendar updateDate) {
+        this.updateDate = updateDate;
     }
 
     public String getOwner()

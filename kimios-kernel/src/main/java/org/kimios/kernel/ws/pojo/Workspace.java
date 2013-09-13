@@ -16,25 +16,12 @@
  */
 package org.kimios.kernel.ws.pojo;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 
-public class Workspace
+public class Workspace extends DMEntity implements Serializable
 {
-    private long uid;
-
-    private String name;
-
-    private String owner;
-
-    private String ownerSource;
-
-    private Calendar creationDate;
-
-    private Calendar updateDate;
-
-    private String path;
-
     public Workspace()
     {
 
@@ -44,15 +31,7 @@ public class Workspace
             Date updateDate,
             String path)
     {
-        this.uid = uid;
-        this.name = name;
-        this.owner = owner;
-        this.ownerSource = ownerSource;
-        this.creationDate = Calendar.getInstance();
-        this.creationDate.setTime(creationDate);
-        this.updateDate = Calendar.getInstance();
-        this.updateDate.setTime(updateDate);
-        this.path = path;
+        super(uid, 1, name, owner, ownerSource, creationDate, updateDate, path);
     }
 
     public Calendar getCreationDate()
@@ -123,6 +102,12 @@ public class Workspace
     public void setUpdateDate(Calendar updateDate)
     {
         this.updateDate = updateDate;
+    }
+
+
+    @Override
+    public int getType() {
+        return 1;
     }
 }
 

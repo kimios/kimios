@@ -29,79 +29,43 @@ import javax.persistence.TemporalType;
 
 @Entity(name = "DocumentPojo")
 @Table(name = "document_pojo")
-public class Document implements Serializable
+public class Document extends DMEntity implements Serializable
 {
     final static long serialVersionUID = 1235489790;
 
-    @Id
-    @Column(name = "id")
-    private long uid;
 
-    @Column(name = "dm_entity_name")
-    private String name;
 
-    @Column(name = "dm_entity_owner")
-    private String owner;
-
-    @Column(name = "dm_entity_owner_source")
-    private String ownerSource;
-
-    @Column(name = "creation_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Calendar creationDate;
-
-    @Column(name = "update_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Calendar updateDate;
-
-    @Column(name = "version_creation_date")
-    @Temporal(TemporalType.TIMESTAMP)
     private Calendar versionCreationDate;
 
-    @Column(name = "version_update_date")
-    @Temporal(TemporalType.TIMESTAMP)
     private Calendar versionUpdateDate;
 
-    @Column(name = "folder_id")
+
     private long folderUid;
 
-    @Column(name = "mime_type")
     private String mimeType;
 
-    @Column(name = "extension")
     private String extension;
 
-    @Column(name = "locked")
     private Boolean checkedOut = false;
 
-    @Column(name = "lock_by")
     private String checkoutUser;
 
-    @Column(name = "lock_source")
     private String checkoutUserSource;
 
-    @Column(name = "lock_date")
     private Calendar checkoutDate;
 
-    @Column(name = "file_length")
     private long length;
 
-    @Column(name = "last_wfs")
     private Long workflowStatusUid = 0L;
 
-    @Column(name = "status_name")
     private String workflowStatusName;
 
-    @Column(name = "outofworkflow")
     private Boolean isOutOfWorkflow = true;
 
-    @Column(name = "type_name")
     private String documentTypeName;
 
-    @Column(name = "document_type_id")
     private Long documentTypeUid = 0L;
 
-    @Column(name = "document_path")
     private String path;
 
     public Document()
@@ -147,6 +111,8 @@ public class Document implements Serializable
         this.path = path;
     }
 
+    @Id
+    @Column(name = "id")
     public long getUid()
     {
         return uid;
@@ -157,6 +123,7 @@ public class Document implements Serializable
         this.uid = uid;
     }
 
+    @Column(name = "dm_entity_name")
     public String getName()
     {
         return name;
@@ -167,16 +134,19 @@ public class Document implements Serializable
         this.name = name;
     }
 
+    @Column(name = "dm_entity_owner")
     public String getOwner()
     {
         return owner;
     }
+
 
     public void setOwner(String owner)
     {
         this.owner = owner;
     }
 
+    @Column(name = "dm_entity_owner_source")
     public String getOwnerSource()
     {
         return ownerSource;
@@ -187,6 +157,8 @@ public class Document implements Serializable
         this.ownerSource = ownerSource;
     }
 
+    @Column(name = "creation_date")
+    @Temporal(TemporalType.TIMESTAMP)
     public Calendar getCreationDate()
     {
         return creationDate;
@@ -197,6 +169,8 @@ public class Document implements Serializable
         this.creationDate = creationDate;
     }
 
+    @Column(name = "update_date")
+    @Temporal(TemporalType.TIMESTAMP)
     public Calendar getUpdateDate()
     {
         return updateDate;
@@ -207,6 +181,7 @@ public class Document implements Serializable
         this.updateDate = updateDate;
     }
 
+    @Column(name = "folder_id")
     public long getFolderUid()
     {
         return folderUid;
@@ -217,6 +192,7 @@ public class Document implements Serializable
         this.folderUid = folderUid;
     }
 
+    @Column(name = "mime_type")
     public String getMimeType()
     {
         return mimeType;
@@ -230,6 +206,7 @@ public class Document implements Serializable
         this.mimeType = mimeType;
     }
 
+    @Column(name = "extension")
     public String getExtension()
     {
         return extension;
@@ -245,11 +222,13 @@ public class Document implements Serializable
         this.checkedOut = checkedOut;
     }
 
+    @Column(name = "locked")
     public Boolean getCheckedOut()
     {
         return checkedOut;
     }
 
+    @Column(name = "lock_by")
     public String getCheckoutUser()
     {
         return checkoutUser;
@@ -260,6 +239,7 @@ public class Document implements Serializable
         this.checkoutUser = checkoutUser;
     }
 
+    @Column(name = "lock_source")
     public String getCheckoutUserSource()
     {
         return checkoutUserSource;
@@ -270,6 +250,7 @@ public class Document implements Serializable
         this.checkoutUserSource = checkoutUserSource;
     }
 
+    @Column(name = "lock_date")
     public Calendar getCheckoutDate()
     {
         return checkoutDate;
@@ -280,6 +261,7 @@ public class Document implements Serializable
         this.checkoutDate = checkoutDate;
     }
 
+    @Column(name = "file_length")
     public long getLength()
     {
         return length;
@@ -290,6 +272,7 @@ public class Document implements Serializable
         this.length = length;
     }
 
+    @Column(name = "last_wfs")
     public Long getWorkflowStatusUid()
     {
         return workflowStatusUid;
@@ -300,6 +283,7 @@ public class Document implements Serializable
         this.workflowStatusUid = workflowStatusUid;
     }
 
+    @Column(name = "status_name")
     public String getWorkflowStatusName()
     {
         return workflowStatusName;
@@ -313,6 +297,7 @@ public class Document implements Serializable
         this.workflowStatusName = workflowStatusName;
     }
 
+    @Column(name = "outofworkflow")
     public Boolean getOutOfWorkflow()
     {
         return isOutOfWorkflow;
@@ -323,6 +308,7 @@ public class Document implements Serializable
         this.isOutOfWorkflow = isOutOfWorkflow;
     }
 
+    @Column(name = "type_name")
     public String getDocumentTypeName()
     {
         return documentTypeName;
@@ -336,6 +322,7 @@ public class Document implements Serializable
         this.documentTypeName = documentTypeName;
     }
 
+    @Column(name = "document_type_id")
     public Long getDocumentTypeUid()
     {
         return documentTypeUid;
@@ -346,6 +333,7 @@ public class Document implements Serializable
         this.documentTypeUid = documentTypeUid;
     }
 
+    @Column(name = "document_path")
     public String getPath()
     {
         return path;
@@ -356,6 +344,9 @@ public class Document implements Serializable
         this.path = path;
     }
 
+
+    @Column(name = "version_creation_date")
+    @Temporal(TemporalType.TIMESTAMP)
     public Calendar getVersionCreationDate()
     {
         return versionCreationDate;
@@ -366,6 +357,8 @@ public class Document implements Serializable
         this.versionCreationDate = versionCreationDate;
     }
 
+    @Column(name = "version_update_date")
+    @Temporal(TemporalType.TIMESTAMP)
     public Calendar getVersionUpdateDate()
     {
         return versionUpdateDate;
@@ -374,6 +367,12 @@ public class Document implements Serializable
     public void setVersionUpdateDate(Calendar versionUpdateDate)
     {
         this.versionUpdateDate = versionUpdateDate;
+    }
+
+
+    @Override
+    public int getType() {
+        return 3;
     }
 
     @Override
