@@ -67,8 +67,8 @@ public interface ExtensionService
     @Produces("application/json")
     public void setEntityAttribute(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "dmEntityId") @WebParam(name = "dmEntityId") long dmEntityId,
-            @QueryParam(value = "attributeValue") @WebParam(name = "attributeValue") String attributeValue,
             @QueryParam(value = "attributeName") @WebParam(name = "attributeName") String attributeName,
+            @QueryParam(value = "attributeValue") @WebParam(name = "attributeValue") String attributeValue,
             @QueryParam(value = "isIndexed") @WebParam(name = "isIndexed") boolean isIndexed) throws DMServiceException;
 
     @GET

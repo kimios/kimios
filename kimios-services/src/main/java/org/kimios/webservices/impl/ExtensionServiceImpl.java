@@ -69,8 +69,8 @@ public class ExtensionServiceImpl extends CoreService implements ExtensionServic
         }
     }
 
-    public void setEntityAttribute(String sessionId, long dmEntityId, String attributeValue, String attributeName,
-            boolean isIndexed) throws DMServiceException
+    public void setEntityAttribute(String sessionId, long dmEntityId, String attributeName, String attributeValue,
+                                   boolean isIndexed) throws DMServiceException
     {
         try {
             Session session = getHelper().getSession(sessionId);
