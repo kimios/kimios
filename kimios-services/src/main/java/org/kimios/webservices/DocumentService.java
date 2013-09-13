@@ -43,7 +43,7 @@ import java.io.InputStream;
 @Path("/document")
 @WebService(targetNamespace = "http://kimios.org", serviceName = "DocumentService")
 @CrossOriginResourceSharing(allowAllOrigins = true)
-public interface DocumentService
+public interface DocumentService {
     @GET
     @Path("/getDocument")
     @Produces("application/json")
