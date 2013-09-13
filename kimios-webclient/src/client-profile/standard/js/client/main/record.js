@@ -145,6 +145,9 @@ kimios.record = {
         {
             name: 'status',
             type: 'string'
+        },{
+            name: 'dmEntityAddonData',
+            type: 'string'
         }
     ]),
 

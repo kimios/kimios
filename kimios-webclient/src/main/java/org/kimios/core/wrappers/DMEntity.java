@@ -16,21 +16,21 @@
  */
 package org.kimios.core.wrappers;
 
-import org.kimios.kernel.ws.pojo.*;
 import org.kimios.kernel.ws.pojo.Document;
+import org.kimios.kernel.ws.pojo.Folder;
+import org.kimios.kernel.ws.pojo.Workspace;
 
 import java.util.Date;
 
 /**
- *
  * @author Fabien Alin
  */
 public class DMEntity {
-    
+
     public static int WORKSPACE = 1;
     public static int FOLDER = 2;
     public static int DOCUMENT = 3;
-    
+
     private long uid;
     private int type;
     private String name;
@@ -54,8 +54,9 @@ public class DMEntity {
     private Date updateDate;
     private Date lastVersionCreationDate;
     private Date lastVersionUpdateDate;
-    
-    public DMEntity(Workspace w){
+    private String dmEntityAddonData;
+
+    public DMEntity(Workspace w) {
         this.type = DMEntity.WORKSPACE;
         this.uid = w.getUid();
         this.name = w.getName();
@@ -66,8 +67,8 @@ public class DMEntity {
         this.parentUid = -1;
         this.path = w.getPath();
     }
-    
-    public DMEntity(Folder f){
+
+    public DMEntity(Folder f) {
         this.type = DMEntity.FOLDER;
         this.uid = f.getUid();
         this.name = f.getName();
@@ -78,8 +79,8 @@ public class DMEntity {
         this.parentUid = f.getParentUid();
         this.path = f.getPath();
     }
-    
-    public DMEntity(Document d){
+
+    public DMEntity(Document d) {
         this.type = DMEntity.DOCUMENT;
         this.uid = d.getUid();
         this.name = d.getName();
@@ -103,6 +104,8 @@ public class DMEntity {
 
         this.lastVersionCreationDate = d.getVersionCreationDate().getTime();
         this.lastVersionUpdateDate = d.getVersionUpdateDate().getTime();
+
+        this.dmEntityAddonData = d.getAddonDatas();
     }
 
     public String getOwnerSource() {
@@ -273,24 +276,28 @@ public class DMEntity {
         this.updateDate = updateDate;
     }
 
-    public Date getLastVersionCreationDate()
-    {
+    public Date getLastVersionCreationDate() {
         return lastVersionCreationDate;
     }
 
-    public void setLastVersionCreationDate( Date lastVersionCreationDate )
-    {
+    public void setLastVersionCreationDate(Date lastVersionCreationDate) {
         this.lastVersionCreationDate = lastVersionCreationDate;
     }
 
-    public Date getLastVersionUpdateDate()
-    {
+    public Date getLastVersionUpdateDate() {
         return lastVersionUpdateDate;
     }
 
-    public void setLastVersionUpdateDate( Date lastVersionUpdateDate )
-    {
+    public void setLastVersionUpdateDate(Date lastVersionUpdateDate) {
         this.lastVersionUpdateDate = lastVersionUpdateDate;
+    }
+
+    public String getDmEntityAddonData() {
+        return dmEntityAddonData;
+    }
+
+    public void setDmEntityAddonData(String dmEntityAddonData) {
+        this.dmEntityAddonData = dmEntityAddonData;
     }
 }
 
