@@ -43,7 +43,6 @@ public class KimiosWebApplicationContext extends XmlWebApplicationContext {
                 File springConf = new File(kimiosHome, "conf");
                 if (springConf.exists()) {
                     return new String[]{kimiosHome.getAbsolutePath() + "/conf/ctx-kimios.xml"};
-
                 }
             }
         }

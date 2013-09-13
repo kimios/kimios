@@ -72,6 +72,8 @@ public class DMEntityImpl implements DMEntity, Serializable
 
     protected Map<String, DMEntityAttribute> attributes = new HashMap<String, DMEntityAttribute>();
 
+    protected String addOnDatas;
+
     public DMEntityImpl()
     {
     }
@@ -193,6 +195,16 @@ public class DMEntityImpl implements DMEntity, Serializable
     public void setCreationDate(Date creationDate)
     {
         this.creationDate = creationDate;
+    }
+
+
+    @Column(name = "dm_entity_addon_data", nullable = true, columnDefinition = "text")
+    public String getAddOnDatas() {
+        return addOnDatas;
+    }
+
+    public void setAddOnDatas(String addOnDatas) {
+        this.addOnDatas = addOnDatas;
     }
 
     public int compareTo(DMEntity o)

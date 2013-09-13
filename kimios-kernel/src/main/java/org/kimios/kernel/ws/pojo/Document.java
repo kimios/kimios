@@ -68,6 +68,8 @@ public class Document extends DMEntity implements Serializable
 
     private String path;
 
+    private String addonDatas;
+
     public Document()
     {
     }
@@ -79,7 +81,7 @@ public class Document extends DMEntity implements Serializable
             boolean checkedOut, String checkoutUser,
             String checkoutUserSource, Date checkoutDate, long length,
             long workflowStatusUid, String workflowStatusName,
-            boolean isOutOfWorkflow, String path)
+            boolean isOutOfWorkflow, String path, String addonDatas)
     {
         this.uid = uid;
         this.name = name;
@@ -109,6 +111,7 @@ public class Document extends DMEntity implements Serializable
         this.documentTypeName = documentTypeName;
         this.documentTypeUid = documentTypeUid;
         this.path = path;
+        this.addonDatas = addonDatas;
     }
 
     @Id
@@ -370,6 +373,15 @@ public class Document extends DMEntity implements Serializable
     }
 
 
+    @Column(name = "dm_entity_addon_data")
+    public String getAddonDatas() {
+        return addonDatas;
+    }
+
+    public void setAddonDatas(String addonDatas) {
+        this.addonDatas = addonDatas;
+    }
+
     @Override
     public int getType() {
         return 3;
@@ -401,6 +413,7 @@ public class Document extends DMEntity implements Serializable
             ", documentTypeName='" + documentTypeName + '\'' +
             ", documentTypeUid=" + documentTypeUid +
             ", path='" + path + '\'' +
+                ", addonDatas='" + addonDatas + '\'' +
             '}';
     }
 }

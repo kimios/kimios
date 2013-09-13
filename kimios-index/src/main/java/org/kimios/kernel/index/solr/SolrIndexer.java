@@ -21,11 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
-import org.kimios.kernel.dms.DMEntityType;
-import org.kimios.kernel.dms.Document;
-import org.kimios.kernel.dms.FactoryInstantiator;
-import org.kimios.kernel.dms.Folder;
-import org.kimios.kernel.dms.Workspace;
+import org.kimios.kernel.dms.*;
 import org.kimios.kernel.events.EventContext;
 import org.kimios.kernel.events.GenericEventHandler;
 import org.kimios.kernel.events.annotations.DmsEvent;
@@ -258,6 +254,20 @@ public class SolrIndexer extends GenericEventHandler
             indexManager.indexDocument(doc);
         } catch (Exception e) {
             log.error(" index action Exception on Document " + doc.getUid(), e);
+        }
+    }
+
+    @DmsEvent( eventName = {DmsEventName.EXTENSION_ENTITY_ATTRIBUTE_SET}, when = DmsEventOccur.AFTER)
+    public void setEntityAttribute(Object[] obj, Object retour, EventContext ctx) throws Exception
+    {
+        log.debug("Indexing on entity attribute set: " + (Long) obj[1]);
+        try {
+            if(ctx.getEntity() != null && ctx.getEntity().getType() == DMEntityType.DOCUMENT){
+                indexManager.indexDocument(ctx.getEntity());
+            }
+
+        } catch (Exception e) {
+            log.error(" index action Exception on entity attribute set");
         }
     }
 }

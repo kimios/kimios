@@ -27,12 +27,14 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @IdClass(MetaValueBeanPK.class)
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@JsonIgnoreProperties("documentVersion")
 public abstract class MetaValueBean implements MetaValue, Serializable
 {
     @Id @Column(name = "meta_id")

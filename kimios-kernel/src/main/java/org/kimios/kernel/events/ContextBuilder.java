@@ -18,18 +18,7 @@ package org.kimios.kernel.events;
 
 import org.aopalliance.intercept.MethodInvocation;
 import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.dms.DMEntityType;
-import org.kimios.kernel.dms.Document;
-import org.kimios.kernel.dms.DocumentFactory;
-import org.kimios.kernel.dms.DocumentType;
-import org.kimios.kernel.dms.DocumentTypeFactory;
-import org.kimios.kernel.dms.DocumentVersion;
-import org.kimios.kernel.dms.DocumentVersionFactory;
-import org.kimios.kernel.dms.FactoryInstantiator;
-import org.kimios.kernel.dms.Folder;
-import org.kimios.kernel.dms.FolderFactory;
-import org.kimios.kernel.dms.Workspace;
-import org.kimios.kernel.dms.WorkspaceFactory;
+import org.kimios.kernel.dms.*;
 import org.kimios.kernel.events.annotations.DmsEventName;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.filetransfer.DataTransfer;
@@ -53,6 +42,8 @@ public class ContextBuilder
 
     private static String fileTransfer = "FILE";
 
+    private static String extension = "EXTENSION";
+
     private static String[] documentMethod = { "createDocument", "updateDocument", "deleteDocument",
             "checkoutDocument", "checkinDocument", "addRelatedDocument", "removeRelatedDocument" };
 
@@ -64,6 +55,8 @@ public class ContextBuilder
             "updateDocumentVersion", "deleteDocumentVersion", "startDownloadTransaction" };
 
     private static String[] fileTransferMethod = { "endUploadTransaction" };
+
+    private static String[] extensionMethods = { "setAttribute" };
 
     public static EventContext buildContext(DmsEventName n, MethodInvocation mi)
     {
@@ -88,11 +81,16 @@ public class ContextBuilder
             if (n.name().startsWith(fileTransfer)) {
                 fileTransferContextBuilder(mi, ctx);
             }
+            if(n.name().startsWith(extension)){
+                extensionContextBuilder(mi, ctx);
+            }
             if (ctx.getEntity() != null) {
                 String path = ctx.getEntity().getPath();
                 ctx.setParentEntity(FactoryInstantiator.getInstance().getDmEntityFactory()
                         .getEntity(path.substring(0, path.lastIndexOf("/"))));
             }
+
+
             return ctx;
         } catch (DataSourceException e) {
             log.error("Exception while building context", e);
@@ -371,6 +369,23 @@ public class ContextBuilder
                 Document document = version.getDocument();
                 ctx.setEntity(document);
                 EventContext.addParameter("version", version);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return ctx;
+    }
+
+    private static EventContext extensionContextBuilder(MethodInvocation mi, EventContext ctx)
+            throws DataSourceException, ConfigException
+    {
+        String name = mi.getMethod().getName();
+        //set attribute on entity
+        if (name.equalsIgnoreCase(extensionMethods[0])) {
+            try {
+                DMEntity entity = FactoryInstantiator.getInstance().getDmEntityFactory()
+                        .getEntity((Long)mi.getArguments()[1]);
+                ctx.setEntity(entity);
             } catch (Exception e) {
                 e.printStackTrace();
             }

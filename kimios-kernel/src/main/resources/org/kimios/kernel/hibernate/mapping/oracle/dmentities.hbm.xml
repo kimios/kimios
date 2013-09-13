@@ -27,6 +27,9 @@
             <basic name="path" optional="false">
                 <column name="dm_entity_path" length="2000" unique="true"/>
             </basic>
+            <basic name="addOnDatas" optional="false">
+                <column name="dm_entity_addon_data" length="5000" />
+            </basic>
         </attributes>
     </entity>
     <entity class="org.kimios.kernel.dms.DocumentComment" metadata-complete="false">

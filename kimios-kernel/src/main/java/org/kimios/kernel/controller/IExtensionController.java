@@ -20,12 +20,16 @@ import java.util.List;
 
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.extension.impl.DMEntityAttribute;
+import org.kimios.kernel.events.annotations.DmsEvent;
+import org.kimios.kernel.events.annotations.DmsEventName;
 import org.kimios.kernel.exception.AccessDeniedException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.security.Session;
 
 public interface IExtensionController
 {
+
+    @DmsEvent(eventName = {DmsEventName.EXTENSION_ENTITY_ATTRIBUTE_SET})
     public void setAttribute(Session session, long dmEntityId,
             String attributeName, String attributeValue, boolean indexed)
             throws Exception;

@@ -33,10 +33,10 @@
           `version_update_date`,if(isnull(`chk`.`document_id`),0,1) AS `locked`,
           `chk`.`username` AS `lock_by`,`chk`.`user_source` AS `lock_source`,`chk`.`checkout_date` AS
           `lock_date`,`ds`.`id` AS `last_wfs`,
-          `req`.`outOfWorkflow` AS `outofworkflow`,`ds`.`status_name` AS `status_name` from
+          `req`.`outOfWorkflow` AS `outofworkflow`,`ds`.`status_name` AS `status_name`, `d`.`dm_entity_addon_data` AS `dm_entity_addon_data` from
           (((((select dent.dm_entity_id, dent.dm_entity_name, dent.dm_entity_path, dent.dm_entity_owner_source,
           dent.dm_entity_owner,
-          dent.update_date as dm_entity_update_date, dent.creation_date as dm_entity_creation_date, doc.*
+          dent.update_date as dm_entity_update_date, dent.creation_date as dm_entity_creation_date, dent.dm_entity_addon_data as dm_entity_addon_data doc.*
           from dm_entity dent join document doc on dent.dm_entity_id = doc.id) `d` join
           (select `v1`.`creation_date` AS `maxCreationDate`,
           `v2`.`id` AS `id`,`v2`.`author` AS `author`,`v2`.`author_source` AS `author_source`,
@@ -143,6 +143,9 @@
         </property>
         <property name="outOfWorkflow">
             <column name="outofworkflow"></column>
+        </property>
+        <property name="addonDatas">
+            <column name="dm_entity_addon_data"></column>
         </property>
     </class>
 </hibernate-mapping>

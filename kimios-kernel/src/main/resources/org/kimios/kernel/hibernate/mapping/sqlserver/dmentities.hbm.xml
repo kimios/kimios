@@ -26,6 +26,9 @@
             <basic name="path" optional="false">
                 <column name="dm_entity_path" length="255" unique="true"/>
             </basic>
+            <basic name="addOnDatas" optional="false">
+                <column name="dm_entity_addon_data" length="5000" />
+            </basic>
         </attributes>
     </entity>
 </entity-mappings>

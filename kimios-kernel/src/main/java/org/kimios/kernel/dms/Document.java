@@ -235,7 +235,7 @@ public class Document extends DMEntityImpl
                 this.ownerSource, this.creationDate, this.updateDate, version.getCreationDate(),
                 version.getModificationDate(), this.folderUid, this.mimeType,
                 this.extension, docTypeUid, docTypeName, isCheckedOut, checkoutUser,
-                checkoutUserSource, checkOutDate, version.getLength(), wsUid, wsName, isOutOfWorkflow, this.path);
+                checkoutUserSource, checkOutDate, version.getLength(), wsUid, wsName, isOutOfWorkflow, this.path, this.addOnDatas);
     }
 
     @OneToOne(mappedBy = "document")

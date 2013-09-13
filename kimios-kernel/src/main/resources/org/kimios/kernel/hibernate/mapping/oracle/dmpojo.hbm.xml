@@ -27,9 +27,9 @@
             doc.update_date, doc.folder_id, doc.mime_type, doc.extension, doc.path AS document_path, dv.id AS
             version_id, dv.type_name, dv.version_length AS file_length, dv.creation_date AS version_creation_date,
             dv.modification_date AS version_update_date, dv.document_type_id, doc.locked, doc.lock_by, doc.lock_source,
-            doc.lock_date, req.outofworkflow, stat.status_name, stat.last_wfs FROM ((((SELECT d.id, dm.dm_entity_name,
+            doc.lock_date, req.outofworkflow, stat.status_name, stat.last_wfs, doc.dm_entity_addon_data FROM ((((SELECT d.id, dm.dm_entity_name,
             dm.dm_entity_owner, dm.dm_entity_owner_source, dm.creation_date, dm.update_date, d.folder_id, d.mime_type,
-            d.extension, CASE WHEN (chk.username IS NOT NULL) THEN 1 ELSE 0 END AS locked, chk.username AS
+            d.extension, dm.dm_entity_addon_data, CASE WHEN (chk.username IS NOT NULL) THEN 1 ELSE 0 END AS locked, chk.username AS
             lock_by, chk.user_source AS lock_source, chk.checkout_date AS lock_date, dm.dm_entity_path AS path FROM
             ((document d LEFT JOIN checkout chk ON ((d.id = chk.document_id))) LEFT JOIN dm_entity dm ON (((d.id =
             dm.dm_entity_id) AND (dm.dm_entity_type = 3))))) doc JOIN (SELECT b.id, b.author, b.author_source,
@@ -115,6 +115,9 @@
         </property>
         <property name="outOfWorkflow">
             <column name="outofworkflow"></column>
+        </property>
+        <property name="addonDatas">
+            <column name="dm_entity_addon_data"></column>
         </property>
     </class>
 </hibernate-mapping>

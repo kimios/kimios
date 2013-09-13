@@ -26,7 +26,7 @@
         <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"></property>
         <property name="locations">
             <list>
-                <value>${kimios.home}/client/conf/kimios.properties</value>
+                <value>${kimios.home}/${kimios.app.settings}/conf/kimios.properties</value>
             </list>
         </property>
     </bean>

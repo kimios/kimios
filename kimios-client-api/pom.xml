@@ -199,7 +199,6 @@
                     <shadedArtifactAttached>true</shadedArtifactAttached>
                     <artifactSet>
                         <excludes>
-                            <exclude>org.apache.cxf:*</exclude>
                             <exclude>org.hibernate:*</exclude>
                             <exclude>org.springframework:*</exclude>
                             <exclude>log4j:*</exclude>
@@ -215,6 +214,35 @@
                             <exclude>org.slf4j:*</exclude>
                         </excludes>
                     </artifactSet>
+                        <transformers>
+                            <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                <resource>META-INF/spring.handlers</resource>
+                            </transformer>
+                            <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                <resource>META-INF/spring.schemas</resource>
+                            </transformer>
+                            <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                <resource>META-INF/services/com.sun.tools.xjc.Plugin</resource>
+                            </transformer>
+                            <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                <resource>META-INF/cxf/cxf.extension</resource>
+                            </transformer>
+                            <transformer implementation="org.apache.maven.plugins.shade.resource.XmlAppendingTransformer">
+                                <resource>META-INF/extensions.xml</resource>
+                            </transformer>
+                            <transformer implementation="org.apache.maven.plugins.shade.resource.XmlAppendingTransformer">
+                                <resource>META-INF/cxf/extensions.xml</resource>
+                            </transformer>
+                            <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                <resource>META-INF/cxf/bus-extensions.txt</resource>
+                            </transformer>
+                            <transformer implementation="org.apache.maven.plugins.shade.resource.XmlAppendingTransformer">
+                                <resource>META-INF/cxf/bus-extensions.xml</resource>
+                            </transformer>
+                            <transformer implementation="org.apache.maven.plugins.shade.resource.XmlAppendingTransformer">
+                                <resource>META-INF/wsdl.plugin.xml</resource>
+                            </transformer>
+                        </transformers>
                 </configuration>
                 <executions>
                     <execution>
