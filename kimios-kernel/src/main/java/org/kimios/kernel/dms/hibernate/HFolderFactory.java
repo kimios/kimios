@@ -140,6 +140,7 @@ public class HFolderFactory extends HFactory implements FolderFactory
     {
         try {
             getSession().save(f);
+            getSession().flush();
         } catch (HibernateException e) {
             boolean integrity = e instanceof ConstraintViolationException;
             throw new DataSourceException(e, e.getMessage());

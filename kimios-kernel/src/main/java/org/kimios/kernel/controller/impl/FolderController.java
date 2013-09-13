@@ -113,6 +113,7 @@ public class FolderController extends AKimiosController implements IFolderContro
         name = name.trim();
         PathUtils.validDmEntityName(name);
         DMEntityImpl parent = (DMEntityImpl) dmsFactoryInstantiator.getDmEntityFactory().getEntity(parentUid);
+        log.info("DmEntity {} {}", parentUid, parent);
         if (parent.getType() == DMEntityType.WORKSPACE) {
             parent = dmsFactoryInstantiator.getWorkspaceFactory().getWorkspace(parentUid);
             if (dmsFactoryInstantiator.getFolderFactory().getFolder(name, (Workspace) parent) != null) {

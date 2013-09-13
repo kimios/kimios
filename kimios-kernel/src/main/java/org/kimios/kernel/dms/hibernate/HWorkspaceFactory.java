@@ -86,6 +86,7 @@ public class HWorkspaceFactory extends HFactory implements WorkspaceFactory
         try {
             long uid = ((Long) getSession().save(w)).longValue();
             w.setUid(uid);
+            getSession().flush();
         } catch (HibernateException e) {
             boolean integrity = e instanceof ConstraintViolationException;
             throw new DataSourceException(e, e.getMessage());
