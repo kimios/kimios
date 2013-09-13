@@ -555,6 +555,10 @@ public class SolrSearchController
                     queries.add( QueryBuilder.documentUpdateDateQuery( "DocumentCreationDate", c.getRangeMin(),
                                                                        c.getRangeMax() ) );
                 }
+                else if ( c.getFieldName().equals( "DocumentVersionHash" ) )
+                {
+                    queries.add( "DocumentVersionHash:" + ClientUtils.escapeQueryChars(c.getQuery()) );
+                }
                 else if ( c.getFieldName().equals( "DocumentTypeUid" ) )
                 {
                     long dtUid = Long.parseLong( c.getQuery() );
