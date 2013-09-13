@@ -204,13 +204,21 @@ public class UploadManager extends Controller {
                         documentController.checkinDocument(sessionUid, Long.parseLong(documentUid));
                      */
 
+                    /*
+                    //FIXME : parse PDF for QR CODE
+
                     String tmpPath = null;
                     String data = null;
                     try {
                         tmpPath = PDFUtil.toImage(in); // convert pdf to image
                         data = QRUtil.scan(tmpPath); // read qr code from image
-                    } finally {
-                        new File(tmpPath).delete();
+                    }
+                    catch (Exception e){
+                        log.warn("Not pdf");
+                    }
+                    finally {
+                        if(tmpPath!=null && new File(tmpPath).exists())
+                            new File(tmpPath).delete();
                     }
 
 
@@ -242,10 +250,10 @@ public class UploadManager extends Controller {
 
                         // Notifier user
 
-                    } else {
+                    } else {*/
                         documentController.createDocumentWithProperties(sessionUid, name, extension, mimeType, folderUid,
                                 isSecurityInherited, securitiesXml, isRecursive, documentTypeId, metaXml, in);
-                    }
+                   //s }
 
 
                 } else if (action.equalsIgnoreCase("AddDocument")) {

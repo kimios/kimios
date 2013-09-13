@@ -28,7 +28,6 @@
 
     <groupId>org.kimios</groupId>
     <artifactId>kimios-convert</artifactId>
-    <version>1.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>kimios-convert</name>
