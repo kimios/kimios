@@ -36,6 +36,42 @@
     <!--</cxf:bus>-->
 
 
+    <!--<bean id="kimiosRestServer" class="org.apache.cxf.jaxrs.JAXRSServerFactoryBean" init-method="create">
+        <property name="address" value="/rest"/>
+        <property name="providers">
+            <list>
+                <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+                <bean class="org.kimios.webservices.DateParamConverter"/>
+                <bean id="exceptionMapper" class="org.kimios.webservices.JaxRSExceptionMapper"/>
+            </list>
+        </property>
+        <property name="serviceBeans">
+            <list>
+            <ref bean="securityServiceBean"/>
+            <ref bean="workspaceServiceBean"/>
+            <ref bean="folderServiceBean"/>
+            <ref bean="documentServiceBean"/>
+            <ref bean="documentVersionServiceBean"/>
+            <ref bean="administrationServiceBean"/>
+            <ref bean="studioServiceBean"/>
+            <ref bean="informationServiceBean"/>
+            <ref bean="logServiceBean"/>
+            <ref bean="reportingServiceBean"/>
+            <ref bean="fileTransferServiceBean"/>
+            <ref bean="ruleServiceBean"/>
+            <ref bean="extensionServiceBean"/>
+            <ref bean="notificationServiceBean"/>
+            <ref bean="searchServiceBean"/>
+            <ref bean="converterServiceBean"/>
+            </list>
+        </property>
+        <property name="extensionMappings">
+            <map>
+                <entry key="json" value="application/json"/>
+            </map>
+        </property>
+    </bean>-->
+
     <jaxrs:server id="kimiosRestServer"
                   address="/rest/">
         <jaxrs:providers>
@@ -61,14 +97,19 @@
             <ref bean="notificationServiceBean"/>
             <ref bean="searchServiceBean"/>
             <ref bean="converterServiceBean"/>
-
-            <!--TODO fix-->
-            <ref bean="bonitaServiceBean"/>
-
         </jaxrs:serviceBeans>
         <jaxrs:extensionMappings>
             <entry key="json" value="application/json"/>
         </jaxrs:extensionMappings>
     </jaxrs:server>
+
+    <!-- JAXRS Bean Services List Merge :
+        Any bean of type org.kimios.webservices.KimiosExtension will be added to serviceBeans property of bean kimiosRestServer
+    -->
+    <bean class="org.kimios.utils.spring.MergePostProcessor">
+        <property name="beanToMerge" value="kimiosRestServer"></property>
+        <property name="beanPropertyToMerge" value="serviceBeans"></property>
+        <property name="beanTypeToLoad" value="org.kimios.webservices.KimiosExtension"></property>
+    </bean>
 
 </beans>

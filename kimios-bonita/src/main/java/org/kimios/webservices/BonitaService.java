@@ -14,7 +14,7 @@ import java.util.List;
 
 @Path("/bonita")
 @WebService(targetNamespace = "http://kimios.org", serviceName = "BonitaService", name = "BonitaService")
-public interface BonitaService {
+public interface BonitaService extends KimiosExtension{
 
     @GET
     @Path("/processes/getProcesses")
