@@ -5,12 +5,12 @@ import java.util.List;
 public class TasksResponse {
 
     private List<TaskWrapper> tasks;
-    private long totalProperty;
+    private Number totalProperty;
 
     public TasksResponse() {
     }
 
-    public TasksResponse(List<TaskWrapper> tasks, long totalProperty) {
+    public TasksResponse(List<TaskWrapper> tasks, Number totalProperty) {
         this.tasks = tasks;
         this.totalProperty = totalProperty;
     }
@@ -23,11 +23,11 @@ public class TasksResponse {
         this.tasks = tasks;
     }
 
-    public long getTotalProperty() {
+    public Number getTotalProperty() {
         return totalProperty;
     }
 
-    public void setTotalProperty(long totalProperty) {
+    public void setTotalProperty(Number totalProperty) {
         this.totalProperty = totalProperty;
     }
 }

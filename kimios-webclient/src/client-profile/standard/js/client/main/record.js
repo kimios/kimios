@@ -145,7 +145,8 @@ kimios.record = {
         {
             name: 'status',
             type: 'string'
-        },{
+        },
+        {
             name: 'dmEntityAddonData',
             type: 'string'
         }
@@ -626,25 +627,70 @@ kimios.record = {
         ]),
 
         processInstanceRecord: Ext.data.Record.create([
-            //TODO
-            /*
-             private Long id;
-             private String name;
-             private Long calledId;
-             private String description;
-             private Date endDate;
-             private Date lastUpdate;
-             private Long processDefinitionId;
-             private Long rootProcessInstanceId;
-             private Date startDate;
-             private Long startBy;
-             private String state;
-             private String stringIndex1;
-             private String stringIndex2;
-             private String stringIndex3;
-             private String stringIndex4;
-             private String stringIndex5;
-             */
+            {
+                name: 'id',
+                type: 'long'
+            },
+            {
+                name: 'name',
+                type: 'string'
+            },
+            {
+                name: 'calledId',
+                type: 'long'
+            },
+            {
+                name: 'description',
+                type: 'string'
+            },
+            {
+                name: 'endDate',
+                type: 'long'
+            },
+            {
+                name: 'lastUpdate',
+                type: 'long'
+            },
+            {
+                name: 'processDefinitionId',
+                type: 'long'
+            },
+            {
+                name: 'rootProcessInstanceId',
+                type: 'long'
+            },
+            {
+                name: 'startDate',
+                type: 'long'
+            },
+            {
+                name: 'startBy',
+                type: 'long'
+            },
+            {
+                name: 'state',
+                type: 'string'
+            },
+            {
+                name: 'stringIndex1',
+                type: 'string'
+            },
+            {
+                name: 'stringIndex2',
+                type: 'string'
+            },
+            {
+                name: 'stringIndex3',
+                type: 'string'
+            },
+            {
+                name: 'stringIndex4',
+                type: 'string'
+            },
+            {
+                name: 'stringIndex5',
+                type: 'string'
+            }
         ]),
 
         taskRecord: Ext.data.Record.create([

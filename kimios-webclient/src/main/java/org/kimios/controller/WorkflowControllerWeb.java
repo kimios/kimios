@@ -21,8 +21,6 @@ import flexjson.transformer.IterableTransformer;
 import org.kimios.kernel.ws.pojo.Document;
 import org.kimios.kernel.ws.pojo.DocumentWorkflowStatusRequest;
 import org.kimios.kernel.ws.pojo.WorkflowStatus;
-import org.kimios.webservices.pojo.CommentWrapper;
-import org.kimios.webservices.pojo.TaskWrapper;
 import org.kimios.webservices.pojo.TasksResponse;
 
 import java.util.*;
@@ -46,6 +44,9 @@ public class WorkflowControllerWeb extends Controller {
         }
         if (action.equals("getBonitaAssignedTasks")) {
             return getBonitaAssignedTasks();
+        }
+        if (action.equals("getBonitaTasksByInstance")) {
+            return getBonitaTasksByInstance();
         }
         if (action.equals("takeTask")) {
             return takeTask();
@@ -240,6 +241,12 @@ public class WorkflowControllerWeb extends Controller {
         TasksResponse response = bonitaController.getAssignedTasks(sessionUid,
                 parameters.get("start") != null ? Integer.parseInt(parameters.get("start")) : Integer.MIN_VALUE,
                 parameters.get("limit") != null ? Integer.parseInt(parameters.get("limit")) : Integer.MAX_VALUE);
+        return new JSONSerializer().deepSerialize(response);
+    }
+
+    private String getBonitaTasksByInstance() throws Exception {
+        TasksResponse response = bonitaController.getTasksByInstance(sessionUid,
+                Integer.parseInt(parameters.get("processInstanceId")), Integer.MIN_VALUE, Integer.MAX_VALUE);
         return new JSONSerializer().deepSerialize(response);
     }
 

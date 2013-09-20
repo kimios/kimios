@@ -18,7 +18,6 @@
  * DM Entity POJO
  */
 kimios.DMEntityPojo = function (entity) {
-
     this.uid = entity.uid;
     this.type = entity.type;
     this.name = entity.name;
@@ -53,5 +52,6 @@ kimios.DMEntityPojo = function (entity) {
     this.authorSource = entity.authorSource;
 
     this.versionUid = entity.versionUid;
+    this.dmEntityAddonData = entity.dmEntityAddonData;
 
 };

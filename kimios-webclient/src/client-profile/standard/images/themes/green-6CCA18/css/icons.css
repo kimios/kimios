@@ -191,6 +191,7 @@
 .studio-cls-wf {
     background-image: url(../icons/16x16/workflow.png) !important;
     background-repeat: no-repeat;
+    background-position: center center;
 }
 
 .attach {

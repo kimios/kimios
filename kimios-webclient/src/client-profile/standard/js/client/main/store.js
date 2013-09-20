@@ -949,13 +949,33 @@ kimios.store = {
                 }
             });
         },
+
+        getBonitaTasksByInstanceStore: function (autoLoad, pageSize) {
+            return new Ext.data.JsonStore({
+                url: getBackEndUrl('Workflow'),
+                baseParams: {
+                    action: 'getBonitaTasksByInstance',
+                    start: 0,
+                    limit: pageSize > 0 ? pageSize : 2147483647
+                },
+                root: 'tasks',
+                totalProperty: 'totalProperty',
+                fields: kimios.record.BonitaRecord.taskRecord,
+                autoLoad: (autoLoad ? autoLoad : false),
+                sortInfo: {
+                    field: 'expectedEndDate',
+                    direction: 'DESC'
+                }
+            });
+        },
+
         getBonitaPendingTasksStore: function (autoLoad, pageSize) {
             return new DmsJsonStore({
                 url: 'Workflow',
                 baseParams: {
                     action: 'getBonitaPendingTasks',
                     start: 0,
-                    limit: pageSize
+                    limit: pageSize > 0 ? pageSize : 2147483647
                 },
                 root: 'tasks',
                 totalProperty: 'totalProperty',
@@ -973,7 +993,7 @@ kimios.store = {
                 baseParams: {
                     action: 'getBonitaAssignedTasks',
                     start: 0,
-                    limit: pageSize
+                    limit: pageSize > 0 ? pageSize : 2147483647
                 },
                 root: 'tasks',
                 totalProperty: 'totalProperty',

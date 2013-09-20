@@ -14,7 +14,7 @@ import java.util.List;
 
 @Path("/bonita")
 @WebService(targetNamespace = "http://kimios.org", serviceName = "BonitaService", name = "BonitaService")
-public interface BonitaService extends KimiosExtension{
+public interface BonitaService extends KimiosExtension {
 
     @GET
     @Path("/processes/getProcesses")
@@ -37,6 +37,16 @@ public interface BonitaService extends KimiosExtension{
     @Produces("application/json")
     TasksResponse getAssignedTasks(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+            @QueryParam(value = "start") @WebParam(name = "start") int start,
+            @QueryParam(value = "limit") @WebParam(name = "limit") int limit
+    ) throws DMServiceException;
+
+    @GET
+    @Path("/tasks/getTasksByInstance")
+    @Produces("application/json")
+    TasksResponse getTasksByInstance(
+            @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+            @QueryParam(value = "processInstanceId") @WebParam(name = "processInstanceId") long processInstanceId,
             @QueryParam(value = "start") @WebParam(name = "start") int start,
             @QueryParam(value = "limit") @WebParam(name = "limit") int limit
     ) throws DMServiceException;

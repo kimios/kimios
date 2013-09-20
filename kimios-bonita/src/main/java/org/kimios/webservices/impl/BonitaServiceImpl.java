@@ -47,6 +47,14 @@ public class BonitaServiceImpl implements BonitaService {
         }
     }
 
+    public TasksResponse getTasksByInstance(String sessionId, long processInstanceId, int start, int limit) throws DMServiceException {
+        try {
+            return controller.getTasksByInstance(helper.getSession(sessionId), processInstanceId, start, limit);
+        } catch (Exception e) {
+            throw new DMServiceException(e.getMessage(), e);
+        }
+    }
+
     public void takeTask(String sessionId, Long taskId) throws DMServiceException {
         try {
             controller.takeTask(helper.getSession(sessionId), taskId);

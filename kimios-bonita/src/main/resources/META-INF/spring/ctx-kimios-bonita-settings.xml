@@ -26,7 +26,7 @@
         <property name="bonitaUserPassword" value="install"/>
         <property name="bonitaHome" value="/tmp/bonita_home"/>
         <property name="bonitaApplicationName" value="bonita"/>
-        <property name="bonitaServerUrl" value="http://localhost:18080"/>
+        <property name="bonitaServerUrl" value="http://localhost:8080"/>
         <property name="bonitaKimiosRoleName" value="kimios"/>
         <property name="bonitaProfileUsers" value="User"/>
         <property name="validDomainsToSynchronize">

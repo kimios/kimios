@@ -7,7 +7,6 @@ import org.kimios.client.exception.ExceptionHelper;
 import org.kimios.webservices.BonitaService;
 import org.kimios.webservices.pojo.CommentWrapper;
 import org.kimios.webservices.pojo.ProcessWrapper;
-import org.kimios.webservices.pojo.TaskWrapper;
 import org.kimios.webservices.pojo.TasksResponse;
 
 import java.util.List;
@@ -46,6 +45,16 @@ public class BonitaController {
     public TasksResponse getAssignedTasks(String sessionId, int min, int max) throws Exception {
         try {
             return client.getAssignedTasks(sessionId, min, max);
+
+        } catch (Exception e) {
+            throw new ExceptionHelper().convertException(e);
+        }
+    }
+
+    public TasksResponse getTasksByInstance(String sessionId, long processInstanceId, int min, int max)
+            throws Exception {
+        try {
+            return client.getTasksByInstance(sessionId, processInstanceId, min, max);
 
         } catch (Exception e) {
             throw new ExceptionHelper().convertException(e);

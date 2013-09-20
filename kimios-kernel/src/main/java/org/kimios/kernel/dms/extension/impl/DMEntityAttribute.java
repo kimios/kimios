@@ -33,7 +33,7 @@ public class DMEntityAttribute implements GenericAttribute, Serializable
 
     private String value;
 
-    @Column(name = "attribute_value", nullable = true)
+    @Column(name = "attribute_value", nullable = true, length = 5000)
     public String getValue()
     {
         return value;

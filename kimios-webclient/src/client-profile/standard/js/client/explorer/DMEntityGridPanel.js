@@ -254,7 +254,7 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
                 } else {
                     this.commentsPanel.collapse();
                     this.commentsPanel.setVisible(false);
-                    this.commentsPanelenableComments = false;
+                    this.commentsPanel.enableComments = false;
                     kimios.explorer.getViewport().doLayout();
                 }
             }
@@ -655,26 +655,31 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
                         return (val / 1024).toFixed(2) + ' ' + kimios.lang('Kb');
                 }
             },
+
             {
-                header: kimios.lang('WorkflowStatus'),
-                dataIndex: 'workflowStatusName',
-                width: 50,
+                header: kimios.lang('Workflow'),
+                dataIndex: 'dmEntityAddonData',
+                width: 80,
                 readOnly: true,
                 sortable: true,
                 menuDisabled: true,
                 align: 'left',
-                renderer: function (value, metaData, record, rowIndex, colIndex, store) {
-                    if (record.get('type') == 3) {
-                        var getStyle = function (bg) {
-                            return 'font-weight:bold;display:block;color:white;background-color:' + bg + ';padding-left:2px;margin-right:20px;';
-                        };
-                        var val = value == '' ? '&nbsp;' : value;
-                        if (record.get('outOfWorkflow') == false) {
-                            return '<span style="' + getStyle('tomato') + '">' + val + '</span>';
-                        } else if (value != '') {
-                            return '<span style="' + getStyle('olive') + '">' + val + '</span>';
+                renderer: function (val, metaData, record, rowIndex, colIndex, store) {
+                    var obj = Ext.decode(val);
+                    var counter = 0;
+                    for (var key in  obj.entityAttributes) {
+                        if (key.indexOf('BonitaProcessInstance_') != -1) {
+                            counter++;
+                            /*
+                             var obj =entityAttribute.entityAttributes[key];
+                             var process=Ext.decode(obj.value);
+                             console.log(process);
+                             return process.name;
+                             */
                         }
                     }
+                    if (counter > 0)
+                        return '<span style="color:red;">' + counter + ' ' + kimios.lang('ProcessInstances') + '</span>';
                 }
             }
 //      ,{

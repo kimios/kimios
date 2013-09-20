@@ -74,9 +74,7 @@ kimios.tasks.BonitaTasksPanel = Ext.extend(Ext.grid.GridPanel, {
                 flex: 1,
                 dataIndex: 'name',
                 renderer: function (value, meta, record) {
-                    var state = record.data.state == 'failed'
-                        ? '<span style="color:red;font-weight:bolder;">' + kimios.lang('BonitaTaskFailed') + '</span>'
-                        : '<span style="color:green;">' + kimios.lang('BonitaTaskReady') + '</span>';
+                    var state = record.data.state;
                     var date = kimios.date(record.data.expectedEndDate);
                     var apps = record.data.processWrapper.name;
                     var desc = record.data.description;
@@ -299,6 +297,8 @@ kimios.tasks.BonitaTasksPanel = Ext.extend(Ext.grid.GridPanel, {
                     ]
                 }),
                 new kimios.tasks.CommentsPanel({
+                    frame:true,
+                    title:kimios.lang('Comments'),
                     taskId: task.id,
                     comments: comments,
                     bodyStyle: 'background-color:transparent;',

@@ -272,6 +272,7 @@ kimios.ContextMenu = new function () {
         this.documentMenu.add(this.getCheckInCheckOutItem());
 //        this.documentMenu.add(this.getStartWorkflowItem());
         this.documentMenu.add(this.getStartProcessItem());
+//        this.documentMenu.add(this.getListProcessItem());
         this.documentMenu.add(this.getMoveItem());
         this.documentMenu.add(this.getDeleteItem());
         this.documentMenu.add(this.getAddToBookmarksItem());
@@ -296,6 +297,7 @@ kimios.ContextMenu = new function () {
         this.viewableDocumentMenu.add(this.getCheckInCheckOutItem());
 //        this.viewableDocumentMenu.add(this.getStartWorkflowItem());
         this.viewableDocumentMenu.add(this.getStartProcessItem());
+//        this.viewableDocumentMenu.add(this.getListProcessItem());
         this.viewableDocumentMenu.add(this.getMoveItem());
         this.viewableDocumentMenu.add(this.getDeleteItem());
         this.viewableDocumentMenu.add(this.getAddToBookmarksItem());
@@ -740,7 +742,7 @@ kimios.ContextMenu = new function () {
 
     this.getStartWorkflowItem = function () {
         return new Ext.menu.Item({
-            text: kimios.lang('StartWorkflow'),
+            text: kimios.lang('Workflow'),
             iconCls: 'studio-cls-wf',
             scope: this,
             handler: function () {
@@ -754,12 +756,27 @@ kimios.ContextMenu = new function () {
 
     this.getStartProcessItem = function () {
         return new Ext.menu.Item({
-            text: kimios.lang('StartWorkflow'),
+            text: kimios.lang('Workflow'),
             iconCls: 'studio-cls-wf',
             scope: this,
             handler: function () {
                 new kimios.picker.BonitaPicker({
-                    documentUid: this.dmEntityPojo.uid
+                    documentUid: this.dmEntityPojo.uid,
+                    instances: this.dmEntityPojo.dmEntityAddonData
+                }).show();
+            }
+        });
+    };
+
+    this.getListProcessItem = function () {
+        return new Ext.menu.Item({
+            text: 'List Processes',
+            iconCls: 'studio-cls-wf',
+            scope: this,
+            handler: function () {
+                new kimios.picker.BonitaPicker({
+                    documentUid: this.dmEntityPojo.uid,
+                    instances: this.dmEntityPojo.dmEntityAddonData
                 }).show();
             }
         });

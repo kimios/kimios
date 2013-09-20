@@ -32,9 +32,6 @@ public class TaskWrapperFactory {
         wrapper.setStateCategory(task.getStateCategory() != null ? task.getStateCategory().name() : null);
         wrapper.setType(task.getType() != null ? task.getType().name() : null);
 
-        log.info("assignee: " + task.getAssigneeId());
-        log.info("actor: " + task.getActorId());
-
         if (task.getActorId() > 1)
             wrapper.setActor(UserWrapperFactory.createUserWrapper(identityAPI.getUser(task.getActorId())));
 

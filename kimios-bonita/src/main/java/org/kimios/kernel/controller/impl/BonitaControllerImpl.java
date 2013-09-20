@@ -5,11 +5,10 @@ import org.bonitasoft.engine.api.LoginAPI;
 import org.bonitasoft.engine.api.ProcessAPI;
 import org.bonitasoft.engine.api.TenantAPIAccessor;
 import org.bonitasoft.engine.bpm.comment.Comment;
-import org.bonitasoft.engine.bpm.flownode.ActivityInstanceCriterion;
-import org.bonitasoft.engine.bpm.flownode.ActivityInstanceNotFoundException;
-import org.bonitasoft.engine.bpm.flownode.HumanTaskInstance;
+import org.bonitasoft.engine.bpm.flownode.*;
 import org.bonitasoft.engine.bpm.process.ProcessDeploymentInfo;
 import org.bonitasoft.engine.bpm.process.ProcessDeploymentInfoCriterion;
+import org.bonitasoft.engine.bpm.process.ProcessInstanceNotFoundException;
 import org.bonitasoft.engine.exception.BonitaHomeNotSetException;
 import org.bonitasoft.engine.exception.ServerAPIException;
 import org.bonitasoft.engine.exception.UnknownAPITypeException;
@@ -54,7 +53,7 @@ public class BonitaControllerImpl implements BonitaController {
         Set<Long> actorsId = new HashSet<Long>();
         actorsId.add(apiSession.getUserId());
 
-        List<ProcessDeploymentInfo> processes = processAPI.getStartableProcessDeploymentInfosForActors(actorsId,
+        List<ProcessDeploymentInfo> processes = processAPI.getProcessDeploymentInfos(
                 Integer.MIN_VALUE, Integer.MAX_VALUE, ProcessDeploymentInfoCriterion.DEFAULT);
 
         log.info(processes.size() + " processes found");
@@ -68,8 +67,6 @@ public class BonitaControllerImpl implements BonitaController {
                     "homepage?__kb=" + session.getUid() + "&ui=form&locale=en#form=" + p.getName() + "--" +
                     p.getVersion() + "$entry&process=" + p.getProcessId() +
                     "&autoInstantiate=false&user=" + apiSession.getUserId() + "&mode=form");
-
-            // TODO add document ID to url
 
             log.info(wrapper.toString());
 
@@ -89,7 +86,7 @@ public class BonitaControllerImpl implements BonitaController {
         List<HumanTaskInstance> pendingTasks = processAPI.getPendingHumanTaskInstances(
                 apiSession.getUserId(), start, limit, ActivityInstanceCriterion.PRIORITY_ASC);
 
-        long count = processAPI.getNumberOfPendingHumanTaskInstances(apiSession.getUserId());
+        Number count = processAPI.getNumberOfPendingHumanTaskInstances(apiSession.getUserId());
 
         List<TaskWrapper> taskWrappers = getTaskWrappers(session, processAPI, identityAPI, pendingTasks);
 
@@ -107,9 +104,27 @@ public class BonitaControllerImpl implements BonitaController {
         List<HumanTaskInstance> assignedTasks = processAPI.getAssignedHumanTaskInstances(
                 apiSession.getUserId(), start, limit, ActivityInstanceCriterion.PRIORITY_ASC);
 
-        long count = processAPI.getNumberOfAssignedHumanTaskInstances(apiSession.getUserId());
+        Number count = processAPI.getNumberOfAssignedHumanTaskInstances(apiSession.getUserId());
 
         List<TaskWrapper> taskWrappers = getTaskWrappers(session, processAPI, identityAPI, assignedTasks);
+
+        logout(apiSession);
+
+        return new TasksResponse(taskWrappers, count);
+    }
+
+    public TasksResponse getTasksByInstance(Session session, long processInstanceId, int start, int limit)
+            throws Exception {
+
+        APISession apiSession = login(session);
+        ProcessAPI processAPI = TenantAPIAccessor.getProcessAPI(apiSession);
+        IdentityAPI identityAPI = TenantAPIAccessor.getIdentityAPI(apiSession);
+
+        List<ActivityInstance> tasks = processAPI.getActivities(processInstanceId, start, limit);
+
+        Number count = processAPI.getNumberOfOpenedActivityInstances(processInstanceId);
+
+        List<TaskWrapper> taskWrappers = getTaskWrappers(session, processAPI, identityAPI, tasks);
 
         logout(apiSession);
 
@@ -191,15 +206,15 @@ public class BonitaControllerImpl implements BonitaController {
         return wrappers;
     }
 
-    private List<TaskWrapper> getTaskWrappers(Session session, ProcessAPI processAPI, IdentityAPI identityAPI, List<HumanTaskInstance> tasks) throws Exception {
+    private List<TaskWrapper> getTaskWrappers(Session session, ProcessAPI processAPI, IdentityAPI identityAPI, List<? extends ActivityInstance> tasks) throws Exception {
 
         List<TaskWrapper> wrappers = new ArrayList<TaskWrapper>();
 
         log.info(tasks.size() + " tasks found");
 
-        for (HumanTaskInstance t : tasks) {
+        for (ActivityInstance t : tasks) {
 
-            TaskWrapper wrapper = TaskWrapperFactory.createTaskWrapper(t, identityAPI);
+            TaskWrapper wrapper = TaskWrapperFactory.createTaskWrapper((HumanTaskInstance)t, identityAPI);
 
             // Add process to current task
             ProcessDeploymentInfo p = processAPI.getProcessDeploymentInfo(t.getProcessDefinitionId());
@@ -209,15 +224,6 @@ public class BonitaControllerImpl implements BonitaController {
             wrapper.setUrl(bonitaCfg.getBonitaServerUrl() + "/" + bonitaCfg.getBonitaApplicationName() + "/console/" +
                     "homepage?__kb=" + session.getUid() + "&ui=form&locale=en#form=" + p.getName() + "--" + p.getVersion() +
                     "--" + t.getName() + "$entry&task=" + t.getId() + "&mode=form");
-
-//            // Add comments to current task
-//            List<CommentWrapper> commentWrappers = new ArrayList<CommentWrapper>();
-//            List<Comment> comments = processAPI.getComments(t.getParentProcessInstanceId());
-//            log.info(comments.size() + " comments found");
-//            for (Comment c : comments) {
-//                commentWrappers.add(CommentWrapperFactory.createCommentWrapper(c, identityAPI));
-//            }
-//            wrapper.setCommentWrappers(commentWrappers);
 
             log.info(wrapper.toString());
             wrappers.add(wrapper);
