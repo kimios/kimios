@@ -40,6 +40,7 @@ kimios.ContextMenu = new function () {
         this.initMyTasksMenu(config);
         this.initMyBonitaTasksMenu(config);
         this.initMyBonitaAssignedTasksMenu(config);
+        this.initMyBonitaAllTasksMenu(config);
         this.initSearchRequestsMenu(config);
         this.initSearchRequestsContainerMenu(config);
         this.initBookmarksMenu(config);
@@ -146,6 +147,11 @@ kimios.ContextMenu = new function () {
         // bonita tasks
         else if (context == 'myBonitaAssignedTasks') {
             return this.myBonitaAssignedTasksMenu;
+        }
+
+        // bonita tasks
+        else if (context == 'myBonitaAllTasks') {
+            return this.myBonitaAllTasksMenu;
         }
 
         else if (context == 'cart') {
@@ -364,6 +370,13 @@ kimios.ContextMenu = new function () {
         this.myBonitaAssignedTasksMenu.add(this.getRefreshItem());
         this.myBonitaAssignedTasksMenu.addSeparator();
         this.myBonitaAssignedTasksMenu.add(this.getPropertiesBonitaTask());
+    };
+
+    this.initMyBonitaAllTasksMenu = function (config) {
+        this.myBonitaAllTasksMenu = new Ext.menu.Menu(config);
+        this.myBonitaAllTasksMenu.add(this.getCheckBonitaTask());
+        this.myBonitaAllTasksMenu.addSeparator();
+        this.myBonitaAllTasksMenu.add(this.getPropertiesBonitaTask());
     };
 
     this.initCartMenu = function (config) {
@@ -742,7 +755,7 @@ kimios.ContextMenu = new function () {
 
     this.getStartWorkflowItem = function () {
         return new Ext.menu.Item({
-            text: kimios.lang('Workflow'),
+            text: kimios.lang('StartWorkflow'),
             iconCls: 'studio-cls-wf',
             scope: this,
             handler: function () {
@@ -756,31 +769,39 @@ kimios.ContextMenu = new function () {
 
     this.getStartProcessItem = function () {
         return new Ext.menu.Item({
-            text: kimios.lang('Workflow'),
+            text: kimios.lang('StartWorkflow'),
             iconCls: 'studio-cls-wf',
             scope: this,
             handler: function () {
-                new kimios.picker.BonitaPicker({
-                    documentUid: this.dmEntityPojo.uid,
-                    instances: this.dmEntityPojo.dmEntityAddonData
+
+                new kimios.properties.PropertiesWindow({
+                    dmEntityPojo: this.dmEntityPojo,
+                    versionsMode: this.context == 'versions' ? true : false,
+                    switchBonitaTab:true
+
                 }).show();
+
+//                new kimios.picker.BonitaPicker({
+//                    documentUid: this.dmEntityPojo.uid,
+//                    instances: this.dmEntityPojo.dmEntityAddonData
+//                }).show();
             }
         });
     };
 
-    this.getListProcessItem = function () {
-        return new Ext.menu.Item({
-            text: 'List Processes',
-            iconCls: 'studio-cls-wf',
-            scope: this,
-            handler: function () {
-                new kimios.picker.BonitaPicker({
-                    documentUid: this.dmEntityPojo.uid,
-                    instances: this.dmEntityPojo.dmEntityAddonData
-                }).show();
-            }
-        });
-    };
+//    this.getListProcessItem = function () {
+//        return new Ext.menu.Item({
+//            text: 'List Processes',
+//            iconCls: 'studio-cls-wf',
+//            scope: this,
+//            handler: function () {
+//                new kimios.picker.BonitaPicker({
+//                    documentUid: this.dmEntityPojo.uid,
+//                    instances: this.dmEntityPojo.dmEntityAddonData
+//                }).show();
+//            }
+//        });
+//    };
 
     this.getMoveItem = function () {
         return new Ext.menu.Item({
@@ -1129,10 +1150,16 @@ kimios.ContextMenu = new function () {
                     fbar: [
                         {
                             text: kimios.lang('Close'),
+                            scope:this,
                             handler: function () {
+                                console.log('cloooose');
                                 iframe.close();
                                 Ext.getCmp('kimios-tasks-panel').refresh();
                                 Ext.getCmp('kimios-assigned-tasks-panel').refresh();
+                                if (this.context == 'myBonitaAllTasks') {
+                                    Ext.getCmp('propInstancesPanelId').getSelectionModel().clearSelections(false);
+                                    Ext.getCmp('propTasksPanelId').getStore().removeAll();
+                                }
                             }
                         }
                     ]
@@ -1209,9 +1236,11 @@ kimios.ContextMenu = new function () {
             scope: this,
             handler: function (btn, evt) {
                 if (this.context == 'myBonitaTasks') {
-                    Ext.getCmp('kimios-tasks-panel').getTaskWindow(this.dmEntityPojo).show();
+                    Ext.getCmp('kimios-assigned-tasks-panel').getTaskWindow(this.dmEntityPojo, true, false).show();
                 } else if (this.context == 'myBonitaAssignedTasks') {
-                    Ext.getCmp('kimios-assigned-tasks-panel').getTaskWindow(this.dmEntityPojo).show();
+                    Ext.getCmp('kimios-assigned-tasks-panel').getTaskWindow(this.dmEntityPojo, false, true).show();
+                } else if (this.context == 'myBonitaAllTasks') {
+                    Ext.getCmp('kimios-assigned-tasks-panel').getTaskWindow(this.dmEntityPojo, false, false).show();
                 }
 
             }

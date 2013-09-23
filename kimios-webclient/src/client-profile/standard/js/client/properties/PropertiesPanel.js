@@ -22,6 +22,8 @@ kimios.properties.PropertiesPanel = Ext.extend(Ext.TabPanel, {
         this.window = config.window;
         this.dmEntityPojo = config.dmEntityPojo;
 
+        this.switchBonitaTab = config.switchBonitaTab;
+
         // when creation mode is enabled
         this.createMode = config.createMode == undefined ? false : config.createMode;
 
@@ -192,7 +194,10 @@ kimios.properties.PropertiesPanel = Ext.extend(Ext.TabPanel, {
             if (this.dmEntityPojo.type == 2 || this.dmEntityPojo.type == 3)
                 this.dmEntityPanel.inheritedPermissionsField.setValue(true);
 
-            this.setActiveTab(0);
+            if (!this.switchBonitaTab)
+                this.setActiveTab(0);
+            else
+                this.setActiveTab(3);
             this.saveButton.setVisible(true);
         }
 
@@ -241,11 +246,22 @@ kimios.properties.PropertiesPanel = Ext.extend(Ext.TabPanel, {
                                 this.add(this.versionsPanel);
 
                                 // add workflow tab
+                                this.bonitaPanel = new kimios.properties.BonitaPanel({
+                                    dmEntityPojo: this.dmEntityPojo,
+                                    instances: this.dmEntityPojo.dmEntityAddonData
+                                });
+                                this.add(this.bonitaPanel);
+
+                                // add workflow tab
+                                //TODO uncomment me to enable Notification
+                                /*
                                 this.workflowPanel = new kimios.properties.WorkflowPanel({
                                     dmEntityPojo: this.dmEntityPojo,
                                     readOnly: write == false && fullAccess == false
                                 });
                                 this.add(this.workflowPanel);
+                                 */
+
 
 //                // add comments tab
 //                this.commentsPanel = new kimios.properties.CommentsPanel({
@@ -346,7 +362,10 @@ kimios.properties.PropertiesPanel = Ext.extend(Ext.TabPanel, {
                     this.getWindow().setIconClass('value');
                     this.saveButton.setVisible(true);
                 }
-                this.setActiveTab(0);
+                if (!this.switchBonitaTab)
+                    this.setActiveTab(0);
+                else
+                    this.setActiveTab(3);
             }, this);
             store.load();
         }
@@ -408,23 +427,23 @@ kimios.properties.PropertiesPanel = Ext.extend(Ext.TabPanel, {
                     );
 
                     /*
-                    kimios.request.uploadDocument(
-                        true,
-                        this.dmEntityPanel, // need to pass the form as parameter (to update it with data fields)
-                        this.dmEntityPanel.nameField.getValue(),
-                        this.dmEntityPojo.parentUid,
-                        this.dmEntityPanel.inheritedPermissionsField.getValue(),
-                        this.securityEntityPanel.getJsonSecurityValues(),
-                        this.metaDataPanel.documentTypeUid,
-                        this.metaDataPanel.getJsonMetaValues(),
-                        function () {
-                            kimios.Info.msg(kimios.lang('Document'), kimios.lang('AddDocumentOK'));
-                            kimios.explorer.getViewport().refreshGrids();
-                            if (prop.window != undefined)
-                                prop.window.close();
-                        }
-                    );
-                    */
+                     kimios.request.uploadDocument(
+                     true,
+                     this.dmEntityPanel, // need to pass the form as parameter (to update it with data fields)
+                     this.dmEntityPanel.nameField.getValue(),
+                     this.dmEntityPojo.parentUid,
+                     this.dmEntityPanel.inheritedPermissionsField.getValue(),
+                     this.securityEntityPanel.getJsonSecurityValues(),
+                     this.metaDataPanel.documentTypeUid,
+                     this.metaDataPanel.getJsonMetaValues(),
+                     function () {
+                     kimios.Info.msg(kimios.lang('Document'), kimios.lang('AddDocumentOK'));
+                     kimios.explorer.getViewport().refreshGrids();
+                     if (prop.window != undefined)
+                     prop.window.close();
+                     }
+                     );
+                     */
                 }
         }
     },

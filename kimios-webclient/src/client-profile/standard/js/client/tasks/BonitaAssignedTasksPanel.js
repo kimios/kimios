@@ -122,7 +122,7 @@ kimios.tasks.BonitaAssignedTasksPanel = Ext.extend(Ext.grid.GridPanel, {
 
         this.on('rowdblclick', function (grid, rowIndex, e) {
             var pojo = grid.getSelectionModel().getSelected().data;
-            this.getTaskWindow(pojo).show();
+            this.getTaskWindow(pojo, false, true).show();
         }, this);
 
         this.on('rowcontextmenu', function (grid, rowIndex, e) {
@@ -153,7 +153,13 @@ kimios.tasks.BonitaAssignedTasksPanel = Ext.extend(Ext.grid.GridPanel, {
         this.doLayout();
     },
 
-    getTaskWindow: function (myTask) {
+    getTaskWindow: function (myTask, withPending, withAssigned) {
+        if (Ext.getCmp('propInstancesPanelId')) {
+            Ext.getCmp('propInstancesPanelId').getSelectionModel().clearSelections(false);
+        }
+        if (Ext.getCmp('propTasksPanelId')) {
+            Ext.getCmp('propTasksPanelId').getStore().removeAll();
+        }
         var task = null;
         var process = null;
         var comments = null;
@@ -180,7 +186,8 @@ kimios.tasks.BonitaAssignedTasksPanel = Ext.extend(Ext.grid.GridPanel, {
             name: 'apps',
             anchor: '100%',
             fieldLabel: 'Assigned to',
-            value: assignee.userName
+            value: assignee ? assignee.userName : undefined,
+            hidden: assignee ? false : true
         });
 
         this.appsField = new Ext.form.DisplayField({
@@ -308,8 +315,8 @@ kimios.tasks.BonitaAssignedTasksPanel = Ext.extend(Ext.grid.GridPanel, {
                     ]
                 }),
                 new kimios.tasks.CommentsPanel({
-                    frame:true,
-                    title:kimios.lang('Comments'),
+                    frame: true,
+                    title: kimios.lang('Comments'),
                     taskId: task.id,
                     comments: comments,
                     bodyStyle: 'background-color:transparent;',
@@ -351,16 +358,41 @@ kimios.tasks.BonitaAssignedTasksPanel = Ext.extend(Ext.grid.GridPanel, {
                                         iframe.close();
                                         Ext.getCmp('kimios-tasks-panel').refresh();
                                         Ext.getCmp('kimios-assigned-tasks-panel').refresh();
+                                        if (Ext.getCmp('propInstancesPanelId')) {
+                                            Ext.getCmp('propInstancesPanelId').getSelectionModel().clearSelections(false);
+                                        }
+                                        if (Ext.getCmp('propTasksPanelId')) {
+                                            Ext.getCmp('propTasksPanelId').getStore().removeAll();
+                                        }
                                     }
                                 }
                             ]
                         }).show();
                     }
                 },
+                {
+                    text: kimios.lang('BonitaTake'),
+                    iconCls: 'studio-cls-wf-down',
+                    hidden: withPending ? false : true,
+                    handler: function () {
+                        kimios.ajaxRequest('Workflow', {
+                                action: 'takeTask',
+                                taskId: task.id
+                            },
+                            function () {
+                                Ext.getCmp('kimios-tasks-panel').refresh();
+                                Ext.getCmp('kimios-assigned-tasks-panel').refresh();
+                            }
+                        );
+                        Ext.getCmp('BonitaAssignedTaskWindowID').close();
+                    }
+                },
+
 
                 {
                     text: kimios.lang('BonitaRelease'),
                     iconCls: 'studio-wf-expand',
+                    hidden: withAssigned ? false : true,
                     handler: function () {
                         kimios.ajaxRequest('Workflow', {
                                 action: 'releaseTask',
@@ -374,13 +406,34 @@ kimios.tasks.BonitaAssignedTasksPanel = Ext.extend(Ext.grid.GridPanel, {
                         Ext.getCmp('BonitaAssignedTaskWindowID').close();
                     }
                 },
+
+                {
+                    text: kimios.lang('BonitaHide'),
+                    iconCls: 'delete',
+                    hidden: withPending ? false : true,
+                    handler: function () {
+                        kimios.ajaxRequest('Workflow', {
+                                action: 'hideTask',
+                                taskId: task.id
+                            },
+                            function () {
+                                Ext.getCmp('kimios-tasks-panel').refresh();
+                                Ext.getCmp('kimios-assigned-tasks-panel').refresh();
+                            }
+                        );
+                        Ext.getCmp('BonitaAssignedTaskWindowID').close();
+                    }
+                },
+
                 {
                     text: kimios.lang('Close'),
                     handler: function () {
                         Ext.getCmp('BonitaAssignedTaskWindowID').close();
+
                     }
                 }
             ]
         });
     }
-});
+})
+;

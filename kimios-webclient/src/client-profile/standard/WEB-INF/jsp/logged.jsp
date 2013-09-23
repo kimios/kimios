@@ -139,6 +139,7 @@
             src="<%=request.getContextPath()%>/js/client/properties/RelatedDocumentsPanel.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/properties/HistoryPanel.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/properties/WorkflowPanel.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/properties/BonitaPanel.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/properties/CommentsPanel.js"></script>
     <script type="text/javascript"
             src="<%=request.getContextPath()%>/js/client/properties/SecurityEntityPanel.js"></script>
