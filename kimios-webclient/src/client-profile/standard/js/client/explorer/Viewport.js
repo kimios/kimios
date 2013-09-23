@@ -23,6 +23,8 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
         this.forceLayout = true;
         this.i18n = config.i18n;
         this.checkSession = config.checkSession;
+        this.bonita = true;
+        this.bonitaAlreadyCheck = false;
 
         this.topContainer = new Ext.Panel({
             border: false,
@@ -274,6 +276,7 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                     interval: (this.checkSession * 1000)
                 };
                 Ext.TaskMgr.start(this.tasksChecker);
+
                 kimios.unmask();
             }
         });

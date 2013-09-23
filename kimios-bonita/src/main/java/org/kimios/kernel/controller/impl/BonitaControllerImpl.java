@@ -5,10 +5,14 @@ import org.bonitasoft.engine.api.LoginAPI;
 import org.bonitasoft.engine.api.ProcessAPI;
 import org.bonitasoft.engine.api.TenantAPIAccessor;
 import org.bonitasoft.engine.bpm.comment.Comment;
-import org.bonitasoft.engine.bpm.flownode.*;
+import org.bonitasoft.engine.bpm.data.DataDefinition;
+import org.bonitasoft.engine.bpm.flownode.ActivityInstance;
+import org.bonitasoft.engine.bpm.flownode.ActivityInstanceCriterion;
+import org.bonitasoft.engine.bpm.flownode.ActivityInstanceNotFoundException;
+import org.bonitasoft.engine.bpm.flownode.HumanTaskInstance;
+import org.bonitasoft.engine.bpm.process.ProcessDefinitionNotFoundException;
 import org.bonitasoft.engine.bpm.process.ProcessDeploymentInfo;
 import org.bonitasoft.engine.bpm.process.ProcessDeploymentInfoCriterion;
-import org.bonitasoft.engine.bpm.process.ProcessInstanceNotFoundException;
 import org.bonitasoft.engine.exception.BonitaHomeNotSetException;
 import org.bonitasoft.engine.exception.ServerAPIException;
 import org.bonitasoft.engine.exception.UnknownAPITypeException;
@@ -40,9 +44,9 @@ import java.util.Set;
 public class BonitaControllerImpl implements BonitaController {
 
     private static Logger log = LoggerFactory.getLogger(BonitaControllerImpl.class);
+    private static final String KIMIOS_PREFIX_VARIABLE = "kimios_data_";
 
     private BonitaSettings bonitaCfg;
-
 
     public List<ProcessWrapper> getProcesses(Session session) throws LoginException, ServerAPIException,
             BonitaHomeNotSetException, UnknownAPITypeException, IOException, LogoutException, SessionNotFoundException {
@@ -214,7 +218,7 @@ public class BonitaControllerImpl implements BonitaController {
 
         for (ActivityInstance t : tasks) {
 
-            TaskWrapper wrapper = TaskWrapperFactory.createTaskWrapper((HumanTaskInstance)t, identityAPI);
+            TaskWrapper wrapper = TaskWrapperFactory.createTaskWrapper((HumanTaskInstance) t, identityAPI);
 
             // Add process to current task
             ProcessDeploymentInfo p = processAPI.getProcessDeploymentInfo(t.getProcessDefinitionId());
@@ -244,6 +248,19 @@ public class BonitaControllerImpl implements BonitaController {
             log.info("Error while authenticating to Bonita: " + e.getMessage());
             throw e;
         }
+    }
+
+    private List<DataDefinition> getKimiosProcessDataDefinitions(ProcessAPI processAPI, long processId)
+            throws ProcessDefinitionNotFoundException {
+
+        List<DataDefinition> definitions = new ArrayList<DataDefinition>();
+        List<DataDefinition> dataDefinitions = processAPI.getProcessDataDefinitions(processId, Integer.MIN_VALUE, Integer.MAX_VALUE);
+        for (DataDefinition dataDefinition : dataDefinitions) {
+            if (dataDefinition.getName().startsWith(KIMIOS_PREFIX_VARIABLE)) {
+                definitions.add(dataDefinition);
+            }
+        }
+        return definitions;
     }
 
     private void logout(APISession session) throws BonitaHomeNotSetException, ServerAPIException, UnknownAPITypeException, LogoutException, SessionNotFoundException {

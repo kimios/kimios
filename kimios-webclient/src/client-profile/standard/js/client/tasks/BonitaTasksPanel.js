@@ -97,10 +97,35 @@ kimios.tasks.BonitaTasksPanel = Ext.extend(Ext.grid.GridPanel, {
         this.store.on('beforeload', function (store, records, options) {
             kimios.explorer.getToolbar().myTasksButton.setIconClass('loading');
             Ext.getCmp('bonitaTabPanelId').setIconClass('loading');
-
         }, this);
 
+        this.store.on('exception', function () {
+            Ext.getCmp('kimios-viewport').bonita = false;
+            kimios.explorer.getToolbar().myTasksButton.setIconClass('tasks');
+            kimios.explorer.getToolbar().myTasksButton.setText('<span style="color:gray;font-style:italic;text-decoration: line-through;">' + kimios.lang('MyTasks') + '</span>');
+            Ext.getCmp('kimios-assigned-tasks-panel').getStore().removeAll();
+            Ext.getCmp('kimios-assigned-tasks-panel').setTitle(kimios.lang('BonitaAssignedTasks'));
+            Ext.getCmp('kimios-tasks-panel').getStore().removeAll();
+            Ext.getCmp('kimios-tasks-panel').setTitle(kimios.lang('BonitaPendingTasks'));
+            Ext.getCmp('bonitaTabPanelId').setTitle('<span style="text-decoration: line-through;font-style:italic;font-weight:normal;">' + kimios.lang('MyTasks') + '</span>');
+            Ext.getCmp('bonitaTabPanelId').setIconClass(undefined);
+            Ext.getCmp('bonitaTabPanelId').setDisabled(true);
+
+            if (Ext.getCmp('kimios-viewport').bonita == false && Ext.getCmp('kimios-viewport').bonitaAlreadyCheck == false) {
+                Ext.Msg.show({
+                    title: 'Bonita Service',
+                    msg: kimios.lang('BonitaUnvailable'),
+                    buttons: Ext.Msg.OK,
+                    icon: Ext.MessageBox.WARNING
+                });
+                Ext.getCmp('kimios-viewport').bonitaAlreadyCheck = true;
+            }
+        });
+
         this.store.on('load', function (store, records, options) {
+            Ext.getCmp('kimios-viewport').bonita = true;
+            Ext.getCmp('kimios-viewport').bonitaAlreadyCheck = false;
+
             this.tasksCounter = store.totalLength;
 
             this.setTitle(kimios.lang('BonitaPendingTasks') + ' ' + (this.tasksCounter > 0 ? '(' + this.tasksCounter + ')' : ''));
@@ -115,6 +140,7 @@ kimios.tasks.BonitaTasksPanel = Ext.extend(Ext.grid.GridPanel, {
                 Ext.getCmp('kimios-tasks-panel-pbar').moveLast();
             }
 
+            Ext.getCmp('bonitaTabPanelId').setDisabled(false);
             kimios.explorer.getToolbar().doLayout(); // My Tasks button GUI fix
         }, this);
 

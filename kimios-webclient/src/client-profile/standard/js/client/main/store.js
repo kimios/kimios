@@ -970,8 +970,8 @@ kimios.store = {
         },
 
         getBonitaPendingTasksStore: function (autoLoad, pageSize) {
-            return new DmsJsonStore({
-                url: 'Workflow',
+            return new Ext.data.JsonStore({
+                url: getBackEndUrl('Workflow'),
                 baseParams: {
                     action: 'getBonitaPendingTasks',
                     start: 0,
@@ -988,8 +988,8 @@ kimios.store = {
             });
         },
         getBonitaAssignedTasksStore: function (autoLoad, pageSize) {
-            return new DmsJsonStore({
-                url: 'Workflow',
+            return new Ext.data.JsonStore({
+                url: getBackEndUrl('Workflow'),
                 baseParams: {
                     action: 'getBonitaAssignedTasks',
                     start: 0,
