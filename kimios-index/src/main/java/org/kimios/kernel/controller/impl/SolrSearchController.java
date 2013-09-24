@@ -152,6 +152,7 @@ public class SolrSearchController
     {
         DMEntity e = dmsFactoryInstantiator.getDmEntityFactory().getEntity(dmEntityUid);
         DMEntity entity = null;
+        if( e != null ){
         switch (e.getType()) {
             case DMEntityType.WORKSPACE:
                 entity = new Workspace(dmEntityUid, "", "", "", null);
@@ -159,6 +160,7 @@ public class SolrSearchController
             case DMEntityType.FOLDER:
                 entity = new Folder(dmEntityUid, "", "", "", null, -1, -1);
                 break;
+        }
         }
         if (entity != null) {
             return quickSearchPojos(session, query, entity, start, pageSize, sortField, sortDir);

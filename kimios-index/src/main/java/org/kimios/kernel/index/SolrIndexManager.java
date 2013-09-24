@@ -263,6 +263,8 @@ public class SolrIndexManager
             doc.addField( "Attribute_" + attribute.toUpperCase(),
                           document.getAttributes().get( attribute ).getValue() );
         }
+        if(document.getAddOnDatas() != null)
+            doc.addField("DocumentRawAddonDatas", document.getAddOnDatas());
         Object body = null;
         try
         {
@@ -398,6 +400,9 @@ public class SolrIndexManager
                 list.add( (Long) dc.getFieldValue( "DocumentUid" ) );
             }
             SearchResponse searchResponse = new SearchResponse( list );
+
+            log.debug(" Solr Num found " + documentList.getNumFound());
+
             searchResponse.setResults( new Long( documentList.getNumFound() ).intValue() );
             searchResponse.setRows( solrDocumentFactory.getPojosFromSolrInputDocument( rsp.getResults() ) );
             return searchResponse;

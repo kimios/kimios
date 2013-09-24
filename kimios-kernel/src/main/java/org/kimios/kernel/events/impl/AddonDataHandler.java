@@ -98,7 +98,7 @@ public class AddonDataHandler extends GenericEventHandler {
         return null;
     }
 
-    public class AddonDatasWrapper {
+    public static class AddonDatasWrapper {
 
         private Map<String, DMEntityAttribute> entityAttributes;
 

@@ -3,6 +3,8 @@ package org.kimios.kernel.index.query.factory;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
+import org.kimios.kernel.dms.MetaValue;
+import org.kimios.kernel.events.impl.AddonDataHandler;
 import org.kimios.kernel.ws.pojo.Document;
 
 import java.util.ArrayList;
@@ -76,9 +78,7 @@ public class DocumentFactory
             pojo.setWorkflowStatusUid((Long) (doc.get( "DocumentWorkflowStatusUid" ) != null ? doc.get( "DocumentWorkflowStatusUid" ) : null) );
             pojo.setOutOfWorkflow( (Boolean) doc.get( "DocumentOutWorkflow" ) );
 
-
-
-
+            pojo.setAddonDatas((String) doc.get("DocumentRawAddonDatas"));
 
             documentArrayList.add( pojo );
 

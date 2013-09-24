@@ -257,11 +257,12 @@
         <field name="DocumentWorkflowStatusName" type="string" indexed="true" stored="true" required="false" />
         <field name="DocumentWorkflowStatusUid" type="tlong" indexed="true" stored="true" required="false" />
         <field name="DocumentOutWorkflow" type="boolean" indexed="true" stored="true" required="false" />
+        <field name="DocumentRawAddonDatas" type="string" indexed="false" stored="true" required="false" />
         <dynamicField name="MetaDataDate_*" type="date" indexed="true" stored="true" required="false"/>
         <dynamicField name="MetaDataString_*" type="string" indexed="true" stored="true" required="false"/>
         <dynamicField name="MetaDataNumber_*" type="tdouble" indexed="true" stored="true" required="false"/>
         <dynamicField name="MetaDataBoolean_*" type="boolean" indexed="true" stored="true" required="false"/>
-        <dynamicField name="Attribute_*" type="text" indexed="true" stored="true" required="false"/>
+        <dynamicField name="Attribute_*" type="text" indexed="true" stored="true" required="false" multiValued="true"/>
     </fields>
 
     <uniqueKey>DocumentUid</uniqueKey>

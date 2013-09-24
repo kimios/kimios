@@ -94,10 +94,10 @@ public class Reindexer implements Runnable
             log.info("Remaining docs: " + docLeak);
             if (docLeak > 0) {
                 List<DMEntity> remaining = new ArrayList<DMEntity>();
-                for (int u = docLeak;
-                        u <= entities.size(); u++)
+                for (int u = (entities.size() - docLeak);
+                        u < entities.size(); u++)
                 {
-                    remaining.add(entities.get(u - 1));
+                    remaining.add(entities.get(u));
                 }
                 blockItems.add(remaining);
             }
