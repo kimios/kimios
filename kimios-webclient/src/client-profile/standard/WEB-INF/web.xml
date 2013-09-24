@@ -45,7 +45,7 @@
         <param-value>org.kimios.utils.spring.KimiosWebApplicationContext</param-value>
     </context-param>
     <context-param>
-        <param-name>kimios.app.settings</param-name>
+        <param-name>kimios.app.name</param-name>
         <param-value>client</param-value>
     </context-param>
     <listener>

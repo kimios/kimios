@@ -20,8 +20,19 @@
         </dependency>
     </dependencies>
     <build>
+        <resources>
+            <resource>
+                <directory>template</directory>
+            </resource>
+        </resources>
         <!-- copy template kimios configuration file before war packaging -->
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.2.1</version>
+
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>

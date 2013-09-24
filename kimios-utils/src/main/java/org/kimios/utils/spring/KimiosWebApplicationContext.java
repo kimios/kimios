@@ -21,7 +21,7 @@ public class KimiosWebApplicationContext extends XmlWebApplicationContext {
     public static String KIMIOS_HOME = "kimios.home";
 
 
-    private static String KIMIOS_APP_ATTRIBUTE_NAME = "kimios.app.settings";
+    private static String KIMIOS_APP_ATTRIBUTE_NAME = "kimios.app.name";
 
     @Override
     protected String[] getDefaultConfigLocations() {

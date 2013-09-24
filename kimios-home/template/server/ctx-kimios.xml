@@ -34,7 +34,7 @@
 
     <!-- Data Source -->
     <bean id="kimiosDataSource" class="com.atomikos.jdbc.nonxa.AtomikosNonXADataSourceBean">
-        <property name="uniqueResourceName" value="jdbc/dms"/>
+        <property name="uniqueResourceName" value="jdbc/${kimios.app.name}"/>
         <property name="maxPoolSize" value="100"/>
         <property name="minPoolSize" value="20"/>
         <property name="maxIdleTime" value="1000"/>
@@ -83,8 +83,8 @@
                 <prop key="com.atomikos.icatch.service">
                     com.atomikos.icatch.standalone.UserTransactionServiceFactory
                 </prop>
-                <prop key="com.atomikos.icatch.output_dir">${kimios.home}/server/txlogs</prop>
-                <prop key="com.atomikos.icatch.log_base_dir">${kimios.home}/server/txlogs</prop>
+                <prop key="com.atomikos.icatch.output_dir">${kimios.home}/${kimios.app.name}/txlogs</prop>
+                <prop key="com.atomikos.icatch.log_base_dir">${kimios.home}/${kimios.app.name}/txlogs</prop>
                 <prop key="com.atomikos.icatch.automatic_resource_registration">true</prop>
                 <prop key="com.atomikos.icatch.console_log_level">ERROR</prop>
                 <prop key="com.atomikos.icatch.max_timeout">2200000</prop>
