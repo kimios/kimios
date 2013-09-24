@@ -109,7 +109,7 @@ kimios.tasks.BonitaTasksPanel = Ext.extend(Ext.grid.GridPanel, {
             Ext.getCmp('kimios-tasks-panel').setTitle(kimios.lang('BonitaPendingTasks'));
             Ext.getCmp('bonitaTabPanelId').setTitle('<span style="text-decoration: line-through;font-style:italic;font-weight:normal;">' + kimios.lang('MyTasks') + '</span>');
             Ext.getCmp('bonitaTabPanelId').setIconClass(undefined);
-            Ext.getCmp('bonitaTabPanelId').setDisabled(true);
+            Ext.getCmp('kimios-tasks-panel').setDisabled(true);
 
             if (Ext.getCmp('kimios-viewport').bonita == false && Ext.getCmp('kimios-viewport').bonitaAlreadyCheck == false) {
                 Ext.Msg.show({

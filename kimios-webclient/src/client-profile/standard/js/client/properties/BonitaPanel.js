@@ -210,7 +210,7 @@ kimios.properties.BonitaPanel = Ext.extend(Ext.Panel, {
                             html: '<iframe id="reportframe" border="0" width="100%" height="100%" ' +
                                 'frameborder="0" marginheight="12" marginwidth="16" scrolling="auto" ' +
                                 'style="padding: 16px" ' +
-                                'src="' + url + '&process_documentId=' + config.dmEntityPojo.uid + '"></iframe>'
+                                'src="' + url + '&process_kimiosData=' + config.dmEntityPojo.uid + '"></iframe>'
                         }
                     ],
                     fbar: [
