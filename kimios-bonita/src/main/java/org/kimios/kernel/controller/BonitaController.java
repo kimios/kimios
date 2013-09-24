@@ -1,6 +1,7 @@
 package org.kimios.kernel.controller;
 
 import org.bonitasoft.engine.bpm.flownode.ActivityInstanceNotFoundException;
+import org.bonitasoft.engine.bpm.process.ProcessDefinitionNotFoundException;
 import org.bonitasoft.engine.exception.BonitaHomeNotSetException;
 import org.bonitasoft.engine.exception.ServerAPIException;
 import org.bonitasoft.engine.exception.UnknownAPITypeException;
@@ -21,7 +22,7 @@ import java.util.List;
 public interface BonitaController {
 
     List<ProcessWrapper> getProcesses(Session session) throws LoginException, ServerAPIException,
-            BonitaHomeNotSetException, UnknownAPITypeException, IOException, LogoutException, SessionNotFoundException;
+            BonitaHomeNotSetException, UnknownAPITypeException, IOException, LogoutException, SessionNotFoundException, ProcessDefinitionNotFoundException;
 
     TasksResponse getPendingTasks(Session session, int start, int limit) throws Exception;
 

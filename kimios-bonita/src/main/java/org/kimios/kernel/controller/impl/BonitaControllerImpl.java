@@ -44,12 +44,13 @@ import java.util.Set;
 public class BonitaControllerImpl implements BonitaController {
 
     private static Logger log = LoggerFactory.getLogger(BonitaControllerImpl.class);
-    private static final String KIMIOS_PREFIX_VARIABLE = "kimios_data_";
+    private static final String KIMIOS_PREFIX_VARIABLE = "kimiosData";
 
     private BonitaSettings bonitaCfg;
 
     public List<ProcessWrapper> getProcesses(Session session) throws LoginException, ServerAPIException,
-            BonitaHomeNotSetException, UnknownAPITypeException, IOException, LogoutException, SessionNotFoundException {
+            BonitaHomeNotSetException, UnknownAPITypeException, IOException, LogoutException, SessionNotFoundException,
+            ProcessDefinitionNotFoundException {
 
         APISession apiSession = login(session);
         ProcessAPI processAPI = TenantAPIAccessor.getProcessAPI(apiSession);
@@ -57,24 +58,26 @@ public class BonitaControllerImpl implements BonitaController {
         Set<Long> actorsId = new HashSet<Long>();
         actorsId.add(apiSession.getUserId());
 
-        List<ProcessDeploymentInfo> processes = processAPI.getProcessDeploymentInfos(
-                Integer.MIN_VALUE, Integer.MAX_VALUE, ProcessDeploymentInfoCriterion.DEFAULT);
+        List<ProcessDeploymentInfo> processes = processAPI.getProcessDeploymentInfos(0, Integer.MAX_VALUE,
+                ProcessDeploymentInfoCriterion.DEFAULT);
 
         log.info(processes.size() + " processes found");
 
         List<ProcessWrapper> wrappers = new ArrayList<ProcessWrapper>();
 
         for (ProcessDeploymentInfo p : processes) {
-            ProcessWrapper wrapper = ProcessWrapperFactory.createProcessWrapper(p);
+            if (isKimiosProcessDataDefinitions(processAPI, p.getProcessId())) {
 
-            wrapper.setUrl(bonitaCfg.getBonitaServerUrl() + "/" + bonitaCfg.getBonitaApplicationName() + "/console/" +
-                    "homepage?__kb=" + session.getUid() + "&ui=form&locale=en#form=" + p.getName() + "--" +
-                    p.getVersion() + "$entry&process=" + p.getProcessId() +
-                    "&autoInstantiate=false&user=" + apiSession.getUserId() + "&mode=form");
+                ProcessWrapper wrapper = ProcessWrapperFactory.createProcessWrapper(p);
 
-            log.info(wrapper.toString());
+                wrapper.setUrl(bonitaCfg.getBonitaServerUrl() + "/" + bonitaCfg.getBonitaApplicationName() + "/console/" +
+                        "homepage?__kb=" + session.getUid() + "&ui=form&locale=en#form=" + p.getName() + "--" +
+                        p.getVersion() + "$entry&process=" + p.getProcessId() +
+                        "&autoInstantiate=false&user=" + apiSession.getUserId() + "&mode=form");
 
-            wrappers.add(wrapper);
+                log.info(wrapper.toString());
+                wrappers.add(wrapper);
+            }
         }
 
         logout(apiSession);
@@ -250,17 +253,18 @@ public class BonitaControllerImpl implements BonitaController {
         }
     }
 
-    private List<DataDefinition> getKimiosProcessDataDefinitions(ProcessAPI processAPI, long processId)
+    private boolean isKimiosProcessDataDefinitions(ProcessAPI processAPI, long processId)
             throws ProcessDefinitionNotFoundException {
 
-        List<DataDefinition> definitions = new ArrayList<DataDefinition>();
-        List<DataDefinition> dataDefinitions = processAPI.getProcessDataDefinitions(processId, Integer.MIN_VALUE, Integer.MAX_VALUE);
+        List<DataDefinition> dataDefinitions = processAPI.getProcessDataDefinitions(processId, 0, Integer.MAX_VALUE);
         for (DataDefinition dataDefinition : dataDefinitions) {
             if (dataDefinition.getName().startsWith(KIMIOS_PREFIX_VARIABLE)) {
-                definitions.add(dataDefinition);
+                return true;
             }
         }
-        return definitions;
+
+        return false;
+
     }
 
     private void logout(APISession session) throws BonitaHomeNotSetException, ServerAPIException, UnknownAPITypeException, LogoutException, SessionNotFoundException {
