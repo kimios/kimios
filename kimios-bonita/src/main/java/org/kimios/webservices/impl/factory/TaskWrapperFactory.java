@@ -2,6 +2,8 @@ package org.kimios.webservices.impl.factory;
 
 import org.bonitasoft.engine.api.IdentityAPI;
 import org.bonitasoft.engine.bpm.flownode.HumanTaskInstance;
+import org.bonitasoft.engine.bpm.flownode.impl.UserTaskInstanceImpl;
+import org.bonitasoft.engine.identity.User;
 import org.bonitasoft.engine.identity.UserNotFoundException;
 import org.kimios.webservices.pojo.TaskWrapper;
 import org.slf4j.Logger;
@@ -32,13 +34,20 @@ public class TaskWrapperFactory {
         wrapper.setStateCategory(task.getStateCategory() != null ? task.getStateCategory().name() : null);
         wrapper.setType(task.getType() != null ? task.getType().name() : null);
 
-        if (task.getActorId() > 1)
-            wrapper.setActor(UserWrapperFactory.createUserWrapper(identityAPI.getUser(task.getActorId())));
+        try{
+            User actor =  identityAPI.getUser(task.getActorId());
+            wrapper.setActor(UserWrapperFactory.createUserWrapper(actor));
+        }catch (Exception e){
+            log.error("No user for task " + e.getMessage(), e);
+        }
 
-        if (task.getAssigneeId() > 1)
-            wrapper.setAssignee(UserWrapperFactory.createUserWrapper(identityAPI.getUser(task.getAssigneeId())));
+        try{
+            User assignee =  identityAPI.getUser(task.getActorId());
+            wrapper.setAssignee(UserWrapperFactory.createUserWrapper(assignee));
+        }catch (Exception e){
+            log.error("No assignee for task " + e.getMessage(), e);
+        }
 
         return wrapper;
     }
-
 }

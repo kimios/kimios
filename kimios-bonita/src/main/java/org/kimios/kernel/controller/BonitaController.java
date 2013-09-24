@@ -10,6 +10,7 @@ import org.bonitasoft.engine.identity.UserNotFoundException;
 import org.bonitasoft.engine.platform.LoginException;
 import org.bonitasoft.engine.platform.LogoutException;
 import org.bonitasoft.engine.session.SessionNotFoundException;
+import org.kimios.kernel.exception.DmsKernelException;
 import org.kimios.kernel.security.Session;
 import org.kimios.webservices.pojo.CommentWrapper;
 import org.kimios.webservices.pojo.ProcessWrapper;
@@ -21,29 +22,23 @@ import java.util.List;
 
 public interface BonitaController {
 
-    List<ProcessWrapper> getProcesses(Session session) throws LoginException, ServerAPIException,
-            BonitaHomeNotSetException, UnknownAPITypeException, IOException, LogoutException, SessionNotFoundException, ProcessDefinitionNotFoundException;
+    List<ProcessWrapper> getProcesses(Session session) throws DmsKernelException;
 
-    TasksResponse getPendingTasks(Session session, int start, int limit) throws Exception;
+    TasksResponse getPendingTasks(Session session, int start, int limit) throws DmsKernelException;
 
-    TasksResponse getAssignedTasks(Session session, int start, int limit) throws Exception;
+    TasksResponse getAssignedTasks(Session session, int start, int limit) throws DmsKernelException;
 
-    TasksResponse getTasksByInstance(Session session, long processInstanceId, int start, int limit) throws Exception;
+    TasksResponse getTasksByInstance(Session session, long processInstanceId, int start, int limit) throws DmsKernelException;
 
-    void takeTask(Session session, Long taskId) throws LoginException, ServerAPIException, BonitaHomeNotSetException,
-            UnknownAPITypeException, IOException, LogoutException, SessionNotFoundException, UpdateException;
+    void takeTask(Session session, Long taskId) throws DmsKernelException;
 
-    void releaseTask(Session session, Long taskId) throws LoginException, ServerAPIException, BonitaHomeNotSetException,
-            UnknownAPITypeException, IOException, ActivityInstanceNotFoundException, UpdateException, LogoutException,
-            SessionNotFoundException;
+    void releaseTask(Session session, Long taskId) throws DmsKernelException;
 
-    void hideTask(Session session, Long taskId) throws Exception;
+    void hideTask(Session session, Long taskId) throws DmsKernelException;
 
     CommentWrapper addComment(Session session, Long taskId, String comment)
-            throws LoginException, ServerAPIException, BonitaHomeNotSetException, UnknownAPITypeException, IOException,
-            LogoutException, SessionNotFoundException, ActivityInstanceNotFoundException, UserNotFoundException;
+            throws DmsKernelException;
 
     List<CommentWrapper> getComments(Session session, Long taskId)
-            throws LoginException, ServerAPIException, BonitaHomeNotSetException, UnknownAPITypeException, IOException,
-            ActivityInstanceNotFoundException, LogoutException, SessionNotFoundException, UserNotFoundException;
+            throws DmsKernelException;
 }
