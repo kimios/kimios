@@ -119,8 +119,8 @@ kimios.tasks.BonitaAssignedTasksPanel = Ext.extend(Ext.grid.GridPanel, {
                     });
                     Ext.getCmp('kimios-viewport').bonitaAlreadyCheck = true;
                 }
-            }else{
-                kimios.explorer.getToolbar().myTasksButton.setText('<span style="color:gray;text-decoration: line-through;">' + kimios.lang('MyTasks') + ' (?)</span>');
+            } else {
+                kimios.explorer.getToolbar().myTasksButton.setText(kimios.lang('MyTasks') + ' (?)');
             }
             Ext.getCmp('kimios-assigned-tasks-panel').getStore().removeAll();
             Ext.getCmp('kimios-assigned-tasks-panel').setTitle('<span style="color:gray;text-decoration: line-through;">' + kimios.lang('BonitaAssignedTasks') + '</span>');
@@ -136,7 +136,7 @@ kimios.tasks.BonitaAssignedTasksPanel = Ext.extend(Ext.grid.GridPanel, {
 
             this.tasksCounter = store.totalLength;
 
-                this.setTitle(kimios.lang('BonitaAssignedTasks') + ' ' + (this.tasksCounter > 0 ? '(' + this.tasksCounter + ')' : ''));
+            this.setTitle(kimios.lang('BonitaAssignedTasks') + ' ' + (this.tasksCounter > 0 ? '(' + this.tasksCounter + ')' : ''));
 
             Ext.getCmp('bonitaTabPanelId').refresh(undefined, this.tasksCounter);
             Ext.getCmp('bonitaTabPanelId').setIconClass(undefined);

@@ -120,7 +120,7 @@ kimios.tasks.BonitaTasksPanel = Ext.extend(Ext.grid.GridPanel, {
                     Ext.getCmp('kimios-viewport').bonitaAlreadyCheck = true;
                 }
             } else {
-                kimios.explorer.getToolbar().myTasksButton.setText('<span style="color:gray;text-decoration: line-through;">' + kimios.lang('MyTasks') + ' (?)</span>');
+                kimios.explorer.getToolbar().myTasksButton.setText(kimios.lang('MyTasks') + ' (?)');
             }
             Ext.getCmp('kimios-tasks-panel').getStore().removeAll();
             Ext.getCmp('kimios-tasks-panel').setTitle('<span style="color:gray;text-decoration: line-through;">' + kimios.lang('BonitaPendingTasks') + '</span>');
