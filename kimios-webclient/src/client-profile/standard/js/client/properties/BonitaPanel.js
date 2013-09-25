@@ -85,11 +85,12 @@ kimios.properties.BonitaPanel = Ext.extend(Ext.Panel, {
                     renderer: function (value, css, record) {
                         var html = '#' + record.get('id') + ' <span style="font-size:.9em;color:gray;">-- ' + record.get('name') + '</span>';
 
-                        html += '<br/><span style="font-size:.9em;color:gray;">Start: ' + kimios.date(record.get('startDate')) + '</span>';
+                        if (record.get('startDate') > 0)
+                            html += '<br/><span style="font-size:.9em;color:gray;">Start date: ' + kimios.date(record.get('startDate')) + '</span>';
                         if (record.get('lastUpdate') > 0)
-                            html += '<br/><span style="font-size:.9em;color:gray;">Update: ' + kimios.date(record.get('lastUpdate')) + '</span>';
+                            html += '<br/><span style="font-size:.9em;color:gray;">Last update: ' + kimios.date(record.get('lastUpdate')) + '</span>';
                         if (record.get('endDate') > 0)
-                            html += '<br/><span style="font-size:.9em;color:gray;">End: ' + kimios.date(record.get('endDate')) + '</span>';
+                            html += '<br/><span style="font-size:.9em;color:gray;">End date: ' + kimios.date(record.get('endDate')) + '</span>';
 
                         html += '<br/><span style="font-size:.8em;">' + record.get('stateCategory') + '</span>';
 
@@ -132,12 +133,14 @@ kimios.properties.BonitaPanel = Ext.extend(Ext.Panel, {
                     dataIndex: 'name',
                     renderer: function (value, meta, record) {
                         var state = record.data.state;
-                        var date = kimios.date(record.data.expectedEndDate);
                         var apps = record.data.processWrapper.name;
                         var desc = record.data.description;
 
                         var html = value + '<span style="font-size:.9em;color:gray;"> -- ' + apps + '</span>';
-                        html += '<br/><span style="font-size:.9em;color:gray;">' + date + '</span>';
+
+                        if (record.data.expectedEndDate > 0)
+                            html += '<br/><span style="font-size:.9em;color:gray;">Expected end date: ' + kimios.date(record.data.expectedEndDate) + '</span>';
+
                         html += '<br/><span style="font-size:.8em;">' + state.toUpperCase() + '</span>';
 
 
@@ -156,6 +159,9 @@ kimios.properties.BonitaPanel = Ext.extend(Ext.Panel, {
                     sm.selectRow(rowIndex);
                     var selectedRecord = sm.getSelected();
                     kimios.ContextMenu.show(selectedRecord.data, e, 'myBonitaAllTasks');
+                },
+                containercontextmenu: function (grid, e) {
+                    e.preventDefault();
                 }
             },
             store: tasksStore
@@ -182,8 +188,13 @@ kimios.properties.BonitaPanel = Ext.extend(Ext.Panel, {
                 this.tasksPanel.setTitle(kimios.lang('TasksList') + ' (' + recs.length + ')');
             }
         }, this);
+        this.instanceProcessPanel.on('containercontextmenu', function (grid, e) {
+            e.preventDefault();
+        });
+        this.instanceProcessPanel.on('rowcontextmenu', function (grid, rowIndex, e) {
+            e.preventDefault();
+        });
         var instanceProcessPanel = this.instanceProcessPanel;
-        ////////////
 
 
         this.nextButton = new Ext.Button({

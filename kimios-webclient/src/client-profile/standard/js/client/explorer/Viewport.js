@@ -133,14 +133,48 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                                         tasksAssignedPanel
                                     ],
                                     refresh: function (p, a) {
-                                        if (p != undefined) this.pending = p;
-                                        if (a != undefined) this.assigned = a;
-                                        if (this.pending == 0 && this.assigned == 0)
+                                        if (p != undefined)
+                                            this.pending = p;
+                                        if (a != undefined)
+                                            this.assigned = a;
+
+                                        if (this.pending == 0 && this.assigned == 0) {
                                             this.setTitle(kimios.lang('MyTasks'));
-                                        else
-                                            this.setTitle(kimios.lang('MyTasks') + ' (' + (this.pending + this.assigned) + ')<br/><div style="font-size:.9em;font-weight:normal;"> ' +
-                                                this.pending + ' ' + kimios.lang('BonitaPendingTasks') + '<br/>' +
-                                                this.assigned + ' ' + kimios.lang('BonitaAssignedTasks') + '</div>');
+                                        }
+
+                                        else {
+                                            var pending = '';
+                                            var assigned = '';
+                                            if (this.pending == '?') {
+                                                pending = '<span style="color:gray;text-decoration: line-through;">' +
+                                                    this.pending + ' ' + kimios.lang('BonitaPendingTasks') + '</span>';
+                                            } else {
+                                                pending = this.pending + ' ' + kimios.lang('BonitaPendingTasks');
+                                            }
+
+                                            if (this.assigned == '?') {
+                                                assigned = '<span style="color:gray;text-decoration: line-through;">' +
+                                                    this.assigned + ' ' + kimios.lang('BonitaAssignedTasks') + '</span>';
+                                            } else {
+                                                assigned = this.assigned + ' ' + kimios.lang('BonitaAssignedTasks');
+                                            }
+
+                                            var total = 0;
+                                            if (this.pending == '?' || this.assigned == '?') {
+                                                total = '?';
+                                            } else {
+                                                total = (this.pending + this.assigned);
+                                            }
+                                            if (this.pending == '?' && this.assigned == '?') {
+                                                this.setTitle('<span style="color:gray;text-decoration: line-through;">' +
+                                                    kimios.lang('MyTasks') + '</span>');
+                                            } else {
+                                                this.setTitle(kimios.lang('MyTasks') + ' (' + total + ')<br/>' +
+                                                    '<div style="font-size:.9em;font-weight:normal;"> ' +
+                                                    pending + '<br/>' +
+                                                    assigned + '</div>');
+                                            }
+                                        }
                                     }
                                 })
                             ]
