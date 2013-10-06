@@ -89,7 +89,13 @@ public class SessionManager extends HFactory implements ISessionManager
     public Session startSession(String uid, String password, String userSource)
             throws DataSourceException, ConfigException
     {
-        UserFactory uf = authenticationSourceFactory.getAuthenticationSource(userSource).getUserFactory();
+        UserFactory uf = null;
+        try{
+           uf = authenticationSourceFactory.getAuthenticationSource(userSource).getUserFactory();
+        } catch (NullPointerException nullException){
+            log.error(userSource + " user source doesn't exist");
+            return null;
+        }
         if (uf.authenticate(uid, password)) {
             Session s = createSession(uid, userSource);
             s.setMetaDatas(ClientInformationUtil.getInfos());
