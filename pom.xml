@@ -98,6 +98,7 @@
         <module>kimios-convert</module>
         <module>kimios-bonita</module>
         <module>kimios-home</module>
+        <module>kimios-runtime</module>
     </modules>
     <packaging>pom</packaging>
     <build>
