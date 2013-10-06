@@ -45,7 +45,7 @@ kimios.tasks.BonitaTasksPanel = Ext.extend(Ext.grid.GridPanel, {
         this.tbar = [
             this.pagingToolBar
         ];
-        this.bonitaError=false;
+        this.bonitaError = false;
 
         this.cm = new Ext.grid.ColumnModel([
             {
@@ -103,10 +103,12 @@ kimios.tasks.BonitaTasksPanel = Ext.extend(Ext.grid.GridPanel, {
         this.store.on('exception', function () {
             Ext.getCmp('kimios-viewport').bonita = false;
             this.bonitaError = true;
+
+            this.tasksCounter = '?';
+
             if (Ext.getCmp('kimios-assigned-tasks-panel').bonitaError) {
 
-                kimios.explorer.getToolbar().myTasksButton.setText('<span style="color:gray;font-style:italic;text-decoration: line-through;">' + kimios.lang('MyTasks') + '</span>');
-                Ext.getCmp('bonitaTabPanelId').setTitle('<span style="text-decoration: line-through;font-style:italic;font-weight:normal;">' + kimios.lang('MyTasks') + '</span>');
+                kimios.explorer.getToolbar().myTasksButton.setText('<span style="color:gray;text-decoration: line-through;">' + kimios.lang('MyTasks') + '</span>');
 
                 if (Ext.getCmp('kimios-viewport').bonita == false && Ext.getCmp('kimios-viewport').bonitaAlreadyCheck == false) {
                     Ext.Msg.show({
@@ -117,14 +119,15 @@ kimios.tasks.BonitaTasksPanel = Ext.extend(Ext.grid.GridPanel, {
                     });
                     Ext.getCmp('kimios-viewport').bonitaAlreadyCheck = true;
                 }
+            } else {
+                kimios.explorer.getToolbar().myTasksButton.setText(kimios.lang('MyTasks') + ' (?)');
             }
             Ext.getCmp('kimios-tasks-panel').getStore().removeAll();
-            Ext.getCmp('kimios-tasks-panel').setTitle(
-                '<span style="color:gray;font-style:italic;text-decoration: line-through;">'+
-                kimios.lang('BonitaPendingTasks')+'</span>');
+            Ext.getCmp('kimios-tasks-panel').setTitle('<span style="color:gray;text-decoration: line-through;">' + kimios.lang('BonitaPendingTasks') + '</span>');
             Ext.getCmp('bonitaTabPanelId').setIconClass(undefined);
+            Ext.getCmp('bonitaTabPanelId').refresh('?', Ext.getCmp('kimios-assigned-tasks-panel').tasksCounter);
             kimios.explorer.getToolbar().myTasksButton.setIconClass('tasks');
-        },this);
+        }, this);
 
         this.store.on('load', function (store, records, options) {
             Ext.getCmp('kimios-viewport').bonita = true;
@@ -138,7 +141,7 @@ kimios.tasks.BonitaTasksPanel = Ext.extend(Ext.grid.GridPanel, {
             Ext.getCmp('bonitaTabPanelId').refresh(this.tasksCounter, undefined);
             Ext.getCmp('bonitaTabPanelId').setIconClass(undefined);
 
-            kimios.explorer.getToolbar().myTasksButton.refresh(this.tasksCounter, undefined);
+            kimios.explorer.getToolbar().myTasksButton.refresh(this.tasksCounter, Ext.getCmp('kimios-assigned-tasks-panel').tasksCounter);
             kimios.explorer.getToolbar().myTasksButton.setIconClass('tasks');
 
             if (records.length == 0 && this.tasksCounter > 0) {

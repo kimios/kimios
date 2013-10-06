@@ -87,6 +87,8 @@ kimios.explorer.Toolbar = Ext.extend(Ext.Toolbar, {
                 if (a != undefined) this.assigned = a;
                 if (this.pending == 0 && this.assigned == 0)
                     this.setText(kimios.lang('MyTasks'));
+                else if (this.pending == '?' || this.assigned == '?')
+                    this.setText(kimios.lang('MyTasks') + ' (?)');
                 else
                     this.setText(kimios.lang('MyTasks') + ' (' + (this.pending + this.assigned) + ')');
             }

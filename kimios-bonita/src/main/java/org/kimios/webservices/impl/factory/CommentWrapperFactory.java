@@ -17,10 +17,13 @@ public class CommentWrapperFactory {
         wrapper.setPostDate(comment.getPostDate());
         wrapper.setProcessInstanceId(comment.getProcessInstanceId());
         wrapper.setTenantId(comment.getTenantId());
-        if (comment.getUserId() != null)
+
+        try {
             wrapper.setUserWrapper(UserWrapperFactory.createUserWrapper(identityAPI.getUser(comment.getUserId())));
-        else
-            wrapper.setUserWrapper(null);
+        } catch (Exception e) {
+            log.error("No user for comment " + e.getMessage(), e);
+        }
+
         return wrapper;
     }
 }
