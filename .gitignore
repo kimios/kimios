@@ -8,3 +8,4 @@ target/
 .idea/*
 Thumbs.db
 .DS_Store
+kimios-home/server/txlogs
