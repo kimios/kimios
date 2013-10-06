@@ -63,16 +63,19 @@
             <column name="dm_entity_owner_source"/>
         </property>
         <property name="creationDate">
-            <column sql-type="date" name="creation_date"/>
+            <column sql-type="timestamp" name="creation_date"/>
         </property>
         <property name="updateDate">
-            <column sql-type="date" name="update_date"/>
+            <column sql-type="timestamp" name="update_date"/>
+        </property>
+        <property name="lastVersionId">
+            <column name="version_id" />
         </property>
         <property name="versionCreationDate">
-            <column sql-type="date" name="version_creation_date"/>
+            <column sql-type="timestamp" name="version_creation_date"/>
         </property>
         <property name="versionUpdateDate">
-            <column sql-type="date" name="version_update_date"/>
+            <column sql-type="timestamp" name="version_update_date"/>
         </property>
         <property name="folderUid">
             <column name="folder_id"/>
@@ -102,7 +105,7 @@
             <column name="lock_source"/>
         </property>
         <property name="checkoutDate">
-            <column name="lock_date"/>
+            <column name="lock_date" sql-type="timestamp"/>
         </property>
         <property name="length">
             <column name="file_length"/>

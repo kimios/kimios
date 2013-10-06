@@ -27,18 +27,17 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-@Entity(name = "DocumentPojo")
-@Table(name = "document_pojo")
+
 public class Document extends DMEntity implements Serializable
 {
     final static long serialVersionUID = 1235489790;
 
 
+    private Long lastVersionId;
 
     private Calendar versionCreationDate;
 
     private Calendar versionUpdateDate;
-
 
     private long folderUid;
 
@@ -66,16 +65,15 @@ public class Document extends DMEntity implements Serializable
 
     private Long documentTypeUid = 0L;
 
-    private String path;
-
     private String addonDatas;
 
     public Document()
     {
+        this.type = 3;
     }
 
     public Document(long uid, String name, String owner, String ownerSource,
-            Date creationDate, Date updateDate, Date versionCreationDate, Date versionUpdateDate, long folderUid,
+            Date creationDate, Date updateDate, long lastVersionId, Date versionCreationDate, Date versionUpdateDate, long folderUid,
             String mimeType,
             String extension, long documentTypeUid, String documentTypeName,
             boolean checkedOut, String checkoutUser,
@@ -95,6 +93,7 @@ public class Document extends DMEntity implements Serializable
         this.versionCreationDate.setTime(versionCreationDate);
         this.versionUpdateDate = Calendar.getInstance();
         this.versionUpdateDate.setTime(versionUpdateDate);
+        this.lastVersionId = lastVersionId;
         this.folderUid = folderUid;
         this.mimeType = mimeType;
         this.extension = extension;
@@ -112,79 +111,11 @@ public class Document extends DMEntity implements Serializable
         this.documentTypeUid = documentTypeUid;
         this.path = path;
         this.addonDatas = addonDatas;
-    }
 
-    @Id
-    @Column(name = "id")
-    public long getUid()
-    {
-        return uid;
-    }
-
-    public void setUid(long uid)
-    {
-        this.uid = uid;
-    }
-
-    @Column(name = "dm_entity_name")
-    public String getName()
-    {
-        return name;
-    }
-
-    public void setName(String name)
-    {
-        this.name = name;
-    }
-
-    @Column(name = "dm_entity_owner")
-    public String getOwner()
-    {
-        return owner;
+        this.type = 3;
     }
 
 
-    public void setOwner(String owner)
-    {
-        this.owner = owner;
-    }
-
-    @Column(name = "dm_entity_owner_source")
-    public String getOwnerSource()
-    {
-        return ownerSource;
-    }
-
-    public void setOwnerSource(String ownerSource)
-    {
-        this.ownerSource = ownerSource;
-    }
-
-    @Column(name = "creation_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    public Calendar getCreationDate()
-    {
-        return creationDate;
-    }
-
-    public void setCreationDate(Calendar creationDate)
-    {
-        this.creationDate = creationDate;
-    }
-
-    @Column(name = "update_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    public Calendar getUpdateDate()
-    {
-        return updateDate;
-    }
-
-    public void setUpdateDate(Calendar updateDate)
-    {
-        this.updateDate = updateDate;
-    }
-
-    @Column(name = "folder_id")
     public long getFolderUid()
     {
         return folderUid;
@@ -195,7 +126,6 @@ public class Document extends DMEntity implements Serializable
         this.folderUid = folderUid;
     }
 
-    @Column(name = "mime_type")
     public String getMimeType()
     {
         return mimeType;
@@ -209,7 +139,6 @@ public class Document extends DMEntity implements Serializable
         this.mimeType = mimeType;
     }
 
-    @Column(name = "extension")
     public String getExtension()
     {
         return extension;
@@ -225,13 +154,11 @@ public class Document extends DMEntity implements Serializable
         this.checkedOut = checkedOut;
     }
 
-    @Column(name = "locked")
     public Boolean getCheckedOut()
     {
         return checkedOut;
     }
 
-    @Column(name = "lock_by")
     public String getCheckoutUser()
     {
         return checkoutUser;
@@ -242,7 +169,6 @@ public class Document extends DMEntity implements Serializable
         this.checkoutUser = checkoutUser;
     }
 
-    @Column(name = "lock_source")
     public String getCheckoutUserSource()
     {
         return checkoutUserSource;
@@ -252,8 +178,6 @@ public class Document extends DMEntity implements Serializable
     {
         this.checkoutUserSource = checkoutUserSource;
     }
-
-    @Column(name = "lock_date")
     public Calendar getCheckoutDate()
     {
         return checkoutDate;
@@ -263,8 +187,6 @@ public class Document extends DMEntity implements Serializable
     {
         this.checkoutDate = checkoutDate;
     }
-
-    @Column(name = "file_length")
     public long getLength()
     {
         return length;
@@ -275,7 +197,6 @@ public class Document extends DMEntity implements Serializable
         this.length = length;
     }
 
-    @Column(name = "last_wfs")
     public Long getWorkflowStatusUid()
     {
         return workflowStatusUid;
@@ -285,8 +206,6 @@ public class Document extends DMEntity implements Serializable
     {
         this.workflowStatusUid = workflowStatusUid;
     }
-
-    @Column(name = "status_name")
     public String getWorkflowStatusName()
     {
         return workflowStatusName;
@@ -299,8 +218,6 @@ public class Document extends DMEntity implements Serializable
         }
         this.workflowStatusName = workflowStatusName;
     }
-
-    @Column(name = "outofworkflow")
     public Boolean getOutOfWorkflow()
     {
         return isOutOfWorkflow;
@@ -310,8 +227,6 @@ public class Document extends DMEntity implements Serializable
     {
         this.isOutOfWorkflow = isOutOfWorkflow;
     }
-
-    @Column(name = "type_name")
     public String getDocumentTypeName()
     {
         return documentTypeName;
@@ -324,8 +239,6 @@ public class Document extends DMEntity implements Serializable
         }
         this.documentTypeName = documentTypeName;
     }
-
-    @Column(name = "document_type_id")
     public Long getDocumentTypeUid()
     {
         return documentTypeUid;
@@ -335,21 +248,6 @@ public class Document extends DMEntity implements Serializable
     {
         this.documentTypeUid = documentTypeUid;
     }
-
-    @Column(name = "document_path")
-    public String getPath()
-    {
-        return path;
-    }
-
-    public void setPath(String path)
-    {
-        this.path = path;
-    }
-
-
-    @Column(name = "version_creation_date")
-    @Temporal(TemporalType.TIMESTAMP)
     public Calendar getVersionCreationDate()
     {
         return versionCreationDate;
@@ -359,9 +257,6 @@ public class Document extends DMEntity implements Serializable
     {
         this.versionCreationDate = versionCreationDate;
     }
-
-    @Column(name = "version_update_date")
-    @Temporal(TemporalType.TIMESTAMP)
     public Calendar getVersionUpdateDate()
     {
         return versionUpdateDate;
@@ -371,9 +266,6 @@ public class Document extends DMEntity implements Serializable
     {
         this.versionUpdateDate = versionUpdateDate;
     }
-
-
-    @Column(name = "dm_entity_addon_data")
     public String getAddonDatas() {
         return addonDatas;
     }
@@ -382,38 +274,34 @@ public class Document extends DMEntity implements Serializable
         this.addonDatas = addonDatas;
     }
 
-    @Override
-    public int getType() {
-        return 3;
+    public Long getLastVersionId() {
+        return lastVersionId;
+    }
+
+    public void setLastVersionId(Long lastVersionId) {
+        this.lastVersionId = lastVersionId;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "Document{" +
-            "uid=" + uid +
-            ", name='" + name + '\'' +
-            ", owner='" + owner + '\'' +
-            ", ownerSource='" + ownerSource + '\'' +
-            ", creationDate=" + creationDate +
-            ", updateDate=" + updateDate +
-            ", versionCreationDate=" + versionCreationDate +
-            ", versionUpdateDate=" + versionUpdateDate +
-            ", folderUid=" + folderUid +
-            ", mimeType='" + mimeType + '\'' +
-            ", extension='" + extension + '\'' +
-            ", checkedOut=" + checkedOut +
-            ", checkoutUser='" + checkoutUser + '\'' +
-            ", checkoutUserSource='" + checkoutUserSource + '\'' +
-            ", checkoutDate=" + checkoutDate +
-            ", length=" + length +
-            ", workflowStatusUid=" + workflowStatusUid +
-            ", workflowStatusName='" + workflowStatusName + '\'' +
-            ", isOutOfWorkflow=" + isOutOfWorkflow +
-            ", documentTypeName='" + documentTypeName + '\'' +
-            ", documentTypeUid=" + documentTypeUid +
-            ", path='" + path + '\'' +
+                "lastVersionId=" + lastVersionId +
+                ", versionCreationDate=" + versionCreationDate +
+                ", versionUpdateDate=" + versionUpdateDate +
+                ", folderUid=" + folderUid +
+                ", mimeType='" + mimeType + '\'' +
+                ", extension='" + extension + '\'' +
+                ", checkedOut=" + checkedOut +
+                ", checkoutUser='" + checkoutUser + '\'' +
+                ", checkoutUserSource='" + checkoutUserSource + '\'' +
+                ", checkoutDate=" + checkoutDate +
+                ", length=" + length +
+                ", workflowStatusUid=" + workflowStatusUid +
+                ", workflowStatusName='" + workflowStatusName + '\'' +
+                ", isOutOfWorkflow=" + isOutOfWorkflow +
+                ", documentTypeName='" + documentTypeName + '\'' +
+                ", documentTypeUid=" + documentTypeUid +
                 ", addonDatas='" + addonDatas + '\'' +
-            '}';
+                '}';
     }
 }

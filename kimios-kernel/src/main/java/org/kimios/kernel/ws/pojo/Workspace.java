@@ -24,7 +24,7 @@ public class Workspace extends DMEntity implements Serializable
 {
     public Workspace()
     {
-
+        this.type = 1;
     }
 
     public Workspace(long uid, String name, String owner, String ownerSource, Date creationDate,
@@ -32,82 +32,6 @@ public class Workspace extends DMEntity implements Serializable
             String path)
     {
         super(uid, 1, name, owner, ownerSource, creationDate, updateDate, path);
-    }
-
-    public Calendar getCreationDate()
-    {
-        return creationDate;
-    }
-
-    public void setCreationDate(Calendar creationDate)
-    {
-        this.creationDate = creationDate;
-    }
-
-    public String getName()
-    {
-        return name;
-    }
-
-    public void setName(String name)
-    {
-        this.name = name;
-    }
-
-    public String getOwner()
-    {
-        return owner;
-    }
-
-    public void setOwner(String owner)
-    {
-        this.owner = owner;
-    }
-
-    public String getOwnerSource()
-    {
-        return ownerSource;
-    }
-
-    public void setOwnerSource(String ownerSource)
-    {
-        this.ownerSource = ownerSource;
-    }
-
-    public long getUid()
-    {
-        return uid;
-    }
-
-    public void setUid(long uid)
-    {
-        this.uid = uid;
-    }
-
-    public String getPath()
-    {
-        return path;
-    }
-
-    public void setPath(String path)
-    {
-        this.path = path;
-    }
-
-    public Calendar getUpdateDate()
-    {
-        return updateDate;
-    }
-
-    public void setUpdateDate(Calendar updateDate)
-    {
-        this.updateDate = updateDate;
-    }
-
-
-    @Override
-    public int getType() {
-        return 1;
     }
 }
 

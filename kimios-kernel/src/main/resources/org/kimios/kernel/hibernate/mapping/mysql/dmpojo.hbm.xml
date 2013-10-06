@@ -96,6 +96,9 @@
         <property name="updateDate">
             <column sql-type="date" name="update_date"/>
         </property>
+        <property name="lastVersionId">
+            <column name="version_id" />
+        </property>
         <property name="versionCreationDate">
             <column sql-type="date" name="version_creation_date"/>
         </property>

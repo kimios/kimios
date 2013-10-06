@@ -232,7 +232,7 @@ public class Document extends DMEntityImpl
             wsName = fc.getWorkflowStatusFactory().getWorkflowStatus(dws.getWorkflowStatusUid()).getName();
         }
         return new org.kimios.kernel.ws.pojo.Document(this.uid, this.name, this.owner,
-                this.ownerSource, this.creationDate, this.updateDate, version.getCreationDate(),
+                this.ownerSource, this.creationDate, this.updateDate,version.getUid(), version.getCreationDate(),
                 version.getModificationDate(), this.folderUid, this.mimeType,
                 this.extension, docTypeUid, docTypeName, isCheckedOut, checkoutUser,
                 checkoutUserSource, checkOutDate, version.getLength(), wsUid, wsName, isOutOfWorkflow, this.path, this.addOnDatas);

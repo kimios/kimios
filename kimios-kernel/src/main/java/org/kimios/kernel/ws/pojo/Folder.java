@@ -30,7 +30,7 @@ public class Folder extends DMEntity implements Serializable
 
     public Folder()
     {
-
+        this.type = 2;
     }
 
     public Folder(long uid, String name, String owner, String ownerSource,
@@ -39,46 +39,6 @@ public class Folder extends DMEntity implements Serializable
         super(uid, 2, name, owner, ownerSource, creationDate, updateDate, path);
         this.parentUid = parentUid;
         this.parentType = parentType;
-    }
-
-    public Calendar getCreationDate()
-    {
-        return creationDate;
-    }
-
-    public void setCreationDate(Calendar creationDate)
-    {
-        this.creationDate = creationDate;
-    }
-
-    public String getName()
-    {
-        return name;
-    }
-
-    public void setName(String name)
-    {
-        this.name = name;
-    }
-
-    public String getOwner()
-    {
-        return owner;
-    }
-
-    public void setOwner(String owner)
-    {
-        this.owner = owner;
-    }
-
-    public String getOwnerSource()
-    {
-        return ownerSource;
-    }
-
-    public void setOwnerSource(String ownerSource)
-    {
-        this.ownerSource = ownerSource;
     }
 
     public int getParentType()
@@ -99,41 +59,6 @@ public class Folder extends DMEntity implements Serializable
     public void setParentUid(long parentUid)
     {
         this.parentUid = parentUid;
-    }
-
-    public long getUid()
-    {
-        return uid;
-    }
-
-    public void setUid(long uid)
-    {
-        this.uid = uid;
-    }
-
-    public String getPath()
-    {
-        return path;
-    }
-
-    public void setPath(String path)
-    {
-        this.path = path;
-    }
-
-    public Calendar getUpdateDate()
-    {
-        return updateDate;
-    }
-
-    public void setUpdateDate(Calendar updateDate)
-    {
-        this.updateDate = updateDate;
-    }
-
-    @Override
-    public int getType() {
-        return 2;
     }
 }
 
