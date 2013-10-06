@@ -71,7 +71,7 @@ public class BonitaControllerImpl implements BonitaController {
                     wrapper.setUrl(bonitaCfg.getBonitaServerUrl() + "/" + bonitaCfg.getBonitaApplicationName() + "/console/" +
                             "homepage?__kb=" + session.getUid() + "&ui=form&locale=en#form=" + p.getName() + "--" +
                             p.getVersion() + "$entry&process=" + p.getProcessId() +
-                            "&autoInstantiate=false&user=" + apiSession.getUserId() + "&mode=form");
+                            "&autoInstantiate=false&user=" + apiSession.getUserId() + "&mode=app");
 
                     log.info(wrapper.toString());
                     wrappers.add(wrapper);
@@ -273,7 +273,7 @@ public class BonitaControllerImpl implements BonitaController {
             // Set direct url to task
             wrapper.setUrl(bonitaCfg.getBonitaServerUrl() + "/" + bonitaCfg.getBonitaApplicationName() + "/console/" +
                     "homepage?__kb=" + session.getUid() + "&ui=form&locale=en#form=" + p.getName() + "--" + p.getVersion() +
-                    "--" + t.getName() + "$entry&task=" + t.getId() + "&mode=form");
+                    "--" + t.getName() + "$entry&task=" + t.getId() + "&mode=app");
             log.info(wrapper.toString());
             wrappers.add(wrapper);
         }
