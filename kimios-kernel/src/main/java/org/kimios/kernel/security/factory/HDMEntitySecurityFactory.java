@@ -444,6 +444,8 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
                 }
             }
 
+
+            getSession().flush();
             return ret;
         } catch (HibernateException e) {
             throw new DataSourceException(e);
