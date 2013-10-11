@@ -402,7 +402,9 @@ kimios.request = {
             gridStore.each(function (rec) {
                 out.push({
                     name: rec.get('name'),
-                    value: rec.get('value')
+                    value: rec.get('value'),
+                    enableMailCheck: rec.get('enableMailCheck'),
+                    enableSso: rec.get('enableSso')
                 });
             });
             var jsonParams = Ext.util.JSON.encode(out);

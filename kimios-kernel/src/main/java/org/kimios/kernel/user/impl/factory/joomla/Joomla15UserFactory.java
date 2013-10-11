@@ -97,6 +97,10 @@ public class Joomla15UserFactory implements UserFactory
         }
     }
 
+    public User getUserByEmail(String emailAddress) throws DataSourceException, ConfigException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     public Vector<User> getUsers(Group group) throws DataSourceException, ConfigException
     {
         try {

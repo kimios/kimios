@@ -148,12 +148,14 @@ public class AdministrationController
      * Create a new generic Authentication Source
      */
     public void createAuthenticationSource( String sessionId, String authenticationSourceName, String className,
+                                            boolean enableSsoCheck,
+                                            boolean enableMailCheck,
                                             String xmlParameters )
         throws Exception
     {
         try
         {
-            client.createAuthenticationSource( sessionId, authenticationSourceName, className, xmlParameters );
+            client.createAuthenticationSource( sessionId, authenticationSourceName, className, enableSsoCheck, enableMailCheck, xmlParameters );
         }
         catch ( Exception e )
         {
@@ -165,13 +167,13 @@ public class AdministrationController
      * Update authentication source
      */
     public void updateAuthenticationSource( String sessionId, String authenticationSourceName,
-                                            String newAuthenticationSourceName, String className, String xmlParameters )
+                                            String className,  boolean enableSsoCheck,boolean enableMailCheck, String xmlParameters )
         throws Exception
     {
         try
         {
-            client.updateAuthenticationSource( sessionId, authenticationSourceName, newAuthenticationSourceName,
-                                               className, xmlParameters );
+            client.updateAuthenticationSource( sessionId, authenticationSourceName,
+                                               className, enableSsoCheck, enableMailCheck, xmlParameters );
         }
         catch ( Exception e )
         {
@@ -230,23 +232,24 @@ public class AdministrationController
     /**
      * Add an user to a DMS Authentication Source
      */
-    public void createUser( String sessionId, String uid, String userName, String mail, String password,
-                            String authenticationSourceName )
+    public void createUser( String sessionId, String uid, String firstName, String lastName, String phoneNumber,
+                            String mail, String password, String authenticationSourceName )
             throws Exception
     {
-       createUser(sessionId, uid, userName, mail, password, authenticationSourceName, true);
+       createUser(sessionId, uid, firstName, lastName, phoneNumber, mail, password, authenticationSourceName, true);
     }
 
     /**
      * Add an user to a DMS Authentication Source
      */
-    public void createUser( String sessionId, String uid, String userName, String mail, String password,
-                            String authenticationSourceName, boolean enabled )
+    public void createUser( String sessionId, String uid, String firstName, String lastName, String phoneNumber,
+                            String mail, String password, String authenticationSourceName, boolean enabled )
         throws Exception
     {
         try
         {
-            client.createUser( sessionId, uid, userName, mail, password, authenticationSourceName, enabled );
+            client.createUser( sessionId, uid, firstName, lastName, phoneNumber,
+                    mail, password, authenticationSourceName, enabled );
         }
         catch ( Exception e )
         {
@@ -257,23 +260,25 @@ public class AdministrationController
     /**
      * Update user information in a DMS Authentication source
      */
-    public void updateUser( String sessionId, String uid, String userName, String mail, String password,
-                            String authenticationSourceName )
+    public void updateUser( String sessionId, String uid, String firstName, String lastName, String phoneNumber,
+                            String mail, String password, String authenticationSourceName )
             throws Exception
     {
-        updateUser(sessionId, uid, userName, mail, password, authenticationSourceName, true);
+        updateUser(sessionId, uid, firstName, lastName, phoneNumber,
+                mail, password, authenticationSourceName, true);
     }
 
     /**
      * Update user information in a DMS Authentication source
      */
-    public void updateUser( String sessionId, String uid, String userName, String mail, String password,
+    public void updateUser( String sessionId, String uid, String firstName, String lastName, String phoneNumber, String mail, String password,
                             String authenticationSourceName, boolean enabled )
         throws Exception
     {
         try
         {
-            client.updateUser( sessionId, uid, userName, mail, password, authenticationSourceName, enabled );
+            client.updateUser( sessionId, uid, firstName, lastName, phoneNumber,
+                    mail, password, authenticationSourceName, enabled );
         }
         catch ( Exception e )
         {

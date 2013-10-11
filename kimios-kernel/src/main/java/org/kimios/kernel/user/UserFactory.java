@@ -33,6 +33,8 @@ public interface UserFactory
 
     public User getUser(String uid) throws DataSourceException, ConfigException;
 
+    public User getUserByEmail(String emailAddress) throws DataSourceException, ConfigException;
+
     public Vector<User> getUsers(Group group) throws DataSourceException, ConfigException;
 
     public Vector<User> getUsers() throws DataSourceException, ConfigException;

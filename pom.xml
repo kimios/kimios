@@ -99,6 +99,7 @@
         <module>kimios-bonita</module>
         <module>kimios-home</module>
         <module>kimios-runtime</module>
+        <module>kimios-sso</module>
     </modules>
     <packaging>pom</packaging>
     <build>

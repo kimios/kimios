@@ -77,14 +77,14 @@ public interface IAdministrationController
      * Create new authentication source
      */
     public void createAuthenticationSource(Session session, String name,
-            String className, String xmlParameters)
+            String className, boolean enableSso, boolean enableMailCheck, String xmlParameters)
             throws AccessDeniedException, ConfigException, DataSourceException;
 
     /**
      * Update authentication source
      */
-    public void updateAuthenticationSource(Session session, String name,
-            String newName, String className, String xmlParameters)
+    public void updateAuthenticationSource(Session session, String name, String className,
+                                           boolean enableSso, boolean enableMailCheck, String xmlParameters)
             throws AccessDeniedException, ConfigException, DataSourceException;
 
     /**
@@ -106,24 +106,24 @@ public interface IAdministrationController
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IAdministrationController#updateAuthenticationSource(org.kimios.kernel.security.Session, java.lang.String, java.lang.String)
     */
-    public void updateAuthenticationSource(Session session, String name,
-            String newName) throws AccessDeniedException, ConfigException,
+    public void updateAuthenticationSource(Session session, String name, String newName)
+            throws AccessDeniedException, ConfigException,
             DataSourceException;
 
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IAdministrationController#createUser(org.kimios.kernel.security.Session, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
     */
     @DmsEvent(eventName = { DmsEventName.USER_CREATE })
-    public void createUser(Session session, String uid, String userName,
-            String mail, String password, String authenticationSourceName, boolean enabled)
+    public void createUser(Session session, String uid, String firstName, String lastName,
+            String phoneNumber, String mail, String password, String authenticationSourceName, boolean enabled)
             throws AccessDeniedException, ConfigException, DataSourceException;
 
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IAdministrationController#updateUser(org.kimios.kernel.security.Session, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
     */
 
-    public void updateUser(Session session, String uid, String userName,
-            String mail, String password, String authenticationSourceName, boolean enabled)
+    public void updateUser(Session session, String uid, String firstName, String lastName,
+            String phoneNumber, String mail, String password, String authenticationSourceName, boolean enabled)
             throws AccessDeniedException, ConfigException, DataSourceException;
 
     /* (non-Javadoc)

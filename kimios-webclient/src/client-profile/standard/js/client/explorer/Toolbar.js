@@ -126,7 +126,7 @@ kimios.explorer.Toolbar = Ext.extend(Ext.Toolbar, {
                     maximizable: false,
                     modal: true,
                     width: 350,
-                    height: 200,
+                    height: 300,
                     items: [new kimios.MyAccountPanel({})]
                 }).show();
             }

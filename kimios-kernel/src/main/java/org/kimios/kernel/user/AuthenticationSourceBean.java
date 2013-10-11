@@ -40,6 +40,12 @@ public class AuthenticationSourceBean
     @Column(name = "java_class", nullable = false)
     private String javaClass = HAuthenticationSource.class.getName();
 
+    @Column(name = "enable_sso", nullable = true)
+    private Boolean enableSso = false;
+
+    @Column(name = "enable_mail_check", nullable = true)
+    private Boolean enableMailCheck = false;
+
     @ElementCollection
     @CollectionTable(name = "authentication_params",
             joinColumns = { @JoinColumn(name = "authentication_source_name", referencedColumnName = "source_name") })
@@ -75,6 +81,22 @@ public class AuthenticationSourceBean
     public void setParameters(Map<String, String> parameters)
     {
         this.parameters = parameters;
+    }
+
+    public Boolean getEnableSso() {
+        return enableSso;
+    }
+
+    public void setEnableSso(Boolean enableSso) {
+        this.enableSso = enableSso;
+    }
+
+    public Boolean getEnableMailCheck() {
+        return enableMailCheck;
+    }
+
+    public void setEnableMailCheck(Boolean enableMailCheck) {
+        this.enableMailCheck = enableMailCheck;
     }
 }
 

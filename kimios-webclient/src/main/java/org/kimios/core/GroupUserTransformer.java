@@ -34,6 +34,15 @@ public class GroupUserTransformer extends AbstractTransformer {
             getContext().writeName("name");
             getContext().transform(sec.getName());
             getContext().writeComma();
+            getContext().writeName("firstName");
+            getContext().transform(sec.getFirstName());
+            getContext().writeComma();
+            getContext().writeName("lastName");
+            getContext().transform(sec.getLastName());
+            getContext().writeComma();
+            getContext().writeName("phoneNumber");
+            getContext().transform(sec.getPhoneNumber());
+            getContext().writeComma();
             getContext().writeName("mail");
             getContext().transform(sec.getMail());
             getContext().writeComma();

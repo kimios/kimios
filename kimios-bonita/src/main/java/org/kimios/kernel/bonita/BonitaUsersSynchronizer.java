@@ -91,10 +91,11 @@ public class BonitaUsersSynchronizer {
                     bUser = identityAPI.getUserByUserName(userName);
                     log.info("User " + userName + " already exists, updating...");
                     UserUpdater userUpdater = new UserUpdater();
-                    userUpdater.setFirstName(u.getName());
-                    userUpdater.setLastName(u.getName());
+                    userUpdater.setFirstName(u.getFirstName());
+                    userUpdater.setLastName(u.getLastName());
                     ContactDataUpdater contact = new ContactDataUpdater();
                     contact.setEmail(u.getMail());
+                    contact.setPhoneNumber(u.getPhoneNumber());
                     userUpdater.setPersonalContactData(contact);
                     userUpdater.setProfessionalContactData(contact);
                     bUser = identityAPI.updateUser(bUser.getId(), userUpdater);
@@ -103,10 +104,11 @@ public class BonitaUsersSynchronizer {
                     // if not exists
                     log.info("User " + userName + " not found, creating...");
                     UserCreator userCreator = new UserCreator(userName, UUID.randomUUID().toString());
-                    userCreator.setFirstName(u.getName());
-                    userCreator.setLastName(u.getName());
+                    userCreator.setFirstName(u.getFirstName());
+                    userCreator.setLastName(u.getLastName());
                     ContactDataCreator contact = new ContactDataCreator();
                     contact.setEmail(u.getMail());
+                    contact.setPhoneNumber(u.getPhoneNumber());
                     userCreator.setPersonalContactData(contact);
                     userCreator.setProfessionalContactData(contact);
                     bUser = identityAPI.createUser(userCreator);

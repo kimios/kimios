@@ -332,6 +332,14 @@ kimios.record = {
             {
                 name: 'className',
                 type: 'string'
+            },
+            {
+                name: 'enableSso',
+                type: 'boolean'
+            },
+            {
+                name: 'enableMailCheck',
+                type: 'boolean'
             }
         ]),
 
@@ -342,6 +350,18 @@ kimios.record = {
             },
             {
                 name: 'name',
+                type: 'string'
+            },
+            {
+                name: 'firstName',
+                type: 'string'
+            },
+            {
+                name: 'lastName',
+                type: 'string'
+            },
+            {
+                name: 'phoneNumber',
                 type: 'string'
             },
             {

@@ -51,6 +51,33 @@
     System.setProperty("javax.net.ssl.trustStorePassword", "secret");
     System.setProperty("java.protocol.handler.pkgs", "com.sun.net.ssl.internal.www.protocol");
     */
+
+    /*
+        Check CAS TGT Exists
+     */
+
+
+  /*  if(request.getParameter("ticket") != null){
+        /*
+            Authenticate with
+
+        String ticket = request.getParameter("ticket");
+        securityController = (SecurityController) wac.getBean("securityController");
+
+
+        sessionUid = securityController.startSessionWithToken(ticket);
+        System.out.println(sessionUid);
+
+        if(sessionUid != null && securityController.isSessionAlive(sessionUid)){
+            request.getSession().setAttribute("sessionUid", sessionUid);
+            response.addCookie(new Cookie("sessionUid", sessionUid));
+            response.sendRedirect(request.getContextPath() + "/logged.jsp");
+            return;
+        }
+    }      */
+
+
+
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">

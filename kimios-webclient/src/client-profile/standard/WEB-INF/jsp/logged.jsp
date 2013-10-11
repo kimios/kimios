@@ -68,6 +68,9 @@
             {name: 'isStudioUser', type: 'boolean'}
         ]);
         var currentName = '<%=u.getName() != null ? u.getName().replaceAll("'", "\\\\'") : ""%>';
+        var currentFirstName = '<%=u.getFirstName() != null ? u.getFirstName().replaceAll("'", "\\\\'") : ""%>';
+        var currentLastName = '<%=u.getLastName() != null ? u.getLastName().replaceAll("'", "\\\\'") : ""%>';
+        var currentPhoneNumber = '<%=u.getPhoneNumber() != null ? u.getPhoneNumber().replaceAll("'", "\\\\'") : ""%>';
         var currentUser = '<%=u.getUid().replaceAll("'", "\\\\'")%>';
         var currentSource = '<%=u.getSource().replaceAll("'", "\\\\'")%>';
         var currentMail = '<%=(u.getMail() != null ? u.getMail().replaceAll("'", "\\\\'") : "")%>';

@@ -23,10 +23,20 @@ kimios.MyAccountPanel = Ext.extend(kimios.FormPanel, {
             editable : false,
             value : currentUser=='null'?'':currentUser
         });
-        this.fullNameTextField = new Ext.form.TextField( {
-            fieldLabel : kimios.lang('UserName'),
-            name : 'name',
-            value : currentName=='null'?'':currentName
+        this.firstNameTextField = new Ext.form.TextField( {
+            fieldLabel : kimios.lang('Firstname'),
+            name : 'firstName',
+            value : currentFirstName=='null'?'':currentFirstName
+        });
+        this.lastNameTextField = new Ext.form.TextField( {
+            fieldLabel : kimios.lang('Lastname'),
+            name : 'lastName',
+            value : currentLastName=='null'?'':currentLastName
+        });
+        this.phoneNumberTextField = new Ext.form.TextField( {
+            fieldLabel : kimios.lang('PhoneNumber'),
+            name : 'phoneNumber',
+            value : currentPhoneNumber=='null'?'':currentPhoneNumber
         });
         this.passwordField = new Ext.form.TextField( {
             name : 'password',
@@ -48,6 +58,10 @@ kimios.MyAccountPanel = Ext.extend(kimios.FormPanel, {
             name : 'authenticationSourceName',
             value : currentSource=='null'?'':currentSource
         });
+        this.enabledUser = new Ext.form.Hidden( {
+            name : 'enabled',
+            value : 'on'
+        });
         this.border = false;
         this.autoScroll = true;
         this.monitorValid = true;
@@ -59,38 +73,46 @@ kimios.MyAccountPanel = Ext.extend(kimios.FormPanel, {
             style : 'font-size: 11px',
             labelStyle : 'font-size: 11px; font-weight:bold;'
         };
-        this.items = [ this.uidTextField, this.fullNameTextField,
+        this.items = [ this.uidTextField, this.firstNameTextField, this.lastNameTextField, this.phoneNumberTextField,
         this.passwordField, this.confirmPasswordField, this.emailField,
-        this.domainField ],
+        this.domainField, this.enabledUser ],
         this.fbar = [
         '->',
         {
             text : kimios.lang('Save'),
             scope : this,
             handler : function() {
-                var match = this.passwordField.getValue() == this.confirmPasswordField.getValue();
-                var empty = this.passwordField.getValue() == '' || this.confirmPasswordField.getValue() == '';
-                if (empty || !match){
-                    Ext.MessageBox.alert(kimios.lang('InvalidPassword'), kimios.lang('NoPasswordMatchJS'));
-                }else{
-                    if (kimios.checkPassword(this.passwordField.getValue()) == true){
-                        var f = this;
-                        kimios.request.AdminRequest.saveMyAccount(form, function(){
-                            var obj = f.getForm().getValues();
-                            currentUser = obj.uid;
-                            currentSource = obj.authenticationSourceName;
-                            currentName = obj.name;
-                            currentMail = obj.mail;
-                            Ext.getCmp('kimios-my-account').close();
-                            var html = '<span style="color:gray;">'+kimios.lang('Welcome')+', ';
-                            if (obj.name != '') html += obj.name;
-                            else html += obj.uid + '@' + obj.authenticationSourceName;
-                            html += '</span>';
-                            kimios.explorer.getToolbar().refreshLanguage(html);
-                            kimios.Info.msg('', kimios.lang('UpdatedAccount'));
-                        });
+                if(this.passwordField.getValue().length > 0 || this.confirmPasswordField.getValue().length > 0){
+                    var match = this.passwordField.getValue() == this.confirmPasswordField.getValue();
+                    var empty = this.passwordField.getValue() == '' || this.confirmPasswordField.getValue() == '';
+                    if (empty || !match){
+                        Ext.MessageBox.alert(kimios.lang('InvalidPassword'), kimios.lang('NoPasswordMatchJS'));
+                        return;
                     }
+                    if(!kimios.checkPassword(this.passwordField.getValue())){
+                        return;
+                    }
+
                 }
+
+                var f = this;
+                kimios.request.AdminRequest.saveMyAccount(form, function(){
+                    var obj = f.getForm().getValues();
+                    currentUser = obj.uid;
+                    currentSource = obj.authenticationSourceName;
+                    currentName = obj.firstName + ' ' + obj.lastName;
+                    currentPhoneNumber = obj.phoneNumber;
+                    currentFirstName = obj.firstName;
+                    currentLastName = obj.lastName;
+                    currentMail = obj.mail;
+                    Ext.getCmp('kimios-my-account').close();
+                    var html = '<span style="color:gray;">'+kimios.lang('Welcome')+', ';
+                    if (obj.name != '') html += currentName;
+                    else html += obj.uid + '@' + obj.authenticationSourceName;
+                    html += '</span>';
+                    kimios.explorer.getToolbar().refreshLanguage(html);
+                    kimios.Info.msg('', kimios.lang('UpdatedAccount'));
+                });
             }
         }, {
             text : kimios.lang('Close'),

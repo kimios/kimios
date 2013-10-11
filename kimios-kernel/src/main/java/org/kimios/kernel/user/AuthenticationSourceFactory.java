@@ -32,7 +32,7 @@ public interface AuthenticationSourceFactory
     public void saveAuthenticationSource(AuthenticationSource source, String className) throws DataSourceException,
             ConfigException;
 
-    public void updateAuthenticationSource(AuthenticationSource source, String newName) throws DataSourceException,
+    public void updateAuthenticationSource(AuthenticationSource source) throws DataSourceException,
             ConfigException;
 
     public void deleteAuthenticationSource(AuthenticationSource source) throws DataSourceException, ConfigException;

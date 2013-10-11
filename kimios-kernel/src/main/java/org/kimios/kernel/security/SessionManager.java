@@ -32,11 +32,9 @@ import org.hibernate.HibernateException;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
-import org.kimios.kernel.user.AuthenticationSourceFactory;
-import org.kimios.kernel.user.Group;
-import org.kimios.kernel.user.User;
-import org.kimios.kernel.user.UserFactory;
+import org.kimios.kernel.user.*;
 import org.kimios.kernel.utils.ClientInformationUtil;
+import org.kimios.utils.spring.ApplicationContextProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,56 +87,111 @@ public class SessionManager extends HFactory implements ISessionManager
     public Session startSession(String uid, String password, String userSource)
             throws DataSourceException, ConfigException
     {
+
+        AuthenticationSource authenticationSource = null;
         UserFactory uf = null;
         try{
-           uf = authenticationSourceFactory.getAuthenticationSource(userSource).getUserFactory();
+            authenticationSource = authenticationSourceFactory.getAuthenticationSource(userSource);
+           uf = authenticationSource.getUserFactory();
         } catch (NullPointerException nullException){
             log.error(userSource + " user source doesn't exist");
             return null;
         }
-        if (uf.authenticate(uid, password)) {
-            Session s = createSession(uid, userSource);
-            s.setMetaDatas(ClientInformationUtil.getInfos());
-            return s;
-        } else {
+        User authenticatingUser = null;
+        if(authenticationSource.getEnableAuthByEmail() && authenticationSource.getEnableAuthByEmail()){
+            authenticatingUser = uf.getUserByEmail(uid);
+        }
+        if(authenticatingUser == null){
+            authenticatingUser = uf.getUser(uid);
+        }
+        if(authenticatingUser != null){
+            if (uf.authenticate(authenticatingUser.getUid(), password)) {
+                Session s = createSession(authenticatingUser.getUid(), userSource);
+                s.setMetaDatas(ClientInformationUtil.getInfos());
+                return s;
+            } else {
             /*
-                            Try to authenticate based on session Uid Content for securized Call (like from Bonita, or Portal)
+              Try to authenticate based on session Uid Content for securized Call (like from Bonita, or Portal)
             */
+                log.debug("Trying to authenticate with " + uid + "@" + userSource + "  through " + password);
+                try {
+                    String secData[] = password.split("\\|\\|\\|");
+                    String serviceId = secData[0];
+                    String serviceKey = secData[1];
+                    AuthenticatedService authService =
+                            authenticatedServiceFactory.loadServiceByIdAndKey(serviceId, serviceKey);
 
-            log.debug("Trying to authenticate with " + uid + "@" + userSource + "  through " + password);
-            try {
-                String secData[] = password.split("\\|\\|\\|");
-                String serviceId = secData[0];
-                String serviceKey = secData[1];
-                AuthenticatedService authService =
-                        authenticatedServiceFactory.loadServiceByIdAndKey(serviceId, serviceKey);
-
-                if (authService != null) {
-                    log.debug("Starting session from service " + serviceId + " for " + uid + "@" + userSource);
-                    return startSession(uid, userSource);
-                } else {
-                    log.debug("Auth service not found");
+                    if (authService != null) {
+                        log.debug("Starting session from service " + serviceId + " for " + uid + "@" + userSource);
+                        return startSession(uid, userSource);
+                    } else {
+                        log.debug("Auth service not found");
+                        return null;
+                    }
+                } catch (ArrayIndexOutOfBoundsException ex) {
+                    return null;
+                } catch (Exception e) {
+                    log.error("Error while auth on service", e);
                     return null;
                 }
-            } catch (ArrayIndexOutOfBoundsException ex) {
-                return null;
-            } catch (Exception e) {
-                log.error("Error while auth on service", e);
-                return null;
             }
-        }
+
+        }  else
+            return  null;
+
     }
 
     public Session startSession(String uid, String userSource) throws DataSourceException, ConfigException
     {
+        AuthenticationSource authenticationSource = authenticationSourceFactory.getAuthenticationSource(userSource);
         UserFactory uf = authenticationSourceFactory.getAuthenticationSource(userSource).getUserFactory();
-        if (uf.getUser(uid) != null) {
-            Session s = createSession(uid, userSource);
+        User userAuthenticating = null;
+        if(authenticationSource.getEnableAuthByEmail()){
+            userAuthenticating = uf.getUserByEmail(uid);
+        }
+        if(userAuthenticating == null){
+            userAuthenticating = uf.getUser(uid);
+        }
+        if (userAuthenticating != null) {
+            Session s = createSession(userAuthenticating.getUid(), userSource);
             s.setMetaDatas(ClientInformationUtil.getInfos());
             return s;
         } else {
             return null;
         }
+    }
+
+
+    public Session startSession(String externalToken) throws DataSourceException, ConfigException
+    {
+        /* Load Authenticator */
+        Map<String, Authenticator> authenticators = ApplicationContextProvider.loadBeans(Authenticator.class);
+        Session session = null;
+        for(Authenticator authenticator: authenticators.values()){
+            log.info("Attempt to log on " + authenticator.getClass().getMethods() + " authenticator");
+            try{
+                String userName = authenticator.authenticate(externalToken);
+                if(userName != null){
+                    /*
+                        Start Session
+                     */
+                        for(AuthenticationSource as: authenticationSourceFactory.getAuthenticationSources()){
+                            if(as.getEnableSSOCheck() != null && as.getEnableSSOCheck()){
+                                User user = as.getUserFactory().getUser(userName);
+                                log.info("Found user on " + as.getName() + " authentication source.");
+                                session =  startSession(user.getUid(), user.getAuthenticationSourceName());
+                                break;
+                            }
+                        }
+                    }
+                    break;
+            }   catch (Exception e){
+                log.error("Login attempt failed");
+                return null;
+            }
+        }
+        log.info("Session Manager External Token Session : " + session);
+        return session;
     }
 
     private static Logger log = LoggerFactory.getLogger(SessionManager.class);
@@ -165,6 +218,7 @@ public class SessionManager extends HFactory implements ISessionManager
             sessions.put(sUser.getUid(), sUser);
             return sUser;
         } catch (Exception he) {
+            he.printStackTrace();
             throw new DataSourceException(he, he.getMessage());
         }
     }
@@ -260,7 +314,7 @@ public class SessionManager extends HFactory implements ISessionManager
         Map<String, User> m = new HashMap<String, User>();
         while (it.hasNext()) {
             Session s = it.next();
-            User user = new User(s.getUserName(), null, null, null, s.getUserSource());
+            User user = new User(s.getUserName(), s.getUserSource());
             m.put(s.getUserName() + "@" + s.getUserSource(), user);
         }
         return m.values();

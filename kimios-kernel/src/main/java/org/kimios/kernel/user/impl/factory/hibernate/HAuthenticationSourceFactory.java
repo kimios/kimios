@@ -36,11 +36,36 @@ import org.kimios.kernel.utils.ClassFinder;
 
 public class HAuthenticationSourceFactory extends HFactory implements AuthenticationSourceFactory
 {
+
+
+    private AuthenticationSource buildAuthenticationSource(AuthenticationSourceBean authenticationSourceBean)
+            throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+        AuthenticationSource source = (AuthenticationSource) Class.forName(authenticationSourceBean.getJavaClass()).newInstance();
+        source.setName(authenticationSourceBean.getName());
+        source.setEnableAuthByEmail(authenticationSourceBean.getEnableMailCheck());
+        source.setEnableSSOCheck(authenticationSourceBean.getEnableSso());
+        setClassFields(source, authenticationSourceBean);
+        return source;
+    }
+
+    private AuthenticationSourceBean getAuthenticationSourceBean(AuthenticationSource authenticationSource){
+        AuthenticationSourceBean a = new AuthenticationSourceBean();
+        a.setJavaClass(authenticationSource.getClass().getName());
+        a.setName(authenticationSource.getName());
+        a.setEnableMailCheck(authenticationSource.getEnableAuthByEmail());
+        a.setEnableSso(authenticationSource.getEnableSSOCheck());
+
+        return a;
+
+    }
+
     public void deleteAuthenticationSource(AuthenticationSource source) throws DataSourceException, ConfigException
     {
         AuthenticationSourceBean a = new AuthenticationSourceBean();
         a.setJavaClass(source.getClass().getName());
         a.setName(source.getName());
+        a.setEnableMailCheck(source.getEnableAuthByEmail());
+        a.setEnableSso(source.getEnableSSOCheck());
         a = (AuthenticationSourceBean) getSession().merge(a);
         getSession().delete(a);
     }
@@ -53,20 +78,17 @@ public class HAuthenticationSourceFactory extends HFactory implements Authentica
             if (a == null) {
                 return null;
             }
-            try {
-                AuthenticationSource source = (AuthenticationSource) Class.forName(a.getJavaClass()).newInstance();
-                source.setName(a.getName());
-                setClassFields(source, a);
-                return source;
-            } catch (ClassNotFoundException cnfe) {
+           try {
+                return buildAuthenticationSource(a);
+            }catch (ClassNotFoundException cnfe) {
                 throw new ConfigException(cnfe, "Cannot instantiate authentication source");
             } catch (IllegalAccessException iae) {
                 throw new ConfigException(iae, "Cannot instantiate authentication source");
             } catch (InstantiationException ie) {
                 throw new ConfigException(ie, "Cannot instantiate authentication source");
             }
-        } catch (HibernateException he) {
-            throw new DataSourceException(he, he.getMessage());
+        } catch (Exception he) {
+           throw new DataSourceException(he, he.getMessage());
         }
     }
 
@@ -80,10 +102,7 @@ public class HAuthenticationSourceFactory extends HFactory implements Authentica
             try {
                 Vector<AuthenticationSource> v = new Vector<AuthenticationSource>();
                 for (AuthenticationSourceBean a : lAsb) {
-                    AuthenticationSource source = (AuthenticationSource) Class.forName(a.getJavaClass()).newInstance();
-                    source.setName(a.getName());
-                    setClassFields(source, a);
-                    v.add(source);
+                    v.add(buildAuthenticationSource(a));
                 }
                 return v;
             } catch (ClassNotFoundException cnfe) {
@@ -101,9 +120,7 @@ public class HAuthenticationSourceFactory extends HFactory implements Authentica
     public void saveAuthenticationSource(AuthenticationSource source, String className) throws DataSourceException
     {
         try {
-            AuthenticationSourceBean a = new AuthenticationSourceBean();
-            a.setJavaClass(className);
-            a.setName(source.getName());
+            AuthenticationSourceBean a = getAuthenticationSourceBean(source);
             getSession().save(a);
             getSession().flush();
         } catch (HibernateException e) {
@@ -117,14 +134,12 @@ public class HAuthenticationSourceFactory extends HFactory implements Authentica
         saveAuthenticationSource(source, source.getClass().getName());
     }
 
-    public void updateAuthenticationSource(AuthenticationSource source, String newName) throws DataSourceException,
+    public void updateAuthenticationSource(AuthenticationSource source) throws DataSourceException,
             ConfigException
     {
 
         try {
-            AuthenticationSourceBean a = new AuthenticationSourceBean();
-            a.setJavaClass(source.getClass().getName());
-            a.setName(source.getName());
+            AuthenticationSourceBean a = getAuthenticationSourceBean(source);
             try {
                 a = (AuthenticationSourceBean) getSession().merge(a);
             } catch (Exception e) {

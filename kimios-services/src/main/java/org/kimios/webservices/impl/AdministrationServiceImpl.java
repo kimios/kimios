@@ -117,12 +117,12 @@ public class AdministrationServiceImpl extends CoreService implements Administra
     /**
      * Create new authentication source
      */
-    public void createAuthenticationSource(String sessionUid, String name, String className, String xmlParameters)
+    public void createAuthenticationSource(String sessionUid, String name, String className, boolean enableSsoCheck, boolean enableMailCheck, String xmlParameters)
             throws DMServiceException
     {
         try {
             org.kimios.kernel.security.Session session = getHelper().getSession(sessionUid);
-            administrationController.createAuthenticationSource(session, name, className, xmlParameters);
+            administrationController.createAuthenticationSource(session, name, className, enableSsoCheck, enableMailCheck, xmlParameters);
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }
@@ -131,13 +131,13 @@ public class AdministrationServiceImpl extends CoreService implements Administra
     /**
      * Update authentication source
      */
-    public void updateAuthenticationSource(String sessionUid, String authenticationSourceName, String newName,
-            String className, String xmlParameters) throws DMServiceException
+    public void updateAuthenticationSource(String sessionUid, String authenticationSourceName,
+            String className, boolean enableSsoCheck, boolean enableMailCheck,String xmlParameters) throws DMServiceException
     {
         try {
             org.kimios.kernel.security.Session session = getHelper().getSession(sessionUid);
             administrationController
-                    .updateAuthenticationSource(session, authenticationSourceName, newName, className, xmlParameters);
+                    .updateAuthenticationSource(session, authenticationSourceName, className, enableSsoCheck, enableMailCheck, xmlParameters);
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }
@@ -181,29 +181,29 @@ public class AdministrationServiceImpl extends CoreService implements Administra
         }
     }
 
-    public void createUser(String sessionUid, String uid, String userName, String mail, String password,
-            String authenticationSourceName, boolean enabled)
+    public void createUser(String sessionUid, String uid, String firstName, String lastName, String phoneNumber,
+                           String mail, String password, String authenticationSourceName, boolean enabled)
             throws DMServiceException
     {
 
         try {
             org.kimios.kernel.security.Session session = getHelper().getSession(sessionUid);
-            administrationController.createUser(session, uid, userName, mail, password, authenticationSourceName,
+            administrationController.createUser(session, uid, firstName, lastName, phoneNumber, mail, password, authenticationSourceName,
                     enabled);
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }
     }
 
-    public void updateUser(String sessionUid, String uid, String userName, String mail, String password,
-            String authenticationSourceName, boolean enabled)
+    public void updateUser(String sessionUid, String uid, String firstName, String lastName, String phoneNumber,
+                           String mail, String password, String authenticationSourceName, boolean enabled)
             throws DMServiceException
     {
 
         try {
             org.kimios.kernel.security.Session session = getHelper().getSession(sessionUid);
-            administrationController.updateUser(session, uid, userName, mail, password, authenticationSourceName,
-                    enabled);
+            administrationController.updateUser(session, uid, firstName, lastName, phoneNumber ,
+                    mail, password, authenticationSourceName, enabled);
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }
@@ -435,7 +435,6 @@ public class AdministrationServiceImpl extends CoreService implements Administra
      *
      * @param sessionUid
      * @param dmEntityUid
-     * @param dmEntityType
      * @param userName
      * @param userSource
      * @throws DMServiceException

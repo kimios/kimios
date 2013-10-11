@@ -24,7 +24,6 @@ import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.ISecurityController;
 import org.kimios.kernel.dms.DMEntity;
-import org.kimios.kernel.dms.DMEntityType;
 import org.kimios.kernel.events.EventContext;
 import org.kimios.kernel.exception.AccessDeniedException;
 import org.kimios.kernel.exception.DataSourceException;
@@ -275,4 +274,9 @@ public class SecurityController extends AKimiosController implements ISecurityCo
             throw new AccessDeniedException();
         }
     }
+
+    public Session startSession(String externalToken) throws ConfigException, AccessDeniedException {
+        return SessionManager.getInstance().startSession(externalToken);
+    }
+
 }

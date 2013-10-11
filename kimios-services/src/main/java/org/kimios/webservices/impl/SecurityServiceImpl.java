@@ -19,7 +19,9 @@ package org.kimios.webservices.impl;
 import java.util.List;
 import java.util.Vector;
 
+import javax.jws.WebParam;
 import javax.jws.WebService;
+import javax.ws.rs.FormParam;
 
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.kimios.kernel.security.Session;
@@ -275,6 +277,16 @@ public class SecurityServiceImpl extends CoreService implements SecurityService
 
             return val;
         } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
+
+    public String startSessionWithToken(String externalToken) throws DMServiceException {
+        try {
+
+            Session session = securityController.startSession(externalToken);
+            return session.getUid();
+        }   catch (Exception e){
             throw getHelper().convertException(e);
         }
     }

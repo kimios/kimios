@@ -169,7 +169,7 @@ public class LiveSessionManager extends SessionManager
         Map<String, User> m = new HashMap<String, User>();
         while (it.hasNext()) {
             Session s = it.next();
-            User user = new User(s.getUserName(), null, null, null, s.getUserSource());
+            User user = new User(s.getUserName(),s.getUserSource());
             m.put(s.getUserName() + "@" + s.getUserSource(), user);
         }
         return m.values();

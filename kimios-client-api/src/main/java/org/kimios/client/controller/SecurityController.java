@@ -64,6 +64,24 @@ public class SecurityController
 
     }
 
+
+    /**
+     * Start a session with external token
+     */
+    public String startSessionWithToken( String externalToken )
+            throws Exception, DMSException
+    {
+        try
+        {
+            return client.startSessionWithToken( externalToken );
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
+        }
+
+    }
+
     /**
      * Is the given session still alive ?
      */

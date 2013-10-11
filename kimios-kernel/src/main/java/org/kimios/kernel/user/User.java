@@ -60,6 +60,18 @@ public class User implements SecurityEntity, Serializable
     @Column(name = "user_fullname")
     private String name;
 
+    @Column(name = "user_firstname")
+    private String firstName;
+
+    @Column(name = "user_lastname")
+    private String lastName;
+
+    @Column(name = "user_phone_number")
+    private String phoneNumber;
+
+    @Column(name = "user_avatar")
+    private byte[] avatar;
+
     @Column(name = "last_login")
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastLogin;
@@ -108,15 +120,23 @@ public class User implements SecurityEntity, Serializable
     {
     }
 
-    public User(String uid, String name, Date lastLogin, String mail, String authenticationSourceName)
-    {
-        this(uid, name, lastLogin, mail, authenticationSourceName, true);
+    public User(String uid, String source){
+        this.uid = uid;
+        this.authenticationSourceName = source;
     }
 
-    public User(String uid, String name, Date lastLogin, String mail, String authenticationSourceName, boolean enabled)
+    public User(String uid, String firstName, String lastName, String phoneNumber, Date lastLogin, String mail, String authenticationSourceName)
+    {
+        this(uid, firstName, lastName, phoneNumber, lastLogin, mail, authenticationSourceName, true);
+    }
+
+    public User(String uid, String firstName, String lastName, String phoneNumber, Date lastLogin, String mail, String authenticationSourceName, boolean enabled)
     {
         this.uid = uid;
-        this.name = name;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phoneNumber = phoneNumber;
+        this.name = firstName +" " + lastName;
         this.lastLogin = lastLogin;
         this.mail = mail;
         this.authenticationSourceName = authenticationSourceName;
@@ -214,7 +234,7 @@ public class User implements SecurityEntity, Serializable
 
     public org.kimios.kernel.ws.pojo.User toPojo()
     {
-        return new org.kimios.kernel.ws.pojo.User(this.uid, this.name, this.authenticationSourceName, this.lastLogin,
+        return new org.kimios.kernel.ws.pojo.User(this.uid, this.firstName, lastName, phoneNumber, this.authenticationSourceName, this.lastLogin,
                 this.mail, this.enabled);
     }
 
@@ -226,6 +246,38 @@ public class User implements SecurityEntity, Serializable
     public void setEnabled(boolean enabled)
     {
         this.enabled = enabled;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public byte[] getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(byte[] avatar) {
+        this.avatar = avatar;
     }
 }
 

@@ -306,6 +306,8 @@ public class AdminControllerWeb extends Controller {
         }
         administrationController.createAuthenticationSource(sessionUid,
                 parameters.get("newName"), parameters.get("className"),
+                parameters.get("enableSso") != null && parameters.get("enableSso").equals("on") ? true : false,
+                parameters.get("enableMailCheck") != null && parameters.get("enableMailCheck").equals("on") ? true : false,
                 util.generateXml());
         return "{\"success\":true}";
     }
@@ -321,8 +323,11 @@ public class AdminControllerWeb extends Controller {
             util.addField((String) m.get("name"), (String) m.get("value"));
         }
         administrationController.updateAuthenticationSource(sessionUid,
-                parameters.get("name"), parameters.get("newName"),
-                parameters.get("className"), util.generateXml());
+                parameters.get("name"),
+                parameters.get("className"),
+                parameters.get("enableSso") != null && parameters.get("enableSso").equals("on") ? true : false,
+                parameters.get("enableMailCheck") != null && parameters.get("enableMailCheck").equals("on") ? true : false,
+                util.generateXml());
         return "{\"success\":true}";
     }
 
@@ -331,7 +336,8 @@ public class AdminControllerWeb extends Controller {
         try {
             boolean enabled = parameters.get("enabled") != null && parameters.get("enabled").equals("on") ? true : false;
             administrationController.createUser(sessionUid,
-                    parameters.get("uid"), parameters.get("name"),
+                    parameters.get("uid"), parameters.get("firstName"),
+                    parameters.get("lastName"), parameters.get("phoneNumber"),
                     parameters.get("mail"), parameters.get("password"),
                     parameters.get("authenticationSourceName"),
                     enabled);
@@ -347,7 +353,8 @@ public class AdminControllerWeb extends Controller {
         try {
             boolean enabled = parameters.get("enabled") != null && parameters.get("enabled").equals("on") ? true : false;
             administrationController.updateUser(sessionUid,
-                    parameters.get("uid"), parameters.get("name"),
+                    parameters.get("uid"), parameters.get("firstName"),
+                    parameters.get("lastName"), parameters.get("phoneNumber"),
                     parameters.get("mail"), parameters.get("password"),
                     parameters.get("authenticationSourceName"),
                     enabled);

@@ -35,5 +35,13 @@ public interface AuthenticationSource
     public UserFactory getUserFactory() throws DataSourceException, ConfigException;
 
     public GroupFactory getGroupFactory() throws DataSourceException, ConfigException;
+
+    public Boolean getEnableSSOCheck();
+
+    public void setEnableSSOCheck(Boolean check);
+
+    public Boolean getEnableAuthByEmail();
+
+    public void setEnableAuthByEmail(Boolean check);
 }
 

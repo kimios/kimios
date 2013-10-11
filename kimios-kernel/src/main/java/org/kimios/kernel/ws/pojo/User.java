@@ -25,6 +25,12 @@ public class User
 
     private String name;
 
+    private String firstName;
+
+    private String lastName;
+
+    private String phoneNumber;
+
     private String source;
 
     private Calendar lastLogin;
@@ -35,18 +41,21 @@ public class User
 
     public User()
     {
-        this(null, null, null, null, null, true);
+        this.enabled = true;
     }
 
-    public User(String uid, String name, String source, Date lastLogin, String mail)
+    public User(String uid, String firstName, String lastName, String phoneNumber, String source, Date lastLogin, String mail)
     {
-        this(uid, name, source, lastLogin, mail, true);
+        this(uid, firstName, lastName, phoneNumber, source, lastLogin, mail, true);
     }
 
-    public User(String uid, String name, String source, Date lastLogin, String mail, boolean enabled)
+    public User(String uid, String firstName, String lastName, String phoneNumber, String source, Date lastLogin, String mail, boolean enabled)
     {
         this.uid = uid;
-        this.name = name;
+        this.name = firstName + " " + lastName;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phoneNumber = phoneNumber;
         this.source = source;
         if (lastLogin != null) {
             this.lastLogin = Calendar.getInstance();
@@ -114,6 +123,30 @@ public class User
     public void setEnabled(boolean enabled)
     {
         this.enabled = enabled;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 }
 

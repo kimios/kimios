@@ -24,6 +24,8 @@ import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import java.util.Map;
+
 public class ApplicationContextProvider implements ApplicationContextAware, BeanFactoryPostProcessor
 {
     private static ApplicationContext ctx;
@@ -38,6 +40,11 @@ public class ApplicationContextProvider implements ApplicationContextAware, Bean
 
     public static <T> T loadBean(Class<T> _class){
         return ctx.getBean(_class);
+    }
+
+
+    public static <T> Map<String, T> loadBeans(Class<T> _class){
+        return ctx.getBeansOfType(_class);
     }
 
     public static Object instantiate(String beanName, Class<?> _class, String parentName)

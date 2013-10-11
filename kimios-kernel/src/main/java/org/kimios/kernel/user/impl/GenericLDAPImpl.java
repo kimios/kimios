@@ -67,6 +67,12 @@ public class GenericLDAPImpl extends AuthenticationSourceImpl
 
     private String userGroupMemberOfKey;
 
+    private String userFirstNameKey;
+
+    private String userLastNameKey;
+
+    private String userPhoneKey;
+
     private String groupDN;
 
     private String groupObjectClassValue;
@@ -204,6 +210,30 @@ public class GenericLDAPImpl extends AuthenticationSourceImpl
     public void setSchemaFullCnUserGroupMatching(String schemaFullCnUserGroupMatching)
     {
         this.schemaFullCnUserGroupMatching = schemaFullCnUserGroupMatching;
+    }
+
+    public String getUserFirstNameKey() {
+        return userFirstNameKey;
+    }
+
+    public void setUserFirstNameKey(String userFirstNameKey) {
+        this.userFirstNameKey = userFirstNameKey;
+    }
+
+    public String getUserLastNameKey() {
+        return userLastNameKey;
+    }
+
+    public void setUserLastNameKey(String userLastNameKey) {
+        this.userLastNameKey = userLastNameKey;
+    }
+
+    public String getUserPhoneKey() {
+        return userPhoneKey;
+    }
+
+    public void setUserPhoneKey(String userPhoneKey) {
+        this.userPhoneKey = userPhoneKey;
     }
 }
 

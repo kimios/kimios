@@ -33,6 +33,18 @@
         <property name="name">
             <column name="user_fullname"></column>
         </property>
+        <property name="firstName">
+            <column name="user_firstname"></column>
+        </property>
+        <property name="lastName">
+            <column name="user_lastname"></column>
+        </property>
+        <property name="phoneNumber">
+            <column name="user_phonenumber"></column>
+        </property>
+        <property name="avatar">
+            <column name="user_avatar"></column>
+        </property>
         <property name="lastLogin">
             <column name="last_login"></column>
         </property>

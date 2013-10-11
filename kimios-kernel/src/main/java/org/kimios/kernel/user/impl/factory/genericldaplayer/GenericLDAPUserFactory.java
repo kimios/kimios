@@ -207,7 +207,16 @@ public class GenericLDAPUserFactory extends GenericLDAPFactory implements UserFa
         if (attrs.get(source.getUsersMailKey()) != null) {
             user.setMail(attrs.get(source.getUsersMailKey()).get().toString());
         }
-        user.setAuthenticationSourceName(source.getName());
+        if(attrs.get(source.getUserFirstNameKey()) != null){
+            user.setFirstName(attrs.get(source.getUserFirstNameKey()).get().toString());
+        }
+        if(attrs.get(source.getUserLastNameKey()) != null){
+            user.setLastName(attrs.get(source.getUserLastNameKey()).get().toString());
+        }
+        if(attrs.get(source.getUserPhoneKey()) != null){
+            user.setPhoneNumber(attrs.get(source.getUserPhoneKey()).get().toString());
+        }
+        user.setAuthenticationSourceName(this.source.getName());
         return user;
     }
 
@@ -270,6 +279,23 @@ public class GenericLDAPUserFactory extends GenericLDAPFactory implements UserFa
             String attributeValue) throws DataSourceException, ConfigException
     {
         throw new ConfigException("Not Implemented Yet");
+    }
+
+    public User getUserByEmail(String emailAddress) throws DataSourceException, ConfigException {
+        try{
+            String s = "(&(objectClass=" + source.getUsersObjectClassValue() + ")(" + source.getUsersMailKey() + "=" +
+                    emailAddress + "))";
+            List<SearchResult> r = this.search(s, SecurityEntityType.USER);
+            if (!r.isEmpty()) {
+                return newUser(r.get(0).getAttributes());
+            } else {
+                return null;
+            }
+        }  catch (javax.naming.AuthenticationException e) {
+            throw new ConfigException(e, "LDAP connection failed, please check your settings");
+        } catch (NamingException e) {
+            throw new DataSourceException(e, "LDAP Exception : " + e.getMessage());
+        }
     }
 }
 

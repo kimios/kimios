@@ -32,6 +32,27 @@ public abstract class AuthenticationSourceImpl extends HFactory implements Authe
 
     protected String name;
 
+    protected Boolean enableAuthByEmail;
+
+    protected Boolean enableSSOCheck;
+
+
+    public Boolean getEnableAuthByEmail() {
+        return enableAuthByEmail;
+    }
+
+    public void setEnableAuthByEmail(Boolean enableAuthByEmail) {
+        this.enableAuthByEmail = enableAuthByEmail;
+    }
+
+    public Boolean getEnableSSOCheck() {
+        return enableSSOCheck;
+    }
+
+    public void setEnableSSOCheck(Boolean enableSSOCheck) {
+        this.enableSSOCheck = enableSSOCheck;
+    }
+
     /**
      * Get the current authentication source name
      */
@@ -53,7 +74,7 @@ public abstract class AuthenticationSourceImpl extends HFactory implements Authe
      */
     public final org.kimios.kernel.ws.pojo.AuthenticationSource toPojo()
     {
-        return new org.kimios.kernel.ws.pojo.AuthenticationSource(this.getName(), this.getClass().getName());
+        return new org.kimios.kernel.ws.pojo.AuthenticationSource(this.getName(), this.getClass().getName(), this.getEnableSSOCheck(), this.getEnableAuthByEmail());
     }
 
     public abstract GroupFactory getGroupFactory() throws DataSourceException,

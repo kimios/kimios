@@ -260,6 +260,20 @@ public class HUserFactory implements UserFactory
                 .setString("attributeValue", attributeValue)
                 .uniqueResult();
     }
+
+    public User getUserByEmail(String emailAddress) throws DataSourceException, ConfigException {
+        String query = "from User where mail = :email";
+        List<User> users = HFactoryImpl.getInstance().getSession().createQuery(query)
+                .setString("email", emailAddress)
+                .list();
+
+        if(users.size() == 1){
+            return users.get(0);
+        } else {
+            return null;
+        }
+
+    }
 }
 
 

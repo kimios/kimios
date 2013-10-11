@@ -192,6 +192,21 @@ Admin.Domains = {
             value: (domainRecord ? domainRecord.data.name : '')
         });
 
+
+        var enableSsoField = new Ext.form.Checkbox({
+            name: 'enableSso',
+            id:'enable-sso',
+            fieldLabel: kimios.lang('AuthenticationSourceSSO'),
+            checked: (domainRecord ? domainRecord.data.enableSso : false)
+        });
+
+        var enableMailCheckField = new Ext.form.Checkbox({
+            name: 'enableMailCheck',
+            id:'enable-mail-check',
+            fieldLabel: kimios.lang('AuthenticationMailCheck'),
+            checked: (domainRecord ? domainRecord.data.enableMailCheck : false)
+        });
+
         var domainTextField = new Ext.form.TextField({
             anchor: '100%',
             name: 'newName',
@@ -275,6 +290,8 @@ Admin.Domains = {
         parametersPanel.add(hiddenField);
         parametersPanel.add(domainTextField);
         parametersPanel.add(classNameCombo);
+        parametersPanel.add(enableMailCheckField);
+        parametersPanel.add(enableSsoField);
         parametersPanel.add(new Ext.Panel({
             anchor: '100% -52',
             viewConfig: {
@@ -316,10 +333,22 @@ Admin.Domains = {
                 value: (usersDetailsRecord ? usersDetailsRecord.data.uid : '')
             });
 
-            var fullNameTextField = new Ext.form.TextField({
-                fieldLabel: kimios.lang('UserName'),
-                name: 'name',
-                value: (usersDetailsRecord ? usersDetailsRecord.data.name : '')
+            var firstNameTextField = new Ext.form.TextField({
+                fieldLabel: kimios.lang('Firstname'),
+                name: 'firstName',
+                value: (usersDetailsRecord ? usersDetailsRecord.data.firstName : '')
+            });
+
+            var lastNameTextField = new Ext.form.TextField({
+                fieldLabel: kimios.lang('Lastname'),
+                name: 'lastName',
+                value: (usersDetailsRecord ? usersDetailsRecord.data.lastName : '')
+            });
+
+            var phoneNumberTextField = new Ext.form.TextField({
+                fieldLabel: kimios.lang('PhoneNumber'),
+                name: 'phoneNumber',
+                value: (usersDetailsRecord ? usersDetailsRecord.data.phoneNumber : '')
             });
 
             var form = new kimios.FormPanel({
@@ -339,7 +368,9 @@ Admin.Domains = {
                 defaultType: 'textfield',
                 items: [
                     uidTextField,
-                    fullNameTextField,
+                    firstNameTextField,
+                    lastNameTextField,
+                    phoneNumberTextField,
                     {
                         id: 'kimios-admin-domains-password',
                         name: 'password',
@@ -370,17 +401,20 @@ Admin.Domains = {
                     text: kimios.lang('Save'),
                     iconCls: 'save',
                     handler: function () {
+
                         var p1 = Ext.getCmp('kimios-admin-domains-password').getValue();
                         var p2 = Ext.getCmp('kimios-admin-domains-password2').getValue();
-                        var match = p1 == p2;
-                        var empty = p1 == '' || p2 == '';
-                        if (empty || !match) {
-                            Ext.MessageBox.alert(kimios.lang('InvalidPassword'), kimios.lang('NoPasswordMatchJS'));
-                        } else {
-                            if (kimios.checkPassword(p1) == true) {
-                                kimios.request.AdminRequest.saveUser(ctn, sm, rowIndex, usersListStore, form, usersDetailsRecord);
+                        if(p1.length > 0 || p2.length > 0){
+                            var match = p1 == p2;
+                            var empty = p1 == '' || p2 == '';
+                            if (empty || !match) {
+                                Ext.MessageBox.alert(kimios.lang('InvalidPassword'), kimios.lang('NoPasswordMatchJS'));
+                                return;
                             }
+                            if(!kimios.checkPassword(p1))
+                                return;
                         }
+                        kimios.request.AdminRequest.saveUser(ctn, sm, rowIndex, usersListStore, form, usersDetailsRecord);
                     }
                 }]
             });
@@ -391,7 +425,7 @@ Admin.Domains = {
                     name: 'uid',
                     value: usersDetailsRecord.data.uid
                 });
-                fullNameTextField.focus(true, true);
+                firstNameTextField.focus(true, true);
             } else {
                 uidTextField.focus(true, true);
             }
@@ -716,7 +750,7 @@ Admin.Domains = {
                 layout: new Ext.layout.CardLayout({
                     layoutOnCardChange: true
                 }),
-                height: 210
+                height: 250
             })],
             listeners: {
                 activate: function () {

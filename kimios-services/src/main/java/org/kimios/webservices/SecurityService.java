@@ -86,6 +86,12 @@ public interface SecurityService
             @FormParam(value = "userSource") @WebParam(name = "userSource") String userSource,
             @FormParam(value = "password") @WebParam(name = "password") String password) throws DMServiceException;
 
+    @POST
+    @Path("/startSessionWithToken")
+    @Produces("application/json")
+    public String startSessionWithToken(@FormParam(value = "externalToken") @WebParam(name = "externalToken") String externalToken)
+                               throws DMServiceException;
+
     @GET
     @Path("/isSessionAlive")
     @Produces("application/json")

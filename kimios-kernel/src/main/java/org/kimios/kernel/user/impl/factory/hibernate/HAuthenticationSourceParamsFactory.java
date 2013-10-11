@@ -18,6 +18,9 @@ package org.kimios.kernel.user.impl.factory.hibernate;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -52,6 +55,25 @@ public class HAuthenticationSourceParamsFactory extends HFactory implements Auth
 
         Map<String, String> params = beanAuth.getParameters();
 
+        /*
+            list class params, to add them if not already created inside database
+         */
+
+        List<String> missingParams = new ArrayList<String>();
+        try{
+
+            Class<?> c = Class.forName(beanAuth.getJavaClass());
+            for (Field f : c.getDeclaredFields()) {
+               missingParams.add(f.getName());
+            }
+        }catch (Exception e){
+
+        }
+
+
+
+
+
         StringBuffer xml = new StringBuffer("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
         xml.append("<authentication-source name=\"" + name + "\">\n");
         for (String fieldName : params.keySet()) {
@@ -60,7 +82,15 @@ public class HAuthenticationSourceParamsFactory extends HFactory implements Auth
             xml.append("\" value=\"");
             xml.append(params.get(fieldName));
             xml.append("\" />\n");
+            missingParams.remove(fieldName);
         }
+        for(String fieldName: missingParams){
+            xml.append("<field name=\"");
+            xml.append(fieldName);
+            xml.append("\" value=\"");
+            xml.append("\" />\n");
+        }
+
         xml.append("</authentication-source>\n");
         return xml.toString();
     }
@@ -101,7 +131,7 @@ public class HAuthenticationSourceParamsFactory extends HFactory implements Auth
     /**
      * Update authentication source parameters with XML parameters for a given authentication source name
      */
-    public void updateParams(String sourceName, String xml) throws AuthenticationSourceException, XSDException
+    public void updateParams(String sourceName, String xml, boolean enableSso, boolean enableMailCheck) throws AuthenticationSourceException, XSDException
     {
         try {
             new XSDUtil().validateXmlStream(xml, "authentication-source.xsd");
@@ -121,6 +151,8 @@ public class HAuthenticationSourceParamsFactory extends HFactory implements Auth
                         .put(map.getNamedItem("name").getNodeValue(), map.getNamedItem("value").getNodeValue());
             }
 
+            beanAuth.setEnableSso(enableSso);
+            beanAuth.setEnableMailCheck(enableMailCheck);
             getSession().update(beanAuth);
             getSession().flush();
         } catch (ParserConfigurationException e) {

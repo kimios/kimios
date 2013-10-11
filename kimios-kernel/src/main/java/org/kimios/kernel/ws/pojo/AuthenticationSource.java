@@ -22,15 +22,21 @@ public class AuthenticationSource
 
     private String className;
 
+    private Boolean enableSso;
+
+    private Boolean enableMailCheck;
+
     public AuthenticationSource()
     {
 
     }
 
-    public AuthenticationSource(String name, String className)
+    public AuthenticationSource(String name, String className,Boolean enableSso,  Boolean enableMailCheck)
     {
         this.name = name;
         this.className = className;
+        this.enableSso = enableSso;
+        this.enableMailCheck = enableMailCheck;
     }
 
     public String getClassName()
@@ -51,6 +57,22 @@ public class AuthenticationSource
     public void setName(String name)
     {
         this.name = name;
+    }
+
+    public Boolean getEnableSso() {
+        return enableSso;
+    }
+
+    public void setEnableSso(Boolean enableSso) {
+        this.enableSso = enableSso;
+    }
+
+    public Boolean getEnableMailCheck() {
+        return enableMailCheck;
+    }
+
+    public void setEnableMailCheck(Boolean enableMailCheck) {
+        this.enableMailCheck = enableMailCheck;
     }
 }
 

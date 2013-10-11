@@ -175,6 +175,13 @@
             <version>5.0.6</version>
         </dependency>
 
+
+        <dependency>
+            <groupId>org.jasig.cas.client</groupId>
+            <artifactId>cas-client-core</artifactId>
+            <version>3.1.11</version>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>

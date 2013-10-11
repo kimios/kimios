@@ -25,6 +25,6 @@ public interface AuthenticationSourceParamsFactory
 
     void createParams(String sourceName, String xml) throws AuthenticationSourceException, XSDException;
 
-    void updateParams(String sourceName, String xml) throws AuthenticationSourceException, XSDException;
+    void updateParams(String sourceName, String xml, boolean enableSso, boolean enableMailCheck) throws AuthenticationSourceException, XSDException;
 }
 

@@ -93,6 +93,8 @@ public interface AdministrationService
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "name") @WebParam(name = "name") String name,
             @QueryParam(value = "className") @WebParam(name = "className") String className,
+            @QueryParam(value = "enableSso") @WebParam(name = "enableSso") boolean enableSso,
+            @QueryParam(value = "enableMailCheck") @WebParam(name = "enableMailCheck") boolean enableMailCheck,
             @QueryParam(value = "xmlParameters") @WebParam(name = "xmlParameters") String xmlParameters)
             throws DMServiceException;
 
@@ -102,8 +104,9 @@ public interface AdministrationService
     public void updateAuthenticationSource(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "currentName") @WebParam(name = "currentName") String authenticationSourceName,
-            @QueryParam(value = "newName") @WebParam(name = "newName") String newName,
             @QueryParam(value = "className") @WebParam(name = "className") String className,
+            @QueryParam(value = "enableSso") @WebParam(name = "enableSso") boolean enableSso,
+            @QueryParam(value = "enableMailCheck") @WebParam(name = "enableMailCheck") boolean enableMailCheck,
             @QueryParam(value = "xmlParameters") @WebParam(name = "xmlParameters") String xmlParameters)
             throws DMServiceException;
 
@@ -132,7 +135,9 @@ public interface AdministrationService
     @Produces("application/json")
     public void createUser(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "uid") @WebParam(name = "uid") String uid,
-            @QueryParam(value = "userName") @WebParam(name = "userName") String userName,
+            @QueryParam(value = "firstName") @WebParam(name = "firstName") String firstName,
+            @QueryParam(value = "lastName") @WebParam(name = "lastName") String lastName,
+            @QueryParam(value = "phoneNumber") @WebParam(name = "phoneNumber") String phoneNumber,
             @QueryParam(value = "mail") @WebParam(name = "mail") String mail,
             @QueryParam(value = "password") @WebParam(name = "password") String password,
             @QueryParam(value = "authenticationSourceName") @WebParam(name = "authenticationSourceName")
@@ -145,7 +150,9 @@ public interface AdministrationService
     @Produces("application/json")
     public void updateUser(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "uid") @WebParam(name = "uid") String uid,
-            @QueryParam(value = "userName") @WebParam(name = "userName") String userName,
+            @QueryParam(value = "firstName") @WebParam(name = "firstName") String firstName,
+            @QueryParam(value = "lastName") @WebParam(name = "lastName") String lastName,
+            @QueryParam(value = "phoneNumber") @WebParam(name = "phoneNumber") String phoneNumber,
             @QueryParam(value = "mail") @WebParam(name = "mail") String mail,
             @QueryParam(value = "password") @WebParam(name = "password") String password,
             @QueryParam(value = "authenticationSourceName") @WebParam(name = "authenticationSourceName")
