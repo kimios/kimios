@@ -239,6 +239,7 @@
         <field name="DocumentParentId" type="tlong" indexed="true" stored="true" required="true"/>
         <field name="DocumentCreationDate" type="tdate" indexed="true" stored="true" required="true"/>
         <field name="DocumentUpdateDate" type="tdate" indexed="true" stored="true" required="true"/>
+        <field name="DocumentVersionId" type="tlong" indexed="true" stored="true" required="true"/>
         <field name="DocumentVersionCreationDate" type="tdate" indexed="true" stored="true" required="true"/>
         <field name="DocumentVersionUpdateDate" type="tdate" indexed="true" stored="true" required="true"/>
         <field name="DocumentVersionOwner" type="string" indexed="true" stored="true" required="true"/>

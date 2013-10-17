@@ -32,6 +32,9 @@ public class DocumentFactory
             Calendar updateDate = Calendar.getInstance();
             updateDate.setTime( ( Date)doc.get( "DocumentUpdateDate" ) );
             pojo.setUpdateDate(updateDate);
+
+            pojo.setLastVersionId((Long)doc.get("DocumentVersionId"));
+
             Calendar versionCreationDate = Calendar.getInstance();
             versionCreationDate.setTime( ( Date)doc.get( "DocumentVersionCreationDate" ) );
             pojo.setVersionCreationDate(versionCreationDate);

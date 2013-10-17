@@ -188,6 +188,7 @@ public class SolrIndexManager
         //standard datas
         doc.addField( "DocumentCreationDate", document.getCreationDate() );
         doc.addField( "DocumentUpdateDate", document.getUpdateDate() );
+        doc.addField( "DocumentVersionId", version.getUid() );
         doc.addField( "DocumentVersionCreationDate", version.getCreationDate() );
         doc.addField( "DocumentVersionUpdateDate", version.getModificationDate() );
         doc.addField( "DocumentVersionOwner", version.getAuthor() + "@" + version.getAuthorSource() );
