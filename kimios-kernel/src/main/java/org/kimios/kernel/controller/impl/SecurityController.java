@@ -181,8 +181,13 @@ public class SecurityController extends AKimiosController implements ISecurityCo
     */
     public User getUser(Session session) throws ConfigException, DataSourceException
     {
-        return authFactoryInstantiator.getAuthenticationSourceFactory().getAuthenticationSource(session.getUserSource())
-                .getUserFactory().getUser(session.getUserName());
+      AuthenticationSource source =
+              authFactoryInstantiator.getAuthenticationSourceFactory().getAuthenticationSource(session.getUserSource());
+        if(source == null){
+            throw new AccessDeniedException();
+        }else {
+            return source.getUserFactory().getUser(session.getUserName());
+        }
     }
 
     /* (non-Javadoc)
