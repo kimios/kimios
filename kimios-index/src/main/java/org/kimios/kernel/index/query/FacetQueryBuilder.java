@@ -17,12 +17,15 @@
 
 package org.kimios.kernel.index.query;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.util.ClientUtils;
+import org.apache.solr.util.DateMathParser;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.TimeZone;
 
 /**
@@ -40,9 +43,42 @@ public class FacetQueryBuilder
         query.setFacet( true );
         SimpleDateFormat localFormat = new SimpleDateFormat( "yyyy-MM-dd" );
         localFormat.setTimeZone( TimeZone.getTimeZone( "UTC" ));
-        Date rangeMinDt = rangeMin != null ? localFormat.parse( rangeMin ) : null;
-        Date rangeMaxDt = rangeMax != null ? localFormat.parse( rangeMax ) : null;
-        query.addDateRangeFacet( facetField, rangeMinDt, rangeMaxDt, "+" +  facetGapNb + facetGapType);
+        Date rangeMinDt = null;
+        Date rangeMaxDt = null;
+        if(StringUtils.isNotBlank(rangeMin)){
+
+            try{
+                rangeMinDt = localFormat.parse( rangeMin );
+
+            } catch (Exception e){
+                e.printStackTrace();
+                try{
+                    rangeMinDt = new DateMathParser(localFormat.getTimeZone(), Locale.getDefault()).parseMath(rangeMin);
+                }   catch (Exception ex){
+                    ex.printStackTrace();
+                }
+            }
+
+
+        }
+
+        if(StringUtils.isNotBlank(rangeMax)){
+            try{
+                    rangeMaxDt = localFormat.parse( rangeMax );
+
+            } catch (Exception e){
+                e.printStackTrace();
+                try{
+                    rangeMaxDt = new DateMathParser(localFormat.getTimeZone(), Locale.getDefault()).parseMath(rangeMax);
+                }   catch (Exception ex){
+                     ex.printStackTrace();
+                }
+            }
+
+
+        }
+        System.out.println("Facet date start " + rangeMinDt + " / ==> end: " + rangeMaxDt);
+        query.addDateRangeFacet( facetField, rangeMinDt, rangeMaxDt, facetGapNb + (StringUtils.isNotBlank(facetGapType) ? facetGapType : ""));
 
         return query;
     }

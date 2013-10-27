@@ -16,7 +16,6 @@
  */
 package org.kimios.kernel.controller;
 
-import org.kimios.kernel.index.AbstractIndexManager;
 import org.kimios.kernel.jobs.security.IACLUpdater;
 import org.kimios.kernel.security.SecurityAgent;
 

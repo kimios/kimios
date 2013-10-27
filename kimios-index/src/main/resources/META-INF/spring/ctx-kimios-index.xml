@@ -61,7 +61,14 @@
   <aop:config>
     <aop:pointcut id="searchService"
                   expression="execution(* org.kimios.kernel.controller.ISearchController.*(..))"/>
+
+      <aop:pointcut id="searchMngService"
+                    expression="execution(* org.kimios.kernel.controller.ISearchManagementController.*(..))"/>
+
     <aop:advisor advice-ref="txAdvice" pointcut-ref="searchService"/>
+
+
+      <aop:advisor advice-ref="txAdvice" pointcut-ref="searchMngService"/>
   </aop:config>
 
 </beans>

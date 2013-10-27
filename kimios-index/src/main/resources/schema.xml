@@ -264,7 +264,7 @@
         <dynamicField name="MetaDataNumber_*" type="tdouble" indexed="true" stored="true" required="false"/>
         <dynamicField name="MetaDataBoolean_*" type="boolean" indexed="true" stored="true" required="false"/>
         <dynamicField name="Attribute_*" type="text" indexed="true" stored="true" required="false"/>
-        <dynamicField name="FileMetaData_*" type="text" indexed="true" stored="true" required="false"/>
+        <dynamicField name="FileMetaData_*" type="text" indexed="true" stored="true" required="false" multiValued="true"/>
     </fields>
 
     <uniqueKey>DocumentUid</uniqueKey>
