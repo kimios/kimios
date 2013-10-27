@@ -27,7 +27,11 @@ import org.kimios.kernel.ws.pojo.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.DateFormatSymbols;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Fabien Alin
@@ -240,6 +244,7 @@ public class SearchControllerWeb
              */
 
             int vUid = 0;
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'");
             for ( Object facetInfo : searchResponse.getFacetsData().keySet() )
             {
                 vUid++;
@@ -247,6 +252,42 @@ public class SearchControllerWeb
                 ArrayList fInfo = (ArrayList) searchResponse.getFacetsData().get( facetInfo );
                 String virtualName = fInfo.get( 0 ).toString();
                 Number count = (Number) fInfo.get( 1 );
+
+                /*
+                    Parse date query
+                 */
+                try{
+                    if(facetInfo.toString().contains(" TO ")){
+                        String[] parts = facetInfo.toString().split(" TO ");
+                        Date dateItem = sdf.parse(parts[0]);
+
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTime(dateItem);
+                        // Get unit for date facet
+                        log.info(dateItem.toString());
+                        Pattern pattern = Pattern.compile("(DAY|MONTH|YEAR|WEEK)");
+                        Matcher m = pattern.matcher(parts[1]);
+                        DateFormatSymbols dfs = new DateFormatSymbols(Locale.getDefault());
+                        while (m.find()){
+                            String res = m.group();
+                            if(res.equals("DAY")){
+                                virtualName = dfs.getWeekdays()[calendar.get(Calendar.DAY_OF_WEEK)] + "(Week " + calendar.get(Calendar.WEEK_OF_YEAR) + ") " + String.valueOf(calendar.get(Calendar.YEAR)) ;
+                            } else if(res.equals("MONTH")){
+                                virtualName = dfs.getMonths()[calendar.get(Calendar.MONTH)] + " " + String.valueOf(calendar.get(Calendar.YEAR));
+                            } else if(res.equals("YEAR")){
+                                virtualName = String.valueOf(calendar.get(Calendar.YEAR));
+                            }
+                            log.info(" > Translated value " + virtualName);
+
+                        }
+
+
+                    }
+
+
+                }  catch (Exception e){
+                    log.error(" > Exception while translating facets", e);
+                }
 
                 VirtualTreeEntity vEntity = new VirtualTreeEntity( vUid, virtualName, virtualPath, count.longValue() );
                 vEntities.add( vEntity );

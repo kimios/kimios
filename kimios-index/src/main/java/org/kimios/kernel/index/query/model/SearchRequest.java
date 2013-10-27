@@ -66,6 +66,17 @@ public class SearchRequest
     @Column( name = "search_virtual_tree", nullable = true )
     private Boolean virtualTree;
 
+    @Column(name = "search_public", nullable = false)
+    private Boolean publicAccess = false;
+
+    public Boolean getPublicAccess() {
+        return publicAccess;
+    }
+
+    public void setPublicAccess(Boolean publicAccess) {
+        this.publicAccess = publicAccess;
+    }
+
     public Boolean isVirtualTree()
     {
         return virtualTree;
@@ -157,18 +168,18 @@ public class SearchRequest
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "SearchRequest{" +
-            "id=" + id +
-            ", name='" + name + '\'' +
-            ", owner='" + owner + '\'' +
-            ", ownerSource='" + ownerSource + '\'' +
-            ", criteriaList=" + criteriaList +
-            ", criteriasListJson='" + criteriasListJson + '\'' +
-            ", sortField='" + sortField + '\'' +
-            ", sortDir='" + sortDir + '\'' +
-            ", virtualTree=" + virtualTree +
-            '}';
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", owner='" + owner + '\'' +
+                ", ownerSource='" + ownerSource + '\'' +
+                ", criteriaList=" + criteriaList +
+                ", criteriasListJson='" + criteriasListJson + '\'' +
+                ", sortField='" + sortField + '\'' +
+                ", sortDir='" + sortDir + '\'' +
+                ", virtualTree=" + virtualTree +
+                ", publicAccess=" + publicAccess +
+                '}';
     }
 }

@@ -922,8 +922,12 @@ kimios.record = {
                 type:'string'
             },
             {
-                name:'virtualFolderCount',
+                name:'virtualDisplayPath',
                 type:'string'
+            },
+            {
+                name:'virtualFolderCount',
+                type:'int'
             }
         ])
     }

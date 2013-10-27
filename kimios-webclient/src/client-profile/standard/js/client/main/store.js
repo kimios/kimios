@@ -298,7 +298,7 @@ kimios.store = {
             ]
         });
     },
-    getVirtualTreeCaller: function(searchParams, virtualStore, entitiesStore){
+    getVirtualTreeCaller: function(searchParams, virtualStore, entitiesStore, callback){
         var baseParams = searchParams;
         baseParams.action = 'ExecuteSaved';
         baseParams.start = 0;
@@ -309,8 +309,11 @@ kimios.store = {
             var searchRes = Ext.util.JSON.decode(resp.responseText);
             virtualStore.loadData(searchRes);
             entitiesStore.loadData(searchRes);
-
+            if(callback){
+                callback(searchRes);
+            }
         });
+
     },
     getVirtualEntityStore : function(searchParams){
         var baseParams = searchParams;

@@ -204,14 +204,44 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
         };
         this.items = [this.advancedSearchPanel, this.gridPanel, this.commentsPanel];
 =======*/
-        this.northCenterContainer = new Ext.Panel({
+        /*this.northCenterContainer = new Ext.Panel({
              region: 'north',
              hidden: true,
              border: false,
              split: true,
              layout: 'fit',
-             height: 300
-         });
+             items: []
+         });*/
+
+
+
+
+        this.virtualTreePanel = new kimios.search.VirtualTreeGridPanel({
+            //queryId: searchQueryId,
+            currentPath: '',
+            prettyPath: '',
+            //searchStore: searchStore,
+            breadcrumbToolbar: this.breadcrumbToolbar,
+            border: false
+            //height: 300,
+            //collapseMode: 'mini',
+            //collapsible: true
+        });
+        var tabPanel = this;
+        this.virtualTreePanel.on('searchloaded', function(globalDocumentCount){
+            tabPanel.setTitle(kimios.lang('DocumentsFound') + ' (' + globalDocumentCount + ')');
+        });
+
+        this.northCenterContainer = new Ext.Panel({
+            region: 'north',
+            border: false,
+            split: true,
+            layout: 'fit',
+            title: 'Search folders',
+            height: 300,
+            hidden: true,
+            items: [this.virtualTreePanel]
+    });
 
         this.centerContainer = new Ext.Panel({
                border: false,
@@ -223,16 +253,64 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
 
         kimios.explorer.DMEntityGridPanel.superclass.constructor.call(this, config);
     },
-    displayVirtualTree: function (virtualTreePanel){
-        this.northCenterContainer.removeAll();
-        this.northCenterContainer.add(virtualTreePanel);
-        this.northCenterContainer.setVisible(true);
-        this.doLayout();
-        this.virtualTreePanel = virtualTreePanel;
+    displayVirtualTree: function (searchQueryId, searchStore){
 
+        if(!this.virtualTreePanel){
+
+            this.northCenterContainer.removeAll();
+            this.northCenterContainer.add(this.virtualTreePanel);
+            this.northCenterContainer.setVisible(true);
+            this.doLayout();
+
+
+
+
+        } else {
+            //this.northCenterContainer.slide();
+            //this.centerContainer.layout.north.slideOut();
+
+            if(kimios.explorer.getActivePanel().advancedSearchPanel.isVisible())
+                kimios.explorer.getActivePanel().advancedSearchPanel.hidePanel();
+
+            this.northCenterContainer.removeAll(false);
+            this.northCenterContainer.add(this.virtualTreePanel);
+            this.northCenterContainer.setVisible(true);
+            this.northCenterContainer.doLayout();
+            this.northCenterContainer.enable();
+            this.virtualTreePanel.currentPath = '';
+            this.virtualTreePanel.prettyPath = '';
+            this.virtualTreePanel.queryId = searchQueryId;
+            this.virtualTreePanel.baseSearchStore = searchStore;
+
+            this.virtualTreePanel.reconfigure( kimios.store.getVirtualEntityStore({
+                queryId:this.virtualTreePanel.queryId
+            }), this.virtualTreePanel.getColumnModel());
+
+
+
+
+        }
         this.breadcrumbToolbar.virtualMode = true;
         this.breadcrumbToolbar.standardMode = false;
-        this.searchToolbar.setVisible(false);
+        this.searchToolbar.disable();
+        this.breadcrumbToolbar.show();
+        this.virtualTreePanel.setPath(undefined, '');
+        this.doLayout();
+        this.virtualTreePanel.doLayout();
+
+    },
+    hideVirtualTree: function(){
+
+        this.northCenterContainer.disable();
+        this.northCenterContainer.setVisible(false);
+        this.northCenterContainer.removeAll(false);
+        this.northCenterContainer.doLayout();
+        this.breadcrumbToolbar.virtualMode = false
+        this.breadcrumbToolbar.standardMode = true;
+
+        this.searchToolbar.enable();
+        this.doLayout();
+
 
     },
     initComponent: function () {
@@ -376,24 +454,21 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
                     }
                     return true;
                 });
-                this.breadcrumbToolbar.virtualMode = true;
-                this.breadcrumbToolbar.standardMode = false;
+                this.breadcrumbToolbar.virtualTreePanel = virtualTreePanel;
+                this.breadcrumbToolbar.enable();
+            } else {
+                this.breadcrumbToolbar.disable();
             }
             this.pagingToolBar.setVisible(true);
             this.pagingToolBar.enable();
-
-
-
         } else {
-            this.breadcrumbToolbar.virtualMode = false;
-            this.breadcrumbToolbar.standardMode = true;
-
             this.pagingToolBar.disable();
             this.pagingToolBar.hide();
             this.breadcrumbToolbar.enable();
         }
+        this.breadcrumbToolbar.virtualMode = virtualTreeEnable;
+        this.breadcrumbToolbar.standardMode = !virtualTreeEnable;
 
-        this.breadcrumbToolbar.setPath();
 
         this.doLayout();
     },
@@ -404,15 +479,15 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
         this.pagingToolBar.hide();
         this.breadcrumbToolbar.enable();
         this.breadcrumbToolbar.show();
-
         this.breadcrumbToolbar.virtualMode = false;
         this.breadcrumbToolbar.standardMode = true;
+        this.hideVirtualTree();
     },
 
     advancedSearch: function (searchConfig, form) {
 
         // search by document body
-
+        this.hideVirtualTree();
 
         if (form == undefined) {
             var searchStore = kimios.store.getAdvancedSearchStore(searchConfig);

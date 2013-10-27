@@ -55,7 +55,7 @@ public class SearchRequestFactory extends HFactory {
 
 
     public List<SearchRequest> loadSearchRequest(String userId, String userSource) {
-        String query = "from SearchRequest fetch all properties where owner = :userId and ownerSource = :userSource order by name";
+        String query = "from SearchRequest fetch all properties where (owner = :userId and ownerSource = :userSource) or publicAccess is true order by name";
         return getSession().createQuery(query)
                 .setString("userId", userId)
                 .setString("userSource", userSource)

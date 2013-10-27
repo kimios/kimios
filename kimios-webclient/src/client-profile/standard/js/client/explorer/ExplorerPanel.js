@@ -159,7 +159,6 @@ kimios.explorer.ExplorerPanel = Ext.extend(kimios.util.DMEntityTree, {
     toDmsPath: function (treePath) {
         return treePath.substr(this.getRootNode().text.length + 1);
     },
-
     synchronize: function (dmsPath) {
         if (dmsPath == '/')
             dmsPath = undefined;

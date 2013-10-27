@@ -31,6 +31,8 @@ public class VirtualTreeEntity
 
     private String virtualPath;
 
+    private String virtualDisplayPath;
+
     private long virtualFolderCount;
 
     private int type = 2;
@@ -42,6 +44,14 @@ public class VirtualTreeEntity
         this.name = name;
         this.virtualPath = virtualPath;
         this.virtualFolderCount = virtualFolderCount;
+    }
+
+    public String getVirtualDisplayPath() {
+        return virtualDisplayPath;
+    }
+
+    public void setVirtualDisplayPath(String virtualDisplayPath) {
+        this.virtualDisplayPath = virtualDisplayPath;
     }
 
     public long getUid()

@@ -565,12 +565,15 @@ public class SolrSearchController
             }
         }
 
+
         for ( Criteria c : criteriaList )
         {
 
             if ( c.isFaceted() )
             {
 
+
+                log.info(" > Required level " + requiredDepth + ". Path Index Size: " + pathIndex.size() + " " + virtualPath + "  / c: " + c.getLevel() + " => " + c.getFieldName());
                 if ( c.getLevel() != null && c.getLevel() > -1 && pathIndex.containsKey( c.getLevel() ) )
                 {
                     /*
@@ -599,36 +602,40 @@ public class SolrSearchController
                 {
                     try
                     {
+                        /*
+                            Apply facet if at required level
+                         */
+                        if(c.getLevel().equals(pathIndex.size())){
+                            log.info("Using criteria for facet: " + c.getFieldName() + " / " + c.getFacetField());
+                            Class fieldType = DmsSolrFields.sortFieldMapping.get( c.getFieldName() );
+                            if ( fieldType.equals( Date.class ) )
+                            {
+                                indexQuery =
+                                        FacetQueryBuilder.dateFacetBuiler( indexQuery, c.getFieldName(), c.getRangeMin(),
+                                                c.getRangeMax(), c.getDateFacetGapType(),
+                                                c.getDateFacetGapRange() );
+                            }
+                            else if ( Number.class.isAssignableFrom( fieldType ) )
+                            {
+                                indexQuery =
+                                        FacetQueryBuilder.numberFacetBuiler( indexQuery, c.getFieldName(), c.getRangeMin(),
+                                                c.getRangeMax(), c.getFacetRangeGap() );
+                            }
+                            else if ( fieldType.equals( String.class ) )
+                            {
+                                indexQuery =
+                                        FacetQueryBuilder.stringFacetBuilder( indexQuery, c.getFieldName(), c.getQuery() );
+                            }
+                            else
+                            {
+                                throw new IndexException( "UnknownFacetFieldType" );
+                            }
 
-                    /*
-                        Check depth
-                     */
+                            someFacet = c.isFaceted();
 
-                        Class fieldType = DmsSolrFields.sortFieldMapping.get( c.getFieldName() );
-                        if ( fieldType.equals( Date.class ) )
-                        {
-                            indexQuery =
-                                FacetQueryBuilder.dateFacetBuiler( indexQuery, c.getFieldName(), c.getRangeMin(),
-                                                                   c.getRangeMax(), c.getDateFacetGapType(),
-                                                                   c.getDateFacetGapRange() );
+                        } else {
+                            log.info("Ignoring criteria: " + c.getFieldName() + " / " + c.getFacetField());
                         }
-                        else if ( Number.class.isAssignableFrom( fieldType ) )
-                        {
-                            indexQuery =
-                                FacetQueryBuilder.numberFacetBuiler( indexQuery, c.getFieldName(), c.getRangeMin(),
-                                                                     c.getRangeMax(), c.getFacetRangeGap() );
-                        }
-                        else if ( fieldType.equals( String.class ) )
-                        {
-                            indexQuery =
-                                FacetQueryBuilder.stringFacetBuilder( indexQuery, c.getFieldName(), c.getQuery() );
-                        }
-                        else
-                        {
-                            throw new IndexException( "UnknownFacetFieldType" );
-                        }
-
-                        someFacet = c.isFaceted();
                     }
                     catch ( Exception e )
                     {
@@ -865,8 +872,9 @@ public class SolrSearchController
         throws AccessDeniedException, DataSourceException, ConfigException, IndexException, IOException, ParseException
     {
         SearchRequest searchRequest = searchRequestFactory.loadById( id );
-        if ( searchRequest == null || !( searchRequest.getOwner().equals( session.getUserName() )
-            && searchRequest.getOwnerSource().equals( session.getUserSource() ) ) )
+        log.info(" >> " + searchRequest.toString());
+        if ( searchRequest == null || (!( searchRequest.getOwner().equals( session.getUserName() )
+            && searchRequest.getOwnerSource().equals( session.getUserSource() )) && !searchRequest.getPublicAccess()))
         {
             throw new AccessDeniedException();
         }

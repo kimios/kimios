@@ -28,22 +28,23 @@ kimios.explorer.BreadcrumbToolbar = Ext.extend(Ext.Toolbar, {
         return this.currentPath;
     },
 
-    setPath: function (path) {
+    setPath: function (path, prettypath) {
         this.currentPath = path;
+        this.prettyPath = prettypath;
 
         this.removeAll();
         if(this.standardMode){
             this.setStandardMode(path);
         }
         if(this.virtualMode){
-            this.setVirtualMode(path);
+            this.setVirtualMode(path, prettypath);
         }
         this.doLayout();
     },
 
-    back: function (url) {
+    back: function (url, prettyUrl) {
         if(this.virtualMode){
-            this.virtualTreePanel.setPath(url);
+            this.virtualTreePanel.setPath(url, prettyUrl);
         } else if(this.standardMode) {
             kimios.explorer.getTreePanel().synchronize(url);
             var node = kimios.explorer.getTreePanel().getSelectionModel().getSelectedNode();
@@ -65,7 +66,7 @@ kimios.explorer.BreadcrumbToolbar = Ext.extend(Ext.Toolbar, {
         this.doLayout();
     } ,
 
-    setVirtualMode: function(path){
+    setVirtualMode: function(path, prettypath){
         this.virtualMode = true;
         var ap = this.virtualTreePanel;
         this.upButton = new Ext.Toolbar.Button({
@@ -74,7 +75,7 @@ kimios.explorer.BreadcrumbToolbar = Ext.extend(Ext.Toolbar, {
             iconCls: 'undo',
             handler: function (btn, evt) {
                 btn.disable();
-                ap.setPath(ap.currentPath.substr(0, ap.lastIndexOf('/')));
+                ap.setPath(ap.currentPath.substr(0, path.lastIndexOf('/')), ap.prettyPath.substr(0, prettypath.lastIndexOf('/')));
             }
         });
         this.refreshButton = new Ext.Toolbar.Button({
@@ -84,7 +85,7 @@ kimios.explorer.BreadcrumbToolbar = Ext.extend(Ext.Toolbar, {
             disabled: true,
             handler: function (btn, evt) {
                 btn.disable();
-                ap.setPath(ap.currentPath);
+                ap.setPath(ap.currentPath, ap.prettyPath);
             }
         });
 
@@ -95,18 +96,22 @@ kimios.explorer.BreadcrumbToolbar = Ext.extend(Ext.Toolbar, {
 
 
         var me = this;
+
         if (path != undefined) {
             var n = path.substr(1).split('/');
             var url = '';
+            var prettyUrl = '';
             for (var i = 0; i < n.length; i++) {
                 url += '/' + n[i];
+                prettyUrl += '/' + prettypath ?  prettypath.substr(1).split('/')[i] : '';
                 this.add('/');
                 this.add(new Ext.Toolbar.Button({
-                    text: n[i],
+                    text: prettypath.substr(1).split('/')[i],
                     targetUrl: url,
+                    prettyUrl: prettyUrl,
                     handler: function () {
                         if (this.handleMouseEvents == true) {
-                            me.back(targetUrl);
+                            me.back(this.targetUrl, this.prettyUrl);
                         }
                     }
                 }));
@@ -229,6 +234,7 @@ kimios.explorer.BreadcrumbToolbar = Ext.extend(Ext.Toolbar, {
             var url = '';
             for (var i = 0; i < n.length; i++) {
                 url += '/' + n[i];
+
                 this.add('/');
                 this.add(new Ext.Toolbar.Button({
                     text: n[i],

@@ -113,53 +113,6 @@ kimios.explorer.SearchQueryPanel = Ext.extend( Ext.grid.GridPanel, {
         this.doLayout();
     },
 
-    virtualTreeColumnModel: function ()
-    {
-        return new Ext.grid.ColumnModel( [
-                 {
-                     align: 'center',
-                     readOnly: true,
-                     width: 18,
-                     hidden: false,
-                     sortable: false,
-                     hideable: false,
-                     fixed: true,
-                     resizable: false,
-                     menuDisabled: true,
-                     renderer: function ( val, metaData, record, rowIndex, colIndex, store )
-                     {
-                         metaData.css =
-                                 kimios.util.IconHelper.getIconClass( record.data.type,
-                                                                      record.data.extension );
-
-                     }
-                 },
-                 {
-                     header: kimios.lang( 'DocumentName' ),
-                     dataIndex: 'name',
-                     readOnly: true,
-                     sortable: true,
-                     hideable: false,
-                     menuDisabled: true
-                 },{
-                header: 'Path',
-                dataIndex: 'virtualPath',
-                readOnly: true,
-                sortable: true,
-                hideable: false,
-                menuDisabled: true
-                },{
-                     header: 'Count',
-                     dataIndex: 'virtualFolderCount',
-                     readOnly: true,
-                     sortable: true,
-                     hideable: false,
-                     menuDisabled: true
-                 }
-
-                                         ]);
-
-    },
 
     initComponent: function ()
     {
@@ -197,6 +150,7 @@ kimios.explorer.SearchQueryPanel = Ext.extend( Ext.grid.GridPanel, {
 
             if ( !virtTree )
             {
+                kimios.explorer.getActivePanel().hideVirtualTree();
                 kimios.explorer.getActivePanel().advancedSearchPanel.loadForm( selected.data );
             } // auto load
 
@@ -204,81 +158,22 @@ kimios.explorer.SearchQueryPanel = Ext.extend( Ext.grid.GridPanel, {
             /*
              execute saved query
              */
+
             var searchStore = kimios.store.getSavedQueryExecStore( {
                    queryId: selected.get( 'id' )
-               } );
-
-
-
+             });
             //TODO: generalize paging Size
-
-            var selectedQueryId =  selected.get( 'id' );
             this.pagingSize = 10;
             var dispPanel = kimios.explorer.getActivePanel();
             var gridPanel = dispPanel.gridPanel;
             gridPanel.reconfigure( searchStore, gridPanel.getColumnModel());
             if(virtTree){
-                var virTreeStore = kimios.store.getVirtualEntityStore({
-                  queryId: selected.get( 'id' )
-                });
-                this.virtualTreeGridPanel = new Ext.grid.GridPanel({
-                    border: false,
-                    stripeRows: true,
-                    margins: '-1 -1 -1 -1',
-                    store: virTreeStore,
-                    columnLines: false,
-                    enableDragDrop: true,
-                    enableDD: true,
-                    ddGroup: 'grid2tree',
-                    ddScroll: true,
-                    cm: this.virtualTreeColumnModel(),
-                    sm: new Ext.grid.RowSelectionModel({
-                                                           singleSelect: false
-                                                       }),
-                    viewConfig: {
-                        forceFit: true,
-                        scrollOffset: 0
-                    },
-                    width: 300,
-                    listeners: {
-                        "rowdblclick": function(grid, rowIndex, ev){
-                            /*
-                                Replay query with selected path
-                             */
-                            var rec = grid.getStore().getAt(rowIndex);
-                            grid.setPath(grid.currentPath + rec.data.virtualPath);
-                        }
-                    }
-                });
 
-
-                var virtualGridPanel = this.virtualTreeGridPanel;
-                this.virtualTreeGridPanel.setPath = function(virtualPath){
-                    virtualGridPanel.currentPath = virtualPath;
-                    kimios.store.getVirtualTreeCaller(
-                            {
-                                queryId: selectedQueryId,
-                                virtualPath: virtualGridPanel.currentPath
-                            },
-                            virTreeStore,
-                            searchStore
-                    );
-                };
-                this.virtualTreeGridPanel.currentPath = '';
-                dispPanel.breadcrumbToolbar.virtualMode = true;
-                dispPanel.displayVirtualTree(this.virtualTreeGridPanel);
-                dispPanel.displayPagingToolBar( gridPanel.getStore(), true );
-                kimios.store.getVirtualTreeCaller(
-                        {
-                            queryId: selectedQueryId
-                        },
-                        this.virtualTreeGridPanel.getStore(),
-                        gridPanel.getStore()
-                );
-
+                dispPanel.displayPagingToolBar( searchStore, true );
+                dispPanel.displayVirtualTree(selected.get('id'), searchStore);
             } else{
-                dispPanel.displayPagingToolBar( gridPanel.getStore() );
-
+                dispPanel.hideVirtualTree();
+                dispPanel.displayPagingToolBar( searchStore, false );
                 gridPanel.getStore().load( {
                    scope: this,
                    params: {
