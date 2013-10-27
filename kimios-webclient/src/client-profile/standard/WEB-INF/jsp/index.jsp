@@ -54,12 +54,9 @@
 
     /*
         Check CAS TGT Exists
-     */
+    if(request.getParameter("ticket") != null){
 
-
-  /*  if(request.getParameter("ticket") != null){
-        /*
-            Authenticate with
+        //    Authenticate with
 
         String ticket = request.getParameter("ticket");
         securityController = (SecurityController) wac.getBean("securityController");
@@ -74,7 +71,7 @@
             response.sendRedirect(request.getContextPath() + "/logged.jsp");
             return;
         }
-    }      */
+    }*/
 
 
 

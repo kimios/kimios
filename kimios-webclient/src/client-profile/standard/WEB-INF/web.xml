@@ -48,10 +48,10 @@
         <filter-name>CoreFilter</filter-name>
         <filter-class>org.kimios.core.filters.CoreFilter</filter-class>
     </filter>
-    <filter-mapping>
+    <!--<filter-mapping>
         <filter-name>CasAuthFilter</filter-name>
         <url-pattern>/index.jsp</url-pattern>
-    </filter-mapping>
+    </filter-mapping>-->
     <filter-mapping>
         <filter-name>CoreFilter</filter-name>
         <url-pattern>/*</url-pattern>
