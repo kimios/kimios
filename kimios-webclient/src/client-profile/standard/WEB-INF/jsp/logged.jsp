@@ -35,6 +35,7 @@
             throw new java.lang.Exception("sessionUid == null");
         u = securityController.getUser(sessionUid);
     } catch (Exception e) {
+        e.printStackTrace();
         response.sendRedirect(request.getContextPath() + "/");
         return;
     }
@@ -127,7 +128,7 @@
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/explorer/BreadcrumbToolbar.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/explorer/BookmarksPanel.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/explorer/SearchQueryPanel.js"></script>
-    <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/explorer/SearchVirtualBreadcrumbToolbar.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/search/VirtualTreeGridPanel.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/explorer/RecentItemsPanel.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/search/SearchToolbar.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/search/SearchButton.js"></script>
