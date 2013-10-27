@@ -47,7 +47,11 @@ kimios.properties.BonitaPanel = Ext.extend(Ext.Panel, {
             data: obj
         });
 
+
+
+
         var tasksStore = kimios.store.TasksStore.getBonitaTasksByInstanceStore();
+
 
         this.instanceProcessPanel = new Ext.grid.GridPanel({
             id: 'propInstancesPanelId',

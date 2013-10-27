@@ -27,7 +27,8 @@ kimios.form.ProcessField = Ext.extend(Ext.form.ComboBox,{
         this.typeAheadDelay = 1000;
         this.lazyRender = true;
         this.autoSelect = true;
-        this.store = kimios.store.StudioStore.getProcessesStore(true);
+        this.store = kimios.store.StudioStore.getProcessesStore(Ext.getCmp('kimios-viewport').bonita);
+
         kimios.form.ProcessField.superclass.constructor.call(this, config);
     },
 

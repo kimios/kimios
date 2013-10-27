@@ -134,6 +134,8 @@ kimios.properties.WorkflowPanel = Ext.extend(Ext.Panel, {
             this.setIconClass('loading');
         }, this);
 
+
+
         this.workflowStatusRequestsStore.on('load', function (store, records, options) {
             this.loaded = true;
             this.clear();
