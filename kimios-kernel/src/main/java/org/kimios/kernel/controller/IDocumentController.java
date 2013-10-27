@@ -97,6 +97,20 @@ public interface IDocumentController {
                                              String hashSha1) throws IOException;
 
     /**
+     * Create a document from full path with properties
+     */
+    public long createDocumentFromFullPathWithProperties(Session s,
+                                             String path,
+                                             boolean isSecurityInherited,
+                                             String securitiesXmlStream,
+                                             boolean isRecursive,
+                                             long documentTypeId,
+                                             String metasXmlStream,
+                                             InputStream documentStream,
+                                             String hashMd5,
+                                             String hashSha1) throws IOException;
+
+    /**
      * Update a document (for move, rename, extension and mime type change)
      */
     @DmsEvent(eventName = {DmsEventName.DOCUMENT_UPDATE})

@@ -144,6 +144,36 @@ public class DocumentServiceImpl extends CoreService implements DocumentService 
         }
     }
 
+
+    /**
+     * @param sessionId
+     * @param path
+     * @param isSecurityInherited
+     * @param securitiesXmlStream
+     * @param isRecursive
+     * @param documentTypeId
+     * @param metasXmlStream
+     * @param documentStream
+     * @param hashMd5
+     * @param hashSha1
+     * @return
+     * @throws DMServiceException
+     */
+    public void createDocumentFromFullPathWithProperties(String sessionId, String path,
+                                             boolean isSecurityInherited, String securitiesXmlStream, boolean isRecursive,
+                                             long documentTypeId, String metasXmlStream, InputStream documentStream,
+                                             String hashMd5, String hashSha1) throws DMServiceException {
+
+        try {
+            Session session = getHelper().getSession(sessionId);
+            documentController.createDocumentFromFullPathWithProperties(session, path,
+                    isSecurityInherited, securitiesXmlStream, isRecursive, documentTypeId, metasXmlStream,
+                    documentStream, hashMd5, hashSha1);
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
+
     /**
      * @param sessionId
      * @param documentId

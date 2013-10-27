@@ -396,6 +396,178 @@ public class DocumentController extends AKimiosController implements IDocumentCo
         }
     }
 
+
+    public long createDocumentFromFullPathWithProperties(Session s, String path,
+                                                         boolean isSecurityInherited, String securitiesXmlStream,
+                                                         boolean isRecursive, long documentTypeId, String metasXmlStream,
+                                                         InputStream documentStream, String hashMd5, String hashSha1)
+            throws NamingException, ConfigException, DataSourceException, AccessDeniedException {
+
+        try {
+
+
+            String targetPath = path;
+            Long documentId = null;
+            if (path.startsWith("/")) {
+                targetPath = path.substring(1);
+            }
+            String[] chunks = targetPath.split("/");
+            if (chunks.length < 3) {
+                throw new PathException("Invalid path : " + path);
+            } else {
+                long parentUid = -1;
+                int parentType = -1;
+                for (int i = 0; i < chunks.length; i++) {
+                    String tmpPath = "";
+                    for (int j = 0; j <= i; j++) {
+                        tmpPath += "/" + chunks[j];
+                    }
+                    if (i == 0) {//the workspace
+                        DMEntity dm = this.getDmEntity(tmpPath);
+                        if (dm == null) {//must create
+                            long uid = wksCtrl.createWorkspace(s, chunks[i]);
+                            parentUid = uid;
+                            parentType = DMEntityType.WORKSPACE;
+                        } else {
+                            parentUid = dm.getUid();
+                            parentType = dm.getType();
+                        }
+                    } else if (i < chunks.length - 1) {//a folder
+                        DMEntity dm = this.getDmEntity(tmpPath);
+                        if (dm == null) {//must create
+                            long uid = fldCtrl.createFolder(s, chunks[i], parentUid, isSecurityInherited);
+                            parentUid = uid;
+                            parentType = DMEntityType.FOLDER;
+                        } else {
+                            parentUid = dm.getUid();
+                            parentType = dm.getType();
+                        }
+                    } else if (i == chunks.length - 1) {//the document
+                        documentId = this.createDocument(s, PathUtils.getFileNameWithoutExtension(chunks[i]),
+                                PathUtils.getFileExtension(chunks[i]), null, parentUid, isSecurityInherited);
+                    }
+                }
+            }
+            Document document = dmsFactoryInstantiator.getDocumentFactory().getDocument(documentId);
+            if (!isSecurityInherited)
+                secCtrl.updateDMEntitySecurities(s, documentId, securitiesXmlStream, isRecursive);
+
+            long versionId = vrsCtrl.createDocumentVersion(s, documentId);
+            DataTransfer dt = ftCtrl.startUploadTransaction(s, documentId, false);
+            DataTransfer transac = transferFactoryInstantiator.getDataTransferFactory().getDataTransfer(dt.getUid());
+            DocumentVersion dv =
+                    dmsFactoryInstantiator.getDocumentVersionFactory().getDocumentVersion(transac.getDocumentVersionUid());
+
+
+            if (!getSecurityAgent().isWritable(document, s.getUserName(), s.getUserSource(),
+                    s.getGroups())) {
+                throw new AccessDeniedException();
+            }
+            OutputStream out = new FileOutputStream(
+                    new File(ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH) + transac.getFilePath()), true);
+
+            byte[] b = new byte[2048];
+            int readBytes;
+            while ((readBytes = documentStream.read(b, 0, b.length)) > -1) {
+                out.write(b, 0, readBytes);
+            }
+            out.flush();
+            out.close();
+            if (hashMd5 != null && hashSha1 != null) {
+                User u = authFactoryInstantiator.getAuthenticationSourceFactory().getAuthenticationSource(
+                        s.getUserSource()).getUserFactory().getUser(s.getUserName());
+                if (!getSecurityAgent().isWritable(document, s.getUserName(), s.getUserSource(), s.getGroups())) {
+                    throw new AccessDeniedException();
+                }
+
+                //Return inpustream on file transmitted
+                InputStream in = FileCompressionHelper.getTransactionFile(transac);
+
+               /* Hash Calculation */
+                String recHashMD5 = "";
+                String recHashSHA1 = "";
+                try {
+                    HashCalculator hc = new HashCalculator("MD5");
+                    recHashMD5 = (hc.hashToString(in).replaceAll(" ", ""));
+                    in = FileCompressionHelper.getTransactionFile(transac);
+                    hc.setAlgorithm("SHA-1");
+                    recHashSHA1 = (hc.hashToString(in).replaceAll(" ", ""));
+
+                } catch (NoSuchAlgorithmException nsae) {
+
+                    hashMd5 = ("error: No algorithm defined");
+                    hashSha1 = ("error: No algorithm defined");
+                }
+
+                if (!(hashMd5.equalsIgnoreCase(recHashMD5) && hashSha1.equalsIgnoreCase(recHashSHA1))) {
+                    new File(
+                            ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH) + transac.getFilePath()).delete();
+                    throw new TransferIntegrityException();
+                }
+
+                in = FileCompressionHelper.getTransactionFile(transac);
+                Vector<DocumentVersion> twoLast =
+                        dmsFactoryInstantiator.getDocumentVersionFactory().getTwoLastDocumentVersion(document);
+                DocumentVersion jBefore = null;
+                for (DocumentVersion h : twoLast) {
+                    jBefore = (h.getUid() != dv.getUid() ? h : null);
+                }
+                if (twoLast.contains(dv) && twoLast.size() > 1 && jBefore != null) {
+
+                    if (jBefore.getStoragePath().equalsIgnoreCase(dv.getStoragePath())) {
+                        //Same path: check the hash
+                        if (!hashMd5.equalsIgnoreCase(jBefore.getHashMD5()) && !hashSha1.equalsIgnoreCase(
+                                jBefore.getHashSHA1())) {
+                            Date newDate = new Date();
+                            dv.setStoragePath(
+                                    new SimpleDateFormat("/yyyy/MM/dd/HH/mm/").format(newDate) + dv.getDocumentUid() + "_" +
+                                            newDate.getTime() + ".bin");
+                            // storing data
+                            dv.setHashMD5(hashMd5);
+                            dv.setHashSHA1(hashSha1);
+                            dv.writeData(in);
+                        } else {
+                            //nothing: same file
+                        }
+                    } else {
+                        //not the same path :
+                        //Update:
+
+                        if (!hashMd5.equalsIgnoreCase(dv.getHashMD5()) && !hashSha1.equalsIgnoreCase(dv.getHashSHA1())) {
+                            dv.setHashMD5(hashMd5);
+                            dv.setHashSHA1(hashSha1);
+                            dv.writeData(in);
+                        } else {
+                        }
+                    }
+                } else {
+                    if (twoLast.size() == 1 && twoLast.contains(dv)) {
+                        dv.setHashMD5(hashMd5);
+                        dv.setHashSHA1(hashSha1);
+                        dv.writeData(in);
+                    }
+                }
+                new File(ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH) + transac.getFilePath()).delete();
+                if (transac.isHasBeenCheckedOutOnStart()) {
+                    dmsFactoryInstantiator.getLockFactory().checkin(document, u);
+                }
+                transferFactoryInstantiator.getDataTransferFactory().removeDataTransfer(transac);
+            }
+
+
+            if (documentTypeId > 0)
+                vrsCtrl.updateDocumentVersion(s, documentId, documentTypeId, metasXmlStream);
+
+            return documentId;
+
+        } catch (IOException e) {
+            throw new AccessDeniedException();
+        }
+    }
+
+
+
+
     private DMEntity getDmEntity(String path) {
         try {
             return dmsFactoryInstantiator.getDmEntityFactory().getEntity(path);

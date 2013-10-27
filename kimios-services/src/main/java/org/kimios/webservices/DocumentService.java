@@ -95,6 +95,24 @@ public interface DocumentService {
             @Multipart(value = "md5") String hashMd5,
             @Multipart(value = "sha1") String hashSha1) throws DMServiceException;
 
+
+
+    @POST
+    @Path("/createDocumentFromFullPathWithProperties")
+    @Produces("application/json")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public void createDocumentFromFullPathWithProperties(
+            @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+            @QueryParam(value = "path") @WebParam(name = "path") String name,
+            @QueryParam(value = "isSecurityInherited") @WebParam(name = "isSecurityInherited") boolean isSecurityInherited,
+            @QueryParam(value = "securitiesXmlStream") @WebParam(name = "securitiesXmlStream") String securitiesXmlStream,
+            @QueryParam(value = "isRecursive") @WebParam(name = "isRecursive") boolean isRecursive,
+            @QueryParam(value = "documentTypeId") @WebParam(name = "documentTypeId") long documentTypeId,
+            @QueryParam(value = "metasXmlStream") @WebParam(name = "metasXmlStream") String metasXmlStream,
+            @Multipart(value = "document") InputStream documentStream,
+            @Multipart(value = "md5") String hashMd5,
+            @Multipart(value = "sha1") String hashSha1) throws DMServiceException;
+
     @GET
     @Path("/updateDocument")
     @Produces("application/json")
