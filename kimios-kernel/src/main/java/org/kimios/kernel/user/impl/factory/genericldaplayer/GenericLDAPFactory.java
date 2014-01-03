@@ -31,9 +31,14 @@ import javax.naming.directory.SearchResult;
 
 import org.kimios.kernel.security.SecurityEntityType;
 import org.kimios.kernel.user.impl.GenericLDAPImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class GenericLDAPFactory
 {
+
+    private static Logger logger = LoggerFactory.getLogger(GenericLDAPFactory.class);
+
     protected GenericLDAPImpl source;
 
     public List<SearchResult> search(String s, int type) throws NamingException
@@ -74,7 +79,10 @@ public abstract class GenericLDAPFactory
                 buildResults(s, where, context, sc, searchResults);
             } else {
                 for (String node : nodes) {
+
+
                     buildResults(s, node, context, sc, searchResults);
+                    logger.debug(" > Loaded data from node " + node + " > " + searchResults.size());
                 }
             }
             context.close();

@@ -240,6 +240,28 @@ public class GenericLDAPUserFactory extends GenericLDAPFactory implements UserFa
         }
     }
 
+    public String getLDAPAttribute(String userId, String attributeName)
+            throws DataSourceException, ConfigException
+    {
+        try {
+            String s = "(&(objectClass=" + source.getUsersObjectClassValue() + ")(" + source.getUsersIdKey() + "=" +
+                    userId + "))";
+            List<SearchResult> r = this.search(s, SecurityEntityType.USER);
+            if (!r.isEmpty()) {
+                Attributes attrs = r.get(0).getAttributes();
+                Object attributeValue = attrs.get(attributeName).get();
+
+                return attributeValue != null ? attributeValue.toString() : null;
+            } else {
+                return null;
+            }
+        } catch (javax.naming.AuthenticationException e) {
+            throw new ConfigException(e, "LDAP connection failed, please check your settings");
+        } catch (NamingException e) {
+            throw new DataSourceException(e, "LDAP Exception : " + e.getMessage());
+        }
+    }
+
     public void setAttribute(User user, String attributeName,
             Object attributeValue) throws DataSourceException, ConfigException
     {

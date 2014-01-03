@@ -85,9 +85,18 @@ public class GenericLDAPGroupFactory extends GenericLDAPFactory implements Group
             List<SearchResult> r = null;
             List<String> nodes = null;
             if (source.isActiveDirectory()) {
-                if (source.getUsersDn() != null) {
-                    if (source.getUsersDn().indexOf(':') != -1) {
-                        String[] ns = source.getUsersDn().split(":");
+                /*
+
+                    Load user
+                 */
+
+                GenericLDAPUserFactory userFactory = (GenericLDAPUserFactory)this.source.getUserFactory();
+
+                String distinguishedName = userFactory.getLDAPAttribute(userUid, "distinguishedName");
+
+                if (source.getGroupsDn() != null) {
+                    if (source.getGroupsDn().indexOf(':') != -1) {
+                        String[] ns = source.getGroupsDn().split(":");
                         nodes = new ArrayList<String>();
                         for (int i = 0; i < ns.length; i++) {
                             nodes.add(ns[i]);
@@ -99,8 +108,7 @@ public class GenericLDAPGroupFactory extends GenericLDAPFactory implements Group
                         v = getGroupsAD(userUid);
                     } else {
                         r = this.search("(&(objectClass=" + source.getGroupsObjectClassValue() + ")(" +
-                                source.getGroupsMemberKey() + "=CN=" + userUid + ","
-                                + source.getUsersDn() + "))", SecurityEntityType.GROUP);
+                                source.getGroupsMemberKey() + "=" + distinguishedName + "))", SecurityEntityType.GROUP);
 
                         for (SearchResult sr : r) {
                             Attributes attrs = sr.getAttributes();
@@ -109,12 +117,15 @@ public class GenericLDAPGroupFactory extends GenericLDAPFactory implements Group
                         }
                     }
                 } else {
+                    /*
+                         Load use
+                     */
                     r = new ArrayList<SearchResult>();
                     for (String node : nodes) {
                         List<SearchResult> lst = this.search(
                                 "(&(objectClass=" + source.getGroupsObjectClassValue() + ")(" +
                                         source.getGroupsMemberKey()
-                                        + "=CN=" + userUid + "," + node + "))", SecurityEntityType.GROUP);
+                                        + "=" + distinguishedName + "))", SecurityEntityType.GROUP);
                         r.addAll(lst);
                     }
                 }
