@@ -59,13 +59,18 @@ public class GlobalFilter
 
             metaDatas = new HashMap<String, Object>(  );
             for(String m: metadata.names()){
-                logger.debug( "Metadata {} --> {}", m, metadata.get( m ) );
+
                 metaDatas.put( m, metadata.isMultiValued( m ) ? metadata.getValues( m ) : metadata.get( m ) );
             }
 
             String val = contentHandler.toString();
-            logger.debug( val );
-            return contentHandler.toString();
+            if(logger.isDebugEnabled()){
+                for(String m: metaDatas.keySet()){
+                    logger.debug( "Metadata {} --> {}", m, metaDatas.get( m ) );
+                }
+                logger.debug( val );
+            }
+            return val;
 
         }
         catch ( Exception e )

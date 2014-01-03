@@ -21,6 +21,14 @@ import org.kimios.kernel.configuration.Config;
 import org.kimios.kernel.controller.*;
 import org.kimios.kernel.controller.utils.PathUtils;
 import org.kimios.kernel.dms.*;
+import org.kimios.kernel.dms.Bookmark;
+import org.kimios.kernel.dms.DMEntity;
+import org.kimios.kernel.dms.Document;
+import org.kimios.kernel.dms.DocumentVersion;
+import org.kimios.kernel.dms.Folder;
+import org.kimios.kernel.dms.SymbolicLink;
+import org.kimios.kernel.dms.WorkflowStatus;
+import org.kimios.kernel.events.EventContext;
 import org.kimios.kernel.exception.*;
 import org.kimios.kernel.filetransfer.DataTransfer;
 import org.kimios.kernel.filetransfer.zip.FileCompressionHelper;
@@ -30,6 +38,7 @@ import org.kimios.kernel.security.DMEntitySecurityFactory;
 import org.kimios.kernel.security.Session;
 import org.kimios.kernel.user.User;
 import org.kimios.kernel.utils.HashCalculator;
+import org.kimios.kernel.ws.pojo.*;
 import org.kimios.utils.configuration.ConfigurationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -276,6 +285,12 @@ public class DocumentController extends AKimiosController implements IDocumentCo
             }
 
 
+
+
+            Document document = dmsFactoryInstantiator.getDocumentFactory().getDocument(documentId);
+            log.info("Adding document " + document + " to event context");
+            EventContext.addParameter("document", document);
+
             if (!isSecurityInherited)
                 secCtrl.updateDMEntitySecurities(s, documentId, securitiesXmlStream, isRecursive);
 
@@ -449,6 +464,8 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                 }
             }
             Document document = dmsFactoryInstantiator.getDocumentFactory().getDocument(documentId);
+            log.info("Adding document " + document + " to event context");
+            EventContext.addParameter("document", document);
             if (!isSecurityInherited)
                 secCtrl.updateDMEntitySecurities(s, documentId, securitiesXmlStream, isRecursive);
 

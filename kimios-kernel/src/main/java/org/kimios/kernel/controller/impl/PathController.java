@@ -37,9 +37,14 @@ public class PathController extends AKimiosController implements IPathController
 
     private static Logger logger = LoggerFactory.getLogger(IPathController.class);
 
+    public org.kimios.kernel.ws.pojo.DMEntity getDMEntityPojoFromPath(Session session, String path) throws PathException, ConfigException, DataSourceException, AccessDeniedException {
+        DMEntity entity = this.getDMEntityFromPath(session, path);
+        return entity.toPojo();
+    }
+
     /* (non-Javadoc)
-    * @see org.kimios.kernel.controller.impl.IPathController#getDMEntityFromPath(org.kimios.kernel.security.Session, java.lang.String)
-    */
+        * @see org.kimios.kernel.controller.impl.IPathController#getDMEntityFromPath(org.kimios.kernel.security.Session, java.lang.String)
+        */
     public DMEntity getDMEntityFromPath(Session session, String path) throws PathException, ConfigException,
             DataSourceException, AccessDeniedException
     {
@@ -70,6 +75,10 @@ public class PathController extends AKimiosController implements IPathController
             {
                 throw new AccessDeniedException();
             }
+
+            /*
+             */
+
             return dm;
         } else {
             logger.error("No entry found at the given path : " + path);

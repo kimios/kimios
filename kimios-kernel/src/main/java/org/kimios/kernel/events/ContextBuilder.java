@@ -45,7 +45,7 @@ public class ContextBuilder
     private static String extension = "EXTENSION";
 
     private static String[] documentMethod = { "createDocument", "updateDocument", "deleteDocument",
-            "checkoutDocument", "checkinDocument", "addRelatedDocument", "removeRelatedDocument" };
+            "checkoutDocument", "checkinDocument", "addRelatedDocument", "removeRelatedDocument", "createDocumentWithProperties", "createDocumentFromFullPathWithProperties" };
 
     private static String[] folderMethod = { "createFolder", "updateFolder", "deleteFolder" };
 
@@ -225,6 +225,19 @@ public class ContextBuilder
             t.getSession().evict(document);
             ctx.setEntity(document);
             EventContext.addParameter("relatedDocument", fc.getDocument((Long) mi.getArguments()[2]));
+        }
+
+
+        // createDocumentWithProperties
+        if (name.equalsIgnoreCase(documentMethod[7])) {
+            Document doc = (Document)EventContext.getParameters().get("document");
+            ctx.setEntity(doc);
+        }
+
+        // createDocumentFromFullPathWithProperties
+        if (name.equalsIgnoreCase(documentMethod[8])) {
+            Document doc = (Document)EventContext.getParameters().get("document");
+            ctx.setEntity(doc);
         }
 
         return ctx;

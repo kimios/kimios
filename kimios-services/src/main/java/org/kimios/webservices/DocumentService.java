@@ -80,7 +80,7 @@ public interface DocumentService {
     @Path("/createDocumentWithProperties")
     @Produces("application/json")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public void createDocumentWithProperties(
+    public long createDocumentWithProperties(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "name") @WebParam(name = "name") String name,
             @QueryParam(value = "extension") @WebParam(name = "extension") String extension,
@@ -101,7 +101,7 @@ public interface DocumentService {
     @Path("/createDocumentFromFullPathWithProperties")
     @Produces("application/json")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public void createDocumentFromFullPathWithProperties(
+    public long createDocumentFromFullPathWithProperties(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "path") @WebParam(name = "path") String name,
             @QueryParam(value = "isSecurityInherited") @WebParam(name = "isSecurityInherited") boolean isSecurityInherited,

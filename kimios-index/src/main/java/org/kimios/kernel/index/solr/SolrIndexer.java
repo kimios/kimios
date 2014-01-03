@@ -79,10 +79,25 @@ public class SolrIndexer extends GenericEventHandler
     @DmsEvent(eventName = { DmsEventName.FILE_UPLOAD }, when = DmsEventOccur.AFTER)
     public void documentVersionUpdateUpload(Object[] obj, Object retour, EventContext ctx) throws Exception
     {
-        log.debug("Indexing version update (after upload): " + (Long) obj[1]);
-        Document doc = FactoryInstantiator.getInstance()
-                .getDocumentVersionFactory().getDocumentVersion(((DataTransfer) retour).getDocumentVersionUid())
-                .getDocument();
+
+        log.info("Inside Solr Indexer");
+        Document doc = (Document)ctx.getEntity();
+        log.info("doc " + doc);
+        if(doc == null){
+            /*
+                Check inside parameters
+             */
+            doc = (Document)EventContext.getParameters().get("document");
+            log.info("doc from event param " + doc);
+
+            if(doc == null){
+                doc = FactoryInstantiator.getInstance()
+                        .getDocumentVersionFactory().getDocumentVersion(((DataTransfer) retour).getDocumentVersionUid())
+                        .getDocument();
+            }
+
+        }
+
         try {
             indexManager.indexDocument(doc);
         } catch (Exception e) {

@@ -31,6 +31,11 @@ public interface IPathController
             throws PathException, ConfigException, DataSourceException,
             AccessDeniedException;
 
+
+    public org.kimios.kernel.ws.pojo.DMEntity getDMEntityPojoFromPath(Session session, String path)
+            throws PathException, ConfigException, DataSourceException,
+            AccessDeniedException;
+
     public String getPathFromDMEntity(Session session, long dmEntityUid)
             throws ConfigException, DataSourceException, AccessDeniedException;
 

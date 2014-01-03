@@ -18,7 +18,7 @@ package org.kimios.kernel.ws.pojo;
 
 import java.util.Calendar;
 
-public class SymbolicLink
+public class SymbolicLink extends DMEntity
 {
     private Calendar creationDate;
 

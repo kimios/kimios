@@ -16,10 +16,25 @@
  */
 package org.kimios.kernel.ws.pojo;
 
+import org.codehaus.jackson.annotate.JsonSubTypes;
+import org.codehaus.jackson.annotate.JsonTypeInfo;
+
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 
+
+
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "classType")
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = Document.class, name = "document"),
+        @JsonSubTypes.Type(value = Folder.class, name = "folder"),
+        @JsonSubTypes.Type(value = Workspace.class, name = "workspace"),
+        @JsonSubTypes.Type(value = SymbolicLink.class, name = "workspace")
+})
 public class DMEntity implements Serializable
 {
     protected long uid;

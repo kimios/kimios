@@ -129,14 +129,14 @@ public class DocumentServiceImpl extends CoreService implements DocumentService 
      * @return
      * @throws DMServiceException
      */
-    public void createDocumentWithProperties(String sessionId, String name, String extension, String mimeType, long folderUid,
+    public long createDocumentWithProperties(String sessionId, String name, String extension, String mimeType, long folderUid,
                                              boolean isSecurityInherited, String securitiesXmlStream, boolean isRecursive,
                                              long documentTypeId, String metasXmlStream, InputStream documentStream,
                                              String hashMd5, String hashSha1) throws DMServiceException {
 
         try {
             Session session = getHelper().getSession(sessionId);
-            documentController.createDocumentWithProperties(session, name, extension, mimeType, folderUid,
+            return documentController.createDocumentWithProperties(session, name, extension, mimeType, folderUid,
                     isSecurityInherited, securitiesXmlStream, isRecursive, documentTypeId, metasXmlStream,
                     documentStream, hashMd5, hashSha1);
         } catch (Exception e) {
@@ -159,14 +159,14 @@ public class DocumentServiceImpl extends CoreService implements DocumentService 
      * @return
      * @throws DMServiceException
      */
-    public void createDocumentFromFullPathWithProperties(String sessionId, String path,
+    public long createDocumentFromFullPathWithProperties(String sessionId, String path,
                                              boolean isSecurityInherited, String securitiesXmlStream, boolean isRecursive,
                                              long documentTypeId, String metasXmlStream, InputStream documentStream,
                                              String hashMd5, String hashSha1) throws DMServiceException {
 
         try {
             Session session = getHelper().getSession(sessionId);
-            documentController.createDocumentFromFullPathWithProperties(session, path,
+            return documentController.createDocumentFromFullPathWithProperties(session, path,
                     isSecurityInherited, securitiesXmlStream, isRecursive, documentTypeId, metasXmlStream,
                     documentStream, hashMd5, hashSha1);
         } catch (Exception e) {

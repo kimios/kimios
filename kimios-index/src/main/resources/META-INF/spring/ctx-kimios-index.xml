@@ -34,9 +34,7 @@
   </bean>
 
 
-  <bean id="solrIndexEventHandler" class="org.kimios.kernel.index.solr.SolrIndexer">
-    <property name="indexManager" ref="indexManagerSolr"/>
-  </bean>
+
 
 
   <bean id="searchRequestFactory" class="org.kimios.kernel.index.query.factory.SearchRequestFactory" parent="hfactory" />

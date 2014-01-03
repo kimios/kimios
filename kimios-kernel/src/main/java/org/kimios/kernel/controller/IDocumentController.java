@@ -81,7 +81,7 @@ public interface IDocumentController {
     /**
      * Create a document with properties
      */
-    @DmsEvent(eventName = {DmsEventName.DOCUMENT_CREATE})
+    @DmsEvent(eventName = {DmsEventName.FILE_UPLOAD})
     public long createDocumentWithProperties(Session s,
                                              String name,
                                              String extension,
@@ -99,6 +99,7 @@ public interface IDocumentController {
     /**
      * Create a document from full path with properties
      */
+    @DmsEvent(eventName = {DmsEventName.FILE_UPLOAD})
     public long createDocumentFromFullPathWithProperties(Session s,
                                              String path,
                                              boolean isSecurityInherited,

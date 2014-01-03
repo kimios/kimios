@@ -262,10 +262,13 @@ public class SolrIndexManager
                     case MetaType.DATE:
 
                         Calendar cal = Calendar.getInstance( TimeZone.getTimeZone( "UTC" ) );
-                        cal.setTime( (Date) value.getValue() );
-                        doc.addField( "MetaDataDate_" + value.getMetaUid(), cal.getTime() );
+                        if(value != null && value.getValue() != null){
+                            cal.setTime( (Date) value.getValue() );
+                            doc.addField( "MetaDataDate_" + value.getMetaUid(), cal.getTime() );
 
-                        log.info( "Inserting date in solr: " + value.getValue() + " / " + cal.getTime() + " / " + cal );
+                            log.info( "Inserting date in solr: " + value.getValue() + " / " + cal.getTime() + " / " + cal );
+                        }
+
                         break;
                     default:
                         doc.addField( "MetaData_" + value.getMetaUid(), value.getValue() );
