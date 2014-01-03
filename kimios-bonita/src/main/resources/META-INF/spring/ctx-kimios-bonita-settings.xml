@@ -22,17 +22,18 @@
 
     <bean id="bonitaSettings" name="bonitaSettings" class="org.kimios.kernel.bonita.BonitaSettings">
 
-        <property name="bonitaUserName" value="install"/>
-        <property name="bonitaUserPassword" value="install"/>
+        <property name="bonitaUserName" value="${bonita.user}"/>
+        <property name="bonitaUserPassword" value="${bonita.password}"/>
         <property name="bonitaHome" value="/tmp/bonita_home"/>
-        <property name="bonitaApplicationName" value="bonita"/>
-        <property name="bonitaServerUrl" value="http://localhost:18080"/>
-        <property name="bonitaKimiosRoleName" value="kimios"/>
+        <property name="bonitaServerUrl" value="${bonita.url.api}"/>
+        <property name="bonitaPublicServerUrl" value="${bonita.url.public}"/>
+        <property name="bonitaApplicationName" value="${bonita.appname}"/>
+        <property name="bonitaKimiosRoleName" value="${bonita.kimiosrole}"/>
         <property name="bonitaProfileUsers" value="User"/>
         <property name="validDomainsToSynchronize">
-            <list>
-                <value>kimios</value>
-            </list>
+            <bean class="org.springframework.util.StringUtils" factory-method="commaDelimitedListToSet">
+                <constructor-arg type="java.lang.String" value="${bonita.domain.list}"/>
+            </bean>
         </property>
 
     </bean>

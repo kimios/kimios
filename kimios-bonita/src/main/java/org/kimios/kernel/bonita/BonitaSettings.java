@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 public class BonitaSettings {
 
@@ -13,9 +14,10 @@ public class BonitaSettings {
     private String bonitaHome;
     private String bonitaApplicationName;
     private String bonitaServerUrl;
+    private String bonitaPublicServerUrl;
     private String bonitaKimiosRoleName;
     private String bonitaProfileUsers;
-    private List<String> validDomainsToSynchronize;
+    private Set<String> validDomainsToSynchronize;
 
     public void init() throws IOException {
         File homeFolder = null;
@@ -102,11 +104,19 @@ public class BonitaSettings {
         this.bonitaProfileUsers = bonitaProfileUsers;
     }
 
-    public List<String> getValidDomainsToSynchronize() {
+    public Set<String> getValidDomainsToSynchronize() {
         return validDomainsToSynchronize;
     }
 
-    public void setValidDomainsToSynchronize(List<String> validDomainsToSynchronize) {
+    public void setValidDomainsToSynchronize(Set<String> validDomainsToSynchronize) {
         this.validDomainsToSynchronize = validDomainsToSynchronize;
+    }
+
+    public String getBonitaPublicServerUrl() {
+        return bonitaPublicServerUrl;
+    }
+
+    public void setBonitaPublicServerUrl(String bonitaPublicServerUrl) {
+        this.bonitaPublicServerUrl = bonitaPublicServerUrl;
     }
 }

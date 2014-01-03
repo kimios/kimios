@@ -1,5 +1,6 @@
 package org.kimios.webservices.pojo;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -8,17 +9,17 @@ public class TaskWrapper {
     private Long id;
     private String name;
     private String description;
-    private Date claimedDate;
-    private Date expectedEndDate;
+    private Calendar claimedDate;
+    private Calendar expectedEndDate;
     private String priority;
     private String displayDescription;
     private String displayName;
     private Long executedBy;
     private Long flownodeDefinitionId;
-    private Date lastUpdateDate;
+    private Calendar lastUpdateDate;
     private Long parentContainerId;
     private Long parentProcessInstanceId;
-    private Date reachedStateDate;
+    private Calendar reachedStateDate;
     private Long rootContainerId;
     private String state;
     private String stateCategory;
@@ -109,19 +110,19 @@ public class TaskWrapper {
         this.assignee = assignee;
     }
 
-    public Date getClaimedDate() {
+    public Calendar getClaimedDate() {
         return claimedDate;
     }
 
-    public void setClaimedDate(Date claimedDate) {
+    public void setClaimedDate(Calendar claimedDate) {
         this.claimedDate = claimedDate;
     }
 
-    public Date getExpectedEndDate() {
+    public Calendar getExpectedEndDate() {
         return expectedEndDate;
     }
 
-    public void setExpectedEndDate(Date expectedEndDate) {
+    public void setExpectedEndDate(Calendar expectedEndDate) {
         this.expectedEndDate = expectedEndDate;
     }
 
@@ -165,11 +166,11 @@ public class TaskWrapper {
         this.flownodeDefinitionId = flownodeDefinitionId;
     }
 
-    public Date getLastUpdateDate() {
+    public Calendar getLastUpdateDate() {
         return lastUpdateDate;
     }
 
-    public void setLastUpdateDate(Date lastUpdateDate) {
+    public void setLastUpdateDate(Calendar lastUpdateDate) {
         this.lastUpdateDate = lastUpdateDate;
     }
 
@@ -189,11 +190,11 @@ public class TaskWrapper {
         this.parentProcessInstanceId = parentProcessInstanceId;
     }
 
-    public Date getReachedStateDate() {
+    public Calendar getReachedStateDate() {
         return reachedStateDate;
     }
 
-    public void setReachedStateDate(Date reachedStateDate) {
+    public void setReachedStateDate(Calendar reachedStateDate) {
         this.reachedStateDate = reachedStateDate;
     }
 

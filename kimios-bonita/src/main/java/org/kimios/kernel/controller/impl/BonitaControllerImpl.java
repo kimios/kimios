@@ -68,7 +68,8 @@ public class BonitaControllerImpl implements BonitaController {
 
                     ProcessWrapper wrapper = ProcessWrapperFactory.createProcessWrapper(p);
 
-                    wrapper.setUrl(bonitaCfg.getBonitaServerUrl() + "/" + bonitaCfg.getBonitaApplicationName() + "/console/" +
+                    wrapper.setUrl(bonitaCfg.getBonitaPublicServerUrl() + (bonitaCfg.getBonitaApplicationName() != null
+                            && bonitaCfg.getBonitaApplicationName().length() > 0 ? "/" + bonitaCfg.getBonitaApplicationName() : "") + "/console/" +
                             "homepage?__kb=" + session.getUid() + "&ui=form&locale=en#form=" + p.getName() + "--" +
                             p.getVersion() + "$entry&process=" + p.getProcessId() +
                             "&autoInstantiate=false&user=" + apiSession.getUserId() + "&mode=app");
@@ -86,6 +87,9 @@ public class BonitaControllerImpl implements BonitaController {
             throw new DmsKernelException(e);
         }
     }
+
+
+
 
     public TasksResponse getPendingTasks(Session session, int start, int limit) throws DmsKernelException {
         try {
@@ -266,12 +270,19 @@ public class BonitaControllerImpl implements BonitaController {
 
         for (ActivityInstance t: tasks) {
 
-            TaskWrapper wrapper = TaskWrapperFactory.createTaskWrapper((HumanTaskInstance)t, identityAPI);
+            TaskWrapper wrapper = null;
+            if( t instanceof HumanTaskInstance)
+                wrapper = TaskWrapperFactory.createTaskWrapper((HumanTaskInstance)t, identityAPI);
+            else if(t instanceof MultiInstanceActivityInstance)
+                wrapper = TaskWrapperFactory.createTaskWrapper((MultiInstanceActivityInstance)t, identityAPI);
+
+
             // Add process to current task
             ProcessDeploymentInfo p = processAPI.getProcessDeploymentInfo(t.getProcessDefinitionId());
             wrapper.setProcessWrapper(ProcessWrapperFactory.createProcessWrapper(p));
             // Set direct url to task
-            wrapper.setUrl(bonitaCfg.getBonitaServerUrl() + "/" + bonitaCfg.getBonitaApplicationName() + "/console/" +
+            wrapper.setUrl(bonitaCfg.getBonitaPublicServerUrl() + (bonitaCfg.getBonitaApplicationName() != null
+                    && bonitaCfg.getBonitaApplicationName().length() > 0 ? "/" + bonitaCfg.getBonitaApplicationName() : "") + "/console/" +
                     "homepage?__kb=" + session.getUid() + "&ui=form&locale=en#form=" + p.getName() + "--" + p.getVersion() +
                     "--" + t.getName() + "$entry&task=" + t.getId() + "&mode=app");
             log.info(wrapper.toString());
