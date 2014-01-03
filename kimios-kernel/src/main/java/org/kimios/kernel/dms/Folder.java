@@ -112,6 +112,7 @@ public class Folder extends DMEntityImpl
     }
 
     @Transient
+    @Override
     public org.kimios.kernel.ws.pojo.Folder toPojo()
     {
         return new org.kimios.kernel.ws.pojo.Folder(this.uid, this.name, this.owner,

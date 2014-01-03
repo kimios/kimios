@@ -37,5 +37,7 @@ public interface DMEntity extends Comparable<DMEntity>
     public String getPath();
 
     public void setPath(String path);
+
+    public org.kimios.kernel.ws.pojo.DMEntity toPojo();
 }
 

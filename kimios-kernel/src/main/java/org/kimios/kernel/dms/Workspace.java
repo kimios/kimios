@@ -55,6 +55,7 @@ public class Workspace extends DMEntityImpl
     }
 
     @Transient
+    @Override
     public org.kimios.kernel.ws.pojo.Workspace toPojo()
     {
         return new org.kimios.kernel.ws.pojo.Workspace(this.uid, this.name,

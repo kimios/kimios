@@ -21,22 +21,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.MapKeyColumn;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 import org.kimios.kernel.dms.extension.impl.DMEntityAttribute;
 import org.slf4j.Logger;
@@ -215,6 +200,15 @@ public class DMEntityImpl implements DMEntity, Serializable
     public boolean equals(Object o)
     {
         return (o instanceof DMEntityImpl && ((DMEntityImpl) o).getUid() == this.getUid());
+    }
+
+
+
+    @Transient
+    public org.kimios.kernel.ws.pojo.DMEntity toPojo(){
+        DMEntity r = this;
+        return new org.kimios.kernel.ws.pojo.DMEntity( r.getUid(), r.getType(), r.getName(), r.getCreationDate(),
+                r.getOwner(), r.getOwnerSource(), r.getPath() );
     }
 
     @Override public String toString()

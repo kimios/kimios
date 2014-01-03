@@ -41,6 +41,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.security.SecurityAgent;
+import org.kimios.kernel.ws.pojo.*;
 
 @Entity
 @Table(name = "document")
@@ -201,6 +202,7 @@ public class Document extends DMEntityImpl
     }
 
     @Transient
+    @Override
     public org.kimios.kernel.ws.pojo.Document toPojo() throws ConfigException, DataSourceException
     {
         FactoryInstantiator fc = FactoryInstantiator.getInstance();

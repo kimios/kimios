@@ -123,6 +123,7 @@ public class SymbolicLink extends DMEntityImpl
     }
 
     @Transient
+    @Override
     public org.kimios.kernel.ws.pojo.SymbolicLink toPojo()
     {
         org.kimios.kernel.ws.pojo.SymbolicLink sl = new org.kimios.kernel.ws.pojo.SymbolicLink();
