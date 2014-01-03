@@ -22,6 +22,7 @@ kimios.properties.PropertiesPanel = Ext.extend(Ext.TabPanel, {
         this.window = config.window;
         this.dmEntityPojo = config.dmEntityPojo;
 
+        this.documentFileItem = config.documentFileItem;
         this.switchBonitaTab = config.switchBonitaTab;
 
         // when creation mode is enabled
@@ -172,7 +173,8 @@ kimios.properties.PropertiesPanel = Ext.extend(Ext.TabPanel, {
             // add entity tab
             this.dmEntityPanel = new kimios.properties.DMEntityPanel({
                 dmEntityPojo: this.dmEntityPojo,
-                propertiesPanel: this
+                propertiesPanel: this,
+                documentFileItem: this.documentFileItem
             });
             this.add(this.dmEntityPanel);
 
@@ -423,7 +425,8 @@ kimios.properties.PropertiesPanel = Ext.extend(Ext.TabPanel, {
                             kimios.explorer.getViewport().refreshGrids();
                             if (prop.window != undefined)
                                 prop.window.close();
-                        }
+                        },
+                        this.documentFileItem
                     );
 
                     /*

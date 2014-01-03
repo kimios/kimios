@@ -21,7 +21,8 @@ kimios.properties.PropertiesWindow = Ext.extend(Ext.Window, {
             createMode: config.createMode == undefined ? false : config.createMode,
             versionsMode: config.versionsMode == undefined ? false : config.versionsMode,
             dmEntityPojo: config.dmEntityPojo,
-            switchBonitaTab: config.switchBonitaTab
+            switchBonitaTab: config.switchBonitaTab,
+            documentFileItem: config.documentFileItem
         });
         this.items = [this.propertiesPanel];
         this.closable = true;

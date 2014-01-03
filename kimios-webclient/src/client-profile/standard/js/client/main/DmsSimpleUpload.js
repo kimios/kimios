@@ -33,6 +33,98 @@ DmsSimpleUpload = function(config) {
     }
   });
 };
+
+Ext.ns('Ext.ux');
+
+Ext.ux.XHRUpload = function(config){
+    Ext.apply(this, config, {
+        method: 'POST'
+        //,fileNameHeader: 'X-File-Name'
+        //,filePostName:'fileName'
+        //,contentTypeHeader: 'text/plain; charset=x-user-defined-binary'
+        ,extraPostData:{}
+        //,xhrExtraPostDataPrefix:'extraPostData_'
+        ,sendMultiPartFormData:false
+    });
+    this.addEvents( //extend the xhr's progress events to here
+        'loadstart',
+        'progress',
+        'abort',
+        'error',
+        'load',
+        'loadend'
+    );
+    Ext.ux.XHRUpload.superclass.constructor.call(this);
+};
+
+Ext.extend(Ext.ux.XHRUpload, Ext.util.Observable,{
+    send:function(config){
+        Ext.apply(this, config);
+
+        this.xhr = new XMLHttpRequest();
+        this.xhr.addEventListener('loadstart', this.relayXHREvent.createDelegate(this), false);
+        this.xhr.addEventListener('progress', this.relayXHREvent.createDelegate(this), false);
+        this.xhr.addEventListener('progressabort', this.relayXHREvent.createDelegate(this), false);
+        this.xhr.addEventListener('error', this.relayXHREvent.createDelegate(this), false);
+        this.xhr.addEventListener('load', this.relayXHREvent.createDelegate(this), false);
+        this.xhr.addEventListener('loadend', this.relayXHREvent.createDelegate(this), false);
+
+        this.xhr.upload.addEventListener('loadstart', this.relayUploadEvent.createDelegate(this), false);
+        this.xhr.upload.addEventListener('progress', this.relayUploadEvent.createDelegate(this), false);
+        this.xhr.upload.addEventListener('progressabort', this.relayUploadEvent.createDelegate(this), false);
+        this.xhr.upload.addEventListener('error', this.relayUploadEvent.createDelegate(this), false);
+        this.xhr.upload.addEventListener('load', this.relayUploadEvent.createDelegate(this), false);
+        this.xhr.upload.addEventListener('loadend', this.relayUploadEvent.createDelegate(this), false);
+
+        this.xhr.open(this.method, this.url, true);
+        this.xhr.send(this.formData);
+
+
+        if(typeof(FileReader) !== 'undefined' && this.sendMultiPartFormData ){
+            //currently this is firefox only, chrome 6 will support this in the future
+            this.reader = new FileReader();
+            this.reader.addEventListener('load', this.sendFileUpload.createDelegate(this), false);
+            this.reader.readAsBinaryString(this.file);
+            return true;
+        }
+        //This will work in both Firefox 1.6 and Chrome 5
+        //this.xhr.overrideMimeType(this.contentTypeHeader);
+        //this.xhr.setRequestHeader(this.fileNameHeader, this.file.name);
+        //for(attr in this.extraPostData){
+        //    this.xhr.setRequestHeader(this.xhrExtraPostDataPrefix + attr, this.extraPostData[attr]);
+        //}
+        //xhr.setRequestHeader('X-File-Size', files.size); //this may be useful
+
+        return true;
+
+    }
+    ,sendFileUpload:function(){
+
+        var boundary = (1000000000000+Math.floor(Math.random()*8999999999998)).toString(),
+            data = '';
+
+        for(attr in this.extraPostData){
+            data += '--'+boundary + '\r\nContent-Disposition: form-data; name="' + attr + '"\r\ncontent-type: text/plain;\r\n\r\n'+this.extraPostData[attr]+'\r\n';
+        }
+
+        //window.btoa(binaryData)
+        //Creates a base-64 encoded ASCII string from a string of binary data.
+        //https://developer.mozilla.org/en/DOM/window.btoa
+        //Firefox and Chrome only!!
+
+        data += '--'+boundary + '\r\nContent-Disposition: form-data; name="' + this.filePostName + '"; filename="' + this.file.name + '"\r\nContent-Type: '+this.file.type+'\r\nContent-Transfer-Encoding: base64\r\n\r\n' + window.btoa(this.reader.result) + '\r\n'+'--'+boundary+'--\r\n\r\n';
+
+        this.xhr.setRequestHeader('Content-Type', 'multipart/form-data; boundary='+boundary);
+        this.xhr.send(data);
+    }
+    ,relayUploadEvent:function(event){
+        this.fireEvent('upload'+event.type, event);
+    }
+    ,relayXHREvent:function(event){
+        this.fireEvent(event.type, event);
+    }
+});
+
 Ext.extend(DmsSimpleUpload, Ext.util.Observable, {
   maxFileSize : 524288,
   progressIdName : 'UPLOAD_ID',
@@ -163,11 +255,18 @@ Ext.extend(DmsSimpleUpload, Ext.util.Observable, {
   uploadCallback : function(options, success, response) {
     alert('upload callback');
   },
-  uploadFile : function(parent, form, action, securityInherit, sec, parentUid, metas) {
+  uploadFile : function(parent, form, action, securityInherit, sec, parentUid, metas, documentFileItem) {
     this.endMsg = kimios.lang('AddDocumentOK');
     this.parentCmp = parent;
     this.createUploadDOM(form, action, securityInherit, sec, parentUid, metas);
+
+
+    this.documentFileItem = documentFileItem;
+    if(console)
+        console.log(this.documentFileItem);
     this.fireEvent('start', form);
+
+
   },
   uploadFileImport : function(parent, action, form, docUid) {
     this.endMsg = kimios.lang('VersionImportOK');
@@ -176,8 +275,42 @@ Ext.extend(DmsSimpleUpload, Ext.util.Observable, {
     this.fireEvent('start', form);
   },
   onStart : function(form) {
+
     var postUrl = getBackEndUrl('Uploader');
-    form.getForm().submit({
+
+    if(this.documentFileItem){
+        var fd = new FormData(form.getForm().getEl().dom);
+        fd.append('docUpload', this.documentFileItem);
+        /*
+            Ajax push
+         */
+        this.xhr = new XMLHttpRequest();
+        /*this.xhr.addEventListener('loadstart', this.relayXHREvent.createDelegate(this), false);
+        this.xhr.addEventListener('progress', this.relayXHREvent.createDelegate(this), false);
+        this.xhr.addEventListener('progressabort', this.relayXHREvent.createDelegate(this), false);
+        this.xhr.addEventListener('error', this.relayXHREvent.createDelegate(this), false);
+        this.xhr.addEventListener('load', this.relayXHREvent.createDelegate(this), false);
+        this.xhr.addEventListener('loadend', this.relayXHREvent.createDelegate(this), false);
+
+        this.xhr.upload.addEventListener('loadstart', this.relayUploadEvent.createDelegate(this), false);
+        this.xhr.upload.addEventListener('progress', this.relayUploadEvent.createDelegate(this), false);
+        this.xhr.upload.addEventListener('progressabort', this.relayUploadEvent.createDelegate(this), false);
+        this.xhr.upload.addEventListener('error', this.relayUploadEvent.createDelegate(this), false);
+        this.xhr.upload.addEventListener('load', this.relayUploadEvent.createDelegate(this), false);
+        this.xhr.upload.addEventListener('loadend', this.relayUploadEvent.createDelegate(this), false);*/
+        this.xhr.open('post', postUrl, true);
+
+        var xhrMe = this.xhr;
+        var me = this;
+        this.xhr.onreadystatechange = function () {
+            if (xhrMe.readyState == 4 && xhrMe.status == 200) {
+                me.fireFinishEvents(form);
+            }
+        };
+        this.xhr.send(fd);
+
+    }else
+        form.getForm().submit({
       clientValidation : false,
       url : postUrl,
       method : 'post',

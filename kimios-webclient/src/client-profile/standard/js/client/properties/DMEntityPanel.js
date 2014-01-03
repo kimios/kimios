@@ -31,6 +31,7 @@ kimios.properties.DMEntityPanel = Ext.extend(kimios.FormPanel, {
         this.labelWidth = 200;
         this.autoScroll = true;
         this.readOnly = config.readOnly;
+        this.documentFileItem = config.documentFileItem;
         this.defaults = {
             width: 200,
             style: 'font-size: 11px',
@@ -162,20 +163,36 @@ kimios.properties.DMEntityPanel = Ext.extend(kimios.FormPanel, {
                 value: ''
             }));
 
-            this.uploadField = new Ext.ux.form.FileUploadField({
-                buttonText: kimios.lang('Browse'),
-                buttonOnly: false,
-                buttonOffset: 3,
-                fieldLabel: kimios.lang('DocumentFile')
-            });
-            this.uploadField.on('fileselected', function () {
-                if (this.nameField.getValue() == '') {
-                    var n = this.uploadField.getValue().substr(0, this.uploadField.getValue().lastIndexOf('.'));
-                    n = n.substr(n.lastIndexOf('\\') + 1);
-                    this.nameField.setValue(n);
-                }
-            }, this);
-            this.itemsArray.push(this.uploadField);
+
+
+
+            if(this.documentFileItem){
+                if(this.documentFileItem.name.lastIndexOf('.') > -1){
+                    this.nameField.setValue(this.documentFileItem.name.substr(0, this.documentFileItem.name.lastIndexOf('.')));
+                }else
+                    this.nameField.setValue(this.documentFileItem.name);
+            } else {
+
+                this.uploadField = new Ext.ux.form.FileUploadField({
+                    buttonText: kimios.lang('Browse'),
+                    buttonOnly: false,
+                    buttonOffset: 3,
+                    fieldLabel: kimios.lang('DocumentFile')
+                });
+
+                this.uploadField.on('fileselected', function () {
+                    if (this.nameField.getValue() == '') {
+                        var n = this.uploadField.getValue().substr(0, this.uploadField.getValue().lastIndexOf('.'));
+                        n = n.substr(n.lastIndexOf('\\') + 1);
+                        this.nameField.setValue(n);
+                    }
+                }, this);
+
+                this.itemsArray.push(this.uploadField);
+            }
+
+
+
             //set file upload mode
             this.fileUpload = true;
             config.fileUpload = true;
