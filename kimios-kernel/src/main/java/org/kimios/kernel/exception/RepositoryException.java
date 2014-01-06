@@ -21,6 +21,12 @@ public class RepositoryException extends DmsKernelException
 {
     private String message;
 
+
+    public RepositoryException(Exception e){
+        super(e);
+        this.message = "Kimios repository Exception: " + e.getMessage();
+    }
+
     public RepositoryException(String message)
     {
         this.message = message;
@@ -33,7 +39,7 @@ public class RepositoryException extends DmsKernelException
 
     public String toString()
     {
-        return "A repository error has occured : " + this.message;
+        return "Kimios Repository Error has occured : " + this.message;
     }
 }
 
