@@ -24,13 +24,14 @@ import java.util.Vector;
 
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.IndexWriter.MaxFieldLength;
+import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.util.Version;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.configuration.Config;
 import org.kimios.kernel.dms.DMEntity;
@@ -74,17 +75,22 @@ public class IndexManager implements LuceneIndexManager
             File indexDir = new File(ConfigurationManager.getValue(Config.DEFAULT_INDEX_PATH));
             boolean create = indexDir.exists();
             this.indexDirectory = FSDirectory.open(indexDir);
+
+            IndexWriterConfig indexWriterConfig = new IndexWriterConfig(
+                    Version.LUCENE_46,
+                    IndexHelper.getAnalyzer()
+            );
+            if(log.isDebugEnabled()){
+                indexWriterConfig.setInfoStream(System.err);
+            }
             indexModifier =
-                    new IndexWriter(this.indexDirectory, IndexHelper.getAnalyzer(), !create, MaxFieldLength.UNLIMITED);
+                    new IndexWriter(this.indexDirectory, indexWriterConfig);
 
             /*
             *
             *  Enable lucene debug
             *
             */
-            if (log.isDebugEnabled()) {
-                indexModifier.setInfoStream(System.out);
-            }
         } catch (IOException io) {
             throw new IndexException(io, io.getMessage());
         }
@@ -119,9 +125,11 @@ public class IndexManager implements LuceneIndexManager
                         File indexDir = new File(ConfigurationManager.getValue(Config.DEFAULT_INDEX_PATH));
                         deleteDirectory(indexDir);
                         Directory d = FSDirectory.open(indexDir);
-                        indexModifier = new IndexWriter(d, IndexHelper.getAnalyzer(), MaxFieldLength.UNLIMITED);
-                        indexModifier.setMaxBufferedDocs(100);
-                        indexModifier.setRAMBufferSizeMB(32);
+                        IndexWriterConfig indexWriterConfig = new IndexWriterConfig(Version.LUCENE_46,
+                                IndexHelper.getAnalyzer());
+                        indexWriterConfig.setMaxBufferedDocs(100);
+                        indexWriterConfig.setRAMBufferSizeMB(32);
+                        indexModifier = new IndexWriter(d, indexWriterConfig);
                         List<DMEntity> entities = FactoryInstantiator.getInstance().getDmEntityFactory()
                                 .getEntitiesByPathAndType(finalPath, DMEntityType.DOCUMENT);
                         int total = entities.size();
@@ -288,10 +296,6 @@ public class IndexManager implements LuceneIndexManager
         } finally {
 
             try {
-                if (searcher != null) {
-                    searcher.close();
-                }
-
                 if (reader != null) {
                     reader.close();
                 }
@@ -336,7 +340,7 @@ public class IndexManager implements LuceneIndexManager
     public void commit() throws IndexException
     {
         try {
-            this.indexModifier.expungeDeletes(true);
+            this.indexModifier.forceMergeDeletes();
             this.indexModifier.commit();
         } catch (Exception e) {
             throw new IndexException(e, e.getMessage());

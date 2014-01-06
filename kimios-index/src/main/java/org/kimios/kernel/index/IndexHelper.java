@@ -28,13 +28,13 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Field.Index;
 import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.WildcardQuery;
 import org.apache.lucene.util.Version;
+import org.apache.solr.parser.QueryParser;
+import org.apache.solr.search.SyntaxError;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.configuration.Config;
 import org.kimios.kernel.exception.IndexException;
@@ -48,30 +48,32 @@ public class IndexHelper
 {
     public static String EMPTY_STRING = "";
 
-    public static Query getLongRangeQuery(String fieldName, long min, long max) throws ParseException
+    public static Query getLongRangeQuery(String fieldName, long min, long max) throws SyntaxError
     {
         String q = fieldName + ":[" + NumberUtils.pad(min) + " TO " + NumberUtils.pad(max) + "]";
-        return new QueryParser(Version.LUCENE_36, fieldName, null).parse(q);
+        return new QueryParser(Version.LUCENE_46, fieldName, null).parse(q);
     }
 
-    public static Query getDateRangeQuery(String fieldName, Date min, Date max) throws ParseException
+    public static Query getDateRangeQuery(String fieldName, Date min, Date max) throws SyntaxError
     {
         String q = fieldName + ":[" + NumberUtils.pad(min.getTime()) + " TO " + NumberUtils.pad(max.getTime()) + "]";
-        return new QueryParser(Version.LUCENE_36, fieldName, null).parse(q);
+        return new QueryParser(Version.LUCENE_46, fieldName, null).parse(q);
     }
 
-    public static Query getStandardQuery(String fieldName, String clause, Analyzer a) throws ParseException
+
+    @Deprecated
+    public static Query getStandardQuery(String fieldName, String clause, Analyzer a) throws SyntaxError
     {
         String q = fieldName + ":" + clause;
-        return new QueryParser(Version.LUCENE_36, fieldName, a).parse(q);
+        return new QueryParser(Version.LUCENE_46, fieldName, null).parse(q);
     }
 
-    public static Query getWildCardQuery(String fieldName, String clause) throws ParseException
+    public static Query getWildCardQuery(String fieldName, String clause) throws SyntaxError
     {
         return new WildcardQuery(new Term(fieldName, clause));
     }
 
-    public static Query mergeQueries(Analyzer a, Query[] q) throws ParseException
+    public static Query mergeQueries(Analyzer a, Query[] q) throws SyntaxError
     {
         String r = "";
         for (int i = 0; i < q.length; i++) {
@@ -81,7 +83,7 @@ public class IndexHelper
                 r += "AND (" + q[i].toString() + ")";
             }
         }
-        return new QueryParser(Version.LUCENE_36, "body", a).parse(r);
+        return new QueryParser(Version.LUCENE_46, "body", null).parse(r);
     }
 
     public static Field getAnalyzedField(String fieldName, String value)
@@ -97,7 +99,7 @@ public class IndexHelper
     public static Field getAnalyzedNotStoredFromReaderField(String fieldName, Reader value)
     {
         Field f = new Field(fieldName, EMPTY_STRING, Store.NO, Index.ANALYZED);
-        f.setValue(value);
+        f.setReaderValue(value);
         return f;
     }
 

@@ -20,26 +20,21 @@
 <config>
 
     <abortOnConfigurationError>${solr.abortOnConfigurationError:true}</abortOnConfigurationError>
-    <luceneMatchVersion>LUCENE_36</luceneMatchVersion>
+    <luceneMatchVersion>LUCENE_46</luceneMatchVersion>
     <lib dir="../lib"/>
     <lib dir="../../contrib/extraction/lib"/>
     <lib dir="../../contrib/clustering/lib/"/>
     <dataDir>${solr.data.dir:}</dataDir>
     <directoryFactory name="DirectoryFactory"
             class="${solr.directoryFactory:solr.StandardDirectoryFactory}"/>
-    <indexDefaults>
+    <indexConfig>
         <useCompoundFile>false</useCompoundFile>
         <mergeFactor>10</mergeFactor>
-        <ramBufferSizeMB>32</ramBufferSizeMB>
-        <maxFieldLength>10000</maxFieldLength>
+        <ramBufferSizeMB>64</ramBufferSizeMB>
+        <maxFieldLength>1000000</maxFieldLength>
         <writeLockTimeout>1000</writeLockTimeout>
         <commitLockTimeout>10000</commitLockTimeout>
         <lockType>native</lockType>
-    </indexDefaults>
-    <mainIndex>
-        <useCompoundFile>false</useCompoundFile>
-        <ramBufferSizeMB>32</ramBufferSizeMB>
-        <mergeFactor>10</mergeFactor>
         <unlockOnStartup>false</unlockOnStartup>
         <reopenReaders>true</reopenReaders>
         <deletionPolicy class="solr.SolrDeletionPolicy">
@@ -47,7 +42,7 @@
             <str name="maxOptimizedCommitsToKeep">0</str>
         </deletionPolicy>
         <infoStream file="INFOSTREAM.txt">false</infoStream>
-    </mainIndex>
+    </indexConfig>
     <jmx/>
     <query>
         <maxBooleanClauses>1024</maxBooleanClauses>

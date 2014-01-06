@@ -31,7 +31,10 @@ import java.util.List;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
+import org.apache.solr.core.ConfigSolr;
+import org.apache.solr.core.ConfigSolrXmlOld;
 import org.apache.solr.core.CoreContainer;
+import org.apache.solr.core.SolrResourceLoader;
 import org.kimios.kernel.controller.IPathController;
 import org.kimios.kernel.exception.IndexException;
 import org.kimios.kernel.index.SolrIndexManager;
@@ -131,20 +134,15 @@ public class SearchServiceSolrFactory implements FactoryBean<SolrIndexManager>
     {
         try {
 
-            log.info("SOLR HOME " + solrHome);
-
+            log.info("Kimios Solr Home " + solrHome);
             URL sorlHomeUrl = new URL("file://" + solrHome);
             File home = new File(sorlHomeUrl.getFile());
             checkSolrXmlFile(home, coreName);
-
             /*
                 Check solr.xml existence. If not exist (create it)
-             */
-
+                */
             File f = new File(home, "solr.xml");
-            CoreContainer container = new CoreContainer();
-            container.load(solrHome, f);
-            coreContainer = container;
+            coreContainer = CoreContainer.createAndLoad(solrHome, f);;
             EmbeddedSolrServer server = new EmbeddedSolrServer(coreContainer, coreName);
             return server;
         } catch (Exception ex) {
