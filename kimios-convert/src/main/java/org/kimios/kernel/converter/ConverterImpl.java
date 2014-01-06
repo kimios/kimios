@@ -25,7 +25,9 @@ public abstract class ConverterImpl implements Converter {
         } catch (Exception e){
             log.error("Error while creating temp repository converter", e);
         }
-        log.debug("Calling " + this.getClass().getName() + " converter implementation...");
+        if(log.isDebugEnabled()){
+            log.debug("Calling " + this.getClass().getName() + " converter implementation...");
+        }
     }
 
     public InputSource convertInputSource(InputSource source) throws ConverterException {
