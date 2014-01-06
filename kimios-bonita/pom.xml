@@ -30,6 +30,12 @@
             <groupId>org.ow2.bonita.engine</groupId>
             <artifactId>bonita-client</artifactId>
             <version>6.0.2</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>

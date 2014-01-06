@@ -1,6 +1,5 @@
 package org.kimios.kernel.bonita;
 
-import org.apache.http.conn.HttpHostConnectException;
 import org.bonitasoft.engine.api.IdentityAPI;
 import org.bonitasoft.engine.api.LoginAPI;
 import org.bonitasoft.engine.api.ProfileAPI;
@@ -22,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -201,7 +201,7 @@ public class BonitaUsersSynchronizer {
 
                 log.info("Synchronisation done.");
 
-            } catch (HttpHostConnectException ex) {
+            } catch (ConnectException ex) {
                 log.error("Bonita is unavailable. Sync job is now disabled until next Kimios restart.");
                 log.error("Please check Bonita Settings inside kimios.properties " + (ex.getMessage()));
                 /*
