@@ -51,7 +51,14 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
     },
 
     initComponent: function () {
+
+
+
+
         kimios.explorer.Viewport.superclass.initComponent.apply(this, arguments);
+        Ext.state.Manager.setProvider(new Ext.state.CookieProvider({
+            expires: new Date(new Date().getTime()+(1000*60*60*24*30)) //7 days from now
+        }));
         this.mask = new kimios.LoadMask(Ext.getBody());
         kimios.mask();
 

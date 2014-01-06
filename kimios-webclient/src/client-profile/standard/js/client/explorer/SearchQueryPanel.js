@@ -127,16 +127,7 @@ kimios.explorer.SearchQueryPanel = Ext.extend( Ext.grid.GridPanel, {
         {
              if (grid.getStore().getAt(rowIndex).data.type == 9)
                 return false;
-/*<<<<<<< HEAD
-            var selected = grid.getStore().getAt(rowIndex);
 
-            var tabbed = new kimios.explorer.DMEntityGridPanel({});
-            var centerPanel = Ext.getCmp('kimios-center-panel');
-            centerPanel.add(tabbed);
-            centerPanel.setActiveTab(tabbed);
-
-            kimios.explorer.getActivePanel().advancedSearchPanel.loadForm(selected.data); // auto load
-=======*/
             var selected = grid.getStore().getAt( rowIndex );
             if ( kimios.explorer.getActivePanel() == null )
             {
@@ -168,9 +159,16 @@ kimios.explorer.SearchQueryPanel = Ext.extend( Ext.grid.GridPanel, {
             var gridPanel = dispPanel.gridPanel;
             gridPanel.reconfigure( searchStore, gridPanel.getColumnModel());
             if(virtTree){
-
-                dispPanel.displayPagingToolBar( searchStore, true );
                 dispPanel.displayVirtualTree(selected.get('id'), searchStore);
+                dispPanel.displayPagingToolBar( searchStore, true );
+                //init load with paging
+                gridPanel.getStore().load( {
+                    scope: this,
+                    params: {
+                        start: 0,
+                        limit: this.pagingSize
+                    }
+                } );
             } else{
                 dispPanel.hideVirtualTree();
                 dispPanel.displayPagingToolBar( searchStore, false );

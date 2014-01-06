@@ -97,16 +97,18 @@ kimios.explorer.BreadcrumbToolbar = Ext.extend(Ext.Toolbar, {
 
         var me = this;
 
+
+
         if (path != undefined) {
             var n = path.substr(1).split('/');
             var url = '';
             var prettyUrl = '';
             for (var i = 0; i < n.length; i++) {
                 url += '/' + n[i];
-                prettyUrl += '/' + prettypath ?  prettypath.substr(1).split('/')[i] : '';
+                prettyUrl += '/' + (prettypath ?  prettypath.substr(1).split('/')[i] : '');
                 this.add('/');
                 this.add(new Ext.Toolbar.Button({
-                    text: prettypath.substr(1).split('/')[i],
+                    text: prettyUrl.substr(1).split('/')[i],
                     targetUrl: url,
                     prettyUrl: prettyUrl,
                     handler: function () {

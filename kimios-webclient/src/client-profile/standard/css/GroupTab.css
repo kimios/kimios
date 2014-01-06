@@ -22,7 +22,7 @@
 }
 
 .x-tab-panel-left .x-grouptabs-bwrap {
-    float: right;
+    /*float: right;*/
     position: relative;
 }
 

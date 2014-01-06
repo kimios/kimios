@@ -17,7 +17,9 @@
 package org.kimios.controller;
 
 import flexjson.JSONSerializer;
+import flexjson.transformer.AbstractTransformer;
 import flexjson.transformer.IterableTransformer;
+import flexjson.transformer.Transformer;
 import org.kimios.kernel.ws.pojo.Document;
 import org.kimios.kernel.ws.pojo.DocumentWorkflowStatusRequest;
 import org.kimios.kernel.ws.pojo.WorkflowStatus;
@@ -233,7 +235,15 @@ public class WorkflowControllerWeb extends Controller {
         TasksResponse response = bonitaController.getPendingTasks(sessionUid,
                 parameters.get("start") != null ? Integer.parseInt(parameters.get("start")) : Integer.MIN_VALUE,
                 parameters.get("limit") != null ? Integer.parseInt(parameters.get("limit")) : Integer.MAX_VALUE);
-        return new JSONSerializer().deepSerialize(response);
+        return new JSONSerializer()
+                .transform(new AbstractTransformer() {
+                    public void transform(Object object) {
+                        if(object instanceof Calendar){
+                            getContext().write(String.valueOf(((Calendar) object).getTime().getTime()));
+                        }
+
+                    }
+                }, Calendar.class).deepSerialize(response);
     }
 
     private String getBonitaAssignedTasks() throws Exception {
@@ -241,13 +251,30 @@ public class WorkflowControllerWeb extends Controller {
         TasksResponse response = bonitaController.getAssignedTasks(sessionUid,
                 parameters.get("start") != null ? Integer.parseInt(parameters.get("start")) : Integer.MIN_VALUE,
                 parameters.get("limit") != null ? Integer.parseInt(parameters.get("limit")) : Integer.MAX_VALUE);
-        return new JSONSerializer().deepSerialize(response);
+        return new JSONSerializer()
+                .transform(new AbstractTransformer() {
+                    public void transform(Object object) {
+                        if(object instanceof Calendar){
+                           getContext().write(String.valueOf(((Calendar) object).getTime().getTime()));
+                        }
+
+                    }
+                }, Calendar.class)
+                .deepSerialize(response);
     }
 
     private String getBonitaTasksByInstance() throws Exception {
         TasksResponse response = bonitaController.getTasksByInstance(sessionUid,
                 Integer.parseInt(parameters.get("processInstanceId")), Integer.MIN_VALUE, Integer.MAX_VALUE);
-        return new JSONSerializer().deepSerialize(response);
+        return new JSONSerializer()
+                .transform(new AbstractTransformer() {
+                    public void transform(Object object) {
+                        if(object instanceof Calendar){
+                            getContext().write(String.valueOf(((Calendar) object).getTime().getTime()));
+                        }
+
+                    }
+                }, Calendar.class).deepSerialize(response);
     }
 
     private String takeTask() throws Exception {

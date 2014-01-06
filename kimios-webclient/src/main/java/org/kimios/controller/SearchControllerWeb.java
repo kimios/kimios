@@ -18,6 +18,8 @@ package org.kimios.controller;
 
 import flexjson.JSONSerializer;
 import flexjson.transformer.DateTransformer;
+import org.apache.commons.lang.time.DateFormatUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.kimios.core.wrappers.DMEntity;
 import org.kimios.core.wrappers.VirtualTreeEntity;
 import org.kimios.kernel.index.query.model.Criteria;
@@ -244,7 +246,7 @@ public class SearchControllerWeb
              */
 
             int vUid = 0;
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
             for ( Object facetInfo : searchResponse.getFacetsData().keySet() )
             {
                 vUid++;
@@ -261,30 +263,41 @@ public class SearchControllerWeb
                         String[] parts = facetInfo.toString().split(" TO ");
                         Date dateItem = sdf.parse(parts[0]);
 
+
+
                         Calendar calendar = Calendar.getInstance();
                         calendar.setTime(dateItem);
+
+                        Date now = new Date();
+
+                        String today = null;
+                        if(DateUtils.isSameDay(dateItem, now)){
+                            today = "Today";
+                        }
                         // Get unit for date facet
-                        log.info(dateItem.toString());
+                        if(log.isDebugEnabled()){
+                            log.info(dateItem.toString());
+                        }
                         Pattern pattern = Pattern.compile("(DAY|MONTH|YEAR|WEEK)");
                         Matcher m = pattern.matcher(parts[1]);
                         DateFormatSymbols dfs = new DateFormatSymbols(Locale.getDefault());
                         while (m.find()){
                             String res = m.group();
                             if(res.equals("DAY")){
-                                virtualName = dfs.getWeekdays()[calendar.get(Calendar.DAY_OF_WEEK)] + "(Week " + calendar.get(Calendar.WEEK_OF_YEAR) + ") " + String.valueOf(calendar.get(Calendar.YEAR)) ;
+                                if(today != null){
+                                    virtualName = "Today (" +  DateFormatUtils.format(calendar, "dd-MM-yyyy") + ")";
+                                } else
+                                    virtualName = dfs.getWeekdays()[calendar.get(Calendar.DAY_OF_WEEK)] + " (" + DateFormatUtils.format(calendar, "dd-MM-yyyy") + " - Week " + calendar.get(Calendar.WEEK_OF_YEAR) + ")";
                             } else if(res.equals("MONTH")){
                                 virtualName = dfs.getMonths()[calendar.get(Calendar.MONTH)] + " " + String.valueOf(calendar.get(Calendar.YEAR));
                             } else if(res.equals("YEAR")){
                                 virtualName = String.valueOf(calendar.get(Calendar.YEAR));
                             }
-                            log.info(" > Translated value " + virtualName);
-
+                            if(log.isDebugEnabled()){
+                                log.debug(" > Translated value " + virtualName);
+                            }
                         }
-
-
                     }
-
-
                 }  catch (Exception e){
                     log.error(" > Exception while translating facets", e);
                 }

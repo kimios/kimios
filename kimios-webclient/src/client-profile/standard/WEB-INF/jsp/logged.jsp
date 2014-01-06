@@ -123,6 +123,7 @@
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/explorer/Toolbar.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/explorer/Cart.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/explorer/ExplorerPanel.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/util/UplDragDrop.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/explorer/DMEntityGridPanel.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/explorer/CommentsPanel.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/explorer/BreadcrumbToolbar.js"></script>

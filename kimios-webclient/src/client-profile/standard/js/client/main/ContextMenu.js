@@ -1130,40 +1130,58 @@ kimios.ContextMenu = new function () {
 
                 var url = this.dmEntityPojo.url;
 
-                var iframe = new Ext.Window({
-                    width: 640,
-                    height: 480,
-                    layout: 'fit',
-                    border: false,
-                    title: kimios.lang('WorkflowStatus'),
-                    maximizable: true,
-                    modal: true,
-                    autoScroll: true,
-                    items: [
-                        {
-                            html: '<iframe id="reportframe" border="0" width="100%" height="100%" ' +
-                                'frameborder="0" marginheight="12" marginwidth="16" scrolling="auto" ' +
-                                'style="padding: 16px" ' +
-                                'src="' + url + '"></iframe>'
-                        }
-                    ],
-                    fbar: [
-                        {
-                            text: kimios.lang('Close'),
-                            scope:this,
-                            handler: function () {
-                                console.log('cloooose');
-                                iframe.close();
-                                Ext.getCmp('kimios-tasks-panel').refresh();
-                                Ext.getCmp('kimios-assigned-tasks-panel').refresh();
-                                if (this.context == 'myBonitaAllTasks') {
-                                    Ext.getCmp('propInstancesPanelId').getSelectionModel().clearSelections(false);
-                                    Ext.getCmp('propTasksPanelId').getStore().removeAll();
+
+                /*
+                    Take it before doing it
+                 */
+                kimios.ajaxRequest('Workflow', {
+                        action: 'takeTask',
+                        taskId: this.dmEntityPojo.id
+                    },
+                    function () {
+                        Ext.getCmp('kimios-tasks-panel').refresh();
+                        Ext.getCmp('kimios-assigned-tasks-panel').refresh();
+
+                        var iframe = new Ext.Window({
+                            width: 640,
+                            height: 480,
+                            layout: 'fit',
+                            border: false,
+                            title: kimios.lang('WorkflowStatus'),
+                            maximizable: true,
+                            modal: true,
+                            autoScroll: true,
+                            items: [
+                                {
+                                    html: '<iframe id="reportframe" border="0" width="100%" height="100%" ' +
+                                        'frameborder="0" marginheight="12" marginwidth="16" scrolling="auto" ' +
+                                        'style="padding: 16px" ' +
+                                        'src="' + url + '"></iframe>'
                                 }
-                            }
-                        }
-                    ]
-                }).show();
+                            ],
+                            fbar: [
+                                {
+                                    text: kimios.lang('Close'),
+                                    scope:this,
+                                    handler: function () {
+                                        if(console) console.log('cloooose');
+                                        iframe.close();
+                                        Ext.getCmp('kimios-tasks-panel').refresh();
+                                        Ext.getCmp('kimios-assigned-tasks-panel').refresh();
+                                        if (this.context == 'myBonitaAllTasks') {
+                                            Ext.getCmp('propInstancesPanelId').getSelectionModel().clearSelections(false);
+                                            Ext.getCmp('propTasksPanelId').getStore().removeAll();
+                                        }
+                                    }
+                                }
+                            ]
+                        }).show();
+
+                    }
+                );
+
+
+
             }
         });
     }

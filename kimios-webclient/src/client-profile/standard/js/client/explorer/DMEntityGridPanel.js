@@ -90,6 +90,8 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
             region: 'center',
             border: true,
             stripeRows: false,
+            stateId: 'gridEntitiesState',
+            stateful: true,
             margins: '-1 -1 -1 -1',
             store: kimios.store.getEntitiesStore(),
             columnLines: false,
@@ -107,13 +109,28 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
             },
             tbar: this.pagingToolBar,
             listeners: {
+                afterRender: {
+                    scope: this,
+                    fn: function() {
+                        var dropZone = document.getElementById(this.getEl().id);
+                        dropZone.addEventListener('dragover', handleDragOver, false);
+                        var me = this;
+                        dropZone.addEventListener('drop', function (evt) {
+                            var elem = me;
+                            handleFileSelect(evt, elem);
+                        }, false);
+                    }
+                },
                 "render": {
                     scope: this,
                     fn: function (grid) {
-                        var ddrow = new Ext.dd.DropTarget(grid.container, {
+                       var ddrow = new Ext.dd.DropTarget(grid.container, {
                             ddGroup: 'grid2tree',
                             copy: false,
                             notifyDrop: function (dd, e, data) {
+
+
+
                                 var ds = grid.store;
                                 var sm = grid.getSelectionModel();
                                 var rows = sm.getSelections();
@@ -190,31 +207,19 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
                                 }
                             }
                         });
+
+
+
+
                     }
                 }
             }
         });
-/*<<<<<<< HEAD
-        this.listeners = {
-            beforeclose: function (panel) {
-                var centerPanel = Ext.getCmp('kimios-center-panel');
-                if (centerPanel.items.length <= 1)
-                    return false;
-            }
-        };
-        this.items = [this.advancedSearchPanel, this.gridPanel, this.commentsPanel];
-=======*/
-        /*this.northCenterContainer = new Ext.Panel({
-             region: 'north',
-             hidden: true,
-             border: false,
-             split: true,
-             layout: 'fit',
-             items: []
-         });*/
 
-
-
+        this.gridPanel.getState = function(){
+            var ret = Ext.grid.GridPanel.prototype.getState.call(this, arguments);
+            return ret;
+        }
 
         this.virtualTreePanel = new kimios.search.VirtualTreeGridPanel({
             //queryId: searchQueryId,
@@ -254,21 +259,12 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
         kimios.explorer.DMEntityGridPanel.superclass.constructor.call(this, config);
     },
     displayVirtualTree: function (searchQueryId, searchStore){
-
         if(!this.virtualTreePanel){
-
             this.northCenterContainer.removeAll();
             this.northCenterContainer.add(this.virtualTreePanel);
             this.northCenterContainer.setVisible(true);
             this.doLayout();
-
-
-
-
         } else {
-            //this.northCenterContainer.slide();
-            //this.centerContainer.layout.north.slideOut();
-
             if(kimios.explorer.getActivePanel().advancedSearchPanel.isVisible())
                 kimios.explorer.getActivePanel().advancedSearchPanel.hidePanel();
 
@@ -298,6 +294,8 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
         this.doLayout();
         this.virtualTreePanel.doLayout();
 
+        this.virtualTreeEnabled = true;
+
     },
     hideVirtualTree: function(){
 
@@ -311,6 +309,8 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
         this.searchToolbar.enable();
         this.doLayout();
 
+
+        this.virtualTreeEnabled = false;
 
     },
     initComponent: function () {
@@ -585,13 +585,17 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
                 this.uid = entityConfig.uid;
                 this.type = entityConfig.type;
             }
-            if (this.lockSearch == true) {
+            if (this.lockSearch == true || this.virtualTreeEnabled == true) {
                 this.gridPanel.reconfigure(kimios.store.getEntitiesStore(), this.gridPanel.getColumnModel());
                 this.lockSearch = false;
+                this.virtualTreeEnabled = false;
             }
             this.setIconClass('loading');
 
+
+            this.hideVirtualTree();
             this.hidePagingToolBar();
+
             // load home (root node)
             if (this.uid == undefined && this.type == undefined) {
                 this.name = kimios.explorer.getTreePanel().getRootNode().text;
@@ -631,7 +635,12 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
     },
 
     loadEntities: function () {
-        this.gridPanel.getStore().setDefaultSort('creationDate', 'desc');
+        if(!this.gridPanel.getState().sort){
+            this.gridPanel.getStore().setDefaultSort('creationDate', 'desc');
+        } else {
+            var sort = this.gridPanel.getState().sort;
+            this.gridPanel.getStore().setDefaultSort(sort.field, sort.direction);
+        }
         this.gridPanel.getStore().load({
             scope: this,
             params: {

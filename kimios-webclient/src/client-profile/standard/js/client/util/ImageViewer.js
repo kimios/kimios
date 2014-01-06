@@ -65,8 +65,9 @@ kimios.util.ImageViewer = Ext.extend(Ext.Panel, {
     //
 
 
+    this.viewCallBack = null;
     
-    var html = '<div id="kimios-image-viewer">';
+    var html = '<div id="kimios-image-viewer" style="height: 100%;overflow: hidden">';
     html += '<span class="kimios-pdf-title">'+config.pojo.name+'</span>';
     html += '<table>';
     html += '<tr><td class="kimios-pdf-label">'+kimios.lang('DocNum')+kimios.lang('LabelSeparator')+'&nbsp;</td><td class="kimios-pdf-value">'+config.pojo.uid+'</td></tr>';
@@ -75,7 +76,7 @@ kimios.util.ImageViewer = Ext.extend(Ext.Panel, {
     html += '<tr><td class="kimios-pdf-label">'+kimios.lang('Size')+kimios.lang('LabelSeparator')+'&nbsp;</td><td class="kimios-pdf-value">'+(config.pojo.length/1024).toFixed(2)+' '+kimios.lang('Kb')+'</td></tr>';
     html += '<tr><td class="kimios-pdf-label">'+kimios.lang('Author')+kimios.lang('LabelSeparator')+'&nbsp;</td><td class="kimios-pdf-value">'+config.pojo.owner+'@'+config.pojo.ownerSource+'</td></tr>';
     html += '<tr><td class="kimios-pdf-label">'+kimios.lang('CreationDate')+kimios.lang('LabelSeparator')+'&nbsp;</td><td class="kimios-pdf-value">'+kimios.date(config.pojo.creationDate)+'</td></tr>';
-    html += '</table>';
+    html += '</table><div style="overflow: auto; height: 100%">';
     if (config.pojo.extension == 'pdf' || config.pojo.extension == 'PDF'){
       html += '<br />';
       /*for (var i=0; i<config.links.length; i++){
@@ -99,15 +100,31 @@ kimios.util.ImageViewer = Ext.extend(Ext.Panel, {
             html += '</object>';
 
         }
-    }else{
+    } else if(config.pojo.extension.toLowerCase() == 'odt' || config.pojo.extension.toLowerCase() == 'odp' || config.pojo.extension.toLowerCase() == 'docx') {
+        for (var i=0; i<config.links.length; i++){
+            var lnk =    config.links[i].path;
+            html += '<iframe border="0" src="viewer/index.jsp?extension=' + config.pojo.extension.toLowerCase() + '#' +  lnk + '" style="width:100%;height:100%;" allowfullscreen webkitallowfullscreen/>';
+            /*var pojoUid = config.pojo.uid;
+            this.viewCallBack = function(){
+                var odfelement = document.getElementById("odfview_" + pojoUid);
+                odfcanvas = new odf.OdfCanvas(odfelement);
+                odfcanvas.load(lnk);
+            }*/
+        }
+
+    } else {
       html += '<img class="kimios-pdf-image" alt="'+kimios.lang('Wait')+'" src="'+config.links[0].path+'"><br />';
     }
-    html += '</div>';
+    html += '</div></div>';
     this.bodyCfg = html;
     kimios.util.ImageViewer.superclass.constructor.call(this, config);
   },
   initComponent: function(){
     kimios.util.ImageViewer.superclass.initComponent.apply(this, arguments);
+
+   if(this.viewCallBack){
+       this.on('afterrender', this.viewCallBack);
+   }
   },
   refreshLanguage : function(){
     this.getDocumentsButton.setText(kimios.lang('GetDocument'));
