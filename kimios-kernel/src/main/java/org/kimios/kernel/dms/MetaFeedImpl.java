@@ -17,18 +17,9 @@
 package org.kimios.kernel.dms;
 
 import java.util.List;
+import java.util.Map;
 
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import org.kimios.kernel.exception.MetaFeedSearchException;
 
@@ -49,8 +40,29 @@ public abstract class MetaFeedImpl implements MetaFeed
     @Column(name = "java_class", nullable = false, insertable = false, updatable = false)
     private String javaClass;
 
+
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    @MapKeyColumn(name = "mf_pref_name")
+    @Column(name="mf_pref_value")
+    @CollectionTable(name = "meta_feed_prefs",
+            joinColumns = @JoinColumn(name = "meta_feed_id"))
+    protected Map<String, String> preferences;
+
+
+    public Map<String, String> getPreferences() {
+        return preferences;
+    }
+
+    public void setPreferences(Map<String, String> preferences) {
+        this.preferences = preferences;
+    }
+
     public MetaFeedImpl()
     {
+        /*
+            load preferences from database
+         */
     }
 
     public long getUid()
