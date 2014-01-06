@@ -77,10 +77,7 @@ public class SearchServiceImpl
         {
             Session s = getHelper().getSession( sessionUid );
             org.kimios.kernel.ws.pojo.DMEntity entity = null;
-            DMEntity r = pathController.getDMEntityFromPath( s, path );
-            entity = new org.kimios.kernel.ws.pojo.DMEntity( r.getUid(), r.getType(), r.getName(), r.getCreationDate(),
-                                                             r.getOwner(), r.getOwnerSource(), r.getPath() );
-            return entity;
+            return pathController.getDMEntityPojoFromPath( s, path );
         }
         catch ( Exception e )
         {
