@@ -268,7 +268,7 @@ public class StudioControllerWeb extends Controller {
                 meta.setMetaFeedUid(((Integer) metaDatas.get("metaFeedUid")).longValue());
             }
             meta.setDocumentTypeUid(docType.getUid());
-            meta.setMandatory((Boolean) metaDatas.get("mandatory"));
+            meta.setMandatory(metaDatas.get("mandatory") != null ? (Boolean) metaDatas.get("mandatory") : false);
             metas.add(meta);
         }
         String xmlStream = XMLGenerators.getDocumentTypeXMLDescriptor(docType, metas);
