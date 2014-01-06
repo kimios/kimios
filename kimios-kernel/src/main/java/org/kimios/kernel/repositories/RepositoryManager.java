@@ -62,7 +62,7 @@ public class RepositoryManager
         try {
             Repository repository = repositoryService.loadDefaultRepository();
             if (repository == null) {
-                log.error("Repository error: no default repository set. Setting to default");
+                log.warn("Repository error: no default repository set. Setting to default");
                 defaultRepositoryPath = ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH);
             } else {
                 defaultRepository = repository;
@@ -106,7 +106,7 @@ public class RepositoryManager
             version.setLength(fis.available());
             fis.close();
         } catch (IOException e) {
-            throw new RepositoryException(e.getMessage());
+            throw new RepositoryException(e);
         }
     }
 
@@ -116,7 +116,7 @@ public class RepositoryManager
             return new FileOutputStream(
                     manager.defaultRepositoryPath + version.getStoragePath());
         } catch (IOException io) {
-            throw new RepositoryException(io.getMessage());
+            throw new RepositoryException(io);
         }
     }
 
@@ -128,7 +128,7 @@ public class RepositoryManager
                     mode
             );
         } catch (IOException io) {
-            throw new RepositoryException(io.getMessage());
+            throw new RepositoryException(io);
         }
     }
 
@@ -149,7 +149,7 @@ public class RepositoryManager
                 newFile.close();
             }
         } catch (IOException io) {
-            throw new RepositoryException(io.getMessage());
+            throw new RepositoryException(io);
         }
     }
 
@@ -181,7 +181,7 @@ public class RepositoryManager
             FileUtils.copyFile(new File(sourcePath),
                     new File(targetPath), false);
         } catch (IOException e) {
-            throw new RepositoryException(e.getMessage());
+            throw new RepositoryException(e);
         }
     }
 }
