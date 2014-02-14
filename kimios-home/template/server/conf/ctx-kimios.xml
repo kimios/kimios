@@ -16,25 +16,36 @@
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
 
 
-    <bean class="org.kimios.kernel.events.impl.AddonDataHandler">
-           <constructor-arg>
-               <bean class="org.codehaus.jackson.map.ObjectMapper" />
-           </constructor-arg>
-    </bean>
+    <!-- JNDI Data Source Settings Example :
 
-    <!-- Load the standard Kimios Spring Configuration files -->
-    <import resource="classpath*:/META-INF/spring/ctx-kimios*.xml" />
+    JNDI Sping Bean
+    <bean id="kimiosDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+      <property name="jndiName" value="${jdbc.jndids}" />
+  </bean>
 
-    <!--<import resource="datasource/${datastdaource.mode}/ctx-kimios-ds.xml"/>  -->
+  Tomcat JNDI Setup Example (inside webappDir/META-INF/context.xml
+
+ <Context ...>
+  <Resource name="jdbc/dms" auth="Container" type="com.atomikos.jdbc.nonxa.AtomikosNonXADataSourceBean"
+        factory="org.apache.naming.factory.BeanFactory"
+        driverClassName="org.postgresql.Driver"
+        uniqueResourceName="jdbc/dms"
+        user="postgres" password="farfou" url="jdbc:postgresql://localhost:5432/kimios-test"
+    maxPoolSize="50" minPoolSize="30" maxIdleTime="1000" readOnly="true" />
+  <Transaction name="UserTransaction" factory="com.atomikos.icatch.jta.UserTransactionFactory" />
+</Context>
+  -->
 
 
     <!-- Data Source -->
     <bean id="kimiosDataSource" class="com.atomikos.jdbc.nonxa.AtomikosNonXADataSourceBean">
-        <property name="uniqueResourceName" value="jdbc/${kimios.app.name}"/>
+        <property name="uniqueResourceName" value="jdbc/dms"/>
         <property name="maxPoolSize" value="100"/>
         <property name="minPoolSize" value="20"/>
         <property name="maxIdleTime" value="1000"/>
@@ -55,36 +66,27 @@
         </property>
     </bean>
 
-    <!-- JNDI Data Source Settings Example :
+    <!--<import resource="datasource/${datastdaource.mode}/ctx-kimios-ds.xml"/>  -->
+    <tx:annotation-driven mode="aspectj" transaction-manager="transactionManager"/>
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method read-only="true" name="reindex" timeout="3600000"/>
+            <tx:method name="updateAclsRecursiveMode" timeout="3600000"/>
+            <tx:method name="*"/>
+        </tx:attributes>
+    </tx:advice>
 
-      JNDI Sping Bean
-      <bean id="kimiosDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
-        <property name="jndiName" value="${jdbc.jndids}" />
-    </bean>
-
-    Tomcat JNDI Setup Example (inside webappDir/META-INF/context.xml
-
-   <Context ...>
-    <Resource name="jdbc/dms" auth="Container" type="com.atomikos.jdbc.nonxa.AtomikosNonXADataSourceBean"
-          factory="org.apache.naming.factory.BeanFactory"
-          driverClassName="org.postgresql.Driver"
-          uniqueResourceName="jdbc/dms"
-          user="postgres" password="farfou" url="jdbc:postgresql://localhost:5432/kimios-test"
-      maxPoolSize="50" minPoolSize="30" maxIdleTime="1000" readOnly="true" />
-    <Transaction name="UserTransaction" factory="com.atomikos.icatch.jta.UserTransactionFactory" />
-  </Context>
-    -->
     <!-- Initialize Transaction Manager -->
     <bean id="userTransactionService"
-            class="com.atomikos.icatch.config.UserTransactionServiceImp"
-            init-method="init" destroy-method="shutdownForce">
+          class="com.atomikos.icatch.config.UserTransactionServiceImp"
+          init-method="init" destroy-method="shutdownForce">
         <constructor-arg>
             <props>
                 <prop key="com.atomikos.icatch.service">
                     com.atomikos.icatch.standalone.UserTransactionServiceFactory
                 </prop>
-                <prop key="com.atomikos.icatch.output_dir">${kimios.home}/${kimios.app.name}/txlogs</prop>
-                <prop key="com.atomikos.icatch.log_base_dir">${kimios.home}/${kimios.app.name}/txlogs</prop>
+                <prop key="com.atomikos.icatch.output_dir">${kimios.home}/server/txlogs</prop>
+                <prop key="com.atomikos.icatch.log_base_dir">${kimios.home}/server/txlogs</prop>
                 <prop key="com.atomikos.icatch.automatic_resource_registration">true</prop>
                 <prop key="com.atomikos.icatch.console_log_level">ERROR</prop>
                 <prop key="com.atomikos.icatch.max_timeout">2200000</prop>
@@ -94,20 +96,26 @@
         </constructor-arg>
     </bean>
     <bean id="AtomikosTransactionManager"
-            class="com.atomikos.icatch.jta.UserTransactionManager"
-            init-method="init" destroy-method="close"
-            depends-on="userTransactionService">
+          class="com.atomikos.icatch.jta.UserTransactionManager"
+          init-method="init" destroy-method="close"
+          depends-on="userTransactionService">
         <property name="forceShutdown" value="false"/>
     </bean>
     <bean id="AtomikosUserTransaction"
-            class="com.atomikos.icatch.jta.UserTransactionImp"
-            depends-on="userTransactionService">
+          class="com.atomikos.icatch.jta.UserTransactionImp"
+          depends-on="userTransactionService">
         <property name="transactionTimeout" value="300"/>
     </bean>
     <bean id="transactionManager"
-            class="org.springframework.transaction.jta.JtaTransactionManager"
-            depends-on="userTransactionService">
+          class="org.springframework.transaction.jta.JtaTransactionManager"
+          depends-on="userTransactionService">
         <property name="transactionManager" ref="AtomikosTransactionManager"/>
         <property name="userTransaction" ref="AtomikosUserTransaction"/>
     </bean>
+
+
+    <!-- Load the standard Kimios Spring Configuration files -->
+    <import resource="classpath*:/META-INF/spring/ctx-kimios*.xml"/>
+
+
 </beans>

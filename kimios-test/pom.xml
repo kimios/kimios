@@ -118,7 +118,7 @@
     <dependency>
       <groupId>org.aspectj</groupId>
       <artifactId>aspectjweaver</artifactId>
-      <version>1.6.8</version>
+      <version>${aspectj.version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>

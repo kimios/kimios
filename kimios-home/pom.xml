@@ -18,6 +18,18 @@
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+            <version>${spring.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.atomikos</groupId>
+            <artifactId>transactions-hibernate3</artifactId>
+            <version>${atomikos.version}</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
     <build>
         <resources>
@@ -33,7 +45,7 @@
                 <version>2.2.1</version>
 
             </plugin>
-            <plugin>
+            <!--<plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>2.5</version>
@@ -81,7 +93,7 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin>-->
         </plugins>
     </build>
 
@@ -105,6 +117,57 @@
                     <filter>${project.basedir}/profiles/client/env.properties</filter>
                     <filter>${project.basedir}/profiles/server/env.properties</filter>
                 </filters>
+                <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>2.5</version>
+                    <executions>
+                        <execution>
+                            <id>copy-settings-server</id>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>copy-resources</goal>
+                            </goals>
+                            <configuration>
+                                <outputDirectory>${project.basedir}/server/conf</outputDirectory>
+                                <resources>
+                                    <resource>
+                                        <directory>
+                                            ${project.parent.basedir}/kimios-kernel/src/main/resources/META-INF/settings/tpl
+                                        </directory>
+                                        <filtering>true</filtering>
+                                        <includes>
+                                            <include>**/kimios.properties</include>
+                                        </includes>
+                                    </resource>
+                                </resources>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>copy-settings-client</id>
+                            <phase>validate</phase>
+                            <goals>
+                                <goal>copy-resources</goal>
+                            </goals>
+                            <configuration>
+                                <outputDirectory>${project.basedir}/client/conf</outputDirectory>
+                                <resources>
+                                    <resource>
+                                        <directory>
+                                            ${project.parent.basedir}/kimios-client-api/src/main/resources/META-INF/settings/tpl
+                                        </directory>
+                                        <filtering>true</filtering>
+                                        <includes>
+                                            <include>**/kimios.properties</include>
+                                        </includes>
+                                    </resource>
+                                </resources>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                </plugins>
             </build>
         </profile>
     </profiles>
