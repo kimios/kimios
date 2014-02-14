@@ -53,12 +53,15 @@ public class RepositoryCleaner implements Runnable
         try {
 
             while (!this.stop) {
-                List<DocumentVersion> v = versionController.getOprhansDocumentVersion();
-                for (int i = 0; i < v.size(); i++) {
+                List<DocumentVersion> versions = versionController.getOprhansDocumentVersion();
+                for (DocumentVersion v: versions) {
                     try {
+                        if(log.isDebugEnabled()){
+                            log.debug("removing version #" + v.getUid() + " -> " + v.getStoragePath());
+                        }
                         new File(ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH) +
-                                v.get(i).getStoragePath()).delete();
-                        versionController.deleteDocumentVersion(v.get(i).getUid());
+                                v.getStoragePath()).delete();
+                        versionController.deleteDocumentVersion(v.getUid());
                     } catch (ConfigException e) {
                         e.printStackTrace();
                     } catch (DataSourceException e) {
