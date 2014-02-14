@@ -19,11 +19,20 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+       xmlns:cxf="http://cxf.apache.org/core"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+        http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
         http://cxf.apache.org/jaxrs
         http://cxf.apache.org/schemas/jaxrs.xsd"
        default-autowire="byName">
+
+
+    <cxf:bus id="kimios-bus">
+        <cxf:features>
+            <cxf:logging/>
+        </cxf:features>
+    </cxf:bus>
 
 
     <!--<cxf:bus>-->
@@ -73,12 +82,13 @@
     </bean>-->
 
     <jaxrs:server id="kimiosRestServer"
-                  address="/rest/">
+                  address="/rest/"
+                  name="kimios-rest">
         <jaxrs:providers>
             <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
             <bean class="org.kimios.webservices.DateParamConverter"/>
             <bean id="exceptionMapper" class="org.kimios.webservices.JaxRSExceptionMapper"/>
-          <bean id="corsFilter" class="org.apache.cxf.rs.security.cors.CrossOriginResourceSharingFilter" />
+            <bean id="corsFilter" class="org.apache.cxf.rs.security.cors.CrossOriginResourceSharingFilter" />
         </jaxrs:providers>
         <jaxrs:serviceBeans>
             <ref bean="securityServiceBean"/>
@@ -96,7 +106,6 @@
             <ref bean="extensionServiceBean"/>
             <ref bean="notificationServiceBean"/>
             <ref bean="searchServiceBean"/>
-            <ref bean="converterServiceBean"/>
         </jaxrs:serviceBeans>
         <jaxrs:extensionMappings>
             <entry key="json" value="application/json"/>
@@ -106,7 +115,7 @@
     <!-- JAXRS Bean Services List Merge :
         Any bean of type org.kimios.webservices.KimiosExtension will be added to serviceBeans property of bean kimiosRestServer
     -->
-    <bean class="org.kimios.utils.spring.MergePostProcessor">
+    <bean class="org.kimios.utils.spring.MergePostProcessor" id="kimiosExtensionServiceHandler">
         <property name="beanToMerge" value="kimiosRestServer"></property>
         <property name="beanPropertyToMerge" value="serviceBeans"></property>
         <property name="beanTypeToLoad" value="org.kimios.webservices.KimiosExtension"></property>

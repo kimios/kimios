@@ -32,7 +32,6 @@ import org.kimios.kernel.exception.WorkflowException;
 import org.kimios.kernel.exception.XMLException;
 import org.kimios.kernel.security.ISessionManager;
 import org.kimios.kernel.security.Session;
-import org.kimios.kernel.security.SessionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +40,8 @@ public class ServiceHelper
     final Logger log = LoggerFactory.getLogger("kimios");
 
     private ISessionManager sessionManager;
+
+    private String publicBaseUrl = "http://localhost:8080/kimios";
 
     public ISessionManager getSessionManager()
     {
@@ -139,6 +140,12 @@ public class ServiceHelper
         }
 
         return new DMServiceException(0, "Error 00 : Exception occured", e.getCause());
+    }
+
+    public String getResourceUrl(String targetUrl){
+        //Append public Kimios Service URL Datas
+        String item = publicBaseUrl + targetUrl;
+        return item;
     }
 }
 

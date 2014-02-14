@@ -27,6 +27,7 @@ import org.kimios.webservices.DocumentService;
 
 import javax.jws.WebService;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -305,14 +306,8 @@ public class DocumentServiceImpl extends CoreService implements DocumentService 
 
         try {
             Session session = getHelper().getSession(sessionId);
-            Vector<SymbolicLink> vSym = documentController.getChildSymbolicLinks(session, parentId);
-            org.kimios.kernel.ws.pojo.SymbolicLink[] pojos = new org.kimios.kernel.ws.pojo.SymbolicLink[vSym.size()];
-            int i = 0;
-            for (SymbolicLink sl : vSym) {
-                pojos[i] = sl.toPojo();
-                i++;
-            }
-            return pojos;
+            List<org.kimios.kernel.ws.pojo.SymbolicLink> links = documentController.getChildSymbolicLinksPojos(session, parentId);
+            return links.toArray(new org.kimios.kernel.ws.pojo.SymbolicLink[]{});
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }
@@ -329,14 +324,11 @@ public class DocumentServiceImpl extends CoreService implements DocumentService 
 
         try {
             Session session = getHelper().getSession(sessionId);
-            Vector<SymbolicLink> vSym = documentController.getSymbolicLinkCreated(session, targetId);
-            org.kimios.kernel.ws.pojo.SymbolicLink[] pojos = new org.kimios.kernel.ws.pojo.SymbolicLink[vSym.size()];
-            int i = 0;
-            for (SymbolicLink sl : vSym) {
-                pojos[i] = sl.toPojo();
-                i++;
-            }
-            return pojos;
+            List<SymbolicLink> vSym = documentController.getSymbolicLinkCreated(session, targetId);
+            List<org.kimios.kernel.ws.pojo.SymbolicLink> links = new ArrayList<org.kimios.kernel.ws.pojo.SymbolicLink>();
+            for(SymbolicLink link: vSym)
+                links.add(link.toPojo());
+            return links.toArray(new org.kimios.kernel.ws.pojo.SymbolicLink[]{});
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }
@@ -412,15 +404,11 @@ public class DocumentServiceImpl extends CoreService implements DocumentService 
 
             Session session = getHelper().getSession(sessionId);
 
-            Vector<Bookmark> vBookmarks = documentController.getBookmarks(session);
-            org.kimios.kernel.ws.pojo.Bookmark[] pojos = new org.kimios.kernel.ws.pojo.Bookmark[vBookmarks.size()];
-            int i = 0;
-            for (Bookmark b : vBookmarks) {
-                pojos[i] = b.toPojo();
-                i++;
-            }
-
-            return pojos;
+            List<Bookmark> vBookmarks = documentController.getBookmarks(session);
+            List<org.kimios.kernel.ws.pojo.Bookmark> links = new ArrayList<org.kimios.kernel.ws.pojo.Bookmark>();
+            for(Bookmark link: vBookmarks)
+                links.add(link.toPojo());
+            return links.toArray(new org.kimios.kernel.ws.pojo.Bookmark[]{});
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }
@@ -470,16 +458,11 @@ public class DocumentServiceImpl extends CoreService implements DocumentService 
         try {
 
             Session session = getHelper().getSession(sessionId);
-
-            Vector<Bookmark> vBookmarks = documentController.getRecentItems(session);
-            org.kimios.kernel.ws.pojo.Bookmark[] pojos = new org.kimios.kernel.ws.pojo.Bookmark[vBookmarks.size()];
-            int i = 0;
-            for (Bookmark b : vBookmarks) {
-                pojos[i] = b.toPojo();
-                i++;
-            }
-
-            return pojos;
+            List<Bookmark> vBookmarks = documentController.getRecentItems(session);
+            List<org.kimios.kernel.ws.pojo.Bookmark> links = new ArrayList<org.kimios.kernel.ws.pojo.Bookmark>();
+            for(Bookmark link: vBookmarks)
+                links.add(link.toPojo());
+            return links.toArray(new org.kimios.kernel.ws.pojo.Bookmark[]{});
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }

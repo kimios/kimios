@@ -25,6 +25,9 @@
                http://www.springframework.org/schema/osgi/spring-osgi.xsd">
 
 
+    <osgi:service interface="org.kimios.webservices.ServiceHelper" ref="serviceHelper" />
+
+
     <osgi:reference id="sessionManager"
             interface="org.kimios.kernel.security.ISessionManager"/>
 
@@ -61,6 +64,8 @@
             interface="org.kimios.kernel.controller.IPathController"/>
     <osgi:reference id="searchController"
             interface="org.kimios.kernel.controller.ISearchController"/>
-
-
+    <osgi:reference id="searchManagementController"
+                    interface="org.kimios.kernel.controller.ISearchManagementController"/>
+    <osgi:reference id="converterController"
+                    interface="org.kimios.kernel.controller.IConverterController"/>
 </beans>

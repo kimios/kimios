@@ -38,7 +38,7 @@ public interface ReportingService
     @Path("/getReport")
     @Produces("application/json")
     public String getReport(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
-            @WebParam(name = "className") String className,
+            @QueryParam(value = "className") @WebParam(name = "className") String className,
             @QueryParam(value = "xmlParameters") @WebParam(name = "xmlParameters") String xmlParameters)
             throws DMServiceException;
 
@@ -52,7 +52,7 @@ public interface ReportingService
     @Path("/getReportAttributes")
     @Produces("application/json")
     public String getReportAttributes(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
-            @WebParam(name = "className") String className) throws DMServiceException;
+                                      @QueryParam(value = "className") @WebParam(name = "className") String className) throws DMServiceException;
 
     @GET
     @Path("/removeGhostTransaction")

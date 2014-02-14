@@ -16,6 +16,7 @@
  */
 package org.kimios.webservices.impl;
 
+import java.util.List;
 import java.util.Vector;
 
 import javax.jws.WebService;
@@ -37,7 +38,7 @@ public class LogServiceImpl extends CoreService implements LogService
     {
         try {
             Session s = getHelper().getSession(sessionUid);
-            Vector<DMEntityLog<Document>> logs = documentController.getDocumentLog(s, documentUid);
+            List<DMEntityLog<Document>> logs = documentController.getDocumentLog(s, documentUid);
             Log[] pojos = new Log[logs.size()];
             int i = 0;
             for (DMEntityLog<Document> l : logs) {
