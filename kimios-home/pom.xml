@@ -146,7 +146,7 @@
                                 <goal>copy-resources</goal>
                             </goals>
                             <configuration>
-                                <outputDirectory>${project.basedir}/server/conf</outputDirectory>
+                                <outputDirectory>${project.basedir}/template/server/conf</outputDirectory>
                                 <resources>
                                     <resource>
                                         <directory>
@@ -167,7 +167,7 @@
                                 <goal>copy-resources</goal>
                             </goals>
                             <configuration>
-                                <outputDirectory>${project.basedir}/client/conf</outputDirectory>
+                                <outputDirectory>${project.basedir}/template/client/conf</outputDirectory>
                                 <resources>
                                     <resource>
                                         <directory>
