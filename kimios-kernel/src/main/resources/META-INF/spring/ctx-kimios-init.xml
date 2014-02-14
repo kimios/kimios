@@ -25,11 +25,11 @@
         http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
 
-    <aop:config>
+    <!--<aop:config>
         <aop:pointcut id="dataInitPct"
                 expression="execution(* org.kimios.kernel.deployment.DataInitializerCtrl.*(..))"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="dataInitPct"/>
-    </aop:config>
+    </aop:config> -->
 
     <bean class="org.kimios.kernel.deployment.DataInitializer"
             depends-on="sessionFactory, txAdvice, dataInitializerCtrl"

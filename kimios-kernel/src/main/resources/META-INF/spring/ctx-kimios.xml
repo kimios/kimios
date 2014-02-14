@@ -44,15 +44,6 @@
 
 
 
-    <tx:advice id="txAdvice" transaction-manager="transactionManager">
-        <tx:attributes>
-            <tx:method read-only="true" name="reindex" timeout="3600000"/>
-            <tx:method name="updateAclsRecursiveMode" timeout="3600000"/>
-            <tx:method name="*"/>
-        </tx:attributes>
-    </tx:advice>
-
-
     <bean id="sessionFactory"
             class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
         <property name="dataSource">
@@ -112,7 +103,7 @@
     </bean>
 
     <aop:config>
-        <aop:pointcut id="securityService"
+        <!--<aop:pointcut id="securityService"
                 expression="execution(* org.kimios.kernel.controller.ISecurityController.*(..))"/>
         <aop:pointcut id="informationService"
                 expression="execution(* org.kimios.kernel.controller.IServerInformationController.*(..))"/>
@@ -170,10 +161,10 @@
         <aop:advisor advice-ref="txAdvice" pointcut-ref="aclUpdateService"/>
 
         <aop:advisor advice-ref="txAdvice" pointcut-ref="repoService"/>
-        <aop:advisor advice-ref="txAdvice" pointcut-ref="sessManagerPct"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="sessManagerPct"/> -->
 
 
-        <aop:advisor advice-ref="eventInterceptor" pointcut-ref="aclUpdateService"/>
+        <!--<aop:advisor advice-ref="eventInterceptor" pointcut-ref="aclUpdateService"/>
         <aop:advisor advice-ref="eventInterceptor" pointcut-ref="securityService"/>
         <aop:advisor advice-ref="eventInterceptor" pointcut-ref="workspaceService"/>
         <aop:advisor advice-ref="eventInterceptor" pointcut-ref="folderService"/>
@@ -182,7 +173,7 @@
         <aop:advisor advice-ref="eventInterceptor" pointcut-ref="documentVersionService"/>
         <aop:advisor advice-ref="eventInterceptor" pointcut-ref="fileTransferService"/>
         <aop:advisor advice-ref="eventInterceptor" pointcut-ref="administrationService"/>
-        <aop:advisor advice-ref="eventInterceptor" pointcut-ref="extService"/>
+        <aop:advisor advice-ref="eventInterceptor" pointcut-ref="extService"/> -->
 
     </aop:config>
     <bean id="appContextProvider" class="org.kimios.utils.spring.ApplicationContextProvider"/>

@@ -31,9 +31,14 @@ import org.kimios.kernel.security.SecurityEntityType;
 import org.kimios.kernel.user.Group;
 import org.kimios.kernel.user.GroupFactory;
 import org.kimios.kernel.user.impl.GenericLDAPImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GenericLDAPGroupFactory extends GenericLDAPFactory implements GroupFactory
 {
+
+    private static Logger logger = LoggerFactory.getLogger(GenericLDAPGroupFactory.class);
+
     public GenericLDAPGroupFactory(GenericLDAPImpl source)
     {
         this.source = source;
@@ -103,13 +108,19 @@ public class GenericLDAPGroupFactory extends GenericLDAPFactory implements Group
                         }
                     }
                 }
+                logger.debug("Will get throug group query with nodes ? " + nodes);
                 if (nodes == null) {
                     if (this.source.getUsersDn() == null || this.source.getUsersDn().length() == 0) {
+                        logger.debug("Old ad query mode... because of " + this.source.getUsersDn());
                         v = getGroupsAD(userUid);
                     } else {
+
+                            logger.debug("looking for Active Directory group for user " + distinguishedName );
                         r = this.search("(&(objectClass=" + source.getGroupsObjectClassValue() + ")(" +
                                 source.getGroupsMemberKey() + "=" + distinguishedName + "))", SecurityEntityType.GROUP);
 
+
+                            logger.debug(" search result count " + r.size() );
                         for (SearchResult sr : r) {
                             Attributes attrs = sr.getAttributes();
                             v.add(new Group(attrs.get(source.getGroupsIdKey()).get().toString(),
@@ -120,14 +131,22 @@ public class GenericLDAPGroupFactory extends GenericLDAPFactory implements Group
                     /*
                          Load use
                      */
-                    r = new ArrayList<SearchResult>();
-                    for (String node : nodes) {
+                    logger.debug(" global mode ");
+                    String groupQuery =  "(&(objectClass=" + source.getGroupsObjectClassValue() + ")(" +
+                            source.getGroupsMemberKey()
+                            + "=" + distinguishedName + "))";
+
+
+                            logger.debug("looking for group for " + distinguishedName + " with query: " + groupQuery);
                         List<SearchResult> lst = this.search(
-                                "(&(objectClass=" + source.getGroupsObjectClassValue() + ")(" +
-                                        source.getGroupsMemberKey()
-                                        + "=" + distinguishedName + "))", SecurityEntityType.GROUP);
-                        r.addAll(lst);
-                    }
+                              groupQuery , SecurityEntityType.GROUP);
+
+                            logger.debug("found result for group for " + distinguishedName + " " + lst.size());
+                        for (SearchResult sr : lst) {
+                            Attributes attrs = sr.getAttributes();
+                            v.add(new Group(attrs.get(source.getGroupsIdKey()).get().toString(),
+                                    attrs.get(source.getGroupsDescriptionKeyn()).get().toString(), source.getName()));
+                        }
                 }
             } else {
                 if (this.source.getSchemaFullCnUserGroupMatching().equals("true")) {

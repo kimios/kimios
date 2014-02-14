@@ -35,8 +35,8 @@ public class MailSendTest
         PropertiesConfigurationHolder holder = new PropertiesConfigurationHolder();
         holder.init(MailSendTest.class.getResourceAsStream("kimios.properties"));
 
-        ConfigurationManager mng = new ConfigurationManager();
-        mng.setHolder(holder);
+        /*ConfigurationManager mng = new ConfigurationManager();
+        mng.setHolder(holder);*/
 
 
         String templatePath = "/org/kimios/kernel/test/incoming-document-notifier.html";

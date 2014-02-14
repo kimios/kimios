@@ -38,6 +38,8 @@ import org.kimios.kernel.user.impl.GenericLDAPImpl;
 
 public class GenericLDAPUserFactory extends GenericLDAPFactory implements UserFactory
 {
+
+
     public GenericLDAPUserFactory(GenericLDAPImpl source)
     {
         this.source = source;
@@ -206,15 +208,20 @@ public class GenericLDAPUserFactory extends GenericLDAPFactory implements UserFa
         }
         if (attrs.get(source.getUsersMailKey()) != null) {
             user.setMail(attrs.get(source.getUsersMailKey()).get().toString());
+            user.setMail(user.getMail() == null || user.getMail().equals("null") ? "" : user.getMail());
         }
         if(attrs.get(source.getUserFirstNameKey()) != null){
             user.setFirstName(attrs.get(source.getUserFirstNameKey()).get().toString());
+            user.setFirstName(user.getFirstName() == null || user.getFirstName().equals("null") ? "" : user.getFirstName());
         }
         if(attrs.get(source.getUserLastNameKey()) != null){
             user.setLastName(attrs.get(source.getUserLastNameKey()).get().toString());
+            user.setLastName(user.getLastName() == null || user.getLastName().equals("null") ? "" : user.getLastName());
+
         }
         if(attrs.get(source.getUserPhoneKey()) != null){
             user.setPhoneNumber(attrs.get(source.getUserPhoneKey()).get().toString());
+            user.setPhoneNumber(user.getPhoneNumber() == null || user.getPhoneNumber().equals("null") ? "" : user.getPhoneNumber());
         }
         user.setAuthenticationSourceName(this.source.getName());
         return user;
