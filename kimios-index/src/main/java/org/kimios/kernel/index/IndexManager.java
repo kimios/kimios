@@ -422,5 +422,12 @@ public class IndexManager implements LuceneIndexManager
             throw new IndexException(io, io.getMessage());
         }
     }
+
+    @Override
+    public void updateAcls(long docUid, List<DMEntityACL> acls, boolean commit) throws IndexException {
+        this.updateAcls(docUid, acls);
+    }
+
+
 }
 

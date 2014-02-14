@@ -165,8 +165,18 @@ public class SolrIndexer extends GenericEventHandler
                         }
                     }
                 }
+                int i = 0;
                 for (Long uid : hash.keySet()) {
-                    indexManager.updateAcls(uid, hash.get(uid));
+                    indexManager.updateAcls(uid, hash.get(uid), false);
+                    i++;
+                    if((i % 200) == 0){
+                        indexManager.commit();
+                    }
+                }
+                try{
+                    indexManager.commit();
+                }catch (Exception e){
+                    log.error("Error while commiting index on acl update");
                 }
                 log.debug("Ending index acl update process " + Thread.currentThread().getId());
             } catch (Throwable ex) {

@@ -265,8 +265,6 @@ public class SolrIndexManager
                         if(value != null && value.getValue() != null){
                             cal.setTime( (Date) value.getValue() );
                             doc.addField( "MetaDataDate_" + value.getMetaUid(), cal.getTime() );
-
-                            log.info( "Inserting date in solr: " + value.getValue() + " / " + cal.getTime() + " / " + cal );
                         }
 
                         break;
@@ -416,13 +414,15 @@ public class SolrIndexManager
             for ( SolrDocument dc : documentList )
             {
 
-                log.debug( "Solr result doc: " + dc );
+                if(log.isDebugEnabled())
+                    log.debug( "Solr result doc: " + dc );
 
                 list.add( (Long) dc.getFieldValue( "DocumentUid" ) );
             }
             SearchResponse searchResponse = new SearchResponse( list );
 
-            log.debug(" Solr Num found " + documentList.getNumFound());
+            if(log.isDebugEnabled())
+                log.debug(" Solr Num found " + documentList.getNumFound());
 
             searchResponse.setResults( new Long( documentList.getNumFound() ).intValue() );
             searchResponse.setRows( solrDocumentFactory.getPojosFromSolrInputDocument( rsp.getResults() ) );
@@ -453,7 +453,8 @@ public class SolrIndexManager
             {
                 for ( FacetField facet : rsp.getFacetFields() )
                 {
-                    System.out.print(facet.getName() + " --> " + facet.getValueCount());
+                    if(log.isDebugEnabled())
+                        log.debug("Returned Facet " + facet.getName() + " --> " + facet.getValueCount());
                     List<FacetField.Count> items = facet.getValues();
                     if(items != null){
                         for ( FacetField.Count fc : items )
@@ -474,7 +475,7 @@ public class SolrIndexManager
         }
     }
 
-    public void updateAcls( long docUid, List<DMEntityACL> acls )
+    public void updateAcls( long docUid, List<DMEntityACL> acls, boolean commit )
         throws IndexException
     {
         try
@@ -500,14 +501,18 @@ public class SolrIndexManager
         }
         finally
         {
-            try
-            {
-                this.solr.commit();
+
+            if(commit){
+                try
+                {
+                    this.solr.commit();
+                }
+                catch ( Exception e )
+                {
+                    throw new IndexException( e, e.getMessage() );
+                }
             }
-            catch ( Exception e )
-            {
-                throw new IndexException( e, e.getMessage() );
-            }
+
         }
     }
 
@@ -591,7 +596,7 @@ public class SolrIndexManager
         try
         {
             SolrQuery query = new SolrQuery();
-            query.setQueryType( "luke" );
+            query.setRequestHandler( "luke" );
             query.setQuery( "numTerms=0" );
             SolrResponse response = solr.query( query );
             SimpleOrderedMap items = (SimpleOrderedMap) response.getResponse().get( "fields" );
@@ -609,6 +614,24 @@ public class SolrIndexManager
         }
 
 
+    }
+
+
+    public void commit() throws IndexException {
+
+        try{
+            this.solr.commit();
+        }   catch (Exception e){
+            throw new IndexException(e);
+        }
+    }
+
+    public void closeSolr(){
+        try{
+            this.solr.shutdown();
+        }   catch (Exception e){
+            log.error("Error while closing Solr", e);
+        }
     }
 
     public IPathController getPathController()

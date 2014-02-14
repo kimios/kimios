@@ -44,9 +44,11 @@ public interface AbstractIndexManager
 
     void indexDocument(DMEntity document) throws IndexException, DataSourceException, ConfigException;
 
-    void updateAcls(long docUid, List<DMEntityACL> acls) throws IndexException;
+    void updateAcls(long docUid, List<DMEntityACL> acls, boolean commit) throws IndexException;
 
     void deletePath(String path) throws IndexException;
 
     void updatePath(String oldPath, String newPath) throws IndexException;
+
+    void commit() throws IndexException;
 }

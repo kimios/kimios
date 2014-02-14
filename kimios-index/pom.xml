@@ -69,6 +69,18 @@
       <version>${spring.version}</version>
       <scope>provided</scope>
     </dependency>
+      <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-tx</artifactId>
+          <version>${spring.version}</version>
+          <scope>provided</scope>
+      </dependency>
+     <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-aspects</artifactId>
+          <version>${spring.version}</version>
+          <scope>provided</scope>
+    </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-core</artifactId>
@@ -118,6 +130,12 @@
       <groupId>org.apache.tika</groupId>
       <artifactId>tika-parsers</artifactId>
       <version>1.4</version>
+      <exclusions>
+          <exclusion>
+              <groupId>org.aspectj</groupId>
+              <artifactId>aspectjrt</artifactId>
+          </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -152,6 +170,31 @@
 
   <build>
     <plugins>
+          <plugin>
+              <groupId>org.codehaus.mojo</groupId>
+              <artifactId>aspectj-maven-plugin</artifactId>
+              <configuration>
+                  <complianceLevel>1.6</complianceLevel>
+                  <source>1.6</source>
+                  <target>1.6</target>
+                  <XnoInline>true</XnoInline>
+                  <outxml>true</outxml>
+                  <aspectLibraries>
+                      <aspectLibrary>
+                          <groupId>org.springframework</groupId>
+                          <artifactId>spring-aspects</artifactId>
+                      </aspectLibrary>
+                  </aspectLibraries>
+                  <showWeaveInfo>true</showWeaveInfo>
+              </configuration>
+              <executions>
+                  <execution>
+                      <goals>
+                          <goal>compile</goal>
+                      </goals>
+                  </execution>
+              </executions>
+          </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>

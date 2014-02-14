@@ -108,7 +108,8 @@
         </arr>
     </requestHandler>
     <requestHandler name="/update"
-                    class="solr.XmlUpdateRequestHandler" />
+                    class="org.apache.solr.handler.UpdateRequestHandler" />
+    <requestHandler name="luke" class="org.apache.solr.handler.admin.LukeRequestHandler" />
     <!--<queryResponseWriter name="xslt" class="solr.XSLTResponseWriter">
         <int name="xsltCacheLifetimeSeconds">5</int>
     </queryResponseWriter>-->

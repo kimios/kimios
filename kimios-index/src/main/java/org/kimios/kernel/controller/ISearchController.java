@@ -32,6 +32,7 @@ import org.kimios.kernel.index.query.model.SearchRequest;
 import org.kimios.kernel.index.query.model.SearchResponse;
 import org.kimios.kernel.security.Session;
 import org.kimios.kernel.ws.pojo.Document;
+import org.springframework.transaction.annotation.Transactional;
 import org.xml.sax.SAXException;
 
 public interface ISearchController
@@ -93,6 +94,8 @@ public interface ISearchController
     public SearchResponse executeSearchQueryOrBrowse( Session session, Long id, int start, int pageSize, String sortField,
                                                     String sortDir, String virtualPath )
         throws AccessDeniedException, DataSourceException, ConfigException, IndexException, IOException, ParseException;
+
+    public List<String> listAvailableFields(Session session) throws AccessDeniedException, IndexException;
 
 
 }

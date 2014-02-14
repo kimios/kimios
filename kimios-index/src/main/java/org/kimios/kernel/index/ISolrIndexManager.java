@@ -39,4 +39,7 @@ public interface ISolrIndexManager
 
     public void deleteByQuery( String query )
         throws IndexException;
+
+    public List<String> filterFields();
+
 }

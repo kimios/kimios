@@ -46,6 +46,7 @@ import org.kimios.kernel.security.Session;
 import org.kimios.kernel.ws.pojo.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -68,6 +69,7 @@ import java.util.TimeZone;
  * @author Fabien Alin
  * @version 1.0
  */
+@Transactional
 public class SolrSearchController
     extends AKimiosController
     implements ISearchController
@@ -114,16 +116,16 @@ public class SolrSearchController
         if ( entity != null )
         {
             DMEntity entityLoaded = dmsFactoryInstantiator.getDmEntityFactory().getEntity( entity.getUid() );
-            String pathQuery = "DocumentParent:" + entityLoaded.getPath() + "/*";
+            String pathQuery = "DocumentParent:" + ClientUtils.escapeQueryChars(entityLoaded.getPath() + "/") + "*";
             filterQueries.add( pathQuery );
         }
         indexQuery.setFilterQueries( filterQueries.toArray( new String[]{ } ) );
         if ( sortField != null )
         {
-            indexQuery.addSortField( sortField,
-                                     SolrQuery.ORDER.valueOf( ( sortDir != null ? sortDir.toLowerCase() : "asc" ) ) );
+            indexQuery.addSort( sortField,
+                              SolrQuery.ORDER.valueOf( ( sortDir != null ? sortDir.toLowerCase() : "asc" ) ) );
         }
-        indexQuery.addSortField( "score", SolrQuery.ORDER.desc );
+        indexQuery.addSort( "score", SolrQuery.ORDER.desc );
         indexQuery.setQuery( documentNameQuery );
         if ( start > -1 && pageSize > -1 )
         {
@@ -887,5 +889,11 @@ public class SolrSearchController
             this.parseQueryFromListCriteria( session, start, pageSize, criteriaList, sortField, sortDir, virtualPath );
         SearchResponse searchResponse = this.solrIndexManager.executeSolrQuery( query );
         return searchResponse;
+    }
+
+
+    @Override
+    public List<String> listAvailableFields(Session session) throws AccessDeniedException, IndexException {
+        return solrIndexManager.filterFields();
     }
 }

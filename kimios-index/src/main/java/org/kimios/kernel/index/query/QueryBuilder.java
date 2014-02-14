@@ -26,10 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
+import java.util.*;
 
 /**
  * Build Solr Queries
@@ -112,8 +109,27 @@ public class QueryBuilder
             String extension = null;
             extension = query.toLowerCase().substring( query.indexOf( "." ) + 1 );
             docName = query.toLowerCase().substring( 0, query.indexOf( "." ) );
-            documentNameQuery = "DocumentName:*" + ClientUtils.escapeQueryChars( docName.toLowerCase() ) + "*";
+
+            String[] items = docName.split("\\*");
+
+            StringBuffer bf = new StringBuffer();
+
+            if(items.length == 0){
+                bf.append("*");
+            } else{
+                for(String t: items){
+                    bf.append("*");
+                    bf.append(ClientUtils.escapeQueryChars(t.toLowerCase()));
+                }
+            }
+
+            //documentNameQuery = "DocumentName:*" + ClientUtils.escapeQueryChars( docName.toLowerCase() ) + "*";
+            documentNameQuery += "DocumentName:" + bf.toString();
             documentNameQuery += " AND DocumentExtension:" + ClientUtils.escapeQueryChars( extension ) + "*";
+
+            //documentNameQuery = documentNameQuery.replaceAll(ClientUtils.escapeQueryChars("*"), "*");
+
+
         }
         else
         {

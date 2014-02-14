@@ -9,10 +9,12 @@ import org.kimios.kernel.exception.IndexException;
 import org.kimios.kernel.index.AbstractIndexManager;
 import org.kimios.kernel.security.Role;
 import org.kimios.kernel.security.Session;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Search Management Controller
  */
+@Transactional
 public class SearchManagementController extends AKimiosController implements ISearchManagementController
 {
 

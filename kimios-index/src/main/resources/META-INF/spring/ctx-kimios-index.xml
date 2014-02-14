@@ -24,7 +24,7 @@
 
   <!-- provide a SolrIndexManager class / No interface here -->
   <bean id="indexManagerSolr" class="org.kimios.kernel.index.solr.SearchServiceSolrFactory" scope="singleton"
-        depends-on="pathController">
+        depends-on="pathController" destroy-method="shutdownSolr">
     <property name="serverMode" value="${dms.index.solr.mode.server}"/>
     <property name="solrHome" value="${dms.index.solr.home}"/>
     <property name="solrUrl" value="${dms.index.solr.server.url}"/>
@@ -36,6 +36,16 @@
 
 
 
+   <bean class="org.kimios.kernel.events.impl.AddonDataHandler">
+        <constructor-arg>
+            <bean class="org.codehaus.jackson.map.ObjectMapper" />
+        </constructor-arg>
+   </bean>
+
+
+   <bean id="solrIndexEventHandler" class="org.kimios.kernel.index.solr.SolrIndexer">
+       <property name="indexManager" ref="indexManagerSolr"/>
+   </bean>
 
   <bean id="searchRequestFactory" class="org.kimios.kernel.index.query.factory.SearchRequestFactory" parent="hfactory" />
 
@@ -53,7 +63,7 @@
 
   <!-- index filter mapping Old filter mapping loading method. Now replaced with Unified Tika Filter
   <bean class="org.kimios.kernel.index.FiltersMapper" factory-method="getInstance"
-        init-method="loadFiltersMapping"/> -->
+        init-method="loadFiltersMapping"/>
 
 
   <aop:config>
@@ -63,10 +73,10 @@
       <aop:pointcut id="searchMngService"
                     expression="execution(* org.kimios.kernel.controller.ISearchManagementController.*(..))"/>
 
-    <aop:advisor advice-ref="txAdvice" pointcut-ref="searchService"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="searchService"/>
 
 
       <aop:advisor advice-ref="txAdvice" pointcut-ref="searchMngService"/>
-  </aop:config>
+  </aop:config> -->
 
 </beans>
