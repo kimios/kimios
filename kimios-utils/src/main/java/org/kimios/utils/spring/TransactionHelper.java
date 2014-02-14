@@ -18,39 +18,44 @@ package org.kimios.utils.spring;
 
 import javax.transaction.UserTransaction;
 
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.jta.JtaTransactionManager;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 public class TransactionHelper
 {
-    public void startNew(Integer timeout) throws Exception
+    public TransactionStatus startNew(Integer timeout) throws Exception
     {
-        JtaTransactionManager txMngr = ApplicationContextProvider.loadBean(JtaTransactionManager.class);
-        UserTransaction userTransaction = txMngr.getUserTransaction();
+        PlatformTransactionManager txMngr = ApplicationContextProvider.loadBean(PlatformTransactionManager.class);
+
+
+        DefaultTransactionDefinition defaultTransactionDefinition = new DefaultTransactionDefinition();
         if (timeout != null) {
-            userTransaction.setTransactionTimeout(timeout);
+            defaultTransactionDefinition.setTimeout(timeout);
         }
-        userTransaction.begin();
+        TransactionStatus t = txMngr.getTransaction(defaultTransactionDefinition);
+
+        return t;
+
     }
 
-    public void commit() throws Exception
+    public void commit(TransactionStatus status) throws Exception
     {
-        JtaTransactionManager txMngr = ApplicationContextProvider.loadBean(JtaTransactionManager.class);
-        UserTransaction userTransaction = txMngr.getUserTransaction();
-        userTransaction.commit();
+        PlatformTransactionManager txMngr = ApplicationContextProvider.loadBean(PlatformTransactionManager.class);
+        txMngr.commit(status);
     }
 
-    public void rollback() throws Exception
+    public void rollback(TransactionStatus status) throws Exception
     {
-        JtaTransactionManager txMngr = ApplicationContextProvider.loadBean(JtaTransactionManager.class);
-        UserTransaction userTransaction = txMngr.getUserTransaction();
-        userTransaction.rollback();
+        PlatformTransactionManager txMngr = ApplicationContextProvider.loadBean(PlatformTransactionManager.class);
+        txMngr.rollback(status);
     }
 
-    public static int displayCurrentTxTimeout()
+    public static int displayCurrentTxTimeout(TransactionStatus status)
     {
-        JtaTransactionManager txMngr = ApplicationContextProvider.loadBean(JtaTransactionManager.class);
-        return txMngr.getDefaultTimeout();
+        return -1;
     }
 }
 

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.ManagedList;
+import org.springframework.osgi.context.ConfigurableOsgiBundleApplicationContext;
 
 /**
  * Created with IntelliJ IDEA.
@@ -48,6 +49,7 @@ public class MergePostProcessor implements BeanFactoryPostProcessor {
     }
 
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+
         BeanDefinition u = beanFactory.getBeanDefinition(beanToMerge);
         PropertyValue value = u.getPropertyValues().getPropertyValue(beanPropertyToMerge);
         if (value.getValue() instanceof ManagedList) {

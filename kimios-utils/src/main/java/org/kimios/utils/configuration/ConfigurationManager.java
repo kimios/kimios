@@ -21,9 +21,10 @@ import java.util.List;
 import org.kimios.exceptions.ConfigException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ApplicationContext;
 
-public class ConfigurationManager
+public class ConfigurationManager implements FactoryBean<ConfigurationManager>
 {
     private static Logger log = LoggerFactory.getLogger(ConfigurationManager.class);
 
@@ -41,9 +42,32 @@ public class ConfigurationManager
 
     private static ConfigurationManager instance;
 
-    public ConfigurationManager()
+    private ConfigurationManager()
     {
         instance = this;
+        log.info("Creating Kimios Configuration Manager");
+    }
+
+    @Override
+    public ConfigurationManager getObject() throws Exception {
+        ConfigurationManager cfg = new ConfigurationManager();
+        cfg.holder = getHolder();
+        ConfigurationManager.instance = cfg;
+
+
+        log.info("While building Configuration Manager: " + getHolder() + " ==> " + cfg.holder);
+
+        return cfg;
+    }
+
+    @Override
+    public Class<?> getObjectType() {
+        return ConfigurationManager.class;
+    }
+
+    @Override
+    public boolean isSingleton() {
+        return true;
     }
 
     public static void init(ApplicationContext springContext) throws ConfigException
@@ -73,7 +97,8 @@ public class ConfigurationManager
 
     public static List<String> getListValue(String key) throws ConfigException
     {
-        if (instance.holder.exists(key)) {
+        log.info("Instance " + instance + ". " + (instance != null ? instance.holder : " No instance"));
+        if (instance != null && instance.holder != null && instance.holder.exists(key)) {
             return instance.holder.getValues(key);
         } else {
             log.warn("[Kimios Kernel] Key " + key + " cannot be found in global configuration");
