@@ -21,6 +21,7 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.List;
 
 /**
  * Allows to convert .DOC to HTML content
@@ -71,6 +72,7 @@ public class DocToHTML extends ConverterImpl {
             log.debug("Converting " + sourcePath + " to HTML content...");
             InputSource result = InputSourceFactory.getInputSource(targetPath);
             result.setHumanName(source.getName() + "_" + source.getType() + "." + OUTPUT_EXTENSION);
+            result.setMimeType(this.converterTargetMimeType());
             return result;
 
         } catch (Exception e) {
@@ -81,5 +83,19 @@ public class DocToHTML extends ConverterImpl {
             // Delete obsolete file
             new File(sourcePath).delete();
         }
+    }
+
+    @Override
+    public InputSource convertInputSources(List<InputSource> sources) throws ConverterException {
+        if(sources.size() == 1){
+            return convertInputSource(sources.get(0));
+        } else
+            throw new ConverterException("Converter " + this.getClass().getName() + " cannot process many versions at once");
+
+    }
+
+    @Override
+    public String converterTargetMimeType() {
+        return "text/html";
     }
 }

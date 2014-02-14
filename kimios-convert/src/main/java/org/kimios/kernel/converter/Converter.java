@@ -19,4 +19,9 @@ public interface Converter {
     InputSource convertInputSources(List<InputSource> sources)
             throws ConverterException;
 
+    /*
+        Get Content Type OutPut
+     */
+    String converterTargetMimeType();
+
 }

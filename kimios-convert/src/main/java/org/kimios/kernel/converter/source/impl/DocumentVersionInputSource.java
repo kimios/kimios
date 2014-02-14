@@ -20,7 +20,8 @@ public class DocumentVersionInputSource extends InputSourceImpl {
     }
 
     public String getType() throws MethodNotImplemented {
-        return version.getDocument().getExtension().toLowerCase();
+        return version.getDocument().getExtension() != null ?
+            version.getDocument().getExtension().toLowerCase() : null;
     }
 
     public String getName() throws MethodNotImplemented {
@@ -34,4 +35,6 @@ public class DocumentVersionInputSource extends InputSourceImpl {
     public DocumentVersion getVersion() {
         return version;
     }
+
+
 }

@@ -109,4 +109,9 @@ public class BarcodeTransformer extends ConverterImpl {
         fileOutputStream.close();
     }
 
+    @Override
+    public String converterTargetMimeType() {
+        return "application/pdf";
+    }
+
 }

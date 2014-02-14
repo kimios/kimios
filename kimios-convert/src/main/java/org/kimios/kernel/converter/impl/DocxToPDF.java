@@ -3,6 +3,8 @@ package org.kimios.kernel.converter.impl;
 import org.apache.commons.io.IOUtils;
 import org.apache.poi.xwpf.converter.core.FileImageExtractor;
 import org.apache.poi.xwpf.converter.core.FileURIResolver;
+import org.apache.poi.xwpf.converter.pdf.PdfConverter;
+import org.apache.poi.xwpf.converter.pdf.PdfOptions;
 import org.apache.poi.xwpf.converter.xhtml.XHTMLConverter;
 import org.apache.poi.xwpf.converter.xhtml.XHTMLOptions;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -19,10 +21,10 @@ import java.util.List;
 /**
  * Allows to convert .DOCX to HTML content
  */
-public class DocxToHTML extends ConverterImpl {
+public class DocxToPDF extends ConverterImpl {
 
     private static final String[] INPUT_EXTENSIONS = new String[]{"docx", "odt"};
-    private static final String OUTPUT_EXTENSION = "html";
+    private static final String OUTPUT_EXTENSION = "pdf";
 
     @Override
     public InputSource convertInputSource(InputSource source) throws ConverterException {
@@ -51,16 +53,15 @@ public class DocxToHTML extends ConverterImpl {
             imgFolder.mkdirs();
 
             XWPFDocument document = new XWPFDocument(in);
-            XHTMLOptions options = XHTMLOptions.create();
+            PdfOptions options = PdfOptions.create();
             options.setExtractor( new FileImageExtractor( imgFolder  ) );
             // URI resolver
-            options.URIResolver( new FileURIResolver( imgFolder ) );
             // 3) Convert XWPFDocument to HTML
 
             // Convert XWPFDocument to XHTML
             log.debug("Converting " + sourcePath + " to HTML content...");
             OutputStream out = new FileOutputStream(targetPath);
-            XHTMLConverter.getInstance().convert(document, out, options);
+            PdfConverter.getInstance().convert(document, out, options);
 
             // Return HTML-based InputSource
             InputSource result = InputSourceFactory.getInputSource(targetPath);
@@ -94,6 +95,6 @@ public class DocxToHTML extends ConverterImpl {
 
     @Override
     public String converterTargetMimeType() {
-        return "text/html";
+        return "application/pdf";
     }
 }

@@ -67,4 +67,14 @@ public class PDFMerger extends ConverterImpl {
             throw new ConverterException(e);
         }
     }
+
+    @Override
+    public InputSource convertInputSource(InputSource source) throws ConverterException {
+        throw new ConverterException("Converter " + this.getClass().getName() + " should process more than one version at once");
+    }
+
+    @Override
+    public String converterTargetMimeType() {
+        return "application/pdf";
+    }
 }

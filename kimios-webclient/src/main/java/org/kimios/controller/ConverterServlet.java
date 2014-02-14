@@ -16,8 +16,11 @@
  */
 package org.kimios.controller;
 
+import org.apache.commons.lang.StringUtils;
 import org.kimios.core.configuration.Config;
 import org.kimios.utils.configuration.ConfigurationManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -28,20 +31,40 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.StringTokenizer;
 
 public class ConverterServlet extends HttpServlet {
+
+    private static Logger logger = LoggerFactory.getLogger(ConverterServlet.class);
+
+
+    private static String SERVICE_URL = "/rest/converter/convertDocuments";
+
+    private static String SERVICE_URL_SINGLE = "/rest/converter/convertDocument";
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String serverUrl = ConfigurationManager.getValue(Config.DM_SERVER_URL);
-        String serviceContext = ConfigurationManager.getValue(Config.DM_SERVICE_CONTEXT) + "/rest/converter/convertDocuments";
+        //Count documentIds
+        int countDoc = StringUtils.countMatches(req.getQueryString(), "documentId");
+        String serviceContext = ConfigurationManager.getValue(Config.DM_SERVICE_CONTEXT) + (countDoc == 1 ? SERVICE_URL_SINGLE : SERVICE_URL);
         String query = req.getQueryString();
-        String rebuiltUrl = serverUrl + serviceContext + "?" + query;
 
-        System.out.println("open connection with rebuilt url: " + rebuiltUrl);
+        boolean inline = req.getParameter("inline") != null && req.getParameter("inline").equals("true");
+        String rebuiltUrl = serverUrl;
+        if(inline)
+            rebuiltUrl += serviceContext + "?" + query.substring(0, query.indexOf("&inline=true"));
+        else
+            rebuiltUrl += serviceContext + "?" + query;
+
+        logger.debug("open connection with rebuilt url: " + rebuiltUrl);
         URLConnection connection = new URL(rebuiltUrl).openConnection();
-
-        resp.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        resp.setHeader("Content-Disposition", connection.getHeaderField("Content-Disposition"));
+        String contentDisposition = connection.getHeaderField("Content-Disposition");
+        resp.setContentType(connection.getContentType());
+        if(inline){
+            resp.setHeader("Content-Disposition", contentDisposition.replace("attachment;", "inline;"));
+        }else
+            resp.setHeader("Content-Disposition", contentDisposition );
 
         int read = -1;
         byte[] data = new byte[4096];

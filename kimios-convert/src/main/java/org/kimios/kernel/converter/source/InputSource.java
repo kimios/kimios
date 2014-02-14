@@ -11,9 +11,17 @@ public interface InputSource {
 
     String getType() throws MethodNotImplemented;
 
+    String getMimeType();
+
+    void setMimeType(String  mimeType) throws MethodNotImplemented;
+
     String getName() throws MethodNotImplemented;
 
     void setHumanName(String altName);
 
     String getHumanName();
+
+    void setPublicUrl(String publicUrl);
+
+    public String getPublicUrl();
 }

@@ -39,9 +39,10 @@ public class FileToZip extends ConverterImpl {
             writer = new ZipFileWriter(targetPath);
 
             log.debug("Adding " + sourcePath + "...");
-            writer.addFile(sourcePath);
+            writer.addFile(sourcePath, source.getName() + (source.getType() != null ? "." + source.getType() : ""));
             InputSource result = InputSourceFactory.getInputSource(targetPath);
-            result.setHumanName(source.getName() + "_" + source.getType() + "." + OUTPUT_EXTENSION);
+            result.setHumanName(source.getName() + "_"
+                    + (source.getType() != null ? source.getType() : "") + "." + OUTPUT_EXTENSION);
             return result;
 
         } catch (Exception e) {
@@ -72,20 +73,21 @@ public class FileToZip extends ConverterImpl {
                     FileNameGenerator.generate() + "." + OUTPUT_EXTENSION;
             writer = new ZipFileWriter(targetPath);
 
-            for (int i = 0; i < sources.size(); ++i) {
+            for (InputSource source: sources) {
                 // Copy given resource to temporary repository
-                String sourcePath = temporaryRepository + "/" + sources.get(i).getName() + "_" +
-                        FileNameGenerator.generate() + "." + sources.get(i).getType();
-                IOUtils.copyLarge(sources.get(i).getInputStream(), new FileOutputStream(sourcePath));
+                String sourcePath = temporaryRepository + "/" + source.getName() + "_" +
+                        FileNameGenerator.generate() + "." + source.getType();
+                IOUtils.copyLarge(source.getInputStream(), new FileOutputStream(sourcePath));
                 filesToDelete.add(sourcePath);
 
                 // Add given data to zip file
                 log.debug("Adding " + sourcePath + "...");
-                writer.addFile(sourcePath);
+                writer.addFile(sourcePath, source.getName() + (source.getType() != null ? "." + source.getType() : ""));
             }
 
             InputSource result = InputSourceFactory.getInputSource(targetPath);
             result.setHumanName(OUTPUT_PREFIX + "_" + FileNameGenerator.getTime() + "." + OUTPUT_EXTENSION);
+            result.setMimeType(this.converterTargetMimeType());
             return result;
 
         } catch (Exception e) {
@@ -120,12 +122,12 @@ public class FileToZip extends ConverterImpl {
             this.output = new ZipOutputStream(new BufferedOutputStream(checksum));
         }
 
-        public void addFile(String fileName) throws FileNotFoundException, IOException {
+        public void addFile(String fileName, String zipInternalFileName) throws FileNotFoundException, IOException {
             FileInputStream fis = new FileInputStream(fileName);
             int size = 0;
             byte[] buffer = new byte[1024];
             File file = new File(fileName);
-            ZipEntry zipEntry = new ZipEntry(file.getName());
+            ZipEntry zipEntry = new ZipEntry(zipInternalFileName);
             this.output.putNextEntry(zipEntry);
             while ((size = fis.read(buffer, 0, buffer.length)) > 0) {
                 this.output.write(buffer, 0, size);
@@ -137,6 +139,12 @@ public class FileToZip extends ConverterImpl {
         public void close() throws IOException {
             this.output.close();
         }
+    }
+
+
+    @Override
+    public String converterTargetMimeType() {
+        return "application/zip";
     }
 }
 

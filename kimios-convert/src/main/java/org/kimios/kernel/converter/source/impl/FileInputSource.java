@@ -18,6 +18,11 @@ public class FileInputSource extends InputSourceImpl {
         this.file = file;
     }
 
+    public FileInputSource(File file, String contentType) {
+        this.file = file;
+        this.mimeType = contentType;
+    }
+
     public FileInputSource(String path) throws FileNotFoundException {
         this.file = new File(path);
     }
@@ -36,4 +41,6 @@ public class FileInputSource extends InputSourceImpl {
     public String getName() throws MethodNotImplemented {
         return file.getName();
     }
+
+
 }
