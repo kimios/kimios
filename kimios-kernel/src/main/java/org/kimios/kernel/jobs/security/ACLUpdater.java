@@ -21,7 +21,10 @@ import java.util.List;
 import java.util.Vector;
 
 import org.kimios.kernel.dms.DMEntity;
+import org.kimios.kernel.dms.DMEntityType;
 import org.kimios.kernel.dms.FactoryInstantiator;
+import org.kimios.kernel.events.annotations.DmsEvent;
+import org.kimios.kernel.events.annotations.DmsEventName;
 import org.kimios.kernel.security.DMEntityACL;
 import org.kimios.kernel.security.DMEntitySecurity;
 import org.kimios.kernel.security.DMEntitySecurityFactory;
@@ -30,17 +33,19 @@ import org.kimios.kernel.security.Session;
 import org.kimios.utils.spring.TransactionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 public class ACLUpdater implements IACLUpdater
 {
     private static Logger log = LoggerFactory.getLogger(IACLUpdater.class);
 
     //TODO: FIX Potential trouble Regarding Ended Transaction before end of clean. Should ENHANCE Performance
+    @DmsEvent(eventName = { DmsEventName.ENTITY_ACL_UPDATE })
     public List<DMEntityACL> updateAclsRecursiveMode(Session session, String xmlStream, DMEntity entity)
             throws Exception
     {
 
-        log.info("Tx Timeout: " + TransactionHelper.displayCurrentTxTimeout());
         DMEntitySecurityFactory fact =
                 org.kimios.kernel.security.FactoryInstantiator.getInstance().getDMEntitySecurityFactory();
         Vector<DMEntitySecurity> des = DMEntitySecurityUtil.getDMentitySecuritesFromXml(xmlStream, entity);
@@ -59,6 +64,9 @@ public class ACLUpdater implements IACLUpdater
                 listAclToIndex.addAll(fact.saveDMEntitySecurity(nSec));
             }
         }
+
+        //Load symbolic links mapper
+
 
         return listAclToIndex;
     }

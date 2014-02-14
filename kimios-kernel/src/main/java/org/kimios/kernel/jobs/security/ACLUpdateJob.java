@@ -19,6 +19,7 @@ package org.kimios.kernel.jobs.security;
 import java.util.List;
 
 import org.kimios.kernel.dms.DMEntity;
+import org.kimios.kernel.events.EventContext;
 import org.kimios.kernel.jobs.JobImpl;
 import org.kimios.kernel.security.DMEntityACL;
 import org.kimios.kernel.security.Session;
@@ -42,6 +43,7 @@ public class ACLUpdateJob extends JobImpl
         String xmlStream = (String) params[0];
         DMEntity entity = (DMEntity) params[1];
         List<DMEntityACL> acls = updater.updateAclsRecursiveMode(session, xmlStream, entity);
+        EventContext.addParameter("acls", acls);
         log.debug("Ending job execution");
         return acls;
     }
