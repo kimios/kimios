@@ -1,7 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2012-2013  DevLib'
- *
+ * Copyright (C) 2008-2014  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -12,12 +11,9 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.kimios.kernel.dms.hibernate;
-
-import java.text.SimpleDateFormat;
-import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.NonUniqueObjectException;
@@ -25,19 +21,12 @@ import org.hibernate.Query;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.dms.Document;
-import org.kimios.kernel.dms.DocumentVersion;
-import org.kimios.kernel.dms.Meta;
-import org.kimios.kernel.dms.MetaBooleanValue;
-import org.kimios.kernel.dms.MetaDateValue;
-import org.kimios.kernel.dms.MetaNumberValue;
-import org.kimios.kernel.dms.MetaStringValue;
-import org.kimios.kernel.dms.MetaType;
-import org.kimios.kernel.dms.MetaValue;
-import org.kimios.kernel.dms.MetaValueBean;
-import org.kimios.kernel.dms.MetaValueFactory;
+import org.kimios.kernel.dms.*;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
+
+import java.text.SimpleDateFormat;
+import java.util.List;
 
 public class HMetaValueFactory extends HFactory implements MetaValueFactory
 {

@@ -1,7 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2012-2013  DevLib'
- *
+ * Copyright (C) 2008-2014  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -12,10 +11,23 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.kimios.controller;
 
+import flexjson.JSONSerializer;
+import org.apache.commons.lang.StringUtils;
+import org.kimios.client.controller.helpers.XMLGenerators;
+import org.kimios.core.configuration.Config;
+import org.kimios.kernel.ws.pojo.Document;
+import org.kimios.kernel.ws.pojo.DocumentComment;
+import org.kimios.kernel.ws.pojo.DocumentVersion;
+import org.kimios.kernel.ws.pojo.Meta;
+import org.kimios.utils.configuration.ConfigurationManager;
+
+import javax.mail.internet.MimeUtility;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.net.URLEncoder;
@@ -23,21 +35,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.mail.internet.MimeUtility;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang.StringUtils;
-import org.kimios.client.controller.helpers.XMLGenerators;
-import org.kimios.core.configuration.Config;
-import org.kimios.utils.configuration.ConfigurationManager;
-import org.kimios.kernel.ws.pojo.Document;
-import org.kimios.kernel.ws.pojo.DocumentComment;
-import org.kimios.kernel.ws.pojo.DocumentVersion;
-import org.kimios.kernel.ws.pojo.Meta;
-
-import flexjson.JSONSerializer;
 
 public class DocumentVersionActionHandler extends Controller
 {

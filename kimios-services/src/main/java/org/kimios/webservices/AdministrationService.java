@@ -16,20 +16,15 @@
  */
 package org.kimios.webservices;
 
+import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
+import org.kimios.kernel.ws.pojo.*;
+
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-
-import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
-import org.kimios.kernel.ws.pojo.AuthenticationSource;
-import org.kimios.kernel.ws.pojo.Document;
-import org.kimios.kernel.ws.pojo.Group;
-import org.kimios.kernel.ws.pojo.Role;
-import org.kimios.kernel.ws.pojo.Session;
-import org.kimios.kernel.ws.pojo.User;
 
 /**
  * Created by IntelliJ IDEA. User: farf Date: 4/1/12 Time: 5:00 PM

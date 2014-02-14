@@ -16,11 +16,6 @@
  */
 package org.kimios.webservices.impl;
 
-import java.util.List;
-import java.util.Vector;
-
-import javax.jws.WebService;
-
 import org.kimios.kernel.dms.Document;
 import org.kimios.kernel.dms.Folder;
 import org.kimios.kernel.dms.Workspace;
@@ -30,6 +25,10 @@ import org.kimios.kernel.ws.pojo.Log;
 import org.kimios.webservices.CoreService;
 import org.kimios.webservices.DMServiceException;
 import org.kimios.webservices.LogService;
+
+import javax.jws.WebService;
+import java.util.List;
+import java.util.Vector;
 
 @WebService(targetNamespace = "http://kimios.org", serviceName = "LogService", name = "LogService")
 public class LogServiceImpl extends CoreService implements LogService

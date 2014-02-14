@@ -16,18 +16,15 @@
  */
 package org.kimios.webservices;
 
-import javax.jws.WebParam;
-import javax.jws.WebService;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MultivaluedMap;
-
-import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.kimios.kernel.index.query.model.SearchRequest;
 import org.kimios.kernel.index.query.model.SearchResponse;
 import org.kimios.kernel.ws.pojo.DMEntity;
 import org.kimios.kernel.ws.pojo.Document;
 
+import javax.jws.WebParam;
+import javax.jws.WebService;
+import javax.ws.rs.*;
 import java.util.List;
 
 /**

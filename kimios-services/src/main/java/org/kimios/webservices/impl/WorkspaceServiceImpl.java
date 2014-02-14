@@ -16,15 +16,14 @@
  */
 package org.kimios.webservices.impl;
 
-import java.util.List;
-
-import javax.jws.WebService;
-
 import org.kimios.kernel.dms.Workspace;
 import org.kimios.kernel.security.Session;
 import org.kimios.webservices.CoreService;
 import org.kimios.webservices.DMServiceException;
 import org.kimios.webservices.WorkspaceService;
+
+import javax.jws.WebService;
+import java.util.List;
 
 
 @WebService(targetNamespace = "http://kimios.org", serviceName = "WorkspaceService", name = "WorkspaceService")

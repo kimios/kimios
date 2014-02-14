@@ -1,7 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2012-2013  DevLib'
- *
+ * Copyright (C) 2008-2014  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -12,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.kimios.client.controller;
 
@@ -26,22 +25,13 @@ import org.kimios.client.controller.helpers.ByteArrayDataSource;
 import org.kimios.client.controller.helpers.FileCompressionHelper;
 import org.kimios.client.controller.helpers.HashCalculator;
 import org.kimios.client.controller.helpers.HashInputStream;
-import org.kimios.client.exception.AccessDeniedException;
-import org.kimios.client.exception.ConfigException;
-import org.kimios.client.exception.DMSException;
-import org.kimios.client.exception.ExceptionHelper;
-import org.kimios.client.exception.TransferIntegrityException;
+import org.kimios.client.exception.*;
 import org.kimios.kernel.ws.pojo.DataTransaction;
 import org.kimios.webservices.DocumentVersionService;
 import org.kimios.webservices.FileTransferService;
 
 import javax.ws.rs.core.MediaType;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;

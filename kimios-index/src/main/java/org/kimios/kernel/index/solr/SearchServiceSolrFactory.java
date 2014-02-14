@@ -1,7 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2012-2013  DevLib'
- *
+ * Copyright (C) 2008-2014  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -12,29 +11,15 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.kimios.kernel.index.solr;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
-import org.apache.solr.core.ConfigSolr;
-import org.apache.solr.core.ConfigSolrXmlOld;
 import org.apache.solr.core.CoreContainer;
-import org.apache.solr.core.SolrResourceLoader;
 import org.kimios.kernel.controller.IPathController;
 import org.kimios.kernel.exception.IndexException;
 import org.kimios.kernel.index.SolrIndexManager;
@@ -42,6 +27,11 @@ import org.kimios.kernel.index.query.factory.DocumentFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
+
+import java.io.*;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Spring factory to instantiate the @see SolrIndexManager

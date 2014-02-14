@@ -1,7 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2008-2012  DevLib'
- *
+ * Copyright (C) 2008-2014  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -12,9 +11,13 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.kimios.kernel.hibernate;
+
+import org.hibernate.HibernateException;
+import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.usertype.UserType;
 
 import java.io.Serializable;
 import java.sql.PreparedStatement;
@@ -22,10 +25,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Date;
-
-import org.hibernate.HibernateException;
-import org.hibernate.engine.spi.SessionImplementor;
-import org.hibernate.usertype.UserType;
 
 /**
  *

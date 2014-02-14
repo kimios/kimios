@@ -1,7 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2012-2013  DevLib'
- *
+ * Copyright (C) 2008-2014  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -12,13 +11,9 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.kimios.kernel.log.factory;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Vector;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -32,6 +27,10 @@ import org.kimios.kernel.log.DMEntityLog;
 import org.kimios.kernel.log.Log;
 import org.kimios.kernel.log.LogFactory;
 import org.kimios.kernel.user.User;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Vector;
 
 public class HLogFactory extends HFactory implements LogFactory
 {

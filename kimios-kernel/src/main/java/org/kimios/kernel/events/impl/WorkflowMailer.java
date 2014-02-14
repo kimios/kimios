@@ -1,7 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2012-2013  DevLib'
- *
+ * Copyright (C) 2008-2014  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -12,23 +11,13 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.kimios.kernel.events.impl;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Vector;
-
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.configuration.Config;
-import org.kimios.kernel.dms.Document;
-import org.kimios.kernel.dms.DocumentWorkflowStatusRequest;
-import org.kimios.kernel.dms.FactoryInstantiator;
-import org.kimios.kernel.dms.WorkflowStatus;
-import org.kimios.kernel.dms.WorkflowStatusManager;
+import org.kimios.kernel.dms.*;
 import org.kimios.kernel.events.EventContext;
 import org.kimios.kernel.events.GenericEventHandler;
 import org.kimios.kernel.events.annotations.DmsEvent;
@@ -44,6 +33,12 @@ import org.kimios.kernel.utils.TemplateUtil;
 import org.kimios.utils.configuration.ConfigurationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Vector;
 
 public class WorkflowMailer extends GenericEventHandler
 {

@@ -16,18 +16,15 @@
  */
 package org.kimios.webservices;
 
-import javax.jws.WebMethod;
+import org.apache.cxf.jaxrs.ext.multipart.Multipart;
+import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
+import org.kimios.kernel.ws.pojo.DataTransaction;
+
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
-
-import org.apache.cxf.jaxrs.ext.multipart.Multipart;
-import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
-import org.kimios.kernel.ws.pojo.DataTransaction;
-
 import java.io.InputStream;
 
 /**

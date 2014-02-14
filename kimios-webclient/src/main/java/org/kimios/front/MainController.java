@@ -1,7 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2012-2013  DevLib'
- *
+ * Copyright (C) 2008-2014  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -12,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 /*
  * To change this template, choose Tools | Templates
@@ -22,26 +21,8 @@ package org.kimios.front;
 
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.kimios.controller.*;
 import org.kimios.core.ParametersExtractor;
-import org.kimios.controller.AdminControllerWeb;
-import org.kimios.controller.AuthenticationControllerWeb;
-import org.kimios.controller.Controller;
-import org.kimios.controller.DmEntityControllerWeb;
-import org.kimios.controller.DocumentActionHandler;
-import org.kimios.controller.DocumentVersionActionHandler;
-import org.kimios.controller.ExtensionControllerWeb;
-import org.kimios.controller.FolderActionHandler;
-import org.kimios.controller.InternationalizationControllerWeb;
-import org.kimios.controller.LogControllerWeb;
-import org.kimios.controller.MetaControllerWeb;
-import org.kimios.controller.ReportingControllerWeb;
-import org.kimios.controller.SearchControllerWeb;
-import org.kimios.controller.SecurityControllerWeb;
-import org.kimios.controller.StudioControllerWeb;
-import org.kimios.controller.TreeControllerWeb;
-import org.kimios.controller.UploadManager;
-import org.kimios.controller.WorkflowControllerWeb;
-import org.kimios.controller.WorkspaceActionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

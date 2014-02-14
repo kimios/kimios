@@ -1,7 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2008-2012  DevLib'
- *
+ * Copyright (C) 2008-2014  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -12,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.kimios.kernel.controller.impl;
 
@@ -24,26 +23,18 @@ import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.ISearchController;
 import org.kimios.kernel.dms.*;
-import org.kimios.kernel.dms.DMEntity;
-import org.kimios.kernel.dms.Document;
-import org.kimios.kernel.dms.DocumentType;
-import org.kimios.kernel.dms.Folder;
-import org.kimios.kernel.dms.Meta;
-import org.kimios.kernel.dms.Workspace;
 import org.kimios.kernel.exception.AccessDeniedException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.IndexException;
 import org.kimios.kernel.index.ISolrIndexManager;
 import org.kimios.kernel.index.query.FacetQueryBuilder;
 import org.kimios.kernel.index.query.QueryBuilder;
-import org.kimios.kernel.index.query.factory.*;
-import org.kimios.kernel.index.query.factory.DocumentFactory;
+import org.kimios.kernel.index.query.factory.SearchRequestFactory;
 import org.kimios.kernel.index.query.model.Criteria;
 import org.kimios.kernel.index.query.model.DmsSolrFields;
 import org.kimios.kernel.index.query.model.SearchRequest;
 import org.kimios.kernel.index.query.model.SearchResponse;
 import org.kimios.kernel.security.Session;
-import org.kimios.kernel.ws.pojo.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,12 +49,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TimeZone;
+import java.util.*;
 
 /**
  * @author Fabien Alin

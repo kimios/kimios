@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ Kimios - Document Management System Software
-  ~ Copyright (C) 2012-2013  DevLib'
-  ~
+  ~ Copyright (C) 2008-2014  DevLib'
   ~ This program is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU Affero General Public License as
   ~ published by the Free Software Foundation, either version 2 of the
@@ -13,14 +12,12 @@
   ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   ~ GNU Affero General Public License for more details.
   ~ You should have received a copy of the GNU Affero General Public License
-  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  ~ aong with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
   <!-- provide a SolrIndexManager class / No interface here -->
   <bean id="indexManagerSolr" class="org.kimios.kernel.index.solr.SearchServiceSolrFactory" scope="singleton"

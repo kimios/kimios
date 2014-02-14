@@ -1,7 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2012-2013  DevLib'
- *
+ * Copyright (C) 2008-2014  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -12,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 /*
  * To change this template, choose Tools | Templates
@@ -20,10 +19,8 @@
  */
 package org.kimios.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
+import flexjson.JSONDeserializer;
+import flexjson.JSONSerializer;
 import org.kimios.client.controller.DocumentController;
 import org.kimios.client.controller.FolderController;
 import org.kimios.client.controller.SearchController;
@@ -32,8 +29,9 @@ import org.kimios.client.controller.helpers.XMLGenerators;
 import org.kimios.core.wrappers.DMEntity;
 import org.kimios.kernel.ws.pojo.*;
 
-import flexjson.JSONDeserializer;
-import flexjson.JSONSerializer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Fabien Alin

@@ -1,7 +1,5 @@
 package org.kimios.webservices;
 
-import org.apache.cxf.jaxrs.ext.ParameterHandler;
-
 import javax.ws.rs.ext.ParamConverter;
 import javax.ws.rs.ext.ParamConverterProvider;
 import javax.ws.rs.ext.Provider;

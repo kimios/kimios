@@ -16,8 +16,10 @@
  */
 package org.kimios.webservices;
 
-import java.util.Date;
-import java.util.List;
+import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
+import org.kimios.kernel.ws.pojo.DocumentComment;
+import org.kimios.kernel.ws.pojo.DocumentVersion;
+import org.kimios.kernel.ws.pojo.Meta;
 
 import javax.jws.WebParam;
 import javax.jws.WebService;
@@ -25,11 +27,8 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-
-import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
-import org.kimios.kernel.ws.pojo.DocumentComment;
-import org.kimios.kernel.ws.pojo.DocumentVersion;
-import org.kimios.kernel.ws.pojo.Meta;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA. User: farf Date: 4/1/12 Time: 4:59 PM

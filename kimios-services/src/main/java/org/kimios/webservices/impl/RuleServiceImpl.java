@@ -16,11 +16,6 @@
  */
 package org.kimios.webservices.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
-import javax.jws.WebService;
-
 import org.kimios.kernel.rules.impl.RuleImpl;
 import org.kimios.kernel.security.Session;
 import org.kimios.kernel.ws.pojo.Rule;
@@ -29,6 +24,10 @@ import org.kimios.kernel.ws.pojo.RuleImplP;
 import org.kimios.webservices.CoreService;
 import org.kimios.webservices.DMServiceException;
 import org.kimios.webservices.RuleService;
+
+import javax.jws.WebService;
+import java.util.ArrayList;
+import java.util.Collection;
 
 @WebService(targetNamespace = "http://kimios.org", serviceName = "RuleService", name = "RuleService")
 public class RuleServiceImpl extends CoreService implements RuleService

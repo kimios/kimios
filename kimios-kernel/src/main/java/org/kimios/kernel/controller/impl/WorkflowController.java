@@ -1,7 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2012-2013  DevLib'
- *
+ * Copyright (C) 2008-2014  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -12,23 +11,15 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.kimios.kernel.controller.impl;
-
-import java.util.Date;
-import java.util.Vector;
 
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.configuration.Config;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.IWorkflowController;
-import org.kimios.kernel.dms.Document;
-import org.kimios.kernel.dms.DocumentWorkflowStatus;
-import org.kimios.kernel.dms.DocumentWorkflowStatusRequest;
-import org.kimios.kernel.dms.RequestStatus;
-import org.kimios.kernel.dms.WorkflowStatus;
-import org.kimios.kernel.dms.WorkflowStatusManagerFactory;
+import org.kimios.kernel.dms.*;
 import org.kimios.kernel.events.EventContext;
 import org.kimios.kernel.events.annotations.DmsEvent;
 import org.kimios.kernel.events.annotations.DmsEventName;
@@ -40,6 +31,9 @@ import org.kimios.kernel.security.Session;
 import org.kimios.kernel.user.Group;
 import org.kimios.utils.configuration.ConfigurationManager;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
+import java.util.Vector;
 
 @Transactional
 public class WorkflowController extends AKimiosController implements IWorkflowController

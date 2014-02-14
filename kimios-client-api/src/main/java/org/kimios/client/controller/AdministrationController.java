@@ -1,7 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2012-2013  DevLib'
- *
+ * Copyright (C) 2008-2014  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -12,21 +11,16 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.kimios.client.controller;
 
 import org.kimios.client.exception.AccessDeniedException;
 import org.kimios.client.exception.ConfigException;
-import org.kimios.client.exception.ExceptionHelper;
 import org.kimios.client.exception.DMSException;
+import org.kimios.client.exception.ExceptionHelper;
+import org.kimios.kernel.ws.pojo.*;
 import org.kimios.webservices.AdministrationService;
-import org.kimios.kernel.ws.pojo.AuthenticationSource;
-import org.kimios.kernel.ws.pojo.Document;
-import org.kimios.kernel.ws.pojo.Group;
-import org.kimios.kernel.ws.pojo.Role;
-import org.kimios.kernel.ws.pojo.Session;
-import org.kimios.kernel.ws.pojo.User;
 
 /**
  * Here are all of the administration functionalities (domain management, user

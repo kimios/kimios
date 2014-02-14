@@ -1,7 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2012-2013  DevLib'
- *
+ * Copyright (C) 2008-2014  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -12,14 +11,15 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.kimios.kernel.user.impl.factory.genericldaplayer;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
+import com.sun.jndi.ldap.ctl.VirtualListViewControl;
+import org.kimios.kernel.security.SecurityEntityType;
+import org.kimios.kernel.user.impl.GenericLDAPImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.naming.AuthenticationException;
 import javax.naming.Context;
@@ -31,14 +31,11 @@ import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 import javax.naming.ldap.Control;
 import javax.naming.ldap.InitialLdapContext;
-import javax.naming.ldap.PagedResultsControl;
 import javax.naming.ldap.SortControl;
-
-import com.sun.jndi.ldap.ctl.VirtualListViewControl;
-import org.kimios.kernel.security.SecurityEntityType;
-import org.kimios.kernel.user.impl.GenericLDAPImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
 
 public abstract class GenericLDAPFactory
 {

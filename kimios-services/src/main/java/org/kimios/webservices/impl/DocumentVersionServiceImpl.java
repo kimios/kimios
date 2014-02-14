@@ -16,13 +16,6 @@
  */
 package org.kimios.webservices.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Vector;
-
-import javax.jws.WebService;
-
 import org.kimios.kernel.dms.MetaValue;
 import org.kimios.kernel.security.Session;
 import org.kimios.kernel.ws.pojo.DocumentComment;
@@ -31,6 +24,12 @@ import org.kimios.kernel.ws.pojo.Meta;
 import org.kimios.webservices.CoreService;
 import org.kimios.webservices.DMServiceException;
 import org.kimios.webservices.DocumentVersionService;
+
+import javax.jws.WebService;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Vector;
 
 @WebService(targetNamespace = "http://kimios.org", serviceName = "DocumentVersionService", name = "DocumentVersionService")
 public class DocumentVersionServiceImpl extends CoreService implements DocumentVersionService

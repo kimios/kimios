@@ -1,7 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2012-2013  DevLib'
- *
+ * Copyright (C) 2008-2014  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -12,24 +11,20 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.kimios.kernel.dms.hibernate;
-
-import java.util.List;
-import java.util.Vector;
 
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
 import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.dms.Bookmark;
-import org.kimios.kernel.dms.BookmarkFactory;
-import org.kimios.kernel.dms.DMEntity;
-import org.kimios.kernel.dms.DMEntityType;
-import org.kimios.kernel.dms.FactoryInstantiator;
+import org.kimios.kernel.dms.*;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
+
+import java.util.List;
+import java.util.Vector;
 
 public class HBookmarkFactory extends HFactory implements BookmarkFactory
 {

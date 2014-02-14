@@ -16,7 +16,9 @@
  */
 package org.kimios.webservices;
 
-import java.util.Date;
+import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
+import org.kimios.kernel.ws.pojo.DocumentWorkflowStatusRequest;
+import org.kimios.kernel.ws.pojo.WorkflowStatus;
 
 import javax.jws.WebParam;
 import javax.jws.WebService;
@@ -24,10 +26,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-
-import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
-import org.kimios.kernel.ws.pojo.DocumentWorkflowStatusRequest;
-import org.kimios.kernel.ws.pojo.WorkflowStatus;
+import java.util.Date;
 
 /**
  * Created by IntelliJ IDEA. User: farf Date: 4/1/12 Time: 5:08 PM To change this template use File | Settings | File

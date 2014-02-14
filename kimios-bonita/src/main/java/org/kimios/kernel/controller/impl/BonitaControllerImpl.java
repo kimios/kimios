@@ -1,3 +1,19 @@
+/*
+ * Kimios - Document Management System Software
+ * Copyright (C) 2008-2014  DevLib'
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 2 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.kimios.kernel.controller.impl;
 
 import org.bonitasoft.engine.api.IdentityAPI;
@@ -6,16 +22,16 @@ import org.bonitasoft.engine.api.ProcessAPI;
 import org.bonitasoft.engine.api.TenantAPIAccessor;
 import org.bonitasoft.engine.bpm.comment.Comment;
 import org.bonitasoft.engine.bpm.data.DataDefinition;
-import org.bonitasoft.engine.bpm.flownode.*;
-import org.bonitasoft.engine.bpm.flownode.impl.UserTaskInstanceImpl;
+import org.bonitasoft.engine.bpm.flownode.ActivityInstance;
+import org.bonitasoft.engine.bpm.flownode.ActivityInstanceCriterion;
+import org.bonitasoft.engine.bpm.flownode.HumanTaskInstance;
+import org.bonitasoft.engine.bpm.flownode.MultiInstanceActivityInstance;
 import org.bonitasoft.engine.bpm.process.ProcessDefinitionNotFoundException;
 import org.bonitasoft.engine.bpm.process.ProcessDeploymentInfo;
 import org.bonitasoft.engine.bpm.process.ProcessDeploymentInfoCriterion;
 import org.bonitasoft.engine.exception.BonitaHomeNotSetException;
 import org.bonitasoft.engine.exception.ServerAPIException;
 import org.bonitasoft.engine.exception.UnknownAPITypeException;
-import org.bonitasoft.engine.exception.UpdateException;
-import org.bonitasoft.engine.identity.UserNotFoundException;
 import org.bonitasoft.engine.platform.LoginException;
 import org.bonitasoft.engine.platform.LogoutException;
 import org.bonitasoft.engine.session.APISession;

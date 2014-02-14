@@ -16,11 +16,6 @@
  */
 package org.kimios.webservices.impl;
 
-import java.util.Date;
-import java.util.Vector;
-
-import javax.jws.WebService;
-
 import org.kimios.kernel.dms.DocumentWorkflowStatus;
 import org.kimios.kernel.dms.DocumentWorkflowStatusRequest;
 import org.kimios.kernel.security.Session;
@@ -28,6 +23,10 @@ import org.kimios.kernel.ws.pojo.WorkflowStatus;
 import org.kimios.webservices.CoreService;
 import org.kimios.webservices.DMServiceException;
 import org.kimios.webservices.NotificationService;
+
+import javax.jws.WebService;
+import java.util.Date;
+import java.util.Vector;
 
 @WebService(targetNamespace = "http://kimios.org", serviceName = "NotificationService", name = "NotificationService")
 public class NotificationServiceImpl extends CoreService implements NotificationService

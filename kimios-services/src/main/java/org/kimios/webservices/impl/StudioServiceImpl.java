@@ -17,22 +17,16 @@
 package org.kimios.webservices.impl;
 
 
-import org.kimios.webservices.DMServiceException;
+import org.kimios.kernel.dms.MetaFeedImpl;
 import org.kimios.kernel.security.Session;
 import org.kimios.kernel.ws.pojo.*;
 import org.kimios.webservices.CoreService;
+import org.kimios.webservices.DMServiceException;
 import org.kimios.webservices.StudioService;
-import org.kimios.kernel.dms.MetaFeedImpl;
-import org.kimios.kernel.ws.pojo.DocumentType;
-import org.kimios.kernel.ws.pojo.MetaFeed;
-import org.kimios.kernel.ws.pojo.Workflow;
-import org.kimios.kernel.ws.pojo.WorkflowStatus;
-import org.kimios.kernel.ws.pojo.WorkflowStatusManager;
-
-import java.util.List;
-import java.util.Vector;
 
 import javax.jws.WebService;
+import java.util.List;
+import java.util.Vector;
 
 @WebService(targetNamespace = "http://kimios.org", serviceName = "StudioService", name = "StudioService")
 public class StudioServiceImpl extends CoreService implements StudioService {

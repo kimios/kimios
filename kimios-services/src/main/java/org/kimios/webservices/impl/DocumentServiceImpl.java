@@ -29,7 +29,6 @@ import javax.jws.WebService;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 @WebService(targetNamespace = "http://kimios.org", serviceName = "DocumentService", name = "DocumentService")
 public class DocumentServiceImpl extends CoreService implements DocumentService {

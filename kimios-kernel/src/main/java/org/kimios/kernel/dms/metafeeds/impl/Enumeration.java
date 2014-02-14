@@ -1,7 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2012-2013  DevLib'
- *
+ * Copyright (C) 2008-2014  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -12,29 +11,19 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.kimios.kernel.dms.metafeeds.impl;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.kimios.kernel.dms.MetaFeedImpl;
 import org.kimios.kernel.exception.MetaFeedSearchException;
+
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 @Entity
 @DiscriminatorValue(value = "org.kimios.kernel.dms.metafeeds.impl.Enumeration")

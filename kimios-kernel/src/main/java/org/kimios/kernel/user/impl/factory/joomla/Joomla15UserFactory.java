@@ -1,7 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2012-2013  DevLib'
- *
+ * Copyright (C) 2008-2014  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -12,15 +11,9 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.kimios.kernel.user.impl.factory.joomla;
-
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Map;
-import java.util.Vector;
 
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.exception.DataSourceException;
@@ -28,6 +21,12 @@ import org.kimios.kernel.user.Group;
 import org.kimios.kernel.user.User;
 import org.kimios.kernel.user.UserFactory;
 import org.kimios.kernel.user.impl.AuthenticationSourceJoomla15;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Map;
+import java.util.Vector;
 
 public class Joomla15UserFactory implements UserFactory
 {

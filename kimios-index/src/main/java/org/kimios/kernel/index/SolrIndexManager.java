@@ -1,7 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2012-2013  DevLib'
- *
+ * Copyright (C) 2008-2014  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -12,21 +11,9 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.kimios.kernel.index;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TimeZone;
-import java.util.Vector;
-
 
 import org.apache.lucene.search.Query;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -43,16 +30,7 @@ import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.util.SimpleOrderedMap;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.controller.IPathController;
-import org.kimios.kernel.dms.DMEntity;
-import org.kimios.kernel.dms.Document;
-import org.kimios.kernel.dms.DocumentVersion;
-import org.kimios.kernel.dms.DocumentWorkflowStatus;
-import org.kimios.kernel.dms.DocumentWorkflowStatusRequest;
-import org.kimios.kernel.dms.FactoryInstantiator;
-import org.kimios.kernel.dms.Lock;
-import org.kimios.kernel.dms.MetaType;
-import org.kimios.kernel.dms.MetaValue;
-import org.kimios.kernel.dms.WorkflowStatus;
+import org.kimios.kernel.dms.*;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.IndexException;
 import org.kimios.kernel.index.filters.impl.GlobalFilter;
@@ -61,6 +39,10 @@ import org.kimios.kernel.index.query.model.SearchResponse;
 import org.kimios.kernel.security.DMEntityACL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 
 public class SolrIndexManager

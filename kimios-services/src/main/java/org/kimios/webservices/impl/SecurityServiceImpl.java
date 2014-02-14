@@ -16,14 +16,6 @@
  */
 package org.kimios.webservices.impl;
 
-import java.util.List;
-import java.util.Vector;
-
-import javax.jws.WebParam;
-import javax.jws.WebService;
-import javax.ws.rs.FormParam;
-
-import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.kimios.kernel.security.Session;
 import org.kimios.kernel.user.AuthenticationSource;
 import org.kimios.kernel.user.Group;
@@ -32,6 +24,9 @@ import org.kimios.kernel.ws.pojo.User;
 import org.kimios.webservices.CoreService;
 import org.kimios.webservices.DMServiceException;
 import org.kimios.webservices.SecurityService;
+
+import javax.jws.WebService;
+import java.util.List;
 
 @WebService(targetNamespace = "http://kimios.org", serviceName = "SecurityService", name = "SecurityService")
 public class SecurityServiceImpl extends CoreService implements SecurityService

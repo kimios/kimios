@@ -18,14 +18,13 @@ package org.kimios.webservices;
 
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 
-import java.util.Date;
-
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import java.util.Date;
 
 /**
  * Created by IntelliJ IDEA. User: farf Date: 4/1/12 Time: 5:05 PM

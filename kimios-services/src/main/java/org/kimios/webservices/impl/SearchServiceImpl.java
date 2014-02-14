@@ -17,10 +17,6 @@
 package org.kimios.webservices.impl;
 
 
-import org.kimios.kernel.dms.DMEntity;
-import org.kimios.kernel.dms.DMEntityType;
-import org.kimios.kernel.dms.Folder;
-import org.kimios.kernel.dms.Workspace;
 import org.kimios.kernel.index.query.model.Criteria;
 import org.kimios.kernel.index.query.model.SearchRequest;
 import org.kimios.kernel.index.query.model.SearchResponse;

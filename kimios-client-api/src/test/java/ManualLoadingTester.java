@@ -1,7 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2012-2013  DevLib'
- *
+ * Copyright (C) 2008-2014  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -12,28 +11,16 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import org.kimios.client.controller.SecurityController;
-import org.kimios.kernel.index.query.model.Criteria;
-import org.kimios.kernel.index.query.model.SearchRequest;
-import org.kimios.kernel.index.query.model.SearchResponse;
-import org.kimios.webservices.DateParamConverter;
-import org.kimios.webservices.NotificationService;
-import org.kimios.webservices.SearchService;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import javax.ws.rs.core.MediaType;
-import java.text.SimpleDateFormat;
-import java.util.*;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.Properties;
 
 /**
  *

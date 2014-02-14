@@ -16,20 +16,15 @@
  */
 package org.kimios.webservices.impl;
 
-import java.util.List;
-import java.util.Vector;
-
-import javax.jws.WebService;
-
 import org.kimios.kernel.user.Group;
-import org.kimios.kernel.ws.pojo.AuthenticationSource;
-import org.kimios.kernel.ws.pojo.Document;
-import org.kimios.kernel.ws.pojo.Role;
-import org.kimios.kernel.ws.pojo.Session;
-import org.kimios.kernel.ws.pojo.User;
+import org.kimios.kernel.ws.pojo.*;
 import org.kimios.webservices.AdministrationService;
 import org.kimios.webservices.CoreService;
 import org.kimios.webservices.DMServiceException;
+
+import javax.jws.WebService;
+import java.util.List;
+import java.util.Vector;
 
 @WebService(targetNamespace = "http://kimios.org", serviceName = "AdministrationService", name = "AdministrationService")
 public class AdministrationServiceImpl extends CoreService implements AdministrationService

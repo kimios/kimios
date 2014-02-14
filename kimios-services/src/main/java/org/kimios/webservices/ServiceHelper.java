@@ -16,24 +16,14 @@
  */
 package org.kimios.webservices;
 
-import java.io.FileNotFoundException;
-
 import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.exception.AccessDeniedException;
-import org.kimios.kernel.exception.DataSourceException;
-import org.kimios.kernel.exception.IndexException;
-import org.kimios.kernel.exception.MetaFeedSearchException;
-import org.kimios.kernel.exception.MetaValueTypeException;
-import org.kimios.kernel.exception.NamingException;
-import org.kimios.kernel.exception.PathException;
-import org.kimios.kernel.exception.RepositoryException;
-import org.kimios.kernel.exception.TransferIntegrityException;
-import org.kimios.kernel.exception.WorkflowException;
-import org.kimios.kernel.exception.XMLException;
+import org.kimios.kernel.exception.*;
 import org.kimios.kernel.security.ISessionManager;
 import org.kimios.kernel.security.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.FileNotFoundException;
 
 public class ServiceHelper
 {

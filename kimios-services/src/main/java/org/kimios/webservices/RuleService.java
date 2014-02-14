@@ -16,16 +16,16 @@
  */
 package org.kimios.webservices;
 
+import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
+import org.kimios.kernel.ws.pojo.Rule;
+import org.kimios.kernel.ws.pojo.RuleBean;
+
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-
-import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
-import org.kimios.kernel.ws.pojo.Rule;
-import org.kimios.kernel.ws.pojo.RuleBean;
 
 /**
  * Created by IntelliJ IDEA. User: farf Date: 4/1/12 Time: 5:06 PM
