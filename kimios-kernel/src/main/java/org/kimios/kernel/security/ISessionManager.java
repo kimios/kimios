@@ -7,6 +7,7 @@ import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.user.AuthenticationSourceFactory;
 import org.kimios.kernel.user.User;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Created with IntelliJ IDEA. User: farf Date: 1/2/13 Time: 9:28 PM To change this template use File | Settings | File

@@ -17,6 +17,7 @@
 package org.kimios.kernel.rules;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,9 +47,9 @@ public class RuleManager
         this.ruleBeanFactory = ruleBeanFactory;
     }
 
-    public List<RuleBean> processRulesBefore(MethodInvocation arg0) throws Throwable
+    public List<RuleBean> processRulesBefore(Method method, Object[] arguments) throws Throwable
     {
-        DmsEvent evt = arg0.getMethod().getAnnotation(DmsEvent.class);
+        DmsEvent evt = method.getAnnotation(DmsEvent.class);
         EventContext ctx = null;
         String path = null;
         List<RuleBean> beans = null;

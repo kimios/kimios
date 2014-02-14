@@ -19,10 +19,12 @@ package org.kimios.kernel.repositories;
 import java.util.List;
 
 import org.kimios.kernel.repositories.dao.RepositoryFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Fabien Alin (Farf) <fabien.alin@gmail.com>
  */
+@Transactional
 public class RepositoryServiceImpl implements RepositoryService
 {
     private RepositoryFactory repositoryFactory;

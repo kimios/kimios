@@ -37,6 +37,7 @@ import org.kimios.kernel.utils.ClientInformationUtil;
 import org.kimios.utils.spring.ApplicationContextProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 public class SessionManager extends HFactory implements ISessionManager
 {
@@ -223,6 +224,7 @@ public class SessionManager extends HFactory implements ISessionManager
         }
     }
 
+    @Transactional
     public Session getSession(String sessionUid) throws DataSourceException, ConfigException
     {
         try {
@@ -241,6 +243,7 @@ public class SessionManager extends HFactory implements ISessionManager
         }
     }
 
+    @Transactional
     public synchronized void cleanSessionContext(long sessionExpire)
     {
         try {
@@ -263,6 +266,7 @@ public class SessionManager extends HFactory implements ISessionManager
         }
     }
 
+    @Transactional
     public void closeSessionContext() throws DataSourceException, ConfigException
     {
         try {
@@ -278,6 +282,7 @@ public class SessionManager extends HFactory implements ISessionManager
         }
     }
 
+    @Transactional
     public void initSessionContext() throws DataSourceException, ConfigException
     {
         try {
@@ -320,6 +325,7 @@ public class SessionManager extends HFactory implements ISessionManager
         return m.values();
     }
 
+    @Transactional
     public List<Session> getSessions() throws DataSourceException, ConfigException
     {
         Collection<Session> e = sessions.values();
@@ -332,6 +338,7 @@ public class SessionManager extends HFactory implements ISessionManager
         return list;
     }
 
+    @Transactional
     public List<Session> getSessions(String userName, String userSource) throws DataSourceException, ConfigException
     {
         Collection<Session> e = sessions.values();

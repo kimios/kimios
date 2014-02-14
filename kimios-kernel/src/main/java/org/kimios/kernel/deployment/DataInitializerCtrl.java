@@ -18,6 +18,8 @@ package org.kimios.kernel.deployment;
 
 import java.util.List;
 
+import org.kimios.kernel.dms.Meta;
+import org.kimios.kernel.dms.MetaFeed;
 import org.kimios.kernel.security.Role;
 import org.kimios.kernel.user.AuthenticationSource;
 import org.kimios.kernel.user.FactoryInstantiator;
@@ -25,17 +27,21 @@ import org.kimios.kernel.user.User;
 import org.kimios.kernel.user.impl.HAuthenticationSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 /***
  *
  *
  *
  */
+
 public class DataInitializerCtrl
 {
     private static Logger log = LoggerFactory.getLogger(DataInitializerCtrl.class);
 
     private FactoryInstantiator userFactoryInstantiator;
+
+    private org.kimios.kernel.dms.FactoryInstantiator dmsFactoryInstantiator;
 
     private org.kimios.kernel.security.FactoryInstantiator securityFactoryInstantior;
 
@@ -59,6 +65,15 @@ public class DataInitializerCtrl
         this.userFactoryInstantiator = userFactoryInstantiator;
     }
 
+    public org.kimios.kernel.dms.FactoryInstantiator getDmsFactoryInstantiator() {
+        return dmsFactoryInstantiator;
+    }
+
+    public void setDmsFactoryInstantiator(org.kimios.kernel.dms.FactoryInstantiator dmsFactoryInstantiator) {
+        this.dmsFactoryInstantiator = dmsFactoryInstantiator;
+    }
+
+    @Transactional
     public void checkSettings() throws Exception
     {
 
@@ -68,7 +83,29 @@ public class DataInitializerCtrl
         if (authenticationSourceList.size() == 0) {
             log.info("Inserting Authentication datas");
             createMinimalSettings();
+        } else {
+
+            for(AuthenticationSource s: authenticationSourceList){
+
+                if(s.getEnableAuthByEmail() == null){
+                    s.setEnableAuthByEmail(false);
+                    userFactoryInstantiator.getAuthenticationSourceFactory()
+                            .saveAuthenticationSource(s);
+                }
+                if(s.getEnableSSOCheck() == null){
+                    userFactoryInstantiator.getAuthenticationSourceFactory()
+                            .saveAuthenticationSource(s);
+                }
+            }
+            /*
+            Should fix meta feed
+             */
         }
+
+        /*
+            Fix new data
+         */
+
 
         log.info("Database Initialized.");
     }
@@ -78,6 +115,8 @@ public class DataInitializerCtrl
 
         AuthenticationSource authenticationSource = new HAuthenticationSource();
         authenticationSource.setName("kimios");
+        authenticationSource.setEnableSSOCheck(false);
+        authenticationSource.setEnableAuthByEmail(false);
         userFactoryInstantiator.getAuthenticationSourceFactory()
                 .saveAuthenticationSource(authenticationSource);
 
@@ -94,6 +133,8 @@ public class DataInitializerCtrl
         adminUser.setAuthenticationSourceName(authenticationSource.getName());
         adminUser.setMail("kimios@kimios.org");
         adminUser.setName("Kimios Administrator");
+        adminUser.setFirstName("Kimios");
+        adminUser.setLastName("Administrator");
         adminUser.setUid("admin");
         adminUser.setPassword("kimios");
 

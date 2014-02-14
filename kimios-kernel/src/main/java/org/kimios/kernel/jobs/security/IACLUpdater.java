@@ -23,6 +23,7 @@ import org.kimios.kernel.events.annotations.DmsEvent;
 import org.kimios.kernel.events.annotations.DmsEventName;
 import org.kimios.kernel.security.DMEntityACL;
 import org.kimios.kernel.security.Session;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface IACLUpdater
 {
