@@ -27,13 +27,6 @@ import org.kimios.kernel.events.annotations.DmsEventOccur;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Created with IntelliJ IDEA.
- * User: farf
- * Date: 1/26/14
- * Time: 5:49 PM
- * To change this template use File | Settings | File Templates.
- */
 public class PreviewCacheHandler extends GenericEventHandler {
 
     private static Logger logger = LoggerFactory.getLogger(PreviewCacheHandler.class);

@@ -21,13 +21,6 @@ import org.kimios.kernel.converter.source.InputSource;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * Created with IntelliJ IDEA.
- * User: farf
- * Date: 1/22/14
- * Time: 4:25 PM
- * To change this template use File | Settings | File Templates.
- */
 public class ConverterCacheHandler {
 
 

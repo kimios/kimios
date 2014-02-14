@@ -28,15 +28,6 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created with IntelliJ IDEA.
- * User: farf
- * Date: 11/27/13
- * Time: 12:00 PM
- * To change this template use File | Settings | File Templates.
- */
-
-
 @Entity
 @DiscriminatorValue(value = "org.kimios.kernel.dms.metafeeds.impl.ClientFeed")
 public class ClientFeed extends MetaFeedImpl {

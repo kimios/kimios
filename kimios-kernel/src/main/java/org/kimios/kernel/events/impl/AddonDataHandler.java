@@ -33,13 +33,6 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created with IntelliJ IDEA.
- * User: farf
- * Date: 9/13/13
- * Time: 2:02 PM
- * To change this template use File | Settings | File Templates.
- */
 public class AddonDataHandler extends GenericEventHandler {
 
 

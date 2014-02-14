@@ -24,10 +24,6 @@ import org.kimios.kernel.user.User;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * Created with IntelliJ IDEA. User: farf Date: 1/2/13 Time: 9:28 PM To change this template use File | Settings | File
- * Templates.
- */
 public interface ISessionManager
 {
     AuthenticationSourceFactory getAuthenticationSourceFactory();

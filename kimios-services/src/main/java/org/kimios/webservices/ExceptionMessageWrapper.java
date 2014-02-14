@@ -2,13 +2,6 @@ package org.kimios.webservices;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 
-/**
- * Created with IntelliJ IDEA.
- * User: farf
- * Date: 2/11/13
- * Time: 11:49 AM
- * To change this template use File | Settings | File Templates.
- */
 public class ExceptionMessageWrapper {
 
 

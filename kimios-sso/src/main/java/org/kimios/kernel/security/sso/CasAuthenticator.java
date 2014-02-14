@@ -23,13 +23,7 @@ import org.jasig.cas.client.validation.TicketValidationException;
 import org.kimios.kernel.security.Authenticator;
 
 import java.util.Map;
-/**
- * Created with IntelliJ IDEA.
- * User: farf
- * Date: 10/10/13
- * Time: 2:24 PM
- * To change this template use File | Settings | File Templates.
- */
+
 public class CasAuthenticator implements Authenticator {
 
 

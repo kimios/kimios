@@ -22,13 +22,7 @@ import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.IndexException;
 import org.kimios.kernel.security.Session;
 
-/**
- * Created with IntelliJ IDEA.
- * User: farf
- * Date: 7/8/13
- * Time: 12:37 PM
- * To change this template use File | Settings | File Templates.
- */
+
 public interface ISearchManagementController
 {
 

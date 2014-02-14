@@ -39,13 +39,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.util.Properties;
 
-/**
- * Created with IntelliJ IDEA.
- * User: farf
- * Date: 2/13/14
- * Time: 3:16 PM
- * To change this template use File | Settings | File Templates.
- */
 public class MailToHtml extends ConverterImpl {
 
 

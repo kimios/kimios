@@ -30,10 +30,6 @@ import org.springframework.transaction.TransactionStatus;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created with IntelliJ IDEA. User: farf Date: 12/10/12 Time: 9:52 PM To change this template use File | Settings |
- * File Templates.
- */
 public class Reindexer implements Runnable {
     private static Logger log = LoggerFactory.getLogger(Reindexer.class);
 

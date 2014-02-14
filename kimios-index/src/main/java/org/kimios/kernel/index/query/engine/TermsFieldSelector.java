@@ -24,13 +24,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-/**
- * Created with IntelliJ IDEA.
- * User: farf
- * Date: 7/6/13
- * Time: 11:54 AM
- * To change this template use File | Settings | File Templates.
- */
 public class TermsFieldSelector
 {
 

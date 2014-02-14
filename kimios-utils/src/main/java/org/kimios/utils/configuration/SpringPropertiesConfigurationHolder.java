@@ -23,13 +23,6 @@ import org.springframework.util.StringUtils;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Created with IntelliJ IDEA.
- * User: farf
- * Date: 9/6/13
- * Time: 2:41 PM
- * To change this template use File | Settings | File Templates.
- */
 public class SpringPropertiesConfigurationHolder implements ConfigurationHolder {
 
 

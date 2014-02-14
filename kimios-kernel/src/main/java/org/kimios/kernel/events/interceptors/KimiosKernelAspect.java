@@ -36,14 +36,6 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Method;
 import java.util.List;
 
-/**
- * Created with IntelliJ IDEA.
- * User: farf
- * Date: 1/12/14
- * Time: 9:20 PM
- * To change this template use File | Settings | File Templates.
- */
-
 @Aspect
 public class KimiosKernelAspect {
 

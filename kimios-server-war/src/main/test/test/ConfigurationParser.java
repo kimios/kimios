@@ -23,10 +23,6 @@ import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Created with IntelliJ IDEA. User: farf Date: 10/7/12 Time: 4:24 PM To change this template use File | Settings | File
- * Templates.
- */
 public class ConfigurationParser
 {
     public static void main(String[] items) throws Exception

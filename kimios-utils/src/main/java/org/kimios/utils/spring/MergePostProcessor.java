@@ -24,13 +24,6 @@ import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.ManagedList;
 
-/**
- * Created with IntelliJ IDEA.
- * User: farf
- * Date: 9/4/13
- * Time: 8:23 PM
- * To change this template use File | Settings | File Templates.
- */
 public class MergePostProcessor implements BeanFactoryPostProcessor {
 
     private String beanToMerge;

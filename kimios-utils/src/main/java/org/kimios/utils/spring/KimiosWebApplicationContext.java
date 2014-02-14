@@ -22,13 +22,6 @@ import org.springframework.web.context.support.XmlWebApplicationContext;
 
 import java.io.File;
 
-/**
- * Created with IntelliJ IDEA.
- * User: farf
- * Date: 9/6/13
- * Time: 3:26 PM
- * To change this template use File | Settings | File Templates.
- */
 public class KimiosWebApplicationContext extends XmlWebApplicationContext {
 
 

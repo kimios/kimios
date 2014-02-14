@@ -33,13 +33,6 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created with IntelliJ IDEA.
- * User: farf
- * Date: 7/5/13
- * Time: 6:15 PM
- * To change this template use File | Settings | File Templates.
- */
 public class GlobalFilter
     implements Filter
 {
