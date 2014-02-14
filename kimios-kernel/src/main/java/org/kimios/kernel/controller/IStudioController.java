@@ -16,23 +16,14 @@
  */
 package org.kimios.kernel.controller;
 
-import java.util.List;
-import java.util.Vector;
-
 import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.dms.DocumentType;
-import org.kimios.kernel.dms.MetaFeedImpl;
-import org.kimios.kernel.dms.Workflow;
-import org.kimios.kernel.dms.WorkflowStatus;
-import org.kimios.kernel.dms.WorkflowStatusManager;
-import org.kimios.kernel.exception.AccessDeniedException;
-import org.kimios.kernel.exception.DataSourceException;
-import org.kimios.kernel.exception.MetaFeedSearchException;
-import org.kimios.kernel.exception.MetaValueTypeException;
-import org.kimios.kernel.exception.RepositoryException;
-import org.kimios.kernel.exception.XMLException;
+import org.kimios.kernel.dms.*;
+import org.kimios.kernel.exception.*;
 import org.kimios.kernel.security.Session;
 import org.kimios.kernel.xml.XSDException;
+
+import java.util.List;
+import java.util.Vector;
 
 public interface IStudioController
 {

@@ -27,6 +27,8 @@ import org.kimios.kernel.controller.IExtensionController;
 import org.kimios.kernel.dms.DMEntity;
 import org.kimios.kernel.dms.DMEntityImpl;
 import org.kimios.kernel.dms.extension.impl.DMEntityAttribute;
+import org.kimios.kernel.events.annotations.DmsEvent;
+import org.kimios.kernel.events.annotations.DmsEventName;
 import org.kimios.kernel.exception.AccessDeniedException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.mail.MailTemplate;
@@ -40,12 +42,15 @@ import org.kimios.kernel.user.impl.HAuthenticationSource;
 import org.kimios.kernel.utils.PasswordGenerator;
 import org.kimios.kernel.utils.TemplateUtil;
 import org.kimios.utils.configuration.ConfigurationManager;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 public class ExtensionController extends AKimiosController implements IExtensionController
 {
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IExtensionController#setAttribute(org.kimios.kernel.security.Session, long, java.lang.String, java.lang.String, boolean)
     */
+    @DmsEvent(eventName = {DmsEventName.EXTENSION_ENTITY_ATTRIBUTE_SET})
     public void setAttribute(Session session, long dmEntityId, String attributeName, String attributeValue,
             boolean indexed) throws Exception
     {

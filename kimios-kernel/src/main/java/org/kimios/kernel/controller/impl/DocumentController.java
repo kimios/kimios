@@ -29,6 +29,8 @@ import org.kimios.kernel.dms.Folder;
 import org.kimios.kernel.dms.SymbolicLink;
 import org.kimios.kernel.dms.WorkflowStatus;
 import org.kimios.kernel.events.EventContext;
+import org.kimios.kernel.events.annotations.DmsEvent;
+import org.kimios.kernel.events.annotations.DmsEventName;
 import org.kimios.kernel.exception.*;
 import org.kimios.kernel.filetransfer.DataTransfer;
 import org.kimios.kernel.filetransfer.zip.FileCompressionHelper;
@@ -42,12 +44,14 @@ import org.kimios.kernel.ws.pojo.*;
 import org.kimios.utils.configuration.ConfigurationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+@Transactional
 public class DocumentController extends AKimiosController implements IDocumentController {
     private static Logger log = LoggerFactory.getLogger(DocumentController.class);
 
@@ -161,6 +165,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IDocumentController#createDocument(org.kimios.kernel.security.Session, java.lang.String, java.lang.String, java.lang.String, java.lang.String, long, boolean)
     */
+    @DmsEvent(eventName = {DmsEventName.DOCUMENT_CREATE})
     public long createDocument(Session s, String name, String extension, String mimeType, long folderUid,
                                boolean isSecurityInherited)
             throws NamingException, ConfigException, DataSourceException, AccessDeniedException {
@@ -242,6 +247,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
         return -1;
     }
 
+    @DmsEvent(eventName = {DmsEventName.FILE_UPLOAD})
     public long createDocumentWithProperties(Session s, String name, String extension, String mimeType, long folderUid,
                                              boolean isSecurityInherited, String securitiesXmlStream,
                                              boolean isRecursive, long documentTypeId, String metasXmlStream,
@@ -411,7 +417,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
         }
     }
 
-
+    @DmsEvent(eventName = {DmsEventName.FILE_UPLOAD})
     public long createDocumentFromFullPathWithProperties(Session s, String path,
                                                          boolean isSecurityInherited, String securitiesXmlStream,
                                                          boolean isRecursive, long documentTypeId, String metasXmlStream,
@@ -596,6 +602,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IDocumentController#updateDocument(org.kimios.kernel.security.Session, long, long, java.lang.String, java.lang.String, java.lang.String)
     */
+    @DmsEvent(eventName = {DmsEventName.DOCUMENT_UPDATE})
     public void updateDocument(Session s, long uid, long folderUid, String name, String extension, String mimeType)
             throws NamingException,
             CheckoutViolationException, AccessDeniedException, ConfigException, DataSourceException {
@@ -628,6 +635,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IDocumentController#deleteDocument(org.kimios.kernel.security.Session, long)
     */
+    @DmsEvent(eventName = {DmsEventName.DOCUMENT_DELETE})
     public void deleteDocument(Session s, long uid)
             throws CheckoutViolationException, AccessDeniedException, ConfigException, DataSourceException {
         Document d = dmsFactoryInstantiator.getDocumentFactory().getDocument(uid);
@@ -648,6 +656,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IDocumentController#checkoutDocument(org.kimios.kernel.security.Session, long)
     */
+    @DmsEvent(eventName = {DmsEventName.DOCUMENT_CHECKOUT})
     public void checkoutDocument(Session s, long uid)
             throws CheckoutViolationException, AccessDeniedException, ConfigException, DataSourceException {
         Document d = dmsFactoryInstantiator.getDocumentFactory().getDocument(uid);
@@ -664,6 +673,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IDocumentController#checkinDocument(org.kimios.kernel.security.Session, long)
     */
+    @DmsEvent(eventName = {DmsEventName.DOCUMENT_CHECKIN})
     public void checkinDocument(Session s, long uid)
             throws CheckoutViolationException, AccessDeniedException, ConfigException, DataSourceException {
         Document d = dmsFactoryInstantiator.getDocumentFactory().getDocument(uid);
@@ -695,6 +705,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IDocumentController#addRelatedDocument(org.kimios.kernel.security.Session, long, long)
     */
+    @DmsEvent(eventName = {DmsEventName.DOCUMENT_ADD_RELATED})
     public void addRelatedDocument(Session s, long uid, long relatedDocumentUid)
             throws AccessDeniedException, ConfigException, DataSourceException {
         Document d = dmsFactoryInstantiator.getDocumentFactory().getDocument(uid);
@@ -716,6 +727,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IDocumentController#removeRelatedDocument(org.kimios.kernel.security.Session, long, long)
     */
+    @DmsEvent(eventName = {DmsEventName.DOCUMENT_REMOVE_RELATED})
     public void removeRelatedDocument(Session s, long uid, long relatedDocumentUid)
             throws AccessDeniedException, ConfigException, DataSourceException {
         Document d = dmsFactoryInstantiator.getDocumentFactory().getDocument(uid);
@@ -737,7 +749,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     /**
      * Get the bookmarks list of the given user
      */
-    public Vector<Bookmark> getBookmarks(Session session) throws DataSourceException, ConfigException {
+    public List<Bookmark> getBookmarks(Session session) throws DataSourceException, ConfigException {
         Vector<DMEntity> bl = dmsFactoryInstantiator.getBookmarkFactory()
                 .getBookmarks(session.getUserName(), session.getUserSource());
         Vector<Bookmark> vBookmarks = new Vector<Bookmark>();
@@ -780,7 +792,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     /**
      * Get the last consulted items for the given user
      */
-    public Vector<Bookmark> getRecentItems(Session session) throws DataSourceException, ConfigException {
+    public List<Bookmark> getRecentItems(Session session) throws DataSourceException, ConfigException {
         Vector<DMEntity> ri = dmsFactoryInstantiator.getRecentItemFactory()
                 .getRecentItems(session.getUserName(), session.getUserSource());
         Vector<Bookmark> vBookmarks = new Vector<Bookmark>();
@@ -795,7 +807,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     /**
      * Get the symbolic links created in workspace or folder (not recursive)
      */
-    public Vector<SymbolicLink> getChildSymbolicLinks(Session session, long parentUid)
+    public List<SymbolicLink> getChildSymbolicLinks(Session session, long parentUid)
             throws DataSourceException, ConfigException,
             AccessDeniedException {
         DMEntity parent = dmsFactoryInstantiator.getDmEntityFactory().getEntity(parentUid);
@@ -806,10 +818,30 @@ public class DocumentController extends AKimiosController implements IDocumentCo
         return dmsFactoryInstantiator.getSymbolicLinkFactory().getChildSymbolicLinks(parent);
     }
 
+
+    /**
+     * Get the symbolic links created in workspace or folder (not recursive)
+     */
+    public List<org.kimios.kernel.ws.pojo.SymbolicLink> getChildSymbolicLinksPojos(Session session, long parentUid)
+            throws DataSourceException, ConfigException,
+            AccessDeniedException {
+        DMEntity parent = dmsFactoryInstantiator.getDmEntityFactory().getEntity(parentUid);
+        if (!getSecurityAgent()
+                .isReadable(parent, session.getUserName(), session.getUserSource(), session.getGroups())) {
+            throw new AccessDeniedException();
+        }
+        List<SymbolicLink> symbolicLinkList = dmsFactoryInstantiator.getSymbolicLinkFactory().getChildSymbolicLinks(parent);
+        List<org.kimios.kernel.ws.pojo.SymbolicLink> items = new ArrayList<org.kimios.kernel.ws.pojo.SymbolicLink>();
+        for(SymbolicLink symbolicLink: symbolicLinkList)
+            items.add(symbolicLink.toPojo());
+
+        return items;
+    }
+
     /**
      * Get the symbolic links created for a specific target
      */
-    public Vector<SymbolicLink> getSymbolicLinkCreated(Session session, long targetUid)
+    public List<SymbolicLink> getSymbolicLinkCreated(Session session, long targetUid)
             throws DataSourceException, ConfigException,
             AccessDeniedException {
         DMEntity target = dmsFactoryInstantiator.getDmEntityFactory().getEntity(targetUid);
@@ -842,9 +874,11 @@ public class DocumentController extends AKimiosController implements IDocumentCo
         sl.setParentType(parent.getType());
         sl.setParentUid(parentUid);
         sl.setCreationDate(new Date());
+        sl.setUpdateDate(sl.getCreationDate());
         sl.setOwner(session.getUserName());
         sl.setOwnerSource(session.getUserSource());
-        sl.setName(name);
+        sl.setName(toLink.getName());
+        sl.setPath(parent.getPath() + toLink.getPath().substring(toLink.getPath().lastIndexOf("/")));
         dmsFactoryInstantiator.getSymbolicLinkFactory().addSymbolicLink(sl);
     }
 
@@ -865,11 +899,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                 .isReadable(linked, session.getUserName(), session.getUserSource(), session.getGroups())) {
             throw new AccessDeniedException();
         }
-
-        SymbolicLink key = dmsFactoryInstantiator.getSymbolicLinkFactory()
-                .getSymbolicLink(dmEntityUid, linked.getType(), parentUid, parent.getType());
-
-        dmsFactoryInstantiator.getSymbolicLinkFactory().removeSymbolicLink(key);
+        dmsFactoryInstantiator.getSymbolicLinkFactory().removeSymbolicLink(dmEntityUid);
     }
 
     /* (non-Javadoc)
@@ -936,7 +966,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     /**
      * Return the log recorded for a given document
      */
-    public Vector<DMEntityLog<Document>> getDocumentLog(Session s, long documentUid)
+    public List<DMEntityLog<Document>> getDocumentLog(Session s, long documentUid)
             throws AccessDeniedException, ConfigException, DataSourceException {
         Document d = dmsFactoryInstantiator.getDocumentFactory().getDocument(documentUid);
         if (getSecurityAgent().isReadable(d, s.getUserName(), s.getUserSource(), s.getGroups())) {

@@ -28,6 +28,8 @@ import org.kimios.kernel.security.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Method;
+
 public class ContextBuilder
 {
     final private static Logger log = LoggerFactory.getLogger(ContextBuilder.class);
@@ -58,31 +60,31 @@ public class ContextBuilder
 
     private static String[] extensionMethods = { "setAttribute" };
 
-    public static EventContext buildContext(DmsEventName n, MethodInvocation mi)
+    public static EventContext buildContext(DmsEventName n, Method invokedMethod, Object[] arguments)
     {
         try {
             EventContext ctx = EventContext.get();
             ctx.setEvent(n);
-            ctx.setContextParameters(mi.getArguments());
-            ctx.setSession((Session) mi.getArguments()[0]);
+            ctx.setContextParameters(arguments);
+            ctx.setSession((Session) arguments[0]);
 
             if (n.name().startsWith(documentVersion)) {
-                documentVersionContextBuilder(mi, ctx);
+                documentVersionContextBuilder(invokedMethod, arguments, ctx);
             }
             if (n.name().startsWith(document)) {
-                documentContextBuilder(mi, ctx);
+                documentContextBuilder(invokedMethod, arguments, ctx);
             }
             if (n.name().startsWith(folder)) {
-                folderContextBuilder(mi, ctx);
+                folderContextBuilder(invokedMethod, arguments, ctx);
             }
             if (n.name().startsWith(workspace)) {
-                workspaceContextBuilder(mi, ctx);
+                workspaceContextBuilder(invokedMethod, arguments, ctx);
             }
             if (n.name().startsWith(fileTransfer)) {
-                fileTransferContextBuilder(mi, ctx);
+                fileTransferContextBuilder(invokedMethod, arguments, ctx);
             }
             if(n.name().startsWith(extension)){
-                extensionContextBuilder(mi, ctx);
+                extensionContextBuilder(invokedMethod, arguments, ctx);
             }
             if (ctx.getEntity() != null) {
                 String path = ctx.getEntity().getPath();
@@ -101,18 +103,18 @@ public class ContextBuilder
         return null;
     }
 
-    private static EventContext folderContextBuilder(MethodInvocation mi, EventContext ctx)
+    private static EventContext folderContextBuilder(Method mi, Object[] arguments, EventContext ctx)
             throws DataSourceException, ConfigException
     {
-        String name = mi.getMethod().getName();
+        String name = mi.getName();
         if (name.equalsIgnoreCase(folderMethod[0])) {
             /*
             * building dm entity
             */
             Folder fold = new Folder();
             fold.setUid(-1);
-            fold.setName(mi.getArguments()[1] != null ? mi.getArguments()[1].toString() : "");
-            fold.setParentUid((Long) mi.getArguments()[2]);
+            fold.setName(arguments[1] != null ? arguments[1].toString() : "");
+            fold.setParentUid((Long) arguments[2]);
             FactoryInstantiator.getInstance().getDmEntityFactory().generatePath(fold);
             ctx.setEntity(fold);
         }
@@ -121,7 +123,7 @@ public class ContextBuilder
             * Load the current (before delete)
             */
             FolderFactory fc = FactoryInstantiator.getInstance().getFolderFactory();
-            Folder fold = fc.getFolder((Long) mi.getArguments()[1]);
+            Folder fold = fc.getFolder((Long) arguments[1]);
             HFactory t = (HFactory) fc;
             t.getSession().evict(fold);
             ctx.setEntity(fold);
@@ -131,7 +133,7 @@ public class ContextBuilder
             * Load the current (before Update)
             */
             FolderFactory fc = FactoryInstantiator.getInstance().getFolderFactory();
-            Folder fold = fc.getFolder((Long) mi.getArguments()[1]);
+            Folder fold = fc.getFolder((Long) arguments[1]);
             HFactory t = (HFactory) fc;
             t.getSession().evict(fold);
             ctx.setEntity(fold);
@@ -140,31 +142,31 @@ public class ContextBuilder
         return ctx;
     }
 
-    private static EventContext documentContextBuilder(MethodInvocation mi, EventContext ctx)
+    private static EventContext documentContextBuilder(Method mi, Object[] arguments,  EventContext ctx)
             throws DataSourceException, ConfigException
     {
-        String name = mi.getMethod().getName();
+        String name = mi.getName();
 
         // createDocument
         if (name.equalsIgnoreCase(documentMethod[0])) {
-            if (mi.getArguments().length == 3) {
+            if (arguments.length == 3) {
                 /*
                    Create document from full path
                 */
                 Document doc = new Document();
                 doc.setUid(-1);
-                String docPath = ((String) mi.getArguments()[1]);
+                String docPath = ((String) arguments[1]);
                 String fldPath = docPath.substring(0, docPath.lastIndexOf("/"));
                 Folder f = (Folder) FactoryInstantiator.getInstance().getDmEntityFactory().getEntity(fldPath);
                 doc.setFolderUid(f.getUid());
-                doc.setPath((String) mi.getArguments()[1]);
+                doc.setPath((String) arguments[1]);
                 ctx.setEntity(doc);
             } else {
                 Document doc = new Document();
                 doc.setUid(-1);
-                doc.setName(mi.getArguments()[1] != null ? mi.getArguments()[1].toString() : "");
-                doc.setMimeType(mi.getArguments()[3] != null ? mi.getArguments()[3].toString() : "");
-                doc.setFolderUid((Long) mi.getArguments()[4]);
+                doc.setName(arguments[1] != null ? arguments[1].toString() : "");
+                doc.setMimeType(arguments[3] != null ? arguments[3].toString() : "");
+                doc.setFolderUid((Long) arguments[4]);
                 doc.setType(DMEntityType.DOCUMENT);
                 FactoryInstantiator.getInstance().getDmEntityFactory().generatePath(doc);
                 ctx.setEntity(doc);
@@ -174,7 +176,7 @@ public class ContextBuilder
         // updateDocument
         if (name.equalsIgnoreCase(documentMethod[1])) {
             DocumentFactory fc = FactoryInstantiator.getInstance().getDocumentFactory();
-            Document document = fc.getDocument((Long) mi.getArguments()[1]);
+            Document document = fc.getDocument((Long) arguments[1]);
             HFactory t = (HFactory) fc;
             t.getSession().evict(document);
             ctx.setEntity(document);
@@ -183,7 +185,7 @@ public class ContextBuilder
         // deleteDocument
         if (name.equalsIgnoreCase(documentMethod[2])) {
             DocumentFactory fc = FactoryInstantiator.getInstance().getDocumentFactory();
-            Document document = fc.getDocument((Long) mi.getArguments()[1]);
+            Document document = fc.getDocument((Long) arguments[1]);
             HFactory t = (HFactory) fc;
             t.getSession().evict(document);
             ctx.setEntity(document);
@@ -192,7 +194,7 @@ public class ContextBuilder
         // checkoutDocument
         if (name.equalsIgnoreCase(documentMethod[3])) {
             DocumentFactory fc = FactoryInstantiator.getInstance().getDocumentFactory();
-            Document document = fc.getDocument((Long) mi.getArguments()[1]);
+            Document document = fc.getDocument((Long) arguments[1]);
             HFactory t = (HFactory) fc;
             t.getSession().evict(document);
             ctx.setEntity(document);
@@ -201,7 +203,7 @@ public class ContextBuilder
         // checkinDocument
         if (name.equalsIgnoreCase(documentMethod[4])) {
             DocumentFactory fc = FactoryInstantiator.getInstance().getDocumentFactory();
-            Document document = fc.getDocument((Long) mi.getArguments()[1]);
+            Document document = fc.getDocument((Long) arguments[1]);
             HFactory t = (HFactory) fc;
             t.getSession().evict(document);
             ctx.setEntity(document);
@@ -210,21 +212,21 @@ public class ContextBuilder
         // addRelatedDocument
         if (name.equalsIgnoreCase(documentMethod[5])) {
             DocumentFactory fc = FactoryInstantiator.getInstance().getDocumentFactory();
-            Document document = fc.getDocument((Long) mi.getArguments()[1]);
+            Document document = fc.getDocument((Long) arguments[1]);
             HFactory t = (HFactory) fc;
             t.getSession().evict(document);
             ctx.setEntity(document);
-            EventContext.addParameter("relatedDocument", fc.getDocument((Long) mi.getArguments()[2]));
+            EventContext.addParameter("relatedDocument", fc.getDocument((Long) arguments[2]));
         }
 
         // removeRelatedDocument
         if (name.equalsIgnoreCase(documentMethod[6])) {
             DocumentFactory fc = FactoryInstantiator.getInstance().getDocumentFactory();
-            Document document = fc.getDocument((Long) mi.getArguments()[1]);
+            Document document = fc.getDocument((Long) arguments[1]);
             HFactory t = (HFactory) fc;
             t.getSession().evict(document);
             ctx.setEntity(document);
-            EventContext.addParameter("relatedDocument", fc.getDocument((Long) mi.getArguments()[2]));
+            EventContext.addParameter("relatedDocument", fc.getDocument((Long) arguments[2]));
         }
 
 
@@ -243,15 +245,15 @@ public class ContextBuilder
         return ctx;
     }
 
-    private static EventContext documentVersionContextBuilder(MethodInvocation mi, EventContext ctx)
+    private static EventContext documentVersionContextBuilder(Method mi, Object[] arguments, EventContext ctx)
             throws DataSourceException, ConfigException
     {
-        String name = mi.getMethod().getName();
+        String name = mi.getName();
 
         // createDocumentVersion
         if (name.equalsIgnoreCase(documentVersionMethod[0])) {
             DocumentFactory fc = FactoryInstantiator.getInstance().getDocumentFactory();
-            Document doc = fc.getDocument((Long) mi.getArguments()[1]);
+            Document doc = fc.getDocument((Long) arguments[1]);
             ctx.setEntity(doc);
             DocumentVersion dv =
                     FactoryInstantiator.getInstance().getDocumentVersionFactory().getLastDocumentVersion(doc);
@@ -261,7 +263,7 @@ public class ContextBuilder
         // createDocumentVersionFromLatest
         if (name.equalsIgnoreCase(documentVersionMethod[1])) {
             DocumentFactory fc = FactoryInstantiator.getInstance().getDocumentFactory();
-            Document doc = fc.getDocument((Long) mi.getArguments()[1]);
+            Document doc = fc.getDocument((Long) arguments[1]);
             ctx.setEntity(doc);
             DocumentVersion dv =
                     FactoryInstantiator.getInstance().getDocumentVersionFactory().getLastDocumentVersion(doc);
@@ -272,7 +274,7 @@ public class ContextBuilder
         if (name.equalsIgnoreCase(documentVersionMethod[2])) {
             DocumentVersionFactory fc = FactoryInstantiator.getInstance().getDocumentVersionFactory();
             Document tDoc =
-                    FactoryInstantiator.getInstance().getDocumentFactory().getDocument((Long) mi.getArguments()[1]);
+                    FactoryInstantiator.getInstance().getDocumentFactory().getDocument((Long) arguments[1]);
             DocumentVersion version = fc.getLastDocumentVersion(tDoc);
             HFactory t = (HFactory) fc;
             t.getSession().evict(version);
@@ -281,9 +283,9 @@ public class ContextBuilder
             EventContext.addParameter("version", version);
 
             //check if document type set
-            if (((Long) mi.getArguments()[2]) > 0) {
+            if (((Long) arguments[2]) > 0) {
                 DocumentTypeFactory dtF = FactoryInstantiator.getInstance().getDocumentTypeFactory();
-                DocumentType dt = dtF.getDocumentType((Long) mi.getArguments()[2]);
+                DocumentType dt = dtF.getDocumentType((Long) arguments[2]);
                 EventContext.addParameter("documentTypeSet", dt);
             }
         }
@@ -292,7 +294,7 @@ public class ContextBuilder
         if (name.equalsIgnoreCase(documentVersionMethod[3])) {
             try {
                 DocumentVersionFactory fc = FactoryInstantiator.getInstance().getDocumentVersionFactory();
-                DocumentVersion version = fc.getDocumentVersion((Long) mi.getArguments()[1]);
+                DocumentVersion version = fc.getDocumentVersion((Long) arguments[1]);
                 HFactory t = (HFactory) fc;
                 t.getSession().evict(version);
                 Document document = version.getDocument();
@@ -307,7 +309,7 @@ public class ContextBuilder
         if (name.equalsIgnoreCase(documentVersionMethod[4])) {
             try {
                 DocumentVersionFactory fc = FactoryInstantiator.getInstance().getDocumentVersionFactory();
-                DocumentVersion version = fc.getDocumentVersion((Long) mi.getArguments()[1]);
+                DocumentVersion version = fc.getDocumentVersion((Long) arguments[1]);
                 HFactory t = (HFactory) fc;
                 t.getSession().evict(version);
                 Document document = version.getDocument();
@@ -320,14 +322,14 @@ public class ContextBuilder
         return ctx;
     }
 
-    private static EventContext workspaceContextBuilder(MethodInvocation mi, EventContext ctx)
+    private static EventContext workspaceContextBuilder(Method mi, Object[] arguments,  EventContext ctx)
             throws DataSourceException, ConfigException
     {
-        String name = mi.getMethod().getName();
+        String name = mi.getName();
         if (name.equalsIgnoreCase(workspaceMethod[0])) {
             Workspace wks = new Workspace();
             wks.setUid(-1);
-            wks.setName(mi.getArguments()[1] != null ? mi.getArguments()[1].toString() : "");
+            wks.setName(arguments[1] != null ? arguments[1].toString() : "");
             try {
                 FactoryInstantiator.getInstance().getDmEntityFactory().generatePath(wks);
             } catch (Exception e) {
@@ -341,7 +343,7 @@ public class ContextBuilder
             */
             try {
                 WorkspaceFactory wc = FactoryInstantiator.getInstance().getWorkspaceFactory();
-                Workspace wsk = wc.getWorkspace((Long) mi.getArguments()[1]);
+                Workspace wsk = wc.getWorkspace((Long) arguments[1]);
                 HFactory t = (HFactory) wc;
                 t.getSession().evict(wsk);
                 ctx.setEntity(wsk);
@@ -354,7 +356,7 @@ public class ContextBuilder
             * Load the current (before  delete)
             */
             WorkspaceFactory wc = FactoryInstantiator.getInstance().getWorkspaceFactory();
-            Workspace wsk = wc.getWorkspace((Long) mi.getArguments()[1]);
+            Workspace wsk = wc.getWorkspace((Long) arguments[1]);
             HFactory t = (HFactory) wc;
             t.getSession().evict(wsk);
             ctx.setEntity(wsk);
@@ -362,10 +364,10 @@ public class ContextBuilder
         return ctx;
     }
 
-    private static EventContext fileTransferContextBuilder(MethodInvocation mi, EventContext ctx)
+    private static EventContext fileTransferContextBuilder(Method mi, Object[] arguments, EventContext ctx)
             throws DataSourceException, ConfigException
     {
-        String name = mi.getMethod().getName();
+        String name = mi.getName();
         //file upload
         if (name.equalsIgnoreCase(fileTransferMethod[0])) {
             try {
@@ -373,7 +375,7 @@ public class ContextBuilder
                         org.kimios.kernel.filetransfer.FactoryInstantiator.getInstance().getDataTransferFactory();
                 DataTransfer dt =
                         org.kimios.kernel.filetransfer.FactoryInstantiator.getInstance().getDataTransferFactory()
-                                .getDataTransfer((Long) mi.getArguments()[1]);
+                                .getDataTransfer((Long) arguments[1]);
                 HFactory t = (HFactory) dtFactory;
                 t.getSession().evict(dt);
                 DocumentVersionFactory fc = FactoryInstantiator.getInstance().getDocumentVersionFactory();
@@ -389,15 +391,15 @@ public class ContextBuilder
         return ctx;
     }
 
-    private static EventContext extensionContextBuilder(MethodInvocation mi, EventContext ctx)
+    private static EventContext extensionContextBuilder(Method mi, Object[] arguments, EventContext ctx)
             throws DataSourceException, ConfigException
     {
-        String name = mi.getMethod().getName();
+        String name = mi.getName();
         //set attribute on entity
         if (name.equalsIgnoreCase(extensionMethods[0])) {
             try {
                 DMEntity entity = FactoryInstantiator.getInstance().getDmEntityFactory()
-                        .getEntity((Long)mi.getArguments()[1]);
+                        .getEntity((Long)arguments[1]);
                 ctx.setEntity(entity);
             } catch (Exception e) {
                 e.printStackTrace();

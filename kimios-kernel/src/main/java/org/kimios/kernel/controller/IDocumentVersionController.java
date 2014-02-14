@@ -16,23 +16,15 @@
  */
 package org.kimios.kernel.controller;
 
-import java.util.List;
-import java.util.Vector;
-
 import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.dms.DocumentComment;
-import org.kimios.kernel.dms.DocumentType;
-import org.kimios.kernel.dms.DocumentVersion;
-import org.kimios.kernel.dms.Meta;
-import org.kimios.kernel.dms.MetaValue;
+import org.kimios.kernel.dms.*;
 import org.kimios.kernel.events.annotations.DmsEvent;
 import org.kimios.kernel.events.annotations.DmsEventName;
-import org.kimios.kernel.exception.AccessDeniedException;
-import org.kimios.kernel.exception.CheckoutViolationException;
-import org.kimios.kernel.exception.DataSourceException;
-import org.kimios.kernel.exception.RepositoryException;
-import org.kimios.kernel.exception.XMLException;
+import org.kimios.kernel.exception.*;
 import org.kimios.kernel.security.Session;
+
+import java.util.List;
+import java.util.Vector;
 
 public interface IDocumentVersionController
 {

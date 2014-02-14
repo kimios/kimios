@@ -62,20 +62,20 @@ public class GenericInterceptor implements MethodInterceptor
         log.trace(evt + " | " +
                 (evt != null ? evt.eventName()[0] : " no event defined. for " + arg0.getMethod().getName()));
         if (evt != null) {
-            ctx = ContextBuilder.buildContext(evt.eventName()[0], arg0);
+            ctx = ContextBuilder.buildContext(evt.eventName()[0], arg0.getMethod(), arg0.getArguments());
             log.trace("Set event: " + ctx.getEvent().name());
         }
 
         ctx.setCurrentOccur(DmsEventOccur.BEFORE);
         //process events (before state)
         for (GenericEventHandler it : EventHandlerManager.getInstance().handlers) {
-            it.process(arg0, DmsEventOccur.BEFORE, null, ctx);
+            it.process(arg0.getMethod(), arg0.getArguments(),  DmsEventOccur.BEFORE, null, ctx);
         }
         //process rules before (before state)
         List<RuleBean> rulesBeans = null;
         if (rulesManagementEnabled) {
             //keep rules bean selected
-            rulesBeans = ruleManager.processRulesBefore(arg0);
+            rulesBeans = ruleManager.processRulesBefore(arg0.getMethod(), arg0.getArguments());
         }
         Object ret = arg0.proceed();
         ctx.setCurrentOccur(DmsEventOccur.AFTER);
@@ -87,7 +87,7 @@ public class GenericInterceptor implements MethodInterceptor
         }
         //process handler after
         for (GenericEventHandler it : EventHandlerManager.getInstance().handlers) {
-            it.process(arg0, DmsEventOccur.AFTER, ret, ctx);
+            it.process(arg0.getMethod(), arg0.getArguments(), DmsEventOccur.AFTER, ret, ctx);
         }
         EventContext.clear();
         return ret;

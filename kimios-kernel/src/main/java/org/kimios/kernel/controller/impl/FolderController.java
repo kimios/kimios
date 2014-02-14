@@ -26,6 +26,8 @@ import org.kimios.kernel.controller.IFolderController;
 import org.kimios.kernel.controller.utils.PathUtils;
 import org.kimios.kernel.dms.*;
 import org.kimios.kernel.events.EventContext;
+import org.kimios.kernel.events.annotations.DmsEvent;
+import org.kimios.kernel.events.annotations.DmsEventName;
 import org.kimios.kernel.exception.AccessDeniedException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.NamingException;
@@ -35,7 +37,9 @@ import org.kimios.kernel.security.DMEntitySecurity;
 import org.kimios.kernel.security.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 public class FolderController extends AKimiosController implements IFolderController
 {
     Logger log = LoggerFactory.getLogger(FolderController.class);
@@ -107,6 +111,7 @@ public class FolderController extends AKimiosController implements IFolderContro
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IFolderController#createFolder(org.kimios.kernel.security.Session, java.lang.String, long, int, boolean)
     */
+    @DmsEvent(eventName = {DmsEventName.FOLDER_CREATE})
     public long createFolder(Session session, String name, long parentUid, boolean isSecurityInherited)
             throws NamingException, ConfigException, DataSourceException, AccessDeniedException
     {
@@ -166,6 +171,7 @@ public class FolderController extends AKimiosController implements IFolderContro
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IFolderController#updateFolder(org.kimios.kernel.security.Session, long, java.lang.String, long, int)
     */
+    @DmsEvent(eventName = {DmsEventName.FOLDER_UPDATE})
     public void updateFolder(Session session, long folderUid, String name, long parentUid)
             throws NamingException, TreeException, AccessDeniedException, ConfigException, DataSourceException
     {
@@ -223,6 +229,7 @@ public class FolderController extends AKimiosController implements IFolderContro
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IFolderController#deleteFolder(org.kimios.kernel.security.Session, long)
     */
+    @DmsEvent(eventName = {DmsEventName.FOLDER_DELETE})
     public boolean deleteFolder(Session session, long folderUid)
             throws AccessDeniedException, ConfigException, DataSourceException
     {

@@ -16,9 +16,6 @@
  */
 package org.kimios.kernel.controller;
 
-import java.util.Date;
-import java.util.Vector;
-
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.DocumentWorkflowStatus;
 import org.kimios.kernel.dms.DocumentWorkflowStatusRequest;
@@ -28,6 +25,9 @@ import org.kimios.kernel.exception.AccessDeniedException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.WorkflowException;
 import org.kimios.kernel.security.Session;
+
+import java.util.Date;
+import java.util.Vector;
 
 public interface IWorkflowController
 {

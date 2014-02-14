@@ -30,6 +30,8 @@ import org.kimios.kernel.dms.RequestStatus;
 import org.kimios.kernel.dms.WorkflowStatus;
 import org.kimios.kernel.dms.WorkflowStatusManagerFactory;
 import org.kimios.kernel.events.EventContext;
+import org.kimios.kernel.events.annotations.DmsEvent;
+import org.kimios.kernel.events.annotations.DmsEventName;
 import org.kimios.kernel.exception.AccessDeniedException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.WorkflowException;
@@ -37,12 +39,15 @@ import org.kimios.kernel.security.SecurityEntityType;
 import org.kimios.kernel.security.Session;
 import org.kimios.kernel.user.Group;
 import org.kimios.utils.configuration.ConfigurationManager;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 public class WorkflowController extends AKimiosController implements IWorkflowController
 {
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IWorkflowController#createWorkflowRequest(org.kimios.kernel.security.Session, long, long)
     */
+    @DmsEvent(eventName = { DmsEventName.WORKFLOW_STATUS_REQUEST_CREATE })
     public void createWorkflowRequest(Session session, long documentUid, long workflowStatusUid)
             throws AccessDeniedException,
             WorkflowException, ConfigException, DataSourceException
@@ -73,6 +78,7 @@ public class WorkflowController extends AKimiosController implements IWorkflowCo
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IWorkflowController#cancelWorkflow(org.kimios.kernel.security.Session, long)
     */
+    @DmsEvent(eventName = { DmsEventName.WORKFLOW_CANCEL })
     public void cancelWorkflow(Session session, long documentUid)
             throws AccessDeniedException, ConfigException, DataSourceException
     {
@@ -164,6 +170,7 @@ public class WorkflowController extends AKimiosController implements IWorkflowCo
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IWorkflowController#acceptWorkflowRequest(org.kimios.kernel.security.Session, long, java.lang.String, java.lang.String, java.lang.String, java.lang.String, long, java.util.Date, java.lang.String)
     */
+    @DmsEvent(eventName = { DmsEventName.WORKFLOW_STATUS_REQUEST_ACCEPT})
     public void acceptWorkflowRequest(Session session, long documentUid, String userName, String userSource,
             String validatorUserName, String validatorUserSource, long workflowStatusUid, Date requestDate,
             String comment)
@@ -201,6 +208,7 @@ public class WorkflowController extends AKimiosController implements IWorkflowCo
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IWorkflowController#rejectWorkflowRequest(org.kimios.kernel.security.Session, long, java.lang.String, java.lang.String, java.lang.String, java.lang.String, long, java.util.Date, java.lang.String)
     */
+    @DmsEvent(eventName = { DmsEventName.WORKFLOW_STATUS_REQUEST_REJECT })
     public void rejectWorkflowRequest(Session session, long documentUid, String userName, String userSource,
             String validatorUserName, String validatorUserSource, long workflowStatusUid, Date requestDate,
             String comment)
@@ -225,6 +233,7 @@ public class WorkflowController extends AKimiosController implements IWorkflowCo
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IWorkflowController#updateDocumentWorkflowRequestComment(org.kimios.kernel.security.Session, long, java.lang.String, java.lang.String, java.util.Date, long, java.lang.String)
     */
+    @DmsEvent(eventName = { DmsEventName.WORKFLOW_STATUS_REQUEST_COMMENT })
     public void updateDocumentWorkflowRequestComment(Session session, long documentUid, String userName,
             String userSource, Date requestDate,
             long workflowStatusUid, String comment) throws AccessDeniedException, ConfigException, DataSourceException

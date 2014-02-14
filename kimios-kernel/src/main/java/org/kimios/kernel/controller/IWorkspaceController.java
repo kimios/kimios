@@ -16,9 +16,6 @@
  */
 package org.kimios.kernel.controller;
 
-import java.util.List;
-import java.util.Vector;
-
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.Workspace;
 import org.kimios.kernel.events.annotations.DmsEvent;
@@ -28,6 +25,9 @@ import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.NamingException;
 import org.kimios.kernel.log.DMEntityLog;
 import org.kimios.kernel.security.Session;
+
+import java.util.List;
+import java.util.Vector;
 
 public interface IWorkspaceController
 {

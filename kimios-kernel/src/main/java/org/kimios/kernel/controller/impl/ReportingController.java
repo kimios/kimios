@@ -26,7 +26,9 @@ import org.kimios.kernel.reporting.XMLReportHelper;
 import org.kimios.kernel.reporting.impl.factory.DocumentTransactionsReportFactory;
 import org.kimios.kernel.security.Role;
 import org.kimios.kernel.security.Session;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 public class ReportingController extends AKimiosController implements IReportingController
 {
     private XMLReportHelper xmlHelper = new XMLReportHelper();

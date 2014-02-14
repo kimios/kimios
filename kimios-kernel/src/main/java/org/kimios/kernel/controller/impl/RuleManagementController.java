@@ -43,12 +43,14 @@ import org.kimios.kernel.security.SecurityAgent;
 import org.kimios.kernel.security.Session;
 import org.kimios.kernel.utils.ClassFinder;
 import org.kimios.kernel.utils.XmlClassSerializer;
+import org.springframework.transaction.annotation.Transactional;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+@Transactional
 public class RuleManagementController extends AKimiosController implements IRuleManagementController
 {
     RuleBeanFactory ruleFactory;

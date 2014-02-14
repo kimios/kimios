@@ -26,18 +26,22 @@ import org.kimios.kernel.controller.IWorkspaceController;
 import org.kimios.kernel.controller.utils.PathUtils;
 import org.kimios.kernel.dms.Workspace;
 import org.kimios.kernel.events.EventContext;
+import org.kimios.kernel.events.annotations.DmsEvent;
+import org.kimios.kernel.events.annotations.DmsEventName;
 import org.kimios.kernel.exception.AccessDeniedException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.NamingException;
 import org.kimios.kernel.log.DMEntityLog;
 import org.kimios.kernel.security.Role;
 import org.kimios.kernel.security.Session;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Workspace Controller :
  *
  * Workspace management methods
  */
+@Transactional
 public class WorkspaceController extends AKimiosController implements IWorkspaceController
 {
     /**
@@ -91,6 +95,7 @@ public class WorkspaceController extends AKimiosController implements IWorkspace
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IWorkspaceController#createWorkspace(org.kimios.kernel.security.Session, java.lang.String)
     */
+    @DmsEvent(eventName = { DmsEventName.WORKSPACE_CREATE })
     public long createWorkspace(Session session, String name)
             throws NamingException, ConfigException, DataSourceException, AccessDeniedException
     {
@@ -117,6 +122,7 @@ public class WorkspaceController extends AKimiosController implements IWorkspace
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IWorkspaceController#updateWorkspace(org.kimios.kernel.security.Session, long, java.lang.String)
     */
+    @DmsEvent(eventName = { DmsEventName.WORKSPACE_UPDATE })
     public void updateWorkspace(Session session, long workspaceUid, String name)
             throws NamingException, ConfigException, DataSourceException, AccessDeniedException
     {
@@ -142,6 +148,7 @@ public class WorkspaceController extends AKimiosController implements IWorkspace
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IWorkspaceController#deleteWorkspace(org.kimios.kernel.security.Session, long)
     */
+    @DmsEvent(eventName = { DmsEventName.WORKSPACE_DELETE })
     public void deleteWorkspace(Session session, long workspaceUid)
             throws ConfigException, DataSourceException, AccessDeniedException
     {

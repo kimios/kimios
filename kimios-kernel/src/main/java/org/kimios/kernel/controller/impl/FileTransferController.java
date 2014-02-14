@@ -22,6 +22,8 @@ import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.IFileTransferController;
 import org.kimios.kernel.dms.Document;
 import org.kimios.kernel.dms.DocumentVersion;
+import org.kimios.kernel.events.annotations.DmsEvent;
+import org.kimios.kernel.events.annotations.DmsEventName;
 import org.kimios.kernel.exception.*;
 import org.kimios.kernel.filetransfer.DataTransfer;
 import org.kimios.kernel.filetransfer.zip.FileCompressionHelper;
@@ -30,6 +32,7 @@ import org.kimios.kernel.user.User;
 import org.kimios.kernel.utils.HashCalculator;
 import org.kimios.kernel.ws.pojo.DocumentWrapper;
 import org.kimios.utils.configuration.ConfigurationManager;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
 import java.security.NoSuchAlgorithmException;
@@ -37,6 +40,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Vector;
 
+@Transactional
 public class FileTransferController
         extends AKimiosController
         implements IFileTransferController {
@@ -99,6 +103,7 @@ public class FileTransferController
      * <p/>
      * - InegrityCheck done - Update of the document version - Remove transaction and temporary file
      */
+    @DmsEvent( eventName = { DmsEventName.FILE_UPLOAD } )
     public DataTransfer endUploadTransaction(Session session, long transactionUid, String hashMD5, String hashSHA1)
             throws ConfigException, AccessDeniedException, IOException, DataSourceException, RepositoryException,
             TransferIntegrityException {
@@ -188,6 +193,7 @@ public class FileTransferController
     /**
      * Start download transaction
      */
+    @DmsEvent( eventName = { DmsEventName.DOCUMENT_VERSION_READ } )
     public DataTransfer startDownloadTransaction(Session session, long documentVersionUid, boolean isCompressed)
             throws IOException, RepositoryException, DataSourceException, ConfigException, AccessDeniedException {
         DocumentVersion dv =

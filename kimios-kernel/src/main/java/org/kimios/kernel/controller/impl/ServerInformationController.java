@@ -26,10 +26,12 @@ import org.kimios.kernel.exception.AccessDeniedException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.security.Session;
 import org.kimios.utils.configuration.ConfigurationManager;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 public class ServerInformationController extends AKimiosController implements IServerInformationController
 {
-    private static String SERVER_VERSION = "kimios 1.0";
+    private static String SERVER_VERSION = "Kimios 1.1";
 
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.IServerInformationController#getServerVersion()

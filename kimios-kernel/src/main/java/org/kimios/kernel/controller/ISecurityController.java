@@ -16,9 +16,6 @@
  */
 package org.kimios.kernel.controller;
 
-import java.util.List;
-import java.util.Vector;
-
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.events.annotations.DmsEvent;
 import org.kimios.kernel.events.annotations.DmsEventName;
@@ -30,6 +27,8 @@ import org.kimios.kernel.security.Session;
 import org.kimios.kernel.user.AuthenticationSource;
 import org.kimios.kernel.user.Group;
 import org.kimios.kernel.user.User;
+
+import java.util.List;
 
 public interface ISecurityController
 {

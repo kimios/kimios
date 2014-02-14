@@ -30,7 +30,6 @@ import org.kimios.kernel.security.Session;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-import java.util.Vector;
 
 public interface IDocumentController {
     /**
@@ -168,7 +167,7 @@ public interface IDocumentController {
     /**
      * Get the bookmarks list of the given user
      */
-    public Vector<Bookmark> getBookmarks(Session session)
+    public List<Bookmark> getBookmarks(Session session)
             throws DataSourceException, ConfigException;
 
     /**
@@ -186,19 +185,27 @@ public interface IDocumentController {
     /**
      * Get the last consulted items for the given user
      */
-    public Vector<Bookmark> getRecentItems(Session session)
+    public List<Bookmark> getRecentItems(Session session)
             throws DataSourceException, ConfigException;
 
     /**
      * Get the symbolic links created in workspace or folder (not recursive)
      */
-    public Vector<SymbolicLink> getChildSymbolicLinks(Session session, long parentUid) throws DataSourceException,
+    public List<SymbolicLink> getChildSymbolicLinks(Session session, long parentUid) throws DataSourceException,
             ConfigException, AccessDeniedException;
+
+
+    /**
+     * Get the symbolic links created in workspace or folder Pojos (not recursive)
+     */
+    public List<org.kimios.kernel.ws.pojo.SymbolicLink> getChildSymbolicLinksPojos(Session session, long parentUid)
+            throws DataSourceException, ConfigException,
+            AccessDeniedException;
 
     /**
      * Get the symbolic links created for a specific target
      */
-    public Vector<SymbolicLink> getSymbolicLinkCreated(Session session, long targetUid) throws DataSourceException,
+    public List<SymbolicLink> getSymbolicLinkCreated(Session session, long targetUid) throws DataSourceException,
             ConfigException, AccessDeniedException;
 
     /**
@@ -224,7 +231,7 @@ public interface IDocumentController {
     /**
      * Return the log recorded for a given document
      */
-    public Vector<DMEntityLog<Document>> getDocumentLog(Session s,
+    public List<DMEntityLog<Document>> getDocumentLog(Session s,
                                                         long documentUid) throws AccessDeniedException, ConfigException,
             DataSourceException;
 

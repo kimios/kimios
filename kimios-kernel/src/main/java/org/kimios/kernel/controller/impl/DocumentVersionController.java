@@ -21,10 +21,13 @@ import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.IDocumentVersionController;
 import org.kimios.kernel.dms.*;
 import org.kimios.kernel.events.EventContext;
+import org.kimios.kernel.events.annotations.DmsEvent;
+import org.kimios.kernel.events.annotations.DmsEventName;
 import org.kimios.kernel.exception.*;
 import org.kimios.kernel.repositories.RepositoryManager;
 import org.kimios.kernel.security.Session;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -35,6 +38,8 @@ import java.util.Vector;
 /**
  * @author Fabien Alin
  */
+
+@Transactional
 public class DocumentVersionController extends AKimiosController implements IDocumentVersionController {
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IDocumentVersionController#getDocumentVersion(org.kimios.kernel.security.Session, long)
@@ -53,6 +58,7 @@ public class DocumentVersionController extends AKimiosController implements IDoc
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IDocumentVersionController#createDocumentVersion(org.kimios.kernel.security.Session, long)
     */
+    @DmsEvent(eventName = { DmsEventName.DOCUMENT_VERSION_CREATE })
     public long createDocumentVersion(Session session, long documentUid)
             throws CheckoutViolationException, ConfigException, DataSourceException, AccessDeniedException {
         DocumentFactory docFactory = dmsFactoryInstantiator.getDocumentFactory();
@@ -71,6 +77,7 @@ public class DocumentVersionController extends AKimiosController implements IDoc
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IDocumentVersionController#createDocumentVersionFromLatest(org.kimios.kernel.security.Session, long)
     */
+    @DmsEvent(eventName = { DmsEventName.DOCUMENT_VERSION_CREATE_FROM_LATEST })
     public long createDocumentVersionFromLatest(Session session, long documentUid)
             throws CheckoutViolationException, ConfigException, DataSourceException, AccessDeniedException,
             RepositoryException {
@@ -128,6 +135,7 @@ public class DocumentVersionController extends AKimiosController implements IDoc
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IDocumentVersionController#updateDocumentVersion(org.kimios.kernel.security.Session, long, long)
     */
+    @DmsEvent(eventName = { DmsEventName.DOCUMENT_VERSION_UPDATE })
     public void updateDocumentVersion(Session session, long documentUid, long documentTypeUid, String xmlStream) throws
             XMLException, CheckoutViolationException, ConfigException, DataSourceException, AccessDeniedException {
         DocumentTypeFactory typeFactory = dmsFactoryInstantiator.getDocumentTypeFactory();

@@ -16,21 +16,17 @@
  */
 package org.kimios.kernel.controller;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.events.annotations.DmsEvent;
 import org.kimios.kernel.events.annotations.DmsEventName;
-import org.kimios.kernel.exception.AccessDeniedException;
-import org.kimios.kernel.exception.CheckoutViolationException;
-import org.kimios.kernel.exception.DataSourceException;
-import org.kimios.kernel.exception.RepositoryException;
-import org.kimios.kernel.exception.TransferIntegrityException;
+import org.kimios.kernel.exception.*;
 import org.kimios.kernel.filetransfer.DataTransfer;
 import org.kimios.kernel.security.Session;
 import org.kimios.kernel.ws.pojo.DocumentWrapper;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
 public interface IFileTransferController
 {

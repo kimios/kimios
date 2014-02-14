@@ -46,10 +46,12 @@ import org.kimios.kernel.security.Role;
 import org.kimios.kernel.security.Session;
 import org.kimios.kernel.xml.XSDException;
 import org.kimios.kernel.xml.XSDUtil;
+import org.springframework.transaction.annotation.Transactional;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+@Transactional
 public class StudioController extends AKimiosController implements IStudioController
 {
     /* (non-Javadoc)

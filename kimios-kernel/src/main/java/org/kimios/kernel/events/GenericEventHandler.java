@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.aopalliance.intercept.MethodInvocation;
+import org.aspectj.lang.ProceedingJoinPoint;
 import org.kimios.kernel.events.annotations.DmsEvent;
 import org.kimios.kernel.events.annotations.DmsEventName;
 import org.kimios.kernel.events.annotations.DmsEventOccur;
@@ -36,10 +37,10 @@ public abstract class GenericEventHandler
         return this.methods;
     }
 
-    final public EventContext process(MethodInvocation _invocation, DmsEventOccur _when, Object methodReturn,
-            EventContext ctx) throws Throwable
+    final public EventContext process(Method method, Object[] arguments, DmsEventOccur _when, Object methodReturn,
+                                      EventContext ctx) throws Throwable
     {
-        DmsEvent evt = _invocation.getMethod().getAnnotation(DmsEvent.class);
+        DmsEvent evt = method.getAnnotation(DmsEvent.class);
         if (evt != null) {
             for (Method it : this.getClass().getDeclaredMethods()) {
                 DmsEvent st = null;
@@ -53,7 +54,7 @@ public abstract class GenericEventHandler
                             *  Generate the before context
                             */
                             Object[] tab = new Object[1];
-                            tab[0] = _invocation.getArguments();
+                            tab[0] = arguments;
                             try {
                                 it.invoke(this, tab[0], methodReturn, ctx);
                             } catch (InvocationTargetException ex) {
@@ -69,6 +70,7 @@ public abstract class GenericEventHandler
         }
         return ctx;
     }
+
 
     final public boolean isJoined(Method mt)
     {

@@ -25,6 +25,8 @@ import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.ISecurityController;
 import org.kimios.kernel.dms.DMEntity;
 import org.kimios.kernel.events.EventContext;
+import org.kimios.kernel.events.annotations.DmsEvent;
+import org.kimios.kernel.events.annotations.DmsEventName;
 import org.kimios.kernel.exception.AccessDeniedException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.XMLException;
@@ -43,7 +45,9 @@ import org.kimios.kernel.user.Group;
 import org.kimios.kernel.user.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 public class SecurityController extends AKimiosController implements ISecurityController
 {
     private static Logger log = LoggerFactory.getLogger(ISecurityController.class);
@@ -67,6 +71,7 @@ public class SecurityController extends AKimiosController implements ISecurityCo
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.ISecurityController#updateDMEntitySecurities(org.kimios.kernel.security.Session, long, int, java.lang.String, boolean)
     */
+    @DmsEvent(eventName = { DmsEventName.ENTITY_ACL_UPDATE })
     public void updateDMEntitySecurities(Session session, long dmEntityUid, String xmlStream,
             boolean isRecursive) throws AccessDeniedException, ConfigException, DataSourceException,
             XMLException

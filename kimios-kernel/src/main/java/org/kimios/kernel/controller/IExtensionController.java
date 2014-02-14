@@ -16,8 +16,6 @@
  */
 package org.kimios.kernel.controller;
 
-import java.util.List;
-
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.extension.impl.DMEntityAttribute;
 import org.kimios.kernel.events.annotations.DmsEvent;
@@ -25,6 +23,8 @@ import org.kimios.kernel.events.annotations.DmsEventName;
 import org.kimios.kernel.exception.AccessDeniedException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.security.Session;
+
+import java.util.List;
 
 public interface IExtensionController
 {

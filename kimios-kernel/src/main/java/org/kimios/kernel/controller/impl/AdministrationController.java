@@ -27,6 +27,8 @@ import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.IAdministrationController;
 import org.kimios.kernel.dms.*;
+import org.kimios.kernel.events.annotations.DmsEvent;
+import org.kimios.kernel.events.annotations.DmsEventName;
 import org.kimios.kernel.exception.AccessDeniedException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.IndexException;
@@ -37,6 +39,7 @@ import org.kimios.kernel.user.AuthenticationSource;
 import org.kimios.kernel.user.Group;
 import org.kimios.kernel.user.GroupFactory;
 import org.kimios.kernel.user.UserFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 /*
  * 
@@ -46,6 +49,7 @@ import org.kimios.kernel.user.UserFactory;
  *    - Here are all of the aministration functionnalities (domain management, user and group, roles)
  * 
  */
+@Transactional
 public class AdministrationController extends AKimiosController implements IAdministrationController
 {
     /* (non-Javadoc)
@@ -264,6 +268,7 @@ public class AdministrationController extends AKimiosController implements IAdmi
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IAdministrationController#createUser(org.kimios.kernel.security.Session, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
     */
+    @DmsEvent(eventName = { DmsEventName.USER_CREATE })
     public void createUser(Session session, String uid, String firstName, String lastName, String phoneNumber, String mail, String password,
             String authenticationSourceName, boolean enabled)
             throws AccessDeniedException, ConfigException, DataSourceException
@@ -311,6 +316,7 @@ public class AdministrationController extends AKimiosController implements IAdmi
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IAdministrationController#deleteUser(org.kimios.kernel.security.Session, java.lang.String, java.lang.String)
     */
+    @DmsEvent(eventName = { DmsEventName.USER_DELETE })
     public void deleteUser(Session session, String uid, String authenticationSourceName)
             throws AccessDeniedException, ConfigException,
             DataSourceException
@@ -329,6 +335,7 @@ public class AdministrationController extends AKimiosController implements IAdmi
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IAdministrationController#createGroup(org.kimios.kernel.security.Session, java.lang.String, java.lang.String, java.lang.String)
     */
+    @DmsEvent(eventName = { DmsEventName.GROUP_CREATE })
     public void createGroup(Session session, String gid, String name, String authenticationSourceName)
             throws AccessDeniedException, ConfigException,
             DataSourceException
@@ -363,6 +370,7 @@ public class AdministrationController extends AKimiosController implements IAdmi
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IAdministrationController#deleteGroup(org.kimios.kernel.security.Session, java.lang.String, java.lang.String)
     */
+    @DmsEvent(eventName = { DmsEventName.GROUP_DELETE })
     public void deleteGroup(Session session, String gid, String authenticationSourceName)
             throws AccessDeniedException, ConfigException,
             DataSourceException
@@ -380,6 +388,7 @@ public class AdministrationController extends AKimiosController implements IAdmi
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IAdministrationController#addUserToGroup(org.kimios.kernel.security.Session, java.lang.String, java.lang.String, java.lang.String)
     */
+    @DmsEvent(eventName = { DmsEventName.USER_GROUP_ADD })
     public void addUserToGroup(Session session, String uid, String gid, String authenticationSourceName)
             throws AccessDeniedException, ConfigException,
             DataSourceException
@@ -699,6 +708,7 @@ public class AdministrationController extends AKimiosController implements IAdmi
         SessionManager.getInstance().removeSessions(userName, userSource);
     }
 
+    @DmsEvent(eventName = { DmsEventName.USER_ATTRIBUTE_SET })
     public void setUserAttribute(Session session, String userId,
             String userSource, String attributeName, String attributeValue)
             throws ConfigException, DataSourceException, AccessDeniedException

@@ -29,7 +29,9 @@ import org.kimios.kernel.security.SecurityAgent;
 import org.kimios.kernel.security.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 public class PathController extends AKimiosController implements IPathController
 {
 

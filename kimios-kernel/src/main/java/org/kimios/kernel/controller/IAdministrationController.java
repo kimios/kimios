@@ -16,20 +16,19 @@
  */
 package org.kimios.kernel.controller;
 
-import java.util.List;
-import java.util.Vector;
-
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.Document;
 import org.kimios.kernel.events.annotations.DmsEvent;
 import org.kimios.kernel.events.annotations.DmsEventName;
 import org.kimios.kernel.exception.AccessDeniedException;
 import org.kimios.kernel.exception.DataSourceException;
-import org.kimios.kernel.exception.IndexException;
 import org.kimios.kernel.security.Role;
 import org.kimios.kernel.security.Session;
 import org.kimios.kernel.user.AuthenticationSource;
 import org.kimios.kernel.user.Group;
+
+import java.util.List;
+import java.util.Vector;
 
 public interface IAdministrationController
 {
