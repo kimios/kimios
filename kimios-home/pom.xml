@@ -154,7 +154,7 @@
                                         </directory>
                                         <filtering>true</filtering>
                                         <includes>
-                                            <include>**/kimios.properties</include>
+                                            <include>kimios.properties</include>
                                         </includes>
                                     </resource>
                                 </resources>
@@ -175,7 +175,7 @@
                                         </directory>
                                         <filtering>true</filtering>
                                         <includes>
-                                            <include>**/kimios.properties</include>
+                                            <include>kimios.properties</include>
                                         </includes>
                                     </resource>
                                 </resources>
