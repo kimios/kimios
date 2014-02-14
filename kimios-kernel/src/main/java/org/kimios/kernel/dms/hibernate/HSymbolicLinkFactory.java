@@ -34,7 +34,7 @@ public class HSymbolicLinkFactory extends HFactory implements SymbolicLinkFactor
     * @see org.kimios.kernel.dms.SymbolicLinkFactory#getChildSymbolicLinks(org.kimios.kernel.dms.DMEntity)
     *
     */
-    public Vector<SymbolicLink> getChildSymbolicLinks(DMEntity dme)
+    public List<SymbolicLink> getChildSymbolicLinks(DMEntity dme)
             throws ConfigException, DataSourceException
     {
 
@@ -46,12 +46,7 @@ public class HSymbolicLinkFactory extends HFactory implements SymbolicLinkFactor
                             .setParameter("dmeUid", dme.getUid())
                             .list();
 
-            Vector<SymbolicLink> vSymLinks = new Vector<SymbolicLink>();
-            for (SymbolicLink sl : lSymLinks) {
-                vSymLinks.add(sl);
-            }
-
-            return vSymLinks;
+            return lSymLinks;
         } catch (HibernateException he) {
             throw new DataSourceException(he);
         }
@@ -60,7 +55,7 @@ public class HSymbolicLinkFactory extends HFactory implements SymbolicLinkFactor
     /* (non-Javadoc)
     * @see org.kimios.kernel.dms.SymbolicLinkFactory#getSymbolicLinks(org.kimios.kernel.dms.DMEntity)
     */
-    public Vector<SymbolicLink> getSymbolicLinks(DMEntity dme)
+    public List<SymbolicLink> getSymbolicLinks(DMEntity dme)
             throws ConfigException, DataSourceException
     {
         try {
@@ -71,11 +66,7 @@ public class HSymbolicLinkFactory extends HFactory implements SymbolicLinkFactor
                             .setParameter("dmeUid", dme.getUid())
                             .list();
 
-            Vector<SymbolicLink> vSymLinks = new Vector<SymbolicLink>();
-            for (SymbolicLink sl : lSymLinks) {
-                vSymLinks.add(sl);
-            }
-            return vSymLinks;
+            return lSymLinks;
         } catch (HibernateException he) {
             throw new DataSourceException(he);
         }
@@ -94,6 +85,21 @@ public class HSymbolicLinkFactory extends HFactory implements SymbolicLinkFactor
             key.setParentType(parentType);
             key.setParentUid(parentUid);
             SymbolicLink sl = (SymbolicLink) getSession().get(SymbolicLink.class, key);
+            return sl;
+        } catch (HibernateException he) {
+            throw new DataSourceException(he);
+        }
+    }
+
+
+    /* (non-Javadoc)
+   * @see org.kimios.kernel.dms.SymbolicLinkFactory#getSymbolicLink(long, int, long, int)
+   */
+    public SymbolicLink getSymbolicLink(long dmEntityUid)
+            throws DataSourceException
+    {
+        try {
+            SymbolicLink sl = (SymbolicLink) getSession().get(SymbolicLink.class, dmEntityUid);
             return sl;
         } catch (HibernateException he) {
             throw new DataSourceException(he);
@@ -120,6 +126,19 @@ public class HSymbolicLinkFactory extends HFactory implements SymbolicLinkFactor
     {
         try {
             getSession().delete(sl);
+        } catch (HibernateException e) {
+            boolean integrity = e instanceof ConstraintViolationException;
+            throw new DataSourceException(e, e.getMessage());
+        }
+    }
+
+    /* (non-Javadoc)
+    * @see org.kimios.kernel.dms.SymbolicLinkFactory#removeSymbolicLink(org.kimios.kernel.dms.SymbolicLink)
+    */
+    public void removeSymbolicLink(long symbolicLinkId) throws ConfigException, DataSourceException
+    {
+        try {
+            getSession().delete(getSession().get(SymbolicLink.class, symbolicLinkId));
         } catch (HibernateException e) {
             boolean integrity = e instanceof ConstraintViolationException;
             throw new DataSourceException(e, e.getMessage());

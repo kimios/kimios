@@ -32,6 +32,8 @@
        default-autowire="byName">
 
 
+
+
     <import resource="classpath*:/META-INF/cxf/cxf.xml"/>
     <import resource="classpath*:/META-INF/cxf/cxf-extension-soap.xml"/>
 
@@ -70,9 +72,14 @@
             <bean class="org.apache.cxf.aegis.databinding.AegisDatabinding">
                 <property name="aegisContext">
                     <bean class="org.apache.cxf.aegis.AegisContext">
+                        <property name="writeXsiTypes" value="true" />
                         <property name="rootClassNames">
                             <list>
                                 <value>org.kimios.webservices.DMServiceException</value>
+                                <value>org.kimios.kernel.ws.pojo.Document</value>
+                                <value>org.kimios.kernel.ws.pojo.Folder</value>
+                                <value>org.kimios.kernel.ws.pojo.SymbolicLink</value>
+                                <value>org.kimios.kernel.ws.pojo.Workspace</value>
                             </list>
                         </property>
                     </bean>
@@ -341,23 +348,6 @@
             >
         <jaxws:binding>
             <soap:soapBinding name="FileTransferService"/>
-        </jaxws:binding>
-        <jaxws:serviceFactory>
-            <ref bean="jaxws-and-aegis-service-factory"/>
-        </jaxws:serviceFactory>
-    </jaxws:endpoint>
-
-    <bean id="converterServiceBean" class="org.kimios.webservices.impl.ConverterServiceImpl"
-          parent="kimiosCoreService"/>
-    <!-- Service endpoint -->
-    <jaxws:endpoint id="converterServiceWs"
-                    implementorClass="org.kimios.webservices.impl.ConverterServiceImpl"
-                    implementor="#converterServiceBean"
-                    address="/ConverterService"
-                    endpointName="ConverterService"
-            >
-        <jaxws:binding>
-            <soap:soapBinding name="ConverterService"/>
         </jaxws:binding>
         <jaxws:serviceFactory>
             <ref bean="jaxws-and-aegis-service-factory"/>

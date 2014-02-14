@@ -205,39 +205,9 @@ public class Document extends DMEntityImpl
     @Override
     public org.kimios.kernel.ws.pojo.Document toPojo() throws ConfigException, DataSourceException
     {
-        FactoryInstantiator fc = FactoryInstantiator.getInstance();
-        DocumentVersion version = fc.getDocumentVersionFactory().getLastDocumentVersion(this);
-        DocumentType docType = (version != null ? version.getDocumentType() : null);
-        String docTypeName = "";
-        long docTypeUid = -1;
-        if (docType != null) {
-            docTypeName = docType.getName();
-            docTypeUid = docType.getUid();
-        }
-        Lock lock = fc.getLockFactory().getDocumentLock(this);
-        String checkoutUser = "";
-        String checkoutUserSource = "";
-        Date checkOutDate = new Date();
-        boolean isCheckedOut = false;
-        if (lock != null) {
-            checkoutUser = lock.getUser();
-            checkoutUserSource = lock.getUserSource();
-            checkOutDate = lock.getDate();
-            isCheckedOut = true;
-        }
-        DocumentWorkflowStatus dws = fc.getDocumentWorkflowStatusFactory().getLastDocumentWorkflowStatus(this.getUid());
-        long wsUid = -1;
-        String wsName = "";
-        boolean isOutOfWorkflow = SecurityAgent.getInstance().isDocumentOutOfWorkflow(this);
-        if (dws != null) {
-            wsUid = dws.getWorkflowStatusUid();
-            wsName = fc.getWorkflowStatusFactory().getWorkflowStatus(dws.getWorkflowStatusUid()).getName();
-        }
-        return new org.kimios.kernel.ws.pojo.Document(this.uid, this.name, this.owner,
-                this.ownerSource, this.creationDate, this.updateDate,version.getUid(), version.getCreationDate(),
-                version.getModificationDate(), this.folderUid, this.mimeType,
-                this.extension, docTypeUid, docTypeName, isCheckedOut, checkoutUser,
-                checkoutUserSource, checkOutDate, version.getLength(), wsUid, wsName, isOutOfWorkflow, this.path, this.addOnDatas);
+        return FactoryInstantiator.getInstance()
+                .getDocumentFactory()
+                .getDocumentPojoFromId(this.getUid());
     }
 
     @OneToOne(mappedBy = "document")
@@ -246,7 +216,7 @@ public class Document extends DMEntityImpl
         return lock;
     }
 
-    @OneToMany(targetEntity = DocumentVersion.class, mappedBy = "document", cascade = CascadeType.ALL)
+    @OneToMany(targetEntity = DocumentVersion.class, mappedBy = "document")
     public List<DocumentVersion> getVersionList()
     {
         return versionList;

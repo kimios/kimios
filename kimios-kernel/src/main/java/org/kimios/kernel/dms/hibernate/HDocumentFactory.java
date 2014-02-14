@@ -45,6 +45,8 @@ public class HDocumentFactory extends HFactory implements DocumentFactory
         try {
             FactoryInstantiator.getInstance().getMetaValueFactory().cleanDocumentMetaValues(d);
             cleanRelatedDocument(d);
+            removeSymbolicLinks(d);
+            deleteDocumentVersionsLink(d);
             getSession().delete(d);
         } catch (HibernateException e) {
             throw new DataSourceException(e, e.getMessage());
@@ -266,6 +268,20 @@ public class HDocumentFactory extends HFactory implements DocumentFactory
     }
 
 
+    public org.kimios.kernel.ws.pojo.Document getDocumentPojoFromId(long documentId)
+            throws ConfigException, DataSourceException
+    {
+        try {
+            String query = "from DocumentPojo where uid = :documentId";
+            return (org.kimios.kernel.ws.pojo.Document)getSession().createQuery(query)
+                    .setLong("documentId", documentId)
+                    .uniqueResult();
+        } catch (HibernateException he) {
+            throw new DataSourceException(he, he.getMessage());
+        }
+    }
+
+
     public List<org.kimios.kernel.ws.pojo.Document> getDocumentsPojosFromIds(List<Long> listIds)
             throws ConfigException, DataSourceException
     {
@@ -326,6 +342,23 @@ public class HDocumentFactory extends HFactory implements DocumentFactory
         getSession().createSQLQuery(query)
                 .setLong("documentId", document.getUid())
                 .executeUpdate();
+    }
+
+    public void removeSymbolicLinks(Document document)
+    {
+        getSession().createQuery("delete SymbolicLink where dmEntityUid = :documentId and dmEntityType = 3")
+                .setLong("documentId", document.getUid())
+                .executeUpdate();
+    }
+
+    public void deleteDocumentVersionsLink(Document document)
+    {
+        String query =
+                "update document_version set document_id = NULL where document_id = :documentId";
+        getSession().createSQLQuery(query)
+                .setLong("documentId", document.getUid())
+                .executeUpdate();
+
     }
 }
 

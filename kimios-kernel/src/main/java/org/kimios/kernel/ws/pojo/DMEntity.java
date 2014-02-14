@@ -19,6 +19,7 @@ package org.kimios.kernel.ws.pojo;
 import org.codehaus.jackson.annotate.JsonSubTypes;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
 
+import javax.xml.bind.annotation.XmlSeeAlso;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
@@ -33,7 +34,7 @@ import java.util.Date;
         @JsonSubTypes.Type(value = Document.class, name = "document"),
         @JsonSubTypes.Type(value = Folder.class, name = "folder"),
         @JsonSubTypes.Type(value = Workspace.class, name = "workspace"),
-        @JsonSubTypes.Type(value = SymbolicLink.class, name = "workspace")
+        @JsonSubTypes.Type(value = SymbolicLink.class, name = "symbolic_link")
 })
 public class DMEntity implements Serializable
 {

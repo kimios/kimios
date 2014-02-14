@@ -16,17 +16,12 @@
  */
 package org.kimios.kernel.ws.pojo;
 
+import java.io.Serializable;
 import java.util.Calendar;
+import java.util.Date;
 
-public class SymbolicLink extends DMEntity
+public class SymbolicLink extends DMEntity implements Serializable
 {
-    private Calendar creationDate;
-
-    private String creatorName;
-
-    private String creatorSource;
-
-    private String name;
 
     private long dmEntityUid;
 
@@ -36,45 +31,7 @@ public class SymbolicLink extends DMEntity
 
     private int parentType;
 
-    public Calendar getCreationDate()
-    {
-        return creationDate;
-    }
-
-    public void setCreationDate(Calendar creationDate)
-    {
-        this.creationDate = creationDate;
-    }
-
-    public String getCreatorName()
-    {
-        return creatorName;
-    }
-
-    public void setCreatorName(String creatorName)
-    {
-        this.creatorName = creatorName;
-    }
-
-    public String getCreatorSource()
-    {
-        return creatorSource;
-    }
-
-    public void setCreatorSource(String creatorSource)
-    {
-        this.creatorSource = creatorSource;
-    }
-
-    public String getName()
-    {
-        return name;
-    }
-
-    public void setName(String name)
-    {
-        this.name = name;
-    }
+    private DMEntity target;
 
     public long getDmEntityUid()
     {
@@ -118,6 +75,24 @@ public class SymbolicLink extends DMEntity
 
     public SymbolicLink()
     {
+        this.type = 7;
+    }
+
+    public SymbolicLink(long uid, String name, String owner, String ownerSource, Date creationDate,
+                     Date updateDate,
+                     String path)
+    {
+        super(uid, 7
+                , name, owner, ownerSource, creationDate, updateDate, path);
+    }
+
+
+    public DMEntity getTarget() {
+        return target;
+    }
+
+    public void setTarget(DMEntity target) {
+        this.target = target;
     }
 }
 

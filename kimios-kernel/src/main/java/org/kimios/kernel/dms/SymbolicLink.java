@@ -16,18 +16,14 @@
  */
 package org.kimios.kernel.dms;
 
+import org.kimios.kernel.ws.pojo.*;
+
 import java.util.Calendar;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 @Entity
-@Table(name = "symbolic_link")
+@Table(name = "symbolic_link", uniqueConstraints=@UniqueConstraint(columnNames={"target_entity_id", "parent_id"}))
 @PrimaryKeyJoinColumn(name = "id")
 public class SymbolicLink extends DMEntityImpl
 {
@@ -127,15 +123,36 @@ public class SymbolicLink extends DMEntityImpl
     public org.kimios.kernel.ws.pojo.SymbolicLink toPojo()
     {
         org.kimios.kernel.ws.pojo.SymbolicLink sl = new org.kimios.kernel.ws.pojo.SymbolicLink();
+
+        sl.setUid(this.getUid());
+        sl.setType(DMEntityType.SYMBOLIC_LINK);
+
         Calendar cal = Calendar.getInstance();
         cal.setTime(this.creationDate);
         sl.setCreationDate(cal);
-        sl.setCreatorName(this.owner);
-        sl.setCreatorSource(this.ownerSource);
-        sl.setDmEntityType(this.dmEntityType);
-        sl.setDmEntityUid(this.dmEntityUid);
+
+        Calendar cal2 = Calendar.getInstance();
+        cal2.setTime(this.updateDate);
+        sl.setUpdateDate(cal2);
+
+        sl.setPath(this.getPath());
         sl.setParentType(this.parentType);
         sl.setParentUid(this.parentUid);
+
+
+        /*
+            Target
+         */
+        sl.setName(this.getLinkTarget().getName());
+        sl.setDmEntityType(this.dmEntityType);
+        sl.setDmEntityUid(this.dmEntityUid);
+        sl.setTarget(this.getLinkTarget().toPojo());
+
+        /*
+           item
+        */
+
+
         return sl;
     }
 }

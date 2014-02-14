@@ -16,7 +16,7 @@
  */
 package org.kimios.kernel.dms;
 
-import java.util.Vector;
+import java.util.List;
 
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.exception.DataSourceException;
@@ -30,13 +30,13 @@ public interface SymbolicLinkFactory
      * @throws org.kimios.kernel.exception.DataSourceException return all of the SymbolicLink linked to a given
      * DMEntity(Document or Folder)
      */
-    public Vector<SymbolicLink> getSymbolicLinks(DMEntity dme) throws ConfigException, DataSourceException;
+    public List<SymbolicLink> getSymbolicLinks(DMEntity dme) throws ConfigException, DataSourceException;
 
     /**
      * @return Vector<SymbolicLinks>
      * @throws DataSourceException return all of the Child SymbolicLink for a given DMEntity(Workspace or Folder)
      */
-    public Vector<SymbolicLink> getChildSymbolicLinks(DMEntity d) throws ConfigException, DataSourceException;
+    public List<SymbolicLink> getChildSymbolicLinks(DMEntity d) throws ConfigException, DataSourceException;
 
     /**
      * @throws DataSourceException save a symbolic link
@@ -49,6 +49,11 @@ public interface SymbolicLinkFactory
     public void removeSymbolicLink(SymbolicLink sl) throws ConfigException, DataSourceException;
 
     /**
+     * @throws DataSourceException remove a symbolic link
+     */
+    public void removeSymbolicLink(long symbolicLinkId) throws ConfigException, DataSourceException;
+
+    /**
      * @param dmEntityUid
      * @param dmEntityType
      * @param parentUid
@@ -59,6 +64,16 @@ public interface SymbolicLinkFactory
      */
     public SymbolicLink getSymbolicLink(long dmEntityUid, int dmEntityType, long parentUid, int parentType)
             throws ConfigException, DataSourceException;
+
+
+    /**
+     * @param symbolicLinkId
+     * @return
+     * @throws ConfigException
+     * @throws DataSourceException
+     */
+    public SymbolicLink getSymbolicLink(long symbolicLinkId)
+            throws DataSourceException;
 
     /**
      * @param sl
