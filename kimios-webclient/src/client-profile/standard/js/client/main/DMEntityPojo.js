@@ -54,4 +54,6 @@ kimios.DMEntityPojo = function (entity) {
     this.versionUid = entity.versionUid;
     this.dmEntityAddonData = entity.dmEntityAddonData;
 
+    this.targetEntity = entity.type == 7 ? entity.targetEntity : null;
+
 };

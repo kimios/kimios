@@ -59,6 +59,9 @@ kimios.ContextMenu = new function () {
         this.initUnknownMenu(config);
         this.initCartMenu(config);
         this.initCartContainerMenu(config);
+
+        this.initSymLinkDocumentMenu(config);
+        this.initViewableSymLinkDocumentMenu(config);
     };
 
     /**
@@ -85,6 +88,13 @@ kimios.ContextMenu = new function () {
                             return this.viewableDocumentMenu;
                         } else {
                             return this.documentMenu;
+                        }
+                    case 7:
+                        var ext = dmEntityPojo.targetEntity.extension ? dmEntityPojo.targetEntity.extension.toLowerCase() : '';
+                        if (kimios.isViewableExtension(ext) || ext.toLowerCase() == 'pdf') {
+                            return this.viewableSymlinkDocumentMenu;
+                        } else {
+                            return this.symlinkDocumentMenu;
                         }
                     default: // is home
                         return this.homeMenu;
@@ -272,51 +282,103 @@ kimios.ContextMenu = new function () {
 
     this.initDocumentMenu = function (config) {
         this.documentMenu = new Ext.menu.Menu(config);
-        this.documentMenu.add(this.getGetDocumentItem());
+        this.getDocMenuItemsList(this.documentMenu);
         this.documentMenu.addSeparator();
-        this.documentMenu.add(this.getUpdateCurrentVersionItem());
-        this.documentMenu.add(this.getCheckInCheckOutItem());
-//        this.documentMenu.add(this.getStartWorkflowItem());
-        this.documentMenu.add(this.getStartProcessItem());
-//        this.documentMenu.add(this.getListProcessItem());
-        this.documentMenu.add(this.getMoveItem());
-        this.documentMenu.add(this.getDeleteItem());
-        this.documentMenu.add(this.getAddToBookmarksItem());
-        this.documentMenu.addSeparator();
-        this.documentMenu.add(this.getRefreshItem());
-        this.documentMenu.addSeparator();
-        this.documentMenu.add(this.getCommentsItem());
-        if (Ext.isIE || Ext.isGecko) this.documentMenu.add(this.getGetDocumentMailLinkItem());
-        this.documentMenu.add(this.getCartItem());
-        this.documentMenu.addSeparator();
-        this.documentMenu.add(this.getPropertiesItem());
+        this.documentMenu.add(this.getGetCreateSymlinkItem());
 
     };
-
     this.initViewableDocumentMenu = function (config) {
         this.viewableDocumentMenu = new Ext.menu.Menu(config);
-        this.viewableDocumentMenu.add(this.getViewDocumentItem());
-        this.viewableDocumentMenu.add(this.getGetDocumentItem());
-        this.viewableDocumentMenu.add(this.getBarcodeDocumentItem());
+        this.getViewableDocMenuItemsList(this.viewableDocumentMenu);
         this.viewableDocumentMenu.addSeparator();
-        this.viewableDocumentMenu.add(this.getUpdateCurrentVersionItem());
-        this.viewableDocumentMenu.add(this.getCheckInCheckOutItem());
-//        this.viewableDocumentMenu.add(this.getStartWorkflowItem());
-        this.viewableDocumentMenu.add(this.getStartProcessItem());
-//        this.viewableDocumentMenu.add(this.getListProcessItem());
-        this.viewableDocumentMenu.add(this.getMoveItem());
-        this.viewableDocumentMenu.add(this.getDeleteItem());
-        this.viewableDocumentMenu.add(this.getAddToBookmarksItem());
-        this.viewableDocumentMenu.addSeparator();
-        this.viewableDocumentMenu.add(this.getRefreshItem());
-        this.viewableDocumentMenu.addSeparator();
-        this.viewableDocumentMenu.add(this.getCommentsItem());
-        if (Ext.isIE || Ext.isGecko) this.viewableDocumentMenu.add(this.getGetDocumentMailLinkItem());
-        this.viewableDocumentMenu.add(this.getCartItem());
-        this.viewableDocumentMenu.addSeparator();
-        this.viewableDocumentMenu.add(this.getPropertiesItem());
-
+        this.viewableDocumentMenu.add(this.getGetCreateSymlinkItem());
     };
+
+    this.initViewableSymLinkDocumentMenu = function (config) {
+        this.viewableSymlinkDocumentMenu = new Ext.menu.Menu(config);
+
+        /*
+            add commons items for viewable document
+         */
+        this.getViewableDocMenuItemsList(this.viewableSymlinkDocumentMenu, ['delete', 'move']);
+
+        this.viewableSymlinkDocumentMenu.addSeparator();
+        this.viewableSymlinkDocumentMenu.add(this.getGetRemoveSymlinkItem());
+    };
+
+    this.initSymLinkDocumentMenu = function (config) {
+        this.symlinkDocumentMenu = new Ext.menu.Menu(config);
+
+        /*
+         add commons items for document
+         */
+        this.getViewableDocMenuItemsList(this.symlinkDocumentMenu, ['delete', 'move']);
+
+
+        this.symlinkDocumentMenu.addSeparator();
+        this.symlinkDocumentMenu.add(this.getGetRemoveSymlinkItem());
+    };
+
+    this.getDocMenuItemsList = function (menu, hiddenItems) {
+        menu.add(this.getGetDocumentItem());
+        menu.addSeparator();
+        menu.add(this.getUpdateCurrentVersionItem());
+        menu.add(this.getCheckInCheckOutItem());
+        if(bonitaEnabled){
+            menu.add(this.getStartProcessItem());
+        }  else {
+            menu.add(this.getStartWorkflowItem());
+        };
+
+
+        if(!hiddenItems || hiddenItems.indexOf('move') == -1){
+            menu.add(this.getMoveItem());
+        }
+        if(!hiddenItems || hiddenItems.indexOf('delete') == -1){
+            menu.add(this.getDeleteItem());
+        }
+        menu.add(this.getAddToBookmarksItem());
+        menu.addSeparator();
+        menu.add(this.getRefreshItem());
+        menu.addSeparator();
+        menu.add(this.getCommentsItem());
+        if (Ext.isIE || Ext.isGecko) menu.add(this.getGetDocumentMailLinkItem());
+        menu.add(this.getCartItem());
+        menu.addSeparator();
+        menu.add(this.getPropertiesItem());
+    };
+    
+    this.getViewableDocMenuItemsList = function(menu, hiddenItems){
+        menu.add(this.getViewDocumentItem());
+        menu.add(this.getGetDocumentItem());
+        menu.add(this.getBarcodeDocumentItem());
+        menu.addSeparator();
+        menu.add(this.getUpdateCurrentVersionItem());
+        menu.add(this.getCheckInCheckOutItem());
+
+        if(bonitaEnabled){
+            menu.add(this.getStartProcessItem());
+        }  else {
+            menu.add(this.getStartWorkflowItem());
+        }
+        if(!hiddenItems || hiddenItems.indexOf('move') == -1){
+            menu.add(this.getMoveItem());
+        }
+        if(!hiddenItems || hiddenItems.indexOf('delete') == -1){
+            menu.add(this.getDeleteItem());
+        }
+        menu.add(this.getAddToBookmarksItem());
+        menu.addSeparator();
+        menu.add(this.getRefreshItem());
+        menu.addSeparator();
+        menu.add(this.getCommentsItem());
+        if (Ext.isIE || Ext.isGecko) menu.add(this.getGetDocumentMailLinkItem());
+        menu.add(this.getCartItem());
+        menu.addSeparator();
+        menu.add(this.getPropertiesItem());
+    }
+
+
 
     this.initWorkspaceMultipleMenu = function (config) {
         this.workspaceMultipleMenu = new Ext.menu.Menu(config);
@@ -552,7 +614,8 @@ kimios.ContextMenu = new function () {
             iconCls: 'eye',
             scope: this,
             handler: function () {
-                kimios.viewDoc(this.dmEntityPojo);
+                var entity = this.dmEntityPojo.type == 7 ? this.dmEntityPojo.targetEntity : this.dmEntityPojo;
+                kimios.viewDoc(entity);
             }
         });
     };
@@ -563,7 +626,8 @@ kimios.ContextMenu = new function () {
             iconCls: 'barcode',
             scope: this,
             handler: function () {
-                kimios.barcode(this.dmEntityPojo);
+                var entity = this.dmEntityPojo.type == 7 ? this.dmEntityPojo.targetEntity : this.dmEntityPojo;
+                kimios.barcode(entity);
             }
         });
     };
@@ -579,9 +643,57 @@ kimios.ContextMenu = new function () {
                         kimios.util.getDocumentVersionLink(this.dmEntityPojo.uid, this.dmEntityPojo.versionUid)
                     );
                 } else {
+                    var entity = this.dmEntityPojo.type == 7 ? this.dmEntityPojo.targetEntity : this.dmEntityPojo;
                     kimios.util.download(
-                        kimios.util.getDocumentLink(this.dmEntityPojo.uid)
+                        kimios.util.getDocumentLink(entity.uid)
                     );
+                }
+            }
+        });
+    };
+
+    this.getGetCreateSymlinkItem = function () {
+        return new Ext.menu.Item({
+            text: kimios.lang('CreateSymlink'),
+            iconCls: 'add',
+            scope: this,
+            handler: function () {
+                var picker = new kimios.picker.DMEntityPicker({
+                    title: kimios.lang('CreateSymlink'),
+                    iconCls: 'move',
+                    buttonText: kimios.lang('CreateSymlink')
+                });
+                picker.on('entitySelected', function (node) {
+                    if(this.multiple == true){
+                        return false;
+                    }
+                    if (node.attributes.type == undefined) {
+                        Ext.MessageBox.alert(kimios.lang('CreateSymlink'), kimios.lang('AlertMoveDocToUnknownJS'));
+                        return false;
+                    }
+
+                    kimios.request.createSymbolicLink(
+                        this.dmEntityPojo.uid,
+                        this.dmEntityPojo.type,
+                        node.attributes.dmEntityUid,
+                        node.attributes.type
+                    );
+                }, this);
+                picker.show();
+            }
+        });
+    };
+
+    this.getGetRemoveSymlinkItem = function () {
+        return new Ext.menu.Item({
+            text: kimios.lang('RemoveSymlink'),
+            iconCls: 'trash',
+            scope: this,
+            handler: function () {
+                if (this.multiple == true) {
+                    return;
+                } else {
+                    kimios.request.deleteDMEntity(this.dmEntityPojo.uid, this.dmEntityPojo.type, this.dmEntityPojo.name, null, this.dmEntityPojo.parentUid);
                 }
             }
         });
@@ -594,7 +706,8 @@ kimios.ContextMenu = new function () {
             iconCls: 'attach',
             scope: this,
             handler: function () {
-                var mailLink = fullServerUrl + kimios.util.getDocumentVersionLink(this.dmEntityPojo.uid);
+                var entity = this.dmEntityPojo.type == 7 ? this.dmEntityPojo.targetEntity : this.dmEntityPojo;
+                var mailLink = fullServerUrl + kimios.util.getDocumentVersionLink(entity.uid);
                 kimios.copyToClipBoard(mailLink);
             }
         });
@@ -612,15 +725,17 @@ kimios.ContextMenu = new function () {
 
                 if (this.multiple == true) {
                     for (var i = 0; i < this.dmEntityPojo.length; ++i) {
-                        cartStore.insert(0, new Ext.data.Record(this.dmEntityPojo[i]));
+                        var entity = this.dmEntityPojo[i].type == 7 ? this.dmEntityPojo[i].targetEntity : this.dmEntityPojo[i];
+                        cartStore.insert(0, new Ext.data.Record(entity));
                     }
 
                 } else {
-                    cartStore.insert(0, new Ext.data.Record(this.dmEntityPojo));
+                    var entity = this.dmEntityPojo.type == 7 ? this.dmEntityPojo.targetEntity : this.dmEntityPojo;
+                    cartStore.insert(0, new Ext.data.Record(entity));
                 }
 
                 var vp = kimios.explorer.getViewport();
-                vp.westPanel.setActiveGroup(5);     // cart panel
+                vp.westPanel.setActiveGroup(4);     // cart panel
                 vp.westPanel.activeGroup.setActiveTab(0);
             }
         });
@@ -632,11 +747,12 @@ kimios.ContextMenu = new function () {
             iconCls: 'comment',
             scope: this,
             handler: function () {
+                var entity = this.dmEntityPojo.type == 7 ? this.dmEntityPojo.targetEntity : this.dmEntityPojo;
                 var p = kimios.explorer.getActivePanel().commentsPanel;
                 if (p.enableComments == false) {
                     p.setVisible(true);
                     p.expand();
-                    p.loadComments(this.dmEntityPojo);
+                    p.loadComments(entity);
                     p.enableComments = true;
                 }
             }
@@ -653,6 +769,7 @@ kimios.ContextMenu = new function () {
                     kimios.lang('AddComment'),
                     kimios.lang('Comment'),
                     function (button, comment) {
+                        var entity = this.dmEntityPojo.type == 7 ? this.dmEntityPojo.targetEntity : this.dmEntityPojo;
                         if (button == 'ok') {
                             kimios.request.addComment(kimios.explorer.getActivePanel().commentsPanel.lastVersionUid, comment, function () {
                                 kimios.Info.msg(kimios.lang('Comment'), kimios.lang('AddComment') + ' ' + kimios.lang('Completed'));
@@ -670,7 +787,6 @@ kimios.ContextMenu = new function () {
         return new Ext.menu.Item({
             text: kimios.lang('NewWorkspace'),
             iconCls: 'newworkspace',
-//      disabled : !kimios.explorer.getViewport().rights.isWorkspaceCreator,
             scope: this,
             handler: function () {
                 new kimios.properties.PropertiesWindow({
@@ -727,9 +843,10 @@ kimios.ContextMenu = new function () {
             iconCls: 'studio-cls-wf-up',
             scope: this,
             handler: function () {
+                var entity = this.dmEntityPojo.type == 7 ? this.dmEntityPojo.targetEntity : this.dmEntityPojo;
                 new kimios.UploaderWindow({
                     context: 'createNewVersion',
-                    dmEntityPojo: this.dmEntityPojo
+                    dmEntityPojo: entity
                 }).show();
             }
         });
@@ -741,12 +858,13 @@ kimios.ContextMenu = new function () {
             iconCls: 'checked-out',
             scope: this,
             handler: function () {
-                if (this.dmEntityPojo.checkedOut == false) {
-                    kimios.request.checkOut(this.dmEntityPojo.uid);
+                var entity = this.dmEntityPojo.type == 7 ? this.dmEntityPojo.targetEntity : this.dmEntityPojo;
+                if (entity.checkedOut == false) {
+                    kimios.request.checkOut(entity.uid);
                 } else {
                     new kimios.UploaderWindow({
                         context: 'checkIn',
-                        dmEntityPojo: this.dmEntityPojo
+                        dmEntityPojo: entity
                     }).show();
                 }
             }
@@ -759,9 +877,10 @@ kimios.ContextMenu = new function () {
             iconCls: 'studio-cls-wf',
             scope: this,
             handler: function () {
+                var entity = this.dmEntityPojo.type == 7 ? this.dmEntityPojo.targetEntity : this.dmEntityPojo;
                 new kimios.picker.WorkflowPicker({
-                    documentUid: this.dmEntityPojo.uid,
-                    documentType: this.dmEntityPojo.type
+                    documentUid: entity.uid,
+                    documentType: entity.type
                 }).show();
             }
         });
@@ -773,9 +892,9 @@ kimios.ContextMenu = new function () {
             iconCls: 'studio-cls-wf',
             scope: this,
             handler: function () {
-
+                var entity = this.dmEntityPojo.type == 7 ? this.dmEntityPojo.targetEntity : this.dmEntityPojo;
                 new kimios.properties.PropertiesWindow({
-                    dmEntityPojo: this.dmEntityPojo,
+                    dmEntityPojo: entity,
                     versionsMode: this.context == 'versions' ? true : false,
                     switchBonitaTab:true
 
@@ -864,11 +983,16 @@ kimios.ContextMenu = new function () {
                     kimios.lang('AddToBookmark'),
                     kimios.lang('AddToBookmark') + '?',
                     function (btn) {
+
                         if (btn == 'yes') {
                             if (this.multiple == true) {
-                                kimios.request.addAllToBookmarks(this.dmEntityPojo);
+                                var it = [];
+                                for(var u = 0; u < this.dmEntityPojo.length; u++)
+                                    it.push(this.dmEntityPojo.type == 7 ? this.dmEntityPojo.targetEntity : this.dmEntityPojo);
+                                kimios.request.addAllToBookmarks(it);
                             } else {
-                                kimios.request.addToBookmarks(this.dmEntityPojo.uid, this.dmEntityPojo.type);
+                                var entity = this.dmEntityPojo.type == 7 ? this.dmEntityPojo.targetEntity : this.dmEntityPojo;
+                                kimios.request.addToBookmarks(entity.uid, entity.type);
                             }
                         }
                     },
@@ -901,7 +1025,7 @@ kimios.ContextMenu = new function () {
                 asp.documentDateFromField.setValue("");
                 asp.documentDateToField.setValue("");
                 asp.documentTypeField.setValue("");
-                asp.form2.removeAll();
+                asp.form2.reCAll();
             }
         });
     };
@@ -1274,6 +1398,7 @@ kimios.ContextMenu = new function () {
                 var context = this.context;
                 var toolbar = kimios.explorer.getToolbar();
                 var treePanel = kimios.explorer.getTreePanel();
+                var legacyTasksPanel = Ext.getCmp('kimios-tasks-panel-legacy');
                 var tasksPanel = Ext.getCmp('kimios-tasks-panel');
                 var assignedTasksPanel = Ext.getCmp('kimios-assigned-tasks-panel');
                 var activePanel = kimios.explorer.getActivePanel();
@@ -1299,8 +1424,7 @@ kimios.ContextMenu = new function () {
                     activePanel.loadEntity();
                 } else if (context == 'myTasks'
                     || context == 'myTasksContainer') {
-                    tasksPanel.refresh();
-                    assignedTasksPanel.refresh();
+                    legacyTasksPanel.refresh();
                 } else if (context == 'myBonitaTasks'
                     || context == 'myBonitaTasksContainer') {
                     tasksPanel.refresh();
@@ -1320,8 +1444,9 @@ kimios.ContextMenu = new function () {
             iconCls: 'properties',
             scope: this,
             handler: function () {
+                var entity = this.dmEntityPojo.type == 7 ? this.dmEntityPojo.targetEntity : this.dmEntityPojo;
                 new kimios.properties.PropertiesWindow({
-                    dmEntityPojo: this.dmEntityPojo,
+                    dmEntityPojo: entity,
                     versionsMode: this.context == 'versions' ? true : false
                 }).show();
             }

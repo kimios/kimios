@@ -18,6 +18,7 @@ package org.kimios.core.wrappers;
 
 import org.kimios.kernel.ws.pojo.Document;
 import org.kimios.kernel.ws.pojo.Folder;
+import org.kimios.kernel.ws.pojo.SymbolicLink;
 import org.kimios.kernel.ws.pojo.Workspace;
 
 import java.util.Date;
@@ -32,6 +33,8 @@ public class DMEntity {
     public static int FOLDER = 2;
 
     public static int DOCUMENT = 3;
+
+    public static int SYMBOLIC_LINK = 7;
 
     private long uid;
 
@@ -79,62 +82,56 @@ public class DMEntity {
     private Date lastVersionUpdateDate;
     private String dmEntityAddonData;
 
+    private DMEntity targetEntity;
+
 
     private long virtualFolderCount;
 
-    public DMEntity( Workspace w )
-    {
-        this.type = DMEntity.WORKSPACE;
-        this.uid = w.getUid();
-        this.name = w.getName();
-        this.creationDate = w.getCreationDate().getTime();
-        this.owner = w.getOwner();
-        this.ownerSource = w.getOwnerSource();
-        this.parentType = -1;
-        this.parentUid = -1;
-        this.path = w.getPath();
-    }
 
-    public DMEntity( Folder f )
-    {
-        this.type = DMEntity.FOLDER;
-        this.uid = f.getUid();
-        this.name = f.getName();
-        this.creationDate = f.getCreationDate().getTime();
-        this.owner = f.getOwner();
-        this.ownerSource = f.getOwnerSource();
-        this.parentType = f.getParentType();
-        this.parentUid = f.getParentUid();
-        this.path = f.getPath();
-    }
+    public DMEntity(org.kimios.kernel.ws.pojo.DMEntity entity){
 
-    public DMEntity( Document d )
-    {
-        this.type = DMEntity.DOCUMENT;
-        this.uid = d.getUid();
-        this.name = d.getName();
-        this.creationDate = d.getCreationDate().getTime();
-        this.owner = d.getOwner();
-        this.ownerSource = d.getOwnerSource();
-        this.updateDate = d.getUpdateDate().getTime();
-        this.parentUid = d.getFolderUid();
-        this.extension = d.getExtension();
-        this.checkedOut = d.getCheckedOut();
-        this.checkoutDate = ( d.getCheckoutDate() != null ? d.getCheckoutDate().getTime() : null );
-        this.checkoutUser = d.getCheckoutUser();
-        this.checkoutUserSource = d.getCheckoutUserSource();
-        this.outOfWorkflow = d.getOutOfWorkflow() != null ? d.getOutOfWorkflow() : true;
-        this.workflowStatusName = d.getWorkflowStatusName();
-        this.workflowStatusUid = d.getWorkflowStatusUid() != null ? d.getWorkflowStatusUid() : 0;
-        this.documentTypeName = d.getDocumentTypeName();
-        this.documentTypeUid = d.getDocumentTypeUid() != null ? d.getDocumentTypeUid() : 0;
-        this.length = d.getLength();
-        this.path = d.getPath();
 
-        this.lastVersionCreationDate = d.getVersionCreationDate().getTime();
-        this.lastVersionUpdateDate = d.getVersionUpdateDate().getTime();
+        this.type = entity.getType();
+        this.uid = entity.getUid();
+        this.name = entity.getName();
+        this.creationDate = entity.getCreationDate().getTime();
+        this.owner = entity.getOwner();
+        this.ownerSource = entity.getOwnerSource();
+        this.path = entity.getPath();
 
-        this.dmEntityAddonData = d.getAddonDatas();
+        if(entity instanceof Workspace){
+            this.parentType = -1;
+            this.parentUid = -1;
+        }
+        if(entity instanceof Folder){
+            this.parentType = ((Folder) entity).getParentType();
+            this.parentUid = ((Folder) entity).getParentUid();
+        }
+        if(entity instanceof Document){
+            this.parentUid = ((Document)entity).getFolderUid();
+            this.extension = ((Document)entity).getExtension();
+            this.checkedOut = ((Document)entity).getCheckedOut();
+            this.checkoutDate = ( ((Document)entity).getCheckoutDate() != null ? ((Document)entity).getCheckoutDate().getTime() : null );
+            this.checkoutUser = ((Document)entity).getCheckoutUser();
+            this.checkoutUserSource = ((Document)entity).getCheckoutUserSource();
+            this.outOfWorkflow = ((Document)entity).getOutOfWorkflow() != null ? ((Document)entity).getOutOfWorkflow() : true;
+            this.workflowStatusName = ((Document)entity).getWorkflowStatusName();
+            this.workflowStatusUid = ((Document)entity).getWorkflowStatusUid() != null ? ((Document)entity).getWorkflowStatusUid() : 0;
+            this.documentTypeName = ((Document)entity).getDocumentTypeName();
+            this.documentTypeUid = ((Document)entity).getDocumentTypeUid() != null ? ((Document)entity).getDocumentTypeUid() : 0;
+            this.length = ((Document)entity).getLength();
+            this.path = ((Document)entity).getPath();
+
+            this.lastVersionCreationDate = ((Document)entity).getVersionCreationDate().getTime();
+            this.lastVersionUpdateDate = ((Document)entity).getVersionUpdateDate().getTime();
+
+            this.dmEntityAddonData = ((Document)entity).getAddonDatas();
+        }
+        if(entity instanceof SymbolicLink){
+            this.parentUid = ((SymbolicLink) entity).getParentUid();
+            this.parentType = ((SymbolicLink) entity).getParentType();
+            this.targetEntity = new DMEntity(((SymbolicLink) entity).getTarget());
+        }
     }
 
     public DMEntity( long virtualEntityCount, String virtualPath, String virtualEntityName, long uid )
@@ -384,6 +381,14 @@ public class DMEntity {
 
     public void setDmEntityAddonData(String dmEntityAddonData) {
         this.dmEntityAddonData = dmEntityAddonData;
+    }
+
+    public DMEntity getTargetEntity() {
+        return targetEntity;
+    }
+
+    public void setTargetEntity(DMEntity targetEntity) {
+        this.targetEntity = targetEntity;
     }
 }
 

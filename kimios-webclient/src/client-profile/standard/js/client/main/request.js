@@ -170,13 +170,20 @@ kimios.request = {
         }, hdl);
     },
 
-    deleteDMEntity: function (uid, type, name, handle) {
+    deleteDMEntity: function (uid, type, name, handle, parentId) {
+
+        var data = {
+            action: 'deleteEntity',
+            dmEntityUid: uid,
+            dmEntityType: type
+        };
+        if(type == 7){
+            data.parentId = parentId
+        }
+
+
         var deleteEntity = function () {
-            kimios.ajaxRequest('DmsEntity', {
-                    action: 'deleteEntity',
-                    dmEntityUid: uid,
-                    dmEntityType: type
-                },
+            kimios.ajaxRequest('DmsEntity', data,
                 function () {
                     if (handle == null) {
                         kimios.Info.msg(kimios.lang('Entity'), kimios.lang('Delete') + ' ' + kimios.lang('Completed'));
@@ -297,6 +304,35 @@ kimios.request = {
                 store.reload();
             }
         );
+    },
+
+    createSymbolicLink: function (uid, type, targetUid, targetType, hdl, eHdl) {
+        var unmovable = false;
+        targetUid = '' + targetUid + '';
+        targetType = '' + targetType + '';
+        if(targetType != '2' || type != 3)
+            unmovable = true;
+        // source is root or workspace
+        if (type == undefined || type != 3) {
+            unmovable = true;
+        }
+
+        if (unmovable == true) {
+            return false;
+        }
+        if (!hdl) {
+            hdl = function () {
+                kimios.Info.msg(kimios.lang('Entity'), kimios.lang('Move') + ' ' + kimios.lang('Completed'));
+                kimios.explorer.getViewport().refreshGrids();
+            };
+        }
+        kimios.ajaxRequest('DmsEntity', {
+            action: 'createSymbolicLink',
+            uid: uid,
+            type: type,
+            targetUid: targetUid,
+            targetType: targetType
+        }, hdl, eHdl);
     },
 
     startWorkflow: function (documentUid, workflowStatusUid, store, handle) {

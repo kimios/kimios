@@ -149,6 +149,9 @@ kimios.record = {
         {
             name: 'dmEntityAddonData',
             type: 'string'
+        },
+        {
+            name: 'targetEntity'
         }
     ]),
 

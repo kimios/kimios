@@ -241,11 +241,8 @@ Ext.extend(DmsSimpleUpload, Ext.util.Observable, {
     }
   },
   startProgress : function() {
-    this.createProgressView();
-    this.progressTask = new Ext.util.DelayedTask(this.requestProgress,
-      this);
-    this.progressTask.delay.defer(this.progressInterval / 2,
-        this.progressTask, [ this.progressInterval ]);
+      this.progressTask.delay.defer(this.progressInterval / 2,
+          this.progressTask, [ this.progressInterval ]);
   },
   stopProgress : function() {
     if (this.progressTask) {
@@ -278,6 +275,11 @@ Ext.extend(DmsSimpleUpload, Ext.util.Observable, {
 
     var postUrl = getBackEndUrl('Uploader');
 
+    //init progress view
+    this.createProgressView();
+      this.progressTask = new Ext.util.DelayedTask(this.requestProgress,
+          this);
+
     if(this.documentFileItem){
         var fd = new FormData(form.getForm().getEl().dom);
         fd.append('docUpload', this.documentFileItem);
@@ -298,15 +300,61 @@ Ext.extend(DmsSimpleUpload, Ext.util.Observable, {
         this.xhr.upload.addEventListener('error', this.relayUploadEvent.createDelegate(this), false);
         this.xhr.upload.addEventListener('load', this.relayUploadEvent.createDelegate(this), false);
         this.xhr.upload.addEventListener('loadend', this.relayUploadEvent.createDelegate(this), false);*/
-        this.xhr.open('post', postUrl, true);
+
 
         var xhrMe = this.xhr;
         var me = this;
         this.xhr.onreadystatechange = function () {
-            if (xhrMe.readyState == 4 && xhrMe.status == 200) {
-                me.fireFinishEvents(form);
+            if(xhrMe.readyState != 4) return;
+            if (xhrMe.status == 200) {
+                var json = Ext.util.JSON.decode(xhrMe.responseText);
+
+                if(json.success){
+                    me.fireFinishEvents(form);
+                } else {
+
+                    //handle error
+                    if(me.progressTask){
+                        me.stopProgress();
+                    }
+                    try{
+                        if(me.msgBox){
+                            me.msgBox.getDialog().close();
+                        }
+                    }catch(e){
+                    }
+
+                    kimios.MessageBox.exception({
+                        exception: json.exception,
+                        stackTrace: json.trace
+                    });
+
+                    me.finished = true;//loop fix
+                    if (me.progressTask)
+                        me.progressTask.cancel();
+                    me.progressTask = null;
+                }
+
+
+
+            } else {
+                //handle error
+                if(me.progressTask){
+                    me.stopProgress();
+                }
+                try{
+                    if(me.msgBox){
+                        me.msgBox.getDialog().close();
+                    }
+                }catch(e){
+                }
+                me.finished = true;//loop fix
+                if (me.progressTask)
+                    me.progressTask.cancel();
+                me.progressTask = null;
             }
         };
+        this.xhr.open('post', postUrl, true);
         this.xhr.send(fd);
 
     }else
@@ -343,7 +391,8 @@ Ext.extend(DmsSimpleUpload, Ext.util.Observable, {
       },
       scope : this
     });
-    this.startProgress.defer(200, this);
+    //start progress process
+    this.startProgress.defer(100, this);
   },
   onFinish : function(form) {
     if (this.progressTask)

@@ -34,9 +34,9 @@ public class AuthenticationControllerWeb extends Controller {
     public String execute() throws Exception {
         String jsonResp = "";
         if(action.equalsIgnoreCase("login")){
-            String login = parameters.get("login-dms");
-            String password = parameters.get("password-dms");
-            String source = parameters.get("combo-domain");
+            String login = parameters.get("username");
+            String password = parameters.get("password");
+            String source = parameters.get("domain");
             sessionUid = securityController.startSession(login, password, source);
             return sessionUid;
         }

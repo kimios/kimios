@@ -76,6 +76,7 @@
         var currentSource = '<%=u.getSource().replaceAll("'", "\\\\'")%>';
         var currentMail = '<%=(u.getMail() != null ? u.getMail().replaceAll("'", "\\\\'") : "")%>';
     </script>
+    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/RowExpander.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/ColumnTree.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/StatusBar.js"></script>
@@ -119,6 +120,8 @@
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/util/DMEntityTree.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/util/IconHelper.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/util/ImageViewer.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/util/PreviewHelper.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/util/DocumentViewer.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/explorer/Viewport.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/explorer/Toolbar.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/explorer/Cart.js"></script>

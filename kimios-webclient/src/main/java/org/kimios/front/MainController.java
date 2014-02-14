@@ -129,7 +129,7 @@ public class MainController extends HttpServlet {
                 c = new ExtensionControllerWeb(params);
             }
             if (action.equalsIgnoreCase("DocumentVersion")) {
-                c = new DocumentVersionActionHandler(params, response);
+                c = new DocumentVersionActionHandler(params, request, response);
             }
             if (action.equalsIgnoreCase("Version")) {
                 c = new DocumentActionHandler(params);

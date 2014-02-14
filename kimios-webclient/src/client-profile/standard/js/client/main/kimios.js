@@ -26,7 +26,7 @@ kimios = {
     setImplPackage: function (impl) {
         this.implPackage = impl;
     },
-    viewableExtensions: new Array('png', 'jpg', 'jpeg', 'tif', 'tiff', 'gif', 'pdf', 'PDF', 'odt', 'odp', 'docx'),
+    viewableExtensions: new Array('png', 'jpg', 'jpeg', 'tif', 'tiff', 'gif', 'pdf', 'PDF', 'odt', 'odp', 'docx', 'doc','txt', 'java', 'cs', 'cpp', 'c', 'py', 'sql', 'xml', 'eml'),
 
     isViewableExtension: function (ext) {
         var exts = kimios.viewableExtensions;
@@ -40,7 +40,7 @@ kimios = {
 
     viewImg: function (pojo, links, ext) {
         var centerPanel = Ext.getCmp('kimios-center-panel');
-        var p = new kimios.util.ImageViewer({
+        var p = new kimios.util.DocumentViewer({
             pojo: pojo,
             links: links
         });
@@ -348,7 +348,12 @@ kimios = {
         },
 
         getTasksPanel: function () {
-            return Ext.getCmp('kimios-tasks-panel');
+            if(bonitaEnabled){
+                return Ext.getCmp('kimios-tasks-panel');
+            }else {
+                return Ext.getCmp('kimios-tasks-panel-legacy');
+            }
+
         },
         getCartPanel: function () {
             return Ext.getCmp('kimios-cart');

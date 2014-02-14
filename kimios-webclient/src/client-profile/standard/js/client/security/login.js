@@ -25,24 +25,38 @@ Ext.onReady(function () {
                 records: records
             });
 
-            var comboSources = new kimios.form.AuthenticationSourceField({fieldLabel: i18n.getValue('AuthenticationSource')});
+            var comboSources = new kimios.form.AuthenticationSourceField({name: 'domain', fieldLabel: i18n.getValue('AuthenticationSource')});
             comboSources.init();
 
             var usernameField = new Ext.form.TextField({
                 id: 'login-field',
-                name: 'login-dms',
+                name: 'username',
                 fieldLabel: i18n.getValue('DMSAuthLoginLabel'),
                 allowBlank: false,
-                blankText: i18n.getValue('UsernameRequired')
+                blankText: i18n.getValue('UsernameRequired'),
+                listeners:{
+                    afterrender:function(cmp){
+                        cmp.el.set({
+                            autocomplete:'on'
+                        });
+                    }
+                }
             });
 
             var passwordField = new Ext.form.TextField({
                 id: 'password-field',
-                name: 'password-dms',
+                name: 'password',
                 fieldLabel: i18n.getValue('DMSAuthPasswordLabel'),
                 inputType: 'password',
                 allowBlank: false,
-                blankText: i18n.getValue('PasswordRequired')
+                blankText: i18n.getValue('PasswordRequired'),
+                listeners:{
+                    afterrender:function(cmp){
+                        cmp.el.set({
+                            autocomplete:'on'
+                        });
+                    }
+                }
             });
 
             var login = new kimios.FormPanel({
@@ -90,10 +104,7 @@ Ext.onReady(function () {
                     login.getForm().submit({
                         url: getBackEndUrl('Security'),
                         params: {
-                            action: 'login',
-                            username: usernameField.getValue(),
-                            password: passwordField.getValue(),
-                            domain: comboSources.getValue()
+                            action: 'login'
                         },
                         success: function (form, action) {
                             if (action.result.success == true) {

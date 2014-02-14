@@ -248,29 +248,31 @@ kimios.properties.PropertiesPanel = Ext.extend(Ext.TabPanel, {
                                 this.add(this.versionsPanel);
 
                                 // add workflow tab
-                                this.bonitaPanel = new kimios.properties.BonitaPanel({
-                                    dmEntityPojo: this.dmEntityPojo,
-                                    instances: this.dmEntityPojo.dmEntityAddonData
-                                });
-                                this.add(this.bonitaPanel);
-
-                                // add workflow tab
-                                //TODO uncomment me to enable Notification
-                                /*
-                                this.workflowPanel = new kimios.properties.WorkflowPanel({
-                                    dmEntityPojo: this.dmEntityPojo,
-                                    readOnly: write == false && fullAccess == false
-                                });
-                                this.add(this.workflowPanel);
-                                 */
+                                if(bonitaEnabled){
 
 
-//                // add comments tab
-//                this.commentsPanel = new kimios.properties.CommentsPanel({
-//                  dmEntityPojo : this.dmEntityPojo,
-//                  readOnly : write == false && fullAccess == false
-//                });
-//                this.add(this.commentsPanel);
+                                    this.bonitaPanel = new kimios.properties.BonitaPanel({
+                                        dmEntityPojo: this.dmEntityPojo,
+                                        instances: this.dmEntityPojo.dmEntityAddonData
+                                    });
+                                    this.add(this.bonitaPanel);
+
+                                } else {
+                                    this.workflowPanel = new kimios.properties.WorkflowPanel({
+                                        dmEntityPojo: this.dmEntityPojo,
+                                        readOnly: write == false && fullAccess == false
+                                    });
+                                    this.add(this.workflowPanel);
+
+                                }
+
+
+                                //                // add comments tab
+                                //                this.commentsPanel = new kimios.properties.CommentsPanel({
+                                //                  dmEntityPojo : this.dmEntityPojo,
+                                //                  readOnly : write == false && fullAccess == false
+                                //                });
+                                //                this.add(this.commentsPanel);
 
                                 // add related documents tab
                                 this.relatedDocumentsPanel = new kimios.properties.RelatedDocumentsPanel({

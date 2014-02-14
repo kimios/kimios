@@ -89,6 +89,8 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                     border: false
                 });
 
+
+                this.kimiosTasksPanel = new kimios.tasks.TasksPanel({});
                 this.tasksPanel = new kimios.tasks.BonitaTasksPanel({});
                 this.tasksAssignedPanel = new kimios.tasks.BonitaAssignedTasksPanel({});
 
@@ -98,6 +100,93 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                 this.cartPanel = new kimios.explorer.Cart({});
 
                 // west
+
+                var groupPanelItems = [{
+                    items: [this.explorerPanel]
+                },
+                    {
+                        items: [this.searchBookmarkPanel]
+                    },
+                    {
+                        items: [this.bookmarksPanel]
+                    },
+                    {
+                        items: [this.recentItemsPanel]
+                    },
+                    {
+                        items: [this.cartPanel]
+                    }
+                ];
+                if(bonitaEnabled){
+                    groupPanelItems.push({
+                        hidden: true,
+                        visible: false,
+                        border: false,
+                        items: [
+                            new Ext.TabPanel({
+                                id: 'bonitaTabPanelId',
+                                title: kimios.lang('MyTasks'),
+                                activeTab: 0,
+                                pending: 0,
+                                assigned: 0,
+                                items: [
+                                    tasksPendingPanel,
+                                    tasksAssignedPanel
+                                ],
+                                refresh: function (p, a) {
+                                    if (p != undefined)
+                                        this.pending = p;
+                                    if (a != undefined)
+                                        this.assigned = a;
+
+                                    if (this.pending == 0 && this.assigned == 0) {
+                                        this.setTitle(kimios.lang('MyTasks'));
+                                    }
+
+                                    else {
+                                        var pending = '';
+                                        var assigned = '';
+                                        if (this.pending == '?') {
+                                            pending = '<span style="color:gray;text-decoration: line-through;">' +
+                                                this.pending + ' ' + kimios.lang('BonitaPendingTasks') + '</span>';
+                                        } else {
+                                            pending = this.pending + ' ' + kimios.lang('BonitaPendingTasks');
+                                        }
+
+                                        if (this.assigned == '?') {
+                                            assigned = '<span style="color:gray;text-decoration: line-through;">' +
+                                                this.assigned + ' ' + kimios.lang('BonitaAssignedTasks') + '</span>';
+                                        } else {
+                                            assigned = this.assigned + ' ' + kimios.lang('BonitaAssignedTasks');
+                                        }
+
+                                        var total = 0;
+                                        if (this.pending == '?' || this.assigned == '?') {
+                                            total = '?';
+                                        } else {
+                                            total = (this.pending + this.assigned);
+                                        }
+                                        if (this.pending == '?' && this.assigned == '?') {
+                                            this.setTitle('<span style="color:gray;text-decoration: line-through;">' +
+                                                kimios.lang('MyTasks') + '</span>');
+                                        } else {
+                                            this.setTitle(kimios.lang('MyTasks') + ' (' + total + ')<br/>' +
+                                                '<div style="font-size:.9em;font-weight:normal;"> ' +
+                                                pending + '<br/>' +
+                                                assigned + '</div>');
+                                        }
+                                    }
+                                }
+                            })
+                        ]
+                    });
+                }else {
+
+                    groupPanelItems.push({
+                        items: [this.kimiosTasksPanel]
+                    });
+                }
+
                 this.westPanel = new Ext.ux.GroupTabPanel({
                     id: 'kimios-west-container',
                     region: 'west',
@@ -110,83 +199,7 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                     activeGroup: 0,
                     minWidth: 180,
                     border: true,
-                    items: [
-                        {
-                            items: [this.explorerPanel]
-                        },
-                        {
-                            items: [this.searchBookmarkPanel]
-                        },
-                        {
-                            items: [this.bookmarksPanel]
-                        },
-                        {
-                            items: [this.recentItemsPanel]
-                        },
-                        {
-                            items: [this.cartPanel]
-                        },
-                        {
-                            border: false,
-                            items: [
-                                new Ext.TabPanel({
-                                    id: 'bonitaTabPanelId',
-                                    title: kimios.lang('MyTasks'),
-                                    activeTab: 0,
-                                    pending: 0,
-                                    assigned: 0,
-                                    items: [
-                                        tasksPendingPanel,
-                                        tasksAssignedPanel
-                                    ],
-                                    refresh: function (p, a) {
-                                        if (p != undefined)
-                                            this.pending = p;
-                                        if (a != undefined)
-                                            this.assigned = a;
-
-                                        if (this.pending == 0 && this.assigned == 0) {
-                                            this.setTitle(kimios.lang('MyTasks'));
-                                        }
-
-                                        else {
-                                            var pending = '';
-                                            var assigned = '';
-                                            if (this.pending == '?') {
-                                                pending = '<span style="color:gray;text-decoration: line-through;">' +
-                                                    this.pending + ' ' + kimios.lang('BonitaPendingTasks') + '</span>';
-                                            } else {
-                                                pending = this.pending + ' ' + kimios.lang('BonitaPendingTasks');
-                                            }
-
-                                            if (this.assigned == '?') {
-                                                assigned = '<span style="color:gray;text-decoration: line-through;">' +
-                                                    this.assigned + ' ' + kimios.lang('BonitaAssignedTasks') + '</span>';
-                                            } else {
-                                                assigned = this.assigned + ' ' + kimios.lang('BonitaAssignedTasks');
-                                            }
-
-                                            var total = 0;
-                                            if (this.pending == '?' || this.assigned == '?') {
-                                                total = '?';
-                                            } else {
-                                                total = (this.pending + this.assigned);
-                                            }
-                                            if (this.pending == '?' && this.assigned == '?') {
-                                                this.setTitle('<span style="color:gray;text-decoration: line-through;">' +
-                                                    kimios.lang('MyTasks') + '</span>');
-                                            } else {
-                                                this.setTitle(kimios.lang('MyTasks') + ' (' + total + ')<br/>' +
-                                                    '<div style="font-size:.9em;font-weight:normal;"> ' +
-                                                    pending + '<br/>' +
-                                                    assigned + '</div>');
-                                            }
-                                        }
-                                    }
-                                })
-                            ]
-                        }
-                    ],
+                    items: groupPanelItems,
                     margins: '5 0 5 5',
                     listeners: {
                         scope: this,
@@ -309,14 +322,26 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                 this.executeAfterBuild();
 
                 // start tasks checker thread (also used to check session)
-                this.tasksChecker = {
-                    run: function () {
-                        Ext.getCmp('kimios-tasks-panel').refresh();
-                        Ext.getCmp('kimios-assigned-tasks-panel').refresh();
-                    },
-                    interval: (this.checkSession * 1000)
-                };
-                Ext.TaskMgr.start(this.tasksChecker);
+                if(bonitaEnabled){
+                    this.tasksChecker = {
+                        run: function () {
+                            Ext.getCmp('kimios-tasks-panel').refresh();
+                            Ext.getCmp('kimios-assigned-tasks-panel').refresh();
+                        },
+                        interval: (this.checkSession * 1000)
+                    };
+                    Ext.TaskMgr.start(this.tasksChecker);
+                } else {
+                    this.tasksChecker = {
+                        run: function () {
+                            Ext.getCmp('kimios-tasks-panel-legacy').refresh();
+                        },
+                        interval: (this.checkSession * 1000)
+                    };
+                    Ext.TaskMgr.start(this.tasksChecker);
+
+                }
+
 
                 kimios.unmask();
             }

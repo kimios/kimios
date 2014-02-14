@@ -111,12 +111,12 @@ kimios.tasks.BonitaAssignedTasksPanel = Ext.extend(Ext.grid.GridPanel, {
                 kimios.explorer.getToolbar().myTasksButton.setText('<span style="color:gray;text-decoration: line-through;">' + kimios.lang('MyTasks') + '</span>');
 
                 if (Ext.getCmp('kimios-viewport').bonita == false && Ext.getCmp('kimios-viewport').bonitaAlreadyCheck == false) {
-                    Ext.Msg.show({
+                    /*Ext.Msg.show({
                         title: 'Bonita Service',
                         msg: kimios.lang('BonitaUnvailable'),
                         buttons: Ext.Msg.OK,
                         icon: Ext.MessageBox.WARNING
-                    });
+                    });*/
                     Ext.getCmp('kimios-viewport').bonitaAlreadyCheck = true;
                 }
             } else {

@@ -170,7 +170,7 @@ public class WorkflowControllerWeb extends Controller {
             myTaskMap.put("creationDate", d.getCreationDate().getTime());
             myTaskMap.put("extension", d.getExtension());
             myTaskMap.put("checkedOut", d.getCheckedOut());
-            myTaskMap.put("checkoutDate", d.getCheckoutDate().getTime());
+            myTaskMap.put("checkoutDate", d.getCheckoutDate() != null ? d.getCheckoutDate().getTime() : null);
             myTaskMap.put("checkoutUser", d.getCheckoutUser());
             myTaskMap.put("checkoutUserSource", d.getCheckoutUserSource());
             myTaskMap.put("documentTypeUid", d.getDocumentTypeUid());

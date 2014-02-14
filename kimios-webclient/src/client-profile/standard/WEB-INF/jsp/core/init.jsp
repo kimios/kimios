@@ -34,4 +34,8 @@
     function getBackEndUrl(servlet) {
         return contextPath + '?servlet=' + servlet;
     }
+
+    var bonitaEnabled = false;
+
+
 </script>

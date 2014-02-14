@@ -30,10 +30,7 @@ import org.kimios.client.controller.SearchController;
 import org.kimios.client.controller.WorkspaceController;
 import org.kimios.client.controller.helpers.XMLGenerators;
 import org.kimios.core.wrappers.DMEntity;
-import org.kimios.kernel.ws.pojo.Document;
-import org.kimios.kernel.ws.pojo.Folder;
-import org.kimios.kernel.ws.pojo.Meta;
-import org.kimios.kernel.ws.pojo.Workspace;
+import org.kimios.kernel.ws.pojo.*;
 
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
@@ -73,6 +70,9 @@ public class DmEntityControllerWeb extends Controller
         }
         if (action.equalsIgnoreCase("updateEntities")) {
             updateEntities();
+        }
+        if(action.equalsIgnoreCase("createSymbolicLink")){
+            createSymbolikLink();
         }
         return "";
     }
@@ -116,6 +116,10 @@ public class DmEntityControllerWeb extends Controller
             case 3:
                 documentController.deleteDocument(sessionUid, dmEntityUid);
                 break;
+            case 7:
+                long parentId = Long.parseLong(parameters.get("parentId"));
+                documentController.removeSymbolicLink(sessionUid, dmEntityUid, parentId);
+                break;
         }
     }
 
@@ -142,6 +146,18 @@ public class DmEntityControllerWeb extends Controller
                     for (Document d : dNodes) {
                         try {
                             qNodes.add(new DMEntity(d));
+                        } catch (Exception e) {
+                            log.error( "Error on pojo convert", e);
+                        }
+                    }
+                    /*
+                        Add Symlinks
+                     */
+                    SymbolicLink[] symbolicLinks = documentController
+                            .getChildSymbolicLinks(sessionUid, dmEntityUid, dmEntityType);
+                    for(SymbolicLink sl: symbolicLinks){
+                        try {
+                            qNodes.add(new DMEntity(sl));
                         } catch (Exception e) {
                             log.error( "Error on pojo convert", e);
                         }
@@ -195,6 +211,21 @@ public class DmEntityControllerWeb extends Controller
             if (doc != null && targetType == 2) {
                 doc.setFolderUid(targetUid);
                 documentController.updateDocument(sessionUid, doc);
+            }
+        }
+    }
+
+
+    private void createSymbolikLink() throws Exception
+    {
+        long dmEntityUid = Long.parseLong(parameters.get("uid"));
+        int dmType = Integer.parseInt(parameters.get("type"));
+        long targetUid = Long.parseLong(parameters.get("targetUid"));
+        int targetType = Integer.parseInt(parameters.get("targetType"));
+        if (dmType == 3) {
+            Document doc = documentController.getDocument(sessionUid, dmEntityUid);
+            if (doc != null && targetType == 2) {
+                documentController.createSymbolicLink(sessionUid, dmEntityUid, targetUid, doc.getName() );
             }
         }
     }

@@ -18,15 +18,18 @@ package org.kimios.controller;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.mail.internet.MimeUtility;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.kimios.client.controller.helpers.XMLGenerators;
-import org.kimios.core.PdfToImage;
 import org.kimios.core.configuration.Config;
 import org.kimios.utils.configuration.ConfigurationManager;
 import org.kimios.kernel.ws.pojo.Document;
@@ -39,6 +42,7 @@ import flexjson.JSONSerializer;
 public class DocumentVersionActionHandler extends Controller
 {
     private HttpServletResponse resp;
+    private HttpServletRequest request;
 
     public DocumentVersionActionHandler(Map<String, String> parameters)
     {
@@ -49,6 +53,13 @@ public class DocumentVersionActionHandler extends Controller
     {
         super(parameters);
         this.resp = resp;
+    }
+
+    public DocumentVersionActionHandler(Map<String, String> parameters, HttpServletRequest request, HttpServletResponse resp)
+    {
+        super(parameters);
+        this.resp = resp;
+        this.request = request;
     }
 
     public String execute() throws Exception
@@ -152,12 +163,68 @@ public class DocumentVersionActionHandler extends Controller
         }
     }
 
+
+    private void getFilePreview() throws Exception
+    {
+        String imgPath = null;
+        Long documentId = Long.parseLong(parameters.get("uid"));
+        if (securityController.canRead(sessionUid,
+                documentId, 3))
+        {
+
+            Document document = documentController.getDocument(sessionUid, documentId);
+            DocumentVersion version =
+                    documentVersionController.getLastDocumenVersion(sessionUid, documentId);
+
+            String fileName = document.getName() + (StringUtils.isNotBlank(document.getExtension())
+                    ? "." + document.getExtension() : "");
+            imgPath = parameters.get("path");
+            int length = (int) (new File(imgPath).length());
+            resp.setHeader("Content-Disposition", "inline; filename=\"" + fileName + "\"");
+
+            //TODO: use mime type handling
+            if(fileName.endsWith( "pdf")){
+                resp.setContentType( "application/pdf" );
+            } else
+                resp.setContentType("application/octet-stream");
+            resp.setContentLength(length);
+            String temporaryFilesPath = ConfigurationManager.getValue(Config.DM_TMP_FILES_PATH);
+            int transferChunkSize = Integer.parseInt(ConfigurationManager.getValue(Config.DM_CHUNK_SIZE));
+            fileTransferController.downloadTemporaryFile(sessionUid,
+                    imgPath, resp.getOutputStream(), length);
+            resp.getOutputStream().flush();
+            resp.getOutputStream().close();
+        }
+    }
+
+
+
+    private String encodeFileNameInHeader(HttpServletRequest request, String docName) throws Exception {
+
+
+        String userAgent = request.getHeader("user-agent");;
+        boolean isInternetExplorer = (userAgent.indexOf("MSIE") > -1);
+
+        String item = null;
+        if (isInternetExplorer) {
+            item = "attachment; filename=\"" + URLEncoder.encode(docName, "utf-8") + "\"";
+        } else {
+            item = "attachment; filename=\"" + MimeUtility.encodeWord(docName) + "\"";
+        }
+
+        return  item;
+    }
+
+
+
+
+
     private void getLastVersion() throws Exception
     {
         Document doc = documentController.getDocument(sessionUid, Long.parseLong(parameters.get("uid")));
         DocumentVersion dv = documentVersionController.getLastDocumenVersion(sessionUid, doc.getUid());
-        resp.setHeader("Content-Disposition", "attachment; filename=\"" + doc.getName() + "." + doc.getExtension()
-                + "\"");
+        String docName = doc.getName() +  (!StringUtils.isNotBlank(doc.getExtension()) ? "." + doc.getExtension() : "");
+        resp.setHeader("Content-Disposition",encodeFileNameInHeader(request, docName));
         resp.setContentType(doc.getMimeType());
         resp.setContentLength((int) dv.getLength());
         fileTransferController.downloadFileVersion(sessionUid, dv.getUid(), resp.getOutputStream(), false);
@@ -168,9 +235,8 @@ public class DocumentVersionActionHandler extends Controller
     private void getDocumentVersion() throws Exception
     {
         Document doc = documentController.getDocument(sessionUid, Long.parseLong(parameters.get("docUid")));
-        resp.setHeader("Content-Disposition",
-                "attachment; filename=\"" + doc.getName() + "_" + parameters.get("verUid") + "." + doc.getExtension()
-                        + "\"");
+        String docName = doc.getName() +  "_" + parameters.get("verUid") + (!StringUtils.isNotBlank(doc.getExtension()) ? "." + doc.getExtension() : "");
+        resp.setHeader("Content-Disposition", encodeFileNameInHeader(request, docName));
         resp.setContentType(doc.getMimeType());
         DocumentVersion dv = documentVersionController.getDocumentVersion(sessionUid,
                 Long.parseLong(parameters.get("verUid")));
