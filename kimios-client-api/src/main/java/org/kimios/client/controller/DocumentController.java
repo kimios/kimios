@@ -30,10 +30,12 @@ import org.kimios.client.exception.ExceptionHelper;
 import org.kimios.kernel.ws.pojo.Bookmark;
 import org.kimios.kernel.ws.pojo.Document;
 import org.kimios.kernel.ws.pojo.SymbolicLink;
+import org.kimios.webservices.DMServiceException;
 import org.kimios.webservices.DocumentService;
 
 import javax.activation.DataHandler;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
@@ -145,7 +147,7 @@ public class DocumentController {
 
             MultipartBody multipartBody = new MultipartBody(attachments);
 
-            wcl.type(MediaType.MULTIPART_FORM_DATA_TYPE)
+            Response resp = wcl.type(MediaType.MULTIPART_FORM_DATA_TYPE)
                     .to(upClient.getCurrentURI().toString() + "/document/createDocumentWithProperties", false)
                     .query("sessionId", sessionId)
                     .query("name", name)
@@ -158,6 +160,13 @@ public class DocumentController {
                     .query("documentTypeId", documentTypeId)
                     .query("metasXmlStream", metasXmlStream)
                     .post(multipartBody);
+
+
+            if(resp.getStatus() == 500){
+                //Exception
+                DMServiceException exception = resp.readEntity(DMServiceException.class);
+                throw exception;
+            }
 
 
         } catch (Exception e) {
@@ -313,7 +322,7 @@ public class DocumentController {
     /**
      * Get the symbolic links created for a specific target
      */
-    public SymbolicLink[] getSymbolicLinksCreated(String sessionId, long dmEntityId, int dmEntityType)
+    public SymbolicLink[] getSymbolicLinksCreated(String sessionId, long dmEntityId)
             throws Exception {
         try {
             return client.getSymbolicLinksCreated(sessionId, dmEntityId);
@@ -322,8 +331,7 @@ public class DocumentController {
         }
     }
 
-    public void createSymbolicLink(String sessionId, long targetId, int targetType, long parentId, int parentType,
-                                   String name)
+    public void createSymbolicLink(String sessionId, long targetId, long parentId, String name)
             throws Exception {
         try {
             client.addSymbolicLink(sessionId, name, targetId, parentId);
@@ -340,6 +348,19 @@ public class DocumentController {
             throws Exception {
         try {
             client.updateSymbolicLink(sessionId, targetId, parentId, newParentId);
+        } catch (Exception e) {
+            throw new ExceptionHelper().convertException(e);
+        }
+    }
+
+
+    /**
+     * Remove the symbolic link
+     */
+    public void removeSymbolicLink(String sessionId, long symbolicLinkId, long parentId)
+            throws Exception {
+        try {
+            client.removeSymbolicLink(sessionId, symbolicLinkId, parentId);
         } catch (Exception e) {
             throw new ExceptionHelper().convertException(e);
         }
