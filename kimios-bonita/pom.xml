@@ -74,19 +74,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-jaxrs</artifactId>
-            <version>1.9.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-            <version>${cxf.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>1.5.8</version>
@@ -115,12 +102,48 @@
             <version>${spring.version}</version>
             <scope>provided</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aspects</artifactId>
+            <version>${spring.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+            <version>${spring.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
     </dependencies>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>aspectj-maven-plugin</artifactId>
+                <configuration>
+                    <complianceLevel>1.6</complianceLevel>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                    <XnoInline>true</XnoInline>
+                    <outxml>true</outxml>
+                    <aspectLibraries>
+                        <aspectLibrary>
+                            <groupId>org.springframework</groupId>
+                            <artifactId>spring-aspects</artifactId>
+                        </aspectLibrary>
+                    </aspectLibraries>
+                    <showWeaveInfo>true</showWeaveInfo>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -131,15 +154,14 @@
                             <goal>jar</goal>
                         </goals>
                         <configuration>
-                            <classifier>interfaces</classifier>
+                            <classifier>pojos</classifier>
                             <includes>
-                                <include>org/kimios/webservices/*</include>
                                 <include>org/kimios/webservices/pojo/*</include>
                             </includes>
                             <excludes>
                                 <exclude>org/kimios/webservices/impl/*</exclude>
-                                <exclude>org/kimios/controller/*</exclude>
-                                <exclude>org/kimios/bonita/*</exclude>
+                                <exclude>org/kimios/kernel/controller/*</exclude>
+                                <exclude>org/kimios/kernel/bonita/*</exclude>
                             </excludes>
                         </configuration>
                     </execution>

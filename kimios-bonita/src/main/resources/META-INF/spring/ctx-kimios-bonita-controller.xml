@@ -27,10 +27,10 @@
         <property name="bonitaCfg" ref="bonitaSettings"/>
     </bean>
 
-    <aop:config>
+    <!--<aop:config>
         <aop:pointcut id="bonitaControllerTx"
                       expression="execution(* org.kimios.kernel.controller.BonitaController.*(..))"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="bonitaControllerTx"/>
-    </aop:config>
+    </aop:config>-->
 
 </beans>

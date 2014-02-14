@@ -19,6 +19,7 @@ import org.quartz.Scheduler;
 import org.quartz.Trigger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.net.ConnectException;
@@ -34,11 +35,11 @@ public class BonitaUsersSynchronizer {
 
     private boolean disabled = false;
 
+
+    @Transactional
     public void synchronize() throws BonitaHomeNotSetException, ServerAPIException, UnknownAPITypeException, LoginException, CreationException, IOException, UpdateException {
 
         if (!disabled) {
-
-
             try {
                 bonitaCfg.init();
 

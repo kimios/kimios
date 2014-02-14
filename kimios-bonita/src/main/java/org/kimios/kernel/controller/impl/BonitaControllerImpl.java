@@ -33,6 +33,7 @@ import org.kimios.webservices.pojo.TaskWrapper;
 import org.kimios.webservices.pojo.TasksResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -40,6 +41,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@Transactional
 public class BonitaControllerImpl implements BonitaController {
 
     private static Logger log = LoggerFactory.getLogger(BonitaControllerImpl.class);

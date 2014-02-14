@@ -56,10 +56,10 @@
     </bean>
 
 
-    <aop:config>
+   <!-- <aop:config>
         <aop:pointcut id="bonitaUsersCtrlTx"
                       expression="execution(* org.kimios.kernel.bonita.BonitaUsersSynchronizer.*(..))"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="bonitaUsersCtrlTx"/>
-    </aop:config>
+    </aop:config>-->
 
 </beans>
