@@ -35,7 +35,7 @@
 
    <bean class="org.kimios.kernel.events.impl.AddonDataHandler">
         <constructor-arg>
-            <bean class="org.codehaus.jackson.map.ObjectMapper" />
+            <bean class="org.kimios.utils.spring.ObjectMapperFactoryBean" />
         </constructor-arg>
    </bean>
 
