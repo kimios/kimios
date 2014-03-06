@@ -60,7 +60,10 @@ public class GlobalFilter
 
 
             Parser parser = new AutoDetectParser(); // Should auto-detect!
-            ContentHandler contentHandler = new BodyContentHandler();
+            /*
+                create content handler with unlimited content length
+             */
+            ContentHandler contentHandler = new BodyContentHandler(-1);
             Metadata metadata = new Metadata();
             ParseContext context = new ParseContext();
             parser.parse( inputStream, contentHandler, metadata, context );
