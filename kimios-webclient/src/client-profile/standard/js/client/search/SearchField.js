@@ -71,7 +71,7 @@ kimios.search.SearchField = Ext.extend(Ext.form.TextField, {
                 DocumentBody: kimios.explorer.getActivePanel().searchToolbar.criteriaButton.isSearchByText() == true ? value : undefined,
                 fromUid: tab.uid,
                 fromType: tab.type,
-                DocumentPath: tab.breadcrumbToolbar.getPath()
+                DocumentParent: tab.breadcrumbToolbar.getPath()
             });
         }
     },
