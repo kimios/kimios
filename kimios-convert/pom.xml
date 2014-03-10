@@ -39,6 +39,13 @@
     <dependencies>
 
         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slfj.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.kimios</groupId>
             <artifactId>kimios-kernel</artifactId>
             <version>${project.version}</version>
@@ -56,22 +63,6 @@
           <artifactId>pdfbox</artifactId>
           <version>${apache.pdfbox.version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.5.8</version>
-            <type>jar</type>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.5.8</version>
-            <type>jar</type>
-            <scope>provided</scope>
-        </dependency>
-
 
         <dependency>
             <groupId>org.hibernate.javax.persistence</groupId>
