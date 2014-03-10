@@ -23,6 +23,7 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.RangeFacet;
+import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.client.solrj.util.ClientUtils;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
@@ -31,12 +32,19 @@ import org.apache.solr.common.util.SimpleOrderedMap;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.controller.IPathController;
 import org.kimios.kernel.dms.*;
+import org.kimios.kernel.dms.DMEntity;
+import org.kimios.kernel.dms.Document;
+import org.kimios.kernel.dms.DocumentVersion;
+import org.kimios.kernel.dms.DocumentWorkflowStatusRequest;
+import org.kimios.kernel.dms.MetaValue;
+import org.kimios.kernel.dms.WorkflowStatus;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.IndexException;
 import org.kimios.kernel.index.filters.impl.GlobalFilter;
 import org.kimios.kernel.index.query.factory.DocumentFactory;
 import org.kimios.kernel.index.query.model.SearchResponse;
 import org.kimios.kernel.security.DMEntityACL;
+import org.kimios.kernel.ws.pojo.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -146,7 +154,8 @@ public class SolrIndexManager
         }
     }
 
-    private SolrInputDocument toSolrInputDocument( Document document )
+
+    private SolrInputDocument toSolrInputDocument( Document document, SolrDocument previousSolrDocument )
         throws DataSourceException, ConfigException
     {
         SolrInputDocument doc = new SolrInputDocument();
@@ -265,32 +274,59 @@ public class SolrIndexManager
             doc.addField("DocumentRawAddonDatas", document.getAddOnDatas());
         Object body = null;
         Map<String, Object> metaDatas = null;
-        try
-        {
-            GlobalFilter globalFilter = new GlobalFilter();
-            body = globalFilter.getFileBody( document, version.getInputStream() );
-            metaDatas = globalFilter.getMetaDatas();
-        }
-        catch ( Throwable ex )
-        {
-            log.debug( "Error while getting body", ex );
-        }
-        if ( body == null )
-        {
-            body = IndexHelper.EMPTY_STRING;
-        }
-        if ( body instanceof String )
-        {
-            doc.addField( "DocumentBody", (String) body );
-        }
-        if ( metaDatas != null )
-        {
-            for ( String mKey : metaDatas.keySet() )
-            {
-                doc.addField( "FileMetaData_" + mKey, metaDatas.get( mKey ) );
+
+        /*
+            check old pojo for hash
+         */
+        boolean shouldReindexBody = true;
+        if(previousSolrDocument != null){
+            log.debug("matching " + doc.getFieldValue("DocumentVersionHash") + " against " + previousSolrDocument.getFieldValue("DocumentVersionHash"));
+            String oldCombinedHash = previousSolrDocument.getFieldValue("DocumentVersionHash").toString();
+            if(doc.getFieldValue("DocumentVersionHash").equals(oldCombinedHash)){
+                log.debug("old version matched on " + oldCombinedHash);
+                /*
+                    get old datas
+                 */
+                doc.addField("DocumentBody", previousSolrDocument.getFieldValue("DocumentBody"));
+                for(String fileMetaFieldName: previousSolrDocument.getFieldNames()){
+                    if(fileMetaFieldName.startsWith("FileMetaData_")){
+                        doc.addField(fileMetaFieldName, previousSolrDocument.getFieldValue(fileMetaFieldName));
+                        log.debug("added previous field " + fileMetaFieldName + " ==> " + previousSolrDocument.getFieldValue(fileMetaFieldName));
+                    }
+                }
+
+                shouldReindexBody = false;
             }
         }
 
+        if(shouldReindexBody) {
+            log.debug("previous document version unavailable in index. will process document body");
+            try
+            {
+                GlobalFilter globalFilter = new GlobalFilter();
+                body = globalFilter.getFileBody( document, version.getInputStream() );
+                metaDatas = globalFilter.getMetaDatas();
+            }
+            catch ( Throwable ex )
+            {
+                log.debug( "Error while getting body", ex );
+            }
+            if ( body == null )
+            {
+                body = IndexHelper.EMPTY_STRING;
+            }
+            if ( body instanceof String )
+            {
+                doc.addField( "DocumentBody", (String) body );
+            }
+            if ( metaDatas != null )
+            {
+                for ( String mKey : metaDatas.keySet() )
+                {
+                    doc.addField( "FileMetaData_" + mKey, metaDatas.get( mKey ) );
+                }
+            }
+        }
         List<DMEntityACL> acls =
             org.kimios.kernel.security.FactoryInstantiator.getInstance().getDMEntitySecurityFactory().getDMEntityACL(
                 document );
@@ -310,9 +346,29 @@ public class SolrIndexManager
         {
 
             Document document = (Document) documentEntity;
+
+            /*
+                check if document must be reindexed
+             */
+
+
+            String docQuery = "DocumentUid:" + documentEntity.getUid();
+
+
+
+            SolrQuery solrQuery = new SolrQuery();
+            solrQuery.setQuery(docQuery);
+            SolrDocumentList searchResponse = this.loadDocuments(solrQuery);
+
+            SolrDocument previousRecord = null;
+            if(searchResponse.getNumFound() == 1){
+                log.debug("found one document for uid #" + documentEntity.getUid());
+                previousRecord = searchResponse.get(0);
+            }
             this.deleteDocument( document );
-            SolrInputDocument solrInputDocument = toSolrInputDocument( document );
+            SolrInputDocument solrInputDocument = toSolrInputDocument( document, previousRecord );
             this.solr.add( solrInputDocument );
+
             this.solr.commit();
         }
         catch ( IOException io )
@@ -340,12 +396,12 @@ public class SolrIndexManager
             List<String> updatedDocumentIds = new ArrayList<String>();
             for ( DMEntity doc : documentEntities )
             {
-                SolrInputDocument solrInputDocument = toSolrInputDocument( (Document) doc );
+                SolrInputDocument solrInputDocument = toSolrInputDocument( (Document) doc, null );
                 if ( solrInputDocument != null )
                 {
                     updatedDocumentIds.add( String.valueOf( doc.getUid() ) );
                     updatedDocument.add( solrInputDocument );
-                    log.info( "Doc added to solr Query " + doc + " / " + solrInputDocument );
+                    log.debug( "Doc added to solr Query " + doc + " / " + solrInputDocument );
                 }
             }
 
@@ -383,6 +439,24 @@ public class SolrIndexManager
             throw new IndexException( ex, ex.getMessage() );
         }
     }
+
+
+    private SolrDocumentList loadDocuments( SolrQuery query )
+            throws IndexException
+    {
+        QueryResponse rsp;
+        try{
+
+            rsp = solr.query( query );
+            SolrDocumentList documentList = rsp.getResults();
+            return documentList;
+
+        }   catch (SolrServerException ex )
+        {
+            throw new IndexException( ex, ex.getMessage() );
+        }
+    }
+
 
     public SearchResponse executeSolrQuery( SolrQuery query )
         throws IndexException
