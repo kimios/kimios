@@ -34,6 +34,8 @@ public class EventHandlerManager implements ApplicationContextAware
 
     private static EventHandlerManager instance;
 
+    private ConfigurationManager configurationManager;
+
     private ApplicationContext springContext;
 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException
@@ -56,6 +58,8 @@ public class EventHandlerManager implements ApplicationContextAware
 
     private void init()
     {
+
+        configurationManager = springContext.getBean(ConfigurationManager.class);
         EventContext.init();
         handlers = new ArrayList<GenericEventHandler>();
         handlers.add(new ActionLogger());
@@ -73,7 +77,7 @@ public class EventHandlerManager implements ApplicationContextAware
 
         try {
             ClassLoader cLoader = Thread.currentThread().getContextClassLoader();
-            List<String> eventClasses = ConfigurationManager.getListValue("dms.events");
+            List<String> eventClasses = configurationManager.getListValue("dms.events");
             if (eventClasses != null && eventClasses.size() > 0) {
                 for (String handlerClass : eventClasses) {
                     try {

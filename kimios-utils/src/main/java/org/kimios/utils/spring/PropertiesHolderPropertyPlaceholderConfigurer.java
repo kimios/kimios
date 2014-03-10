@@ -16,10 +16,15 @@
 
 package org.kimios.utils.spring;
 
+import org.kimios.exceptions.ConfigException;
+import org.kimios.utils.configuration.ConfigurationHolder;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
+import org.springframework.util.StringUtils;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -29,28 +34,53 @@ import java.util.Properties;
  * Time: 2:35 PM
  * To change this template use File | Settings | File Templates.
  */
-public class PropertiesHolderPropertyPlaceholderConfiguer extends PropertyPlaceholderConfigurer {
+public class PropertiesHolderPropertyPlaceholderConfigurer extends PropertyPlaceholderConfigurer
+        implements ConfigurationHolder {
 
 
     @Override
     protected void processProperties(ConfigurableListableBeanFactory beanFactoryToProcess, Properties props) throws BeansException {
-
         /*
             Execute standard bean definition replacement
-         */
+        */
         super.processProperties(beanFactoryToProcess, props);
         /*
             Add support to maintain reference to resolved properties
-         */
+        */
         resolvedProperties = props;
     }
 
-
-
     private Properties resolvedProperties = null;
-
 
     public Properties getResolvedProperties() {
         return resolvedProperties;
+    }
+
+    public boolean exists(String keyOrPrefix) {
+        if(System.getProperty(keyOrPrefix) != null){
+            return true;
+        } else {
+            if(resolvedProperties != null)
+                return resolvedProperties.getProperty(keyOrPrefix) != null;
+        }
+        return false;
+    }
+
+    public Object getValue(String key) {
+        return resolvePlaceholder(key, resolvedProperties, SYSTEM_PROPERTIES_MODE_OVERRIDE);
+    }
+
+    public String getStringValue(String key) {
+        return resolvePlaceholder(key, resolvedProperties, SYSTEM_PROPERTIES_MODE_OVERRIDE);
+    }
+
+    public List<String> getValues(String prefix) {
+        String valuesItems = resolvePlaceholder(prefix, resolvedProperties, SYSTEM_PROPERTIES_MODE_OVERRIDE);
+        List<String> valuesItemList = Arrays.asList(StringUtils.tokenizeToStringArray(valuesItems, ","));
+        return valuesItemList;
+    }
+
+    public void refresh() throws ConfigException {
+
     }
 }
