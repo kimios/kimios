@@ -31,10 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DocumentVersionActionHandler extends Controller
 {
@@ -59,17 +56,17 @@ public class DocumentVersionActionHandler extends Controller
         this.request = request;
     }
 
+    private static String[] DL_ACTIONS = new String[]{"GetLastVersion", "GetDocumentVersion", "getTemporaryFile"};
+
     public String execute() throws Exception
     {
         String jsonResp = "";
         if (action != null) {
             if (action.equals("GetLastVersion")) {
                 getLastVersion();
-                jsonResp = "downloadaction";
             }
             if (action.equals("GetDocumentVersion")) {
                 getDocumentVersion();
-                jsonResp = "downloadaction";
             }
             if (action.equals("getDocumentVersions")) {
                 jsonResp = getDocumentVersions();
@@ -95,6 +92,11 @@ public class DocumentVersionActionHandler extends Controller
             if (action.equals("getTemporaryFile")) {
                 getTemporaryFile();
             }
+
+            if(Arrays.asList(DL_ACTIONS).indexOf(action) > - 1){
+                jsonResp = "downloadaction";
+            }
+
             return jsonResp;
         } else {
             return "{\"success\":false}";
