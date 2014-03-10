@@ -31,18 +31,21 @@
         </property>
     </bean>
 
-    <bean id="configurationManager" class="org.kimios.utils.configuration.ConfigurationManager">
-        <property name="holder">
-            <bean class="org.kimios.utils.configuration.SpringPropertiesConfigurationHolder">
-                <constructor-arg ref="propertyConfigurer" />
-            </bean>
-        </property>
+    <bean id="springConfigurationHolder" class="org.kimios.utils.configuration.SpringPropertiesConfigurationHolder">
+        <constructor-arg ref="propertyConfigurer" />
     </bean>
 
-
+    <bean id="configurationManager" class="org.kimios.utils.configuration.ConfigurationManager">
+        <property name="holder" ref="springConfigurationHolder" />
+    </bean>
 
     <bean id="sessionFactory"
-            class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+            class="org.springframework.orm.hibernate4.LocalSessionFactoryBean"
+            >
+        <!-- directly set transaction manager. Spring will handle Hibernate JTA Platform new stuff with
+            a ConfigurableJtaPlatform instance
+        -->
+        <property name="jtaTransactionManager" ref="transactionManager" />
         <property name="dataSource">
             <ref bean="kimiosDataSource"/>
         </property>
@@ -58,8 +61,6 @@
                 <prop key="hibernate.default_schema">${jdbc.schema}</prop>
                 <prop key="hibernate.current_session_context_class">jta</prop>
                 <prop key="hibernate.connection.release_mode">after_statement</prop>
-                <prop key="hibernate.transaction.factory_class">${jta.tx.factory}</prop>
-                <prop key="hibernate.transaction.manager_lookup_class">${jta.tx.managerlookup}</prop>
                 <prop key="hibernate.jdbc.use_streams_for_binary">true</prop>
             </props>
         </property>

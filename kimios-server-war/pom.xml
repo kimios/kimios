@@ -150,13 +150,6 @@
             <type>jar</type>
             <scope>runtime</scope>
         </dependency>
-        <dependency>
-            <groupId>javassist</groupId>
-            <artifactId>javassist</artifactId>
-            <version>3.12.0.GA</version>
-            <type>jar</type>
-            <scope>runtime</scope>
-        </dependency>
 
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -259,19 +252,36 @@
             <version>${slfj.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>${slfj.version}</version>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
         </dependency>
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>${log4j.version}</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>${slfj.version}</version>
         </dependency>
 
     </dependencies>
     <build>
         <finalName>kimios-${project.version}</finalName>
+        <plugins>
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <!--
+                      Exclude JCL and LOG4J since all logging should go through SLF4J.
+                      Note that we're excluding log4j-<version>.jar but keeping
+                      log4j-over-slf4j-<version>.jar
+                    -->
+                    <packagingExcludes>
+                        WEB-INF/lib/commons-logging-*.jar,
+                        %regex[WEB-INF/lib/log4j-(?!over-slf4j).*.jar]
+                    </packagingExcludes>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
     <profiles>
         <profile>
@@ -303,23 +313,6 @@
                     <scope>system</scope>
                     <systemPath>${basedir}/../ext-libs/ojdbc5.jar</systemPath>
                 </dependency>-->
-                <dependency>
-                    <groupId>com.atomikos</groupId>
-                    <artifactId>transactions-hibernate3</artifactId>
-                    <version>${atomikos.version}</version>
-                    <type>jar</type>
-                    <scope>compile</scope>
-                    <exclusions>
-                        <exclusion>
-                            <groupId>org.hibernate</groupId>
-                            <artifactId>hibernate</artifactId>
-                        </exclusion>
-                        <exclusion>
-                            <groupId>javax.jms</groupId>
-                            <artifactId>jms</artifactId>
-                        </exclusion>
-                    </exclusions>
-                </dependency>
                 <dependency>
                     <groupId>com.atomikos</groupId>
                     <artifactId>transactions-api</artifactId>

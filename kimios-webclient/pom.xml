@@ -114,10 +114,13 @@
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
+            <artifactId>jcl-over-slf4j</artifactId>
             <version>${slfj.version}</version>
-            <type>jar</type>
-            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
         </dependency>
 
 
@@ -196,7 +199,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>2.1.1</version>
+                <version>2.4</version>
                 <configuration>
                     <webResources>
                         <resource>
@@ -204,6 +207,15 @@
                             <targetPath />
                         </resource>
                     </webResources>
+                    <!--
+                              Exclude JCL and LOG4J since all logging should go through SLF4J.
+                              Note that we're excluding log4j-<version>.jar but keeping
+                              log4j-over-slf4j-<version>.jar
+                            -->
+                    <packagingExcludes>
+                        WEB-INF/lib/commons-logging-*.jar,
+                        %regex[WEB-INF/lib/log4j-(?!over-slf4j).*.jar]
+                    </packagingExcludes>
                 </configuration>
             </plugin>
         </plugins>
