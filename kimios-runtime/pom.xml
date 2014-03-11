@@ -93,14 +93,7 @@
         <dependency>
             <groupId>cglib</groupId>
             <artifactId>cglib</artifactId>
-            <version>2.2</version>
-            <type>jar</type>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>javassist</groupId>
-            <artifactId>javassist</artifactId>
-            <version>3.12.0.GA</version>
+            <version>${cglib.version}</version>
             <type>jar</type>
             <scope>runtime</scope>
         </dependency>
@@ -222,23 +215,6 @@
         </dependency>-->
         <dependency>
             <groupId>com.atomikos</groupId>
-            <artifactId>transactions-hibernate3</artifactId>
-            <version>${atomikos.version}</version>
-            <type>jar</type>
-            <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.hibernate</groupId>
-                    <artifactId>hibernate</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>javax.jms</groupId>
-                    <artifactId>jms</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.atomikos</groupId>
             <artifactId>transactions-api</artifactId>
             <version>${atomikos.version}</version>
             <type>jar</type>
@@ -277,11 +253,11 @@
     <build>
         <pluginManagement>
             <plugins>
-                        <plugin>
-                            <groupId>org.apache.karaf.tooling</groupId>
-                            <artifactId>karaf-maven-plugin</artifactId>
-                            <version>3.0.0</version>
-                        </plugin>
+                <plugin>
+                    <groupId>org.apache.karaf.tooling</groupId>
+                    <artifactId>karaf-maven-plugin</artifactId>
+                    <version>3.0.0</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -499,90 +475,4 @@
             </plugin>
         </plugins>
     </build>
-    <profiles>
-    <profile>
-        <activation>
-            <!-- Active By Default In development Mode (to get Atomikos lib) -->
-            <activeByDefault>true</activeByDefault>
-        </activation>
-        <id>tomcat</id>
-        <dependencies>
-            <dependency>
-                <groupId>postgresql</groupId>
-                <artifactId>postgresql</artifactId>
-                <version>8.4-702.jdbc4</version>
-            </dependency>
-            <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
-                <version>5.1.21</version>
-            </dependency>
-            <dependency>
-                <groupId>net.sourceforge.jtds</groupId>
-                <artifactId>jtds</artifactId>
-                <version>1.2.4</version>
-            </dependency>
-            <!--<dependency>
-                <groupId>oracle</groupId>
-                <artifactId>oracle-jdbc</artifactId>
-                <version>5.0</version>
-                <scope>system</scope>
-                <systemPath>${basedir}/../ext-libs/ojdbc5.jar</systemPath>
-            </dependency>-->
-            <dependency>
-                <groupId>com.atomikos</groupId>
-                <artifactId>transactions-hibernate3</artifactId>
-                <version>${atomikos.version}</version>
-                <type>jar</type>
-                <scope>compile</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.hibernate</groupId>
-                        <artifactId>hibernate</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>javax.jms</groupId>
-                        <artifactId>jms</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>com.atomikos</groupId>
-                <artifactId>transactions-api</artifactId>
-                <version>${atomikos.version}</version>
-                <type>jar</type>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.atomikos</groupId>
-                <artifactId>transactions</artifactId>
-                <version>${atomikos.version}</version>
-                <type>jar</type>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.atomikos</groupId>
-                <artifactId>atomikos-util</artifactId>
-                <version>${atomikos.version}</version>
-                <type>jar</type>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.atomikos</groupId>
-                <artifactId>transactions-jdbc</artifactId>
-                <version>${atomikos.version}</version>
-                <type>jar</type>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.atomikos</groupId>
-                <artifactId>transactions-jta</artifactId>
-                <version>${atomikos.version}</version>
-                <type>jar</type>
-                <scope>compile</scope>
-            </dependency>
-        </dependencies>
-    </profile>
-    </profiles>
-
 </project>
