@@ -583,8 +583,8 @@ public class SolrIndexManager
             {
                 path = path.substring( 0, path.lastIndexOf( "/" ) );
             }
-            Query q = new DocumentParentClause( path ).getLuceneQuery();
-            this.solr.deleteByQuery( "DocumentParent:" + path + "/*" );
+            UpdateResponse response = this.solr.deleteByQuery( "DocumentParent:" + path + "/*" );
+            log.debug(response.toString());
             this.solr.commit();
         }
         catch ( Exception ex )
