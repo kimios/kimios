@@ -40,6 +40,7 @@ import org.kimios.kernel.bonita.BonitaSettings;
 import org.kimios.kernel.controller.BonitaController;
 import org.kimios.kernel.exception.DmsKernelException;
 import org.kimios.kernel.security.Session;
+import org.kimios.webservices.DMServiceException;
 import org.kimios.webservices.impl.factory.CommentWrapperFactory;
 import org.kimios.webservices.impl.factory.ProcessWrapperFactory;
 import org.kimios.webservices.impl.factory.TaskWrapperFactory;
@@ -312,7 +313,7 @@ public class BonitaControllerImpl implements BonitaController {
     }
 
 
-    private APISession login(Session session) throws IOException, BonitaHomeNotSetException, ServerAPIException, UnknownAPITypeException, LoginException {
+    private APISession login(Session session) throws LoginException {
         try {
             bonitaCfg.init();
 
@@ -320,8 +321,11 @@ public class BonitaControllerImpl implements BonitaController {
             return loginAPI.login(session.getUserName() + "@" + session.getUserSource(), session.getUid());
 
         } catch (LoginException e) {
-            log.error("Error while authenticating to Bonita: " + e.getMessage());
-            throw e;
+            log.error("error while authenticating to Bonita", e);
+            throw new DmsKernelException(e, "error while authenticating to Bonita");
+        } catch (Exception e){
+            log.error("error while attempting bonita connexion", e);
+            throw new DmsKernelException(e, "error while attempting bonita connexion");
         }
     }
 
@@ -339,9 +343,14 @@ public class BonitaControllerImpl implements BonitaController {
 
     }
 
-    private void logout(APISession session) throws BonitaHomeNotSetException, ServerAPIException, UnknownAPITypeException, LogoutException, SessionNotFoundException {
-        LoginAPI loginAPI = TenantAPIAccessor.getLoginAPI();
-        loginAPI.logout(session);
+    private void logout(APISession session) throws DmsKernelException {
+        try{
+            LoginAPI loginAPI = TenantAPIAccessor.getLoginAPI();
+            loginAPI.logout(session);
+        } catch (Exception e){
+            log.error("error while attempting bonita connexion for logout", e);
+            throw new DmsKernelException(e, "error while attempting bonita connexion");
+        }
     }
 
     public BonitaSettings getBonitaCfg() {
