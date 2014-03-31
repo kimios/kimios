@@ -31,7 +31,13 @@ public class JaxRSResponseExceptionMapper
 
     public DMServiceException fromResponse( Response r )
     {
-        DMServiceException ex = r.readEntity( DMServiceException.class );
-        return ex;
+        try{
+            DMServiceException ex = r.readEntity( DMServiceException.class );
+            return ex;
+        }catch (Exception e){
+            System.out.println(" error while deserializing ");
+            e.printStackTrace();
+        }
+        return  null;
     }
 }
