@@ -221,12 +221,11 @@ public class DocumentVersionActionHandler extends Controller
     private void getLastVersion() throws Exception
     {
         Document doc = documentController.getDocument(sessionUid, Long.parseLong(parameters.get("uid")));
-        DocumentVersion dv = documentVersionController.getLastDocumenVersion(sessionUid, doc.getUid());
-        String docName = doc.getName() +  (!StringUtils.isNotBlank(doc.getExtension()) ? "." + doc.getExtension() : "");
+        String docName = doc.getName() +  (StringUtils.isNotBlank(doc.getExtension()) ? "." + doc.getExtension() : "");
         resp.setHeader("Content-Disposition",encodeFileNameInHeader(request, docName));
         resp.setContentType(doc.getMimeType());
-        resp.setContentLength((int) dv.getLength());
-        fileTransferController.downloadFileVersion(sessionUid, dv.getUid(), resp.getOutputStream(), false);
+        resp.setContentLength((int) doc.getLength());
+        fileTransferController.downloadFileVersion(sessionUid, doc.getLastVersionId(), resp.getOutputStream(), false);
         resp.getOutputStream().flush();
         resp.getOutputStream().close();
     }
@@ -234,7 +233,7 @@ public class DocumentVersionActionHandler extends Controller
     private void getDocumentVersion() throws Exception
     {
         Document doc = documentController.getDocument(sessionUid, Long.parseLong(parameters.get("docUid")));
-        String docName = doc.getName() +  "_" + parameters.get("verUid") + (!StringUtils.isNotBlank(doc.getExtension()) ? "." + doc.getExtension() : "");
+        String docName = doc.getName() +  "_" + parameters.get("verUid") + (StringUtils.isNotBlank(doc.getExtension()) ? "." + doc.getExtension() : "");
         resp.setHeader("Content-Disposition", encodeFileNameInHeader(request, docName));
         resp.setContentType(doc.getMimeType());
         DocumentVersion dv = documentVersionController.getDocumentVersion(sessionUid,

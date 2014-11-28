@@ -34,6 +34,8 @@ import java.util.List;
 public class SearchRequestFactory extends HFactory {
 
 
+
+
     public Long save(SearchRequest searchRequest) throws DataSourceException {
 
         /*
@@ -52,6 +54,11 @@ public class SearchRequestFactory extends HFactory {
         }
     }
 
+
+    public List<SearchRequest> loadAllSearchRequests(){
+        return getSession().createQuery("from SearchRequest fetch all properties order by name")
+                .list();
+    }
 
     public List<SearchRequest> loadSearchRequest(String userId, String userSource) {
         String query = "from SearchRequest fetch all properties where (owner = :userId and ownerSource = :userSource) or publicAccess is true order by name";

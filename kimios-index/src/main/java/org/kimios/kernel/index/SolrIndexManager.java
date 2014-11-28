@@ -50,6 +50,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -158,6 +159,14 @@ public class SolrIndexManager
     private SolrInputDocument toSolrInputDocument( Document document, SolrDocument previousSolrDocument )
         throws DataSourceException, ConfigException
     {
+
+        SimpleDateFormat dateParser = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat dateTimeParser = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        SimpleDateFormat utcDateParser = new SimpleDateFormat("dd-MM-yyyy");
+        utcDateParser.setTimeZone(TimeZone.getTimeZone("UTC"));
+        SimpleDateFormat utcDateTimeParser = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        utcDateTimeParser.setTimeZone(TimeZone.getTimeZone("UTC"));
+        log.info("processing document {} for path {}", document.getUid(), document.getPath());
         SolrInputDocument doc = new SolrInputDocument();
         doc.addField( "DocumentUid", document.getUid() );
         doc.addField( "DocumentName", document.getName().toLowerCase() );
@@ -242,7 +251,7 @@ public class SolrIndexManager
                 {
                     case MetaType.STRING:
                         doc.addField( "MetaDataString_" + value.getMetaUid(),
-                                      ( (String) value.getValue() ).toLowerCase() );
+                                      value.getValue() != null ? ( (String) value.getValue() ).toLowerCase() : null);
                         break;
                     case MetaType.BOOLEAN:
                         doc.addField( "MetaDataBoolean_" + value.getMetaUid(), value.getValue() );
@@ -254,10 +263,24 @@ public class SolrIndexManager
 
                         Calendar cal = Calendar.getInstance( TimeZone.getTimeZone( "UTC" ) );
                         if(value != null && value.getValue() != null){
-                            cal.setTime( (Date) value.getValue() );
-                            doc.addField( "MetaDataDate_" + value.getMetaUid(), cal.getTime() );
+                            //reparse date for local
+                            String dateString = dateParser.format(value.getValue());
+                            log.debug("meta parsed on re-index: " + dateString);
+                            try{
+                                cal.setTime(  utcDateParser.parse(dateString) );
+                                log.debug("meta parsed on re-index: " + dateString + " ==> Cal:" + cal.getTime());
+                                doc.addField( "MetaDataDate_" + value.getMetaUid(), cal.getTime() );
+                            }   catch (Exception ex){
+                                log.error("error while reparsing meta data date {} {} {}", value.getMeta().getName(), value, dateString);
+                            }
                         }
-
+                        break;
+                    case MetaType.LIST:
+                        if(value != null && value.getValue() != null){
+                            List<String> items = ((MetaListValue)value).getValue();
+                            for(String u: items)
+                                doc.addField( "MetaDataList_" + value.getMetaUid(),u.toLowerCase());
+                        }
                         break;
                     default:
                         doc.addField( "MetaData_" + value.getMetaUid(), value.getValue() );
@@ -267,8 +290,21 @@ public class SolrIndexManager
         }
         for ( String attribute : document.getAttributes().keySet() )
         {
-            doc.addField( "Attribute_" + attribute.toUpperCase(),
-                          document.getAttributes().get( attribute ).getValue() );
+
+            if(attribute.equals("SearchTag")){
+                //Custom parsing
+                String[] tags = document.getAttributes().get(attribute) != null &&
+                document.getAttributes().get(attribute).getValue() != null ?
+                        document.getAttributes().get(attribute).getValue().split("\\|\\|\\|") : new String[]{};
+                for(String tag: tags){
+                    log.debug("adding field Attribute_SEARCHTAG {} ", tag);
+                    doc.addField( "Attribute_SEARCHTAG", tag);
+                }
+            } else {
+                doc.addField( "Attribute_" + attribute.toUpperCase(),
+                        document.getAttributes().get( attribute ).getValue() );
+            }
+
         }
         if(document.getAddOnDatas() != null)
             doc.addField("DocumentRawAddonDatas", document.getAddOnDatas());
@@ -401,7 +437,18 @@ public class SolrIndexManager
                 {
                     updatedDocumentIds.add( String.valueOf( doc.getUid() ) );
                     updatedDocument.add( solrInputDocument );
-                    log.debug( "Doc added to solr Query " + doc + " / " + solrInputDocument );
+
+
+                    if(log.isDebugEnabled())               {
+                        log.debug( "Solr Added doc: #" + solrInputDocument.getFieldValue("DocumentId"));
+                        for(String field: solrInputDocument.getFieldNames()){
+                            if(!field.equals("DocumentBody")){
+                                log.debug( "Solr result doc: ======> {} : {}", field, solrInputDocument.getFieldValue(field));
+                            }
+
+                        }
+
+                    }
                 }
             }
 
@@ -470,8 +517,16 @@ public class SolrIndexManager
             for ( SolrDocument dc : documentList )
             {
 
-                if(log.isDebugEnabled())
-                    log.debug( "Solr result doc: " + dc );
+                if(log.isDebugEnabled())               {
+                    log.debug( "Solr result doc: #" + dc.getFieldValue("DocumentId"));
+                    for(String field: dc.getFieldNames()){
+                        if(!field.equals("DocumentBody")){
+                            log.debug( "Solr result doc: ======> {} : {}", field, dc.getFieldValue(field));
+                        }
+
+                    }
+
+                }
 
                 list.add( (Long) dc.getFieldValue( "DocumentUid" ) );
             }
@@ -520,6 +575,15 @@ public class SolrIndexManager
                         break;
                     }
 
+                }
+            }
+            if ( rsp.getFacetQuery() != null )
+            {
+                for ( String facetQuery : rsp.getFacetQuery().keySet() )
+                {
+                    if(log.isDebugEnabled())
+                        log.debug("Returned Facet Query: " + facetQuery);
+                    facetsData.put( facetQuery, new Object[]{ facetQuery, rsp.getFacetQuery().get(facetQuery) } );
                 }
             }
             searchResponse.setFacetsData( facetsData );
@@ -583,7 +647,8 @@ public class SolrIndexManager
             {
                 path = path.substring( 0, path.lastIndexOf( "/" ) );
             }
-            UpdateResponse response = this.solr.deleteByQuery( "DocumentParent:" + path + "/*" );
+
+            UpdateResponse response = this.solr.deleteByQuery( "DocumentParent:" + ClientUtils.escapeQueryChars(path + "/") + "*" );
             log.debug(response.toString());
             this.solr.commit();
         }
@@ -621,7 +686,15 @@ public class SolrIndexManager
                 newPath += "/";
             }
             Query q = new DocumentParentClause( oldPath ).getLuceneQuery();
-            SolrDocumentList items = this.solr.query( new SolrQuery( q.toString() ) ).getResults();
+            String pathQuery = q.toString().replaceAll("/", "\\\\/");
+
+
+            log.debug("find documents to update {}", pathQuery);
+
+            SolrDocumentList items = this.solr.query( new SolrQuery( pathQuery ) ).getResults();
+
+
+
 
             if ( items.getNumFound() > 0 )
             {
@@ -660,6 +733,8 @@ public class SolrIndexManager
             for ( int u = 0; u < items.size(); u++ )
             {
                 fieldList.add( items.getName( u ) );
+
+
             }
 
             return fieldList;

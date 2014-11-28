@@ -19,7 +19,7 @@ kimios.util.PreviewHelper = {
     generatePreviewUrl : function(entityRecord, converter){
         var link = srcContextPath + '/Converter?sessionId=' + sessionUid;
         link += '&documentId=' + entityRecord.uid;
-        link += '&converterImpl=' + (converter ? converter : kimios.util.PreviewHelper.extensionMapping()[entityRecord.extension][0].conv) ;
+        link += '&converterImpl=' + (converter ? converter : kimios.util.PreviewHelper.extensionMapping()[entityRecord.extension.toLowerCase()][0].conv) ;
         link += "&inline=true";
         return link;
     },

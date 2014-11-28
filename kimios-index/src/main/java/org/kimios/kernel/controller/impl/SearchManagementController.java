@@ -23,26 +23,26 @@ import org.kimios.kernel.exception.AccessDeniedException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.IndexException;
 import org.kimios.kernel.index.AbstractIndexManager;
+import org.kimios.kernel.index.SolrIndexManager;
 import org.kimios.kernel.security.Role;
 import org.kimios.kernel.security.Session;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * Search Management Controller
  */
 @Transactional
-public class SearchManagementController extends AKimiosController implements ISearchManagementController
-{
+public class SearchManagementController extends AKimiosController implements ISearchManagementController {
 
     private AbstractIndexManager indexManager;
 
-    public AbstractIndexManager getIndexManager()
-    {
+    public AbstractIndexManager getIndexManager() {
         return indexManager;
     }
 
-    public void setIndexManager( AbstractIndexManager indexManager )
-    {
+    public void setIndexManager(AbstractIndexManager indexManager) {
         this.indexManager = indexManager;
     }
 
@@ -50,11 +50,9 @@ public class SearchManagementController extends AKimiosController implements ISe
         * @see org.kimios.kernel.controller.impl.IAdministrationController#reindex(org.kimios.kernel.security.Session, java.lang.String)
         */
     public void reindex(Session session, String path)
-        throws AccessDeniedException, IndexException, ConfigException, DataSourceException
-    {
+            throws AccessDeniedException, IndexException, ConfigException, DataSourceException {
         if (securityFactoryInstantiator.getRoleFactory()
-            .getRole( Role.ADMIN, session.getUserName(), session.getUserSource()) != null)
-        {
+                .getRole(Role.ADMIN, session.getUserName(), session.getUserSource()) != null) {
             indexManager.reindex(path);
         } else {
             throw new AccessDeniedException();
@@ -65,14 +63,20 @@ public class SearchManagementController extends AKimiosController implements ISe
     * @see org.kimios.kernel.controller.impl.ISearchManagementController#getReindexProgress(org.kimios.kernel.security.Session)
     */
     public int getReindexProgress(Session session)
-        throws AccessDeniedException, IndexException, ConfigException, DataSourceException
-    {
+            throws AccessDeniedException, IndexException, ConfigException, DataSourceException {
         if (securityFactoryInstantiator.getRoleFactory()
-            .getRole(Role.ADMIN, session.getUserName(), session.getUserSource()) != null)
-        {
+                .getRole(Role.ADMIN, session.getUserName(), session.getUserSource()) != null) {
             return indexManager.getReindexProgression();
         } else {
             throw new AccessDeniedException();
         }
+    }
+
+    @Override
+    public List<String> listDocumentAvailableFields(Session session) throws AccessDeniedException, IndexException, ConfigException, DataSourceException {
+        if (indexManager instanceof SolrIndexManager) {
+            return ((SolrIndexManager) indexManager).filterFields();
+        } else
+            throw new AccessDeniedException();
     }
 }

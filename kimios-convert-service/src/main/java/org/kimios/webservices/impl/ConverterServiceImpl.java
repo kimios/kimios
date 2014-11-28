@@ -24,8 +24,11 @@ import org.kimios.webservices.DMServiceException;
 import org.kimios.webservices.ServiceHelper;
 
 import javax.jws.WebService;
+import javax.mail.internet.MimeUtility;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,10 +45,13 @@ public class ConverterServiceImpl implements ConverterService {
     }
 
 
-    public Response convertDocument(String sessionId, Long documentId, String converterImpl) throws DMServiceException {
+    public Response convertDocument(String sessionId, Long documentId, String converterImpl, Boolean inline) throws DMServiceException {
         try {
             Session session = helper.getSession(sessionId);
-            return wrapResponse(convertController.convertDocument(session, documentId, converterImpl));
+            if (inline) {
+                return wrapResponseInline(convertController.convertDocument(session, documentId, converterImpl));
+            } else
+                return wrapResponse(convertController.convertDocument(session, documentId, converterImpl));
 
         } catch (Exception e) {
             throw helper.convertException(e);
@@ -63,38 +69,47 @@ public class ConverterServiceImpl implements ConverterService {
         }
     }
 
-    public Response convertDocumentVersion(String sessionId, Long versionId, String converterImpl) throws DMServiceException {
+    public Response convertDocumentVersion(String sessionId, Long versionId, String converterImpl, Boolean inline) throws DMServiceException {
         try {
             Session session = helper.getSession(sessionId);
-            return wrapResponse(convertController.convertDocumentVersion(session, versionId, converterImpl));
+            if (inline) {
+                return wrapResponseInline(convertController.convertDocumentVersion(session, versionId, converterImpl));
+            } else
+                return wrapResponse(convertController.convertDocumentVersion(session, versionId, converterImpl));
 
         } catch (Exception e) {
             throw helper.convertException(e);
         }
     }
 
-    public Response convertDocuments(String sessionId, Long[] documentIds, String converterImpl) throws DMServiceException {
+    public Response convertDocuments(String sessionId, Long[] documentIds, String converterImpl, Boolean inline) throws DMServiceException {
         try {
             Session session = helper.getSession(sessionId);
             List<Long> documents = new ArrayList<Long>();
             for (Long documentId : documentIds) {
                 documents.add(documentId);
             }
-            return wrapResponse(convertController.convertDocuments(session, documents, converterImpl));
+            if (inline) {
+                return wrapResponseInline(convertController.convertDocuments(session, documents, converterImpl));
+            } else
+                return wrapResponse(convertController.convertDocuments(session, documents, converterImpl));
 
         } catch (Exception e) {
             throw helper.convertException(e);
         }
     }
 
-    public Response convertDocumentVersions(String sessionId, Long[] versionIds, String converterImpl) throws DMServiceException {
+    public Response convertDocumentVersions(String sessionId, Long[] versionIds, String converterImpl, Boolean inline) throws DMServiceException {
         try {
             Session session = helper.getSession(sessionId);
             List<Long> versions = new ArrayList<Long>();
             for (Long versionId : versionIds) {
                 versions.add(versionId);
             }
-            return wrapResponse(convertController.convertDocumentVersions(session, versions, converterImpl));
+            if (inline) {
+                return wrapResponseInline(convertController.convertDocumentVersions(session, versions, converterImpl));
+            } else
+                return wrapResponse(convertController.convertDocumentVersions(session, versions, converterImpl));
 
         } catch (Exception e) {
             throw helper.convertException(e);
@@ -111,4 +126,31 @@ public class ConverterServiceImpl implements ConverterService {
                 .header("Content-Type", source.getMimeType())
                 .build();
     }
+
+    private Response wrapResponseInline(InputSource source) throws IOException {
+
+        return Response.ok(source.getInputStream()).header(
+                "Content-Disposition",
+                "inline; filename=\"" + source.getHumanName() + "\"")
+                .header("Content-Type", source.getMimeType())
+                .build();
+    }
+
+
+    /*private String encodeFileNameInHeader(HttpServletRequest request, String docName) throws Exception {
+
+
+        String userAgent = servletRequest.get("user-agent");
+        boolean isInternetExplorer = (userAgent.indexOf("MSIE") > -1);
+
+        String item = null;
+        if (isInternetExplorer) {
+            item = "attachment; filename=\"" + URLEncoder.encode(docName, "utf-8") + "\"";
+        } else {
+            item = "attachment; filename=\"" + MimeUtility.encodeWord(docName) + "\"";
+        }
+
+        return item;
+    }*/
+
 }

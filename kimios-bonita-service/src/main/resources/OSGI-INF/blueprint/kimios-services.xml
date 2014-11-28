@@ -1,0 +1,692 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Kimios - Document Management System Software
+  ~ Copyright (C) 2008-2013  DevLib'
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 2 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:jaxws="http://cxf.apache.org/blueprint/jaxws"
+        xmlns:cxf="http://cxf.apache.org/blueprint/core"
+        xmlns:jaxrs="http://cxf.apache.org/blueprint/jaxrs"
+        xmlns:soap="http://cxf.apache.org/blueprint/bindings/soap"
+        xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0
+        http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
+        http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
+  http://cxf.apache.org/blueprint/jaxrs http://cxf.apache.org/schemas/blueprint/jaxrs.xsd
+    http://cxf.apache.org/blueprint/jaxws http://cxf.apache.org/schemas/blueprint/jaxws.xsd
+  http://cxf.apache.org/blueprint/core http://cxf.apache.org/schemas/blueprint/core.xsd"
+        >
+
+
+
+
+    <bean id="kimiosBusManager" class="org.kimios.webservices.utils.KimiosBusServiceManager" />
+    <bean id="loggingFeature" class="org.apache.cxf.feature.LoggingFeature" />
+    <cxf:bus id="kimios-bus">
+        <cxf:features>
+            <ref component-id="kimiosBusManager" />
+        </cxf:features>
+    </cxf:bus>
+
+    <reference id="sessionManager"
+            interface="org.kimios.kernel.security.ISessionManager"/>
+
+    <reference id="administrationController"
+            interface="org.kimios.kernel.controller.IAdministrationController"/>
+    <reference id="studioController"
+            interface="org.kimios.kernel.controller.IStudioController"/>
+    <reference id="documentController"
+            interface="org.kimios.kernel.controller.IDocumentController"/>
+    <reference id="documentVersionController"
+            interface="org.kimios.kernel.controller.IDocumentVersionController"/>
+    <reference id="workspaceController"
+            interface="org.kimios.kernel.controller.IWorkspaceController"/>
+    <reference id="folderController"
+            interface="org.kimios.kernel.controller.IFolderController"/>
+
+    <reference id="fileTransferController"
+            interface="org.kimios.kernel.controller.IFileTransferController"/>
+    <reference id="searchController"
+        interface="org.kimios.kernel.controller.ISearchController"/>
+
+    <reference id="converterController"
+               interface="org.kimios.kernel.controller.IConverterController" />
+    
+    <reference id="searchManagementController"
+               interface="org.kimios.kernel.controller.ISearchManagementController" />
+    <reference id="reportingController"
+            interface="org.kimios.kernel.controller.IReportingController"/>
+    <reference id="rulesController"
+            interface="org.kimios.kernel.controller.IRuleManagementController"/>
+    <reference id="securityController"
+            interface="org.kimios.kernel.controller.ISecurityController"/>
+    <reference id="informationController"
+            interface="org.kimios.kernel.controller.IServerInformationController"/>
+    <reference id="workflowController"
+            interface="org.kimios.kernel.controller.IWorkflowController"/>
+
+    <reference id="extensionController"
+            interface="org.kimios.kernel.controller.IExtensionController"/>
+
+
+    <reference id="pathController"
+            interface="org.kimios.kernel.controller.IPathController"/>
+
+
+    <!-- Service beans -->
+
+    <bean id="serviceHelper" class="org.kimios.webservices.ServiceHelper">
+        <property name="sessionManager" ref="sessionManager"/>
+    </bean>
+
+   <bean id="jaxws-and-aegis-service-factory" class="org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean"
+          scope="prototype">
+        <property name="dataBinding">
+            <bean class="org.apache.cxf.aegis.databinding.AegisDatabinding">
+                <property name="aegisContext">
+                    <bean class="org.apache.cxf.aegis.AegisContext">
+                        <property name="writeXsiTypes" value="true" />
+                        <property name="rootClassNames">
+                            <list>
+                                <value>org.kimios.webservices.DMServiceException</value>
+                                <value>org.kimios.kernel.ws.pojo.Document</value>
+                                <value>org.kimios.kernel.ws.pojo.Folder</value>
+                                <value>org.kimios.kernel.ws.pojo.SymbolicLink</value>
+                                <value>org.kimios.kernel.ws.pojo.Workspace</value>
+                            </list>
+                        </property>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+        <property name="serviceConfigurations">
+            <list>
+                <bean class="org.apache.cxf.jaxws.support.JaxWsServiceConfiguration"/>
+                <bean class="org.apache.cxf.service.factory.DefaultServiceConfiguration"/>
+            </list>
+        </property>
+    </bean>
+
+
+
+    <bean id="securityServiceBean" class="org.kimios.webservices.impl.SecurityServiceImpl">
+        <property name="helper" ref="serviceHelper"/>
+        <property name="securityController" ref="securityController"/>
+        <property name="documentController" ref="documentController"/>
+        <property name="documentVersionController" ref="documentVersionController"/>
+        <property name="folderController" ref="folderController"/>
+        <property name="workspaceController" ref="workspaceController"/>
+        <property name="pathController" ref="pathController"/>
+        <property name="informationController" ref="informationController"/>
+        <property name="workflowController" ref="workflowController"/>
+        <property name="studioController" ref="studioController"/>
+        <property name="transferController" ref="fileTransferController"/>
+        <property name="reportingController" ref="reportingController"/>
+        <property name="administrationController" ref="administrationController"/>
+        <property name="searchController" ref="searchController"/>
+        <property name="searchManagementController" ref="searchManagementController" />
+        <property name="ruleController" ref="rulesController"/>
+        <property name="extensionController" ref="extensionController"/>
+        <property name="converterController" ref="converterController"/>
+
+    </bean>
+    <!-- Service endpoint -->
+    <jaxws:endpoint id="securityServiceWs"
+                    implementorClass="org.kimios.webservices.impl.SecurityServiceImpl"
+                    implementor="#securityServiceBean"
+                    address="/SecurityService"
+                    endpointName="SecurityService"
+            >
+
+        <jaxws:binding>
+            <soap:soapBinding id="SecurityService"/>
+        </jaxws:binding>
+        <jaxws:serviceFactory>
+            <ref component-id="jaxws-and-aegis-service-factory"/>
+        </jaxws:serviceFactory>
+    </jaxws:endpoint>
+
+    <bean id="administrationServiceBean" class="org.kimios.webservices.impl.AdministrationServiceImpl">
+        <argument ref="kimiosBusManager" />
+
+        <property name="helper" ref="serviceHelper"/>
+        <property name="securityController" ref="securityController"/>
+        <property name="documentController" ref="documentController"/>
+        <property name="documentVersionController" ref="documentVersionController"/>
+        <property name="folderController" ref="folderController"/>
+        <property name="workspaceController" ref="workspaceController"/>
+        <property name="pathController" ref="pathController"/>
+        <property name="informationController" ref="informationController"/>
+        <property name="workflowController" ref="workflowController"/>
+        <property name="studioController" ref="studioController"/>
+        <property name="transferController" ref="fileTransferController"/>
+        <property name="reportingController" ref="reportingController"/>
+        <property name="administrationController" ref="administrationController"/>
+        <property name="searchController" ref="searchController"/>
+        <property name="searchManagementController" ref="searchManagementController" />
+        <property name="ruleController" ref="rulesController"/>
+        <property name="extensionController" ref="extensionController"/>
+        <property name="converterController" ref="converterController"/>
+    </bean>
+    <!-- Service endpoint -->
+    <jaxws:endpoint id="administrationServiceWs"
+                    implementorClass="org.kimios.webservices.impl.AdministrationServiceImpl"
+                    implementor="#administrationServiceBean"
+                    address="/AdministrationService"
+                    endpointName="AdministrationService"
+            >
+        <jaxws:binding>
+            <soap:soapBinding id="AdministrationService"/>
+        </jaxws:binding>
+        <jaxws:serviceFactory>
+            <ref component-id="jaxws-and-aegis-service-factory"/>
+        </jaxws:serviceFactory>
+    </jaxws:endpoint>
+
+    <jaxws:endpoint id="studioServiceWs"
+                    implementorClass="org.kimios.webservices.impl.StudioServiceImpl"
+                    implementor="#studioServiceBean"
+                    address="/StudioService"
+                    endpointName="StudioService"
+                    depends-on="studioServiceBean"
+            >
+        <jaxws:binding>
+            <soap:soapBinding id="StudioService"/>
+        </jaxws:binding>
+        <jaxws:serviceFactory>
+            <ref component-id="jaxws-and-aegis-service-factory"/>
+        </jaxws:serviceFactory>
+    </jaxws:endpoint>
+
+    <jaxws:endpoint id="documentServiceWs"
+                    implementorClass="org.kimios.webservices.impl.DocumentServiceImpl"
+                    implementor="#documentServiceBean"
+                    address="/DocumentService"
+
+                    endpointName="DocumentService"
+                    depends-on="documentServiceBean"
+            >
+        <jaxws:binding>
+            <soap:soapBinding id="DocumentService"/>
+        </jaxws:binding>
+        <jaxws:serviceFactory>
+            <ref component-id="jaxws-and-aegis-service-factory"/>
+        </jaxws:serviceFactory>
+    </jaxws:endpoint>
+
+    <jaxws:endpoint id="documentVersionServiceWs"
+                    implementorClass="org.kimios.webservices.impl.DocumentVersionServiceImpl"
+                    implementor="#documentVersionServiceBean"
+                    address="/DocumentVersionService"
+                    endpointName="DocumentVersionService"
+            >
+        <jaxws:binding>
+            <soap:soapBinding id="DocumentVersionService"/>
+        </jaxws:binding>
+        <jaxws:serviceFactory>
+            <ref component-id="jaxws-and-aegis-service-factory"/>
+        </jaxws:serviceFactory>
+    </jaxws:endpoint>
+
+    <jaxws:endpoint id="folderServiceWs"
+                    implementorClass="org.kimios.webservices.impl.FolderServiceImpl"
+                    implementor="#folderServiceBean"
+                    address="/FolderService"
+                    endpointName="FolderService"
+            >
+        <jaxws:binding>
+            <soap:soapBinding id="FolderService"/>
+        </jaxws:binding>
+        <jaxws:serviceFactory>
+            <ref component-id="jaxws-and-aegis-service-factory"/>
+        </jaxws:serviceFactory>
+    </jaxws:endpoint>
+
+    <jaxws:endpoint id="workspaceServiceWs"
+                    implementorClass="org.kimios.webservices.impl.WorkspaceServiceImpl"
+                    implementor="#workspaceServiceBean"
+                    address="/WorkspaceService"
+                    endpointName="WorkspaceService"
+            >
+        <jaxws:binding>
+            <soap:soapBinding id="WorkspaceService"/>
+        </jaxws:binding>
+        <jaxws:serviceFactory>
+            <ref component-id="jaxws-and-aegis-service-factory"/>
+        </jaxws:serviceFactory>
+    </jaxws:endpoint>
+
+    <jaxws:endpoint id="searchServiceWs"
+                    implementorClass="org.kimios.webservices.impl.SearchServiceImpl"
+                    implementor="#searchServiceBean"
+                    address="/SearchService"
+                    endpointName="SearchService"
+            >
+    <jaxws:binding>
+        <soap:soapBinding id="SearchService"/>
+    </jaxws:binding>
+    <jaxws:serviceFactory>
+        <ref component-id="jaxws-and-aegis-service-factory"/>
+    </jaxws:serviceFactory>
+    </jaxws:endpoint>
+    <jaxws:endpoint id="notificationServiceWs"
+                    implementorClass="org.kimios.webservices.impl.NotificationServiceImpl"
+                    implementor="#notificationServiceBean"
+                    address="/NotificationService"
+                    endpointName="NotificationService"
+            >
+        <jaxws:binding>
+            <soap:soapBinding id="NotificationService"/>
+        </jaxws:binding>
+        <jaxws:serviceFactory>
+            <ref component-id="jaxws-and-aegis-service-factory"/>
+        </jaxws:serviceFactory>
+    </jaxws:endpoint>
+
+    <jaxws:endpoint id="logServiceWs"
+                    implementorClass="org.kimios.webservices.impl.LogServiceImpl"
+                    implementor="#logServiceBean"
+                    address="/LogService"
+                    endpointName="LogService"
+            >
+        <jaxws:binding>
+            <soap:soapBinding id="LogService"/>
+        </jaxws:binding>
+        <jaxws:serviceFactory>
+            <ref component-id="jaxws-and-aegis-service-factory"/>
+        </jaxws:serviceFactory>
+    </jaxws:endpoint>
+
+    <jaxws:endpoint id="informationServiceWs"
+                    implementorClass="org.kimios.webservices.impl.InformationServiceImpl"
+                    implementor="#informationServiceBean"
+                    address="/InformationService"
+                    endpointName="InformationService"
+            >
+        <jaxws:binding>
+            <soap:soapBinding id="InformationService"/>
+        </jaxws:binding>
+        <jaxws:serviceFactory>
+            <ref component-id="jaxws-and-aegis-service-factory"/>
+        </jaxws:serviceFactory>
+    </jaxws:endpoint>
+
+    <jaxws:endpoint id="extensionServiceWs"
+                    implementorClass="org.kimios.webservices.impl.ExtensionServiceImpl"
+                    implementor="#extensionServiceBean"
+                    address="/ExtensionService"
+                    endpointName="ExtensionService"
+            >
+        <jaxws:binding>
+            <soap:soapBinding id="ExtensionService"/>
+        </jaxws:binding>
+        <jaxws:serviceFactory>
+            <ref component-id="jaxws-and-aegis-service-factory"/>
+        </jaxws:serviceFactory>
+    </jaxws:endpoint>
+
+
+    <jaxws:endpoint id="ruleServiceWs"
+                    implementorClass="org.kimios.webservices.impl.RuleServiceImpl"
+                    implementor="#ruleServiceBean"
+                    address="/RuleService"
+                    endpointName="RuleService"
+            >
+        <jaxws:binding>
+            <soap:soapBinding id="RuleService"/>
+        </jaxws:binding>
+        <jaxws:serviceFactory>
+            <ref component-id="jaxws-and-aegis-service-factory"/>
+        </jaxws:serviceFactory>
+    </jaxws:endpoint>
+
+
+    <jaxws:endpoint id="reportingServiceWs"
+                    implementorClass="org.kimios.webservices.impl.ReportingServiceImpl"
+                    implementor="#reportingServiceBean"
+                    address="/ReportingService"
+                    endpointName="ReportingService"
+            >
+        <jaxws:binding>
+            <soap:soapBinding id="ReportingService"/>
+        </jaxws:binding>
+        <jaxws:serviceFactory>
+            <ref component-id="jaxws-and-aegis-service-factory"/>
+        </jaxws:serviceFactory>
+    </jaxws:endpoint>
+
+
+    <bean id="studioServiceBean" class="org.kimios.webservices.impl.StudioServiceImpl">
+        <property name="helper" ref="serviceHelper"/>
+        <property name="securityController" ref="securityController"/>
+        <property name="documentController" ref="documentController"/>
+        <property name="documentVersionController" ref="documentVersionController"/>
+        <property name="folderController" ref="folderController"/>
+        <property name="workspaceController" ref="workspaceController"/>
+        <property name="pathController" ref="pathController"/>
+        <property name="informationController" ref="informationController"/>
+        <property name="workflowController" ref="workflowController"/>
+        <property name="studioController" ref="studioController"/>
+        <property name="transferController" ref="fileTransferController"/>
+        <property name="reportingController" ref="reportingController"/>
+        <property name="administrationController" ref="administrationController"/>
+        <property name="searchController" ref="searchController"/>
+        <property name="searchManagementController" ref="searchManagementController" />
+        <property name="ruleController" ref="rulesController"/>
+        <property name="extensionController" ref="extensionController"/>
+        <property name="converterController" ref="converterController"/>
+    </bean>
+
+    <bean id="documentServiceBean" class="org.kimios.webservices.impl.DocumentServiceImpl" > <property name="helper" ref="serviceHelper"/>
+        <property name="securityController" ref="securityController"/>
+        <property name="documentController" ref="documentController"/>
+        <property name="documentVersionController" ref="documentVersionController"/>
+        <property name="folderController" ref="folderController"/>
+        <property name="workspaceController" ref="workspaceController"/>
+        <property name="pathController" ref="pathController"/>
+        <property name="informationController" ref="informationController"/>
+        <property name="workflowController" ref="workflowController"/>
+        <property name="studioController" ref="studioController"/>
+        <property name="transferController" ref="fileTransferController"/>
+        <property name="reportingController" ref="reportingController"/>
+        <property name="administrationController" ref="administrationController"/>
+        <property name="searchController" ref="searchController"/>
+        <property name="searchManagementController" ref="searchManagementController" />
+        <property name="ruleController" ref="rulesController"/>
+        <property name="extensionController" ref="extensionController"/>
+        <property name="converterController" ref="converterController"/>
+    </bean>
+
+    <bean id="documentVersionServiceBean" class="org.kimios.webservices.impl.DocumentVersionServiceImpl">
+        <property name="helper" ref="serviceHelper"/>
+        <property name="securityController" ref="securityController"/>
+        <property name="documentController" ref="documentController"/>
+        <property name="documentVersionController" ref="documentVersionController"/>
+        <property name="folderController" ref="folderController"/>
+        <property name="workspaceController" ref="workspaceController"/>
+        <property name="pathController" ref="pathController"/>
+        <property name="informationController" ref="informationController"/>
+        <property name="workflowController" ref="workflowController"/>
+        <property name="studioController" ref="studioController"/>
+        <property name="transferController" ref="fileTransferController"/>
+        <property name="reportingController" ref="reportingController"/>
+        <property name="administrationController" ref="administrationController"/>
+        <property name="searchController" ref="searchController"/>
+        <property name="searchManagementController" ref="searchManagementController" />
+        <property name="ruleController" ref="rulesController"/>
+        <property name="extensionController" ref="extensionController"/>
+        <property name="converterController" ref="converterController"/>
+    </bean>
+
+    <bean id="folderServiceBean" class="org.kimios.webservices.impl.FolderServiceImpl">
+        <property name="helper" ref="serviceHelper"/>
+        <property name="securityController" ref="securityController"/>
+        <property name="documentController" ref="documentController"/>
+        <property name="documentVersionController" ref="documentVersionController"/>
+        <property name="folderController" ref="folderController"/>
+        <property name="workspaceController" ref="workspaceController"/>
+        <property name="pathController" ref="pathController"/>
+        <property name="informationController" ref="informationController"/>
+        <property name="workflowController" ref="workflowController"/>
+        <property name="studioController" ref="studioController"/>
+        <property name="transferController" ref="fileTransferController"/>
+        <property name="reportingController" ref="reportingController"/>
+        <property name="administrationController" ref="administrationController"/>
+        <property name="searchController" ref="searchController"/>
+        <property name="searchManagementController" ref="searchManagementController" />
+        <property name="ruleController" ref="rulesController"/>
+        <property name="extensionController" ref="extensionController"/>
+        <property name="converterController" ref="converterController"/>
+    </bean>
+    <bean id="workspaceServiceBean" class="org.kimios.webservices.impl.WorkspaceServiceImpl">
+        <property name="helper" ref="serviceHelper"/>
+        <property name="securityController" ref="securityController"/>
+        <property name="documentController" ref="documentController"/>
+        <property name="documentVersionController" ref="documentVersionController"/>
+        <property name="folderController" ref="folderController"/>
+        <property name="workspaceController" ref="workspaceController"/>
+        <property name="pathController" ref="pathController"/>
+        <property name="informationController" ref="informationController"/>
+        <property name="workflowController" ref="workflowController"/>
+        <property name="studioController" ref="studioController"/>
+        <property name="transferController" ref="fileTransferController"/>
+        <property name="reportingController" ref="reportingController"/>
+        <property name="administrationController" ref="administrationController"/>
+        <property name="searchController" ref="searchController"/>
+        <property name="searchManagementController" ref="searchManagementController" />
+        <property name="ruleController" ref="rulesController"/>
+        <property name="extensionController" ref="extensionController"/>
+        <property name="converterController" ref="converterController"/>
+    </bean>
+
+    <bean id="searchServiceBean" class="org.kimios.webservices.impl.SearchServiceImpl" >
+        <property name="helper" ref="serviceHelper"/>
+        <property name="securityController" ref="securityController"/>
+        <property name="documentController" ref="documentController"/>
+        <property name="documentVersionController" ref="documentVersionController"/>
+        <property name="folderController" ref="folderController"/>
+        <property name="workspaceController" ref="workspaceController"/>
+        <property name="pathController" ref="pathController"/>
+        <property name="informationController" ref="informationController"/>
+        <property name="workflowController" ref="workflowController"/>
+        <property name="studioController" ref="studioController"/>
+        <property name="transferController" ref="fileTransferController"/>
+        <property name="reportingController" ref="reportingController"/>
+        <property name="administrationController" ref="administrationController"/>
+        <property name="searchController" ref="searchController"/>
+        <property name="searchManagementController" ref="searchManagementController" />
+        <property name="ruleController" ref="rulesController"/>
+        <property name="extensionController" ref="extensionController"/>
+        <property name="converterController" ref="converterController"/>
+    </bean>
+
+
+    <bean id="notificationServiceBean" class="org.kimios.webservices.impl.NotificationServiceImpl">
+        <property name="helper" ref="serviceHelper"/>
+        <property name="securityController" ref="securityController"/>
+        <property name="documentController" ref="documentController"/>
+        <property name="documentVersionController" ref="documentVersionController"/>
+        <property name="folderController" ref="folderController"/>
+        <property name="workspaceController" ref="workspaceController"/>
+        <property name="pathController" ref="pathController"/>
+        <property name="informationController" ref="informationController"/>
+        <property name="workflowController" ref="workflowController"/>
+        <property name="studioController" ref="studioController"/>
+        <property name="transferController" ref="fileTransferController"/>
+        <property name="reportingController" ref="reportingController"/>
+        <property name="administrationController" ref="administrationController"/>
+        <property name="searchController" ref="searchController"/>
+        <property name="searchManagementController" ref="searchManagementController" />
+        <property name="ruleController" ref="rulesController"/>
+        <property name="extensionController" ref="extensionController"/>
+        <property name="converterController" ref="converterController"/>
+    </bean>
+
+
+    <bean id="logServiceBean" class="org.kimios.webservices.impl.LogServiceImpl">
+        <property name="helper" ref="serviceHelper"/>
+        <property name="securityController" ref="securityController"/>
+        <property name="documentController" ref="documentController"/>
+        <property name="documentVersionController" ref="documentVersionController"/>
+        <property name="folderController" ref="folderController"/>
+        <property name="workspaceController" ref="workspaceController"/>
+        <property name="pathController" ref="pathController"/>
+        <property name="informationController" ref="informationController"/>
+        <property name="workflowController" ref="workflowController"/>
+        <property name="studioController" ref="studioController"/>
+        <property name="transferController" ref="fileTransferController"/>
+        <property name="reportingController" ref="reportingController"/>
+        <property name="administrationController" ref="administrationController"/>
+        <property name="searchController" ref="searchController"/>
+        <property name="searchManagementController" ref="searchManagementController" />
+        <property name="ruleController" ref="rulesController"/>
+        <property name="extensionController" ref="extensionController"/>
+        <property name="converterController" ref="converterController"/>
+    </bean>
+
+    <bean id="informationServiceBean" class="org.kimios.webservices.impl.InformationServiceImpl">
+        <property name="helper" ref="serviceHelper"/>
+        <property name="securityController" ref="securityController"/>
+        <property name="documentController" ref="documentController"/>
+        <property name="documentVersionController" ref="documentVersionController"/>
+        <property name="folderController" ref="folderController"/>
+        <property name="workspaceController" ref="workspaceController"/>
+        <property name="pathController" ref="pathController"/>
+        <property name="informationController" ref="informationController"/>
+        <property name="workflowController" ref="workflowController"/>
+        <property name="studioController" ref="studioController"/>
+        <property name="transferController" ref="fileTransferController"/>
+        <property name="reportingController" ref="reportingController"/>
+        <property name="administrationController" ref="administrationController"/>
+        <property name="searchController" ref="searchController"/>
+        <property name="searchManagementController" ref="searchManagementController" />
+        <property name="ruleController" ref="rulesController"/>
+        <property name="extensionController" ref="extensionController"/>
+        <property name="converterController" ref="converterController"/>
+    </bean>
+
+    <bean id="extensionServiceBean" class="org.kimios.webservices.impl.ExtensionServiceImpl">
+        <property name="helper" ref="serviceHelper"/>
+        <property name="securityController" ref="securityController"/>
+        <property name="documentController" ref="documentController"/>
+        <property name="documentVersionController" ref="documentVersionController"/>
+        <property name="folderController" ref="folderController"/>
+        <property name="workspaceController" ref="workspaceController"/>
+        <property name="pathController" ref="pathController"/>
+        <property name="informationController" ref="informationController"/>
+        <property name="workflowController" ref="workflowController"/>
+        <property name="studioController" ref="studioController"/>
+        <property name="transferController" ref="fileTransferController"/>
+        <property name="reportingController" ref="reportingController"/>
+        <property name="administrationController" ref="administrationController"/>
+        <property name="searchController" ref="searchController"/>
+        <property name="searchManagementController" ref="searchManagementController" />
+        <property name="ruleController" ref="rulesController"/>
+        <property name="extensionController" ref="extensionController"/>
+        <property name="converterController" ref="converterController"/>
+    </bean>
+
+    <bean id="ruleServiceBean" class="org.kimios.webservices.impl.RuleServiceImpl">
+        <property name="helper" ref="serviceHelper"/>
+        <property name="securityController" ref="securityController"/>
+        <property name="documentController" ref="documentController"/>
+        <property name="documentVersionController" ref="documentVersionController"/>
+        <property name="folderController" ref="folderController"/>
+        <property name="workspaceController" ref="workspaceController"/>
+        <property name="pathController" ref="pathController"/>
+        <property name="informationController" ref="informationController"/>
+        <property name="workflowController" ref="workflowController"/>
+        <property name="studioController" ref="studioController"/>
+        <property name="transferController" ref="fileTransferController"/>
+        <property name="reportingController" ref="reportingController"/>
+        <property name="administrationController" ref="administrationController"/>
+        <property name="searchController" ref="searchController"/>
+        <property name="searchManagementController" ref="searchManagementController" />
+        <property name="ruleController" ref="rulesController"/>
+        <property name="extensionController" ref="extensionController"/>
+        <property name="converterController" ref="converterController"/>
+    </bean>
+
+    <bean id="reportingServiceBean" class="org.kimios.webservices.impl.ReportingServiceImpl"
+            >
+        <property name="helper" ref="serviceHelper"/>
+        <property name="securityController" ref="securityController"/>
+        <property name="documentController" ref="documentController"/>
+        <property name="documentVersionController" ref="documentVersionController"/>
+        <property name="folderController" ref="folderController"/>
+        <property name="workspaceController" ref="workspaceController"/>
+        <property name="pathController" ref="pathController"/>
+        <property name="informationController" ref="informationController"/>
+        <property name="workflowController" ref="workflowController"/>
+        <property name="studioController" ref="studioController"/>
+        <property name="transferController" ref="fileTransferController"/>
+        <property name="reportingController" ref="reportingController"/>
+        <property name="administrationController" ref="administrationController"/>
+        <property name="searchController" ref="searchController"/>
+        <property name="searchManagementController" ref="searchManagementController" />
+        <property name="ruleController" ref="rulesController"/>
+        <property name="extensionController" ref="extensionController"/>
+        <property name="converterController" ref="converterController"/>
+    </bean>
+
+
+    <bean id="fileTransferServiceBean" class="org.kimios.webservices.impl.FileTransferServiceImpl">
+        <property name="helper" ref="serviceHelper"/>
+        <property name="securityController" ref="securityController"/>
+        <property name="documentController" ref="documentController"/>
+        <property name="documentVersionController" ref="documentVersionController"/>
+        <property name="folderController" ref="folderController"/>
+        <property name="workspaceController" ref="workspaceController"/>
+        <property name="pathController" ref="pathController"/>
+        <property name="informationController" ref="informationController"/>
+        <property name="workflowController" ref="workflowController"/>
+        <property name="studioController" ref="studioController"/>
+        <property name="transferController" ref="fileTransferController"/>
+        <property name="reportingController" ref="reportingController"/>
+        <property name="administrationController" ref="administrationController"/>
+        <property name="searchController" ref="searchController"/>
+        <property name="searchManagementController" ref="searchManagementController" />
+        <property name="ruleController" ref="rulesController"/>
+        <property name="extensionController" ref="extensionController"/>
+        <property name="converterController" ref="converterController"/>
+    </bean>
+    <!-- Service endpoint -->
+    <jaxws:endpoint id="fileTransferServiceWs"
+                    implementorClass="org.kimios.webservices.impl.FileTransferServiceImpl"
+                    implementor="#fileTransferServiceBean"
+                    address="/FileTransferService"
+                    endpointName="FileTransferService"
+            >
+        <jaxws:binding>
+            <soap:soapBinding id="FileTransferService"/>
+        </jaxws:binding>
+        <jaxws:serviceFactory>
+            <ref component-id="jaxws-and-aegis-service-factory"/>
+        </jaxws:serviceFactory>
+    </jaxws:endpoint>
+
+
+    <jaxrs:server id="kimiosRestServer"
+                  address="/rest/">
+        <jaxrs:providers>
+            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="org.kimios.webservices.DateParamConverter"/>
+            <bean id="exceptionMapper" class="org.kimios.webservices.JaxRSExceptionMapper"/>
+            <bean id="corsFilter" class="org.apache.cxf.rs.security.cors.CrossOriginResourceSharingFilter" />
+        </jaxrs:providers>
+        <jaxrs:serviceBeans>
+            <ref component-id="securityServiceBean"/>
+            <ref component-id="workspaceServiceBean"/>
+            <ref component-id="folderServiceBean"/>
+            <ref component-id="documentServiceBean"/>
+            <ref component-id="documentVersionServiceBean"/>
+            <ref component-id="administrationServiceBean"/>
+            <ref component-id="studioServiceBean"/>
+            <ref component-id="informationServiceBean"/>
+            <ref component-id="logServiceBean"/>
+            <ref component-id="reportingServiceBean"/>
+            <ref component-id="fileTransferServiceBean"/>
+            <ref component-id="ruleServiceBean"/>
+            <ref component-id="extensionServiceBean"/>
+            <ref component-id="notificationServiceBean"/>
+            <ref component-id="searchServiceBean"/>
+        </jaxrs:serviceBeans>
+        <jaxrs:extensionMappings>
+            <entry key="json" value="application/json"/>
+        </jaxrs:extensionMappings>
+    </jaxrs:server>
+
+</blueprint>
+

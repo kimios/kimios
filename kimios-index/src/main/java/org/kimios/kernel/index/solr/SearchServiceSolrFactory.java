@@ -125,7 +125,14 @@ public class SearchServiceSolrFactory implements FactoryBean<SolrIndexManager>
         try {
 
             log.info("Kimios Solr Home " + solrHome);
-            URL sorlHomeUrl = new URL("file://" + solrHome);
+            String os = System.getProperty("os.name").toLowerCase();
+
+            URL sorlHomeUrl = null;
+            if(os.contains("win") && !os.contains("darwin")){
+                //windos url
+                sorlHomeUrl = new URL("file:///" + solrHome);
+            } else
+                sorlHomeUrl = new URL("file://" + solrHome);
             File home = new File(sorlHomeUrl.getFile());
             checkSolrXmlFile(home, coreName);
             /*

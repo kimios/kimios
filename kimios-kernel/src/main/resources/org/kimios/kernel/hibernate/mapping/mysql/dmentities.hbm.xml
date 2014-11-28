@@ -21,13 +21,11 @@
         xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm orm_2_0.xsd"
         version="2.0">
     <entity class="org.kimios.kernel.dms.DMEntityImpl" metadata-complete="false">
-        <attributes>
-            <basic name="path" optional="false">
-                <column name="dm_entity_path" length="255" unique="true"/>
-            </basic>
-            <basic name="addOnDatas" optional="false">
-                <column name="dm_entity_addon_data" length="5000" />
-            </basic>
-        </attributes>
+        <attribute-override name="path">
+            <column name="dm_entity_path" length="255" unique="true"/>
+        </attribute-override>
+        <attribute-override name="addOnDatas">
+            <column nullable="true" name="dm_entity_addon_data" length="5000"  />
+        </attribute-override>
     </entity>
 </entity-mappings>

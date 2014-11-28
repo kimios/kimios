@@ -18,6 +18,7 @@ package org.kimios.webservices;
 
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.kimios.kernel.ws.pojo.*;
+import org.kimios.utils.logging.LoggerManager;
 
 import javax.jws.WebParam;
 import javax.jws.WebService;
@@ -25,6 +26,8 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA. User: farf Date: 4/1/12 Time: 5:00 PM
@@ -335,4 +338,29 @@ public interface AdministrationService
             @QueryParam(value = "attributeName") @WebParam(name = "attributeName") String attributeName,
             @QueryParam(value = "attributeValue") @WebParam(name = "attributeValue") String attributeValue)
             throws DMServiceException;
+
+
+    @GET
+    @Path("/disableServiceLogging")
+    public void disableServiceLogging()
+            throws DMServiceException;
+
+    @GET
+    @Path("/enableServiceLogging")
+    public void enableServiceLogging()
+            throws DMServiceException;
+
+    @GET
+    @Path("/listLoggers")
+    @Produces("application/json")
+    public HashMap<String,String> listLoggers() throws DMServiceException;
+
+    @GET
+    @Path("/setLoggerLevel")
+    @Produces("application/json")
+    public void setLoggerLevel(@QueryParam(value = "loggerName") @WebParam(name = "loggerName") String loggerName,
+                                   @QueryParam(value = "loggerLevel") @WebParam(name = "loggerLevel") String loggerLevel)
+        throws DMServiceException;
+
+
 }

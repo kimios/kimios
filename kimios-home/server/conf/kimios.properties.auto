@@ -1,0 +1,203 @@
+#
+# Kimios - Document Management System Software
+# Copyright (C) 2008-2014  DevLib'
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 2 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+# You should have received a copy of the GNU Affero General Public License
+# aong with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+# Setting item : JDBC Datasource Mode
+# Description :  possible values : embed / jndi
+# Name: datasource.mode
+datasource.mode=embed
+# Setting item :  Hibernate DDL Mode
+# Description :   Hibernate DDL Mode (create / update) !!! DOT NOT USE CREATE DROP ON PRODUCTION DATABASE !!!
+# Name: jdbc.ddl.mode
+jdbc.ddl.mode=update
+# Setting item : Transaction Factory Class
+# Description :
+# Name: jta.tx.factory
+jta.tx.factory=org.hibernate.engine.transaction.internal.jta.JtaTransactionFactory
+# Setting item : Hibernate JTA Platform (since Hibernate 4)
+# Description : Empty if in Standard WAR Mode On Tomcat, with Atomikos (see tx.managerlookup).
+# Name: jta.platform
+jta.platform=
+# Setting item : Transaction Factory Class
+# Description : Defaulted to Atomikos Implementation until now.
+# Name: jta.tx.managerlookup
+jta.tx.managerlookup=com.atomikos.icatch.jta.hibernate3.TransactionManagerLookup
+# Setting item : Database Type
+# Description :  Available type : postgresql / mysql / sqlserver
+# Name: jdbc.databasetype
+jdbc.databasetype=postgresql
+# Setting item : Hibernate database dialect
+# Description :  Supported Dialect org.hibernate.dialect.PostgreSQLDialect / org.hibernate.dialect.MySQL5InnoDBDialect / org.hibernate.dialect.SQLServerDialect
+# Name: jdbc.dialect
+jdbc.dialect=org.hibernate.dialect.PostgreSQLDialect
+# Setting item : Database Default Schema
+# Description :  Postgresql : Public / mysql : None / SQLServer : none
+# Name: jdbc.schema
+jdbc.schema=public
+# Setting item : Datasource JNDI Selector
+# Description :
+# Name: jdbc.jndids
+jdbc.jndids=java:/comp/env/jdbc/dms
+# Setting item : Database jdbc url connection
+# Description : jdbc:postgresql://127.0.0.1:5432/kimios_test / jdbc:mysql://127.0.0.1:3306/kimios_test / jdbc:mysql://127.0.0.1:3306/kimios_test
+# Name: jdbc.url
+jdbc.url=jdbc:postgresql://127.0.0.1:5432/kimios-db
+# Setting item : Database JDBC Driver
+# Description : Supported driver : org.postgresql.Driver / com.mysql.jdbc.Driver / net.sourceforge.jtds.jdbc.Driver
+# Name: jdbc.driver
+jdbc.driver=org.postgresql.Driver
+# Setting item : Database Connexion user
+# Description :
+# Name: jdbc.user
+jdbc.user=postgres
+# Setting item : Database Connexion Password
+# Description :
+# Name: jdbc.password
+jdbc.password=postgres
+# Setting item : Server Session default Timeout
+# Description :
+# Name: dms.session.timeout
+dms.session.timeout=60
+# Setting item : Default File Repository
+# Description :
+# Name: dms.repository.default.path
+dms.repository.default.path=/home/kimios/repository
+# Setting item : Temporary File Repository
+# Description :
+# Name: dms.repository.tmp.path
+dms.repository.tmp.path=/tmp
+# Setting item : Lucene Index Path
+# Description : Deprecated
+# Name: dms.repository.index.path
+dms.repository.index.path=/lucene
+# Setting item : Lucene Analyser
+# Description :
+# Name: dms.repository.index.analyser
+dms.repository.index.analyser=org.apache.lucene.analysis.fr.FrenchAnalyzer
+# Setting item : Recent Items Count
+# Description :
+# Name: dms.recentitems.limit
+dms.recentitems.limit=10
+# Setting item : Encrypted Password Algorithm
+# Description :
+# Name: dms.security.passwordenc
+dms.security.passwordenc=MD5
+# Setting item : Automated Workflow ?
+# Description :
+# Name: dms.workflow.automated
+dms.workflow.automated=true
+# Setting item : Workflow Mailer Sender Address
+# Description :
+# Name: dms.workflow.mailaddress
+dms.workflow.mailaddress=kimios@kimios.org
+# Setting item : Workflow Mailer Sender Name
+# Description :
+# Name: dms.workflow.mailfromname
+dms.workflow.mailfromname=kimios-notifier
+# Setting item : Default Smtp Host
+# Description :
+# Name: dms.mail.defaulthost
+dms.mail.defaulthost=localhost
+# Setting item : Default Smtp User
+# Description :
+# Name: dms.mail.hostuser
+dms.mail.hostuser=
+# Setting item : Default Smtp User Password
+# Description :
+# Name: dms.mail.hostpassword
+dms.mail.hostpassword
+# Setting item : Default Smtp TLS Auth ?
+# Description :
+# Name: dms.mail.tlsauth
+dms.mail.tlsauth=false
+# Setting item : Default Smtp Host Port
+# Description :
+# Name: dms.mail.port
+dms.mail.port=25
+# Setting item : Smtp Debug Mode ?
+# Description :
+# Name: dms.mail.debug
+dms.mail.debug=true
+# Setting item : Optional Server Name
+# Description :
+# Name: dms.server.name
+dms.server.name=kimios-Server
+# Setting item : Mail Sender Address
+# Description :
+# Name: dms.mail.senderemail
+dms.mail.senderemail=
+# Setting item : Mail Sender Name
+# Description :
+# Name: dms.mail.sendername
+dms.mail.sendername=
+# Setting item : Mail Template New Password
+# Description :
+# Name: dms.security.newpasswordtpl
+dms.security.newpasswordtpl=
+# Setting item : Enable Solr Server Mode ?
+# Description :
+# Name: dms.index.solr.mode.server
+dms.index.solr.mode.server=false
+# Setting item : Solr Home
+# Description :
+# Name: dms.index.solr.home
+dms.index.solr.home=/home/kimios/repository/solr
+# Setting item : Solr Server Url
+# Description :
+# Name: dms.index.solr.server.url
+dms.index.solr.server.url=
+# Setting item : Solr Core Name
+# Description :
+# Name: dms.index.corename
+dms.index.corename=kimios-index
+# Setting item : Event Handlers
+# Description :
+# Name: dms.events
+dms.events=
+# Setting item : Modules
+# Description :
+# Name: dms.modules
+dms.modules=
+# Setting item : Bonita Admin User
+# Description :
+# Name: bonita.user
+bonita.user=install
+# Setting item : Bonita Admin Password
+# Description :
+# Name: bonita.password
+bonita.password=install
+# Setting item : Bonita API Url
+# Description :
+# Name: bonita.url.api
+bonita.url.api=http://localhost:8080
+# Setting item : Bonita Public URL (Portal Iframe Load)
+# Description :
+# Namee: bonita.url.public
+bonita.url.public=http://localhost:8080
+# Setting item : Bonita WebApp Context Name
+# Description :
+# Name: bonita.appname
+bonita.appname=bonita
+# Setting item : Bonita User Kimios Role Name
+# Description :
+# Name: bonita.kimiosrole
+bonita.kimiosrole=kimios
+# Setting item : Bonita Domain List (split by comma)
+# Description :
+# Name: bonita.domain.list
+bonita.domain.list=kimios
+
+
+

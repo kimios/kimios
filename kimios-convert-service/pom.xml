@@ -149,6 +149,7 @@
                     <instructions>
                         <Bundle-SymbolicName>${project.name}</Bundle-SymbolicName>
                         <Include-Resource>{maven-resources}</Include-Resource>
+                        <Private-Package>org.kimios.webservices.impl,org.kimios.webservices.utils</Private-Package>
                         <Export-Package>org.kimios.webservices</Export-Package>
                         <Spring-Context>*;create-asynchronously:=false</Spring-Context>
                         <Import-Package>
@@ -164,6 +165,7 @@
                             org.apache.cxf.bus.resource,
                             org.apache.cxf.bus.osgi,
                             org.apache.cxf.bus.managers,
+                            org.apache.cxf.endpoint, org.apache.cxf.feature, org.apache.cxf.interceptor,
                             javax.ws.rs,
                             javax.jws,
                             java.lang,
@@ -175,11 +177,13 @@
                             javax.ws.rs.ext,
                             org.kimios.exceptions,
                             org.kimios.webservices.pojo,
+                            org.codehaus.jackson.map, org.codehaus.jackson.type,
                             org.kimios.kernel.*,
                             org.kimios.kernel.ws.pojo,
                             org.kimios.kernel.controller,
                             org.kimios.kernel.converter,
                             org.kimios.kernel.security,
+                            org.kimios.utils.logging,
                             org.apache.cxf.aegis,
                             org.apache.cxf.aegis.databinding,
                             org.apache.cxf.jaxws.support,

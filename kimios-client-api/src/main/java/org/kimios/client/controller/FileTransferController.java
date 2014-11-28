@@ -142,6 +142,8 @@ public class FileTransferController
                 String hashMD5 = HashCalculator.buildHexaString( md5.digest() ).replaceAll( " ", "" );
                 String hashSHA = HashCalculator.buildHexaString( sha1.digest() ).replaceAll( " ", "" );
 
+
+
                 client.endUploadTransaction( sessionId, transaction.getUid(), hashMD5, hashSHA );
 
             }
@@ -368,7 +370,7 @@ public class FileTransferController
 
                 if ( !isCompressed )
                 {
-                    IOUtils.copyLarge( client.downloadDocumentVersion( sessionId, transac.getUid() ), os );
+                    IOUtils.copyLarge( (InputStream)client.downloadDocumentVersion( sessionId, transac.getUid(), false ).getEntity(), os );
 
                     try{
 
@@ -386,7 +388,7 @@ public class FileTransferController
                     tmpFileName = FileCompressionHelper.getTempFilePath( temporaryFilesPath, "dl" + sessionId );
                     tmp = new BufferedOutputStream( new FileOutputStream( temporaryFilesPath + tmpFileName ) );
 
-                    IOUtils.copyLarge( client.downloadDocumentVersion( sessionId, transac.getUid() ), tmp );
+                    IOUtils.copyLarge( (InputStream)client.downloadDocumentVersion( sessionId, transac.getUid(), false ).getEntity(), tmp );
 
                     InputStream inFull = new FileInputStream( temporaryFilesPath + tmpFileName );
 

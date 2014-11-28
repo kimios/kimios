@@ -4,11 +4,11 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 
 public class ExceptionMessageWrapper {
 
-
-
     private String message;
 
     private int code;
+
+    private StackTraceElement[] stacktrace;
 
 
     @JsonIgnore
@@ -39,6 +39,9 @@ public class ExceptionMessageWrapper {
     }
 
 
+    public ExceptionMessageWrapper(){}
+
+
     public ExceptionMessageWrapper(String message, int code) {
         this.message = message;
         this.code = code;
@@ -53,5 +56,13 @@ public class ExceptionMessageWrapper {
     public ExceptionMessageWrapper(String message, String name) {
         this.message = message;
         this.name = name;
+    }
+
+    public StackTraceElement[] getStackTrace() {
+        return stacktrace;
+    }
+
+    public void setStackTrace(StackTraceElement[] stackTrace) {
+        this.stacktrace = stackTrace;
     }
 }

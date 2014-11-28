@@ -47,6 +47,7 @@ public class ServiceHelper
     {
         try {
             Session session = sessionManager.getSession(sessionUid);
+            log.debug("no exception, but session is empty with {}", sessionUid);
             if (session == null) {
                 throw new Exception("Error 01 : Invalid session");
             } else {

@@ -34,6 +34,8 @@ public class BonitaSettings {
     private String bonitaProfileUsers;
     private Set<String> validDomainsToSynchronize;
 
+    private boolean bonitaEnabled = false;
+
     public void init() throws IOException {
         File homeFolder = null;
         if (System.getProperty("bonita.home") == null) {
@@ -51,6 +53,7 @@ public class BonitaSettings {
             properties.put("org.bonitasoft.engine.api-type", "HTTP");
             properties.put("server.url", bonitaServerUrl);
             properties.put("org.bonitasoft.engine.api-type.parameters", "server.url,application.name");
+
 
             final FileWriter writer = new FileWriter(file);
             try {
@@ -133,5 +136,13 @@ public class BonitaSettings {
 
     public void setBonitaPublicServerUrl(String bonitaPublicServerUrl) {
         this.bonitaPublicServerUrl = bonitaPublicServerUrl;
+    }
+
+    public boolean isBonitaEnabled() {
+        return bonitaEnabled;
+    }
+
+    public void setBonitaEnabled(boolean bonitaEnabled) {
+        this.bonitaEnabled = bonitaEnabled;
     }
 }

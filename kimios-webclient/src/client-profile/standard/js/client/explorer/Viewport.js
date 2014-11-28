@@ -44,10 +44,21 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
     },
 
     executeAfterBuild: function () {
-        if (this.afterBuild)
-            this.afterBuild();
-        else
-            this.newTab();
+        if(clientConfig.defaultdocumenttype){
+            loadAddonCols(this.newTab);
+        } else {
+            if (this.afterBuild)  {
+                this.afterBuild();
+
+            }
+            else {
+
+
+                this.newTab();
+            }
+        }
+
+
     },
 
     initComponent: function () {
@@ -346,6 +357,8 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                 kimios.unmask();
             }
         });
+
+
     },
 
     changeLanguage: function (lang) {
@@ -379,6 +392,7 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
         var gridTabPanel = kimios.explorer.getMainPanel();
         for (var i = 0; i < gridTabPanel.items.length; i++) {
             var tab = gridTabPanel.items.get(i);
+
             // check instance and reload tab
             if (tab.loadable == true) {
                 tab.loadEntity();
@@ -387,6 +401,7 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
     },
 
     refresh: function () {
+
         kimios.explorer.getTreePanel().refresh();
         kimios.explorer.getToolbar().refresh();
         kimios.explorer.getTasksPanel().refresh();
@@ -397,13 +412,7 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
     },
 
     newTab: function (uid, type) {
-        var gridPanel = new kimios.explorer.DMEntityGridPanel({});
-        Ext.getCmp('kimios-center-panel').add(gridPanel);
-        Ext.getCmp('kimios-center-panel').setActiveTab(gridPanel);
-        gridPanel.loadEntity({
-            uid: uid,
-            type: type
-        });
+        kimios.explorer.addNewPanel(uid, type);
     }
 });
 

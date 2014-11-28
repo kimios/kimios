@@ -42,7 +42,6 @@
         </deletionPolicy>
         <infoStream file="INFOSTREAM.txt">false</infoStream>
     </indexConfig>
-    <jmx/>
     <query>
         <maxBooleanClauses>1024</maxBooleanClauses>
         <filterCache class="solr.FastLRUCache"

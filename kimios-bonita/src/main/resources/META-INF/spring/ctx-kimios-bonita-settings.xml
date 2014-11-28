@@ -34,6 +34,7 @@
                 <constructor-arg type="java.lang.String" value="${bonita.domain.list}"/>
             </bean>
         </property>
+        <property name="bonitaEnabled" value="${bonita.enabled}" />
 
     </bean>
 

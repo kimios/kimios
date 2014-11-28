@@ -39,6 +39,8 @@ public class RepositoryManager
 
     private String defaultRepositoryPath;
 
+    private RepositoryAccessor defaultAccessor;
+
     synchronized public static RepositoryManager init()
     {
         if (manager == null) {
@@ -54,9 +56,20 @@ public class RepositoryManager
             if (repository == null) {
                 log.warn("Repository error: no default repository set. Setting to default");
                 defaultRepositoryPath = ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH);
+                defaultAccessor = new DefaultRepositoryAccessor(defaultRepositoryPath);
             } else {
                 defaultRepository = repository;
                 defaultRepositoryPath = repository.getPath();
+                if(repository.getImplementor() != null){
+                    Class<?> accessorImpl = Class.forName(repository.getImplementor());
+                    Object accessorInstance = accessorImpl.getDeclaredConstructors()[0].newInstance(defaultRepositoryPath);
+                    if(accessorInstance instanceof RepositoryAccessor){
+                        defaultAccessor = (RepositoryAccessor)accessorInstance;
+                    }
+                } else {
+                    defaultAccessor  = new DefaultRepositoryAccessor(defaultRepositoryPath);
+                }
+
             }
         } catch (Exception e) {
             log.error("Repository error: unable to get default repository", e);
@@ -66,81 +79,34 @@ public class RepositoryManager
     public static InputStream accessVersionStream(DocumentVersion version)
             throws RepositoryException, ConfigException, IOException
     {
-        return new FileInputStream(manager.defaultRepositoryPath + version.getStoragePath());
+        return init().defaultAccessor.accessVersionStream(version);
     }
 
     public static void writeVersion(DocumentVersion version, InputStream in)
             throws DataSourceException, ConfigException, RepositoryException
     {
-        try {
-            String storageDirPath = version.getStoragePath().substring(0, version.getStoragePath().lastIndexOf("/"));
-            File f = new File(manager.defaultRepositoryPath + storageDirPath);
-            if (!f.exists()) {
-                boolean created = f.mkdirs();
-            }
-            BufferedOutputStream out = new BufferedOutputStream(
-                    new FileOutputStream(
-                            manager.defaultRepositoryPath + version.getStoragePath()));
-            BufferedInputStream input = new BufferedInputStream(in);
-            int len = 0;
-            byte[] buffer = new byte[10000];
-            while ((len = input.read(buffer)) > 0) {
-                out.write(buffer, 0, len);
-            }
-            out.flush();
-            out.close();
+        init().defaultAccessor.writeVersion(version, in);
+    }
 
-            FileInputStream fis =
-                    new FileInputStream(
-                            manager.defaultRepositoryPath + version.getStoragePath());
-            version.setLength(fis.available());
-            fis.close();
-        } catch (IOException e) {
-            throw new RepositoryException(e);
-        }
+    public static void readVersionToStream(DocumentVersion version, OutputStream out)
+            throws DataSourceException, ConfigException, RepositoryException
+    {
+        init().defaultAccessor.readVersionToStream(version, out);
     }
 
     public static OutputStream accessOutputStreamVersion(DocumentVersion version) throws Exception
     {
-        try {
-            return new FileOutputStream(
-                    manager.defaultRepositoryPath + version.getStoragePath());
-        } catch (IOException io) {
-            throw new RepositoryException(io);
-        }
+        return init().defaultAccessor.accessOutputStreamVersion(version);
     }
 
     public static RandomAccessFile randomAccessFile(DocumentVersion version, String mode) throws Exception
     {
-        try {
-            return new RandomAccessFile(
-                    new File(manager.defaultRepositoryPath + version.getStoragePath()),
-                    mode
-            );
-        } catch (IOException io) {
-            throw new RepositoryException(io);
-        }
+        return init().defaultAccessor.randomAccessFile(version, mode);
     }
 
     public static void initRepositoryStorage(DocumentVersion version) throws Exception
     {
-        try {
-            String storageDirPath = version.getStoragePath().substring(0, version.getStoragePath().lastIndexOf("/"));
-            File f = new File(manager.defaultRepositoryPath + storageDirPath);
-            if (!f.exists()) {
-                f.mkdirs();
-            }
-            if (!new File(manager.defaultRepositoryPath + version.getStoragePath())
-                    .exists())
-            {
-                FileWriter newFile =
-                        new FileWriter(manager.defaultRepositoryPath +
-                                version.getStoragePath(), false);
-                newFile.close();
-            }
-        } catch (IOException io) {
-            throw new RepositoryException(io);
-        }
+        init().defaultAccessor.initRepositoryStorage(version);
     }
 
     public RepositoryService getRepositoryService()
@@ -156,22 +122,6 @@ public class RepositoryManager
     public static void copyVersion(DocumentVersion source, DocumentVersion target)
             throws DataSourceException, ConfigException, RepositoryException
     {
-        try {
-            String storageDirPath = source.getStoragePath().substring(0, source.getStoragePath().lastIndexOf("/"));
-            File f = new File(manager.defaultRepositoryPath + storageDirPath);
-            if (!f.exists()) {
-                f.mkdirs();
-            }
-
-            String sourcePath = manager.defaultRepositoryPath + source.getStoragePath();
-            String targetPath = manager.defaultRepositoryPath + target.getStoragePath();
-
-            log.debug("Source Version Path " + sourcePath + " | Target Path " + targetPath);
-
-            FileUtils.copyFile(new File(sourcePath),
-                    new File(targetPath), false);
-        } catch (IOException e) {
-            throw new RepositoryException(e);
-        }
+        init().defaultAccessor.copyVersion(source, target);
     }
 }

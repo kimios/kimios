@@ -39,6 +39,9 @@ public class RepositoryImpl implements Repository
     @Column(name = "repository_default", nullable = true)
     private Boolean defaultRepository;
 
+    @Column(name = "repository_implementor", nullable = true)
+    private String implementor;
+
     public Boolean getDefaultRepository()
     {
         return defaultRepository;
@@ -77,5 +80,13 @@ public class RepositoryImpl implements Repository
     public void setPath(String path)
     {
         this.path = path;
+    }
+
+    public String getImplementor() {
+        return implementor;
+    }
+
+    public void setImplementor(String implementor) {
+        this.implementor = implementor;
     }
 }

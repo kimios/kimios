@@ -60,6 +60,14 @@ public interface IDocumentVersionController
             ConfigException, DataSourceException, AccessDeniedException;
 
     /**
+     * Update document version for document type change
+     */
+    @DmsEvent(eventName = { DmsEventName.DOCUMENT_VERSION_UPDATE })
+    public void updateDocumentVersion(Session session, long documentId,
+                                      long documentTypeId, List<MetaValue> metaValues) throws XMLException, CheckoutViolationException,
+            ConfigException, DataSourceException, AccessDeniedException;
+
+    /**
      * Remove document version and linked metas
      */
     public void deleteDocumentVersion(long documentVersionId)

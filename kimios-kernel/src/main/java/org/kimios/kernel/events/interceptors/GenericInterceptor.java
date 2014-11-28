@@ -67,7 +67,7 @@ public class GenericInterceptor implements MethodInterceptor
 
         ctx.setCurrentOccur(DmsEventOccur.BEFORE);
         //process events (before state)
-        for (GenericEventHandler it : EventHandlerManager.getInstance().handlers) {
+        for (GenericEventHandler it : EventHandlerManager.getInstance().handlers()) {
             it.process(arg0.getMethod(), arg0.getArguments(),  DmsEventOccur.BEFORE, null, ctx);
         }
         //process rules before (before state)
@@ -85,7 +85,7 @@ public class GenericInterceptor implements MethodInterceptor
             ruleManager.processRulesAfter(rulesBeans, ctx);
         }
         //process handler after
-        for (GenericEventHandler it : EventHandlerManager.getInstance().handlers) {
+        for (GenericEventHandler it : EventHandlerManager.getInstance().handlers()) {
             it.process(arg0.getMethod(), arg0.getArguments(), DmsEventOccur.AFTER, ret, ctx);
         }
         EventContext.clear();

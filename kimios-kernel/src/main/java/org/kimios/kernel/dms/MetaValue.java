@@ -15,13 +15,30 @@
  */
 package org.kimios.kernel.dms;
 
+import org.codehaus.jackson.annotate.JsonSubTypes;
+import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.MetaValueTypeException;
+import org.kimios.kernel.ws.pojo.*;
+import org.kimios.kernel.ws.pojo.Folder;
+import org.kimios.kernel.ws.pojo.SymbolicLink;
+import org.kimios.kernel.ws.pojo.Workspace;
 
 import java.io.Serializable;
 
-public interface MetaValue extends Serializable
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "metaTypeName")
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = MetaStringValue.class, name = "string"),
+        @JsonSubTypes.Type(value = MetaNumberValue.class, name = "number"),
+        @JsonSubTypes.Type(value = MetaDateValue.class, name = "date"),
+        @JsonSubTypes.Type(value = MetaBooleanValue.class, name = "boolean"),
+        @JsonSubTypes.Type(value = MetaListValue.class, name = "list")
+})
+public interface MetaValue<T> extends Serializable
 {
     public DocumentVersion getDocumentVersion();
 
@@ -39,8 +56,8 @@ public interface MetaValue extends Serializable
 
     public void setMetaUid(long metaUid);
 
-    public Object getValue();
+    public T getValue();
 
-    public void setValue(Object value) throws MetaValueTypeException;
+    public void setValue(T value) throws MetaValueTypeException;
 }
 

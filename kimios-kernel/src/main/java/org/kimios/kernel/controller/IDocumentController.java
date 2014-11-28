@@ -16,14 +16,12 @@
 package org.kimios.kernel.controller;
 
 import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.dms.Bookmark;
-import org.kimios.kernel.dms.Document;
-import org.kimios.kernel.dms.SymbolicLink;
-import org.kimios.kernel.dms.WorkflowStatus;
+import org.kimios.kernel.dms.*;
 import org.kimios.kernel.events.annotations.DmsEvent;
 import org.kimios.kernel.events.annotations.DmsEventName;
 import org.kimios.kernel.exception.*;
 import org.kimios.kernel.log.DMEntityLog;
+import org.kimios.kernel.security.DMEntitySecurity;
 import org.kimios.kernel.security.Session;
 
 import java.io.IOException;
@@ -76,6 +74,16 @@ public interface IDocumentController {
                                boolean isSecurityInherited) throws NamingException,
             ConfigException, DataSourceException, AccessDeniedException;
 
+
+    /**
+     * Create a document, and version with properties
+     */
+    @DmsEvent(eventName = {DmsEventName.DOCUMENT_CREATE})
+    public long createDocument(Session s, String name, String extension,
+                               boolean isSecurityInherited, String securitiesXmlStream,
+                                long documentTypeId, String metasXmlStream)
+            throws NamingException, ConfigException, DataSourceException, AccessDeniedException, PathException;
+
     /**
      * Create a document with properties
      */
@@ -94,6 +102,22 @@ public interface IDocumentController {
                                              String hashMd5,
                                              String hashSha1) throws IOException;
 
+
+    /**
+     * Create a document from full path with properties
+     */
+    @DmsEvent(eventName = {DmsEventName.FILE_UPLOAD})
+    public long createDocumentFromFullPathWithProperties(Session s,
+                                                         String path,
+                                                         boolean isSecurityInherited,
+                                                         String securitiesXmlStream,
+                                                         boolean isRecursive,
+                                                         long documentTypeId,
+                                                         String metasXmlStream,
+                                                         InputStream documentStream,
+                                                         String hashMd5,
+                                                         String hashSha1) throws IOException;
+
     /**
      * Create a document from full path with properties
      */
@@ -101,10 +125,10 @@ public interface IDocumentController {
     public long createDocumentFromFullPathWithProperties(Session s,
                                              String path,
                                              boolean isSecurityInherited,
-                                             String securitiesXmlStream,
+                                             List<DMEntitySecurity> securities,
                                              boolean isRecursive,
                                              long documentTypeId,
-                                             String metasXmlStream,
+                                             List<MetaValue> metaValues,
                                              InputStream documentStream,
                                              String hashMd5,
                                              String hashSha1) throws IOException;

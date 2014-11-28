@@ -27,22 +27,13 @@
         http://cxf.apache.org/schemas/jaxrs.xsd"
        default-autowire="byName">
 
-
+    <bean id="kimiosBusManager" class="org.kimios.webservices.utils.KimiosBusServiceManager" />
+    <bean id="loggingFeature" class="org.apache.cxf.feature.LoggingFeature" />
     <cxf:bus id="kimios-bus">
         <cxf:features>
-            <cxf:logging/>
+            <ref bean="kimiosBusManager" />
         </cxf:features>
     </cxf:bus>
-
-
-    <!--<cxf:bus>-->
-    <!--<cxf:inInterceptors>-->
-    <!--<bean id="logInbound" class="org.apache.cxf.interceptor.LoggingInInterceptor"/>-->
-    <!--</cxf:inInterceptors>-->
-    <!--<cxf:features>-->
-    <!--<cxf:logging/>-->
-    <!--</cxf:features>-->
-    <!--</cxf:bus>-->
 
 
     <!--<bean id="kimiosRestServer" class="org.apache.cxf.jaxrs.JAXRSServerFactoryBean" init-method="create">

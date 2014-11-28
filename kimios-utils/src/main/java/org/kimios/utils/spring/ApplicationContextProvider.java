@@ -15,6 +15,7 @@
  */
 package org.kimios.utils.spring;
 
+import org.osgi.framework.BundleContext;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -36,9 +37,16 @@ public class ApplicationContextProvider implements ApplicationContextAware, Bean
         return ctx.getBean(beanName);
     }
 
+    public static ApplicationContext context(){
+        return ctx;
+    }
+
 
     public static <T> T loadBean(Class<T> _class){
-        return ctx.getBean(_class);
+        if(ctx != null){
+            return ctx.getBean(_class);
+        }
+        return null;
     }
 
 

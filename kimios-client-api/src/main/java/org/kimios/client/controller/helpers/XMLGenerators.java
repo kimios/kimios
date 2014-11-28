@@ -128,6 +128,14 @@ public class XMLGenerators {
                         xmlStream += "<![CDATA[false]]></meta>\r\n";
                     }
                     break;
+                case 5:
+                    try {
+                        xmlStream +=
+                                "<![CDATA[" + metaValues.get(m) + "]]></meta>\r\n";
+                    } catch (Exception pe) {
+                        xmlStream += "<![CDATA[false]]></meta>\r\n";
+                    }
+                    break;
             }
         }
         xmlStream += "</document-meta>";

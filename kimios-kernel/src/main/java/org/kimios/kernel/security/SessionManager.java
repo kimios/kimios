@@ -220,8 +220,10 @@ public class SessionManager extends HFactory implements ISessionManager
     public Session getSession(String sessionUid) throws DataSourceException, ConfigException
     {
         try {
+            log.debug("getting session with id {}", sessionUid);
             Session sUser = sessionUid != null ? (Session) sessions.get(sessionUid) : null;
             if (sUser != null) {
+                log.debug("session found {} {}", sUser, sUser.getUserName());
                 sUser.setLastUse(new Date());
                 sUser.setGroups(
                         authenticationSourceFactory.getAuthenticationSource(sUser.getUserSource()).getGroupFactory()
@@ -231,6 +233,7 @@ public class SessionManager extends HFactory implements ISessionManager
             }
             return sUser;
         } catch (HibernateException he) {
+            log.error("error while loading session", he);
             throw new DataSourceException(he);
         }
     }

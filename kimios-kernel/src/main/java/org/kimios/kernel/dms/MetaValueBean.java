@@ -18,6 +18,7 @@ package org.kimios.kernel.dms;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.kimios.kernel.exception.MetaValueTypeException;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -26,7 +27,7 @@ import java.io.Serializable;
 @IdClass(MetaValueBeanPK.class)
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @JsonIgnoreProperties("documentVersion")
-public abstract class MetaValueBean implements MetaValue, Serializable
+public abstract class MetaValueBean<T> implements MetaValue<T>, Serializable
 {
     @Id @Column(name = "meta_id")
     protected long metaUid;
@@ -43,6 +44,13 @@ public abstract class MetaValueBean implements MetaValue, Serializable
     @ManyToOne(targetEntity = Meta.class)
     @JoinColumn(name = "meta_id", nullable = false, insertable = false, updatable = false)
     protected Meta meta;
+
+
+    @Override
+    abstract public T getValue();
+
+    @Override
+    abstract public void setValue(T value) throws MetaValueTypeException;
 
     public MetaValueBean()
     {

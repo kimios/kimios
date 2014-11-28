@@ -22,6 +22,7 @@ import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.IndexException;
 import org.kimios.kernel.index.query.model.Criteria;
 import org.kimios.kernel.index.query.model.SearchRequest;
+import org.kimios.kernel.index.query.model.SearchRequestSecurity;
 import org.kimios.kernel.index.query.model.SearchResponse;
 import org.kimios.kernel.security.Session;
 import org.kimios.kernel.ws.pojo.Document;
@@ -71,9 +72,8 @@ public interface ISearchController
                                  String sortDir )
         throws DataSourceException, ConfigException, IndexException, IOException;
 
-    public void updateSearchQuery( Session session, Long id, String name, List<Criteria> criteriaList, int start,
-                                   int pageSize, String sortField, String sortDir )
-        throws AccessDeniedException, DataSourceException, ConfigException, IndexException, IOException;
+    public Long advancedSaveSearchQuery(Session session, SearchRequest request)
+            throws DataSourceException, ConfigException, IndexException, IOException;
 
     public void deleteSearchQuery( Session session, Long id )
         throws AccessDeniedException, DataSourceException, ConfigException, IndexException, IOException;
@@ -94,5 +94,8 @@ public interface ISearchController
 
     public List<String> listAvailableFields(Session session) throws AccessDeniedException, IndexException;
 
+    public Long advancedSaveSearchQueryWithSecurity(Session session, SearchRequest searchRequest, List<SearchRequestSecurity> securities)
+            throws DataSourceException, ConfigException, IndexException, IOException;
 
-}
+
+    }

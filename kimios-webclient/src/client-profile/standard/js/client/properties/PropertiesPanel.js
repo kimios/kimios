@@ -201,6 +201,14 @@ kimios.properties.PropertiesPanel = Ext.extend(Ext.TabPanel, {
             else
                 this.setActiveTab(3);
             this.saveButton.setVisible(true);
+
+            if(this.dmEntityPojo.type == 3 && this.createMode && clientConfig.defaultdocumenttype){
+                var me = this;
+                this.on('afterrender', function(){
+                    me.setActiveTab(1);
+               });
+            }
+
         }
 
         // update

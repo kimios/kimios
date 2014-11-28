@@ -20,6 +20,7 @@ import flexjson.JSONSerializer;
 import org.kimios.client.controller.helpers.AuthenticationSourceUtil;
 import org.kimios.core.DateHelper;
 import org.kimios.core.GroupUserTransformer;
+import org.kimios.core.wrappers.LoggerWrapper;
 import org.kimios.kernel.ws.pojo.*;
 
 import java.util.ArrayList;
@@ -135,6 +136,19 @@ public class AdminControllerWeb extends Controller {
         if (action.equals("getReindexProgress")) {
             return getReindexProgress();
         }
+        if (action.equals("disableServiceLogging")) {
+            return disableServiceLogging();
+        }
+        if (action.equals("enableServiceLogging")) {
+            return enableServiceLogging();
+        }
+        if (action.equals("listLoggers")) {
+            return listLoggers();
+        }
+        if (action.equals("setLoggerLevel")) {
+            return setLoggerLevel();
+        }
+
         return "{\"success\":false,\"exception\":\"Unknown action\"}";
     }
 
@@ -502,5 +516,35 @@ public class AdminControllerWeb extends Controller {
         administrationController.changeOwnerShip(sessionUid, dmEntityUid,
                 dmEntityType, userName, userSource);
         return "{\"success\":true}";
+    }
+
+    private String disableServiceLogging() throws Exception {
+        administrationController.disableServiceLogging(sessionUid);
+        return "{\"success\":true}";
+    }
+
+    private String enableServiceLogging() throws Exception {
+        administrationController.enableServiceLogging(sessionUid);
+        return "{\"success\":true}";
+    }
+
+    private String setLoggerLevel() throws Exception {
+        administrationController.setLoggerLevel(sessionUid,
+                parameters.get("loggerName"),
+                parameters.get("loggerLevel")
+                );
+        return "{\"success\":true}";
+    }
+
+    private String listLoggers() throws Exception {
+        Map<String, String> map = administrationController.listLoggers(sessionUid);
+        List<LoggerWrapper> wrapperList = new ArrayList<LoggerWrapper>();
+        for(String u: map.keySet()){
+            LoggerWrapper wrapper = new LoggerWrapper();
+            wrapper.setLoggerName(u);
+            wrapper.setLoggerLevel(map.get(u));
+            wrapperList.add(wrapper);
+        }
+        return new JSONSerializer().serialize(wrapperList);
     }
 }

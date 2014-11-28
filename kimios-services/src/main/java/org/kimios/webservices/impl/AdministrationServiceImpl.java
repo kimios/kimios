@@ -18,17 +18,40 @@ package org.kimios.webservices.impl;
 
 import org.kimios.kernel.user.Group;
 import org.kimios.kernel.ws.pojo.*;
+import org.kimios.utils.logging.LoggerManager;
 import org.kimios.webservices.AdministrationService;
 import org.kimios.webservices.CoreService;
 import org.kimios.webservices.DMServiceException;
+import org.kimios.webservices.utils.KimiosBusServiceManager;
 
 import javax.jws.WebService;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 @WebService(targetNamespace = "http://kimios.org", serviceName = "AdministrationService", name = "AdministrationService")
 public class AdministrationServiceImpl extends CoreService implements AdministrationService
 {
+
+    public AdministrationServiceImpl(){
+
+    }
+
+    public KimiosBusServiceManager getKimiosBusServiceManager() {
+        return kimiosBusServiceManager;
+    }
+
+    public void setKimiosBusServiceManager(KimiosBusServiceManager kimiosBusServiceManager) {
+        this.kimiosBusServiceManager = kimiosBusServiceManager;
+    }
+
+    private KimiosBusServiceManager kimiosBusServiceManager;
+
+    public AdministrationServiceImpl(KimiosBusServiceManager serviceManager){
+        this.kimiosBusServiceManager = serviceManager;
+    }
+
     public Role[] getRoles(String sessionUid, int role) throws DMServiceException
     {
         try {
@@ -588,6 +611,25 @@ public class AdministrationServiceImpl extends CoreService implements Administra
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }
+    }
+
+    @Override
+    public void disableServiceLogging() throws DMServiceException {
+        this.kimiosBusServiceManager.disableLogging();
+    }
+
+    @Override
+    public void enableServiceLogging() throws DMServiceException {
+        this.kimiosBusServiceManager.enableLogging();
+    }
+
+    public HashMap<String,String> listLoggers() throws DMServiceException {
+        return (HashMap)LoggerManager.listLoggers();
+    }
+
+    @Override
+    public void setLoggerLevel(String loggerName, String loggerLevel) throws DMServiceException {
+        LoggerManager.setLevel(loggerName, loggerLevel);
     }
 }
 

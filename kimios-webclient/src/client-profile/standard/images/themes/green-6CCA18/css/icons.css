@@ -396,3 +396,11 @@
     background-image: url(../icons/16x16/expand.png) !important;
     background-repeat: no-repeat;
 }
+
+
+.search-lg {
+    background-image: url(../icons/16x16/large32search.png) !important;
+    background-repeat: no-repeat;
+    background-position: top left;
+    background-size: 14%;
+}

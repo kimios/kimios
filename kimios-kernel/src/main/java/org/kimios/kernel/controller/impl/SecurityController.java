@@ -105,6 +105,51 @@ public class SecurityController extends AKimiosController implements ISecurityCo
         }
     }
 
+    /* (non-Javadoc)
+    * @see org.kimios.kernel.controller.impl.ISecurityController#updateDMEntitySecurities(org.kimios.kernel.security.Session, long, int, java.lang.String, boolean)
+    */
+    @DmsEvent(eventName = { DmsEventName.ENTITY_ACL_UPDATE })
+    public void updateDMEntitySecurities(Session session, long dmEntityUid, List<DMEntitySecurity> items,
+                                         boolean isRecursive) throws AccessDeniedException, ConfigException, DataSourceException,
+            XMLException
+    {
+        DMEntity entity = this.getDMEntity(dmEntityUid);
+        if (entity != null) {
+            if (getSecurityAgent()
+                    .isFullAccess(entity, session.getUserName(), session.getUserSource(), session.getGroups()))
+            {
+                if (entity.getType() == 1 || entity.getType() == 2) {
+                    if (isRecursive && getSecurityAgent()
+                            .hasAnyChildNotFullAccess(entity, session.getUserName(), session.getUserSource(),
+                                    session.getGroups()))
+                    {
+                        throw new AccessDeniedException();
+                    }
+                }
+                if (isRecursive) {
+                    /*ACLUpdateJob job =
+                            ApplicationContextProvider.prototypeBean("aclUpdaterThreadJob", ACLUpdateJob.class, null);*/
+                    ThreadManager.getInstance()
+                            .startJob(session, new ACLUpdateJob(aclUpdater), "UpdateACL", items, entity);
+                } else {
+                    DMEntitySecurityFactory fact = FactoryInstantiator.getInstance().getDMEntitySecurityFactory();
+                    fact.cleanACL(entity);
+                    List<DMEntityACL> nAcls = new ArrayList<DMEntityACL>();
+                    for (DMEntitySecurity acl : items) {
+                        acl.setDmEntity(entity);
+                        nAcls.addAll(fact.saveDMEntitySecurity(acl));
+                    }
+                    //set acl in the context for event handler
+                    EventContext.addParameter("acls", nAcls);
+                }
+            } else {
+                throw new AccessDeniedException();
+            }
+        } else {
+            throw new AccessDeniedException();
+        }
+    }
+
     /**
      * Convenience method to get dmEntity from dmEntityUid and dmEntityType (workspace, folder and document)
      */

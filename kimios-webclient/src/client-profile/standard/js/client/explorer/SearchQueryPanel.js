@@ -125,11 +125,11 @@ kimios.explorer.SearchQueryPanel = Ext.extend( Ext.grid.GridPanel, {
 
         this.on( 'rowdblclick', function ( grid, rowIndex, ev )
         {
-             if (grid.getStore().getAt(rowIndex).data.type == 9)
+            if (grid.getStore().getAt(rowIndex).data.type == 9)
                 return false;
 
             var selected = grid.getStore().getAt( rowIndex );
-            if ( kimios.explorer.getActivePanel() == null )
+            if ( kimios.explorer.getActivePanel() == null || !(kimios.explorer.getActivePanel() instanceof kimios.explorer.DMEntityGridPanel))
             {
                 var tabbed = new kimios.explorer.DMEntityGridPanel( {} );
                 var centerPanel = Ext.getCmp( 'kimios-center-panel' );

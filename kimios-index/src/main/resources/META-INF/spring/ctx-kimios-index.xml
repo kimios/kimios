@@ -51,11 +51,15 @@
   <bean id="searchController" class="org.kimios.kernel.controller.impl.SolrSearchController" parent="kimiosCoreCtrl">
     <property name="solrIndexManager" ref="indexManagerSolr"/>
     <property name="searchRequestFactory" ref="searchRequestFactory" />
+    <property name="searchRequestSecurityFactory" ref="searchRequestSecurityFactory" />
   </bean>
 
   <bean id="searchManagementController" class="org.kimios.kernel.controller.impl.SearchManagementController" parent="kimiosCoreCtrl">
     <property name="indexManager" ref="indexManagerSolr"/>
   </bean>
+
+
+    <bean id="searchRequestSecurityFactory" class="org.kimios.kernel.index.query.factory.SearchRequestSecurityFactory" parent="hfactory" />
 
 
   <!-- index filter mapping Old filter mapping loading method. Now replaced with Unified Tika Filter

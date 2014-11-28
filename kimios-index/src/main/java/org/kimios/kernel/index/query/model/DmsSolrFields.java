@@ -35,6 +35,8 @@ public class DmsSolrFields
 
     static {
         sortFieldMapping.put("DocumentCreationDate", Date.class);
+        sortFieldMapping.put("DocumentUpdateDate", Date.class);
+        sortFieldMapping.put("DocumentCreationDate", Date.class);
         sortFieldMapping.put("DocumentVersionUpdateDate", Date.class);
         sortFieldMapping.put("DocumentExtension", String.class);
         sortFieldMapping.put("DocumentOwner", String.class);
@@ -42,6 +44,23 @@ public class DmsSolrFields
         sortFieldMapping.put("DocumentName", String.class);
         sortFieldMapping.put("DocumentTypeName", String.class);
         sortFieldMapping.put("DocumentTypeUid", Number.class);
+        sortFieldMapping.put("DocumentUid", Number.class);
+        sortFieldMapping.put("DocumentVersionId", Number.class);
+        sortFieldMapping.put("DocumentVersionOwner", String.class);
+        sortFieldMapping.put("DocumentVersionOwnerId", String.class);
+        sortFieldMapping.put("DocumentVersionOwnerSource", String.class);
+        sortFieldMapping.put("DocumentVersionHash", String.class);
+        sortFieldMapping.put("Attribute_SEARCHTAG", String.class);
+
+    }
+
+    public static Map<String, Class> sortMetaFieldMapping = new HashMap<String, Class>();
+
+    static {
+        sortMetaFieldMapping.put("MetaDataDate", Date.class);
+        sortMetaFieldMapping.put("MetaDataNumber", Number.class);
+        sortMetaFieldMapping.put("MetaDataString", String.class);
+        sortMetaFieldMapping.put("MetaDataList", String.class);
     }
 
 

@@ -56,6 +56,12 @@ kimios.properties.MetaDataPanel = Ext.extend(Ext.Panel, {
             if (this.loaded == false && this.dmEntityPojo.uid != undefined) {
                 this.lastMetaValuesStore.load();
             }
+
+            if(!this.dmEntityPojo.uid){
+                //create mode. try to select default Doc Type
+            }
+
+
         }, this);
 
         this.lastMetaValuesStore.on('beforeload', function (store, options) {
@@ -74,8 +80,10 @@ kimios.properties.MetaDataPanel = Ext.extend(Ext.Panel, {
             displayField: 'name',
             valueField: 'uid',
             hiddenName: 'document-type',
-            readOnly: this.readOnly
+            readOnly: this.readOnly,
+            defaultTypeName: clientConfig.defaultdocumenttype && this.dmEntityPojo.uid == undefined ? clientConfig.defaultdocumenttype : undefined
         });
+
 
         this.documentTypeForm = new kimios.FormPanel({
             border: false,
@@ -194,12 +202,22 @@ kimios.properties.MetaDataPanel = Ext.extend(Ext.Panel, {
             return Ext.util.JSON.encode(out);
         for (var i = 0; i < this.metaDataFieldSet.items.length; i++) {
             var field = this.metaDataFieldSet.items.get(i);
-            out.push({
-                uid: field.getName(),
-                value: field.getValue()
-            });
+
+            if (field.mType && field.mType == 5) {
+
+                var array = field.getValue().split(",");
+                out.push({
+                    uid: field.getName(),
+                    value: JSON.stringify(array)
+                });
+            } else
+                out.push({
+                    uid: field.getName(),
+                    value: field.getValue()
+                });
         }
-        return Ext.util.JSON.encode(out);
+        var mModel = Ext.util.JSON.encode(out);
+        return mModel;
     },
 
     getField: function (record) {
@@ -209,6 +227,7 @@ kimios.properties.MetaDataPanel = Ext.extend(Ext.Panel, {
         var value = record.get('value');
         var metaFeedUid = record.get('metaFeedUid');
         var mandatory = record.get('mandatory');
+
 
         if (this.documentTypeUid == this.documentTypeUid_ || this.parentType_) {
             this.fields_.push({
@@ -282,6 +301,33 @@ kimios.properties.MetaDataPanel = Ext.extend(Ext.Panel, {
                     mandatory: mandatory,
                     ignoreField: true
                 });
+            case 5:
+                //string type
+
+                if (metaFeedUid != -1) {
+                    var f = new kimios.form.MetaFeedMultiField({
+                        name: uid,
+                        metaFeedUid: metaFeedUid,
+                        fieldLabel: name + (mandatory == true ? '&nbsp;<span style="color:red; font-weight:bolder;">*</span>' : ''),
+                        passedValue: value ? value : (this.documentTypeUid == this.documentTypeUid_ || this.parentType_ ? thisValue : ''),
+                        emptyText: kimios.lang('MetaFeed'),
+                        readOnly: this.readOnly,
+                        mandatory: mandatory,
+                        selectOnFocus: false
+                    });
+                    f.mType = 5;
+                    return f;
+
+                } else {
+                    return new Ext.form.TextField({
+                        name: uid,
+                        fieldLabel: name + (mandatory == true ? '&nbsp;<span style="color:red; font-weight:bolder;">*</span>' : ''),
+                        value: value ? value : (this.documentTypeUid == this.documentTypeUid_ || this.parentType_ ? thisValue : ''),
+                        emptyText: kimios.lang('MetaListValue'),
+                        readOnly: this.readOnly,
+                        mandatory: mandatory
+                    });
+                }
         }
     }
 });

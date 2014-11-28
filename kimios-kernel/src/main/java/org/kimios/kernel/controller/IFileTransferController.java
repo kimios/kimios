@@ -26,6 +26,7 @@ import org.kimios.kernel.ws.pojo.DocumentWrapper;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 public interface IFileTransferController
 {
@@ -82,5 +83,11 @@ public interface IFileTransferController
       Get document version stream for direct version read
   */
     public DocumentWrapper getDocumentVersionWrapper( Session session, long transactionId )
+            throws ConfigException, AccessDeniedException, DataSourceException, IOException;
+
+    /*
+      Get document version stream for direct version streaming
+  */
+    public void readVersionStream( Session session, long transactionId, OutputStream versionStream)
             throws ConfigException, AccessDeniedException, DataSourceException, IOException;
 }

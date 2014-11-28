@@ -19,6 +19,7 @@ import org.kimios.kernel.dms.DMEntity;
 import org.kimios.kernel.events.annotations.DmsEvent;
 import org.kimios.kernel.events.annotations.DmsEventName;
 import org.kimios.kernel.security.DMEntityACL;
+import org.kimios.kernel.security.DMEntitySecurity;
 import org.kimios.kernel.security.Session;
 
 import java.util.List;
@@ -27,5 +28,9 @@ public interface IACLUpdater
 {
     @DmsEvent(eventName = { DmsEventName.ENTITY_ACL_UPDATE })
     public List<DMEntityACL> updateAclsRecursiveMode(Session session, String xmlStream, DMEntity entity)
+            throws Exception;
+
+    @DmsEvent(eventName = { DmsEventName.ENTITY_ACL_UPDATE })
+    public List<DMEntityACL> updateAclsRecursiveMode(Session session, List<DMEntitySecurity> securityItems, DMEntity entity)
             throws Exception;
 }

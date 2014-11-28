@@ -117,9 +117,18 @@ public class DataInitializerCtrl
         userFactoryInstantiator.getAuthenticationSourceFactory()
                 .saveAuthenticationSource(authenticationSource);
 
+
+        AuthenticationSource backupSource = authenticationSource;
+
+        log.info("Creating Authentication source " + authenticationSource.getName());
         authenticationSource = userFactoryInstantiator.getAuthenticationSourceFactory()
                 .getAuthenticationSource(authenticationSource.getName());
 
+        log.info("Creating Authentication source " + authenticationSource);
+        if(authenticationSource == null){
+            //throw new Exception("Kimios Init Process Error. Unable to create minmal Data");
+            authenticationSource = backupSource;
+        }
         createAdminUser(authenticationSource);
     }
 

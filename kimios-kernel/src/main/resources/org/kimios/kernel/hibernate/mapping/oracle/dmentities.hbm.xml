@@ -27,7 +27,7 @@
                 <column name="dm_entity_path" length="2000" unique="true"/>
             </basic>
             <basic name="addOnDatas" optional="false">
-                <column name="dm_entity_addon_data" length="5000" />
+                <column name="dm_entity_addon_data" length="5000" nullable="true" />
             </basic>
         </attributes>
     </entity>

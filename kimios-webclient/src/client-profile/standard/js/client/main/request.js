@@ -891,6 +891,41 @@ kimios.request = {
 
         },
 
+        disableServiceLog: function () {
+
+            kimios.ajaxRequest('Admin', {
+                    action: 'disableServiceLogging'
+                },
+                function () {
+
+                }
+            );
+
+        },
+
+        enableServiceLog: function () {
+
+            kimios.ajaxRequest('Admin', {
+                    action: 'enableServiceLogging'
+                },
+                function () {
+
+                }
+            );
+
+        },
+
+        setLoggerLevel: function(loggerName, loggerLevel, grid){
+            kimios.ajaxRequest('Admin', {
+                action: 'setLoggerLevel',
+                loggerName: loggerName,
+                    loggerLevel: loggerLevel
+            }, function(){
+                grid.getStore().reload();
+            })
+        },
+
+
         changeOwner: function (store, records, userName, userSource) {
             var recordsCounter = 0;
             var change = function () {

@@ -22,6 +22,8 @@ import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.IndexException;
 import org.kimios.kernel.security.Session;
 
+import java.util.List;
+
 
 public interface ISearchManagementController
 {
@@ -38,4 +40,9 @@ public interface ISearchManagementController
     */
     public int getReindexProgress(Session session)
         throws AccessDeniedException, IndexException, ConfigException, DataSourceException;
+
+
+    public List<String> listDocumentAvailableFields(Session session)
+        throws AccessDeniedException, IndexException, ConfigException, DataSourceException;
+
 }

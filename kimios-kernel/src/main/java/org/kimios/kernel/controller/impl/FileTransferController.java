@@ -26,6 +26,7 @@ import org.kimios.kernel.events.annotations.DmsEventName;
 import org.kimios.kernel.exception.*;
 import org.kimios.kernel.filetransfer.DataTransfer;
 import org.kimios.kernel.filetransfer.zip.FileCompressionHelper;
+import org.kimios.kernel.repositories.RepositoryManager;
 import org.kimios.kernel.security.Session;
 import org.kimios.kernel.user.User;
 import org.kimios.kernel.utils.HashCalculator;
@@ -314,6 +315,24 @@ public class FileTransferController
                 String filename = dv.getDocument().getName() + "." + dv.getDocument().getExtension();
                 return new DocumentWrapper(ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH) + "/" +
                         dv.getStoragePath(), filename, dv.getLength());
+            } else {
+                throw new AccessDeniedException();
+            }
+        } else {
+            throw new AccessDeniedException();
+        }
+    }
+
+    public void readVersionStream(Session session, long transactionId, OutputStream versionStream)
+            throws ConfigException, AccessDeniedException, DataSourceException, IOException {
+
+        DataTransfer transac = transferFactoryInstantiator.getDataTransferFactory().getDataTransfer(transactionId);
+        if (transac != null && transac.getTransferMode() == DataTransfer.DOWNLOAD) {
+            DocumentVersion dv = dmsFactoryInstantiator.getDocumentVersionFactory().getDocumentVersion(
+                    transac.getDocumentVersionUid());
+            if (getSecurityAgent().isReadable(dv.getDocument(), session.getUserName(), session.getUserSource(),
+                    session.getGroups())) {
+                RepositoryManager.readVersionToStream(dv, versionStream);
             } else {
                 throw new AccessDeniedException();
             }

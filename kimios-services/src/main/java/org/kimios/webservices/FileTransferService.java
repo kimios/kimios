@@ -96,15 +96,17 @@ public interface FileTransferService
     @GET
     @Path( "/downloadDocumentVersion" )
     @Produces( value = {MediaType.APPLICATION_OCTET_STREAM, MediaType.APPLICATION_JSON} )
-    public InputStream downloadDocumentVersion( @QueryParam("sessionId") String sessionId,
-                                                @QueryParam("transactionId") long transactionId )
+    public Response downloadDocumentVersion( @QueryParam("sessionId") String sessionId,
+                                                @QueryParam("transactionId") long transactionId,
+                                                @DefaultValue("true") @QueryParam("inline") Boolean inline)
             throws DMServiceException;
 
     @GET
     @Path( "/downloadDocument" )
     @Produces( MediaType.APPLICATION_OCTET_STREAM )
     public Response downloadDocument( @QueryParam("sessionId") String sessionId,
-                                                @QueryParam("transactionId") long transactionId )
+                                                @QueryParam("transactionId") long transactionId,
+                                                @DefaultValue("true") @QueryParam("inline") Boolean inline)
             throws DMServiceException;
 
 

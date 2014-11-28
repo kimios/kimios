@@ -85,12 +85,13 @@ public class KimiosKernelAspect {
                     (evt != null ? evt.eventName()[0] : " no event defined. for " + method.getName()));
             if (evt != null) {
                 ctx = ContextBuilder.buildContext(evt.eventName()[0], method, pjp.getArgs());
-                log.trace("Set event: " + ctx.getEvent().name());
+                log.trace("Set event: " + ctx.getEvent().name() + " | " + ctx.getEntity());
             }
 
             ctx.setCurrentOccur(DmsEventOccur.BEFORE);
             //process events (before state)
-            for (GenericEventHandler it : EventHandlerManager.getInstance().handlers) {
+            for (GenericEventHandler it : EventHandlerManager.getInstance().handlers()) {
+                log.trace("Event Before Context: " + ctx.getEntity());
                 it.process(method, pjp.getArgs(), DmsEventOccur.BEFORE, null, ctx);
             }
             //process rules before (before state)
@@ -108,7 +109,8 @@ public class KimiosKernelAspect {
                 ruleManager.processRulesAfter(rulesBeans, ctx);
             }
             //process handler after
-            for (GenericEventHandler it : EventHandlerManager.getInstance().handlers) {
+            for (GenericEventHandler it : EventHandlerManager.getInstance().handlers()) {
+                log.trace("Event After Context: " + ctx.getEntity());
                 it.process(method, pjp.getArgs(), DmsEventOccur.AFTER, ret, ctx);
             }
             EventContext.clear();

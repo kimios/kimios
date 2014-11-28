@@ -28,11 +28,9 @@ import org.kimios.kernel.hibernate.HFactory;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-public class HMetaValueFactory extends HFactory implements MetaValueFactory
-{
+public class HMetaValueFactory extends HFactory implements MetaValueFactory {
     public void deleteMetaValue(MetaValue metaValue) throws ConfigException,
-            DataSourceException
-    {
+            DataSourceException {
         try {
             getSession().delete(metaValue);
         } catch (HibernateException e) {
@@ -41,8 +39,7 @@ public class HMetaValueFactory extends HFactory implements MetaValueFactory
     }
 
     public MetaValue getMetaValue(DocumentVersion documentVersion, Meta meta)
-            throws ConfigException, DataSourceException
-    {
+            throws ConfigException, DataSourceException {
         try {
             meta.getMetaType();
             MetaValue mv = (MetaValue) getSession().createCriteria(MetaValueBean.class)
@@ -56,8 +53,7 @@ public class HMetaValueFactory extends HFactory implements MetaValueFactory
     }
 
     public boolean hasValue(Meta meta)
-            throws ConfigException, DataSourceException
-    {
+            throws ConfigException, DataSourceException {
         try {
             boolean isEmpty = getSession().createCriteria(MetaValueBean.class)
                     .add(Restrictions.eq("metaUid", meta.getUid()))
@@ -70,8 +66,7 @@ public class HMetaValueFactory extends HFactory implements MetaValueFactory
     }
 
     public List<MetaValue> getMetaValues(DocumentVersion documentVersion)
-            throws ConfigException, DataSourceException
-    {
+            throws ConfigException, DataSourceException {
         try {
             List<MetaValue> lValues = (List<MetaValue>) getSession().createCriteria(MetaValueBean.class)
                     .add(Restrictions.eq("documentVersionUid", documentVersion.getUid()))
@@ -84,25 +79,9 @@ public class HMetaValueFactory extends HFactory implements MetaValueFactory
     }
 
     public void saveMetaValue(MetaValue metaValue) throws ConfigException,
-            DataSourceException
-    {
+            DataSourceException {
         try {
-            switch (metaValue.getMeta().getMetaType()) {
-                case MetaType.STRING:
-                    getSession().save((MetaStringValue) metaValue);
-                    break;
-                case MetaType.NUMBER:
-                    getSession().save((MetaNumberValue) metaValue);
-                    break;
-                case MetaType.DATE:
-                    getSession().save((MetaDateValue) metaValue);
-                    break;
-                case MetaType.BOOLEAN:
-                    getSession().save((MetaBooleanValue) metaValue);
-                    break;
-                default:
-                    break;
-            }
+            getSession().save(metaValue);
             getSession().flush();
         } catch (HibernateException e) {
             throw new DataSourceException(e);
@@ -110,45 +89,14 @@ public class HMetaValueFactory extends HFactory implements MetaValueFactory
     }
 
     public void saveMetaValueOverride(MetaValue metaValue) throws ConfigException,
-            DataSourceException
-    {
+            DataSourceException {
         try {
-            switch (metaValue.getMeta().getMetaType()) {
-                case MetaType.STRING:
-                    getSession().save((MetaStringValue) metaValue);
-                    break;
-                case MetaType.NUMBER:
-                    getSession().save((MetaNumberValue) metaValue);
-                    break;
-                case MetaType.DATE:
-                    getSession().save((MetaDateValue) metaValue);
-                    break;
-                case MetaType.BOOLEAN:
-                    getSession().save((MetaBooleanValue) metaValue);
-                    break;
-                default:
-                    break;
-            }
+            getSession().save(metaValue);
         } catch (HibernateException e) {
             if (e instanceof NonUniqueObjectException) {
                 //merge and update
                 try {
-                    switch (metaValue.getMeta().getMetaType()) {
-                        case MetaType.STRING:
-                            getSession().merge((MetaStringValue) metaValue);
-                            break;
-                        case MetaType.NUMBER:
-                            getSession().merge((MetaNumberValue) metaValue);
-                            break;
-                        case MetaType.DATE:
-                            getSession().merge((MetaDateValue) metaValue);
-                            break;
-                        case MetaType.BOOLEAN:
-                            getSession().merge((MetaBooleanValue) metaValue);
-                            break;
-                        default:
-                            break;
-                    }
+                    getSession().merge(metaValue);
                 } catch (HibernateException ex) {
                     throw new DataSourceException(e);
                 }
@@ -159,8 +107,7 @@ public class HMetaValueFactory extends HFactory implements MetaValueFactory
     }
 
     public void updateMetaValue(MetaValue metaValue) throws ConfigException,
-            DataSourceException
-    {
+            DataSourceException {
         try {
             getSession().update(metaValue);
         } catch (HibernateException e) {
@@ -168,8 +115,7 @@ public class HMetaValueFactory extends HFactory implements MetaValueFactory
         }
     }
 
-    public List<MetaValue> getMetaByValue(String value, int type) throws ConfigException, DataSourceException
-    {
+    public List<MetaValue> getMetaByValue(String value, int type) throws ConfigException, DataSourceException {
         try {
             String query = "";
             Query q = null;
@@ -195,6 +141,11 @@ public class HMetaValueFactory extends HFactory implements MetaValueFactory
 
                     }
                     break;
+                case MetaType.LIST:
+                    query = "SELECT m FROM MetaListValue m JOIN m.value v WHERE v = :value";
+                    q = getSession().createQuery(query)
+                            .setString("value", value);
+                    break;
             }
             return q.list();
         } catch (HibernateException e) {
@@ -202,8 +153,7 @@ public class HMetaValueFactory extends HFactory implements MetaValueFactory
         }
     }
 
-    public void cleanMetaValues() throws ConfigException, DataSourceException
-    {
+    public void cleanMetaValues() throws ConfigException, DataSourceException {
         String query =
                 "delete from %s mvb where mvb.documentVersionUid " +
                         "in (select uid from DocumentVersion where documentUid is null)";
@@ -212,10 +162,10 @@ public class HMetaValueFactory extends HFactory implements MetaValueFactory
         getSession().createQuery(String.format(query, "MetaDateValue")).executeUpdate();
         getSession().createQuery(String.format(query, "MetaNumberValue")).executeUpdate();
         getSession().createQuery(String.format(query, "MetaBooleanValue")).executeUpdate();
+        getSession().createQuery(String.format(query, "MetaListValue")).executeUpdate();
     }
 
-    public void cleanDocumentMetaValues(Document document) throws ConfigException, DataSourceException
-    {
+    public void cleanDocumentMetaValues(Document document) throws ConfigException, DataSourceException {
         String query = "delete from %s mvb where mvb.documentVersionUid in " +
                 "(select uid from DocumentVersion where document = :document)";
 
@@ -231,6 +181,21 @@ public class HMetaValueFactory extends HFactory implements MetaValueFactory
         getSession().createQuery(String.format(query, "MetaBooleanValue"))
                 .setEntity("document", document)
                 .executeUpdate();
+
+
+        //TODO: check JPA / Hibernate feature enhancement, for sub collection with @ElementCollection
+        //on delete cascade.
+        // For now, have to manual delete item
+
+        String item = "select v from MetaListValue v where v.documentVersionUid in "
+                + "(select uid from DocumentVersion where document = :document)";
+        List<MetaListValue> metaListValues =
+                getSession().createQuery(item)
+                        .setEntity("document", document)
+                        .list();
+        for (MetaListValue metaListValue : metaListValues) {
+            getSession().delete(metaListValue);
+        }
     }
 }
 

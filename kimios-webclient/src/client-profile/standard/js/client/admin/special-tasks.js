@@ -44,6 +44,7 @@ Admin.Tasks = {
         rootNode.appendChild(Admin.Tasks.getOwnersNode(contextPanel));
         rootNode.appendChild(Admin.Tasks.getDeadLockNode(contextPanel));
         rootNode.appendChild(Admin.Tasks.getReIndexNode(contextPanel));
+        rootNode.appendChild(Admin.Tasks.getLogNode(contextPanel));
         return Admin.getPanel(kimios.lang('SpecialTasks'), 'specialtasks', treePanel,
             contextPanel);
     },
@@ -116,6 +117,95 @@ Admin.Tasks = {
         });
 
         return node;
+    },
+
+    getLogNode: function (contextPanel) {
+        var node = new Ext.tree.TreeNode({
+            text: kimios.lang('LoggingManagement'),
+            iconCls: 'reporting'
+        });
+
+        node.on('click', function (node, e) {
+            var p = Admin.Tasks.getLogPanel(node);
+            contextPanel.removeAll();
+            contextPanel.add(p);
+            contextPanel.doLayout();
+
+        });
+
+        return node;
+    },
+
+    getLogPanel : function(node){
+
+        var disableLogButton = new Ext.Button({
+            id: 'admin-tasks-disable-btn',
+            text: kimios.lang('DisableLog'),
+            iconCls: 'reindex',
+            disabled: false,
+            handler: function () {
+                //Ext.getCmp('admin-tasks-reindex-btn').disable();
+                //Ext.getCmp('admin-tasks-reindex-pb').setVisible(true);
+                kimios.request.AdminRequest.disableServiceLog();
+            }
+        });
+
+        var enableLogButton = new Ext.Button({
+            id: 'admin-tasks-enable-btn',
+            text: kimios.lang('EnableLog'),
+            iconCls: 'reindex',
+            disabled: false,
+            handler: function () {
+                //Ext.getCmp('admin-tasks-reindex-btn').disable();
+                //Ext.getCmp('admin-tasks-reindex-pb').setVisible(true);
+                kimios.request.AdminRequest.enableServiceLog();
+            }
+        });
+
+
+        var editHandler = function(e){
+
+            if(e.value != e.originalValue){
+                console.log('editing ' + e.record.get('loggerName') + ' ==> '  + e.value + '(old: ' + e.originalValue + ')');
+                kimios.request.AdminRequest.setLoggerLevel(e.record.get('loggerName'), e.value, this);
+            }
+        }
+
+        var logGrid = new Ext.grid.EditorGridPanel({
+            store: kimios.store.AdminStore.getLoggerStore(),
+            cm: new Ext.grid.ColumnModel([{
+                header: kimios.lang('LoggerName'),
+                dataIndex: 'loggerName',
+                readOnly: true,
+                sortable: true,
+                width: 400,
+                menuDisabled: false,
+                align: 'left'
+            }, {
+                header: kimios.lang('LoggerLevel'),
+                dataIndex: 'loggerLevel',
+                width: 90,
+                editable: true,
+                editor: new Ext.form.TextField({}),
+                readOnly: true,
+                sortable: true,
+                menuDisabled: false,
+                align: 'left'
+            }])
+        });
+        logGrid.on('afteredit', editHandler, logGrid);
+
+        var p = new Ext.Panel({
+            id: 'admin-tasks-logs-panel',
+            title: node.text,
+            layout: 'fit',
+//            iconCls: 'reindex',
+            bodyStyle: 'padding:5px;background-color:transparent;',
+            tbar: [ disableLogButton, enableLogButton ],
+            items: [ logGrid  ]
+        });
+
+        return p;
     },
 
     getReIndexPanel: function (node) {

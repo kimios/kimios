@@ -18,6 +18,8 @@ package org.kimios.kernel.events;
 import org.kimios.kernel.events.annotations.DmsEvent;
 import org.kimios.kernel.events.annotations.DmsEventName;
 import org.kimios.kernel.events.annotations.DmsEventOccur;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -27,6 +29,9 @@ import java.util.Set;
 
 public abstract class GenericEventHandler
 {
+
+    private static Logger logger = LoggerFactory.getLogger(GenericEventHandler.class);
+
     protected Set<Method> methods;
 
     public Set<Method> getMethods()
@@ -43,9 +48,11 @@ public abstract class GenericEventHandler
                 DmsEvent st = null;
                 st = it.getAnnotation(DmsEvent.class);
                 if (st != null) {
+
                     DmsEventName[] names = st.eventName();
                     List<DmsEventName> nameList = Arrays.asList(names);
                     for (DmsEventName nCurrent : evt.eventName()) {
+                        logger.trace(" will call " + it.getName() + " on " + this.getClass().getName() + " with " + ctx + " ( " + ctx.getEntity() + ") on event " + nCurrent.name() + ". accepted ? " + nameList.contains(nCurrent) + " / " + _when.name());
                         if (nameList.contains(nCurrent) && st.when().equals(_when)) {
                             /*
                             *  Generate the before context

@@ -18,16 +18,15 @@ package org.kimios.webservices;
 
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
-import org.kimios.kernel.ws.pojo.Bookmark;
-import org.kimios.kernel.ws.pojo.Document;
-import org.kimios.kernel.ws.pojo.SymbolicLink;
-import org.kimios.kernel.ws.pojo.WorkflowStatus;
+import org.kimios.kernel.ws.pojo.*;
 
+import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.io.InputStream;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA. User: farf Date: 4/1/12 Time: 4:59 PM To change this template use File | Settings | File
@@ -69,6 +68,19 @@ public interface DocumentService {
             @QueryParam(value = "isSecurityInherited") @WebParam(name = "isSecurityInherited")
             boolean isSecurityInherited) throws DMServiceException;
 
+    @GET
+    @Path("/createDocumentFromFullPathAndVersion")
+    @Produces("application/json")
+    public long createDocumentFromFullPathAndVersion(
+            @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+            @QueryParam(value = "name") @WebParam(name = "name") String name,
+            @QueryParam(value = "extension") @WebParam(name = "extension") String extension,
+            @QueryParam(value = "isSecurityInherited") @WebParam(name = "isSecurityInherited") boolean isSecurityInherited,
+            @QueryParam(value = "securitiesXmlStream") @WebParam(name = "securitiesXmlStream") String securitiesXmlStream,
+            @QueryParam(value = "documentTypeId") @WebParam(name = "documentTypeId") long documentTypeId,
+            @QueryParam(value = "metasXmlStream") @WebParam(name = "metasXmlStream") String metasXmlStream
+            ) throws DMServiceException;
+
     @POST
     @Path("/createDocumentWithProperties")
     @Produces("application/json")
@@ -105,6 +117,24 @@ public interface DocumentService {
             @Multipart(value = "document") InputStream documentStream,
             @Multipart(value = "md5") String hashMd5,
             @Multipart(value = "sha1") String hashSha1) throws DMServiceException;
+
+    @POST
+    @Path("/createDocumentFromFullPathWithPropertiesNoHash")
+    @Produces("application/json")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public long createDocumentFromFullPathWithPropertiesNoHash(
+            @Multipart(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+            @Multipart(value = "path") @WebParam(name = "path") String name,
+            @Multipart(value = "isSecurityInherited") @WebParam(name = "isSecurityInherited") boolean isSecurityInherited,
+            @Multipart(value = "securityItems", required = false) @WebParam(name = "securityItems") String securityItemsJson,
+            @Multipart(value = "isRecursive") @WebParam(name = "isRecursive") boolean isRecursive,
+            @Multipart(value = "documentTypeId", required = false) @WebParam(name = "documentTypeId") Long documentTypeId,
+            @Multipart(value = "metaItems", required = false) @WebParam(name = "metaItems") String metaValuesJson,
+            @Multipart(value = "document") InputStream documentStream,
+            @DefaultValue(value = "") @Multipart(value = "md5", required = false) String hashMd5,
+            @DefaultValue(value = "") @Multipart(value = "sha1", required = false) String hashSha1) throws DMServiceException;
+
+
 
     @GET
     @Path("/updateDocument")

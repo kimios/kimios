@@ -22,17 +22,26 @@ import org.kimios.kernel.ws.pojo.DocumentWrapper;
 import org.kimios.webservices.CoreService;
 import org.kimios.webservices.DMServiceException;
 import org.kimios.webservices.FileTransferService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 @WebService(targetNamespace = "http://kimios.org", serviceName = "FileTransferService", name = "FileTransferService")
 public class FileTransferServiceImpl
         extends CoreService
         implements FileTransferService {
+
+    private static Logger logger = LoggerFactory.getLogger(FileTransferServiceImpl.class);
+
     /**
      * @param sessionUid
      * @param documentId
@@ -134,25 +143,24 @@ public class FileTransferServiceImpl
     }
 
     @WebMethod(exclude = true)
-    public InputStream downloadDocumentVersion(String sessionId, long transactionId)
+    public Response downloadDocumentVersion(String sessionId, final long transactionId, Boolean inline)
             throws DMServiceException {
         try {
-
-            Session session = getHelper().getSession(sessionId);
-            return transferController.getDocumentVersionStream(session, transactionId);
-        } catch (Exception e) {
-            throw getHelper().convertException(e);
-        }
-    }
-
-    @WebMethod(exclude = true)
-    public Response downloadDocument(String sessionId, long transactionId)
-            throws DMServiceException {
-        try {
-
-            Session session = getHelper().getSession(sessionId);
+            final Session session = getHelper().getSession(sessionId);
             DocumentWrapper dw = transferController.getDocumentVersionWrapper(session, transactionId);
-            Response.ResponseBuilder response = Response.ok((Object) new File(dw.getStoragePath()));
+            StreamingOutput sOutput = new StreamingOutput() {
+                @Override
+                public void write(OutputStream output) throws IOException, WebApplicationException {
+                    try {
+                        transferController.readVersionStream(session, transactionId, output);
+                        output.flush();
+                        output.close();
+                    } catch (Exception ex) {
+                        logger.error("error on streaming", ex);
+                    }
+                }
+            };
+            Response.ResponseBuilder response = Response.ok(sOutput);
             response.header("Content-Description", "File Transfer");
             response.header("Content-Type", dw.getContentType());
             response.header("Content-Transfer-Encoding", "binary");
@@ -160,7 +168,41 @@ public class FileTransferServiceImpl
             response.header("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
             response.header("Pragma", "public");
             response.header("Content-Length", dw.getLength());
-            response.header("Content-Disposition", "attachment; filename=\"" + dw.getFilename() + "\"");
+            response.header("Content-Disposition", (inline ? "inline;" : "attachment;") + " filename=\"" + dw.getFilename() + "\"");
+            return response.build();
+        } catch (Exception e) {
+            logger.error("error", e);
+            throw getHelper().convertException(e);
+        }
+    }
+
+    @WebMethod(exclude = true)
+    public Response downloadDocument(String sessionId, final long transactionId, Boolean inline)
+            throws DMServiceException {
+        try {
+            final Session session = getHelper().getSession(sessionId);
+            DocumentWrapper dw = transferController.getDocumentVersionWrapper(session, transactionId);
+            StreamingOutput sOutput = new StreamingOutput() {
+                @Override
+                public void write(OutputStream output) throws IOException, WebApplicationException {
+                    try {
+                        transferController.readVersionStream(session, transactionId, output);
+                        output.flush();
+                        output.close();
+                    } catch (Exception ex) {
+                        logger.error("error on streaming", ex);
+                    }
+                }
+            };
+            Response.ResponseBuilder response = Response.ok(sOutput);
+            response.header("Content-Description", "File Transfer");
+            response.header("Content-Type", dw.getContentType());
+            response.header("Content-Transfer-Encoding", "binary");
+            response.header("Expires", "0");
+            response.header("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
+            response.header("Pragma", "public");
+            response.header("Content-Length", dw.getLength());
+            response.header("Content-Disposition", (inline ? "inline;" : "attachment;") + " filename=\"" + dw.getFilename() + "\"");
             return response.build();
 
 

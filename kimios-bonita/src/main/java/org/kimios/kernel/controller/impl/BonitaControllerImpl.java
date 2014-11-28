@@ -69,6 +69,12 @@ public class BonitaControllerImpl implements BonitaController {
     public List<ProcessWrapper> getProcesses(Session session) throws DmsKernelException {
 
         try {
+
+            if (!bonitaCfg.isBonitaEnabled()) {
+                log.debug("disabled bonita link. returning empty data");
+                return new ArrayList<ProcessWrapper>();
+            }
+
             APISession apiSession = login(session);
             ProcessAPI processAPI = TenantAPIAccessor.getProcessAPI(apiSession);
 
@@ -88,7 +94,7 @@ public class BonitaControllerImpl implements BonitaController {
                     ProcessWrapper wrapper = ProcessWrapperFactory.createProcessWrapper(p);
 
                     wrapper.setUrl(bonitaCfg.getBonitaPublicServerUrl() + (bonitaCfg.getBonitaApplicationName() != null
-                            && bonitaCfg.getBonitaApplicationName().length() > 0 ? "/" + bonitaCfg.getBonitaApplicationName() : "") + "/console/" +
+                            && bonitaCfg.getBonitaApplicationName().length() > 0 ? "/" + bonitaCfg.getBonitaApplicationName() : "") + "/portal/" +
                             "homepage?__kb=" + session.getUid() + "&ui=form&locale=en#form=" + p.getName() + "--" +
                             p.getVersion() + "$entry&process=" + p.getProcessId() +
                             "&autoInstantiate=false&user=" + apiSession.getUserId() + "&mode=app");
@@ -108,10 +114,15 @@ public class BonitaControllerImpl implements BonitaController {
     }
 
 
-
-
     public TasksResponse getPendingTasks(Session session, int start, int limit) throws DmsKernelException {
         try {
+
+
+            if (!bonitaCfg.isBonitaEnabled()) {
+                log.debug("disabled bonita link. returning empty data");
+                return new TasksResponse(new ArrayList<TaskWrapper>(), 0);
+            }
+
             APISession apiSession = login(session);
             ProcessAPI processAPI = TenantAPIAccessor.getProcessAPI(apiSession);
             IdentityAPI identityAPI = TenantAPIAccessor.getIdentityAPI(apiSession);
@@ -135,10 +146,15 @@ public class BonitaControllerImpl implements BonitaController {
 
     public TasksResponse getAssignedTasks(Session session, int start, int limit) throws DmsKernelException {
         try {
+
+            if (!bonitaCfg.isBonitaEnabled()) {
+                log.debug("disabled bonita link. returning empty data");
+                return new TasksResponse(new ArrayList<TaskWrapper>(), 0);
+            }
+
             APISession apiSession = login(session);
             ProcessAPI processAPI = TenantAPIAccessor.getProcessAPI(apiSession);
             IdentityAPI identityAPI = TenantAPIAccessor.getIdentityAPI(apiSession);
-
 
 
             System.out.println(" Just before getting whole human tasks " + start + " " + limit);
@@ -164,6 +180,13 @@ public class BonitaControllerImpl implements BonitaController {
     public TasksResponse getTasksByInstance(Session session, long processInstanceId, int start, int limit)
             throws DmsKernelException {
         try {
+
+
+            if (!bonitaCfg.isBonitaEnabled()) {
+                log.debug("disabled bonita link. returning empty data");
+                return new TasksResponse(new ArrayList<TaskWrapper>(), 0);
+            }
+
             APISession apiSession = login(session);
             ProcessAPI processAPI = TenantAPIAccessor.getProcessAPI(apiSession);
             IdentityAPI identityAPI = TenantAPIAccessor.getIdentityAPI(apiSession);
@@ -232,6 +255,13 @@ public class BonitaControllerImpl implements BonitaController {
     public CommentWrapper addComment(Session session, Long taskId, String comment) throws DmsKernelException {
 
         try {
+
+
+            if (!bonitaCfg.isBonitaEnabled()) {
+                log.debug("disabled bonita link. returning empty data");
+                return new CommentWrapper();
+            }
+
             APISession apiSession = login(session);
             ProcessAPI processAPI = TenantAPIAccessor.getProcessAPI(apiSession);
             IdentityAPI identityAPI = TenantAPIAccessor.getIdentityAPI(apiSession);
@@ -255,6 +285,12 @@ public class BonitaControllerImpl implements BonitaController {
 
     public List<CommentWrapper> getComments(Session session, Long taskId) throws DmsKernelException {
         try {
+
+            if (!bonitaCfg.isBonitaEnabled()) {
+                log.debug("disabled bonita link. returning empty data");
+                return new ArrayList<CommentWrapper>();
+            }
+
             APISession apiSession = login(session);
             ProcessAPI processAPI = TenantAPIAccessor.getProcessAPI(apiSession);
             IdentityAPI identityAPI = TenantAPIAccessor.getIdentityAPI(apiSession);
@@ -287,13 +323,13 @@ public class BonitaControllerImpl implements BonitaController {
 
         log.info(tasks.size() + " tasks found");
 
-        for (ActivityInstance t: tasks) {
+        for (ActivityInstance t : tasks) {
 
             TaskWrapper wrapper = null;
-            if( t instanceof HumanTaskInstance)
-                wrapper = TaskWrapperFactory.createTaskWrapper((HumanTaskInstance)t, identityAPI);
-            else if(t instanceof MultiInstanceActivityInstance)
-                wrapper = TaskWrapperFactory.createTaskWrapper((MultiInstanceActivityInstance)t, identityAPI);
+            if (t instanceof HumanTaskInstance)
+                wrapper = TaskWrapperFactory.createTaskWrapper((HumanTaskInstance) t, identityAPI);
+            else if (t instanceof MultiInstanceActivityInstance)
+                wrapper = TaskWrapperFactory.createTaskWrapper((MultiInstanceActivityInstance) t, identityAPI);
 
 
             // Add process to current task
@@ -301,7 +337,7 @@ public class BonitaControllerImpl implements BonitaController {
             wrapper.setProcessWrapper(ProcessWrapperFactory.createProcessWrapper(p));
             // Set direct url to task
             wrapper.setUrl(bonitaCfg.getBonitaPublicServerUrl() + (bonitaCfg.getBonitaApplicationName() != null
-                    && bonitaCfg.getBonitaApplicationName().length() > 0 ? "/" + bonitaCfg.getBonitaApplicationName() : "") + "/console/" +
+                    && bonitaCfg.getBonitaApplicationName().length() > 0 ? "/" + bonitaCfg.getBonitaApplicationName() : "") + "/portal/" +
                     "homepage?__kb=" + session.getUid() + "&ui=form&locale=en#form=" + p.getName() + "--" + p.getVersion() +
                     "--" + t.getName() + "$entry&task=" + t.getId() + "&mode=app");
             log.info(wrapper.toString());
@@ -323,7 +359,7 @@ public class BonitaControllerImpl implements BonitaController {
         } catch (LoginException e) {
             log.error("error while authenticating to Bonita", e);
             throw new DmsKernelException(e, "error while authenticating to Bonita");
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error("error while attempting bonita connexion", e);
             throw new DmsKernelException(e, "error while attempting bonita connexion");
         }
@@ -344,10 +380,10 @@ public class BonitaControllerImpl implements BonitaController {
     }
 
     private void logout(APISession session) throws DmsKernelException {
-        try{
+        try {
             LoginAPI loginAPI = TenantAPIAccessor.getLoginAPI();
             loginAPI.logout(session);
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error("error while attempting bonita connexion for logout", e);
             throw new DmsKernelException(e, "error while attempting bonita connexion");
         }

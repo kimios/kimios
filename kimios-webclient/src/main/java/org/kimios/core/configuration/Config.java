@@ -32,4 +32,10 @@ public class Config
     public static String DM_TMP_FILES_PATH = "temp.directory";
 
     public static String DM_CHUNK_SIZE = "transfer.chunksize";
+
+    public static String DEFAULT_DOMAIN = "default.domain";
+
+    public static String DEFAULT_DOCUMENT_TYPE = "default.documenttype";
+
+    public static String BONITA_ENABLED = "bonita.enabled";
 }

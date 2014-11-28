@@ -32,7 +32,7 @@ import java.util.Date;
 @TypeDefs({
         @TypeDef(name = "dateUserType", typeClass = DateUserType.class)
 })
-public class MetaDateValue extends MetaValueBean
+public class MetaDateValue extends MetaValueBean<Date>
 {
     @Type(type = "dateUserType")
     @Column(name = "meta_date_value", nullable = true)
@@ -59,21 +59,16 @@ public class MetaDateValue extends MetaValueBean
         return this.value;
     }
 
-    public void setValue(Object value) throws MetaValueTypeException
+    public void setValue(Date value) throws MetaValueTypeException
     {
 
-        if (value.getClass().equals(Date.class) || value.getClass().equals(Timestamp.class)) {
-            this.value = (Date) value;
+        if (value != null && value.getClass().equals(Date.class) || value.getClass().equals(Timestamp.class)) {
+            this.value = value;
         } else {
             throw new MetaValueTypeException(
                     "Meta value type \"" + Date.class.getName() + "\" was expected instead of \"" +
                             value.getClass().getName() + "\"");
         }
-    }
-
-    public void setValue(Date value)
-    {
-        this.value = value;
     }
 }
 

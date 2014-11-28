@@ -28,6 +28,8 @@ public class Criteria
 
     private String fieldName;
 
+    private String operator;
+
     private int position = 0;
 
     private boolean isFaceted;
@@ -37,6 +39,8 @@ public class Criteria
     private List<String> filtersValues;
 
     private String facetField;
+
+    private boolean exclusiveFacet = false;
 
     private boolean isFacetRange;
 
@@ -53,6 +57,25 @@ public class Criteria
     private String dateFacetGapType;
 
     private String dateFacetGapRange;
+
+    private boolean rawQuery = false;
+
+
+    public boolean isExclusiveFacet() {
+        return exclusiveFacet;
+    }
+
+    public void setExclusiveFacet(boolean exclusiveFacet) {
+        this.exclusiveFacet = exclusiveFacet;
+    }
+
+    public String getOperator() {
+        return operator;
+    }
+
+    public void setOperator(String operator) {
+        this.operator = operator;
+    }
 
     public String getDateFacetGapType()
     {
@@ -202,6 +225,14 @@ public class Criteria
     public void setPosition( int position )
     {
         this.position = position;
+    }
+
+    public boolean isRawQuery() {
+        return rawQuery;
+    }
+
+    public void setRawQuery(boolean rawQuery) {
+        this.rawQuery = rawQuery;
     }
 
     @Override

@@ -42,12 +42,24 @@
             <artifactId>kimios-index</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.bouncycastle</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.kimios</groupId>
             <artifactId>kimios-convert</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.bouncycastle</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.kimios</groupId>
@@ -222,6 +234,12 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aspects</artifactId>
+            <version>${spring.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
             <version>${hibernate.version}</version>
@@ -231,6 +249,12 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-ehcache</artifactId>
             <version>${hibernate.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.javax.persistence</groupId>
+            <artifactId>hibernate-jpa-2.0-api</artifactId>
+            <version>1.0.1.Final</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -277,6 +301,7 @@
                     -->
                     <packagingExcludes>
                         WEB-INF/lib/commons-logging-*.jar,
+                        WEB-INF/lib/bc*-jdk14*.jar,
                         %regex[WEB-INF/lib/log4j-(?!over-slf4j).*.jar]
                     </packagingExcludes>
                 </configuration>
@@ -353,6 +378,7 @@
                     <artifactId>kimios-dolibarr</artifactId>
                     <version>${project.version}</version>
                 </dependency>
+
             </dependencies>
         </profile>
         <profile>

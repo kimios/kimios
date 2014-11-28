@@ -1,3 +1,5 @@
+<%@ page import="java.util.Properties" %>
+<%@ page import="java.io.FileInputStream" %>
 <%@page contentType="text/html" %>
 <%@page pageEncoding="UTF-8" %>
 <%--
@@ -35,7 +37,25 @@
         return contextPath + '?servlet=' + servlet;
     }
 
-    var bonitaEnabled = false;
 
+
+
+    /*
+        Load configuration
+     */
+    var clientConfig = {}
+
+    <%
+        Properties properties = new Properties();
+        properties.load(new FileInputStream(System.getProperty("kimios.home") + "/" + this.getServletConfig().getServletContext().getInitParameter("kimios.app.name") + "/conf/kimios.properties"));
+
+        for(String p: properties.stringPropertyNames()){
+            String pName = p.replaceAll("\\.", "");
+            %>
+                clientConfig.<%=pName%> = '<%=properties.get(p).toString()%>';
+            <%
+        }
+    %>
+    var bonitaEnabled = clientConfig.bonitaenabled === 'true';
 
 </script>

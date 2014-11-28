@@ -47,7 +47,17 @@ public class BonitaUsersSynchronizer {
     @Transactional
     public void synchronize() throws JobExecutionException {
         try {
+
+            if(!bonitaCfg.isBonitaEnabled()){
+                log.error("Bonita Link is Disabled. Sync job is now disabled until next Kimios restart.");
+                throw new Exception("BonitaDisabled");
+
+            }
+
             bonitaCfg.init();
+
+
+
 
 
             LoginAPI loginAPI = TenantAPIAccessor.getLoginAPI();
@@ -210,7 +220,6 @@ public class BonitaUsersSynchronizer {
 
         } catch (Exception ex) {
             log.error("error while sync with Bonita", ex);
-            log.error("Please check Bonita Settings inside kimios.properties " + (ex.getMessage()));
             JobExecutionException jobExecutionException = new JobExecutionException(ex);
                  /*
                     Disable job

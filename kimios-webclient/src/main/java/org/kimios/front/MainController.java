@@ -161,18 +161,16 @@ public class MainController extends HttpServlet {
                 if (!response.isCommitted()) {
                     c.setSessionUid(sessionUid);
                     json = c.execute();
-                    log.debug("JSON " + json);
                     if (!json.equals("downloadaction"))
                         response.getWriter().write(json);
                 }
             }
         } catch (Exception e) {
-            log.error("Error ", e);
+            log.error("webclient error report", e);
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             e.printStackTrace(pw);
             json = "{success:false,exception:\"" + StringEscapeUtils.escapeJava(e.getMessage()) + "\",trace:\"" + StringEscapeUtils.escapeJava(sw.toString()) + "\"}";
-            log.debug("JSON " + json);
             response.getWriter().write(json);
         }
     }

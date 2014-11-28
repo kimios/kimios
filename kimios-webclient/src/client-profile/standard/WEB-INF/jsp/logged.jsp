@@ -56,6 +56,8 @@
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/GroupTab.css"/>
     <link rel="stylesheet" type="text/css"
           href="<%=request.getContextPath()%>/js/ext/resources/css/kimios-theme-grouptab.css"/>
+    <link rel="stylesheet" type="text/css"
+          href="<%=request.getContextPath()%>/css/dashboard.css"/>
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/icons"/>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/ext/adapter/ext/ext-base.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/ext/ext-all.js"></script>
@@ -76,7 +78,7 @@
         var currentSource = '<%=u.getSource().replaceAll("'", "\\\\'")%>';
         var currentMail = '<%=(u.getMail() != null ? u.getMail().replaceAll("'", "\\\\'") : "")%>';
     </script>
-    <script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/run_prettify.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/RowExpander.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/ColumnTree.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/StatusBar.js"></script>
@@ -113,6 +115,9 @@
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/form/SecurityEntityField.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/form/DocumentTypeField.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/form/DMEntityField.js"></script>
+
+
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/util/MultiComboBox.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/form/MetaFeedField.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/form/WorkflowField.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/form/ProcessField.js"></script>
@@ -138,6 +143,11 @@
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/search/SearchButton.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/search/SearchField.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/search/AdvancedSearchPanel.js"></script>
+
+    <!-- Dashboard -->
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/explorer/DashBoard.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/search/SearchFieldGeneric.js"></script>
+
     <script type="text/javascript"
             src="<%=request.getContextPath()%>/js/client/properties/PropertiesWindow.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/properties/PropertiesPanel.js"></script>

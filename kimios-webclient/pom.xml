@@ -216,6 +216,43 @@
                         WEB-INF/lib/commons-logging-*.jar,
                         %regex[WEB-INF/lib/log4j-(?!over-slf4j).*.jar]
                     </packagingExcludes>
+                    <archive>
+                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>2.3.7</version>
+                <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>manifest</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+
+                    <supportedProjectTypes>
+                        <supportedProjectType>war</supportedProjectType>
+                    </supportedProjectTypes>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                        <Bundle-Version>${project.version}</Bundle-Version>
+                        <Bundle-ClassPath>WEB-INF/classes</Bundle-ClassPath>
+                        <Web-ContextPath>kimios-client</Web-ContextPath>
+                        <Import-Package>
+                            javax.servlet; version="[2.4.0, 4.0.0)",
+                            javax.servlet.http; version="[2.4.0, 4.0.0)",
+                            javax.servlet.jsp.jstl.core; version="[1.2,2.0)",
+                            javax.servlet.resources; version="[2.4.0, 4.0.0)",
+                            *
+                        </Import-Package>
+                    </instructions>
                 </configuration>
             </plugin>
         </plugins>
@@ -228,9 +265,9 @@
               <resource>
                 <directory>src/main/resources</directory>
               </resource>
-              <resource>
+              <!--<resource>
                 <directory>src/client-settings/general</directory>
-              </resource>
+              </resource>-->
             </resources>
           </build>
         </profile>
@@ -256,10 +293,10 @@
                                     <directory>src/client-profile/standard</directory>
                                     <targetPath />
                                 </resource>
-                                <resource>
+                                <!--<resource>
                                     <directory>src/client-settings</directory>
                                     <targetPath>WEB-INF</targetPath>
-                                </resource>
+                                </resource>-->
                             </webResources>
                         </configuration>
                     </plugin>

@@ -16,6 +16,7 @@
 
 package org.kimios.kernel.ws.pojo;
 
+import javax.activation.FileDataSource;
 import javax.activation.MimetypesFileTypeMap;
 import java.io.IOException;
 
@@ -29,11 +30,12 @@ public class DocumentWrapper {
         this.storagePath = storagePath;
         this.filename = filename;
         this.length = length;
-        this.mft = new MimetypesFileTypeMap(this.getClass().getClassLoader().getResourceAsStream("META-INF/mime.types"));
+        //this.mft = new MimetypesFileTypeMap(this.getClass().getClassLoader().getResourceAsStream("META-INF/mime.types"));
+
     }
 
     public String getContentType() {
-        return mft.getContentType(filename);
+        return new FileDataSource(storagePath).getContentType();
     }
 
     public String getStoragePath() {

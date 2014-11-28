@@ -15,8 +15,11 @@
  */
 package org.kimios.kernel.dms.metafeeds;
 
+import org.kimios.kernel.dms.MetaFeed;
 import org.kimios.kernel.dms.MetaFeedImpl;
 import org.kimios.kernel.utils.ClassFinder;
+import org.kimios.utils.extension.ExtensionRegistry;
+import org.kimios.utils.extension.ExtensionRegistryManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,20 +27,23 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class MetaFeedManager
+public class MetaFeedManager extends ExtensionRegistry<MetaFeedImpl>
 {
     private static Logger log = LoggerFactory.getLogger(MetaFeedManager.class);
 
-    private static List<String> metasFeedsClass = new ArrayList<String>();
+
+    private static List<String> metaFeedClass = new ArrayList<String>();
 
     public void init()
     {
         log.info("[kimios MetaFeed Manager] - Starting ...");
+        metaFeedClass.clear();
         Collection<Class<? extends MetaFeedImpl>> classes = ClassFinder.findImplement("org.kimios", MetaFeedImpl.class);
-        metasFeedsClass.clear();
         if (classes != null) {
-            for (Class<?> c : classes) {
-                metasFeedsClass.add(c.getName());
+            for (Class<? extends MetaFeedImpl> c : classes) {
+                log.info("mManager adding {}", c);
+                metaFeedClass.add(c.getName());
+                this.addClass(c);
             }
             log.info("[kimios MetaFeed Manager] - Started : " + classes.size() + " loaded and available.");
         } else {
@@ -47,7 +53,8 @@ public class MetaFeedManager
 
     public static List<String> getMetasFeedClasses()
     {
-        return metasFeedsClass;
+        List<String> classz = new ArrayList<String>(ExtensionRegistryManager.itemsAsString(MetaFeedImpl.class));
+        return classz;
     }
 }
 

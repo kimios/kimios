@@ -23,7 +23,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "meta_number_value")
-public class MetaNumberValue extends MetaValueBean
+public class MetaNumberValue extends MetaValueBean<Double>
 {
     @Column(name = "meta_number_value", nullable = false)
     private double value;
@@ -49,20 +49,15 @@ public class MetaNumberValue extends MetaValueBean
         return this.value;
     }
 
-    public void setValue(Object value) throws MetaValueTypeException
+    public void setValue(Double value) throws MetaValueTypeException
     {
-        if (value.getClass().equals(Double.class)) {
+        if (value != null && value.getClass().equals(Double.class)) {
             this.value = (Double) value;
         } else {
             throw new MetaValueTypeException(
                     "Meta value type \"" + Double.class.getName() + "\" was expected instead of \"" +
                             value.getClass().getName() + "\"");
         }
-    }
-
-    public void setValue(double value)
-    {
-        this.value = (Double) value;
     }
 }
 

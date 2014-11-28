@@ -41,7 +41,7 @@ public class ConfigurationManager implements FactoryBean<ConfigurationManager>
 
     private static ConfigurationManager instance;
 
-    private ConfigurationManager()
+    protected ConfigurationManager()
     {
         instance = this;
         log.info("Creating Kimios Configuration Manager");

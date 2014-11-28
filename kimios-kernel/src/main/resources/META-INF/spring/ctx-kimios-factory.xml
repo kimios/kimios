@@ -193,7 +193,9 @@
     <bean id="informationController" class="org.kimios.kernel.controller.impl.ServerInformationController"
             parent="kimiosCoreCtrl"/>
     <bean id="workflowController" class="org.kimios.kernel.controller.impl.WorkflowController" parent="kimiosCoreCtrl"/>
-    <bean id="studioController" class="org.kimios.kernel.controller.impl.StudioController" parent="kimiosCoreCtrl"/>
+    <bean id="studioController" class="org.kimios.kernel.controller.impl.StudioController" parent="kimiosCoreCtrl">
+        <property name="metaFeedManager" ref="metaFeedManager" />
+    </bean>
     <bean id="fileTransferController" class="org.kimios.kernel.controller.impl.FileTransferController"
             parent="kimiosCoreCtrl"/>
     <bean id="reportingController" class="org.kimios.kernel.controller.impl.ReportingController"
@@ -225,5 +227,5 @@
     </bean>
 
     <!-- meta feeds manager -->
-    <bean class="org.kimios.kernel.dms.metafeeds.MetaFeedManager" init-method="init"/>
+    <bean id="metaFeedManager" class="org.kimios.kernel.dms.metafeeds.MetaFeedManager" init-method="init"/>
 </beans>

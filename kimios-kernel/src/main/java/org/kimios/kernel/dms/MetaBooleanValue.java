@@ -23,7 +23,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "meta_boolean_value")
-public class MetaBooleanValue extends MetaValueBean
+public class MetaBooleanValue extends MetaValueBean<Boolean>
 {
     @Column(name = "meta_boolean_value", nullable = true)
     private boolean value;
@@ -49,9 +49,9 @@ public class MetaBooleanValue extends MetaValueBean
         return this.value;
     }
 
-    public void setValue(Object value) throws MetaValueTypeException
+    public void setValue(Boolean value) throws MetaValueTypeException
     {
-        if (value.getClass().equals(Boolean.class)) {
+        if (value != null && value.getClass().equals(Boolean.class)) {
             this.value = (Boolean) value;
         } else {
             throw new MetaValueTypeException(
@@ -60,9 +60,5 @@ public class MetaBooleanValue extends MetaValueBean
         }
     }
 
-    public void setValue(boolean value)
-    {
-        this.value = value;
-    }
 }
 

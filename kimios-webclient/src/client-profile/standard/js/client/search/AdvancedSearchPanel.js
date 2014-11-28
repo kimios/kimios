@@ -76,7 +76,14 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                     // is date
                     if (fields[key] && fields[key] instanceof Date)
                         value = fields[key] ? fields[key].format('Y-m-d') : '';
-                    else
+                    else if(key.indexOf('MetaDataList') > -1){
+                        var tmpVal = fields[key];
+                        if(tmpVal.indexOf(',') > -1){
+                            value = JSON.stringify(tmpVal.split(','));
+                        } else {
+                            value = JSON.stringify([ fields[key] ]);
+                        }
+                    } else
                         value = fields[key] ? fields[key] : '';
 
                     obj += "'" + key + "':'" + value + "',";
@@ -179,7 +186,12 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                         for (var j = 0; j < this.form2.items.length; ++j) {
                             var f = this.form2.items.items[j];
                             if (f.name == fieldName) {
+
                                 f.setValue(query);
+                                if(f.refreshValue){
+                                    f.refreshValue(query);
+                                }
+
                                 break;
                             }
                         }
@@ -260,8 +272,18 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
 
                     // Meta Data parsing when document type set
                     else {
-                        var begin = fieldName.substr(0, 8);
-                        if (begin == 'MetaData') {
+                        if (fieldName.indexOf('MetaDataList') == 0) {
+                            var tabData = eval('(' + criteria.query + ')');
+                            var strQ = '';
+                            for(var u = 0; u < tabData.length; u++){
+                                strQ += tabData[u] + ','
+                            };
+                            if(strQ.length > 0){
+                                strQ = strQ.substr(0, strQ.length - 1);
+                            }
+                            criteria.query = strQ;
+                            this.loadedMetadatas.push(criteria);
+                        } else if (fieldName.substr(0, 8) == 'MetaData') {
                             this.loadedMetadatas.push(criteria);
                         }
 
@@ -428,6 +450,25 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                                 checked: value == 'true' ? true : false,
                                 labelSeparator: kimios.lang('LabelSeparator')
                             }));
+                            break;
+                        case 5:
+                            //list type
+                            if (metaFeedUid == -1) {
+                                fields.push(new Ext.form.TextField({
+                                    name: 'MetaDataList_' + uid,
+                                    fieldLabel: name,
+                                    value: value,
+                                    labelSeparator: kimios.lang('LabelSeparator')
+                                }));
+                            } else {
+                                fields.push(new kimios.form.MetaFeedMultiField({
+                                    name: 'MetaDataList_' + uid,
+                                    metaFeedUid: metaFeedUid,
+                                    fieldLabel: name,
+                                    passedValue: value,
+                                    labelSeparator: kimios.lang('LabelSeparator')
+                                }));
+                            }
                             break;
                     }
                 }, this);

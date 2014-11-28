@@ -175,6 +175,24 @@ public class HDocumentVersionFactory extends HFactory implements DocumentVersion
         }
     }
 
+
+    public void saveDocumentVersionBulk(DocumentVersion v) throws ConfigException, DataSourceException
+    {
+        try {
+            long uid = -1;
+            if (v.getStoragePath() == null || v.getStoragePath().equals("")) {
+                v.setStoragePath(
+                        new SimpleDateFormat("/yyyy/MM/dd/HH/mm/").format(v.getCreationDate()) + v.getDocumentUid() + "_" + v.getCreationDate().getTime() +
+                                ".bin");
+            }
+            uid = (Long) getSession().save(v);
+            getSession().flush();
+        } catch (HibernateException e) {
+            boolean integrity = e instanceof ConstraintViolationException;
+            throw new DataSourceException(e, e.getMessage());
+        }
+    }
+
     public void updateDocumentVersion(DocumentVersion v) throws ConfigException, DataSourceException
     {
         try {

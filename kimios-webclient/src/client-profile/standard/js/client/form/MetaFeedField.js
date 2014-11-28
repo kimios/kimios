@@ -30,3 +30,56 @@ kimios.form.MetaFeedField = Ext.extend(Ext.form.ComboBox,{
 });
 
 
+
+kimios.form.MetaFeedMultiField = Ext.extend(Ext.ux.form.LovCombo, {
+    constructor: function(config){
+        this.editable = false;
+        this.valueField = 'value';
+        this.displayField = 'value';
+        this.triggerAction = 'all';
+        this.maxHeight = 200
+        config.multiSelect = true;
+        config.hideOnSelect = false;
+        config.queryMode = 'local';
+        config.triggerAction = 'all';
+
+        config.id = 'metalistval-' + config.name;
+
+        this.passedValue = config.passedValue;
+
+        if (config.fieldLabel != null)
+            this.fieldLabel = kimios.lang('MetaFeeds');
+        this.store = kimios.store.StudioStore.getMetaFeedValuesStore(config.metaFeedUid, false);
+
+        kimios.form.MetaFeedMultiField.superclass.constructor.call(this, config);
+    }
+    ,refreshValue: function(pValue){
+        this.passedValue = pValue;
+        if(this.passedValue){
+            this.setValue(this.passedValue);
+            var me = this;
+            this.store.on('load', function(rec){
+                rec.each(function(it){
+                    var a = pValue.split(',');
+                    for(var e in a){
+                        if(a[e] == it.data.value){
+                            it.set('checked', true);
+                        }
+                    }
+                });
+
+                me.setValue(me.passedValue);
+            })
+
+            this.store.load();
+
+
+        }
+    }
+    ,initComponent:function() {
+        this.refreshValue(this.passedValue);
+        kimios.form.MetaFeedMultiField.superclass.initComponent.apply(this, arguments);
+    }
+})
+
+

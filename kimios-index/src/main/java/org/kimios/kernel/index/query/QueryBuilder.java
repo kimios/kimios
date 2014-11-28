@@ -25,10 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
+import java.util.*;
 
 /**
  * Build Solr Queries
@@ -163,7 +160,8 @@ public class QueryBuilder
 
         SimpleDateFormat localFormat = new SimpleDateFormat( "yyyy-MM-dd" );
         localFormat.setTimeZone( TimeZone.getTimeZone( "UTC" ) );
-        SimpleDateFormat solrFormat = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ss'Z'" );
+        SimpleDateFormat solrFormat = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ss'Z'");
+        solrFormat.setTimeZone(TimeZone.getTimeZone("UTC") );
 
         Date rangeMin = null;
         Date rangeMax = null;
@@ -172,9 +170,24 @@ public class QueryBuilder
         rangeMin = min != null && min.trim().length() > 0 ? localFormat.parse(min) : null;
         rangeMax = max != null && max.trim().length() > 0 ? localFormat.parse(max) : null;
 
+        String minParam =  ( rangeMin != null ? solrFormat.format( rangeMin ) : "*" );
+
+        String maxParam = (
+                rangeMax != null ? solrFormat.format( rangeMax ) : "*" );
+        if(rangeMin != null && rangeMax != null){
+            if(rangeMin.compareTo(rangeMax) == 0){
+                //add 1 day to rangemax
+
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(rangeMax.getTime());
+                calendar.add(Calendar.DATE, 1);
+                calendar.add(Calendar.MILLISECOND, -1);
+                maxParam =   solrFormat.format( calendar.getTime() );
+            }
+        }
+
         String documentPathQuery =
-            dateFieldName + ":[" + ( rangeMin != null ? solrFormat.format( rangeMin ) : "*" ) + " TO " + (
-                rangeMax != null ? solrFormat.format( rangeMax ) : "*" ) + "]";
+            dateFieldName + ":[" + minParam + " TO " + maxParam + "]";
         log.debug( "SOLR {} Query: {}", dateFieldName, documentPathQuery );
         return documentPathQuery;
     }

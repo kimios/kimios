@@ -22,6 +22,8 @@ import org.kimios.client.exception.ExceptionHelper;
 import org.kimios.kernel.ws.pojo.*;
 import org.kimios.webservices.AdministrationService;
 
+import java.util.Map;
+
 /**
  * Here are all of the administration functionalities (domain management, user
  * and group, roles)
@@ -594,6 +596,71 @@ public class AdministrationController
         try
         {
             client.removeEnabledSessions( sessionId, userName, userSource );
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
+        }
+    }
+
+    /**
+     * Disable Service Logging
+     */
+    public void disableServiceLogging( String sessionId )
+            throws Exception
+    {
+        try
+        {
+            client.disableServiceLogging();
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
+        }
+    }
+
+    /**
+     * Enable Service Logging
+     */
+    public void enableServiceLogging( String sessionId )
+            throws Exception
+    {
+        try
+        {
+            client.enableServiceLogging();
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
+        }
+    }
+
+
+    /**
+     * List Loggers
+     */
+    public Map<String,String> listLoggers( String sessionId )
+            throws Exception
+    {
+        try
+        {
+            return client.listLoggers();
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
+        }
+    }
+
+    /**
+     * Set Logger Level
+     */
+    public void setLoggerLevel( String sessionId, String loggerName, String loggerLevel )
+            throws Exception
+    {
+        try
+        {
+            client.setLoggerLevel( loggerName, loggerLevel );
         }
         catch ( Exception e )
         {

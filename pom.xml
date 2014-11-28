@@ -15,16 +15,17 @@
   ~ aong with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.kimios</groupId>
     <artifactId>kimios</artifactId>
     <version>1.1-SNAPSHOT</version>
     <scm>
-      <connection>scm:git:ssh://git@gitlab.devlib.infra/org-kimios/kimios.git</connection>
-      <developerConnection>scm:git:ssh://git@gitlab.devlib.infra/org-kimios/kimios.git</developerConnection>
-      <tag>HEAD</tag>
-  </scm>
+        <connection>scm:git:ssh://git@gitlab.devlib.infra/org-kimios/kimios.git</connection>
+        <developerConnection>scm:git:ssh://git@gitlab.devlib.infra/org-kimios/kimios.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
     <repositories>
         <!--<repository>
             <id>kimios-releases</id>
@@ -54,7 +55,7 @@
     <properties>
         <spring.version>3.2.2.RELEASE</spring.version>
         <slfj.version>1.7.5</slfj.version>
-        <apache.poi.version>3.9</apache.poi.version>
+        <apache.poi.version>3.10-FINAL</apache.poi.version>
         <lucene.version>3.6.0</lucene.version>
         <hibernate.version>4.2.10.Final</hibernate.version>
         <apache.pdfbox.version>1.7.1</apache.pdfbox.version>
@@ -109,6 +110,13 @@
         <module>kimios-convert-service</module>
     </modules>
     <packaging>pom</packaging>
+    <dependencies>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>${aspectj.version}</version>
+        </dependency>
+    </dependencies>
     <build>
         <plugins>
             <plugin>
@@ -128,13 +136,98 @@
                 </configuration>
             </plugin>
             <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-release-plugin</artifactId>
-              <version>2.4.1</version>
-              <configuration>
-                <tagNameFormat>v@{project.version}</tagNameFormat>
-              </configuration>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.4.1</version>
+                <configuration>
+                    <tagNameFormat>v@{project.version}</tagNameFormat>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>aspectj-maven-plugin</artifactId>
+                <version>1.6</version>
+                <configuration>
+                    <complianceLevel>1.6</complianceLevel>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                    <outxml>true</outxml>
+                    <showWeaveInfo>true</showWeaveInfo>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>spring-tx</id>
+            <activation>
+                <property>
+                    <name>!osgitx</name>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-aspects</artifactId>
+                    <version>${spring.version}</version>
+                    <scope>provided</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-tx</artifactId>
+                    <version>${spring.version}</version>
+                    <type>jar</type>
+                    <scope>provided</scope>
+                    <exclusions>
+                        <exclusion>
+                            <artifactId>*</artifactId>
+                            <groupId>*</groupId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+                <dependency>
+                    <groupId>org.hibernate.javax.persistence</groupId>
+                    <artifactId>hibernate-jpa-2.0-api</artifactId>
+                    <version>1.0.1.Final</version>
+                    <scope>provided</scope>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>aspectj-maven-plugin</artifactId>
+                        <version>1.6</version>
+                        <configuration>
+                            <complianceLevel>1.6</complianceLevel>
+                            <source>1.6</source>
+                            <target>1.6</target>
+                            <outxml>true</outxml>
+                            <aspectLibraries>
+                                <aspectLibrary>
+                                    <groupId>org.springframework</groupId>
+                                    <artifactId>spring-aspects</artifactId>
+                                </aspectLibrary>
+                            </aspectLibraries>
+                            <showWeaveInfo>true</showWeaveInfo>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>compile</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

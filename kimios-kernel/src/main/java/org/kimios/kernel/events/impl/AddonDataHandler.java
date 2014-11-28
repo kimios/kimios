@@ -17,6 +17,7 @@
 package org.kimios.kernel.events.impl;
 
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig;
 import org.kimios.kernel.dms.DMEntityImpl;
 import org.kimios.kernel.dms.Document;
 import org.kimios.kernel.dms.FactoryInstantiator;
@@ -43,6 +44,8 @@ public class AddonDataHandler extends GenericEventHandler {
 
     public AddonDataHandler(ObjectMapper mapper) {
         this.objectMapper = mapper;
+
+        mapper.configure(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS, false);
     }
 
 

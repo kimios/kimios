@@ -18,17 +18,16 @@ package org.kimios.kernel.events;
 import org.kimios.kernel.events.impl.ActionLogger;
 import org.kimios.kernel.events.impl.WorkflowMailer;
 import org.kimios.utils.configuration.ConfigurationManager;
+import org.kimios.utils.extension.ExtensionRegistry;
+import org.kimios.utils.spring.ApplicationContextProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class EventHandlerManager implements ApplicationContextAware
+public class EventHandlerManager extends ExtensionRegistry<GenericEventHandler>
 {
     private static Logger log = LoggerFactory.getLogger(EventHandlerManager.class);
 
@@ -36,15 +35,17 @@ public class EventHandlerManager implements ApplicationContextAware
 
     private ConfigurationManager configurationManager;
 
-    private ApplicationContext springContext;
+    public ConfigurationManager getConfigurationManager() {
+        return configurationManager;
+    }
 
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException
-    {
-        this.springContext = applicationContext;
+    public void setConfigurationManager(ConfigurationManager configurationManager) {
+        this.configurationManager = configurationManager;
     }
 
     private EventHandlerManager()
-    { }
+    {
+    }
 
     synchronized public static EventHandlerManager getInstance()
     {
@@ -54,25 +55,67 @@ public class EventHandlerManager implements ApplicationContextAware
         return instance;
     }
 
-    public List<GenericEventHandler> handlers;
+    private List<GenericEventHandler> handlers;
 
-    private void init()
+    public List<GenericEventHandler> handlers(){
+        List<GenericEventHandler> handlerList = new ArrayList<GenericEventHandler>(handlers);
+        return handlerList;
+    }
+
+    @Override
+    protected void handleAdd(Class<? extends GenericEventHandler> classz) {
+        try {
+            log.debug("creating event handler " + classz);
+            GenericEventHandler handler = classz.newInstance();
+            if(handlers == null || handlers.isEmpty()){
+                handlers = new ArrayList<GenericEventHandler>();
+                handlers.add(new ActionLogger());
+                handlers.add(new WorkflowMailer());
+            }
+            handlers.add(handler);
+            log.info("instantiating event handler", classz);
+        } catch (Exception e) {
+            log.error("error while adding event handler " + classz, e);
+        }
+    }
+
+    @Override
+    protected void handleRemove(Class<? extends GenericEventHandler> classz) {
+        GenericEventHandler _z = null;
+        for(GenericEventHandler e: handlers){
+            if(e.getClass().isAssignableFrom(classz)){
+                log.info("removing event handler {}", e);
+                _z = e;
+            }
+        }
+        if(_z != null){
+            log.info("removing event handler {}", _z);
+            handlers.remove(_z);
+        }
+
+    }
+
+    public void init()
     {
-
-        configurationManager = springContext.getBean(ConfigurationManager.class);
         EventContext.init();
-        handlers = new ArrayList<GenericEventHandler>();
-        handlers.add(new ActionLogger());
-        handlers.add(new WorkflowMailer());
-        /*
+        if(handlers == null || handlers.isEmpty()){
+            handlers = new ArrayList<GenericEventHandler>();
+            handlers.add(new ActionLogger());
+            handlers.add(new WorkflowMailer());
+        }
+
+        try{
+             /*
             Load handlers from spring context
          */
-        Map<String, GenericEventHandler> springInstantiatedHandlers =
-                springContext.getBeansOfType(GenericEventHandler.class);
-
-        for (GenericEventHandler manager : springInstantiatedHandlers.values()) {
-            log.info("Adding event handler " + manager.getClass().getName());
-            handlers.add(manager);
+            Map<String, GenericEventHandler> springInstantiatedHandlers =
+                    ApplicationContextProvider.loadBeans(GenericEventHandler.class);
+            for (GenericEventHandler manager : springInstantiatedHandlers.values()) {
+                log.info("Adding event handler " + manager.getClass().getName());
+                handlers.add(manager);
+            }
+        } catch (Exception ex){
+            log.info("not spring enabled");
         }
 
         try {

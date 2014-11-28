@@ -29,6 +29,7 @@ kimios.form.DocumentTypeField = Ext.extend(Ext.form.ComboBox, {
                 baseParams: {action: 'types'}
             });
         }
+        this.defaultTypeName = config.defaultTypeName;
         kimios.form.DocumentTypeField.superclass.constructor.call(this, config);
     },
 
@@ -44,11 +45,35 @@ kimios.form.DocumentTypeField = Ext.extend(Ext.form.ComboBox, {
                 uid: -1,
                 name: kimios.lang('NoDocumentType')
             }));
+
+            if(this.defaultTypeName){
+                var val = null;
+                for(var u in records){
+                    var it = records[u];
+                    if(it.data && it.data.name == me.defaultTypeName){
+                        val = it.data.uid;
+                        me.setValue(val);
+                        me.fireEvent('select', me, it);
+                        break;
+                    }
+                }
+
+            }
+
+
         }, this);
 
+        var me = this;
         // force combo to reload
         this.on('expand', function (combo) {
             this.store.load({});
         }, this);
+    },
+    listeners:{
+        afterrender: function(){
+            if(this.defaultTypeName){
+                this.store.load({});
+            }
+        }
     }
 });

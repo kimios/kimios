@@ -23,4 +23,6 @@ public interface Repository
     public String getName();
 
     public String getPath();
+
+    public String getImplementor();
 }

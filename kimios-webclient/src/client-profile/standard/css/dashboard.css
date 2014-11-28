@@ -1,0 +1,71 @@
+/*
+ * Kimios - Document Management System Software
+ * Copyright (C) 2008-2014  DevLib'
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 2 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#dashboard {
+    background-color: #fff;
+    text-shadow: #fff 0 1px 0;
+}
+
+#dashboard ul {
+    position: relative;
+    display: block;
+    height: auto;
+    font-size: 85%;
+}
+
+#dashboard ul li img {
+    margin-bottom: 1px;
+}
+
+#dashboard ul li {
+    float: left;
+    padding: 8px 17px;
+    margin: 5px;
+    /*    margin: 10px 0 0 25px;*/
+    text-align: center;
+    line-height: 1.25em;
+    color: #333;
+    font-family: "Helvetica Neue",sans-serif;
+    height: 80px;
+    width: 80px;
+    overflow: hidden;
+    border-top: 1px solid transparent;
+    cursor: pointer;
+}
+
+/*#phones ul li.phone-hover {
+    background-color: #eee;
+}*/
+
+#dashboard ul li.x-view-selected {
+    background-color: rgba(100, 100, 100, .15);
+    -moz-border-radius: 8px;
+    -webkit-border-radius: 8px;
+    border-top: 1px solid rgba(0, 0, 0, .15);
+}
+
+#dashboard ul li img {
+    /*    display: block;*/
+}
+
+#dashboard li strong {
+    color: #000;
+    display: block;
+}
+
+#dashboard li span {
+    color: #999;
+}

@@ -20,7 +20,6 @@ import org.kimios.utils.spring.SpringWebContextLauncher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.ContextLoader;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -33,12 +32,10 @@ public class Listener extends ContextLoader implements ServletContextListener
 
     public void contextInitialized(ServletContextEvent event)
     {
-
         log.info("Kimios starting");
         this.contextLoader = this;
         SpringWebContextLauncher.launchApp(event.getServletContext(), this.contextLoader);
-        Starter.start(event.getServletContext().getRealPath("/") + "/WEB-INF",
-                WebApplicationContextUtils.getRequiredWebApplicationContext(event.getServletContext()));
+        Starter.start(event.getServletContext().getRealPath("/") + "/WEB-INF");
         log.info("Kimios started");
     }
 

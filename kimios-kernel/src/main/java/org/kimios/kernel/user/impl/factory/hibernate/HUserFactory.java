@@ -20,7 +20,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.exception.DataSourceException;
-import org.kimios.kernel.hibernate.HFactoryImpl;
+import org.kimios.kernel.hibernate.AbstractDBFactory;
 import org.kimios.kernel.security.FactoryInstantiator;
 import org.kimios.kernel.security.pwdgen.md5.MD5Generator;
 import org.kimios.kernel.user.*;
@@ -50,15 +50,15 @@ public class HUserFactory implements UserFactory
     {
         try {
 
-            User u = (User) HFactoryImpl.getInstance()
+            User u = (User) AbstractDBFactory.getInstance()
                     .getSession().get(User.class, user);
-            Group g = (Group) HFactoryImpl.getInstance()
+            Group g = (Group) AbstractDBFactory.getInstance()
                     .getSession().get(Group.class, group);
             AuthenticationSourceBean l = new AuthenticationSourceBean();
             l.setJavaClass(this.auth.getClass().getName());
             l.setName(this.auth.getName());
             u.getGroups().add(g);
-            HFactoryImpl.getInstance()
+            AbstractDBFactory.getInstance()
                     .getSession().save(u);
         } catch (HibernateException e) {
             throw new DataSourceException(e, e.getMessage());
@@ -73,7 +73,7 @@ public class HUserFactory implements UserFactory
         String rq = "from User where uid = :uid AND password= :cryptpwd AND authenticationSourceName=:authname";
 
         try {
-            Object u = HFactoryImpl.getInstance()
+            Object u = AbstractDBFactory.getInstance()
                     .getSession().createQuery(rq)
                     .setString("uid", uid)
                     .setString("cryptpwd", md5Password)
@@ -92,7 +92,7 @@ public class HUserFactory implements UserFactory
 
             Date lDate = new Date();
             String query = "update User set lastLogin=:ldate where uid=:uid AND authenticationSourceName=:authname";
-            HFactoryImpl.getInstance()
+            AbstractDBFactory.getInstance()
                     .getSession().createQuery(query)
                     .setString("uid", uid)
                     .setString("authname", this.getAuth().getName())
@@ -109,7 +109,7 @@ public class HUserFactory implements UserFactory
             ConfigException
     {
         try {
-            HFactoryImpl.getInstance().getSession().delete(user);
+            AbstractDBFactory.getInstance().getSession().delete(user);
         } catch (HibernateException e) {
             throw new DataSourceException(e, e.getMessage());
         }
@@ -118,7 +118,7 @@ public class HUserFactory implements UserFactory
     public User getUser(String uid) throws DataSourceException, ConfigException
     {
         try {
-            User u = (User) HFactoryImpl.getInstance()
+            User u = (User) AbstractDBFactory.getInstance()
                     .getSession()
                     .createCriteria(User.class).add(Restrictions.eq("uid", uid))
                     .add(Restrictions.eq("authenticationSourceName", this.getAuth().getName())).uniqueResult();
@@ -148,7 +148,7 @@ public class HUserFactory implements UserFactory
     {
         try {
             Vector<User> vUsers = new Vector<User>();
-            List<User> lUsers = (List<User>) HFactoryImpl.getInstance().getSession().createCriteria(User.class)
+            List<User> lUsers = (List<User>) AbstractDBFactory.getInstance().getSession().createCriteria(User.class)
                     .add(Restrictions.eq("authenticationSourceName", this.getAuth().getName()))
                     .addOrder(Order.asc("uid"))
                     .list();
@@ -165,10 +165,10 @@ public class HUserFactory implements UserFactory
             throws DataSourceException, ConfigException
     {
         try {
-            User u = (User) HFactoryImpl.getInstance().getSession().load(User.class, user);
-            Group g = (Group) HFactoryImpl.getInstance().getSession().load(Group.class, group);
+            User u = (User) AbstractDBFactory.getInstance().getSession().load(User.class, user);
+            Group g = (Group) AbstractDBFactory.getInstance().getSession().load(Group.class, group);
             u.getGroups().remove(g);
-            HFactoryImpl.getInstance().getSession().update(u);
+            AbstractDBFactory.getInstance().getSession().update(u);
         } catch (HibernateException he) {
             throw new DataSourceException(he, he.getMessage());
         }
@@ -178,15 +178,15 @@ public class HUserFactory implements UserFactory
             throws DataSourceException, ConfigException
     {
         try {
-            HFactoryImpl.getInstance()
+            AbstractDBFactory.getInstance()
                     .getSession().save(user);
-            HFactoryImpl.getInstance()
+            AbstractDBFactory.getInstance()
                     .getSession().flush();
 
             String query =
                     "update User set password = :cryptwd WHERE uid= :uid AND authenticationSourceName like :authname";
 
-            HFactoryImpl.getInstance()
+            AbstractDBFactory.getInstance()
                     .getSession()
                     .createQuery(query)
                     .setString("cryptwd",
@@ -204,12 +204,12 @@ public class HUserFactory implements UserFactory
     {
 
         try {
-            HFactoryImpl.getInstance().getSession().update(user);
-            HFactoryImpl.getInstance().getSession().flush();
+            AbstractDBFactory.getInstance().getSession().update(user);
+            AbstractDBFactory.getInstance().getSession().flush();
             if (password != null && !password.equals("")) {
                 String query =
                         "update User SET password = :cryptwd WHERE uid= :uid AND authenticationSourceName like :authname";
-                HFactoryImpl.getInstance().getSession().createQuery(query)
+                AbstractDBFactory.getInstance().getSession().createQuery(query)
                         .setString("cryptwd",
                                 FactoryInstantiator.getInstance().getCredentialsGenerator().generatePassword(password))
                         .setString("uid", user.getID())
@@ -234,7 +234,7 @@ public class HUserFactory implements UserFactory
         log.debug(
                 "attribute set for " + user.getID() + " " + user.getAuthenticationSourceName() + ": " + attributeName +
                         " --> " + attributeValue);
-        HFactoryImpl.getInstance().getSession().saveOrUpdate(user);
+        AbstractDBFactory.getInstance().getSession().saveOrUpdate(user);
     }
 
     public Map<String, String> getAttributes(User user)
@@ -247,14 +247,14 @@ public class HUserFactory implements UserFactory
             throws DataSourceException, ConfigException
     {
         String query = "from User where attributes['" + attributeName + "'] = :attributeValue";
-        return (User) HFactoryImpl.getInstance().getSession().createQuery(query)
+        return (User) AbstractDBFactory.getInstance().getSession().createQuery(query)
                 .setString("attributeValue", attributeValue)
                 .uniqueResult();
     }
 
     public User getUserByEmail(String emailAddress) throws DataSourceException, ConfigException {
         String query = "from User where mail = :email";
-        List<User> users = HFactoryImpl.getInstance().getSession().createQuery(query)
+        List<User> users = AbstractDBFactory.getInstance().getSession().createQuery(query)
                 .setString("email", emailAddress)
                 .list();
 

@@ -20,10 +20,7 @@ import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 
 import javax.jws.WebParam;
 import javax.jws.WebService;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -44,7 +41,8 @@ public interface ConverterService extends KimiosExtension {
     Response convertDocument(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "documentId") @WebParam(name = "documentId") Long documentId,
-            @QueryParam(value = "converterImpl") @WebParam(name = "converterImpl") String converterImpl)
+            @QueryParam(value = "converterImpl") @WebParam(name = "converterImpl") String converterImpl,
+            @DefaultValue("true") @QueryParam(value = "inline") @WebParam(name = "inline") Boolean inline)
             throws DMServiceException;
 
 
@@ -75,7 +73,8 @@ public interface ConverterService extends KimiosExtension {
     Response convertDocumentVersion(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "versionId") @WebParam(name = "versionId") Long versionId,
-            @QueryParam(value = "converterImpl") @WebParam(name = "converterImpl") String converterImpl)
+            @QueryParam(value = "converterImpl") @WebParam(name = "converterImpl") String converterImpl,
+            @DefaultValue("true") @QueryParam(value = "inline") @WebParam(name = "inline") Boolean inline)
             throws DMServiceException;
 
     /**
@@ -90,7 +89,8 @@ public interface ConverterService extends KimiosExtension {
     Response convertDocuments(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "documentId") @WebParam(name = "documentId") Long[] documentIds,
-            @QueryParam(value = "converterImpl") @WebParam(name = "converterImpl") String converterImpl)
+            @QueryParam(value = "converterImpl") @WebParam(name = "converterImpl") String converterImpl,
+            @DefaultValue("true") @QueryParam(value = "inline") @WebParam(name = "inline") Boolean inline)
             throws DMServiceException;
 
     /**
@@ -105,6 +105,7 @@ public interface ConverterService extends KimiosExtension {
     Response convertDocumentVersions(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "versionId") @WebParam(name = "versionId") Long[] versionIds,
-            @QueryParam(value = "converterImpl") @WebParam(name = "converterImpl") String converterImpl)
+            @QueryParam(value = "converterImpl") @WebParam(name = "converterImpl") String converterImpl,
+            @DefaultValue("true") @QueryParam(value = "inline") @WebParam(name = "inline") Boolean inline)
             throws DMServiceException;
 }

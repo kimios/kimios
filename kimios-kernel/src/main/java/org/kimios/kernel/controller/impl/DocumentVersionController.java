@@ -15,16 +15,20 @@
  */
 package org.kimios.kernel.controller.impl;
 
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.IDocumentVersionController;
 import org.kimios.kernel.dms.*;
+import org.kimios.kernel.dms.utils.MetaProcessor;
 import org.kimios.kernel.events.EventContext;
 import org.kimios.kernel.events.annotations.DmsEvent;
 import org.kimios.kernel.events.annotations.DmsEventName;
 import org.kimios.kernel.exception.*;
 import org.kimios.kernel.repositories.RepositoryManager;
 import org.kimios.kernel.security.Session;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import org.w3c.dom.NodeList;
@@ -40,6 +44,9 @@ import java.util.Vector;
 
 @Transactional
 public class DocumentVersionController extends AKimiosController implements IDocumentVersionController {
+
+    private static Logger logger = LoggerFactory.getLogger(DocumentVersionController.class);
+
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IDocumentVersionController#getDocumentVersion(org.kimios.kernel.security.Session, long)
     */
@@ -119,6 +126,10 @@ public class DocumentVersionController extends AKimiosController implements IDoc
                         toSave.add(new MetaBooleanValue(newVersion, m.getMeta(),
                                 (m.getValue() != null ? (Boolean) m.getValue() : null)));
                         break;
+                    case MetaType.LIST:
+                        toSave.add(new MetaListValue(newVersion, m.getMeta(),
+                                (m.getValue() != null ? (List) m.getValue() : null)));
+                        break;
                 }
             }
             MetaValueFactory mvf = dmsFactoryInstantiator.getMetaValueFactory();
@@ -170,7 +181,7 @@ public class DocumentVersionController extends AKimiosController implements IDoc
             } else {
                 //set all value
                 MetaValueFactory fact = dmsFactoryInstantiator.getMetaValueFactory();
-                Vector<MetaValue> vNewMetas = getMetaValuesFromXML(xmlStream, dv.getUid());
+                List<MetaValue> vNewMetas = MetaProcessor.getMetaValuesFromXML(xmlStream, dv.getUid());
                 List<MetaValue> vMetas = fact.getMetaValues(dv);
 
                 for (MetaValue m : vNewMetas) {
@@ -195,6 +206,10 @@ public class DocumentVersionController extends AKimiosController implements IDoc
                                 if (((String) m.getValue()).isEmpty() || ((String) m.getValue()).length() < 1)
                                     throw new AccessDeniedException();
                                 break;
+                            case MetaType.LIST:
+                                if(((List)m.getValue()).size() == 0)
+                                    throw new AccessDeniedException();
+                                break;
                         }
                     }
                 }
@@ -215,6 +230,103 @@ public class DocumentVersionController extends AKimiosController implements IDoc
             throw new AccessDeniedException();
         }
     }
+
+
+    /* (non-Javadoc)
+    * @see org.kimios.kernel.controller.impl.IDocumentVersionController#updateDocumentVersion(org.kimios.kernel.security.Session, long, long)
+    */
+    @DmsEvent(eventName = { DmsEventName.DOCUMENT_VERSION_UPDATE })
+    public void updateDocumentVersion(Session session, long documentUid, long documentTypeUid, List<MetaValue> metaValues) throws
+            XMLException, CheckoutViolationException, ConfigException, DataSourceException, AccessDeniedException {
+        DocumentTypeFactory typeFactory = dmsFactoryInstantiator.getDocumentTypeFactory();
+        Document d = dmsFactoryInstantiator.getDocumentFactory().getDocument(documentUid);
+        DocumentVersion dv = dmsFactoryInstantiator.getDocumentVersionFactory().getLastDocumentVersion(d);
+        if (getSecurityAgent().isWritable(d, session.getUserName(), session.getUserSource(), session.getGroups())) {
+            //Getting existing values
+            List<MetaValue> vMetaValuesExisting = dmsFactoryInstantiator.getMetaValueFactory().getMetaValues(dv);
+            //Changing document version to new type
+            DocumentType newDt = typeFactory.getDocumentType(documentTypeUid);
+            dv.setDocumentType(newDt);
+            dmsFactoryInstantiator.getDocumentVersionFactory().updateDocumentVersion(dv);
+
+            if (metaValues == null || metaValues.size() == 0) {
+                //Metas list of new DocumentType
+                // keep existing value for inheritance
+                Vector<Meta> vMetaNewType = null;
+                if (dv.getDocumentType() != null) {
+                    vMetaNewType = dmsFactoryInstantiator.getMetaFactory().getMetas(newDt);
+                } else {
+                    vMetaNewType = new Vector<Meta>();
+                }
+
+                Vector<MetaValue> toDelete = new Vector<MetaValue>();
+                for (MetaValue v : vMetaValuesExisting) {
+                    if (!vMetaNewType.contains(v.getMeta())) {
+                        toDelete.add(v);
+                    }
+                }
+                for (MetaValue v : toDelete) {
+                    dmsFactoryInstantiator.getMetaValueFactory().deleteMetaValue(v);
+                }
+            } else {
+                //set all value
+                MetaValueFactory fact = dmsFactoryInstantiator.getMetaValueFactory();
+                for(MetaValue v: metaValues)  {
+
+                    logger.debug("setting metavalue {} to {}", v.getMetaUid(), v.getValue());
+                    v.setDocumentVersionUid(dv.getUid());
+
+                }
+
+                List<MetaValue> vMetas = fact.getMetaValues(dv);
+
+                for (MetaValue m : metaValues) {
+                    if (m.getMeta().isMandatory()) {
+                        if (m.getValue() == null) {
+                            throw new AccessDeniedException();
+                        }
+
+                        switch (m.getMeta().getMetaType()) {
+                            case MetaType.BOOLEAN:
+                                // do nothing: never undefined (true if checked, else false)
+                                break;
+                            case MetaType.DATE:
+                                if (String.valueOf(m.getValue()).isEmpty() || String.valueOf(m.getValue()).length() < 1)
+                                    throw new AccessDeniedException();
+                                break;
+                            case MetaType.NUMBER:
+                                if ((Double) m.getValue() == 0)
+                                    throw new AccessDeniedException();
+                                break;
+                            case MetaType.STRING:
+                                if (((String) m.getValue()).isEmpty() || ((String) m.getValue()).length() < 1)
+                                    throw new AccessDeniedException();
+                                break;
+                            case MetaType.LIST:
+                                if(((List)m.getValue()).size() == 0)
+                                    throw new AccessDeniedException();
+                                break;
+                        }
+                    }
+                }
+
+                for (MetaValue m : vMetas) {
+                    fact.deleteMetaValue(m);
+                }
+                for (MetaValue m : metaValues) {
+                    fact.saveMetaValue(m);
+                }
+            }
+
+            dv.setModificationDate(new Date());
+            dmsFactoryInstantiator.getDocumentVersionFactory().updateDocumentVersion(dv);
+            EventContext.addParameter("version", dv);
+            EventContext.addParameter("documentTypeSet", newDt);
+        } else {
+            throw new AccessDeniedException();
+        }
+    }
+
 
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IDocumentVersionController#deleteDocumentVersion(org.kimios.kernel.security.Session, long)
@@ -245,76 +357,11 @@ public class DocumentVersionController extends AKimiosController implements IDoc
         }
     }
 
-    /**
-     * Convenience method to generate meta list from an xml descriptor
-     */
-    private Vector<MetaValue> getMetaValuesFromXML(String xmlStream, long uid)
-            throws XMLException, DataSourceException, ConfigException {
-        DocumentVersion dv = dmsFactoryInstantiator.getDocumentVersionFactory().getDocumentVersion(uid);
-        Vector<MetaValue> v = new Vector<MetaValue>();
-        if (dv != null) {
-            try {
-                org.w3c.dom.Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder()
-                        .parse(new java.io.ByteArrayInputStream(xmlStream.getBytes()));
-                org.w3c.dom.Element root = doc.getDocumentElement();
-                NodeList list = root.getChildNodes();
-                for (int i = 0; i < list.getLength(); i++) {
-                    if (list.item(i).getNodeName().equalsIgnoreCase("meta")) {
-                        long metaUid =
-                                Long.parseLong(list.item(i).getAttributes().getNamedItem("uid").getTextContent());
-                        Meta m = dmsFactoryInstantiator.getMetaFactory().getMeta(metaUid);
-                        LoggerFactory.getLogger(DocumentVersionController.class)
-                                .info("Parsed VALUE " + list.item(i).getTextContent());
-                        MetaValue mv = toMetaValue(m.getMetaType(), dv, m, list.item(i).getTextContent());
-                        if (mv != null) {
-                            v.add(mv);
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                throw new XMLException();
-            }
-        }
-        return v;
-    }
-
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IDocumentVersionController#toMetaValue(int, org.kimios.kernel.dms.DocumentVersion, long, java.lang.String)
     */
     public MetaValue toMetaValue(int metaType, DocumentVersion version, Meta meta, String metaValue) {
-        MetaValue metaV = null;
-        switch (metaType) {
-            case MetaType.BOOLEAN:
-                metaV = new MetaBooleanValue(
-                        version,
-                        meta,
-                        Boolean.parseBoolean(metaValue));
-                break;
-            case MetaType.DATE:
-                if (Long.parseLong(metaValue) != -1) {
-                    metaV = new MetaDateValue(
-                            version,
-                            meta,
-                            new Date(Long.parseLong(metaValue)));
-                } else {
-                    metaV = new MetaDateValue(version, meta, null);
-                }
-
-                break;
-            case MetaType.NUMBER:
-                metaV = new MetaNumberValue(
-                        version,
-                        meta,
-                        Double.parseDouble(metaValue));
-                break;
-            case MetaType.STRING:
-                metaV = new MetaStringValue(
-                        version,
-                        meta,
-                        metaValue);
-                break;
-        }
-        return metaV;
+        return MetaProcessor.toMetaValue(metaType, version, meta, metaValue);
     }
 
     /* (non-Javadoc)
@@ -326,7 +373,7 @@ public class DocumentVersionController extends AKimiosController implements IDoc
         if (getSecurityAgent()
                 .isWritable(dv.getDocument(), session.getUserName(), session.getUserSource(), session.getGroups())) {
             MetaValueFactory fact = dmsFactoryInstantiator.getMetaValueFactory();
-            Vector<MetaValue> vNewMetas = getMetaValuesFromXML(xmlStream, uid);
+            List<MetaValue> vNewMetas = MetaProcessor.getMetaValuesFromXML(xmlStream, uid);
             List<MetaValue> vMetas = fact.getMetaValues(dv);
             for (MetaValue m : vMetas) {
                 fact.deleteMetaValue(m);
@@ -527,6 +574,14 @@ public class DocumentVersionController extends AKimiosController implements IDoc
         if (getSecurityAgent()
                 .isReadable(dv.getDocument(), session.getUserName(), session.getUserSource(), session.getGroups())) {
             List<MetaValue> items = dmsFactoryInstantiator.getMetaValueFactory().getMetaValues(dv);
+            for(MetaValue v: items){
+                if(v.getMeta().getMetaType() == MetaType.LIST){
+                    //read subcollection
+                    for(Object u: ((List)v.getValue())){
+                        logger.debug("list metavalue item: {}", u);
+                    }
+                }
+            }
             return items;
         } else {
             throw new AccessDeniedException();

@@ -186,5 +186,30 @@ public class SearchServiceImpl
             throw getHelper().convertException( e );
         }
     }
+
+    public List<String> listAvailableSearchFields(String sessionId) throws DMServiceException {
+        try
+        {
+            Session s = getHelper().getSession( sessionId );
+            return searchManagementController.listDocumentAvailableFields(s);
+        }
+        catch ( Exception e )
+        {
+            throw getHelper().convertException( e );
+        }
+    }
+
+
+    public Long advancedSaveSearchQuery(String sessionId, SearchRequest searchRequest) throws DMServiceException {
+        try
+        {
+            Session s = getHelper().getSession( sessionId );
+            return searchController.advancedSaveSearchQueryWithSecurity(s, searchRequest, searchRequest.getSecurities());
+        }
+        catch ( Exception e )
+        {
+            throw getHelper().convertException( e );
+        }
+    }
 }
 

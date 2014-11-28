@@ -117,7 +117,10 @@
 
 
     <bean id="administrationServiceBean" class="org.kimios.webservices.impl.AdministrationServiceImpl"
-          parent="kimiosCoreService"/>
+          parent="kimiosCoreService">
+        <!--<constructor-arg ref="kimiosBusManager" />-->
+        <property name="kimiosBusServiceManager" ref="kimiosBusManager" />
+    </bean>
     <!-- Service endpoint -->
     <jaxws:endpoint id="administrationServiceWs"
                     implementorClass="org.kimios.webservices.impl.AdministrationServiceImpl"

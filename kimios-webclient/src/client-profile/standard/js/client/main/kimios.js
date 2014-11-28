@@ -121,6 +121,10 @@ kimios = {
         return new Date(timestamp == null ? 0 : timestamp).format(kimios.lang('SimpleDateJSFormat'));
     },
 
+    dateWithoutTime: function (timestamp) {
+        return new Date(timestamp == null ? 0 : timestamp).format(kimios.lang('ShortJSDateFormat'));
+    },
+
     util: {
         setTitle: function (path) {
             if (path == undefined || path == '' || path == '/')
@@ -225,7 +229,6 @@ kimios = {
                           });
 
     },
-
     ajaxSubmit: function (url, params, successHandler, failureHandler) {
         kimios.mask();
 
@@ -365,6 +368,16 @@ kimios = {
 
         getActivePanel: function () {
             return this.getMainPanel().getActiveTab();
+        },
+
+        addNewPanel: function(uid, type){
+            var gridPanel = new kimios.explorer.DMEntityGridPanel({});
+            Ext.getCmp('kimios-center-panel').add(gridPanel);
+            Ext.getCmp('kimios-center-panel').setActiveTab(gridPanel);
+            gridPanel.loadEntity({
+                uid: uid,
+                type: type
+            });
         }
     },
 

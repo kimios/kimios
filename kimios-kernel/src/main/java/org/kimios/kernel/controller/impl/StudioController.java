@@ -25,6 +25,7 @@ import org.kimios.kernel.security.Role;
 import org.kimios.kernel.security.Session;
 import org.kimios.kernel.xml.XSDException;
 import org.kimios.kernel.xml.XSDUtil;
+import org.kimios.utils.extension.ExtensionRegistryManager;
 import org.springframework.transaction.annotation.Transactional;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -288,9 +289,19 @@ public class StudioController extends AKimiosController implements IStudioContro
         return feed.search(criteria);
     }
 
+    private MetaFeedManager metaFeedManager;
+
+    public MetaFeedManager getMetaFeedManager() {
+        return metaFeedManager;
+    }
+
+    public void setMetaFeedManager(MetaFeedManager metaFeedManager) {
+        this.metaFeedManager = metaFeedManager;
+    }
+
     /* (non-Javadoc)
-    * @see org.kimios.kernel.controller.impl.IStudioController#createMetaFeed(org.kimios.kernel.security.Session, java.lang.String, java.lang.String)
-    */
+        * @see org.kimios.kernel.controller.impl.IStudioController#createMetaFeed(org.kimios.kernel.security.Session, java.lang.String, java.lang.String)
+        */
     public long createMetaFeed(Session session, String name, String className)
             throws RepositoryException, AccessDeniedException, ConfigException,
             DataSourceException
@@ -301,13 +312,16 @@ public class StudioController extends AKimiosController implements IStudioContro
             throw new AccessDeniedException();
         }
         try {
-            MetaFeedImpl m = (MetaFeedImpl) Class.forName(className).newInstance();
+            Class mClass = metaFeedManager.readClass(className);
+            MetaFeedImpl m = (MetaFeedImpl) mClass.newInstance();
             m.setName(name);
             m.setJavaClass(className);
             return dmsFactoryInstantiator.getMetaFeedFactory().saveMetaFeed(m);
-        } catch (ClassNotFoundException e) {
+        }
+        /*catch (ClassNotFoundException e) {
             throw new RepositoryException(e.getMessage());
-        } catch (IllegalAccessException e) {
+        }*/
+        catch (IllegalAccessException e) {
             throw new RepositoryException(e.getMessage());
         } catch (InstantiationException e) {
             throw new RepositoryException(e.getMessage());

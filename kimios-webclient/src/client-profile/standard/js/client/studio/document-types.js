@@ -306,7 +306,8 @@ Studio.DocumentTypes = {
                     [2, kimios.lang('MetaNumberValue')],
                     [3, kimios.lang('MetaDateValue')],
                     [4, kimios.lang('MetaBooleanValue')],
-                    [1, kimios.lang('SearchText') + ' / ' + kimios.lang('MetaFeed')]
+                    [1, kimios.lang('SearchText') + ' / ' + kimios.lang('MetaFeed')],
+                    [5, kimios.lang('MetaList') + ' / ' + kimios.lang('MetaFeed')]
                 ]
             }),
             displayField: 'name',
@@ -383,6 +384,13 @@ Studio.DocumentTypes = {
                                         return kimios.lang('MetaFeed');
                                     }
                                 }
+                                if (value == 5) {
+                                    if (record.get('metaFeedUid') == -1) {
+                                        return kimios.lang('MetaList');
+                                    } else {
+                                        return kimios.lang('MetaList') +  '(' + kimios.lang('MetaFeed') + ')';
+                                    }
+                                }
                                 grid.doLayout();
                                 return typeRecord.data.name;
                             }
@@ -399,11 +407,11 @@ Studio.DocumentTypes = {
                         for (var i = 0; i < metaFeedsStore.getCount(); ++i) {
                             var metaFeedRecord = metaFeedsStore.getAt(i);
                             if (metaFeedRecord.data.uid == value) {
-                                if (record.get('metaType') == 1)
+                                if (record.get('metaType') == 1 || record.get('metaType') == 5)
                                     return metaFeedRecord.data.name;
                             }
                         }
-                        if (record.get('metaType') != 1)
+                        if (record.get('metaType') != 1 && record.get('metaType') != 5)
                             return '<span style="color: #aaa;">N/A</span>';
                         else
                             return '<span style="font-style: italic; color: red;">' + kimios.lang('MetaFeed') + '?</span>';
@@ -431,7 +439,7 @@ Studio.DocumentTypes = {
                     if (e.column != 4) {
                         return true;
                     }
-                    if (e.record.get('metaType') == 1) {
+                    if (e.record.get('metaType') == 1 || e.record.get('metaType') == 5) {
                         return true;
                     } else {
                         return false;
@@ -439,7 +447,7 @@ Studio.DocumentTypes = {
                 },
                 afteredit: function (e) {
                     if (e.field == 'metaType') {
-                        if (e.record.get('metaType') == 1) {
+                        if (e.record.get('metaType') == 1 || e.record.get('metaType') == 5) {
                             e.record.set('metaFeedUid', -1);
                         }
                     }

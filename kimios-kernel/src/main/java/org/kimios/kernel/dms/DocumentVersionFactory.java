@@ -41,5 +41,7 @@ public interface DocumentVersionFactory
     public void removeDocumentType(DocumentType dt) throws ConfigException, DataSourceException;
 
     public DocumentVersion getVersionByHashes(String md5, String sha1) throws ConfigException, DataSourceException;
+
+    public void saveDocumentVersionBulk(DocumentVersion v) throws ConfigException, DataSourceException;
 }
 

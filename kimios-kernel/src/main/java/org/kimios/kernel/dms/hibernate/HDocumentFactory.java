@@ -29,7 +29,9 @@ import org.kimios.kernel.dms.FactoryInstantiator;
 import org.kimios.kernel.dms.Folder;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
+import org.kimios.utils.configuration.ConfigurationManager;
 
+import javax.print.Doc;
 import java.util.*;
 
 public class HDocumentFactory extends HFactory implements DocumentFactory
@@ -149,6 +151,7 @@ public class HDocumentFactory extends HFactory implements DocumentFactory
     {
         try {
             getSession().save(d);
+            getSession().flush();
         } catch (HibernateException e) {
             boolean integrity = e instanceof ConstraintViolationException;
             throw new DataSourceException(e, e.getMessage());
@@ -220,25 +223,19 @@ public class HDocumentFactory extends HFactory implements DocumentFactory
     public List<org.kimios.kernel.ws.pojo.Document> getDocumentsPojos(List<Document> docs)
             throws ConfigException, DataSourceException
     {
-        List<org.kimios.kernel.ws.pojo.Document> lists = null;
         if (docs.size() > 0) {
             try {
-                String query = "from DocumentPojo where uid in (";
-                for (int j = 0; j < docs.size(); j++) {
-                    if (j == (docs.size() - 1)) {
-                        query += docs.get(j).getUid() + ")";
-                    } else {
-                        query += docs.get(j).getUid() + ",";
-                    }
+
+                List<Long> items = new ArrayList<Long>();
+                for(Document d: docs){
+                    items.add(d.getUid());
                 }
-                query += " ORDER by lower(name)";
-                lists = getSession().createQuery(query).list();
-                return lists;
+                return this.getDocumentsPojosFromIds(items);
             } catch (HibernateException he) {
                 throw new DataSourceException(he, he.getMessage());
             }
         } else {
-            return new Vector<org.kimios.kernel.ws.pojo.Document>();
+            return new ArrayList<org.kimios.kernel.ws.pojo.Document>();
         }
     }
 
@@ -267,10 +264,20 @@ public class HDocumentFactory extends HFactory implements DocumentFactory
             throws ConfigException, DataSourceException
     {
         try {
-            String query = "from DocumentPojo where uid = :documentId";
-            return (org.kimios.kernel.ws.pojo.Document)getSession().createQuery(query)
-                    .setLong("documentId", documentId)
-                    .uniqueResult();
+
+            if(ConfigurationManager.getValue("jdbc.dialect").equals("org.hibernate.dialect.MySQL5InnoDBDialect")){
+                return (org.kimios.kernel.ws.pojo.Document)getSession().getNamedQuery("findDocumentPojoById")
+                        .setLong("documentId", documentId)
+                        .uniqueResult();
+
+            }   else {
+                String query = "from DocumentPojo where uid = :documentId";
+                return (org.kimios.kernel.ws.pojo.Document)getSession().createQuery(query)
+                        .setLong("documentId", documentId)
+                        .uniqueResult();
+            }
+
+
         } catch (HibernateException he) {
             throw new DataSourceException(he, he.getMessage());
         }
@@ -283,11 +290,21 @@ public class HDocumentFactory extends HFactory implements DocumentFactory
         List<org.kimios.kernel.ws.pojo.Document> lists = null;
         if (listIds.size() > 0) {
             try {
-                String query = "from DocumentPojo where uid in (:listIds)";
-                query += " ORDER by lower(name)";
-                lists = getSession().createQuery(query)
-                        .setParameterList("listIds", listIds)
-                        .list();
+
+                //should check if mysql
+
+                if(ConfigurationManager.getValue("jdbc.dialect").equals("org.hibernate.dialect.MySQL5InnoDBDialect")){
+                    lists = getSession().getNamedQuery("documentPojosUid")
+                            .setParameterList("idsList", listIds)
+                            .list();
+                } else {
+                    String query = "from DocumentPojo where uid in (:listIds)";
+                    query += " ORDER by lower(name)";
+                    lists = getSession().createQuery(query)
+                            .setParameterList("listIds", listIds)
+                            .list();
+                }
+
                 return lists;
             } catch (HibernateException he) {
                 throw new DataSourceException(he, he.getMessage());

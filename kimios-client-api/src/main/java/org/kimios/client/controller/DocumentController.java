@@ -31,6 +31,7 @@ import org.kimios.kernel.ws.pojo.Document;
 import org.kimios.kernel.ws.pojo.SymbolicLink;
 import org.kimios.webservices.DMServiceException;
 import org.kimios.webservices.DocumentService;
+import org.kimios.webservices.ExceptionMessageWrapper;
 
 import javax.activation.DataHandler;
 import javax.ws.rs.core.MediaType;
@@ -119,6 +120,7 @@ public class DocumentController {
             Client upClient = WebClient.client(client);
             WebClient wcl = WebClient.fromClient(upClient);
 
+
             MessageDigest md5 = null;
             MessageDigest sha1 = null;
             try {
@@ -163,8 +165,7 @@ public class DocumentController {
 
             if(resp.getStatus() == 500){
                 //Exception
-                DMServiceException exception = resp.readEntity(DMServiceException.class);
-                throw exception;
+                throw new JaxRSResponseExceptionMapper().fromResponse(resp);
             }
 
 

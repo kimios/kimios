@@ -16,10 +16,13 @@
  */
 package org.kimios.webservices.impl;
 
-import org.kimios.kernel.dms.Bookmark;
-import org.kimios.kernel.dms.SymbolicLink;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
+import org.kimios.kernel.dms.*;
 import org.kimios.kernel.security.Session;
+import org.kimios.kernel.ws.pojo.DMEntitySecurity;
 import org.kimios.kernel.ws.pojo.Document;
+import org.kimios.kernel.ws.pojo.MetaValue;
 import org.kimios.kernel.ws.pojo.WorkflowStatus;
 import org.kimios.webservices.CoreService;
 import org.kimios.webservices.DMServiceException;
@@ -113,6 +116,31 @@ public class DocumentServiceImpl extends CoreService implements DocumentService 
     }
 
     /**
+     * @param name
+     * @param extension
+     * @param isSecurityInherited
+     * @param securitiesXmlStream
+     * @param documentTypeId
+     * @param metasXmlStream
+     * @return
+     * @throws DMServiceException
+     */
+    public long createDocumentFromFullPathAndVersion(
+            String sessionId,
+            String name, String extension,
+            boolean isSecurityInherited, String securitiesXmlStream,
+            long documentTypeId, String metasXmlStream) throws DMServiceException {
+
+        try {
+            Session session = getHelper().getSession(sessionId);
+            return documentController.createDocument(session, name, extension, isSecurityInherited,
+                    securitiesXmlStream, documentTypeId, metasXmlStream);
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
+
+    /**
      * @param sessionId
      * @param name
      * @param extension
@@ -160,14 +188,81 @@ public class DocumentServiceImpl extends CoreService implements DocumentService 
      * @throws DMServiceException
      */
     public long createDocumentFromFullPathWithProperties(String sessionId, String path,
-                                             boolean isSecurityInherited, String securitiesXmlStream, boolean isRecursive,
-                                             long documentTypeId, String metasXmlStream, InputStream documentStream,
-                                             String hashMd5, String hashSha1) throws DMServiceException {
+                                                         boolean isSecurityInherited, String securitiesXmlStream, boolean isRecursive,
+                                                         long documentTypeId, String metasXmlStream, InputStream documentStream,
+                                                         String hashMd5, String hashSha1) throws DMServiceException {
 
         try {
             Session session = getHelper().getSession(sessionId);
             return documentController.createDocumentFromFullPathWithProperties(session, path,
                     isSecurityInherited, securitiesXmlStream, isRecursive, documentTypeId, metasXmlStream,
+                    documentStream, hashMd5, hashSha1);
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
+
+    /**
+     * @param sessionId
+     * @param path
+     * @param isSecurityInherited
+     * @param securityItemsJsonString
+     * @param isRecursive
+     * @param documentTypeId
+     * @param metaItemsJsonString
+     * @param documentStream
+     * @param hashMd5
+     * @param hashSha1
+     * @return
+     * @throws DMServiceException
+     */
+    public long createDocumentFromFullPathWithPropertiesNoHash(String sessionId, String path,
+                                                               boolean isSecurityInherited, String securityItemsJsonString, boolean isRecursive,
+                                                               Long documentTypeId, String metaItemsJsonString, InputStream documentStream,
+                                                               String hashMd5, String hashSha1) throws DMServiceException {
+
+        try {
+            Session session = getHelper().getSession(sessionId);
+
+            /*
+                Convert pojo list
+             */
+
+            List<org.kimios.kernel.security.DMEntitySecurity> securityItems = new ObjectMapper().readValue(securityItemsJsonString, new TypeReference<List<org.kimios.kernel.security.DMEntitySecurity>>() {
+            });
+            /*for (DMEntitySecurity des : securityItems)
+                targetList.add(new org.kimios.kernel.security.DMEntitySecurity(des.getDmEntityUid(), des.getDmEntityType(), des.getName(), des.getSource(), des.getType(), des.isRead(), des.isWrite(), des.isFullAccess())); */
+
+
+            List<org.kimios.kernel.dms.MetaValue> metaValues = new ObjectMapper().readValue(metaItemsJsonString, new TypeReference<List<org.kimios.kernel.dms.MetaValue>>() {
+            });
+            /*for(MetaValue mv: metaItems){
+                MetaValueBean mvb = null;
+                switch (mv.getMeta().getMetaType()){
+                    case MetaType.STRING:
+                        mvb = new MetaStringValue();
+                        break;
+                    case MetaType.NUMBER:
+                        mvb = new MetaNumberValue();
+                        break;
+                    case MetaType.DATE:
+                        mvb = new MetaDateValue();
+                        break;
+                    case MetaType.BOOLEAN:
+                        mvb = new MetaDateValue();
+                        break;
+                    case MetaType.LIST:
+                        mvb = new MetaListValue();
+                        break;
+                }
+                mvb.setValue(mv.getValue());
+                mvb.setDocumentVersionUid(mv.getDocumentVersionId());
+                mvb.setMetaUid(mv.getMetaId());
+                metaValues.add(mvb);
+            }*/
+
+            return documentController.createDocumentFromFullPathWithProperties(session, path,
+                    isSecurityInherited, securityItems, isRecursive, documentTypeId, metaValues,
                     documentStream, hashMd5, hashSha1);
         } catch (Exception e) {
             throw getHelper().convertException(e);
@@ -325,7 +420,7 @@ public class DocumentServiceImpl extends CoreService implements DocumentService 
             Session session = getHelper().getSession(sessionId);
             List<SymbolicLink> vSym = documentController.getSymbolicLinkCreated(session, targetId);
             List<org.kimios.kernel.ws.pojo.SymbolicLink> links = new ArrayList<org.kimios.kernel.ws.pojo.SymbolicLink>();
-            for(SymbolicLink link: vSym)
+            for (SymbolicLink link : vSym)
                 links.add(link.toPojo());
             return links.toArray(new org.kimios.kernel.ws.pojo.SymbolicLink[]{});
         } catch (Exception e) {
@@ -405,7 +500,7 @@ public class DocumentServiceImpl extends CoreService implements DocumentService 
 
             List<Bookmark> vBookmarks = documentController.getBookmarks(session);
             List<org.kimios.kernel.ws.pojo.Bookmark> links = new ArrayList<org.kimios.kernel.ws.pojo.Bookmark>();
-            for(Bookmark link: vBookmarks)
+            for (Bookmark link : vBookmarks)
                 links.add(link.toPojo());
             return links.toArray(new org.kimios.kernel.ws.pojo.Bookmark[]{});
         } catch (Exception e) {
@@ -459,7 +554,7 @@ public class DocumentServiceImpl extends CoreService implements DocumentService 
             Session session = getHelper().getSession(sessionId);
             List<Bookmark> vBookmarks = documentController.getRecentItems(session);
             List<org.kimios.kernel.ws.pojo.Bookmark> links = new ArrayList<org.kimios.kernel.ws.pojo.Bookmark>();
-            for(Bookmark link: vBookmarks)
+            for (Bookmark link : vBookmarks)
                 links.add(link.toPojo());
             return links.toArray(new org.kimios.kernel.ws.pojo.Bookmark[]{});
         } catch (Exception e) {

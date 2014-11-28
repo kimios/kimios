@@ -30,11 +30,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Transactional
+@Transactional(noRollbackFor = PathException.class)
 public class PathController extends AKimiosController implements IPathController
 {
-
-
 
     private static Logger logger = LoggerFactory.getLogger(IPathController.class);
 
@@ -76,10 +74,6 @@ public class PathController extends AKimiosController implements IPathController
             {
                 throw new AccessDeniedException();
             }
-
-            /*
-             */
-
             return dm;
         } else {
             logger.error("No entry found at the given path : " + path);

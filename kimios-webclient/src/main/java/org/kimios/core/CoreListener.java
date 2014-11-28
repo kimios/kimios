@@ -20,6 +20,7 @@
 package org.kimios.core;
 
 import org.apache.commons.io.output.FileWriterWithEncoding;
+import org.apache.commons.lang.StringUtils;
 import org.kimios.controller.Controller;
 import org.kimios.core.configuration.Config;
 import org.kimios.i18n.InternationalizationManager;
@@ -51,8 +52,14 @@ public class CoreListener extends ContextLoader implements ServletContextListene
             /*
                Check config file exist
             */
-            String settingsPath =
-                    System.getProperty("kimios.home") + "/client/conf";
+            String kimiosHome = System.getProperty("kimios.home");
+
+            if(StringUtils.isBlank(kimiosHome)){
+                throw new Exception("Kimios Home Directory not found. Please Check App servers parameters");
+            }
+
+            String settingsPath = kimiosHome
+                     + "/client/conf";
             File f = new File(settingsPath);
             // if dir, or kimios.properties file in dir doesn't exist
             if (!f.exists() || !new File(f, "kimios.properties").exists()) {
@@ -76,6 +83,13 @@ public class CoreListener extends ContextLoader implements ServletContextListene
                                     "http://127.0.0.1:" + serverPort + "/" + serverWebAppName);
 
                     webProperties.setProperty(Config.DM_SERVICE_CONTEXT, "/services");
+
+
+                    webProperties.setProperty(Config.BONITA_ENABLED, "false");
+
+                    webProperties.setProperty(Config.DEFAULT_DOCUMENT_TYPE, "");
+
+                    webProperties.setProperty(Config.DEFAULT_DOMAIN, "kimios");
 
                     String temporaryPathName = "kimios-tmp";
                     File temporaryDirectory = new File(temporaryPathName);

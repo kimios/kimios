@@ -18,7 +18,9 @@ package org.kimios.kernel.index.query.model;
 
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Fabien Alin
@@ -66,7 +68,32 @@ public class SearchRequest
     private Boolean virtualTree;
 
     @Column(name = "search_public", nullable = false)
-    private Boolean publicAccess = false;
+    private Boolean publicAccess = true;
+
+
+    /*@ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "search_tag",
+            joinColumns = @JoinColumn(name = "id"))
+    public List<String> searchTags = new ArrayList<String>();
+
+    public List<String> getSearchTags() {
+        return searchTags;
+    }
+
+    public void setSearchTags(List<String> searchTags) {
+        this.searchTags = searchTags;
+    }*/
+
+    @Transient
+    private List<SearchRequestSecurity> securities = new ArrayList<SearchRequestSecurity>();
+
+    public List<SearchRequestSecurity> getSecurities() {
+        return securities;
+    }
+
+    public void setSecurities(List<SearchRequestSecurity> securities) {
+        this.securities = securities;
+    }
 
     public Boolean getPublicAccess() {
         return publicAccess;

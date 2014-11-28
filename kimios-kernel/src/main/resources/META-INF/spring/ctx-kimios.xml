@@ -26,7 +26,7 @@
         <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"></property>
         <property name="locations">
             <list>
-                <value>${kimios.home}/${kimios.app.name}/conf/kimios.properties</value>
+                <value>file:${kimios.home}/${kimios.app.name}/conf/kimios.properties</value>
             </list>
         </property>
     </bean>
@@ -90,7 +90,9 @@
     </bean>
 
     <bean id="eventHandlerManager" class="org.kimios.kernel.events.EventHandlerManager" factory-method="getInstance"
-            init-method="init"/>
+            init-method="init">
+           <property name="configurationManager" ref="configurationManager" />
+    </bean>
 
     <bean id="eventInterceptor" class="org.kimios.kernel.events.interceptors.GenericInterceptor" init-method="init">
         <property name="ruleManager" ref="ruleManager"></property>

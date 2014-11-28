@@ -45,6 +45,11 @@ public interface ISecurityController
             throws AccessDeniedException, ConfigException, DataSourceException,
             XMLException;
 
+
+    @DmsEvent(eventName = { DmsEventName.ENTITY_ACL_UPDATE })
+    public void updateDMEntitySecurities(Session session, long dmEntityUid, List<DMEntitySecurity> items,
+                             boolean isRecursive) throws AccessDeniedException, ConfigException, DataSourceException;
+
     /**
      * Can given user read the given entity ?
      */

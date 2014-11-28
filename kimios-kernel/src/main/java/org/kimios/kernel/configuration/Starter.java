@@ -20,7 +20,6 @@ import org.kimios.kernel.system.RepositoryCleaner;
 import org.kimios.utils.configuration.ConfigurationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
 
 import java.lang.reflect.Method;
 import java.net.URLClassLoader;
@@ -66,7 +65,7 @@ public class Starter
         }
     }
 
-    public static synchronized void start(String configPath, ApplicationContext _springContext)
+    public static synchronized void start(String configPath)
     {
         try {
             log.info(" **** Kimios **** Initializing context ...");

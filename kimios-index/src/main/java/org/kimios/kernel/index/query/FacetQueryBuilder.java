@@ -111,5 +111,19 @@ public class FacetQueryBuilder
         return query;
     }
 
+    public static SolrQuery searchTagFacetBuilder( SolrQuery query, String facetField, String facetQuery )
+            throws Exception
+    {
+
+        query.setFacet( true );
+        if(facetQuery == null)
+            query.addFacetField( facetField );
+        else
+            query.addFacetQuery( facetField + ":" + facetQuery);
+
+
+        return query;
+    }
+
 
 }

@@ -137,13 +137,18 @@
                 <version>2.3.7</version>
                 <executions>
                     <execution>
-                        <id>bundle-manifest</id>
+                       <id>bundle-manifest</id>
                         <phase>package</phase>
                         <goals>
                             <goal>bundle</goal>
                         </goals>
-
+                        <!--<id>bundle-manifest</id>
+                       <phase>process-classes</phase>
+                       <goals>
+                           <goal>manifest</goal>
+                       </goals> -->
                     </execution>
+
                 </executions>
                 <dependencies>
                     <dependency>
@@ -191,9 +196,15 @@
                     <instructions>
                         <Bundle-SymbolicName>kimios-services</Bundle-SymbolicName>
                         <Include-Resource>{maven-resources}</Include-Resource>
+                        <Private-Package>org.kimios.webservices.utils.*,org.kimios.webservices.impl.*</Private-Package>
                         <Export-Package>org.kimios.webservices.*,org.kimios.kernel.ws.pojo</Export-Package>
-                        <Spring-Context>*;create-asynchronously:=false</Spring-Context>
+                        <!--<Spring-Context>*;create-asynchronously:=false</Spring-Context>-->
                         <Import-Package>
+                            org.codehaus.jackson.jaxrs,
+                            org.codehaus.jackson.map,
+                            org.codehaus.jackson.type,
+                            org.osgi.service.blueprint,
+                            org.codehaus.jackson.annotate,
                             org.slf4j,
                             org.apache.cxf,
                             org.apache.cxf.annotations,
@@ -206,6 +217,10 @@
                             org.apache.cxf.bus.resource,
                             org.apache.cxf.bus.osgi,
                             org.apache.cxf.bus.managers,
+                            org.kimios.utils.logging,
+                            org.apache.cxf.endpoint,
+                            org.apache.cxf.feature,
+                            org.apache.cxf.interceptor,
                             javax.ws.rs,
                             javax.jws,
                             java.lang,
@@ -225,9 +240,6 @@
                             org.apache.cxf.jaxws.support,
                             org.apache.cxf.service.factory,
                             org.apache.cxf.jaxrs.ext.multipart,
-                            org.codehaus.jackson.jaxrs,
-                            org.osgi.service.blueprint,
-                            org.codehaus.jackson.annotate,
                             org.apache.cxf.jaxrs.ext,
                             org.kimios.utils.spring,
                             org.apache.commons.io
@@ -241,6 +253,52 @@
                 <version>2.3.2</version>
                 <executions>
                     <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <excludes>
+                                <exclude>OSGI-INF/blueprint/**</exclude>
+                            </excludes>
+                            <archive>
+                                <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                            </archive>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.2</version>
+                <executions>
+                    <execution>
+                        <id>osgi</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>blueprint</classifier>
+                            <excludes>
+                                <exclude>META-INF/spring/**</exclude>
+                            </excludes>
+                            <archive>
+                                <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                            </archive>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.2</version>
+                <executions>
+                    <execution>
+                        <id>pojo-gen</id>
                         <goals>
                             <goal>jar</goal>
                         </goals>

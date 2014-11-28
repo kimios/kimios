@@ -39,9 +39,14 @@ public class ACLUpdateJob extends JobImpl
     public List<DMEntityACL> execute(Session session, Object... params) throws Exception
     {
         log.debug("Starting job execution");
-        String xmlStream = (String) params[0];
         DMEntity entity = (DMEntity) params[1];
-        List<DMEntityACL> acls = updater.updateAclsRecursiveMode(session, xmlStream, entity);
+        List<DMEntityACL> acls = null;
+        if(params[0] instanceof String){
+            String xmlStream = (String) params[0];
+            acls = updater.updateAclsRecursiveMode(session, xmlStream, entity);
+        } else {
+            acls = updater.updateAclsRecursiveMode(session, (List)params[1], entity);
+        }
         EventContext.addParameter("acls", acls);
         log.debug("Ending job execution");
         return acls;

@@ -21,7 +21,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.exception.DataSourceException;
-import org.kimios.kernel.hibernate.HFactoryImpl;
+import org.kimios.kernel.hibernate.AbstractDBFactory;
 import org.kimios.kernel.user.AuthenticationSource;
 import org.kimios.kernel.user.Group;
 import org.kimios.kernel.user.GroupFactory;
@@ -50,11 +50,11 @@ public class HGroupFactory implements GroupFactory
     {
         try {
 
-            group = (Group) HFactoryImpl.getInstance().getSession().merge(group);
+            group = (Group) AbstractDBFactory.getInstance().getSession().merge(group);
             for (User u : group.getUsers()) {
                 auth.getUserFactory().removeUserFromGroup(u, group);
             }
-            HFactoryImpl.getInstance().getSession().delete(group);
+            AbstractDBFactory.getInstance().getSession().delete(group);
         } catch (HibernateException e) {
             throw new DataSourceException(e, e.getMessage());
         }
@@ -64,7 +64,7 @@ public class HGroupFactory implements GroupFactory
             ConfigException
     {
         try {
-            Criteria c = HFactoryImpl.getInstance().getSession().createCriteria(Group.class)
+            Criteria c = AbstractDBFactory.getInstance().getSession().createCriteria(Group.class)
                     .add(Restrictions.eq("gid", gid))
                     .add(Restrictions.eq("authenticationSourceName", this.getAuth().getName()));
             Group g = (Group) (c.uniqueResult());
@@ -78,7 +78,7 @@ public class HGroupFactory implements GroupFactory
             ConfigException
     {
         try {
-            Criteria c = HFactoryImpl.getInstance().getSession().createCriteria(Group.class)
+            Criteria c = AbstractDBFactory.getInstance().getSession().createCriteria(Group.class)
                     .add(Restrictions.eq("authenticationSourceName", this.getAuth().getName()))
                     .addOrder(Order.asc("name"));
             List<Group> lGroups = (List<Group>) (c.list());
@@ -96,7 +96,7 @@ public class HGroupFactory implements GroupFactory
             ConfigException
     {
         try {
-            User u = (User) HFactoryImpl.getInstance().getSession().createCriteria(User.class)
+            User u = (User) AbstractDBFactory.getInstance().getSession().createCriteria(User.class)
                     .add(Restrictions.eq("uid", userUid))
                     .add(Restrictions.eq("authenticationSourceName", this.auth.getName()))
                     .uniqueResult();
@@ -115,7 +115,7 @@ public class HGroupFactory implements GroupFactory
             ConfigException
     {
         try {
-            HFactoryImpl.getInstance().getSession().save(group);
+            AbstractDBFactory.getInstance().getSession().save(group);
         } catch (HibernateException e) {
             throw new DataSourceException(e, e.getMessage());
         }
@@ -125,7 +125,7 @@ public class HGroupFactory implements GroupFactory
             ConfigException
     {
         try {
-            HFactoryImpl.getInstance().getSession().update(group);
+            AbstractDBFactory.getInstance().getSession().update(group);
         } catch (HibernateException e) {
             throw new DataSourceException(e, e.getMessage());
         }

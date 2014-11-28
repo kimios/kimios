@@ -280,6 +280,10 @@ public class ContextBuilder
             ctx.setEntity(document);
             EventContext.addParameter("version", version);
 
+
+            log.trace("added version to context: " + version);
+            log.trace("item " + document);
+
             //check if document type set
             if (((Long) arguments[2]) > 0) {
                 DocumentTypeFactory dtF = FactoryInstantiator.getInstance().getDocumentTypeFactory();

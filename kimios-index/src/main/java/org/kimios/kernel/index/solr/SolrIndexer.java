@@ -188,6 +188,7 @@ public class SolrIndexer extends GenericEventHandler
     @DmsEvent(eventName = { DmsEventName.FOLDER_UPDATE }, when = DmsEventOccur.AFTER)
     public void updateFolder(Object[] o, Object retour, EventContext ctx)
     {
+        log.debug("handling folder update for index");
         try {
             String oldPath = ctx.getEntity().getPath();
             FactoryInstantiator fc = FactoryInstantiator.getInstance();
@@ -202,6 +203,7 @@ public class SolrIndexer extends GenericEventHandler
     @DmsEvent(eventName = { DmsEventName.WORKSPACE_UPDATE }, when = DmsEventOccur.AFTER)
     public void updateWorkspace(Object[] o, Object retour, EventContext ctx)
     {
+        log.debug("handling workspace update for index");
         try {
             Workspace w = FactoryInstantiator.getInstance().getWorkspaceFactory().getWorkspace((Long) o[1]);
             String oldName = ctx.getEntity().getName();

@@ -53,10 +53,18 @@ DmsJsonStore = Ext.extend(Ext.data.JsonStore, {
 
             // dms exception
             if (resp.status == 200) {
-                kimios.MessageBox.exception({
-                    exception: opts.reader.jsonData.exception,
-                    stackTrace: opts.reader.jsonData.trace
-                });
+                if(opts.reader.jsonData){
+                    kimios.MessageBox.exception({
+                        exception: opts.reader.jsonData.exception,
+                        stackTrace: opts.reader.jsonData.trace
+                    });
+                }
+                else {
+                    console.log(resp);
+                    kimios.MessageBox.exception({
+                        exception: arg
+                    });
+                }
             }
 
             // server exception
@@ -734,6 +742,17 @@ kimios.store = {
                 },
                 fields: ['percent'],
                 autoLoad: false
+            });
+        },
+
+        getLoggerStore: function () {
+            return new DmsJsonStore({
+                url: 'Admin',
+                baseParams: {
+                    action: 'listLoggers'
+                },
+                fields: ['loggerName', 'loggerLevel'],
+                autoLoad: true
             });
         }
     },

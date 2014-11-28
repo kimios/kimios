@@ -63,5 +63,32 @@ public class ACLUpdater implements IACLUpdater
 
         return listAclToIndex;
     }
+
+
+    @DmsEvent(eventName = { DmsEventName.ENTITY_ACL_UPDATE })
+    public List<DMEntityACL> updateAclsRecursiveMode(Session session, List<DMEntitySecurity> securityItems, DMEntity entity)
+            throws Exception
+    {
+
+        DMEntitySecurityFactory fact =
+                org.kimios.kernel.security.FactoryInstantiator.getInstance().getDMEntitySecurityFactory();
+        List<DMEntityACL> listAclToIndex = new ArrayList<DMEntityACL>();
+        fact.cleanACLRecursive(entity);
+        for (DMEntitySecurity acl : securityItems) {
+            acl.setDmEntity(entity);
+            listAclToIndex.addAll(fact.saveDMEntitySecurity(acl));
+        }
+        List<DMEntity> items = FactoryInstantiator.getInstance().getDmEntityFactory().getEntities(entity.getPath());
+        for (DMEntity it : items) {
+            //generate sec for childrens, from previouslys created sec (to avoid xml parsing on each loop)
+            for (DMEntitySecurity sec : securityItems) {
+                DMEntitySecurity nSec =
+                        new DMEntitySecurity(it.getUid(), it.getType(), sec.getName(), sec.getSource(), sec.getType(),
+                                sec.isRead(), sec.isWrite(), sec.isFullAccess(), it);
+                listAclToIndex.addAll(fact.saveDMEntitySecurity(nSec));
+            }
+        }
+        return listAclToIndex;
+    }
 }
 

@@ -222,7 +222,7 @@ public class DocumentActionHandler
         {
             if ( !toRemove.contains( m ) )
             {
-                metaValues.add( new Meta( m.getUid(), m.getName(), null, m.getMetaType(), m.getMetaFeedUid() ) );
+                metaValues.add( new Meta( m.getUid(), m.getName(), null, m.getMetaType(), m.getMetaFeedUid(), m.isMandatory() ) );
             }
         }
 

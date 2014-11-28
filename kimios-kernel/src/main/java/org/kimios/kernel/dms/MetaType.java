@@ -24,5 +24,7 @@ public class MetaType
     public static final int DATE = 3;
 
     public static final int BOOLEAN = 4;
+
+    public static final int LIST = 5;
 }
 
