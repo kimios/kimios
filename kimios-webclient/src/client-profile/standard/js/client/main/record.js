@@ -532,6 +532,9 @@ kimios.record = {
             {
                 name: 'mandatory',
                 type: 'boolean'
+            },
+            {
+                name:  'position'
             }
         ]),
 

@@ -20,7 +20,7 @@ import org.kimios.client.exception.AccessDeniedException;
 import org.kimios.client.exception.ConfigException;
 import org.kimios.client.exception.DMSException;
 import org.kimios.client.exception.ExceptionHelper;
-import org.kimios.webservices.BonitaService;
+import org.kimios.webservices.bonita.BonitaService;
 import org.kimios.webservices.pojo.CommentWrapper;
 import org.kimios.webservices.pojo.ProcessWrapper;
 import org.kimios.webservices.pojo.TasksResponse;

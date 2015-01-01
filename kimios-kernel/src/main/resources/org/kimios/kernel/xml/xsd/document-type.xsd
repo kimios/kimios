@@ -33,6 +33,7 @@
             <xsd:attribute name="name" use="required" type="xsd:string"/>
             <xsd:attribute name="uid" use="required" type="xsd:long"/>
             <xsd:attribute name="mandatory" use="required" type="xsd:boolean"/>
+            <xsd:attribute name="position" use="optional" type="xsd:integer"/>
         </xsd:complexType>
     </xsd:element>
 </xsd:schema>

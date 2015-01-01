@@ -32,6 +32,8 @@ public interface DocumentVersionFactory
 
     public void updateDocumentVersion(DocumentVersion v) throws ConfigException, DataSourceException;
 
+    public void updateDocumentVersionBulk(DocumentVersion v) throws ConfigException, DataSourceException;
+
     public void deleteDocumentVersion(DocumentVersion v) throws ConfigException, DataSourceException;
 
     public Vector<DocumentVersion> getVersionsToDelete() throws ConfigException, DataSourceException;

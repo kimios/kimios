@@ -18,6 +18,8 @@ package org.kimios.kernel.ws.pojo;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class Document extends DMEntity implements Serializable
@@ -58,6 +60,8 @@ public class Document extends DMEntity implements Serializable
     private Long documentTypeUid = 0L;
 
     private String addonDatas;
+
+    private Map<String, MetaValue> metaDatas = new HashMap<String, MetaValue>();
 
     public Document()
     {
@@ -272,6 +276,14 @@ public class Document extends DMEntity implements Serializable
 
     public void setLastVersionId(Long lastVersionId) {
         this.lastVersionId = lastVersionId;
+    }
+
+    public Map<String, MetaValue> getMetaDatas() {
+        return metaDatas;
+    }
+
+    public void setMetaDatas(Map<String, MetaValue> metaDatas) {
+        this.metaDatas = metaDatas;
     }
 
     @Override

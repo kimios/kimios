@@ -75,7 +75,7 @@
                         <property name="writeXsiTypes" value="true" />
                         <property name="rootClassNames">
                             <list>
-                                <value>org.kimios.webservices.DMServiceException</value>
+                                <value>org.kimios.webservices.exceptions.DMServiceException</value>
                                 <value>org.kimios.kernel.ws.pojo.Document</value>
                                 <value>org.kimios.kernel.ws.pojo.Folder</value>
                                 <value>org.kimios.kernel.ws.pojo.SymbolicLink</value>

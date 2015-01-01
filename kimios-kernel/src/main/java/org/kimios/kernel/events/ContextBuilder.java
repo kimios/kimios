@@ -64,7 +64,8 @@ public class ContextBuilder
             EventContext ctx = EventContext.get();
             ctx.setEvent(n);
             ctx.setContextParameters(arguments);
-            ctx.setSession((Session) arguments[0]);
+            if(arguments[0] instanceof Session)
+                ctx.setSession((Session) arguments[0]);
 
             if (n.name().startsWith(documentVersion)) {
                 documentVersionContextBuilder(invokedMethod, arguments, ctx);
@@ -176,7 +177,7 @@ public class ContextBuilder
             DocumentFactory fc = FactoryInstantiator.getInstance().getDocumentFactory();
             Document document = fc.getDocument((Long) arguments[1]);
             HFactory t = (HFactory) fc;
-            t.getSession().evict(document);
+            //t.getSession().evict(document);
             ctx.setEntity(document);
         }
 
@@ -185,7 +186,7 @@ public class ContextBuilder
             DocumentFactory fc = FactoryInstantiator.getInstance().getDocumentFactory();
             Document document = fc.getDocument((Long) arguments[1]);
             HFactory t = (HFactory) fc;
-            t.getSession().evict(document);
+            //t.getSession().evict(document);
             ctx.setEntity(document);
         }
 
@@ -194,7 +195,7 @@ public class ContextBuilder
             DocumentFactory fc = FactoryInstantiator.getInstance().getDocumentFactory();
             Document document = fc.getDocument((Long) arguments[1]);
             HFactory t = (HFactory) fc;
-            t.getSession().evict(document);
+            //t.getSession().evict(document);
             ctx.setEntity(document);
         }
 
@@ -203,7 +204,7 @@ public class ContextBuilder
             DocumentFactory fc = FactoryInstantiator.getInstance().getDocumentFactory();
             Document document = fc.getDocument((Long) arguments[1]);
             HFactory t = (HFactory) fc;
-            t.getSession().evict(document);
+            //t.getSession().evict(document);
             ctx.setEntity(document);
         }
 
@@ -222,7 +223,7 @@ public class ContextBuilder
             DocumentFactory fc = FactoryInstantiator.getInstance().getDocumentFactory();
             Document document = fc.getDocument((Long) arguments[1]);
             HFactory t = (HFactory) fc;
-            t.getSession().evict(document);
+            //t.getSession().evict(document);
             ctx.setEntity(document);
             EventContext.addParameter("relatedDocument", fc.getDocument((Long) arguments[2]));
         }

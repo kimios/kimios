@@ -379,6 +379,12 @@ public class SolrSearchController
             throws DataSourceException, ConfigException, IndexException, IOException {
         searchRequest.setOwner(session.getUserName());
         searchRequest.setOwnerSource(session.getUserSource());
+        if (searchRequest.getId() == null) {
+            searchRequest.setCreationDate(new Date());
+            searchRequest.setUpdateDate(searchRequest.getCreationDate());
+        } else {
+            searchRequest.setUpdateDate(new Date());
+        }
         searchRequestFactory.save(searchRequest);
         searchRequestFactory.getSession().flush();
         return searchRequest.getId();
@@ -388,26 +394,38 @@ public class SolrSearchController
     public Long advancedSaveSearchQueryWithSecurity(Session session, SearchRequest searchRequest, List<SearchRequestSecurity> securities)
             throws DataSourceException, ConfigException, IndexException, IOException {
 
-        if(searchRequest.getId() != null){
+        if (searchRequest.getId() != null) {
             //update mode
             if (!canWrite(session, searchRequest)) {
                 throw new AccessDeniedException();
             }
+            searchRequest.setUpdateDate(new Date());
+        } else {
+            searchRequest.setCreationDate(new Date());
+            searchRequest.setUpdateDate(searchRequest.getUpdateDate());
         }
         searchRequest.setOwner(session.getUserName());
         searchRequest.setOwnerSource(session.getUserSource());
+
         searchRequestFactory.save(searchRequest);
         searchRequestFactory.getSession().flush();
         //process security
-        if (searchRequest.getSecurities() != null) {
+        if (searchRequest.getSecurities() != null && searchRequest.getSecurities().size() > 0) {
 
             searchRequestSecurityFactory.cleanACL(searchRequest);
             for (SearchRequestSecurity secItem : securities) {
                 secItem.setSearchRequest(searchRequest);
                 searchRequestSecurityFactory.saveSearchRequestSecurity(secItem);
                 log.debug("saving search request acl " + secItem);
+
+
             }
+            // Views is supposed to be published, because of rights definition
+            searchRequest.setPublished(true);
+            searchRequest.setTemporary(false);
         }
+        searchRequestFactory.save(searchRequest);
+        searchRequestFactory.getSession().flush();
         return searchRequest.getId();
     }
 
@@ -421,6 +439,10 @@ public class SolrSearchController
             if (!canWrite(session, searchRequest)) {
                 throw new AccessDeniedException();
             }
+            searchRequest.setUpdateDate(new Date());
+        } else {
+            searchRequest.setCreationDate(new Date());
+            searchRequest.setUpdateDate(searchRequest.getCreationDate());
         }
         searchRequest.setName(name);
         searchRequest.setCriteriaList(criteriaList);
@@ -428,6 +450,9 @@ public class SolrSearchController
         searchRequest.setOwnerSource(session.getUserSource());
         searchRequest.setSortField(sortField);
         searchRequest.setSortDir(sortDir);
+        searchRequest.setPublished(false);
+        searchRequest.setTemporary(false);
+        searchRequest.setPublicAccess(false);
         searchRequestFactory.save(searchRequest);
     }
 
@@ -508,8 +533,8 @@ public class SolrSearchController
             throws AccessDeniedException, DataSourceException, ConfigException, IndexException, IOException {
         SearchRequest searchRequest = searchRequestFactory.loadById(id);
 
-        if((searchRequest.getPublicAccess() != null && searchRequest.getPublicAccess()) ||
-                canRead(session, searchRequest)){
+        if ((searchRequest.getPublicAccess() != null && searchRequest.getPublicAccess()) ||
+                canRead(session, searchRequest)) {
             //load securities
             List<SearchRequestSecurity> securities = searchRequestSecurityFactory.getSearchRequestSecurities(searchRequest);
             for (SearchRequestSecurity sec : securities)
@@ -517,7 +542,7 @@ public class SolrSearchController
 
             searchRequest.setSecurities(securities);
             return searchRequest;
-        }   else {
+        } else {
             throw new AccessDeniedException();
         }
     }
@@ -525,39 +550,39 @@ public class SolrSearchController
     public List<SearchRequest> listSavedSearch(Session session)
             throws AccessDeniedException, DataSourceException, ConfigException, IndexException, IOException {
 
-        try{
-        List<SearchRequest> requests = searchRequestFactory.loadAllSearchRequests();
-        if (SecurityAgent.getInstance().isAdmin(session.getUserName(), session.getUserSource())) {
-            return requests;
-        }
+        try {
+            List<SearchRequest> requests = searchRequestFactory.loadAllSearchRequests();
+            if (SecurityAgent.getInstance().isAdmin(session.getUserName(), session.getUserSource())) {
+                return requests;
+            }
         /*
             filter rights
          */
-        List<String> hashs = new ArrayList<String>();
-        List<String> noAccessHash = new ArrayList<String>();
-        noAccessHash.add(DMSecurityRule
-                .getInstance(session.getUserName(), session.getUserSource(), SecurityEntityType.USER, DMSecurityRule.NOACCESS).getRuleHash());
-        hashs.add(DMSecurityRule.getInstance(session.getUserName(), session.getUserSource(), SecurityEntityType.USER, DMSecurityRule.READRULE)
-                .getRuleHash());
-        hashs.add(
-                DMSecurityRule.getInstance(session.getUserName(), session.getUserSource(), SecurityEntityType.USER, DMSecurityRule.WRITERULE)
-                        .getRuleHash());
-        hashs.add(DMSecurityRule.getInstance(session.getUserName(), session.getUserSource(), SecurityEntityType.USER, DMSecurityRule.FULLRULE)
-                .getRuleHash());
-        for (Group g : session.getGroups()) {
-            hashs.add(DMSecurityRule
-                    .getInstance(g.getGid(), g.getAuthenticationSourceName(), SecurityEntityType.GROUP,
-                            DMSecurityRule.READRULE).getRuleHash());
-            hashs.add(DMSecurityRule
-                    .getInstance(g.getGid(), g.getAuthenticationSourceName(), SecurityEntityType.GROUP,
-                            DMSecurityRule.WRITERULE).getRuleHash());
-            hashs.add(DMSecurityRule
-                    .getInstance(g.getGid(), g.getAuthenticationSourceName(), SecurityEntityType.GROUP,
-                            DMSecurityRule.FULLRULE).getRuleHash());
-        }
-        List<SearchRequest> readables = searchRequestSecurityFactory.authorizedReadRequests(requests, session.getUserName(), session.getUserSource(), hashs, noAccessHash);
-        return readables;
-        }catch (Exception e){
+            List<String> hashs = new ArrayList<String>();
+            List<String> noAccessHash = new ArrayList<String>();
+            noAccessHash.add(DMSecurityRule
+                    .getInstance(session.getUserName(), session.getUserSource(), SecurityEntityType.USER, DMSecurityRule.NOACCESS).getRuleHash());
+            hashs.add(DMSecurityRule.getInstance(session.getUserName(), session.getUserSource(), SecurityEntityType.USER, DMSecurityRule.READRULE)
+                    .getRuleHash());
+            hashs.add(
+                    DMSecurityRule.getInstance(session.getUserName(), session.getUserSource(), SecurityEntityType.USER, DMSecurityRule.WRITERULE)
+                            .getRuleHash());
+            hashs.add(DMSecurityRule.getInstance(session.getUserName(), session.getUserSource(), SecurityEntityType.USER, DMSecurityRule.FULLRULE)
+                    .getRuleHash());
+            for (Group g : session.getGroups()) {
+                hashs.add(DMSecurityRule
+                        .getInstance(g.getGid(), g.getAuthenticationSourceName(), SecurityEntityType.GROUP,
+                                DMSecurityRule.READRULE).getRuleHash());
+                hashs.add(DMSecurityRule
+                        .getInstance(g.getGid(), g.getAuthenticationSourceName(), SecurityEntityType.GROUP,
+                                DMSecurityRule.WRITERULE).getRuleHash());
+                hashs.add(DMSecurityRule
+                        .getInstance(g.getGid(), g.getAuthenticationSourceName(), SecurityEntityType.GROUP,
+                                DMSecurityRule.FULLRULE).getRuleHash());
+            }
+            List<SearchRequest> readables = searchRequestSecurityFactory.authorizedReadRequests(requests, session.getUserName(), session.getUserSource(), hashs, noAccessHash);
+            return readables;
+        } catch (Exception e) {
             log.error("error while loading queries", e);
             throw new AccessDeniedException();
         }
@@ -565,17 +590,136 @@ public class SolrSearchController
 
 
     public List<SearchRequest> searchRequestList(Session session) {
+        log.debug("Calling Global Search Request List");
         return searchRequestFactory.loadSearchRequest(session.getUserName(), session.getUid());
+    }
+
+    public List<SearchRequest> loadMysSearchQueriesNotPublished(Session session)
+            throws DataSourceException, ConfigException {
+        log.debug("Calling My Search Request List");
+        return searchRequestFactory.loadMySearchRequestNotPublished(session);
+    }
+
+
+
+
+    private String convertDateString(String input) throws ParseException {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat targetDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+        return targetDateFormat.format(dateFormat.parse(input));
+    }
+    private String temporarySearchNameUpdate(List<Criteria> criteriaList) {
+        try {
+
+
+            String appendName = "";
+            for (Criteria c : criteriaList) {
+                boolean isDateField = c.getFieldName().startsWith("MetaDataDate") ||
+                        c.getFieldName().equals("DocumentCreationDate") ||
+                        c.getFieldName().equals("DocumentUpdateDate") ||
+                        c.getFieldName().equals("DocumentVersionCreationDate") ||
+                        c.getFieldName().equals("DocumentVersionUpdateDate");
+                String tmpAppendName = "";
+                if (!c.getFieldName().equals("DocumentTypeUid"))
+
+                    if (c.getQuery() != null) {
+                        if (c.getFieldName().contains("Meta") && c.getQuery().contains("[\"")
+                                && c.getQuery().contains("\"]")) {
+                            //value list handling
+                            tmpAppendName += "\"" + c.getQuery().replaceAll("\"\\]", "")
+                                    .replaceAll("\\[\"", "")
+                                    .replaceAll("\",\"", ",")
+                                    .replaceAll("\\[\\]", "");
+                            tmpAppendName = tmpAppendName.replaceAll("\"\"", "") + "\"";
+                        } else {
+                            tmpAppendName += "\"" + c.getQuery() + "\"";
+                        }
+
+                    } else if (c.getRangeMin() != null || c.getRangeMax() != null) {
+                        if (StringUtils.isNotBlank(c.getRangeMin()) && StringUtils.isNotBlank(c.getRangeMax())) {
+                            if(isDateField){
+                                tmpAppendName += convertDateString(c.getRangeMin())
+                                        + " to " + convertDateString(c.getRangeMax());
+                            } else {
+                                tmpAppendName += c.getRangeMin()
+                                        + " to " + c.getRangeMax();
+                            }
+
+                        } else if (StringUtils.isNotBlank(c.getRangeMin())) {
+                            if(isDateField){
+                                tmpAppendName += convertDateString(c.getRangeMin());
+                            } else
+                                tmpAppendName += c.getRangeMin();
+                        } else if (StringUtils.isNotBlank(c.getRangeMax())) {
+                            if(isDateField){
+                                tmpAppendName += convertDateString(c.getRangeMax());
+                            } else
+                                tmpAppendName += c.getRangeMax();
+                        }
+                    }
+                appendName += tmpAppendName + ", ";
+
+            }
+            appendName = appendName.replaceAll("\"\"", "");
+            if (appendName.trim().endsWith(",")) {
+                appendName = appendName.substring(0, appendName.lastIndexOf(","));
+            }
+
+            return appendName;
+
+        } catch (Exception ex) {
+            return "New Search Request (" + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()) + ")";
+
+        }
     }
 
 
     public SearchResponse advancedSearchDocuments(Session session, List<Criteria> criteriaList, int start,
-                                                  int pageSize, String sortField, String sortDir, String virtualPath)
+                                                  int pageSize, String sortField, String sortDir, String virtualPath, Long requestId, Boolean mustSave)
             throws DataSourceException, ConfigException, IndexException, IOException, ParseException {
 
         SolrQuery query =
                 this.parseQueryFromListCriteria(session, start, pageSize, criteriaList, sortField, sortDir, virtualPath, null);
         SearchResponse searchResponse = solrIndexManager.executeSolrQuery(query);
+
+        /*
+            Create temporary request
+         */
+        SearchRequest searchRequest = null;
+        if (requestId != null && requestId > 0) {
+            searchRequest = searchRequestFactory.loadById(requestId);
+            if (searchRequest.getTemporary() != null && searchRequest.getTemporary()) {
+                searchRequest.setName(temporarySearchNameUpdate(criteriaList));
+                searchRequest.setCriteriaList(criteriaList);
+                searchRequest.setUpdateDate(new Date());
+                searchRequestFactory.save(searchRequest);
+                searchRequest = searchRequestFactory.loadById(requestId);
+            }
+        } else {
+            searchRequest = new SearchRequest();
+            String name = temporarySearchNameUpdate(criteriaList);
+            searchRequest.setName(name);
+            searchRequest.setCreationDate(new Date());
+            searchRequest.setUpdateDate(searchRequest.getCreationDate());
+            searchRequest.setTemporary(true);
+            searchRequest.setPublished(false);
+            searchRequest.setPublicAccess(false);
+            searchRequest.setCriteriaList(criteriaList);
+            searchRequest.setOwner(session.getUserName());
+            searchRequest.setOwnerSource(session.getUserSource());
+            searchRequest.setSearchSessionId(session.getUid());
+            searchRequest.setSortField(sortField);
+            searchRequest.setSortDir(sortDir);
+
+            if (mustSave != null && mustSave) {
+                Long reqId = searchRequestFactory.save(searchRequest);
+                searchRequest.setId(reqId);
+            } else {
+                searchRequest.setTransient(true);
+            }
+        }
+        searchResponse.setTemporaryRequest(searchRequest);
         return searchResponse;
 
     }
@@ -585,7 +729,7 @@ public class SolrSearchController
                                                   int pageSize, String sortField, String sortDir)
             throws DataSourceException, ConfigException, IndexException, IOException, ParseException {
 
-        return advancedSearchDocuments(session, criteriaList, start, pageSize, sortField, sortDir, null);
+        return advancedSearchDocuments(session, criteriaList, start, pageSize, sortField, sortDir, null, null, null);
     }
 
     private SolrQuery parseQueryFromListCriteria(Session session, int page, int pageSize, List<Criteria> criteriaList,
@@ -670,7 +814,7 @@ public class SolrSearchController
                         fQuery = c.getFieldName() + ":" + ClientUtils.escapeQueryChars(pathIndex.get(c.getLevel()));
                     }
 
-                    if(fQuery != null){
+                    if (fQuery != null) {
                         //should we calculate facet as exclusive ?
                         queryHasExclusiveFacetApplied = c.isExclusiveFacet();
                         filtersMap.put(c, fQuery);
@@ -744,7 +888,10 @@ public class SolrSearchController
                         queries.add("DocumentBody:" + ClientUtils.escapeQueryChars(c.getQuery()));
                     } else if (c.getFieldName().equals("DocumentUid")) {
                         //filterQueries.add("DocumentUid:" + c.getQuery());
-                        filtersMap.put(c, "DocumentUid:"  + c.getQuery());
+                        filtersMap.put(c, "DocumentUid:" + c.getQuery());
+                    } else if (c.getFieldName().equals("DocumentOwner")) {
+                        //filterQueries.add("DocumentUid:" + c.getQuery());
+                        filtersMap.put(c, "DocumentOwner:" + c.getQuery());
                     } else if (c.getFieldName().equals("DocumentParent")) {
                         //filterQueries.add(QueryBuilder.documentParentQuery(c.getQuery()));
                         filtersMap.put(c, QueryBuilder.documentParentQuery(c.getQuery()));
@@ -783,10 +930,45 @@ public class SolrSearchController
                         Meta meta = dmsFactoryInstantiator.getMetaFactory().getMeta(c.getMetaId());
                         if (meta != null) {
                             if (meta.getMetaType() == MetaType.STRING) {
+                                if (meta.getMetaFeedBean() != null) {
+                                    ObjectMapper mapper = new ObjectMapper();
+                                    try {
+                                        List<String> list = mapper.readValue(c.getQuery(), new TypeReference<List<String>>() {
+                                        });
+                                        List<String> tmpQ = new ArrayList<String>();
+                                        for (String u : list) {
+                                            String metaStringQuery = "MetaDataString_" + meta.getUid() + ":*" +
+                                                    ClientUtils.escapeQueryChars(u.toLowerCase()) + "*";
+                                            tmpQ.add(metaStringQuery + " OR ");
+                                        }
+                                        String eq = "";
+                                        if (list.size() > 0) {
+                                            for (String z : tmpQ) {
+                                                eq += z;
+                                            }
+                                            log.debug("query multivalue {}", eq);
+                                            eq = eq.substring(0, eq.lastIndexOf("OR"));
 
-                                String metaStringQuery = "MetaDataString_" + meta.getUid() + ":*" +
-                                        ClientUtils.escapeQueryChars(c.getQuery().toLowerCase()) + "*";
-                                queries.add(metaStringQuery);
+                                            eq = "(" + eq + ")";
+                                            queries.add(eq);
+                                        }
+
+                                    } catch (Exception e) {
+                                        log.error("error while parsing multivalued meta value", e);
+                                        String metaStringQuery = "MetaDataString_" + meta.getUid() + ":*" +
+                                                ClientUtils.escapeQueryChars(c.getQuery().toLowerCase()) + "*";
+                                        queries.add(metaStringQuery);
+                                    }
+
+                                } else {
+
+                                    String metaStringQuery = "MetaDataString_" + meta.getUid() + ":*" +
+                                            ClientUtils.escapeQueryChars(c.getQuery().toLowerCase()) + "*";
+                                    queries.add(metaStringQuery);
+
+                                }
+
+
                             }
                             if (meta.getMetaType() == MetaType.LIST) {
 
@@ -883,8 +1065,8 @@ public class SolrSearchController
         }
 
 
-        for(Criteria c: criteriaList){
-            if(filtersMap.get(c) != null){
+        for (Criteria c : criteriaList) {
+            if (filtersMap.get(c) != null) {
                 filterQueries.add(filtersMap.get(c));
             }
         }
@@ -910,8 +1092,8 @@ public class SolrSearchController
             sQuery = new StringBuilder();
             sQuery.append("*:*");
             filterQueries.clear();
-            for(Criteria c: criteriaList){
-                if(c.isExclusiveFacet() && filtersMap.get(c) != null){
+            for (Criteria c : criteriaList) {
+                if (c.isExclusiveFacet() && filtersMap.get(c) != null) {
                     filterQueries.add(filtersMap.get(c));
                 }
             }
@@ -943,12 +1125,12 @@ public class SolrSearchController
 
         }
 
-        if(indexQuery.getFilterQueries() != null)
+        if (indexQuery.getFilterQueries() != null)
             log.debug("Solr Final Filter Query " + Joiner.on(" ").join(indexQuery.getFilterQueries()));
         log.debug("Solr Final Query: " + sQuery);
-        if(indexQuery.getFacetFields() != null)
+        if (indexQuery.getFacetFields() != null)
             log.debug("Solr Final Facet  " + Joiner.on(" ").join(indexQuery.getFacetFields()));
-        if(indexQuery.getFacetQuery() != null)
+        if (indexQuery.getFacetQuery() != null)
             log.debug("Solr Final Facet  Query " + Joiner.on(" ").join(indexQuery.getFacetQuery()));
 
         indexQuery.setQuery(sQuery.toString());

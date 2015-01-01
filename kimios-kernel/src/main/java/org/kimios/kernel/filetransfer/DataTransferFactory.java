@@ -28,5 +28,7 @@ public interface DataTransferFactory
     public void updateDataTransfer(DataTransfer transfer) throws DataSourceException;
 
     public DataTransfer getUploadDataTransferByDocumentId(long uid) throws DataSourceException;
+
+    public DataTransfer getUploadDataTransferByDocumentToken(String token) throws DataSourceException;
 }
 

@@ -153,7 +153,16 @@ public class HDocumentFactory extends HFactory implements DocumentFactory
             getSession().save(d);
             getSession().flush();
         } catch (HibernateException e) {
-            boolean integrity = e instanceof ConstraintViolationException;
+            throw new DataSourceException(e, e.getMessage());
+        }
+    }
+
+    public void saveDocumentNoFlush(Document d) throws ConfigException,
+            DataSourceException
+    {
+        try {
+            getSession().save(d);
+        } catch (HibernateException e) {
             throw new DataSourceException(e, e.getMessage());
         }
     }

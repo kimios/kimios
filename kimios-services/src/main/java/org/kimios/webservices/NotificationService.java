@@ -19,6 +19,7 @@ package org.kimios.webservices;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.kimios.kernel.ws.pojo.DocumentWorkflowStatusRequest;
 import org.kimios.kernel.ws.pojo.WorkflowStatus;
+import org.kimios.webservices.exceptions.DMServiceException;
 
 import javax.jws.WebParam;
 import javax.jws.WebService;

@@ -71,7 +71,7 @@ public class MetaControllerWeb extends Controller {
         org.kimios.kernel.ws.pojo.Meta[] list = documentVersionController.getMetas(sessionUid, typeUid);
         List<Meta> items = new ArrayList<Meta>();
         for(org.kimios.kernel.ws.pojo.Meta type: list){
-            items.add(new Meta(type.getUid(), type.getName(), null, type.getMetaType(), type.getMetaFeedUid(), type.isMandatory()));
+            items.add(new Meta(type.getUid(), type.getName(), null, type.getMetaType(), type.getMetaFeedUid(), type.isMandatory(), type.getPosition()));
         }
         String jsonResp = new JSONSerializer()
                 .exclude("class")

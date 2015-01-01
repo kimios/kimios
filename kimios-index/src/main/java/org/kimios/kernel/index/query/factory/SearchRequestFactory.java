@@ -22,6 +22,9 @@ import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
 import org.kimios.kernel.index.query.model.Criteria;
 import org.kimios.kernel.index.query.model.SearchRequest;
+import org.kimios.kernel.security.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -35,6 +38,8 @@ public class SearchRequestFactory extends HFactory {
 
 
 
+
+    private static Logger logger = LoggerFactory.getLogger(SearchRequestFactory.class);
 
     public Long save(SearchRequest searchRequest) throws DataSourceException {
 
@@ -56,16 +61,37 @@ public class SearchRequestFactory extends HFactory {
 
 
     public List<SearchRequest> loadAllSearchRequests(){
+
         return getSession().createQuery("from SearchRequest fetch all properties order by name")
                 .list();
     }
 
     public List<SearchRequest> loadSearchRequest(String userId, String userSource) {
-        String query = "from SearchRequest fetch all properties where (owner = :userId and ownerSource = :userSource) or publicAccess is true order by name";
-        return getSession().createQuery(query)
-                .setString("userId", userId)
-                .setString("userSource", userSource)
+
+
+        String query = "from SearchRequest fetch all properties where temporary is false " +
+                "and (publicAccess is true or published is true) order by publicAccess, name";
+        List<SearchRequest> requests =  getSession().createQuery(query)
+                //.setString("userId", userId)
+                //.setString("userSource", userSource)
                 .list();
+        logger.debug("loading search request {}", requests.size());
+        return requests;
+    }
+
+    public List<SearchRequest> loadMySearchRequestNotPublished(Session session) {
+        String query = "from SearchRequest fetch all properties where " +
+                "publicAccess is false and ((searchSessionId = :searchSessionId and temporary is true) " +
+                " or (owner = :userId and ownerSource = :userSource and published is false))  order by temporary, creationDate, name";
+        List<SearchRequest> requests =  getSession().createQuery(query)
+                .setString("searchSessionId", session.getUid())
+                .setString("userId", session.getUserName())
+                .setString("userSource", session.getUserSource())
+                .list();
+
+        logger.debug("loading my search request {}", requests.size());
+
+        return requests;
     }
 
     public SearchRequest loadById(Long id) {

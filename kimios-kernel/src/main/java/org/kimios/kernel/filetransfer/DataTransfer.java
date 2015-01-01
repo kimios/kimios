@@ -35,6 +35,8 @@ public class DataTransfer implements Serializable
 
     public static final int DOWNLOAD = 2;
 
+    public static final int TOKEN = 3;
+
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq")
@@ -78,6 +80,9 @@ public class DataTransfer implements Serializable
 
     @Column(name = "has_been_chk_out", nullable = false)
     private boolean hasBeenCheckedOutOnStart = false;
+
+    @Column(name = "dl_token", nullable = true)
+    private String downloadToken = null;
 
     public DataTransfer()
     {
@@ -233,9 +238,17 @@ public class DataTransfer implements Serializable
         this.hasBeenCheckedOutOnStart = hasBeenCheckedOutOnStart;
     }
 
+    public String getDownloadToken() {
+        return downloadToken;
+    }
+
+    public void setDownloadToken(String downloadToken) {
+        this.downloadToken = downloadToken;
+    }
+
     public DataTransaction toPojo()
     {
-        return new DataTransaction(this.uid, this.dataSize, this.isCompressed, this.hashMD5, this.hashSHA);
+        return new DataTransaction(this.uid, this.dataSize, this.isCompressed, this.hashMD5, this.hashSHA, this.downloadToken);
     }
 
     public DocumentVersion getVersion()

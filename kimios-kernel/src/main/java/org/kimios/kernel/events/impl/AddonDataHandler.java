@@ -16,12 +16,10 @@
 
 package org.kimios.kernel.events.impl;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
-import org.kimios.kernel.dms.DMEntityImpl;
-import org.kimios.kernel.dms.Document;
-import org.kimios.kernel.dms.FactoryInstantiator;
-import org.kimios.kernel.dms.MetaValue;
+import org.kimios.kernel.dms.*;
 import org.kimios.kernel.dms.extension.impl.DMEntityAttribute;
 import org.kimios.kernel.events.EventContext;
 import org.kimios.kernel.events.GenericEventHandler;
@@ -46,6 +44,7 @@ public class AddonDataHandler extends GenericEventHandler {
         this.objectMapper = mapper;
 
         mapper.configure(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS, false);
+        mapper.getSerializationConfig().addMixInAnnotations(Meta.class, MetaMixIn.class);
     }
 
 
@@ -107,6 +106,17 @@ public class AddonDataHandler extends GenericEventHandler {
             log.error("Error while generating Document addon data", e);
         }
         return null;
+    }
+
+
+    public static abstract class MetaMixIn {
+
+        @JsonIgnore
+        abstract MetaFeedImpl getMetaFeedBean();
+
+        @JsonIgnore
+        abstract MetaFeedImpl getMetaFeed();
+
     }
 
     public static class AddonDatasWrapper {

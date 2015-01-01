@@ -34,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilderFactory;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Vector;
@@ -162,11 +163,11 @@ public class DocumentVersionController extends AKimiosController implements IDoc
             if (xmlStream == null || xmlStream.length() == 0) {
                 //Metas list of new DocumentType
                 // keep existing value for inheritance
-                Vector<Meta> vMetaNewType = null;
+                List<Meta> vMetaNewType = null;
                 if (dv.getDocumentType() != null) {
                     vMetaNewType = dmsFactoryInstantiator.getMetaFactory().getMetas(newDt);
                 } else {
-                    vMetaNewType = new Vector<Meta>();
+                    vMetaNewType = new ArrayList<Meta>();
                 }
 
                 Vector<MetaValue> toDelete = new Vector<MetaValue>();
@@ -252,11 +253,11 @@ public class DocumentVersionController extends AKimiosController implements IDoc
             if (metaValues == null || metaValues.size() == 0) {
                 //Metas list of new DocumentType
                 // keep existing value for inheritance
-                Vector<Meta> vMetaNewType = null;
+                List<Meta> vMetaNewType = null;
                 if (dv.getDocumentType() != null) {
                     vMetaNewType = dmsFactoryInstantiator.getMetaFactory().getMetas(newDt);
                 } else {
-                    vMetaNewType = new Vector<Meta>();
+                    vMetaNewType = new ArrayList<Meta>();
                 }
 
                 Vector<MetaValue> toDelete = new Vector<MetaValue>();
@@ -504,7 +505,7 @@ public class DocumentVersionController extends AKimiosController implements IDoc
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IDocumentVersionController#getMetas(org.kimios.kernel.security.Session, long)
     */
-    public Vector<Meta> getMetas(Session session, long documentTypeUid)
+    public List<Meta> getMetas(Session session, long documentTypeUid)
             throws AccessDeniedException, ConfigException, DataSourceException {
         MetaFactory mf = dmsFactoryInstantiator.getMetaFactory();
         DocumentType dt = dmsFactoryInstantiator.getDocumentTypeFactory().getDocumentType(documentTypeUid);
@@ -527,14 +528,14 @@ public class DocumentVersionController extends AKimiosController implements IDoc
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IDocumentVersionController#getUnheritedMetas(org.kimios.kernel.security.Session, long)
     */
-    public Vector<Meta> getUnheritedMetas(Session session, long documentTypeUid)
+    public List<Meta> getUnheritedMetas(Session session, long documentTypeUid)
             throws AccessDeniedException, ConfigException, DataSourceException {
         MetaFactory mf = dmsFactoryInstantiator.getMetaFactory();
         DocumentType dt = dmsFactoryInstantiator.getDocumentTypeFactory().getDocumentType(documentTypeUid);
         if (dt != null) {
             return mf.getUnheritedMetas(dt);
         } else {
-            return new Vector<Meta>();
+            return new ArrayList<Meta>();
         }
     }
 

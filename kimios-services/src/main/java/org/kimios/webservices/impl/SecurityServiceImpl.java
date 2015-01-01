@@ -22,7 +22,7 @@ import org.kimios.kernel.user.Group;
 import org.kimios.kernel.ws.pojo.DMEntitySecurity;
 import org.kimios.kernel.ws.pojo.User;
 import org.kimios.webservices.CoreService;
-import org.kimios.webservices.DMServiceException;
+import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.SecurityService;
 
 import javax.jws.WebService;

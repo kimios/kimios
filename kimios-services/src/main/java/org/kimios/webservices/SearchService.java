@@ -21,6 +21,7 @@ import org.kimios.kernel.index.query.model.SearchRequest;
 import org.kimios.kernel.index.query.model.SearchResponse;
 import org.kimios.kernel.ws.pojo.DMEntity;
 import org.kimios.kernel.ws.pojo.Document;
+import org.kimios.webservices.exceptions.DMServiceException;
 
 import javax.jws.WebParam;
 import javax.jws.WebService;
@@ -84,7 +85,10 @@ public interface SearchService {
             @QueryParam(value = "pageSize") @WebParam(name = "pageSize") int pageSize,
             @QueryParam(value = "sortField") @WebParam(name = "sortField") String sortField,
             @QueryParam(value = "sortDir") @WebParam(name = "sortDir") String sortDir,
-            @QueryParam(value = "virtualPath") @WebParam(name = "virtualPath") String virtualPath)
+            @QueryParam(value = "virtualPath") @WebParam(name = "virtualPath") String virtualPath,
+            @QueryParam(value = "requestId") @WebParam(name = "requestId") @DefaultValue(value = "-1") long requestId,
+            @QueryParam(value = "mustSave") @WebParam(name = "mustSave") @DefaultValue(value = "false") boolean mustSave
+        )
             throws DMServiceException;
 
 
@@ -113,6 +117,14 @@ public interface SearchService {
     @Produces("application/json")
     public List<SearchRequest> listSearchQueries(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId)
+            throws DMServiceException;
+
+
+    @GET
+    @Path("/listMySearchQueries")
+    @Produces("application/json")
+    public List<SearchRequest> listMySearchQueries(
+            @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId )
             throws DMServiceException;
 
 

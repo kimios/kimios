@@ -23,7 +23,7 @@ import org.kimios.kernel.log.DMEntityLog;
 import org.kimios.kernel.security.Session;
 import org.kimios.kernel.ws.pojo.Log;
 import org.kimios.webservices.CoreService;
-import org.kimios.webservices.DMServiceException;
+import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.LogService;
 
 import javax.jws.WebService;

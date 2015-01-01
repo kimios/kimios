@@ -38,6 +38,7 @@ import java.io.*;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.UUID;
 import java.util.Vector;
 
 @Transactional
@@ -103,7 +104,7 @@ public class FileTransferController
      * <p/>
      * - InegrityCheck done - Update of the document version - Remove transaction and temporary file
      */
-    @DmsEvent( eventName = { DmsEventName.FILE_UPLOAD } )
+    @DmsEvent(eventName = {DmsEventName.FILE_UPLOAD})
     public DataTransfer endUploadTransaction(Session session, long transactionUid, String hashMD5, String hashSHA1)
             throws ConfigException, AccessDeniedException, IOException, DataSourceException, RepositoryException,
             TransferIntegrityException {
@@ -193,7 +194,7 @@ public class FileTransferController
     /**
      * Start download transaction
      */
-    @DmsEvent( eventName = { DmsEventName.DOCUMENT_VERSION_READ } )
+    @DmsEvent(eventName = {DmsEventName.DOCUMENT_VERSION_READ})
     public DataTransfer startDownloadTransaction(Session session, long documentVersionUid, boolean isCompressed)
             throws IOException, RepositoryException, DataSourceException, ConfigException, AccessDeniedException {
         DocumentVersion dv =
@@ -323,6 +324,23 @@ public class FileTransferController
         }
     }
 
+    public DocumentWrapper getDocumentVersionWrapper(String token)
+            throws ConfigException, AccessDeniedException, DataSourceException, IOException {
+
+        DataTransfer transac = transferFactoryInstantiator.getDataTransferFactory()
+                .getUploadDataTransferByDocumentToken(token);
+        if (transac != null && transac.getTransferMode() == DataTransfer.TOKEN) {
+            DocumentVersion dv = dmsFactoryInstantiator.getDocumentVersionFactory().getDocumentVersion(
+                    transac.getDocumentVersionUid());
+            String filename = dv.getDocument().getName() + "." + dv.getDocument().getExtension();
+            return new DocumentWrapper(ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH) + "/" +
+                    dv.getStoragePath(), filename, dv.getLength());
+        } else {
+            throw new AccessDeniedException();
+        }
+    }
+
+
     public void readVersionStream(Session session, long transactionId, OutputStream versionStream)
             throws ConfigException, AccessDeniedException, DataSourceException, IOException {
 
@@ -336,6 +354,49 @@ public class FileTransferController
             } else {
                 throw new AccessDeniedException();
             }
+        } else {
+            throw new AccessDeniedException();
+        }
+    }
+
+
+    /**
+     * Create Token For Download Transaction
+     */
+    public DataTransfer startDownloadTransactionToken(Session session, long documentVersionUid)
+            throws IOException, RepositoryException, DataSourceException, ConfigException, AccessDeniedException {
+        DocumentVersion dv =
+                dmsFactoryInstantiator.getDocumentVersionFactory().getDocumentVersion(documentVersionUid);
+        if (!getSecurityAgent().isReadable(dv.getDocument(), session.getUserName(), session.getUserSource(),
+                session.getGroups())) {
+            throw new AccessDeniedException();
+        }
+        DataTransfer transac = new DataTransfer();
+        transac.setDocumentVersionUid(dv.getUid());
+        transac.setIsCompressed(false);
+        transac.setHashMD5(dv.getHashMD5());
+        transac.setHashSHA(dv.getHashSHA1());
+        transac.setLastActivityDate(new Date());
+        transac.setUserName(session.getUserName());
+        transac.setUserSource(session.getUserSource());
+        transac.setDataSize(0);
+        transac.setTransferMode(DataTransfer.TOKEN);
+        transac.setDownloadToken(UUID.randomUUID().toString());
+        transferFactoryInstantiator.getDataTransferFactory().addDataTransfer(transac);
+        transac.setDataSize(dv.getLength());
+        transferFactoryInstantiator.getDataTransferFactory().updateDataTransfer(transac);
+        return transac;
+    }
+
+    public void readVersionStream(String transactionToken, OutputStream versionStream)
+            throws ConfigException, AccessDeniedException, DataSourceException, IOException {
+
+        DataTransfer transac = transferFactoryInstantiator
+                .getDataTransferFactory().getUploadDataTransferByDocumentToken(transactionToken);
+        if (transac != null && transac.getTransferMode() == DataTransfer.TOKEN) {
+            DocumentVersion dv = dmsFactoryInstantiator.getDocumentVersionFactory().getDocumentVersion(
+                    transac.getDocumentVersionUid());
+            RepositoryManager.readVersionToStream(dv, versionStream);
         } else {
             throw new AccessDeniedException();
         }

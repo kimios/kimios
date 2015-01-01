@@ -21,7 +21,7 @@ import org.kimios.kernel.dms.DocumentWorkflowStatusRequest;
 import org.kimios.kernel.security.Session;
 import org.kimios.kernel.ws.pojo.WorkflowStatus;
 import org.kimios.webservices.CoreService;
-import org.kimios.webservices.DMServiceException;
+import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.NotificationService;
 
 import javax.jws.WebService;

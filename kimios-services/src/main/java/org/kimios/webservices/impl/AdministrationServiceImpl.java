@@ -21,13 +21,12 @@ import org.kimios.kernel.ws.pojo.*;
 import org.kimios.utils.logging.LoggerManager;
 import org.kimios.webservices.AdministrationService;
 import org.kimios.webservices.CoreService;
-import org.kimios.webservices.DMServiceException;
+import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.utils.KimiosBusServiceManager;
 
 import javax.jws.WebService;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Vector;
 
 @WebService(targetNamespace = "http://kimios.org", serviceName = "AdministrationService", name = "AdministrationService")

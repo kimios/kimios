@@ -74,9 +74,15 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                     var value = null;
 
                     // is date
+                    console.log(key);
+                    console.log(this.form2.metaFieldsMapping);
                     if (fields[key] && fields[key] instanceof Date)
                         value = fields[key] ? fields[key].format('Y-m-d') : '';
-                    else if(key.indexOf('MetaDataList') > -1){
+                    else
+                    //handle meta feed linked field (String or List)
+                    if(this.form2.metaFieldsMapping.filter(function(it){
+                        return it.crit == key;
+                         }).length == 1){
                         var tmpVal = fields[key];
                         if(tmpVal.indexOf(',') > -1){
                             value = JSON.stringify(tmpVal.split(','));
@@ -381,6 +387,8 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
             kimios.store.getMetasStore(this.documentTypeField.getValue()).on('load', function (store, metasRecords, options) {
                 this.form2.removeAll();
                 var fields = [];
+                var metaFieldsMapping = [];
+                this.form2.metaFieldsMapping =  metaFieldsMapping;
                 Ext.each(metasRecords, function (record, index) {
                     var type = record.get('type');
                     var uid = record.get('uid');
@@ -399,11 +407,19 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                                     labelSeparator: kimios.lang('LabelSeparator')
                                 }));
                             } else {
-                                fields.push(new kimios.form.MetaFeedField({
+                                /*fields.push(new kimios.form.MetaFeedField({
                                     name: 'MetaDataString_' + uid,
                                     metaFeedUid: metaFeedUid,
                                     fieldLabel: name,
                                     value: value,
+                                    labelSeparator: kimios.lang('LabelSeparator')
+                                }));*/
+                                metaFieldsMapping.push({crit: 'MetaDataString_' + uid, metaFeed: metaFeedUid});
+                                fields.push(new kimios.form.MetaFeedMultiField({
+                                    name: 'MetaDataString_' + uid,
+                                    metaFeedUid: metaFeedUid,
+                                    fieldLabel: name,
+                                    passedValue: value,
                                     labelSeparator: kimios.lang('LabelSeparator')
                                 }));
                             }
@@ -461,6 +477,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                                     labelSeparator: kimios.lang('LabelSeparator')
                                 }));
                             } else {
+                                metaFieldsMapping.push({crit: 'MetaDataList_' + uid, metaFeed: metaFeedUid});
                                 fields.push(new kimios.form.MetaFeedMultiField({
                                     name: 'MetaDataList_' + uid,
                                     metaFeedUid: metaFeedUid,

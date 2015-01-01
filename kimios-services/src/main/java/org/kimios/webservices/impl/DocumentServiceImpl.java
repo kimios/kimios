@@ -20,12 +20,10 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.kimios.kernel.dms.*;
 import org.kimios.kernel.security.Session;
-import org.kimios.kernel.ws.pojo.DMEntitySecurity;
 import org.kimios.kernel.ws.pojo.Document;
-import org.kimios.kernel.ws.pojo.MetaValue;
 import org.kimios.kernel.ws.pojo.WorkflowStatus;
 import org.kimios.webservices.CoreService;
-import org.kimios.webservices.DMServiceException;
+import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.DocumentService;
 
 import javax.jws.WebService;

@@ -66,57 +66,48 @@ public class HMetaFactory extends HFactory implements MetaFactory
         }
     }
 
-    public Vector<Meta> getMetas(DocumentType t) throws ConfigException,
+    public List<Meta> getMetas(DocumentType t) throws ConfigException,
             DataSourceException
     {
         try {
             Criteria c = getSession().createCriteria(Meta.class)
                     .add(Restrictions.eq("documentTypeUid", t.getUid()))
+                    .addOrder(Order.asc("position"))
                     .addOrder(Order.asc("name").ignoreCase());
             List<Meta> lMetas = (List<Meta>) c.list();
-            Vector<Meta> vMetas = new Vector<Meta>();
-            for (Meta m : lMetas) {
-                vMetas.add(m);
-            }
             if (t.getDocumentType() != null) {
-                vMetas.addAll(this.getMetas(t.getDocumentType()));
+                lMetas.addAll(this.getMetas(t.getDocumentType()));
             }
-            return vMetas;
+            return lMetas;
         } catch (HibernateException e) {
             throw new DataSourceException(e);
         }
     }
 
-    public Vector<Meta> getMetas() throws ConfigException,
+    public List<Meta> getMetas() throws ConfigException,
             DataSourceException
     {
         try {
             Criteria c = getSession().createCriteria(Meta.class)
+                    .addOrder(Order.asc("position"))
                     .addOrder(Order.asc("name").ignoreCase());
             List<Meta> lMetas = (List<Meta>) c.list();
-            Vector<Meta> vMetas = new Vector<Meta>();
-            for (Meta m : lMetas) {
-                vMetas.add(m);
-            }
-            return vMetas;
+            return lMetas;
         } catch (HibernateException e) {
             throw new DataSourceException(e);
         }
     }
 
-    public Vector<Meta> getUnheritedMetas(DocumentType t)
+    public List<Meta> getUnheritedMetas(DocumentType t)
             throws ConfigException, DataSourceException
     {
         try {
             Criteria c = getSession().createCriteria(Meta.class)
                     .add(Restrictions.eq("documentTypeUid", t.getUid()))
+                    .addOrder(Order.asc("position"))
                     .addOrder(Order.asc("name").ignoreCase());
             List<Meta> lMetas = (List<Meta>) c.list();
-            Vector<Meta> vMetas = new Vector<Meta>();
-            for (Meta m : lMetas) {
-                vMetas.add(m);
-            }
-            return vMetas;
+            return lMetas;
         } catch (HibernateException e) {
             throw new DataSourceException(e);
         }

@@ -20,7 +20,7 @@ import org.kimios.kernel.security.Session;
 import org.kimios.kernel.ws.pojo.DataTransaction;
 import org.kimios.kernel.ws.pojo.DocumentWrapper;
 import org.kimios.webservices.CoreService;
-import org.kimios.webservices.DMServiceException;
+import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.FileTransferService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +30,6 @@ import javax.jws.WebService;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -206,6 +205,52 @@ public class FileTransferServiceImpl
             return response.build();
 
 
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
+
+    @WebMethod(exclude = true)
+    public Response downloadDocumentByToken(final String token) throws DMServiceException {
+        try {
+            DocumentWrapper dw = transferController.getDocumentVersionWrapper(token);
+            StreamingOutput sOutput = new StreamingOutput() {
+                @Override
+                public void write(OutputStream output) throws IOException, WebApplicationException {
+                    try {
+                        transferController.readVersionStream(token, output);
+                        output.flush();
+                        output.close();
+                    } catch (Exception ex) {
+                        logger.error("error on streaming", ex);
+                    }
+                }
+            };
+            Response.ResponseBuilder response = Response.ok(sOutput);
+            response.header("Content-Description", "File Transfer");
+            response.header("Content-Type", dw.getContentType());
+            response.header("Content-Transfer-Encoding", "binary");
+            response.header("Expires", "0");
+            response.header("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
+            response.header("Pragma", "public");
+            response.header("Content-Length", dw.getLength());
+            //response.header("Content-Disposition", (inline ? "inline;" : "attachment;") + " filename=\"" + dw.getFilename() + "\"");
+            response.header("Content-Disposition", "attachment; filename=\"" + dw.getFilename() + "\"");
+            return response.build();
+
+
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
+
+    public DataTransaction createTokenDownloadTransaction(String sessionUid, long documentVersionUid)
+            throws DMServiceException {
+        try {
+            Session session = getHelper().getSession(sessionUid);
+            DataTransaction dtr =
+                    transferController.startDownloadTransactionToken(session, documentVersionUid).toPojo();
+            return dtr;
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }

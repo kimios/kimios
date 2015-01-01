@@ -306,7 +306,7 @@
                             <classifier>interfaces</classifier>
                             <includes>
                                 <include>org/kimios/webservices/*</include>
-                                <include>org/kimios/DMServiceException</include>
+                                <include>org/kimios/webservices/exceptions/*</include>
                             </includes>
                             <excludes>
                                 <exclude>org/kimios/webservices/ClientInformationUtil</exclude>

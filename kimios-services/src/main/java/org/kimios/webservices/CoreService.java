@@ -20,14 +20,14 @@ import org.kimios.kernel.controller.*;
 
 public abstract class CoreService
 {
-    private ServiceHelper helper;
+    private IServiceHelper helper;
 
-    public ServiceHelper getHelper()
+    public IServiceHelper getHelper()
     {
         return helper;
     }
 
-    public void setHelper(ServiceHelper helper)
+    public void setHelper(IServiceHelper helper)
     {
         this.helper = helper;
     }

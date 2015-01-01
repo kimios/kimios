@@ -204,6 +204,16 @@ public class HDocumentVersionFactory extends HFactory implements DocumentVersion
         }
     }
 
+    public void updateDocumentVersionBulk(DocumentVersion v) throws ConfigException, DataSourceException
+    {
+        try {
+            getSession().update(v);
+        } catch (HibernateException e) {
+            boolean integrity = e instanceof ConstraintViolationException;
+            throw new DataSourceException(e, e.getMessage());
+        }
+    }
+
     public void removeDocumentType(DocumentType dt) throws ConfigException, DataSourceException
     {
         try {

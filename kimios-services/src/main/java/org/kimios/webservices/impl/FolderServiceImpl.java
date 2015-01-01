@@ -19,7 +19,7 @@ package org.kimios.webservices.impl;
 import org.kimios.kernel.security.Session;
 import org.kimios.kernel.ws.pojo.Folder;
 import org.kimios.webservices.CoreService;
-import org.kimios.webservices.DMServiceException;
+import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.FolderService;
 
 import javax.jws.WebService;

@@ -30,7 +30,7 @@
         http://www.springframework.org/schema/beans/spring-beans-3.1.xsd"
        default-autowire="byName">
 
-    <bean id="converterServiceBean" class="org.kimios.webservices.impl.ConverterServiceImpl"
+    <bean id="converterServiceBean" class="org.kimios.webservices.converter.impl.ConverterServiceImpl"
           depends-on="kimiosExtensionServiceHandler">
         <constructor-arg name="controller" ref="converterController"/>
         <constructor-arg name="helper" ref="serviceHelper"/>
@@ -38,7 +38,7 @@
 
     <!-- Service endpoint -->
     <jaxws:endpoint id="converterServiceWs"
-                    implementorClass="org.kimios.webservices.impl.ConverterServiceImpl"
+                    implementorClass="org.kimios.webservices.converter.impl.ConverterServiceImpl"
                     implementor="#converterServiceBean"
                     address="/ConverterService"
                     endpointName="ConverterService"

@@ -281,16 +281,30 @@ Studio.DocumentTypes = {
             }
         });
 
-
         var sm = new Ext.grid.CheckboxSelectionModel({
             checkOnly: true,
             listeners: {
                 selectionchange: function (sm) {
                     var count = sm.getCount();
                     if (count > 0) {
+                        if(count == 1){
+                            var index = metaDataStore.indexOf(sm.getSelected());
+                            if (index != 0){
+                                upButton.enable();
+                            }
+                            if (index != metaDataStore.getCount()-1){
+                                downButton.enable();
+                            }
+                        }
+                        else{
+                            upButton.disable();
+                            downButton.disable();
+                        }
                         removeButton.enable();
                     } else {
                         removeButton.disable();
+                        upButton.disable();
+                        downButton.disable();
                     }
                 }
             }
@@ -355,6 +369,14 @@ Studio.DocumentTypes = {
                     menuDisabled: true,
                     dataIndex: 'icon'
                 }, {
+                    width: 20,
+                    fixed: true,
+                    hidden: false,
+                    editable: false,
+                    sortable: true,
+                    menuDisabled: true,
+                    dataIndex: 'position'
+                },{
                     id: 'name',
                     header: kimios.lang('MetaData'),
                     sortable: true,
@@ -420,6 +442,40 @@ Studio.DocumentTypes = {
                 mandatoryCombo]
         });
 
+
+        var upButton = new Ext.Button({
+            iconCls:'studio-cls-wf-up',
+            disabled: true,
+            handler: function(){
+                var selectedStatus = sm.getSelected();
+                var index = metaDataStore.indexOf(selectedStatus);
+                if (index != 0){
+                    metaDataStore.removeAt(index);
+                    index = index - 1;
+                    metaDataStore.insert(index, selectedStatus);
+                    selectedStatus.data.position = index;
+                    sm.selectRow(index);
+                }
+            }
+        });
+
+        var downButton = new Ext.Button({
+            iconCls:'studio-cls-wf-down',
+            disabled: true,
+            handler: function(){
+                var selectedStatus = sm.getSelected();
+                var index = metaDataStore.indexOf(selectedStatus);
+                if (index != metaDataStore.getCount()-1){
+                    metaDataStore.removeAt(index);
+                    index = index + 1;
+                    metaDataStore.insert(index, selectedStatus);
+                    selectedStatus.data.position = index;
+                    sm.selectRow(index);
+                }
+            }
+        });
+
+
         var grid = new Ext.grid.EditorGridPanel({
             store: metaDataStore,
             autoScroll: true,
@@ -433,10 +489,10 @@ Studio.DocumentTypes = {
                 forceFit: true,
                 scrollOffset: 0
             },
-            tbar: [addButton, '-', removeButton],
+            tbar: [addButton, '-', removeButton, upButton, downButton],
             listeners: {
                 beforeedit: function (e) {
-                    if (e.column != 4) {
+                    if (e.column != 5) {
                         return true;
                     }
                     if (e.record.get('metaType') == 1 || e.record.get('metaType') == 5) {

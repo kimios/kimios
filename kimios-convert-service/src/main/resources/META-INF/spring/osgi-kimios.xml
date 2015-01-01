@@ -48,7 +48,7 @@
                     <bean class="org.apache.cxf.aegis.AegisContext">
                         <property name="rootClassNames">
                             <list>
-                                <value>org.kimios.webservices.DMServiceException</value>
+                                <value>org.kimios.webservices.exceptions.DMServiceException</value>
                             </list>
                         </property>
                     </bean>

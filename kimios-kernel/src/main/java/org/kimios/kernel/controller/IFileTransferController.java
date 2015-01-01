@@ -81,8 +81,14 @@ public interface IFileTransferController
 
     /*
       Get document version stream for direct version read
-  */
+    */
     public DocumentWrapper getDocumentVersionWrapper( Session session, long transactionId )
+            throws ConfigException, AccessDeniedException, DataSourceException, IOException;
+
+    /*
+        Get document version stream for direct version read
+    */
+    public DocumentWrapper getDocumentVersionWrapper( String token )
             throws ConfigException, AccessDeniedException, DataSourceException, IOException;
 
     /*
@@ -90,4 +96,11 @@ public interface IFileTransferController
   */
     public void readVersionStream( Session session, long transactionId, OutputStream versionStream)
             throws ConfigException, AccessDeniedException, DataSourceException, IOException;
+
+
+    public void readVersionStream(String transactionToken, OutputStream versionStream)
+            throws ConfigException, AccessDeniedException, DataSourceException, IOException;
+
+    public DataTransfer startDownloadTransactionToken(Session session, long documentVersionUid)
+            throws IOException, RepositoryException, DataSourceException, ConfigException, AccessDeniedException;
 }

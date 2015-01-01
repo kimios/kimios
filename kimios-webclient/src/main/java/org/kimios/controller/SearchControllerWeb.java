@@ -145,7 +145,7 @@ public class SearchControllerWeb
             String virtualPath = parameters.get( "virtualPath" );
             searchResponse =
                 searchController.advancedSearchDocument( sessionUid, criteriaList, page, pageSize, sort, sortDir,
-                                                         virtualPath );
+                                                         virtualPath, -1, false );
             log.debug( "Advanced search in uid: " + positionUid + " [Type: " + positionType + "]: "
                            + searchResponse.getRows().size() + " results / " + searchResponse.getResults() );
 

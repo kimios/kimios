@@ -18,6 +18,7 @@ package org.kimios.kernel.dms;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.exception.DataSourceException;
 
+import java.util.List;
 import java.util.Vector;
 
 public interface MetaFactory
@@ -26,11 +27,11 @@ public interface MetaFactory
 
     public Meta getMeta(long uid) throws ConfigException, DataSourceException;
 
-    public Vector<Meta> getMetas(DocumentType t) throws ConfigException, DataSourceException;
+    public List<Meta> getMetas(DocumentType t) throws ConfigException, DataSourceException;
 
-    public Vector<Meta> getMetas() throws ConfigException, DataSourceException;
+    public List<Meta> getMetas() throws ConfigException, DataSourceException;
 
-    public Vector<Meta> getUnheritedMetas(DocumentType t) throws ConfigException, DataSourceException;
+    public List<Meta> getUnheritedMetas(DocumentType t) throws ConfigException, DataSourceException;
 
     public void saveMeta(Meta m) throws ConfigException, DataSourceException;
 

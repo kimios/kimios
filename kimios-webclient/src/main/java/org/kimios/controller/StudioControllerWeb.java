@@ -252,6 +252,9 @@ public class StudioControllerWeb extends Controller {
 
         ArrayList<Map<String, String>> l = (ArrayList<Map<String, String>>) new JSONDeserializer().deserialize(parameters.get("jsonParameters"));
         List<Meta> metas = new ArrayList<Meta>();
+
+
+        int p = 0;
         for (Map metaDatas : l) {
             Meta meta = new Meta();
             int metaUid = -1;
@@ -268,6 +271,7 @@ public class StudioControllerWeb extends Controller {
             }
             meta.setDocumentTypeUid(docType.getUid());
             meta.setMandatory(metaDatas.get("mandatory") != null ? (Boolean) metaDatas.get("mandatory") : false);
+            meta.setPosition(p++);
             metas.add(meta);
         }
         String xmlStream = XMLGenerators.getDocumentTypeXMLDescriptor(docType, metas);
@@ -287,6 +291,7 @@ public class StudioControllerWeb extends Controller {
 
         ArrayList<Map<String, String>> l = (ArrayList<Map<String, String>>) new JSONDeserializer().deserialize(parameters.get("jsonParameters"));
         List<Meta> metas = new ArrayList<Meta>();
+        int p = 0;
         for (Map metaDatas : l) {
             Meta meta = new Meta();
             meta.setUid(-1);
@@ -299,6 +304,7 @@ public class StudioControllerWeb extends Controller {
             }
             meta.setDocumentTypeUid(docType.getUid());
             meta.setMandatory((Boolean) (metaDatas.get("mandatory") != null ? Boolean.parseBoolean(metaDatas.get("mandatory").toString()) : false));
+            meta.setPosition(p++);
             metas.add(meta);
         }
         String xmlStream = XMLGenerators.getDocumentTypeXMLDescriptor(docType, metas);

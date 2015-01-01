@@ -34,6 +34,7 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -76,14 +77,14 @@ public class StudioController extends AKimiosController implements IStudioContro
             long docTypeUid = -1;
             String docTypeName = root.getAttribute("name");
             long parentUid = Long.parseLong(root.getAttribute("document-type-uid"));
-            Vector<Meta> metas = this.getMetasFromXml(xmlStream, docTypeUid);
+            List<Meta> metas = this.getMetasFromXml(xmlStream, docTypeUid);
 
             DocumentType t = new DocumentType(-1, docTypeName,
                     dmsFactoryInstantiator.getDocumentTypeFactory().getDocumentType(parentUid));
             dmsFactoryInstantiator.getDocumentTypeFactory().saveDocumentType(t);
             for (int i = 0; i < metas.size(); i++) {
-                metas.elementAt(i).setDocumentTypeUid(t.getUid());
-                dmsFactoryInstantiator.getMetaFactory().saveMeta(metas.elementAt(i));
+                metas.get(i).setDocumentTypeUid(t.getUid());
+                dmsFactoryInstantiator.getMetaFactory().saveMeta(metas.get(i));
             }
         } catch (ParserConfigurationException e) {
             throw new XMLException();
@@ -126,8 +127,8 @@ public class StudioController extends AKimiosController implements IStudioContro
                     t.setDocumentType(null);
                 }
                 dmsFactoryInstantiator.getDocumentTypeFactory().updateDocumentType(t);
-                Vector<Meta> metas = this.getMetasFromXml(xmlStream, docTypeUid);
-                Vector<Meta> v = dmsFactoryInstantiator.getMetaFactory().getUnheritedMetas(t);
+                List<Meta> metas = this.getMetasFromXml(xmlStream, docTypeUid);
+                List<Meta> v = dmsFactoryInstantiator.getMetaFactory().getUnheritedMetas(t);
                 for (Meta m : v) {
                     boolean delete = true;
                     for (Meta m2 : metas) {
@@ -184,11 +185,11 @@ public class StudioController extends AKimiosController implements IStudioContro
     /**
      * Convenience method to generate meta beans from an xml descriptor
      */
-    private Vector<Meta> getMetasFromXml(String xmlStream, long docTypeUid)
+    private List<Meta> getMetasFromXml(String xmlStream, long docTypeUid)
             throws XMLException, ConfigException, DataSourceException, XSDException
     {
         try {
-            Vector<Meta> v = new Vector<Meta>();
+            ArrayList<Meta> v = new ArrayList<Meta>();
             org.w3c.dom.Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder()
                     .parse(new java.io.ByteArrayInputStream(xmlStream.getBytes()));
             Element root = doc.getDocumentElement();
@@ -203,7 +204,10 @@ public class StudioController extends AKimiosController implements IStudioContro
                                     .getNamedItem("name").getTextContent(), docTypeUid, feed,
                             Integer.parseInt(list.item(i).getAttributes().getNamedItem("meta_type")
                                     .getTextContent()), Boolean.parseBoolean(list.item(i).getAttributes()
-                                    .getNamedItem("mandatory").getTextContent()))
+                                    .getNamedItem("mandatory").getTextContent()),
+                                    Integer.parseInt(list.item(i).getAttributes().getNamedItem("position")
+                                            .getTextContent())
+                                    )
                     );
 
 

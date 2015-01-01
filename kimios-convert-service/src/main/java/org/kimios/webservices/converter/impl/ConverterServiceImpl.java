@@ -14,21 +14,19 @@
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.kimios.webservices.impl;
+package org.kimios.webservices.converter.impl;
 
+import org.kimios.kernel.controller.IConverterController;
 import org.kimios.kernel.controller.impl.ConverterController;
 import org.kimios.kernel.converter.source.InputSource;
 import org.kimios.kernel.security.Session;
-import org.kimios.webservices.ConverterService;
-import org.kimios.webservices.DMServiceException;
-import org.kimios.webservices.ServiceHelper;
+import org.kimios.webservices.converter.ConverterService;
+import org.kimios.webservices.exceptions.DMServiceException;
+import org.kimios.webservices.IServiceHelper;
 
 import javax.jws.WebService;
-import javax.mail.internet.MimeUtility;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,10 +34,10 @@ import java.util.List;
 public class ConverterServiceImpl implements ConverterService {
 
 
-    private ConverterController convertController;
-    private ServiceHelper helper;
+    private IConverterController convertController;
+    private IServiceHelper helper;
 
-    public ConverterServiceImpl(ConverterController controller, ServiceHelper helper) {
+    public ConverterServiceImpl(IConverterController controller, IServiceHelper helper) {
         this.convertController = controller;
         this.helper = helper;
     }

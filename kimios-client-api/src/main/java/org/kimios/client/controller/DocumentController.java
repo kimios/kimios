@@ -29,9 +29,7 @@ import org.kimios.client.exception.ExceptionHelper;
 import org.kimios.kernel.ws.pojo.Bookmark;
 import org.kimios.kernel.ws.pojo.Document;
 import org.kimios.kernel.ws.pojo.SymbolicLink;
-import org.kimios.webservices.DMServiceException;
 import org.kimios.webservices.DocumentService;
-import org.kimios.webservices.ExceptionMessageWrapper;
 
 import javax.activation.DataHandler;
 import javax.ws.rs.core.MediaType;

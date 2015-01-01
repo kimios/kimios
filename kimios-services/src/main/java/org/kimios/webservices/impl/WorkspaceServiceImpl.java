@@ -19,7 +19,7 @@ package org.kimios.webservices.impl;
 import org.kimios.kernel.dms.Workspace;
 import org.kimios.kernel.security.Session;
 import org.kimios.webservices.CoreService;
-import org.kimios.webservices.DMServiceException;
+import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.WorkspaceService;
 
 import javax.jws.WebService;

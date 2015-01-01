@@ -44,7 +44,7 @@ public class XMLGenerators {
         for (Meta m : lMetas) {
             xmlStream += "\t<meta meta_type=\"" + m.getMetaType() + "\" uid=\"" +
                     m.getUid() + "\" name=\"" + cleanString(m.getName()) + "\" meta_feed=\"" + m.getMetaFeedUid()
-                    + "\" mandatory=\"" + m.isMandatory() + "\" />\r\n";
+                    + "\" mandatory=\"" + m.isMandatory() + "\" position=\"" + m.getPosition() + "\"/>\r\n";
         }
         xmlStream += "</document-type>";
         return xmlStream;

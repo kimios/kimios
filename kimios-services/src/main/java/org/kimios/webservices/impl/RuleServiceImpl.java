@@ -22,7 +22,7 @@ import org.kimios.kernel.ws.pojo.Rule;
 import org.kimios.kernel.ws.pojo.RuleBean;
 import org.kimios.kernel.ws.pojo.RuleImplP;
 import org.kimios.webservices.CoreService;
-import org.kimios.webservices.DMServiceException;
+import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.RuleService;
 
 import javax.jws.WebService;

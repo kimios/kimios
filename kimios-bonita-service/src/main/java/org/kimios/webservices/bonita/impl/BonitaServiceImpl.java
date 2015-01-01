@@ -14,13 +14,13 @@
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.kimios.webservices.impl;
+package org.kimios.webservices.bonita.impl;
 
 
 import org.kimios.kernel.controller.BonitaController;
-import org.kimios.webservices.BonitaService;
-import org.kimios.webservices.DMServiceException;
-import org.kimios.webservices.ServiceHelper;
+import org.kimios.webservices.bonita.BonitaService;
+import org.kimios.webservices.exceptions.DMServiceException;
+import org.kimios.webservices.IServiceHelper;
 import org.kimios.webservices.pojo.CommentWrapper;
 import org.kimios.webservices.pojo.ProcessWrapper;
 import org.kimios.webservices.pojo.TasksResponse;
@@ -32,9 +32,9 @@ import java.util.List;
 public class BonitaServiceImpl implements BonitaService {
 
     private BonitaController controller;
-    private ServiceHelper helper;
+    private IServiceHelper helper;
 
-    public BonitaServiceImpl(BonitaController controller, ServiceHelper helper) {
+    public BonitaServiceImpl(BonitaController controller, IServiceHelper helper) {
         this.controller = controller;
         this.helper = helper;
     }

@@ -17,6 +17,10 @@ package org.kimios.kernel.security;
 
 import org.hibernate.HibernateException;
 import org.kimios.exceptions.ConfigException;
+import org.kimios.kernel.events.EventContext;
+import org.kimios.kernel.events.annotations.DmsEvent;
+import org.kimios.kernel.events.annotations.DmsEventName;
+import org.kimios.kernel.events.annotations.DmsEventOccur;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
 import org.kimios.kernel.user.*;
@@ -239,23 +243,25 @@ public class SessionManager extends HFactory implements ISessionManager
     }
 
     @Transactional
+    @DmsEvent(eventName = DmsEventName.SESSION_STOP, when = DmsEventOccur.AFTER)
     public synchronized void cleanSessionContext(long sessionExpire)
     {
         try {
             Date cleanDate = new Date();
             cleanDate.setTime((new Date().getTime()) - sessionExpire);
-            Vector<String> toDelete = new Vector<String>();
+            List<Session> sessionList = new ArrayList<Session>();
             for (Entry<String, Session> s : sessions.entrySet()) {
                 Timestamp test = new Timestamp(cleanDate.getTime());
                 if (s.getValue().getLastUse().compareTo(test) < 0) {
-                    toDelete.add(s.getKey());
+                    sessionList.add(s.getValue());
                 }
             }
 
-            for (String d : toDelete) {
-                log.info("Cleaning Session: " + d);
-                sessions.remove(d);
+            for (Session d : sessionList) {
+                log.debug("Cleaning Session: " + d.getUid());
+                sessions.remove(d.getUid());
             }
+            EventContext.getParameters().put("sessions", sessionList);
         } catch (Exception e) {
             log.error("Error while cleaning session", e);
         }

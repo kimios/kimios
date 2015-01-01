@@ -30,7 +30,7 @@
         http://www.springframework.org/schema/beans/spring-beans-3.1.xsd"
        default-autowire="byName">
 
-    <bean id="bonitaServiceBean" class="org.kimios.webservices.impl.BonitaServiceImpl"
+    <bean id="bonitaServiceBean" class="org.kimios.webservices.bonita.impl.BonitaServiceImpl"
           depends-on="kimiosExtensionServiceHandler">
         <constructor-arg name="controller" ref="bonitaController"/>
         <constructor-arg name="helper" ref="serviceHelper"/>
@@ -40,7 +40,7 @@
 
     <!-- Service endpoint -->
     <jaxws:endpoint id="bonitaServiceWs"
-                    implementorClass="org.kimios.webservices.impl.BonitaServiceImpl"
+                    implementorClass="org.kimios.webservices.bonita.impl.BonitaServiceImpl"
                     implementor="#bonitaServiceBean"
                     address="/BonitaService"
                     endpointName="BonitaService">

@@ -17,13 +17,12 @@
 package org.kimios.client.controller;
 
 import org.apache.cxf.jaxrs.client.ResponseExceptionMapper;
-import org.kimios.webservices.DMServiceException;
+import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.ExceptionMessageWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.ExceptionMapper;
 
 /**
  * @author Fabien ALIN <fabien.alin@gmail.com>

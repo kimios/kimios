@@ -21,6 +21,7 @@ import org.kimios.kernel.ws.pojo.AuthenticationSource;
 import org.kimios.kernel.ws.pojo.DMEntitySecurity;
 import org.kimios.kernel.ws.pojo.Group;
 import org.kimios.kernel.ws.pojo.User;
+import org.kimios.webservices.exceptions.DMServiceException;
 
 import javax.jws.WebParam;
 import javax.jws.WebService;

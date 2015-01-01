@@ -22,7 +22,7 @@ import org.kimios.kernel.ws.pojo.DocumentComment;
 import org.kimios.kernel.ws.pojo.DocumentVersion;
 import org.kimios.kernel.ws.pojo.Meta;
 import org.kimios.webservices.CoreService;
-import org.kimios.webservices.DMServiceException;
+import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.DocumentVersionService;
 
 import javax.jws.WebService;
@@ -38,7 +38,7 @@ public class DocumentVersionServiceImpl extends CoreService implements DocumentV
      * @param sessionId
      * @param documentVersionId
      * @return
-     * @throws org.kimios.webservices.DMServiceException
+     * @throws org.kimios.webservices.exceptions.DMServiceException
      *
      */
     public DocumentVersion getDocumentVersion(String sessionId,
@@ -298,7 +298,7 @@ public class DocumentVersionServiceImpl extends CoreService implements DocumentV
 
             Session session = getHelper().getSession(sessionUid);
 
-            Vector<org.kimios.kernel.dms.Meta> vMetas = documentVersionController
+            List<org.kimios.kernel.dms.Meta> vMetas = documentVersionController
                     .getMetas(session, documentTypeUid);
             Meta[] pojos = new Meta[vMetas.size()];
             int i = 0;
@@ -327,7 +327,7 @@ public class DocumentVersionServiceImpl extends CoreService implements DocumentV
 
             Session session = getHelper().getSession(sessionUid);
 
-            Vector<org.kimios.kernel.dms.Meta> vMetas = documentVersionController
+            List<org.kimios.kernel.dms.Meta> vMetas = documentVersionController
                     .getUnheritedMetas(session, documentTypeUid);
             Meta[] pojos = new Meta[vMetas.size()];
             int i = 0;

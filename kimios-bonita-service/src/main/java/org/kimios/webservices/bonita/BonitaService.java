@@ -14,8 +14,10 @@
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.kimios.webservices;
+package org.kimios.webservices.bonita;
 
+import org.kimios.webservices.exceptions.DMServiceException;
+import org.kimios.webservices.KimiosExtension;
 import org.kimios.webservices.pojo.CommentWrapper;
 import org.kimios.webservices.pojo.ProcessWrapper;
 import org.kimios.webservices.pojo.TasksResponse;

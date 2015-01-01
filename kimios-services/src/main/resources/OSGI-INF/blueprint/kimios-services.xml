@@ -31,6 +31,9 @@
 
 
 
+    <service id="serviceHelperOsgi" ref="serviceHelper"
+             interface="org.kimios.webservices.IServiceHelper"/>
+
 
     <bean id="kimiosBusManager" class="org.kimios.webservices.utils.KimiosBusServiceManager" />
     <bean id="loggingFeature" class="org.apache.cxf.feature.LoggingFeature" />
@@ -100,7 +103,7 @@
                         <property name="writeXsiTypes" value="true" />
                         <property name="rootClassNames">
                             <list>
-                                <value>org.kimios.webservices.DMServiceException</value>
+                                <value>org.kimios.webservices.exceptions.DMServiceException</value>
                                 <value>org.kimios.kernel.ws.pojo.Document</value>
                                 <value>org.kimios.kernel.ws.pojo.Folder</value>
                                 <value>org.kimios.kernel.ws.pojo.SymbolicLink</value>

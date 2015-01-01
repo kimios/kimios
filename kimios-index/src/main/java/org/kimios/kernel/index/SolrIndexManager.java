@@ -29,6 +29,8 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.util.SimpleOrderedMap;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.controller.IPathController;
 import org.kimios.kernel.dms.*;
@@ -36,8 +38,10 @@ import org.kimios.kernel.dms.DMEntity;
 import org.kimios.kernel.dms.Document;
 import org.kimios.kernel.dms.DocumentVersion;
 import org.kimios.kernel.dms.DocumentWorkflowStatusRequest;
+import org.kimios.kernel.dms.Meta;
 import org.kimios.kernel.dms.MetaValue;
 import org.kimios.kernel.dms.WorkflowStatus;
+import org.kimios.kernel.events.impl.AddonDataHandler;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.IndexException;
 import org.kimios.kernel.index.filters.impl.GlobalFilter;
@@ -77,9 +81,15 @@ public class SolrIndexManager
         this.solrDocumentFactory = solrDocumentFactory;
     }
 
+
+    private ObjectMapper mp;
+
     public SolrIndexManager( SolrServer solr )
     {
         this.solr = solr;
+        mp = new ObjectMapper();
+        mp.configure(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS, false);
+        mp.getSerializationConfig().addMixInAnnotations(Meta.class, AddonDataHandler.MetaMixIn.class);
     }
 
     private final SolrServer solr;
@@ -238,12 +248,13 @@ public class SolrIndexManager
             }
         }
         doc.addField( "DocumentOutWorkflow", outOfWorkflow );
+        List<MetaValue> values = null;
         if ( version.getDocumentType() != null )
         {
             log.info( "Document Type Found for version" );
             doc.addField( "DocumentTypeUid", version.getDocumentType().getUid() );
             doc.addField( "DocumentTypeName", version.getDocumentType().getName() );
-            List<MetaValue> values = FactoryInstantiator.getInstance().getMetaValueFactory().getMetaValues( version );
+            values = FactoryInstantiator.getInstance().getMetaValueFactory().getMetaValues( version );
             log.info( "Meta Values Found for version " + values.size() + " / " + values );
             for ( MetaValue value : values )
             {
@@ -251,7 +262,7 @@ public class SolrIndexManager
                 {
                     case MetaType.STRING:
                         doc.addField( "MetaDataString_" + value.getMetaUid(),
-                                      value.getValue() != null ? ( (String) value.getValue() ).toLowerCase() : null);
+                                      value.getValue() != null ? ( (String) value.getValue().toString() ) : null);
                         break;
                     case MetaType.BOOLEAN:
                         doc.addField( "MetaDataBoolean_" + value.getMetaUid(), value.getValue() );
@@ -279,7 +290,7 @@ public class SolrIndexManager
                         if(value != null && value.getValue() != null){
                             List<String> items = ((MetaListValue)value).getValue();
                             for(String u: items)
-                                doc.addField( "MetaDataList_" + value.getMetaUid(),u.toLowerCase());
+                                doc.addField( "MetaDataList_" + value.getMetaUid(),u);
                         }
                         break;
                     default:
@@ -306,8 +317,30 @@ public class SolrIndexManager
             }
 
         }
-        if(document.getAddOnDatas() != null)
+        if(document.getAddOnDatas() != null && document.getAddOnDatas().length() > 0){
             doc.addField("DocumentRawAddonDatas", document.getAddOnDatas());
+            log.info("adding current addon data {}", document.getAddOnDatas());
+        }
+        else {
+            //try to regenerate field
+
+            if((values != null && values.size() > 0) || (document.getAttributes() != null || document.getAttributes().size() > 0)){
+                AddonDataHandler.AddonDatasWrapper wrapper = new AddonDataHandler.AddonDatasWrapper();
+                wrapper.setEntityAttributes(document.getAttributes());
+                wrapper.setEntityMetaValues(values);
+                try{
+                    document.setAddOnDatas(mp.writeValueAsString(wrapper));
+                    FactoryInstantiator.getInstance().getDocumentFactory().saveDocumentNoFlush(document);
+                    log.info("updating addon data with " + document.getAddOnDatas());
+                }catch (Exception ex){
+                    log.error("error while generation addon meta field", ex);
+                }
+                //update document
+                doc.addField("DocumentRawAddonDatas", document.getAddOnDatas());
+            } else {
+                log.info("not generating addon field because of no data");
+            }
+        }
         Object body = null;
         Map<String, Object> metaDatas = null;
 

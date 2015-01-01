@@ -19,6 +19,7 @@ package org.kimios.webservices;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.kimios.kernel.ws.pojo.DataTransaction;
+import org.kimios.webservices.exceptions.DMServiceException;
 
 import javax.jws.WebParam;
 import javax.jws.WebService;
@@ -107,6 +108,23 @@ public interface FileTransferService
     public Response downloadDocument( @QueryParam("sessionId") String sessionId,
                                                 @QueryParam("transactionId") long transactionId,
                                                 @DefaultValue("true") @QueryParam("inline") Boolean inline)
+            throws DMServiceException;
+
+
+
+    @GET
+    @Path("/createTokenDownload")
+    @Produces(MediaType.APPLICATION_JSON)
+    public DataTransaction createTokenDownloadTransaction(
+            @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+            @QueryParam(value = "documentVersionId") @WebParam(name = "documentVersionId") long documentVersionId)
+            throws DMServiceException;
+
+
+    @GET
+    @Path( "/downloadDocumentByToken" )
+    @Produces( MediaType.APPLICATION_OCTET_STREAM )
+    public Response downloadDocumentByToken( @QueryParam("token") String token)
             throws DMServiceException;
 
 

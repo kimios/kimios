@@ -73,7 +73,7 @@ public class SessionCleaner implements Runnable
                 try {
                     sessionManager.cleanSessionContext(sessionExpire);
                 } catch (Exception e) {
-                    log.info("Cleaning relaunched ...");
+                    log.error("Cleaning relaunched while cleaning session", e);
                 }
             }
 

@@ -27,17 +27,21 @@ public class DataTransaction
 
     private String hashSHA;
 
+    private String downloadToken;
+
     public DataTransaction()
     {
     }
 
-    public DataTransaction(long uid, long size, boolean isCompressed, String hashMD5, String hashSHA)
+    public DataTransaction(long uid, long size, boolean isCompressed, String hashMD5, String hashSHA,
+                           String downloadToken)
     {
         this.uid = uid;
         this.size = size;
         this.isCompressed = isCompressed;
         this.hashMD5 = hashMD5;
         this.hashSHA = hashSHA;
+        this.downloadToken = downloadToken;
     }
 
     public long getUid()
@@ -88,6 +92,14 @@ public class DataTransaction
     public void setHashSHA(String hashSHA)
     {
         this.hashSHA = hashSHA;
+    }
+
+    public String getDownloadToken() {
+        return downloadToken;
+    }
+
+    public void setDownloadToken(String downloadToken) {
+        this.downloadToken = downloadToken;
     }
 }
 

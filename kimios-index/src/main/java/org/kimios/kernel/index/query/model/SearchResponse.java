@@ -45,6 +45,8 @@ public class SearchResponse
 
     private int results;
 
+    private SearchRequest temporaryRequest;
+
     private boolean facetResponse;
 
     private List<Document> rows;
@@ -113,5 +115,13 @@ public class SearchResponse
     public void setVirtualPath( String virtualPath )
     {
         this.virtualPath = virtualPath;
+    }
+
+    public SearchRequest getTemporaryRequest() {
+        return temporaryRequest;
+    }
+
+    public void setTemporaryRequest(SearchRequest temporaryRequest) {
+        this.temporaryRequest = temporaryRequest;
     }
 }

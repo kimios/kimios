@@ -1,5 +1,6 @@
 package org.kimios.webservices;
 
+import org.kimios.webservices.exceptions.DMServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

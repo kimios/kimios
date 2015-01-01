@@ -143,7 +143,7 @@ public interface IDocumentVersionController
     /**
      * Return the meta datas list for a given document type
      */
-    public Vector<Meta> getMetas(Session session, long documentTypeId)
+    public List<Meta> getMetas(Session session, long documentTypeId)
             throws AccessDeniedException, ConfigException, DataSourceException;
 
     /**
@@ -155,7 +155,7 @@ public interface IDocumentVersionController
     /**
      * Get the unherited meta list for a given document type id
      */
-    public Vector<Meta> getUnheritedMetas(Session session, long documentTypeId)
+    public List<Meta> getUnheritedMetas(Session session, long documentTypeId)
             throws AccessDeniedException, ConfigException, DataSourceException;
 
     /**

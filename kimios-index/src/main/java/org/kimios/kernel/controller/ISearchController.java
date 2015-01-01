@@ -64,7 +64,7 @@ public interface ISearchController
         throws DataSourceException, ConfigException, IndexException, IOException, ParseException;
 
     public SearchResponse advancedSearchDocuments( Session session, List<Criteria> criteriaList, int start,
-                                                   int pageSize, String sortField, String sortDir, String virtualPath )
+                                                   int pageSize, String sortField, String sortDir, String virtualPath, Long requestId, Boolean mustSave )
         throws DataSourceException, ConfigException, IndexException, IOException, ParseException;
 
 
@@ -81,6 +81,10 @@ public interface ISearchController
     public SearchRequest loadSearchQuery( Session session, Long id )
         throws AccessDeniedException, DataSourceException, ConfigException, IndexException, IOException;
 
+    public List<SearchRequest> loadMysSearchQueriesNotPublished(Session session)
+            throws DataSourceException, ConfigException;
+
+
     public List<SearchRequest> listSavedSearch( Session session )
         throws AccessDeniedException, DataSourceException, ConfigException, IndexException, IOException;
 
@@ -96,6 +100,9 @@ public interface ISearchController
 
     public Long advancedSaveSearchQueryWithSecurity(Session session, SearchRequest searchRequest, List<SearchRequestSecurity> securities)
             throws DataSourceException, ConfigException, IndexException, IOException;
+
+    public List<SearchRequest> searchRequestList(Session session)
+            throws AccessDeniedException, DataSourceException, ConfigException, IndexException, IOException;
 
 
     }

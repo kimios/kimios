@@ -29,6 +29,8 @@ public class Meta
 
     private boolean mandatory = false;
 
+    private Integer position;
+
     public Meta()
     {
 
@@ -51,6 +53,16 @@ public class Meta
         this.metaFeedUid = metaFeedUid;
         this.metaType = metaType;
         this.mandatory = mandatory;
+    }
+    public Meta(long uid, String name, long documentTypeUid, Long metaFeedUid, int metaType, boolean mandatory, Integer position)
+    {
+        this.uid = uid;
+        this.name = name;
+        this.documentTypeUid = documentTypeUid;
+        this.metaFeedUid = metaFeedUid;
+        this.metaType = metaType;
+        this.mandatory = mandatory;
+        this.position = position;
     }
 
     public int getMetaType()
@@ -111,6 +123,14 @@ public class Meta
     public void setMandatory(boolean mandatory)
     {
         this.mandatory = mandatory;
+    }
+
+    public Integer getPosition() {
+        return position;
+    }
+
+    public void setPosition(Integer position) {
+        this.position = position;
     }
 }
 

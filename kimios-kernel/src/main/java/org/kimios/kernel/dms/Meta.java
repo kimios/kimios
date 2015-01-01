@@ -52,9 +52,13 @@ public class Meta implements Serializable
     @Column(name = "mandatory", nullable = false)
     private boolean mandatory = false;
 
+    @Column(name= "position", nullable = true)
+    private Integer position;
+
+
+
     public Meta()
-    {
-    }
+    {}
 
     public Meta(long uid, String name, long documentTypeUid, MetaFeedImpl metaFeedBean, int metaType)
     {
@@ -73,6 +77,17 @@ public class Meta implements Serializable
         this.metaFeedBean = metaFeedBean;
         this.metaType = metaType;
         this.mandatory = mandatory;
+    }
+
+    public Meta(long uid, String name, long documentTypeUid, MetaFeedImpl metaFeedBean, int metaType, boolean mandatory, Integer position)
+    {
+        this.uid = uid;
+        this.name = name;
+        this.documentTypeUid = documentTypeUid;
+        this.metaFeedBean = metaFeedBean;
+        this.metaType = metaType;
+        this.mandatory = mandatory;
+        this.position = position;
     }
 
     public int getMetaType()
@@ -152,6 +167,14 @@ public class Meta implements Serializable
         this.mandatory = mandatory;
     }
 
+    public Integer getPosition() {
+        return position;
+    }
+
+    public void setPosition(Integer position) {
+        this.position = position;
+    }
+
     public org.kimios.kernel.ws.pojo.Meta toPojo()
     {
         long metaFeedUid = -1;
@@ -159,7 +182,7 @@ public class Meta implements Serializable
             metaFeedUid = this.metaFeedBean.getUid();
         }
         return new org.kimios.kernel.ws.pojo.Meta(this.uid, this.name, this.documentTypeUid, metaFeedUid,
-                this.metaType, this.mandatory);
+                this.metaType, this.mandatory, this.position);
     }
 
     public boolean equals(Object o)

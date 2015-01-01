@@ -19,6 +19,7 @@ package org.kimios.kernel.index.query.model;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -27,8 +28,8 @@ import java.util.Map;
  */
 
 @Entity
-@Table(name = "searches",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"search_name", "owner", "owner_source"})
+@Table(name = "searches"
+        //uniqueConstraints = @UniqueConstraint(columnNames = {"search_name", "owner", "owner_source"}
 )
 @SequenceGenerator(allocationSize = 1, name = "seq", sequenceName = "search_id_sed")
 public class SearchRequest
@@ -57,6 +58,13 @@ public class SearchRequest
     @Column(name = "search_criterias", length = 20000, nullable = false)
     private String criteriasListJson;
 
+    @Column(name = "search_creation_date", nullable = true)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date creationDate;
+
+    @Column(name = "search_update_date", nullable = true)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updateDate;
 
     @Column(name = "search_sort_field", nullable = true)
     private String sortField;
@@ -70,6 +78,26 @@ public class SearchRequest
     @Column(name = "search_public", nullable = false)
     private Boolean publicAccess = true;
 
+    @Column(name = "search_published", nullable = true)
+    private Boolean published = false;
+
+    @Column(name = "search_temporary", nullable = true)
+    private Boolean temporary = false;
+
+
+    @Column(name = "search_temporary_session_id", nullable = true)
+    private String searchSessionId;
+
+    @Transient
+    private boolean isTransient = false;
+
+    public boolean isTransient() {
+        return isTransient;
+    }
+
+    public void setTransient(boolean isTransient) {
+        this.isTransient = isTransient;
+    }
 
     /*@ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "search_tag",
@@ -193,6 +221,14 @@ public class SearchRequest
         this.sortDir = sortDir;
     }
 
+    public String getSearchSessionId() {
+        return searchSessionId;
+    }
+
+    public void setSearchSessionId(String searchSessionId) {
+        this.searchSessionId = searchSessionId;
+    }
+
     @Override
     public String toString() {
         return "SearchRequest{" +
@@ -206,6 +242,40 @@ public class SearchRequest
                 ", sortDir='" + sortDir + '\'' +
                 ", virtualTree=" + virtualTree +
                 ", publicAccess=" + publicAccess +
+                ", published=" + published +
+                ", temporary=" + temporary +
                 '}';
+    }
+
+    public Boolean getPublished() {
+        return published;
+    }
+
+    public void setPublished(Boolean published) {
+        this.published = published;
+    }
+
+    public Boolean getTemporary() {
+        return temporary;
+    }
+
+    public void setTemporary(Boolean temporary) {
+        this.temporary = temporary;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public Date getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(Date updateDate) {
+        this.updateDate = updateDate;
     }
 }

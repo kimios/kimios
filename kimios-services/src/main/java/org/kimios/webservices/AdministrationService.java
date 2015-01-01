@@ -18,7 +18,7 @@ package org.kimios.webservices;
 
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.kimios.kernel.ws.pojo.*;
-import org.kimios.utils.logging.LoggerManager;
+import org.kimios.webservices.exceptions.DMServiceException;
 
 import javax.jws.WebParam;
 import javax.jws.WebService;
@@ -27,7 +27,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA. User: farf Date: 4/1/12 Time: 5:00 PM

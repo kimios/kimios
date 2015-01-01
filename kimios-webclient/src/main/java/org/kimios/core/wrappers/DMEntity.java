@@ -15,12 +15,10 @@
  */
 package org.kimios.core.wrappers;
 
-import org.kimios.kernel.ws.pojo.Document;
-import org.kimios.kernel.ws.pojo.Folder;
-import org.kimios.kernel.ws.pojo.SymbolicLink;
-import org.kimios.kernel.ws.pojo.Workspace;
+import org.kimios.kernel.ws.pojo.*;
 
 import java.util.Date;
+import java.util.Map;
 
 /**
  * @author Fabien Alin
@@ -81,6 +79,8 @@ public class DMEntity {
     private Date lastVersionUpdateDate;
     private String dmEntityAddonData;
 
+    private Map<String, MetaValue> metaDatas;
+
     private DMEntity targetEntity;
 
 
@@ -106,25 +106,27 @@ public class DMEntity {
             this.parentType = ((Folder) entity).getParentType();
             this.parentUid = ((Folder) entity).getParentUid();
         }
-        if(entity instanceof Document){
-            this.parentUid = ((Document)entity).getFolderUid();
-            this.extension = ((Document)entity).getExtension();
-            this.checkedOut = ((Document)entity).getCheckedOut();
-            this.checkoutDate = ( ((Document)entity).getCheckoutDate() != null ? ((Document)entity).getCheckoutDate().getTime() : null );
-            this.checkoutUser = ((Document)entity).getCheckoutUser();
-            this.checkoutUserSource = ((Document)entity).getCheckoutUserSource();
-            this.outOfWorkflow = ((Document)entity).getOutOfWorkflow() != null ? ((Document)entity).getOutOfWorkflow() : true;
-            this.workflowStatusName = ((Document)entity).getWorkflowStatusName();
-            this.workflowStatusUid = ((Document)entity).getWorkflowStatusUid() != null ? ((Document)entity).getWorkflowStatusUid() : 0;
-            this.documentTypeName = ((Document)entity).getDocumentTypeName();
-            this.documentTypeUid = ((Document)entity).getDocumentTypeUid() != null ? ((Document)entity).getDocumentTypeUid() : 0;
-            this.length = ((Document)entity).getLength();
-            this.path = ((Document)entity).getPath();
+        if(entity instanceof org.kimios.kernel.ws.pojo.Document){
+            this.parentUid = ((org.kimios.kernel.ws.pojo.Document)entity).getFolderUid();
+            this.extension = ((org.kimios.kernel.ws.pojo.Document)entity).getExtension();
+            this.checkedOut = ((org.kimios.kernel.ws.pojo.Document)entity).getCheckedOut();
+            this.checkoutDate = ( ((org.kimios.kernel.ws.pojo.Document)entity).getCheckoutDate() != null ? ((org.kimios.kernel.ws.pojo.Document)entity).getCheckoutDate().getTime() : null );
+            this.checkoutUser = ((org.kimios.kernel.ws.pojo.Document)entity).getCheckoutUser();
+            this.checkoutUserSource = ((org.kimios.kernel.ws.pojo.Document)entity).getCheckoutUserSource();
+            this.outOfWorkflow = ((org.kimios.kernel.ws.pojo.Document)entity).getOutOfWorkflow() != null ? ((org.kimios.kernel.ws.pojo.Document)entity).getOutOfWorkflow() : true;
+            this.workflowStatusName = ((org.kimios.kernel.ws.pojo.Document)entity).getWorkflowStatusName();
+            this.workflowStatusUid = ((org.kimios.kernel.ws.pojo.Document)entity).getWorkflowStatusUid() != null ? ((org.kimios.kernel.ws.pojo.Document)entity).getWorkflowStatusUid() : 0;
+            this.documentTypeName = ((org.kimios.kernel.ws.pojo.Document)entity).getDocumentTypeName();
+            this.documentTypeUid = ((org.kimios.kernel.ws.pojo.Document)entity).getDocumentTypeUid() != null ? ((org.kimios.kernel.ws.pojo.Document)entity).getDocumentTypeUid() : 0;
+            this.length = ((org.kimios.kernel.ws.pojo.Document)entity).getLength();
+            this.path = ((org.kimios.kernel.ws.pojo.Document)entity).getPath();
 
-            this.lastVersionCreationDate = ((Document)entity).getVersionCreationDate().getTime();
-            this.lastVersionUpdateDate = ((Document)entity).getVersionUpdateDate().getTime();
+            this.lastVersionCreationDate = ((org.kimios.kernel.ws.pojo.Document)entity).getVersionCreationDate().getTime();
+            this.lastVersionUpdateDate = ((org.kimios.kernel.ws.pojo.Document)entity).getVersionUpdateDate().getTime();
 
-            this.dmEntityAddonData = ((Document)entity).getAddonDatas();
+            this.dmEntityAddonData = ((org.kimios.kernel.ws.pojo.Document)entity).getAddonDatas();
+
+            this.metaDatas = ((org.kimios.kernel.ws.pojo.Document)entity).getMetaDatas();
         }
         if(entity instanceof SymbolicLink){
             this.parentUid = ((SymbolicLink) entity).getParentUid();
@@ -388,6 +390,14 @@ public class DMEntity {
 
     public void setTargetEntity(DMEntity targetEntity) {
         this.targetEntity = targetEntity;
+    }
+
+    public Map<String, MetaValue> getMetaDatas() {
+        return metaDatas;
+    }
+
+    public void setMetaDatas(Map<String, MetaValue> metaDatas) {
+        this.metaDatas = metaDatas;
     }
 }
 

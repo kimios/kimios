@@ -156,9 +156,9 @@
                     <instructions>
                         <Bundle-SymbolicName>${project.name}</Bundle-SymbolicName>
                         <Include-Resource>{maven-resources}</Include-Resource>
-                        <Private-Package>org.kimios.webservices.impl,org.kimios.webservices.utils</Private-Package>
-                        <Export-Package>org.kimios.webservices</Export-Package>
-                        <Spring-Context>*;create-asynchronously:=false</Spring-Context>
+                        <Private-Package>org.kimios.webservices.bonita.impl</Private-Package>
+                        <Export-Package>org.kimios.webservices.bonita</Export-Package>
+                        <!--<Spring-Context>*;create-asynchronously:=false</Spring-Context>-->
                         <Import-Package>
                             org.slf4j,
                             org.apache.cxf,
@@ -182,8 +182,11 @@
                             javax.persistence,
                             javax.ws.rs.core,
                             javax.ws.rs.ext,
-                            org.codehaus.jackson.map, org.codehaus.jackson.type,
+                            org.codehaus.jackson.map,
+                            org.codehaus.jackson.type,
                             org.kimios.exceptions,
+                            org.kimios.webservices,
+                            org.kimios.webservices.exceptions,
                             org.kimios.webservices.utils,
                             org.kimios.webservices.pojo,
                             org.kimios.kernel.*,
@@ -213,6 +216,29 @@
                 <version>2.3.2</version>
                 <executions>
                     <execution>
+                        <id>osgi</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>blueprint</classifier>
+                            <excludes>
+                                <exclude>META-INF/spring/**</exclude>
+                            </excludes>
+                            <archive>
+                                <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                            </archive>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.2</version>
+                <executions>
+                    <execution>
                         <goals>
                             <goal>jar</goal>
                         </goals>
@@ -220,9 +246,10 @@
                             <classifier>interfaces</classifier>
                             <includes>
                                 <include>org/kimios/webservices/*</include>
+                                <include>org/kimios/webservices/bonita/*</include>
                             </includes>
                             <excludes>
-                                <exclude>org/kimios/webservices/impl/*</exclude>
+                                <exclude>org/kimios/webservices/bonita/impl/*</exclude>
                                 <exclude>org/kimios/controller/*</exclude>
                                 <exclude>org/kimios/bonita/*</exclude>
                             </excludes>

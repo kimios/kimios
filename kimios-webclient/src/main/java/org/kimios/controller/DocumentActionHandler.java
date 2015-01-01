@@ -208,7 +208,9 @@ public class DocumentActionHandler
                 value = mValue.getValue();
             }
             metaValues.add( new Meta( mValue.getMetaId(), mValue.getMeta().getName(), value,
-                                      mValue.getMeta().getMetaType(), mValue.getMeta().getMetaFeedUid(), mValue.getMeta().isMandatory() ) );
+                                      mValue.getMeta().getMetaType(),
+                                        mValue.getMeta().getMetaFeedUid(),
+                                        mValue.getMeta().isMandatory(), mValue.getMeta().getPosition() ) );
             for ( org.kimios.kernel.ws.pojo.Meta meta : mServ )
             {
                 if ( mValue.getMeta().getUid() == meta.getUid() )
@@ -222,7 +224,7 @@ public class DocumentActionHandler
         {
             if ( !toRemove.contains( m ) )
             {
-                metaValues.add( new Meta( m.getUid(), m.getName(), null, m.getMetaType(), m.getMetaFeedUid(), m.isMandatory() ) );
+                metaValues.add( new Meta( m.getUid(), m.getName(), null, m.getMetaType(), m.getMetaFeedUid(), m.isMandatory(), m.getPosition() ) );
             }
         }
 

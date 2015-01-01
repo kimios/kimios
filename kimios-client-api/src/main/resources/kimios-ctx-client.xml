@@ -39,7 +39,7 @@
             <bean class="org.apache.cxf.aegis.AegisContext">
                 <property name="rootClassNames">
                     <list>
-                        <value>org.kimios.webservices.DMServiceException</value>
+                        <value>org.kimios.webservices.exceptions.DMServiceException</value>
                     </list>
                 </property>
             </bean>
@@ -164,7 +164,7 @@
         </jaxws:dataBinding>
     </jaxws:client>
 
-    <jaxws:client id="bonitaService" serviceClass="org.kimios.webservices.BonitaService"
+    <jaxws:client id="bonitaService" serviceClass="org.kimios.webservices.bonita.BonitaService"
                   address="${server.url}${service.context}/BonitaService">
         <jaxws:dataBinding>
             <ref bean="aegisBean"/>

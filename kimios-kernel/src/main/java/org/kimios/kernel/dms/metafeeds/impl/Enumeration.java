@@ -22,6 +22,7 @@ import org.kimios.kernel.exception.MetaFeedSearchException;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
@@ -35,6 +36,7 @@ public class Enumeration extends MetaFeedImpl
                      joinColumns = @JoinColumn(name = "enumeration_id"), uniqueConstraints =
     @UniqueConstraint(columnNames = { "enumeration_id", "enumeration_value" }))
     @Column(name = "enumeration_value")
+    @OrderBy(value = "enumeration_value")
     private List<String> values = new ArrayList<String>();
 
     public Enumeration()
@@ -50,7 +52,7 @@ public class Enumeration extends MetaFeedImpl
     public String[] search(String criteria) throws MetaFeedSearchException
     {
         try {
-            Vector<String> v = new Vector<String>();
+            ArrayList<String> v = new ArrayList<String>();
             for (String res : values) {
                 if (res.toLowerCase().contains( criteria.toLowerCase() )
                     || criteria.trim().length() == 0) {
@@ -58,11 +60,8 @@ public class Enumeration extends MetaFeedImpl
                 }
             }
 
-            String[] results = new String[v.size()];
-            for (String s : v) {
-                results[v.indexOf(s)] = s;
-            }
-            return results;
+            Collections.sort(v);
+            return v.toArray(new String[]{});
         } catch (Exception e) {
             throw new MetaFeedSearchException("Retrieving metafeed value error : " + e.getMessage());
         }

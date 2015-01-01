@@ -77,7 +77,7 @@ public class KimiosKernelAspect {
 
         if(method != null){
 
-            log.info(" > " + ruleManager + " / " + rulesManagementEnabled);
+            log.trace(" Rule Manager  " + ruleManager + " | Rule Managerment Enabled " + rulesManagementEnabled);
 
             EventContext ctx = EventContext.get();
             DmsEvent evt = method.getAnnotation(DmsEvent.class);

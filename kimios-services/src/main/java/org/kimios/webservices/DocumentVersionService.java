@@ -20,6 +20,7 @@ import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.kimios.kernel.ws.pojo.DocumentComment;
 import org.kimios.kernel.ws.pojo.DocumentVersion;
 import org.kimios.kernel.ws.pojo.Meta;
+import org.kimios.webservices.exceptions.DMServiceException;
 
 import javax.jws.WebParam;
 import javax.jws.WebService;

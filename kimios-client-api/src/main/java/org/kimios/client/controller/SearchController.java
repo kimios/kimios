@@ -110,13 +110,14 @@ public class SearchController
 
 
     public SearchResponse advancedSearchDocument( String sessionId, List<Criteria> criteriaList, int start,
-                                                  int pageSize, String sort, String sortDir, String virtualPath )
+                                                  int pageSize, String sort, String sortDir, String virtualPath,
+                                                  long reqId, boolean mustSave )
         throws Exception
     {
         try
         {
             return client.advancedSearchDocuments( sessionId, criteriaList, start, pageSize, sort, sortDir,
-                                                   virtualPath );
+                                                   virtualPath, reqId, mustSave );
         }
         catch ( Exception e )
         {

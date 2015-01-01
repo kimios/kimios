@@ -20,7 +20,7 @@ import org.kimios.kernel.ws.pojo.DocumentComment;
 import org.kimios.kernel.ws.pojo.DocumentVersion;
 import org.kimios.kernel.ws.pojo.Meta;
 import org.kimios.kernel.ws.pojo.MetaValue;
-import org.kimios.webservices.DMServiceException;
+import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.DocumentVersionService;
 
 import java.util.Date;

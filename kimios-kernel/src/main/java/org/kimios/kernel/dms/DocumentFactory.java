@@ -33,6 +33,8 @@ public interface DocumentFactory
 
     public void saveDocument(Document d) throws ConfigException, DataSourceException;
 
+    public void saveDocumentNoFlush(Document d) throws ConfigException, DataSourceException;
+
     public void updateDocument(Document d) throws ConfigException, DataSourceException;
 
     public void deleteDocument(Document d) throws ConfigException, DataSourceException;

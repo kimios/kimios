@@ -23,7 +23,7 @@ import org.kimios.kernel.index.query.model.SearchResponse;
 import org.kimios.kernel.security.Session;
 import org.kimios.kernel.ws.pojo.Document;
 import org.kimios.webservices.CoreService;
-import org.kimios.webservices.DMServiceException;
+import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.SearchService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,14 +96,14 @@ public class SearchServiceImpl
 
 
     public SearchResponse advancedSearchDocuments( String sessionId, List<Criteria> criterias, int start, int pageSize,
-                                                   String sortField, String sortDir, String virtualPath )
+                                                   String sortField, String sortDir, String virtualPath, long requestId, boolean mustSave )
         throws DMServiceException
     {
         try
         {
             Session s = getHelper().getSession( sessionId );
             return searchController.advancedSearchDocuments( s, criterias, start, pageSize, sortField, sortDir,
-                                                             virtualPath );
+                                                             virtualPath, requestId, mustSave );
         }
         catch ( Exception e )
         {
@@ -149,7 +149,22 @@ public class SearchServiceImpl
         try
         {
             Session s = getHelper().getSession( sessionId );
-            return searchController.listSavedSearch( s );
+            //return searchController.listSavedSearch( s )
+            return searchController.searchRequestList(s);
+        }
+        catch ( Exception e )
+        {
+            throw getHelper().convertException( e );
+        }
+    }
+
+    public List<SearchRequest> listMySearchQueries( String sessionId )
+            throws DMServiceException
+    {
+        try
+        {
+            Session s = getHelper().getSession( sessionId );
+            return searchController.loadMysSearchQueriesNotPublished( s );
         }
         catch ( Exception e )
         {

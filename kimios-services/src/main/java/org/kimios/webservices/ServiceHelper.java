@@ -20,19 +20,20 @@ import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.exception.*;
 import org.kimios.kernel.security.ISessionManager;
 import org.kimios.kernel.security.Session;
+import org.kimios.webservices.exceptions.DMServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.FileNotFoundException;
 
-public class ServiceHelper
-{
+public class ServiceHelper implements IServiceHelper {
     final Logger log = LoggerFactory.getLogger("kimios");
 
     private ISessionManager sessionManager;
 
     private String publicBaseUrl = "http://localhost:8080/kimios";
 
+    @Override
     public ISessionManager getSessionManager()
     {
         return sessionManager;
@@ -43,6 +44,7 @@ public class ServiceHelper
         this.sessionManager = sessionManager;
     }
 
+    @Override
     public Session getSession(String sessionUid) throws Exception
     {
         try {
@@ -58,6 +60,7 @@ public class ServiceHelper
         }
     }
 
+    @Override
     public DMServiceException convertException(Exception e)
     {
         if (log.isDebugEnabled()) {
@@ -133,6 +136,7 @@ public class ServiceHelper
         return new DMServiceException(0, "Error 00 : Exception occured", e.getCause());
     }
 
+    @Override
     public String getResourceUrl(String targetUrl){
         //Append public Kimios Service URL Datas
         String item = publicBaseUrl + targetUrl;

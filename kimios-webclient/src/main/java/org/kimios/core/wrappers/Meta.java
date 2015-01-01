@@ -31,7 +31,10 @@ public class Meta {
     private Object value;
     private long uid;
     private Long metaFeedUid;
+
     private boolean mandatory = false;
+
+    private Integer position;
 
     private String sessionUid;
 
@@ -91,6 +94,14 @@ public class Meta {
         this.mandatory = mandatory;
     }
 
+    public Integer getPosition() {
+        return position;
+    }
+
+    public void setPosition(Integer position) {
+        this.position = position;
+    }
+
     public Meta(long uid, String name, String value, int type) {
         this(uid, name, value, type, new Long(-1));
     }
@@ -103,13 +114,14 @@ public class Meta {
         this.metaFeedUid = metaFeedUid;
     }
 
-    public Meta(long uid, String name, Object value, int type, Long metaFeedUid, boolean mandatory) {
+    public Meta(long uid, String name, Object value, int type, Long metaFeedUid, boolean mandatory, Integer position) {
         this.uid = uid;
         this.name = name;
         this.value = value;
         this.type = type;
         this.metaFeedUid = metaFeedUid;
         this.mandatory = mandatory;
+        this.position = position;
     }
 
     public Meta(org.kimios.kernel.ws.pojo.Meta m, long docVersion, String sessionUid, DocumentVersionController versionController) throws Exception {
@@ -135,6 +147,7 @@ public class Meta {
         this.type = m.getMetaType();
         this.metaFeedUid = m.getMetaFeedUid();
         this.mandatory = m.isMandatory();
+        this.position = m.getPosition();
     }
 
 

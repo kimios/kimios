@@ -68,11 +68,20 @@ public class HMetaValueFactory extends HFactory implements MetaValueFactory {
     public List<MetaValue> getMetaValues(DocumentVersion documentVersion)
             throws ConfigException, DataSourceException {
         try {
-            List<MetaValue> lValues = (List<MetaValue>) getSession().createCriteria(MetaValueBean.class)
+
+            String query = "select mvb from MetaValueBean mvb join mvb.meta mt " +
+                    "where mvb.documentVersionUid = :vuid order by mt.position,mt.name,mt.id";
+
+
+            /*List<MetaValue> lValues = (List<MetaValue>) getSession().createCriteria(MetaValueBean.class)
                     .add(Restrictions.eq("documentVersionUid", documentVersion.getUid()))
+                    .addOrder(Order.asc("meta.position"))
                     .addOrder(Order.asc("meta.id"))
+                    .addOrder(Order.asc("meta.name"))
+                    .list();*/
+            return getSession().createQuery(query)
+                    .setLong("vuid", documentVersion.getUid())
                     .list();
-            return lValues;
         } catch (HibernateException e) {
             throw new DataSourceException(e);
         }

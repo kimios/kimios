@@ -14,9 +14,11 @@
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.kimios.webservices;
+package org.kimios.webservices.converter;
 
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
+import org.kimios.webservices.KimiosExtension;
+import org.kimios.webservices.exceptions.DMServiceException;
 
 import javax.jws.WebParam;
 import javax.jws.WebService;

@@ -21,7 +21,7 @@ import org.kimios.kernel.dms.MetaFeedImpl;
 import org.kimios.kernel.security.Session;
 import org.kimios.kernel.ws.pojo.*;
 import org.kimios.webservices.CoreService;
-import org.kimios.webservices.DMServiceException;
+import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.StudioService;
 
 import javax.jws.WebService;
