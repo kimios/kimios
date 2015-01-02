@@ -73,16 +73,16 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <KIMIOS_VERSION>1.0-SNAPSHOT</KIMIOS_VERSION>
         <releaseRepoUrl>http://maven.devlib.infra/repository/kimios-releases</releaseRepoUrl>
-        <snapshotRepoUrl>http://maven.devlib.infra/repository/kimios-internal</snapshotRepoUrl>
+        <snapshotRepoUrl>http://repositories.k.devlib.fr/repository/kimios-private</snapshotRepoUrl>
         <deployRepoUrl>${releaseRepoUrl}</deployRepoUrl>
         <releaseRepoId>kimios-releases</releaseRepoId>
-        <snapshotRepoId>kimios-internal</snapshotRepoId>
+        <snapshotRepoId>kimios-private</snapshotRepoId>
         <deployRepoId>${releaseRepoId}</deployRepoId>
         <isRelease>true</isRelease>
     </properties>
     <distributionManagement>
         <snapshotRepository>
-            <id>kimios-internal</id>
+            <id>kimios-private</id>
             <url>${snapshotRepoUrl}</url>
         </snapshotRepository>
         <repository>
