@@ -36,6 +36,8 @@ public class DocumentFactory {
 
             Document pojo = new Document();
 
+            pojo.setIndexScore((Float)doc.getFirstValue("score"));
+
             pojo.setUid((Long) doc.get("DocumentUid"));
             pojo.setName(doc.get("DocumentNameDisplayed").toString());
             pojo.setPath(doc.get("DocumentPath").toString());

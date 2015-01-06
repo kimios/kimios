@@ -885,7 +885,15 @@ public class SolrSearchController
                     if (c.getFieldName().equals("DocumentName")) {
                         queries.add(QueryBuilder.documentNameQuery(c.getQuery()));
                     } else if (c.getFieldName().equals("DocumentBody")) {
-                        queries.add("DocumentBody:" + ClientUtils.escapeQueryChars(c.getQuery()));
+                        //build query
+                        String[] tmpQuery = c.getQuery().split("\\s");
+                        StringBuilder bld = new StringBuilder();
+                        for(String u : tmpQuery){
+                            bld.append("+");
+                            bld.append(ClientUtils.escapeQueryChars(u));
+                            bld.append(" ");
+                        }
+                        queries.add("DocumentBody:(" + bld.toString().trim() + ")");
                     } else if (c.getFieldName().equals("DocumentUid")) {
                         //filterQueries.add("DocumentUid:" + c.getQuery());
                         filtersMap.put(c, "DocumentUid:" + c.getQuery());
@@ -1077,7 +1085,10 @@ public class SolrSearchController
                     ? SolrQuery.ORDER.valueOf(sortDir.toLowerCase())
                     : SolrQuery.ORDER.asc);
         }
-        indexQuery.addSort("score", SolrQuery.ORDER.desc);
+        if(!indexQuery.getSorts().contains(new SolrQuery.SortClause("score", SolrQuery.ORDER.desc)) &&
+                !indexQuery.getSorts().contains(new SolrQuery.SortClause("score", SolrQuery.ORDER.asc))){
+            indexQuery.addSort("score", SolrQuery.ORDER.desc);
+        }
         StringBuilder sQuery = new StringBuilder();
 
         for (String q : queries) {

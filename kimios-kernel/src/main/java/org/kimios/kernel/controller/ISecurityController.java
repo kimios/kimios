@@ -80,10 +80,18 @@ public interface ISecurityController
     public Session startSession(String userName, String userSource,
             String password) throws ConfigException, DataSourceException, AccessDeniedException;
 
+
+    /**
+     * End a kernel session
+     */
+    public void endSession(String sessionId) throws ConfigException, DataSourceException, AccessDeniedException;
+
     /**
      * Start a kernel session using external Token (by example: SSO System like CAS)
      */
     public Session startSession(String externalToken) throws ConfigException,AccessDeniedException;
+
+
 
     /**
      * Is the given session still alive ?

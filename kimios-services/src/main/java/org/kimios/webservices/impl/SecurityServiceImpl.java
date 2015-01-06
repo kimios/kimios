@@ -134,6 +134,17 @@ public class SecurityServiceImpl extends CoreService implements SecurityService
         }
     }
 
+    public void endSession(String sessionId) throws DMServiceException
+    {
+
+        try {
+
+            securityController.endSession(sessionId);
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
+
     public boolean isSessionAlive(String sessionId) throws DMServiceException
     {
 

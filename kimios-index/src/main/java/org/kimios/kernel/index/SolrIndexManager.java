@@ -544,6 +544,9 @@ public class SolrIndexManager
         QueryResponse rsp;
         try
         {
+
+            query.addField("score");
+            query.addField("*");
             rsp = solr.query( query );
             final List<Long> list = new Vector<Long>();
             SolrDocumentList documentList = rsp.getResults();
@@ -551,7 +554,7 @@ public class SolrIndexManager
             {
 
                 if(log.isDebugEnabled())               {
-                    log.debug( "Solr result doc: #" + dc.getFieldValue("DocumentId"));
+                    log.debug( "Solr result doc: #" + dc.getFieldValue("DocumentUid"));
                     for(String field: dc.getFieldNames()){
                         if(!field.equals("DocumentBody")){
                             log.debug( "Solr result doc: ======> {} : {}", field, dc.getFieldValue(field));

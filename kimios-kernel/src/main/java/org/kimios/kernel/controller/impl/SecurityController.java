@@ -209,6 +209,11 @@ public class SecurityController extends AKimiosController implements ISecurityCo
         return s;
     }
 
+    public void endSession(String sessionId) throws ConfigException, DataSourceException, AccessDeniedException{
+        SessionManager.getInstance().removeSession(sessionId);
+    }
+
+
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.ISecurityController#isSessionAlive(java.lang.String)
     */

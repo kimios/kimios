@@ -63,6 +63,8 @@ public class Document extends DMEntity implements Serializable
 
     private Map<String, MetaValue> metaDatas = new HashMap<String, MetaValue>();
 
+    private Float indexScore;
+
     public Document()
     {
         this.type = 3;
@@ -284,6 +286,14 @@ public class Document extends DMEntity implements Serializable
 
     public void setMetaDatas(Map<String, MetaValue> metaDatas) {
         this.metaDatas = metaDatas;
+    }
+
+    public Float getIndexScore() {
+        return indexScore;
+    }
+
+    public void setIndexScore(Float indexScore) {
+        this.indexScore = indexScore;
     }
 
     @Override
