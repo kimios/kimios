@@ -55,6 +55,11 @@ public class EventHandlerManager extends ExtensionRegistry<GenericEventHandler>
         return instance;
     }
 
+    synchronized public static void addHandler(GenericEventHandler handler)
+    {
+        instance.handlers.add(handler);
+    }
+
     private List<GenericEventHandler> handlers;
 
     public List<GenericEventHandler> handlers(){
