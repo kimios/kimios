@@ -47,6 +47,7 @@ import org.kimios.kernel.exception.IndexException;
 import org.kimios.kernel.index.filters.impl.GlobalFilter;
 import org.kimios.kernel.index.query.factory.DocumentFactory;
 import org.kimios.kernel.index.query.model.SearchResponse;
+import org.kimios.kernel.index.query.model.VirtualFolder;
 import org.kimios.kernel.security.DMEntityACL;
 import org.kimios.kernel.ws.pojo.*;
 import org.slf4j.Logger;
@@ -164,6 +165,11 @@ public class SolrIndexManager
                 + e.getMessage() );
         }
     }
+
+
+
+
+
 
 
     private SolrInputDocument toSolrInputDocument( Document document, SolrDocument previousSolrDocument )
@@ -407,6 +413,7 @@ public class SolrIndexManager
 
         return doc;
     }
+
 
     public void indexDocument( DMEntity documentEntity )
         throws IndexException, DataSourceException, ConfigException

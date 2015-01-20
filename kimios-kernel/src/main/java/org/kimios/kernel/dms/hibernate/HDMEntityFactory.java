@@ -17,8 +17,7 @@ package org.kimios.kernel.dms.hibernate;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.*;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.*;
 import org.kimios.kernel.exception.DataSourceException;
@@ -73,6 +72,7 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory {
 
             return getSession().createCriteria(DMEntityImpl.class)
                     .add(Restrictions.like("path", finalPath, MatchMode.START))
+                    .setProjection(Projections.distinct(Projections.id()))
                     .list();
         } catch (HibernateException e) {
             throw new DataSourceException(e, e.getMessage());
@@ -90,6 +90,7 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory {
 
             return getSession().createCriteria(DMEntityImpl.class)
                     .add(Restrictions.like("path", finalPath, MatchMode.START))
+                    .setProjection(Projections.distinct(Projections.id()))
                     .list();
         } catch (HibernateException e) {
             throw new DataSourceException(e, e.getMessage());
@@ -106,14 +107,85 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory {
                 finalPath += "/%";
             }
 
+
+            /**/
+
+
+
             return getSession().createCriteria(DMEntityImpl.class)
                     .add(Restrictions.like("path", finalPath, MatchMode.START))
                     .add(Restrictions.eq("type", dmEntityType))
+                    .setProjection(Projections.distinct(Projections.id()))
                     .list();
         } catch (HibernateException e) {
             throw new DataSourceException(e, e.getMessage());
         }
     }
+
+
+    public Long getEntitiesByPathAndTypeCount(String path, int dmEntityType)
+            throws ConfigException, DataSourceException {
+        try {
+            String finalPath = path != null ? path : "";
+            if (finalPath.endsWith("/")) {
+                finalPath += "%";
+            } else {
+                finalPath += "/%";
+            }
+
+            return (Long)getSession().createCriteria(DMEntityImpl.class)
+                    .add(Restrictions.like("path", finalPath, MatchMode.START))
+                    .add(Restrictions.eq("type", dmEntityType))
+                    .setProjection(Projections.rowCount()).uniqueResult();
+        } catch (HibernateException e) {
+            throw new DataSourceException(e, e.getMessage());
+        }
+    }
+
+
+
+    public List<DMEntity> getEntitiesByPathAndType(String path, int dmEntityType, int start, int count)
+            throws ConfigException, DataSourceException {
+        try {
+            String finalPath = path != null ? path : "";
+            if (finalPath.endsWith("/")) {
+                finalPath += "%";
+            } else {
+                finalPath += "/%";
+            }
+
+
+            /*String sql = "select distinct d.dm_entity_id as uid, {d.*} " +
+                    "from dm_entity d where d.dm_entity_type = :dmtype and d.dm_entity_path like :fpath order by d.creation_date offset " + start + " limit " + count;*/
+
+            Criteria criteria = getSession().createCriteria(DMEntityImpl.class);
+            criteria.setProjection(Projections.distinct(Projections.id()))
+                .add(Restrictions.like("path", finalPath, MatchMode.START))
+                .add(Restrictions.eq("type", dmEntityType))
+                .setFirstResult(start)
+                .setMaxResults(count);
+            List uniqueSubList = criteria.list();
+
+            criteria.setProjection(null);
+            criteria.setFirstResult(0);
+            criteria.setMaxResults(Integer.MAX_VALUE);
+            criteria.add(Restrictions.in("uid", uniqueSubList));
+            criteria.addOrder(Order.asc("creationDate"));
+            criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+
+            return criteria.list();
+            /*getSession().createSQLQuery(sql)
+                        .addEntity("d", Document.class)
+                        .addJoin()
+                        .setString("fpath", finalPath)
+                        .setInteger("type", dmEntityType)
+                        .*/
+
+        } catch (HibernateException e) {
+            throw new DataSourceException(e, e.getMessage());
+        }
+    }
+
 
     public void deteteEntities(String path) throws ConfigException, DataSourceException {
         try {

@@ -28,6 +28,7 @@ import org.kimios.kernel.events.annotations.DmsEventName;
 import org.kimios.kernel.exception.*;
 import org.kimios.kernel.repositories.RepositoryManager;
 import org.kimios.kernel.security.Session;
+import org.kimios.utils.configuration.ConfigurationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -319,8 +320,16 @@ public class DocumentVersionController extends AKimiosController implements IDoc
                 }
             }
 
-            dv.setModificationDate(new Date());
-            dmsFactoryInstantiator.getDocumentVersionFactory().updateDocumentVersion(dv);
+            /*
+                Check Configuration to know if change update date on simple meta value or right change
+             */
+            if(ConfigurationManager.getValue("dms.version.date.keep.on.update").equals("true")){
+                dmsFactoryInstantiator.getDocumentVersionFactory().updateDocumentVersionBulk(dv);
+            } else {
+                dv.setModificationDate(new Date());
+                dmsFactoryInstantiator.getDocumentVersionFactory().updateDocumentVersion(dv);
+            }
+
             EventContext.addParameter("version", dv);
             EventContext.addParameter("documentTypeSet", newDt);
         } else {

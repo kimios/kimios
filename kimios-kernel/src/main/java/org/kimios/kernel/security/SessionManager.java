@@ -354,19 +354,31 @@ public class SessionManager extends HFactory implements ISessionManager
         return list;
     }
 
+
+    @DmsEvent(eventName = DmsEventName.SESSION_STOP, when = DmsEventOccur.AFTER)
     public void removeSession(String sessionUid) throws DataSourceException, ConfigException
     {
+        Session s = sessions.get(sessionUid);
         sessions.remove(sessionUid);
+        List<Session> items = new ArrayList<Session>();
+        items.add(s);
+        EventContext.getParameters().put("sessions", items);
     }
 
+
+    @DmsEvent(eventName = DmsEventName.SESSION_STOP, when = DmsEventOccur.AFTER)
     public void removeSessions(String userName, String userSource) throws DataSourceException, ConfigException
     {
+
+        List<Session> items = new ArrayList<Session>();
         for (String sessionUid : sessions.keySet()) {
             Session s = sessions.get(sessionUid);
             if (s.getUserName().equals(userName) && s.getUserSource().equals(userSource)) {
+                items.add(s);
                 sessions.remove(sessionUid);
             }
         }
+        EventContext.getParameters().put("sessions", items);
     }
 
     protected String generateSessionUid()

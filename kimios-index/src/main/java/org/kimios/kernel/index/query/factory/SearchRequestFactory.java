@@ -121,5 +121,20 @@ public class SearchRequestFactory extends HFactory {
         getSession().delete( loadById( id ) );
     }
 
+    public void deleteSearchRequestBySession(String id){
+        String query = "from SearchRequest fetch all properties where " +
+                "publicAccess is false and (searchSessionId = :searchSessionId and temporary is true) ";
+
+        List<SearchRequest> requests =  getSession().createQuery(query)
+                .setString("searchSessionId", id)
+                .list();
+
+
+        for(SearchRequest req: requests){
+            getSession().delete( req );
+        }
+
+    }
+
 
 }

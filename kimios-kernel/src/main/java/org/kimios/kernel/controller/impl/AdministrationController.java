@@ -21,6 +21,7 @@ import org.kimios.kernel.controller.IAdministrationController;
 import org.kimios.kernel.dms.*;
 import org.kimios.kernel.events.annotations.DmsEvent;
 import org.kimios.kernel.events.annotations.DmsEventName;
+import org.kimios.kernel.events.annotations.DmsEventOccur;
 import org.kimios.kernel.exception.AccessDeniedException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.security.Role;
@@ -530,6 +531,7 @@ public class AdministrationController extends AKimiosController implements IAdmi
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IAdministrationController#clearLock(org.kimios.kernel.security.Session, long)
     */
+    @DmsEvent(eventName = DmsEventName.DOCUMENT_CHECKIN, when = DmsEventOccur.AFTER)
     public void clearLock(Session session, long documentUid)
             throws AccessDeniedException, ConfigException, DataSourceException
     {

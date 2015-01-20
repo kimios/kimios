@@ -29,7 +29,8 @@
     <indexConfig>
         <useCompoundFile>false</useCompoundFile>
         <mergeFactor>10</mergeFactor>
-        <ramBufferSizeMB>64</ramBufferSizeMB>
+        <maxIndexingThreads>8</maxIndexingThreads>
+        <ramBufferSizeMB>512</ramBufferSizeMB>
         <maxFieldLength>1000000</maxFieldLength>
         <writeLockTimeout>1000</writeLockTimeout>
         <commitLockTimeout>10000</commitLockTimeout>

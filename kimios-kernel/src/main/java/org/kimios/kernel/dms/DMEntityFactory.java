@@ -35,7 +35,13 @@ public interface DMEntityFactory
     public List<DMEntity> getEntitiesByPathAndType(String path, int dmEntityType)
             throws ConfigException, DataSourceException;
 
-    public void deteteEntities(String path) throws ConfigException, DataSourceException;
+    public Long getEntitiesByPathAndTypeCount(String path, int dmEntityType)
+            throws ConfigException, DataSourceException;
+
+    public List<DMEntity> getEntitiesByPathAndType(String path, int dmEntityType, int start, int count)
+            throws ConfigException, DataSourceException;
+
+        public void deteteEntities(String path) throws ConfigException, DataSourceException;
 
     public void updateEntity(DMEntityImpl entity) throws ConfigException, DataSourceException;
 
