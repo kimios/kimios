@@ -70,10 +70,16 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory {
                 finalPath += "/%";
             }
 
-            return getSession().createCriteria(DMEntityImpl.class)
+            List<Long> items =  getSession().createCriteria(DMEntityImpl.class)
                     .add(Restrictions.like("path", finalPath, MatchMode.START))
                     .setProjection(Projections.distinct(Projections.id()))
                     .list();
+
+            return getSession().createCriteria(DMEntityImpl.class)
+                    .add(Property.forName("uid").in(items))
+                    .list();
+
+
         } catch (HibernateException e) {
             throw new DataSourceException(e, e.getMessage());
         }
@@ -88,10 +94,15 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory {
                 finalPath += "/%";
             }
 
-            return getSession().createCriteria(DMEntityImpl.class)
+            List<Long> items = getSession().createCriteria(DMEntityImpl.class)
                     .add(Restrictions.like("path", finalPath, MatchMode.START))
                     .setProjection(Projections.distinct(Projections.id()))
                     .list();
+
+            return getSession().createCriteria(DMEntityImpl.class)
+                    .add(Property.forName("uid").in(items))
+                    .list();
+
         } catch (HibernateException e) {
             throw new DataSourceException(e, e.getMessage());
         }
@@ -112,10 +123,14 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory {
 
 
 
-            return getSession().createCriteria(DMEntityImpl.class)
+            List<Long> items = getSession().createCriteria(DMEntityImpl.class)
                     .add(Restrictions.like("path", finalPath, MatchMode.START))
                     .add(Restrictions.eq("type", dmEntityType))
                     .setProjection(Projections.distinct(Projections.id()))
+                    .list();
+
+            return getSession().createCriteria(DMEntityImpl.class)
+                    .add(Property.forName("uid").in(items))
                     .list();
         } catch (HibernateException e) {
             throw new DataSourceException(e, e.getMessage());
