@@ -276,9 +276,12 @@ public class ContextBuilder
                     FactoryInstantiator.getInstance().getDocumentFactory().getDocument((Long) arguments[1]);
             DocumentVersion version = fc.getLastDocumentVersion(tDoc);
             HFactory t = (HFactory) fc;
-            t.getSession().evict(version);
-            Document document = version.getDocument();
-            ctx.setEntity(document);
+            if(version != null){
+                t.getSession().evict(version);
+                Document document = version.getDocument();
+                ctx.setEntity(document);
+            }
+
             EventContext.addParameter("version", version);
 
 

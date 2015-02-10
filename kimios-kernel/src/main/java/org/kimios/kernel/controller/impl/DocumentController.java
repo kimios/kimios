@@ -222,6 +222,8 @@ public class DocumentController extends AKimiosController implements IDocumentCo
         if (!isSecurityInherited)
             secCtrl.updateDMEntitySecurities(s, documentId, securitiesXmlStream, false);
 
+        long versionId = vrsCtrl.createDocumentVersion(s, documentId);
+
         if (documentTypeId > 0) {
             vrsCtrl.updateDocumentVersion(s, documentId, documentTypeId, metasXmlStream);
         }
