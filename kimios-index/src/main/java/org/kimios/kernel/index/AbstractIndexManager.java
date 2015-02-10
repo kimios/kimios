@@ -18,6 +18,7 @@ package org.kimios.kernel.index;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.DMEntity;
 import org.kimios.kernel.dms.Document;
+import org.kimios.kernel.dms.MetaValue;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.IndexException;
 import org.kimios.kernel.security.DMEntityACL;
@@ -38,7 +39,7 @@ public interface AbstractIndexManager
 
     boolean deleteDirectory(File path);
 
-    void deleteDocument(Document document) throws IndexException;
+    void deleteDocument(DMEntity document) throws IndexException;
 
     void indexDocument(DMEntity document) throws IndexException, DataSourceException, ConfigException;
 

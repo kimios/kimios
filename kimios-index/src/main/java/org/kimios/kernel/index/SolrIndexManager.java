@@ -47,9 +47,7 @@ import org.kimios.kernel.exception.IndexException;
 import org.kimios.kernel.index.filters.impl.GlobalFilter;
 import org.kimios.kernel.index.query.factory.DocumentFactory;
 import org.kimios.kernel.index.query.model.SearchResponse;
-import org.kimios.kernel.index.query.model.VirtualFolder;
 import org.kimios.kernel.security.DMEntityACL;
-import org.kimios.kernel.ws.pojo.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -145,7 +143,7 @@ public class SolrIndexManager
         return ( path.delete() );
     }
 
-    public void deleteDocument( Document document )
+    public void deleteDocument( DMEntity document )
         throws IndexException
     {
         try
@@ -414,6 +412,107 @@ public class SolrIndexManager
         return doc;
     }
 
+    private SolrInputDocument toSolrInputDocument( Folder folder, List<MetaValue> metaValues )
+            throws DataSourceException, ConfigException
+    {
+
+        SimpleDateFormat dateParser = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat dateTimeParser = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        SimpleDateFormat utcDateParser = new SimpleDateFormat("dd-MM-yyyy");
+        utcDateParser.setTimeZone(TimeZone.getTimeZone("UTC"));
+        SimpleDateFormat utcDateTimeParser = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        utcDateTimeParser.setTimeZone(TimeZone.getTimeZone("UTC"));
+        log.info("processing folder {} for path {}", folder.getUid(), folder.getPath());
+        SolrInputDocument doc = new SolrInputDocument();
+        doc.addField( "DocumentUid", folder.getUid() );
+        doc.addField( "DocumentName", folder.getName().toLowerCase() );
+        doc.addField( "DocumentNameDisplayed", folder.getName() );
+        doc.addField( "DocumentNameAnalysed", folder.getName() );
+
+        doc.addField( "DocumentOwner", folder.getOwner() + "@" + folder.getOwnerSource() );
+        doc.addField( "DocumentOwnerId", folder.getOwner() );
+        doc.addField( "DocumentOwnerSource", folder.getOwnerSource() );
+        doc.addField( "DocumentPath", folder.getPath() );
+        doc.addField( "DocumentParent", folder.getParent().getPath() + "/" );
+        doc.addField( "DocumentParentId", folder.getParent().getUid() );
+
+        //standard datas
+        doc.addField( "DocumentCreationDate", folder.getCreationDate() );
+        doc.addField( "DocumentUpdateDate", folder.getUpdateDate() );
+        doc.addField( "DocumentVersionId", -1 );
+        doc.addField( "DocumentVersionCreationDate", folder.getCreationDate() );
+        doc.addField( "DocumentVersionUpdateDate", folder.getUpdateDate() );
+        doc.addField( "DocumentVersionOwner", folder.getOwner() + "@" + folder.getOwnerSource() );
+        doc.addField( "DocumentVersionOwnerId", folder.getOwner() );
+        doc.addField("DocumentVersionOwnerSource", folder.getOwnerSource());
+        doc.addField( "DocumentVersionLength", -10 );
+        doc.addField( "DocumentVersionHash", "folder" );
+        doc.addField( "DocumentOutWorkflow", true );
+        List<MetaValue> values = null;
+        if ( metaValues.size() > 0 )
+        {
+            log.info( "Document Type Found for version" );
+            doc.addField( "DocumentTypeUid", -1 );
+            doc.addField( "DocumentTypeName", -1 );
+
+            for ( MetaValue value : metaValues )
+            {
+                switch ( value.getMeta().getMetaType() )
+                {
+                    case MetaType.STRING:
+                        doc.addField( "MetaDataString_" + value.getMetaUid(),
+                                value.getValue() != null ? ( (String) value.getValue().toString() ) : null);
+                        break;
+                    case MetaType.BOOLEAN:
+                        doc.addField( "MetaDataBoolean_" + value.getMetaUid(), value.getValue() );
+                        break;
+                    case MetaType.NUMBER:
+                        doc.addField( "MetaDataNumber_" + value.getMetaUid(), value.getValue() );
+                        break;
+                    case MetaType.DATE:
+
+                        Calendar cal = Calendar.getInstance( TimeZone.getTimeZone( "UTC" ) );
+                        if(value != null && value.getValue() != null){
+                            //reparse date for local
+                            String dateString = dateParser.format(value.getValue());
+                            log.debug("meta parsed on re-index: " + dateString);
+                            try{
+                                cal.setTime(  utcDateParser.parse(dateString) );
+                                log.debug("meta parsed on re-index: " + dateString + " ==> Cal:" + cal.getTime());
+                                doc.addField( "MetaDataDate_" + value.getMetaUid(), cal.getTime() );
+                            }   catch (Exception ex){
+                                log.error("error while reparsing meta data date {} {} {}", value.getMeta().getName(), value, dateString);
+                            }
+                        }
+                        break;
+                    case MetaType.LIST:
+                        if(value != null && value.getValue() != null){
+                            List<String> items = ((MetaListValue)value).getValue();
+                            for(String u: items)
+                                doc.addField( "MetaDataList_" + value.getMetaUid(),u);
+                        }
+                        break;
+                    default:
+                        doc.addField( "MetaData_" + value.getMetaUid(), value.getValue() );
+                        break;
+                }
+            }
+        }
+        doc.addField( "Attribute_VirtualFolder", "folder");
+        Object body = null;
+        Map<String, Object> metaDatas = null;
+        doc.addField( "DocumentBody", IndexHelper.EMPTY_STRING);
+        List<DMEntityACL> acls =
+                org.kimios.kernel.security.FactoryInstantiator.getInstance().getDMEntitySecurityFactory().getDMEntityACL(
+                        folder );
+        for ( int i = 0; i < acls.size(); i++ )
+        {
+            doc.addField( "DocumentACL", acls.get( i ).getRuleHash() );
+        }
+
+        return doc;
+    }
+
 
     public void indexDocument( DMEntity documentEntity )
         throws IndexException, DataSourceException, ConfigException
@@ -462,6 +561,36 @@ public class SolrIndexManager
                                           ex.getMessage() );
         }
     }
+
+
+    public void indexFolder( DMEntity documentEntity, List<MetaValue> metaValues )
+            throws IndexException, DataSourceException, ConfigException
+    {
+        try
+        {
+
+            Folder folder = (Folder) documentEntity;
+            this.deleteDocument( folder );
+            SolrInputDocument solrInputDocument = toSolrInputDocument( folder, metaValues );
+            this.solr.add( solrInputDocument );
+            this.solr.commit();
+        }
+        catch ( IOException io )
+        {
+            throw new IndexException( io,
+                    "An exception occured while indexing folder " + documentEntity.getUid() + " : "
+                            +
+                            io.getMessage() );
+        }
+        catch ( SolrServerException ex )
+        {
+            throw new IndexException( ex,
+                    "An exception occured while indexing folder " + documentEntity.getUid() + " : "
+                            +
+                            ex.getMessage() );
+        }
+    }
+
 
     public void indexDocumentList( List<DMEntity> documentEntities )
         throws IndexException, DataSourceException, ConfigException

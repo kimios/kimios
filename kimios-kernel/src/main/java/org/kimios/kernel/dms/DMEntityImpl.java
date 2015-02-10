@@ -35,8 +35,6 @@ public class DMEntityImpl implements DMEntity, Serializable
 
     public static String DM_EXTENSION_SEPARATOR = ".";
 
-    private static Logger log = LoggerFactory.getLogger(DMEntity.class);
-
     protected long uid;
 
     protected int type;
@@ -56,6 +54,8 @@ public class DMEntityImpl implements DMEntity, Serializable
     protected Map<String, DMEntityAttribute> attributes = new HashMap<String, DMEntityAttribute>();
 
     protected String addOnDatas;
+
+    protected Boolean trashed = false;
 
     public DMEntityImpl()
     {
@@ -184,6 +184,15 @@ public class DMEntityImpl implements DMEntity, Serializable
     @Column(name = "dm_entity_addon_data", nullable = true, columnDefinition = "text")
     public String getAddOnDatas() {
         return addOnDatas;
+    }
+
+    @Column(name = "dm_entity_is_trashed", nullable = true)
+    public Boolean getTrashed() {
+        return trashed;
+    }
+
+    public void setTrashed(Boolean trashed) {
+        this.trashed = trashed;
     }
 
     public void setAddOnDatas(String addOnDatas) {

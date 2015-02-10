@@ -16,13 +16,19 @@
  */
 package org.kimios.webservices.impl;
 
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 import org.kimios.kernel.dms.extension.impl.DMEntityAttribute;
+import org.kimios.kernel.security.DMEntitySecurity;
 import org.kimios.kernel.security.Session;
+import org.kimios.kernel.ws.pojo.DMEntity;
 import org.kimios.webservices.CoreService;
 import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.ExtensionService;
 
 import javax.jws.WebService;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 @WebService(targetNamespace = "http://kimios.org", serviceName = "ExtensionService", name = "ExtensionService")
@@ -89,5 +95,59 @@ public class ExtensionServiceImpl extends CoreService implements ExtensionServic
             throw getHelper().convertException(e);
         }
     }
+
+    @Override
+    public void trashEntity(String sessionId, long dmEntityId) throws DMServiceException {
+        try {
+            Session session = getHelper().getSession(sessionId);
+            extensionController.trashEntity(session, dmEntityId);
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
+
+    @Override
+    public List<DMEntity> viewTrash(String sessionId, Integer start, Integer count) throws DMServiceException {
+        try {
+            Session session = getHelper().getSession(sessionId);
+            List<org.kimios.kernel.dms.DMEntity> items = extensionController.viewTrash(session, start, count);
+            List<DMEntity> toReturn = new ArrayList<DMEntity>();
+            for(org.kimios.kernel.dms.DMEntity d: items){
+                toReturn.add(d.toPojo());
+            }
+            return toReturn;
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
+
+    @Override
+    public String restoreFromTrash(String sessionId, Long dmEntityId) throws DMServiceException {
+        try {
+            Session session = getHelper().getSession(sessionId);
+            return extensionController.restoreEntity(session, dmEntityId);
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
+
+    @Override
+    public long saveVirtualFolder(String sessionId, Long id, String folderName,
+                                                               boolean isSecurityInherited, Long documentTypeId, String metaItemsJsonString)
+            throws DMServiceException {
+
+        try {
+            Session session = getHelper().getSession(sessionId);
+            List<org.kimios.kernel.dms.MetaValue> metaValues =
+                    new ObjectMapper().readValue(metaItemsJsonString, new TypeReference<List<org.kimios.kernel.dms.MetaValue>>() {
+            });
+            return folderController.createVirtualFolder(session, id, folderName, metaValues);
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
+
+
+
 }
 

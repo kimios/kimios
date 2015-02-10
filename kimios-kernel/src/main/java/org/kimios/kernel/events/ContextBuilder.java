@@ -56,7 +56,7 @@ public class ContextBuilder
 
     private static String[] fileTransferMethod = { "endUploadTransaction" };
 
-    private static String[] extensionMethods = { "setAttribute" };
+    private static String[] extensionMethods = { "setAttribute", "trash", "untrash" };
 
     public static EventContext buildContext(DmsEventName n, Method invokedMethod, Object[] arguments)
     {
@@ -400,6 +400,22 @@ public class ContextBuilder
         String name = mi.getName();
         //set attribute on entity
         if (name.equalsIgnoreCase(extensionMethods[0])) {
+            try {
+                DMEntity entity = FactoryInstantiator.getInstance().getDmEntityFactory()
+                        .getEntity((Long)arguments[1]);
+                ctx.setEntity(entity);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (name.equalsIgnoreCase(extensionMethods[1])) {
+            try {
+                DMEntity entity = FactoryInstantiator.getInstance().getDmEntityFactory()
+                        .getEntity((Long)arguments[1]);
+                ctx.setEntity(entity);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (name.equalsIgnoreCase(extensionMethods[2])) {
             try {
                 DMEntity entity = FactoryInstantiator.getInstance().getDmEntityFactory()
                         .getEntity((Long)arguments[1]);

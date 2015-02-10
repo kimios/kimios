@@ -60,6 +60,8 @@ public class Criteria
 
     private boolean rawQuery = false;
 
+    private String dateFormat;
+
 
     public boolean isExclusiveFacet() {
         return exclusiveFacet;
@@ -233,6 +235,14 @@ public class Criteria
 
     public void setRawQuery(boolean rawQuery) {
         this.rawQuery = rawQuery;
+    }
+
+    public String getDateFormat() {
+        return dateFormat;
+    }
+
+    public void setDateFormat(String dateFormat) {
+        this.dateFormat = dateFormat;
     }
 
     @Override

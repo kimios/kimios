@@ -14,14 +14,13 @@
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.kimios.kernel.index.query.factory;
+package org.kimios.kernel.dms.hibernate;
 
 import org.hibernate.HibernateException;
 import org.hibernate.ObjectNotFoundException;
+import org.kimios.kernel.dms.VirtualFolderMetaData;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
-import org.kimios.kernel.index.query.model.VirtualFolder;
-import org.kimios.kernel.index.query.model.VirtualFolderMetaData;
 
 /**
  * VirtualFolderFactory
@@ -32,15 +31,6 @@ import org.kimios.kernel.index.query.model.VirtualFolderMetaData;
  */
 public class VirtualFolderFactory extends HFactory {
 
-    public void saveOrUpdate(VirtualFolder virtualFolder){
-        getSession().saveOrUpdate(virtualFolder);
-    }
-
-
-    public void delete(VirtualFolder virtualFolder){
-        getSession().delete(virtualFolder);
-    }
-
     public void saveOrUpdateMeta(VirtualFolderMetaData virtualFolderMd){
         getSession().saveOrUpdate(virtualFolderMd);
     }
@@ -48,17 +38,5 @@ public class VirtualFolderFactory extends HFactory {
     public void deleteMeta(VirtualFolderMetaData virtualFolderMd){
         getSession().delete(virtualFolderMd);
     }
-
-    public VirtualFolder loadById(Long virtualFolderId){
-        try {
-            VirtualFolder d = (VirtualFolder) getSession().get(VirtualFolder.class, new Long(virtualFolderId));
-            return d;
-        } catch (ObjectNotFoundException e) {
-            return null;
-        } catch (HibernateException e) {
-            throw new DataSourceException(e, e.getMessage());
-        }
-    }
-
 
 }

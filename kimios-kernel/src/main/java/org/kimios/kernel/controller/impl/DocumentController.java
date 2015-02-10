@@ -199,48 +199,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
 
     public long createDocument(Session s, String path, boolean isSecurityInherited)
             throws NamingException, ConfigException, DataSourceException, AccessDeniedException, PathException {
-        String targetPath = path;
-        if (path.startsWith("/")) {
-            targetPath = path.substring(1);
-        }
-        String[] chunks = targetPath.split("/");
-        if (chunks.length < 3) {
-            throw new PathException("Invalid path : " + path);
-        } else {
-            long parentUid = -1;
-            int parentType = -1;
-            for (int i = 0; i < chunks.length; i++) {
-                String tmpPath = "";
-                for (int j = 0; j <= i; j++) {
-                    tmpPath += "/" + chunks[j];
-                }
-                if (i == 0) {//the workspace
-                    DMEntity dm = this.getDmEntity(tmpPath);
-                    if (dm == null) {//must create
-                        long uid = wksCtrl.createWorkspace(s, chunks[i]);
-                        parentUid = uid;
-                        parentType = DMEntityType.WORKSPACE;
-                    } else {
-                        parentUid = dm.getUid();
-                        parentType = dm.getType();
-                    }
-                } else if (i < chunks.length - 1) {//a folder
-                    DMEntity dm = this.getDmEntity(tmpPath);
-                    if (dm == null) {//must create
-                        long uid = fldCtrl.createFolder(s, chunks[i], parentUid, isSecurityInherited);
-                        parentUid = uid;
-                        parentType = DMEntityType.FOLDER;
-                    } else {
-                        parentUid = dm.getUid();
-                        parentType = dm.getType();
-                    }
-                } else if (i == chunks.length - 1) {//the document
-                    return this.createDocument(s, PathUtils.getFileNameWithoutExtension(chunks[i]),
-                            PathUtils.getFileExtension(chunks[i]), null, parentUid, isSecurityInherited);
-                }
-            }
-        }
-        return -1;
+        return generateEntitiesFromPath(s, path, isSecurityInherited);
     }
 
 
@@ -254,61 +213,21 @@ public class DocumentController extends AKimiosController implements IDocumentCo
         List<MetaValue> values = MetaProcessor.getMetaValuesFromXML(metasXmlStream);
         String path = new MetaPathHandler().path(new Date(), values, extension);
         log.info("generated path: {}", path);
+        long documentId = generateEntitiesFromPath(s, path, isSecurityInherited);
+        Document document = dmsFactoryInstantiator.getDocumentFactory().getDocument(documentId);
+        log.info("Adding document " + document + " to event context");
+        EventContext.addParameter("document", document);
+        EventContext.get().setEntity(document);
 
+        if (!isSecurityInherited)
+            secCtrl.updateDMEntitySecurities(s, documentId, securitiesXmlStream, false);
 
-        if (path.startsWith("/")) {
-            targetPath = path.substring(1);
-        } else {
-            targetPath = path;
+        if (documentTypeId > 0) {
+            vrsCtrl.updateDocumentVersion(s, documentId, documentTypeId, metasXmlStream);
         }
-        String[] chunks = targetPath.split("/");
-        if (chunks.length < 3) {
-            throw new PathException("Invalid path : " + path);
-        } else {
-            long parentUid = -1;
-            long documentId = -1;
-            for (int i = 0; i < chunks.length; i++) {
-                String tmpPath = "";
-                for (int j = 0; j <= i; j++) {
-                    tmpPath += "/" + chunks[j];
-                }
-                if (i == 0) {//the workspace
-                    DMEntity dm = this.getDmEntity(tmpPath);
-                    if (dm == null) {//must create
-                        long uid = wksCtrl.createWorkspace(s, chunks[i]);
-                        parentUid = uid;
-                    } else {
-                        parentUid = dm.getUid();
-                    }
-                } else if (i < chunks.length - 1) {//a folder
-                    DMEntity dm = this.getDmEntity(tmpPath);
-                    if (dm == null) {//must create
-                        long uid = fldCtrl.createFolder(s, chunks[i], parentUid, isSecurityInherited);
-                        parentUid = uid;
-                    } else {
-                        parentUid = dm.getUid();
-                    }
-                } else if (i == chunks.length - 1) {//the document
-                    documentId = this.createDocument(s, PathUtils.getFileNameWithoutExtension(chunks[i]),
-                            PathUtils.getFileExtension(chunks[i]), null, parentUid, isSecurityInherited);
-                }
-            }
-            Document document = dmsFactoryInstantiator.getDocumentFactory().getDocument(documentId);
-            log.info("Adding document " + document + " to event context");
-            EventContext.addParameter("document", document);
-            EventContext.get().setEntity(document);
 
-            if (!isSecurityInherited)
-                secCtrl.updateDMEntitySecurities(s, documentId, securitiesXmlStream, false);
+        return documentId;
 
-
-            long versionId = vrsCtrl.createDocumentVersion(s, documentId);
-            if (documentTypeId > 0) {
-                vrsCtrl.updateDocumentVersion(s, documentId, documentTypeId, metasXmlStream);
-            }
-
-            return documentId;
-        }
     }
 
 
@@ -366,9 +285,6 @@ public class DocumentController extends AKimiosController implements IDocumentCo
 
             long versionId = vrsCtrl.createDocumentVersion(s, documentId);
             DataTransfer dt = ftCtrl.startUploadTransaction(s, documentId, false);
-
-
-//            ftCtrl.uploadDocument(s, dt.getUid(), documentStream, hashMd5, hashSha1);
             DataTransfer transac = transferFactoryInstantiator.getDataTransferFactory().getDataTransfer(dt.getUid());
             DocumentVersion dv =
                     dmsFactoryInstantiator.getDocumentVersionFactory().getDocumentVersion(transac.getDocumentVersionUid());
@@ -480,6 +396,53 @@ public class DocumentController extends AKimiosController implements IDocumentCo
         }
     }
 
+
+    private long generateEntitiesFromPath(Session s, String path, boolean isSecurityInherited){
+        String targetPath = path;
+        Long documentId = null;
+        if (path.startsWith("/")) {
+            targetPath = path.substring(1);
+        }
+        String[] chunks = targetPath.split("/");
+        if (chunks.length < 3) {
+            throw new PathException("Invalid path : " + path);
+        } else {
+            long parentUid = -1;
+            int parentType = -1;
+            for (int i = 0; i < chunks.length; i++) {
+                String tmpPath = "";
+                for (int j = 0; j <= i; j++) {
+                    tmpPath += "/" + chunks[j];
+                }
+                if (i == 0) {//the workspace
+                    DMEntity dm = this.getDmEntity(tmpPath);
+                    if (dm == null) {//must create
+                        long uid = wksCtrl.createWorkspace(s, chunks[i]);
+                        parentUid = uid;
+                        parentType = DMEntityType.WORKSPACE;
+                    } else {
+                        parentUid = dm.getUid();
+                        parentType = dm.getType();
+                    }
+                } else if (i < chunks.length - 1) {//a folder
+                    DMEntity dm = this.getDmEntity(tmpPath);
+                    if (dm == null) {//must create
+                        long uid = fldCtrl.createFolder(s, chunks[i], parentUid, isSecurityInherited);
+                        parentUid = uid;
+                        parentType = DMEntityType.FOLDER;
+                    } else {
+                        parentUid = dm.getUid();
+                        parentType = dm.getType();
+                    }
+                } else if (i == chunks.length - 1) {//the document
+                    documentId = this.createDocument(s, PathUtils.getFileNameWithoutExtension(chunks[i]),
+                            PathUtils.getFileExtension(chunks[i]), null, parentUid, isSecurityInherited);
+                }
+            }
+        }
+        return documentId;
+    }
+
     @DmsEvent(eventName = {DmsEventName.FILE_UPLOAD})
     public long createDocumentFromFullPathWithProperties(Session s, String path,
                                                          boolean isSecurityInherited, String securitiesXmlStream,
@@ -488,78 +451,27 @@ public class DocumentController extends AKimiosController implements IDocumentCo
             throws NamingException, ConfigException, DataSourceException, AccessDeniedException {
 
         try {
-
-
-            String targetPath = path;
-            Long documentId = null;
-
-
              /*
                 Check for custom path generation
              */
             if (StringUtils.isBlank(path)) {
-
-
                 //parse metas
                 List<MetaValue> values = MetaProcessor.getMetaValuesFromXML(metasXmlStream);
                 /*
                     Generate Path from meta
                  */
-
                 path = new MetaPathHandler().path(new Date(), values, path.substring(path.lastIndexOf("\\.")));
-
                 log.info("generated path: {}", path);
 
             }
-
-
-            if (path.startsWith("/")) {
-                targetPath = path.substring(1);
-            }
-            String[] chunks = targetPath.split("/");
-            if (chunks.length < 3) {
-                throw new PathException("Invalid path : " + path);
-            } else {
-                long parentUid = -1;
-                int parentType = -1;
-                for (int i = 0; i < chunks.length; i++) {
-                    String tmpPath = "";
-                    for (int j = 0; j <= i; j++) {
-                        tmpPath += "/" + chunks[j];
-                    }
-                    if (i == 0) {//the workspace
-                        DMEntity dm = this.getDmEntity(tmpPath);
-                        if (dm == null) {//must create
-                            long uid = wksCtrl.createWorkspace(s, chunks[i]);
-                            parentUid = uid;
-                            parentType = DMEntityType.WORKSPACE;
-                        } else {
-                            parentUid = dm.getUid();
-                            parentType = dm.getType();
-                        }
-                    } else if (i < chunks.length - 1) {//a folder
-                        DMEntity dm = this.getDmEntity(tmpPath);
-                        if (dm == null) {//must create
-                            long uid = fldCtrl.createFolder(s, chunks[i], parentUid, isSecurityInherited);
-                            parentUid = uid;
-                            parentType = DMEntityType.FOLDER;
-                        } else {
-                            parentUid = dm.getUid();
-                            parentType = dm.getType();
-                        }
-                    } else if (i == chunks.length - 1) {//the document
-                        documentId = this.createDocument(s, PathUtils.getFileNameWithoutExtension(chunks[i]),
-                                PathUtils.getFileExtension(chunks[i]), null, parentUid, isSecurityInherited);
-                    }
-                }
-            }
+            Long documentId = generateEntitiesFromPath(s, path, isSecurityInherited);
             Document document = dmsFactoryInstantiator.getDocumentFactory().getDocument(documentId);
             log.info("Adding document " + document + " to event context");
             EventContext.addParameter("document", document);
             if (!isSecurityInherited)
                 secCtrl.updateDMEntitySecurities(s, documentId, securitiesXmlStream, isRecursive);
 
-            long versionId = vrsCtrl.createDocumentVersion(s, documentId);
+            vrsCtrl.createDocumentVersion(s, documentId);
             DataTransfer dt = ftCtrl.startUploadTransaction(s, documentId, false);
             DataTransfer transac = transferFactoryInstantiator.getDataTransferFactory().getDataTransfer(dt.getUid());
             DocumentVersion dv =
@@ -684,66 +596,23 @@ public class DocumentController extends AKimiosController implements IDocumentCo
 
             EventContext initialContext = EventContext.get();
             EventContext.clear();
-
-
-            String targetPath = path;
             Long documentId = null;
-
             //path contains only documentName
             if (!path.contains("/")) {
-
                  /*
                     Generate Path from meta
                  */
                 path = new MetaPathHandler().path(new Date(), metaValues, path.substring(path.lastIndexOf("\\."))) + "/" + path;
                 log.info("generated path: {}", path);
-                targetPath = path;
-
             }
-
-            if (path.startsWith("/")) {
-                targetPath = path.substring(1);
-            }
-            String[] chunks = targetPath.split("/");
-            if (chunks.length < 3) {
-                throw new PathException("Invalid path : " + path);
-            } else {
-                long parentUid = -1;
-                for (int i = 0; i < chunks.length; i++) {
-                    String tmpPath = "";
-                    for (int j = 0; j <= i; j++) {
-                        tmpPath += "/" + chunks[j];
-                    }
-                    if (i == 0) {//the workspace
-                        DMEntity dm = this.getDmEntity(tmpPath);
-                        if (dm == null) {//must create
-                            long uid = wksCtrl.createWorkspace(s, chunks[i]);
-                            parentUid = uid;
-                        } else {
-                            parentUid = dm.getUid();
-                        }
-                    } else if (i < chunks.length - 1) {//a folder
-                        DMEntity dm = this.getDmEntity(tmpPath);
-                        if (dm == null) {//must create
-                            long uid = fldCtrl.createFolder(s, chunks[i], parentUid, isSecurityInherited);
-                            parentUid = uid;
-                        } else {
-                            parentUid = dm.getUid();
-                        }
-                    } else if (i == chunks.length - 1) {//the document
-                        documentId = this.createDocument(s, PathUtils.getFileNameWithoutExtension(chunks[i]),
-                                PathUtils.getFileExtension(chunks[i]), null, parentUid, isSecurityInherited);
-                    }
-                }
-            }
+            documentId = generateEntitiesFromPath(s, path, isSecurityInherited);
             Document document = dmsFactoryInstantiator.getDocumentFactory().getDocument(documentId);
             log.info("Adding document " + document + " to event context");
             log.info("EventContext info " + EventContext.get().getEntity() + " " + EventContext.get().getEntity());
             EventContext.addParameter("document", document);
             if (!isSecurityInherited)
                 secCtrl.updateDMEntitySecurities(s, documentId, items, isRecursive);
-
-            long versionId = vrsCtrl.createDocumentVersion(s, documentId);
+            vrsCtrl.createDocumentVersion(s, documentId);
             DataTransfer dt = ftCtrl.startUploadTransaction(s, documentId, false);
             DataTransfer transac = transferFactoryInstantiator.getDataTransferFactory().getDataTransfer(dt.getUid());
             DocumentVersion dv =
@@ -773,8 +642,6 @@ public class DocumentController extends AKimiosController implements IDocumentCo
             }
 
             if (hashMd5 != null && hashSha1 != null) {
-
-
                 //Return inpustream on file transmitted
                 InputStream in = FileCompressionHelper.getTransactionFile(transac);
 
@@ -845,7 +712,6 @@ public class DocumentController extends AKimiosController implements IDocumentCo
 
             } else {
                 //simple add :
-
                 //Return inpustream on file transmitted
                 InputStream in = FileCompressionHelper.getTransactionFile(transac);
                 /* Hash Calculation */

@@ -658,10 +658,10 @@ public class SolrSearchController
                                 tmpAppendName += c.getRangeMax();
                         }
                     }
-                appendName += tmpAppendName + ", ";
-
+                appendName += StringUtils.isNotBlank(tmpAppendName) ? tmpAppendName + ", " : "";
             }
             appendName = appendName.replaceAll("\"\"", "");
+            appendName = appendName.replaceAll(",,","");
             if (appendName.trim().endsWith(",")) {
                 appendName = appendName.substring(0, appendName.lastIndexOf(","));
             }
@@ -878,8 +878,69 @@ public class SolrSearchController
 
                 if (c.isRawQuery()) {
                     // create direct query
-                    queries.add((c.getOperator() != null && c.getOperator().length() > 0 ?
-                            c.getOperator() : "") + c.getFieldName() + ":" + c.getQuery());
+
+
+                    //reparse date if necessary
+
+                    if(c.getFieldName().contains("Date")){
+
+                        String finalDateQuery = "";
+                        SimpleDateFormat sdfTmp = new SimpleDateFormat(c.getDateFormat());
+                        sdfTmp.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+                        SimpleDateFormat solrFormat = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ss'Z'");
+                        solrFormat.setTimeZone(TimeZone.getTimeZone("UTC") );
+
+                        if(c.getQuery().toLowerCase().contains(" to ")){
+                            finalDateQuery +="[";
+                            String[] tQueryParts = c.getQuery().toLowerCase().split(" to ");
+                            Date date1 = null;
+                            Date date2 = null;
+                            try{
+                                date1 = sdfTmp.parse(tQueryParts[0]);
+                                finalDateQuery+= solrFormat.format(date1);
+                            }   catch(Exception ex){
+                                finalDateQuery += tQueryParts[0].toUpperCase();
+                            }
+                            try{
+                                date2 = sdfTmp.parse(tQueryParts[1]);
+                                finalDateQuery += " TO " + solrFormat.format(date2);
+                            }   catch(Exception ex){
+                                finalDateQuery += " TO " + tQueryParts[1].toUpperCase();
+                            }
+
+                            finalDateQuery +="]";
+                        } else {
+                            Date date1 = null;
+                            try{
+                                date1 = sdfTmp.parse(c.getQuery());
+                                finalDateQuery+= solrFormat.format(date1);
+                                //only one date, so add current day
+
+                                Calendar calendar = Calendar.getInstance();
+                                calendar.setTimeInMillis(date1.getTime());
+                                calendar.add(Calendar.DATE, 1);
+                                calendar.add(Calendar.MILLISECOND, -1);
+                                String endDate =   solrFormat.format( calendar.getTime() );
+                                finalDateQuery = "[" + finalDateQuery + " TO " + endDate + "]";
+
+                            }   catch(Exception ex){
+                                finalDateQuery+=c.getQuery();
+                            }
+
+                        }
+                        log.info("Raw FINAL DATE QUERY {}", finalDateQuery);
+                        queries.add((c.getOperator() != null && c.getOperator().length() > 0 ?
+                                c.getOperator() : "") + c.getFieldName() + ":" + finalDateQuery);
+
+                    } else {
+                        queries.add((c.getOperator() != null && c.getOperator().length() > 0 ?
+                                c.getOperator() : "") + c.getFieldName() + ":" + c.getQuery());
+                    }
+
+
+
+
                 } else {
 
                     if (c.getFieldName().equals("DocumentName")) {

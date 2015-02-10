@@ -58,5 +58,9 @@ public class ActionType
     public final static int KERNEL_STOP = 19;
 
     public final static int CREATE_DOCUMENT_VERSION_FROM_LATEST = 20;
+
+    public final static int TRASH_DOCUMENT = 21;
+
+    public final static int UNTRASH_DOCUMENT = 22;
 }
 

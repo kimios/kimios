@@ -66,7 +66,7 @@ public class DocumentVersionController extends AKimiosController implements IDoc
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IDocumentVersionController#createDocumentVersion(org.kimios.kernel.security.Session, long)
     */
-    @DmsEvent(eventName = { DmsEventName.DOCUMENT_VERSION_CREATE })
+    @DmsEvent(eventName = {DmsEventName.DOCUMENT_VERSION_CREATE})
     public long createDocumentVersion(Session session, long documentUid)
             throws CheckoutViolationException, ConfigException, DataSourceException, AccessDeniedException {
         DocumentFactory docFactory = dmsFactoryInstantiator.getDocumentFactory();
@@ -85,7 +85,7 @@ public class DocumentVersionController extends AKimiosController implements IDoc
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IDocumentVersionController#createDocumentVersionFromLatest(org.kimios.kernel.security.Session, long)
     */
-    @DmsEvent(eventName = { DmsEventName.DOCUMENT_VERSION_CREATE_FROM_LATEST })
+    @DmsEvent(eventName = {DmsEventName.DOCUMENT_VERSION_CREATE_FROM_LATEST})
     public long createDocumentVersionFromLatest(Session session, long documentUid)
             throws CheckoutViolationException, ConfigException, DataSourceException, AccessDeniedException,
             RepositoryException {
@@ -147,7 +147,7 @@ public class DocumentVersionController extends AKimiosController implements IDoc
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IDocumentVersionController#updateDocumentVersion(org.kimios.kernel.security.Session, long, long)
     */
-    @DmsEvent(eventName = { DmsEventName.DOCUMENT_VERSION_UPDATE })
+    @DmsEvent(eventName = {DmsEventName.DOCUMENT_VERSION_UPDATE})
     public void updateDocumentVersion(Session session, long documentUid, long documentTypeUid, String xmlStream) throws
             XMLException, CheckoutViolationException, ConfigException, DataSourceException, AccessDeniedException {
         DocumentTypeFactory typeFactory = dmsFactoryInstantiator.getDocumentTypeFactory();
@@ -159,7 +159,15 @@ public class DocumentVersionController extends AKimiosController implements IDoc
             //Changing document version to new type
             DocumentType newDt = typeFactory.getDocumentType(documentTypeUid);
             dv.setDocumentType(newDt);
-            dmsFactoryInstantiator.getDocumentVersionFactory().updateDocumentVersion(dv);
+            if (ConfigurationManager.getValue("dms.version.date.keep.on.update") != null &&
+                    ConfigurationManager.getValue("dms.version.date.keep.on.update").equals("true")) {
+                logger.debug("Will keep previous document update date !");
+                dmsFactoryInstantiator.getDocumentVersionFactory().updateDocumentVersionBulk(dv);
+            } else {
+                logger.debug("Will update document update date !");
+                dv.setModificationDate(new Date());
+                dmsFactoryInstantiator.getDocumentVersionFactory().updateDocumentVersion(dv);
+            }
 
             if (xmlStream == null || xmlStream.length() == 0) {
                 //Metas list of new DocumentType
@@ -209,23 +217,43 @@ public class DocumentVersionController extends AKimiosController implements IDoc
                                     throw new AccessDeniedException();
                                 break;
                             case MetaType.LIST:
-                                if(((List)m.getValue()).size() == 0)
+                                if (((List) m.getValue()).size() == 0)
                                     throw new AccessDeniedException();
                                 break;
                         }
                     }
                 }
 
+                 /*
+                    Delete only meta newly submitted
+                 */
                 for (MetaValue m : vMetas) {
-                    fact.deleteMetaValue(m);
+                    for (MetaValue mSubmitted : vNewMetas) {
+                        if (mSubmitted.getMetaUid() == m.getMetaUid()) {
+                            logger.debug("removing meta value {} ", m.getMetaUid());
+                            fact.deleteMetaValue(m);
+                        }
+                    }
                 }
                 for (MetaValue m : vNewMetas) {
+                    logger.debug("saving meta value {} => {}", m.getMetaUid(), m.getValue());
                     fact.saveMetaValue(m);
                 }
             }
 
-            dv.setModificationDate(new Date());
-            dmsFactoryInstantiator.getDocumentVersionFactory().updateDocumentVersion(dv);
+            /*
+                Check Configuration to know if change update date on simple meta value or right change
+             */
+            if (ConfigurationManager.getValue("dms.version.date.keep.on.update") != null &&
+                    ConfigurationManager.getValue("dms.version.date.keep.on.update").equals("true")) {
+                logger.debug("Will keep previous document update date !");
+                dmsFactoryInstantiator.getDocumentVersionFactory().updateDocumentVersionBulk(dv);
+            } else {
+                logger.debug("Will update document update date !");
+                dv.setModificationDate(new Date());
+                dmsFactoryInstantiator.getDocumentVersionFactory().updateDocumentVersion(dv);
+            }
+
             EventContext.addParameter("version", dv);
             EventContext.addParameter("documentTypeSet", newDt);
         } else {
@@ -237,7 +265,7 @@ public class DocumentVersionController extends AKimiosController implements IDoc
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IDocumentVersionController#updateDocumentVersion(org.kimios.kernel.security.Session, long, long)
     */
-    @DmsEvent(eventName = { DmsEventName.DOCUMENT_VERSION_UPDATE })
+    @DmsEvent(eventName = {DmsEventName.DOCUMENT_VERSION_UPDATE})
     public void updateDocumentVersion(Session session, long documentUid, long documentTypeUid, List<MetaValue> metaValues) throws
             XMLException, CheckoutViolationException, ConfigException, DataSourceException, AccessDeniedException {
         DocumentTypeFactory typeFactory = dmsFactoryInstantiator.getDocumentTypeFactory();
@@ -249,7 +277,16 @@ public class DocumentVersionController extends AKimiosController implements IDoc
             //Changing document version to new type
             DocumentType newDt = typeFactory.getDocumentType(documentTypeUid);
             dv.setDocumentType(newDt);
-            dmsFactoryInstantiator.getDocumentVersionFactory().updateDocumentVersion(dv);
+            if (ConfigurationManager.getValue("dms.version.date.keep.on.update") != null &&
+                    ConfigurationManager.getValue("dms.version.date.keep.on.update").equals("true")) {
+                logger.debug("Will keep previous document update date !");
+                dmsFactoryInstantiator.getDocumentVersionFactory().updateDocumentVersionBulk(dv);
+            } else {
+                logger.debug("Will update document update date !");
+                dv.setModificationDate(new Date());
+                dmsFactoryInstantiator.getDocumentVersionFactory().updateDocumentVersion(dv);
+            }
+
 
             if (metaValues == null || metaValues.size() == 0) {
                 //Metas list of new DocumentType
@@ -267,17 +304,16 @@ public class DocumentVersionController extends AKimiosController implements IDoc
                         toDelete.add(v);
                     }
                 }
+
                 for (MetaValue v : toDelete) {
                     dmsFactoryInstantiator.getMetaValueFactory().deleteMetaValue(v);
                 }
             } else {
                 //set all value
                 MetaValueFactory fact = dmsFactoryInstantiator.getMetaValueFactory();
-                for(MetaValue v: metaValues)  {
-
+                for (MetaValue v : metaValues) {
                     logger.debug("setting metavalue {} to {}", v.getMetaUid(), v.getValue());
                     v.setDocumentVersionUid(dv.getUid());
-
                 }
 
                 List<MetaValue> vMetas = fact.getMetaValues(dv);
@@ -305,17 +341,25 @@ public class DocumentVersionController extends AKimiosController implements IDoc
                                     throw new AccessDeniedException();
                                 break;
                             case MetaType.LIST:
-                                if(((List)m.getValue()).size() == 0)
+                                if (((List) m.getValue()).size() == 0)
                                     throw new AccessDeniedException();
                                 break;
                         }
                     }
                 }
-
+                /*
+                    Delete only meta newly submitted
+                 */
                 for (MetaValue m : vMetas) {
-                    fact.deleteMetaValue(m);
+                    for (MetaValue mSubmitted : metaValues) {
+                        if (mSubmitted.getMetaUid() == m.getMetaUid()) {
+                            logger.debug("removing meta value {} ", m.getMetaUid());
+                            fact.deleteMetaValue(m);
+                        }
+                    }
                 }
                 for (MetaValue m : metaValues) {
+                    logger.debug("saving meta value {} => {}", m.getMetaUid(), m.getValue());
                     fact.saveMetaValue(m);
                 }
             }
@@ -323,9 +367,12 @@ public class DocumentVersionController extends AKimiosController implements IDoc
             /*
                 Check Configuration to know if change update date on simple meta value or right change
              */
-            if(ConfigurationManager.getValue("dms.version.date.keep.on.update").equals("true")){
+            if (ConfigurationManager.getValue("dms.version.date.keep.on.update") != null &&
+                    ConfigurationManager.getValue("dms.version.date.keep.on.update").equals("true")) {
+                logger.debug("Will keep previous document update date !");
                 dmsFactoryInstantiator.getDocumentVersionFactory().updateDocumentVersionBulk(dv);
             } else {
+                logger.debug("Will update document update date !");
                 dv.setModificationDate(new Date());
                 dmsFactoryInstantiator.getDocumentVersionFactory().updateDocumentVersion(dv);
             }
@@ -584,10 +631,10 @@ public class DocumentVersionController extends AKimiosController implements IDoc
         if (getSecurityAgent()
                 .isReadable(dv.getDocument(), session.getUserName(), session.getUserSource(), session.getGroups())) {
             List<MetaValue> items = dmsFactoryInstantiator.getMetaValueFactory().getMetaValues(dv);
-            for(MetaValue v: items){
-                if(v.getMeta().getMetaType() == MetaType.LIST){
+            for (MetaValue v : items) {
+                if (v.getMeta().getMetaType() == MetaType.LIST) {
                     //read subcollection
-                    for(Object u: ((List)v.getValue())){
+                    for (Object u : ((List) v.getValue())) {
                         logger.debug("list metavalue item: {}", u);
                     }
                 }

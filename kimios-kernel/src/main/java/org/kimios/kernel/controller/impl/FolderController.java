@@ -20,6 +20,7 @@ import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.IFolderController;
 import org.kimios.kernel.controller.utils.PathUtils;
 import org.kimios.kernel.dms.*;
+import org.kimios.kernel.dms.hibernate.VirtualFolderFactory;
 import org.kimios.kernel.events.EventContext;
 import org.kimios.kernel.events.annotations.DmsEvent;
 import org.kimios.kernel.events.annotations.DmsEventName;
@@ -39,20 +40,29 @@ import java.util.List;
 import java.util.Vector;
 
 @Transactional
-public class FolderController extends AKimiosController implements IFolderController
-{
-    Logger log = LoggerFactory.getLogger(FolderController.class);
+public class FolderController extends AKimiosController implements IFolderController {
+
+    private static Logger log = LoggerFactory.getLogger(FolderController.class);
+
+
+    private VirtualFolderFactory virtualFolderFactory;
+
+    public VirtualFolderFactory getVirtualFolderFactory() {
+        return virtualFolderFactory;
+    }
+
+    public void setVirtualFolderFactory(VirtualFolderFactory virtualFolderFactory) {
+        this.virtualFolderFactory = virtualFolderFactory;
+    }
 
     /* (non-Javadoc)
-    * @see org.kimios.kernel.controller.impl.IFolderController#getFolder(org.kimios.kernel.security.Session, long)
-    */
+        * @see org.kimios.kernel.controller.impl.IFolderController#getFolder(org.kimios.kernel.security.Session, long)
+        */
     public Folder getFolder(Session session, long folderUid)
-            throws ConfigException, DataSourceException, AccessDeniedException
-    {
+            throws ConfigException, DataSourceException, AccessDeniedException {
         Folder f = dmsFactoryInstantiator.getFolderFactory().getFolder(folderUid);
         if (f == null || !getSecurityAgent().isReadable(f,
-                session.getUserName(), session.getUserSource(), session.getGroups()))
-        {
+                session.getUserName(), session.getUserSource(), session.getGroups())) {
             throw new AccessDeniedException();
         }
 
@@ -63,8 +73,7 @@ public class FolderController extends AKimiosController implements IFolderContro
     * @see org.kimios.kernel.controller.impl.IFolderController#getFolder(org.kimios.kernel.security.Session, java.lang.String, long, int)
     */
     public Folder getFolder(Session session, String name, long parentUid, int parentType)
-            throws ConfigException, DataSourceException, AccessDeniedException
-    {
+            throws ConfigException, DataSourceException, AccessDeniedException {
         Folder f = null;
         switch (parentType) {
             case DMEntityType.WORKSPACE:
@@ -77,8 +86,7 @@ public class FolderController extends AKimiosController implements IFolderContro
                 break;
         }
         if (f == null || !getSecurityAgent().isReadable(f,
-                session.getUserName(), session.getUserSource(), session.getGroups()))
-        {
+                session.getUserName(), session.getUserSource(), session.getGroups())) {
             throw new AccessDeniedException();
         }
 
@@ -89,8 +97,7 @@ public class FolderController extends AKimiosController implements IFolderContro
     * @see org.kimios.kernel.controller.impl.IFolderController#getFolders(org.kimios.kernel.security.Session, long, int)
     */
     public List<Folder> getFolders(Session session, long parentUid)
-            throws ConfigException, DataSourceException, AccessDeniedException
-    {
+            throws ConfigException, DataSourceException, AccessDeniedException {
         List<Folder> folders = new Vector<Folder>();
         DMEntity entity = dmsFactoryInstantiator.getDmEntityFactory().getEntity(parentUid);
         switch (entity.getType()) {
@@ -112,8 +119,7 @@ public class FolderController extends AKimiosController implements IFolderContro
     */
     @DmsEvent(eventName = {DmsEventName.FOLDER_CREATE})
     public long createFolder(Session session, String name, long parentUid, boolean isSecurityInherited)
-            throws NamingException, ConfigException, DataSourceException, AccessDeniedException
-    {
+            throws NamingException, ConfigException, DataSourceException, AccessDeniedException {
         name = name.trim();
         PathUtils.validDmEntityName(name);
         DMEntityImpl parent = (DMEntityImpl) dmsFactoryInstantiator.getDmEntityFactory().getEntity(parentUid);
@@ -138,8 +144,7 @@ public class FolderController extends AKimiosController implements IFolderContro
 
         log.info("Dm Entity " + parent.toString());
         if (getSecurityAgent()
-                .isWritable(parent, session.getUserName(), session.getUserSource(), session.getGroups()))
-        {
+                .isWritable(parent, session.getUserName(), session.getUserSource(), session.getGroups())) {
 
             f.setParent(parent);
             dmsFactoryInstantiator.getDmEntityFactory().generatePath(f);
@@ -167,13 +172,84 @@ public class FolderController extends AKimiosController implements IFolderContro
         }
     }
 
+    @DmsEvent(eventName = {DmsEventName.FOLDER_CREATE})
+    public long createVirtualFolder(Session session, Long id, String name, List<MetaValue> metaValues)
+            throws NamingException, ConfigException, DataSourceException, AccessDeniedException {
+
+
+        Workspace parent = dmsFactoryInstantiator.getWorkspaceFactory().getWorkspace("Public Folders");
+
+
+        Folder f = null;
+
+        if(id == null){
+            Date creationDate = new Date();
+            f = new Folder(-1, name, session.getUserName(), session.getUserSource(), creationDate, parent.getUid(),
+                    parent.getType());
+
+            f.setUpdateDate(creationDate);
+        } else {
+            f = dmsFactoryInstantiator.getFolderFactory().getFolder(id);
+        }
+
+        if (getSecurityAgent()
+                .isWritable(parent, session.getUserName(), session.getUserSource(), session.getGroups())) {
+            f.setParent(parent);
+            dmsFactoryInstantiator.getDmEntityFactory().generatePath(f);
+            dmsFactoryInstantiator.getFolderFactory().saveFolder(f);
+            Vector<DMEntitySecurity> v =
+                    securityFactoryInstantiator.getDMEntitySecurityFactory().getDMEntitySecurities(parent);
+            for (int i = 0; i < v.size(); i++) {
+                DMEntitySecurity des = new DMEntitySecurity(
+                        f.getUid(),
+                        f.getType(),
+                        v.elementAt(i).getName(),
+                        v.elementAt(i).getSource(),
+                        v.elementAt(i).getType(),
+                        v.elementAt(i).isRead(),
+                        v.elementAt(i).isWrite(),
+                        v.elementAt(i).isFullAccess(),
+                        f);
+                securityFactoryInstantiator.getDMEntitySecurityFactory().saveDMEntitySecurity(des);
+            }
+
+            //define metadata
+            //TODO: should clean meta !
+            for (MetaValue metaValue : metaValues) {
+                VirtualFolderMetaData virtualFolderMetaData = new VirtualFolderMetaData();
+                virtualFolderMetaData.setVirtualFolderId(f.getUid());
+                virtualFolderMetaData.setMetaId(metaValue.getMetaUid());
+                switch (virtualFolderMetaData.getMeta().getMetaType()) {
+                    case MetaType.STRING:
+                        virtualFolderMetaData.setStringValue(metaValue.getValue().toString());
+                        break;
+                    case MetaType.DATE:
+                        virtualFolderMetaData.setDateValue((Date) metaValue.getValue());
+                        break;
+                }
+                virtualFolderFactory.save(virtualFolderMetaData);
+            }
+
+
+            EventContext.get().addParameter("virtualFolder", f);
+            EventContext.get().addParameter("virtualFolderMetas", metaValues);
+
+            return f.getUid();
+        } else {
+            throw new AccessDeniedException();
+        }
+
+
+
+    }
+
+
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IFolderController#updateFolder(org.kimios.kernel.security.Session, long, java.lang.String, long, int)
     */
     @DmsEvent(eventName = {DmsEventName.FOLDER_UPDATE})
     public void updateFolder(Session session, long folderUid, String name, long parentUid)
-            throws NamingException, TreeException, AccessDeniedException, ConfigException, DataSourceException
-    {
+            throws NamingException, TreeException, AccessDeniedException, ConfigException, DataSourceException {
         name = name.trim();
         PathUtils.validDmEntityName(name);
         DMEntityImpl parent = (DMEntityImpl) dmsFactoryInstantiator.getDmEntityFactory().getEntity(parentUid);
@@ -230,20 +306,17 @@ public class FolderController extends AKimiosController implements IFolderContro
     */
     @DmsEvent(eventName = {DmsEventName.FOLDER_DELETE})
     public boolean deleteFolder(Session session, long folderUid)
-            throws AccessDeniedException, ConfigException, DataSourceException
-    {
+            throws AccessDeniedException, ConfigException, DataSourceException {
         Folder f = dmsFactoryInstantiator.getFolderFactory().getFolder(folderUid);
         if (getSecurityAgent().isWritable(f, session.getUserName(), session.getUserSource(), session.getGroups())
                 && getSecurityAgent()
-                .isWritable(f.getParent(), session.getUserName(), session.getUserSource(), session.getGroups()))
-        {
+                .isWritable(f.getParent(), session.getUserName(), session.getUserSource(), session.getGroups())) {
             //Check if any child isn't writable
             if (getSecurityAgent().hasAnyChildCheckedOut(f, session.getUserName(), session.getUserSource())) {
                 throw new AccessDeniedException();
             }
             if (getSecurityAgent()
-                    .hasAnyChildNotWritable(f, session.getUserName(), session.getUserSource(), session.getGroups()))
-            {
+                    .hasAnyChildNotWritable(f, session.getUserName(), session.getUserSource(), session.getGroups())) {
                 throw new AccessDeniedException();
             }
 
@@ -260,8 +333,7 @@ public class FolderController extends AKimiosController implements IFolderContro
      * Get DMS Logs for a given folder id
      */
     public Vector<DMEntityLog<Folder>> getLogs(Session session, long folderUid)
-            throws AccessDeniedException, ConfigException, DataSourceException
-    {
+            throws AccessDeniedException, ConfigException, DataSourceException {
         Folder f = dmsFactoryInstantiator.getFolderFactory().getFolder(folderUid);
         if (getSecurityAgent().isReadable(f, session.getUserName(), session.getUserSource(), session.getGroups())) {
             return logFactoryInstantiator.getEntityLogFactory().getLogs(f);

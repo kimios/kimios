@@ -21,10 +21,13 @@ import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.IExtensionController;
 import org.kimios.kernel.dms.DMEntity;
 import org.kimios.kernel.dms.DMEntityImpl;
+import org.kimios.kernel.dms.Document;
+import org.kimios.kernel.dms.Lock;
 import org.kimios.kernel.dms.extension.impl.DMEntityAttribute;
 import org.kimios.kernel.events.annotations.DmsEvent;
 import org.kimios.kernel.events.annotations.DmsEventName;
 import org.kimios.kernel.exception.AccessDeniedException;
+import org.kimios.kernel.exception.CheckoutViolationException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.mail.MailTemplate;
 import org.kimios.kernel.mail.Mailer;
@@ -44,19 +47,16 @@ import java.util.HashMap;
 import java.util.List;
 
 @Transactional
-public class ExtensionController extends AKimiosController implements IExtensionController
-{
+public class ExtensionController extends AKimiosController implements IExtensionController {
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IExtensionController#setAttribute(org.kimios.kernel.security.Session, long, java.lang.String, java.lang.String, boolean)
     */
     @DmsEvent(eventName = {DmsEventName.EXTENSION_ENTITY_ATTRIBUTE_SET})
     public void setAttribute(Session session, long dmEntityId, String attributeName, String attributeValue,
-            boolean indexed) throws Exception
-    {
+                             boolean indexed) throws Exception {
         DMEntity entity = dmsFactoryInstantiator.getDmEntityFactory().getEntity(dmEntityId);
         if (!SecurityAgent.getInstance()
-                .isWritable(entity, session.getUserName(), session.getUserSource(), session.getGroups()))
-        {
+                .isWritable(entity, session.getUserName(), session.getUserSource(), session.getGroups())) {
             throw new AccessDeniedException();
         }
         DMEntityAttribute attribute = new DMEntityAttribute();
@@ -70,12 +70,10 @@ public class ExtensionController extends AKimiosController implements IExtension
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IExtensionController#getAttribute(org.kimios.kernel.security.Session, long, java.lang.String)
     */
-    public DMEntityAttribute getAttribute(Session session, long dmEntityId, String attributeName) throws Exception
-    {
+    public DMEntityAttribute getAttribute(Session session, long dmEntityId, String attributeName) throws Exception {
         DMEntity entity = dmsFactoryInstantiator.getDmEntityFactory().getEntity(dmEntityId);
         if (!SecurityAgent.getInstance()
-                .isReadable(entity, session.getUserName(), session.getUserSource(), session.getGroups()))
-        {
+                .isReadable(entity, session.getUserName(), session.getUserSource(), session.getGroups())) {
             throw new AccessDeniedException();
         }
         return ((DMEntityImpl) entity).getAttributes().get(attributeName);
@@ -84,12 +82,10 @@ public class ExtensionController extends AKimiosController implements IExtension
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IExtensionController#getAttributeValue(org.kimios.kernel.security.Session, long, java.lang.String)
     */
-    public String getAttributeValue(Session session, long dmEntityId, String attributeName) throws Exception
-    {
+    public String getAttributeValue(Session session, long dmEntityId, String attributeName) throws Exception {
         DMEntity entity = dmsFactoryInstantiator.getDmEntityFactory().getEntity(dmEntityId);
         if (!SecurityAgent.getInstance()
-                .isReadable(entity, session.getUserName(), session.getUserSource(), session.getGroups()))
-        {
+                .isReadable(entity, session.getUserName(), session.getUserSource(), session.getGroups())) {
             throw new AccessDeniedException();
         }
         return ((DMEntityImpl) entity).getAttributes().get(attributeName).getValue();
@@ -98,12 +94,10 @@ public class ExtensionController extends AKimiosController implements IExtension
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IExtensionController#getAttributes(org.kimios.kernel.security.Session, long)
     */
-    public List<DMEntityAttribute> getAttributes(Session session, long dmEntityId) throws Exception
-    {
+    public List<DMEntityAttribute> getAttributes(Session session, long dmEntityId) throws Exception {
         DMEntity entity = dmsFactoryInstantiator.getDmEntityFactory().getEntity(dmEntityId);
         if (!SecurityAgent.getInstance()
-                .isReadable(entity, session.getUserName(), session.getUserSource(), session.getGroups()))
-        {
+                .isReadable(entity, session.getUserName(), session.getUserSource(), session.getGroups())) {
             throw new AccessDeniedException();
         }
         return new ArrayList<DMEntityAttribute>(((DMEntityImpl) entity).getAttributes().values());
@@ -111,11 +105,9 @@ public class ExtensionController extends AKimiosController implements IExtension
 
     public String generatePasswordForUser(Session session, String userId, String userSource, boolean sendMail)
             throws ConfigException,
-            DataSourceException, AccessDeniedException
-    {
+            DataSourceException, AccessDeniedException {
         if (securityFactoryInstantiator.getRoleFactory()
-                .getRole(Role.ADMIN, session.getUserName(), session.getUserSource()) == null)
-        {
+                .getRole(Role.ADMIN, session.getUserName(), session.getUserSource()) == null) {
             throw new AccessDeniedException();
         }
         AuthenticationSource authSource =
@@ -148,6 +140,49 @@ public class ExtensionController extends AKimiosController implements IExtension
             }
         }
         return pwd;
+    }
+
+    @Override
+    public void trashEntity(Session session, long dmEntityId)
+            throws ConfigException, DataSourceException, AccessDeniedException {
+
+        Document d = dmsFactoryInstantiator.getDocumentFactory().getDocument(dmEntityId);
+        Lock lock = d.getCheckoutLock();
+        if (lock != null) {
+            if (!session.getUserName().equals(lock.getUser())) {
+                throw new CheckoutViolationException();
+            }
+        }
+        if (getSecurityAgent().isWritable(d, session.getUserName(), session.getUserSource(), session.getGroups()) &&
+                getSecurityAgent().isWritable(d.getFolder(), session.getUserName(), session.getUserSource(), session.getGroups())) {
+            dmsFactoryInstantiator.getDmEntityFactory().trash(d);
+        } else {
+            throw new AccessDeniedException();
+        }
+    }
+
+
+    @Override
+    public List<DMEntity> viewTrash(Session session, Integer start, Integer count)
+            throws ConfigException, DataSourceException, AccessDeniedException {
+        if (getSecurityAgent().isAdmin(session.getUserName(), session.getUserSource())) {
+            return dmsFactoryInstantiator.getDmEntityFactory().listTrashedEntities(start, count);
+        } else {
+            throw new AccessDeniedException();
+        }
+
+    }
+
+    @Override
+    public String restoreEntity(Session session, long dmEntityId)
+            throws ConfigException, DataSourceException, AccessDeniedException {
+        Document d = dmsFactoryInstantiator.getDocumentFactory().getDocument(dmEntityId);
+        if (getSecurityAgent().isAdmin(session.getUserName(), session.getUserSource())) {
+            dmsFactoryInstantiator.getDmEntityFactory().untrash(d);
+            return d.getPath();
+        } else {
+            throw new AccessDeniedException();
+        }
     }
 }
 

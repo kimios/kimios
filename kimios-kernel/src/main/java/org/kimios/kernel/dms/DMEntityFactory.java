@@ -20,8 +20,7 @@ import org.kimios.kernel.exception.DataSourceException;
 
 import java.util.List;
 
-public interface DMEntityFactory
-{
+public interface DMEntityFactory {
     public DMEntity getEntity(long dmEntityUid) throws ConfigException, DataSourceException;
 
     public DMEntity getEntity(long dmEntityUid, int dmEntityType) throws ConfigException, DataSourceException;
@@ -41,12 +40,19 @@ public interface DMEntityFactory
     public List<DMEntity> getEntitiesByPathAndType(String path, int dmEntityType, int start, int count)
             throws ConfigException, DataSourceException;
 
-        public void deteteEntities(String path) throws ConfigException, DataSourceException;
+    public void deteteEntities(String path) throws ConfigException, DataSourceException;
 
     public void updateEntity(DMEntityImpl entity) throws ConfigException, DataSourceException;
 
     public void generatePath(DMEntity entity) throws ConfigException, DataSourceException;
 
     public void updatePath(DMEntity entity, String newName) throws ConfigException, DataSourceException;
+
+    public void trash(DMEntityImpl entity) throws ConfigException, DataSourceException;
+
+    public List<DMEntity> listTrashedEntities(Integer start, Integer count)
+            throws ConfigException, DataSourceException;
+
+    public void untrash(DMEntityImpl entity) throws ConfigException, DataSourceException;
 }
 

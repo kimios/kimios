@@ -43,4 +43,6 @@ public interface IPathController
 
     public List<DMEntity> getDMEntitiesByPath(String path)
             throws ConfigException, DataSourceException, AccessDeniedException;
+
+
 }

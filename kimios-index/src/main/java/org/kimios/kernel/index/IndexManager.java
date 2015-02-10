@@ -421,6 +421,9 @@ public class IndexManager implements LuceneIndexManager
         this.updateAcls(docUid, acls);
     }
 
+    @Override
+    public void deleteDocument(DMEntity document) throws IndexException {
 
+    }
 }
 

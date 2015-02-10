@@ -24,6 +24,7 @@ import org.kimios.kernel.events.annotations.DmsEventName;
 import org.kimios.kernel.events.annotations.DmsEventOccur;
 import org.kimios.kernel.filetransfer.DataTransfer;
 import org.kimios.kernel.index.AbstractIndexManager;
+import org.kimios.kernel.index.SolrIndexManager;
 import org.kimios.kernel.security.DMEntityACL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -190,15 +191,42 @@ public class SolrIndexer extends GenericEventHandler
     {
         log.debug("handling folder update for index");
         try {
+
             String oldPath = ctx.getEntity().getPath();
             FactoryInstantiator fc = FactoryInstantiator.getInstance();
             Folder f = fc.getFolderFactory().getFolder((Long) o[1]);
             String newPath = f.getPath();
             indexManager.updatePath(oldPath, newPath);
+
+
+            Folder f2 = (Folder)ctx.getParameters().get("virtualFolder");
+            List<MetaValue> values = (List)ctx.getParameters().get("virtualFolderMetas");
+            if(f2 != null && values != null && values.size() > 0 && indexManager instanceof SolrIndexManager){
+                log.debug("start virtual folder index !!!!!");
+                ((SolrIndexManager)indexManager).indexFolder(f, values);
+            }
         } catch (Exception e) {
             log.error("Exception during index update : ", e);
         }
     }
+
+    /* Handle virtual folder indexing */
+    @DmsEvent(eventName = { DmsEventName.FOLDER_CREATE }, when = DmsEventOccur.AFTER)
+    public void virtualFolderAdd(Object[] o, Object retour, EventContext ctx)
+    {
+        log.debug("handling virtual folder add for index");
+        try {
+            Folder f = (Folder)ctx.getParameters().get("virtualFolder");
+            List<MetaValue> values = (List)ctx.getParameters().get("virtualFolderMetas");
+            if(f != null && values != null && values.size() > 0 && indexManager instanceof SolrIndexManager){
+                log.debug("start virtual folder index !!!!!");
+                ((SolrIndexManager)indexManager).indexFolder(f, values);
+            }
+        } catch (Exception e) {
+            log.error("Exception during index update : ", e);
+        }
+    }
+
 
     @DmsEvent(eventName = { DmsEventName.WORKSPACE_UPDATE }, when = DmsEventOccur.AFTER)
     public void updateWorkspace(Object[] o, Object retour, EventContext ctx)

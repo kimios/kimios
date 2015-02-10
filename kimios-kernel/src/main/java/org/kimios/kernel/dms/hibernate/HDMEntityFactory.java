@@ -25,6 +25,7 @@ import org.kimios.kernel.hibernate.HFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Date;
 import java.util.List;
 
 public class HDMEntityFactory extends HFactory implements DMEntityFactory {
@@ -389,6 +390,55 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory {
                     .setString("oldPath", oldPath + "/")
                     .setString("newPath", entity.getPath() + "/")
                     .executeUpdate();
+        }
+    }
+
+    public static String TRASH_PREFIX = "__TRASHED_ENTITY__";
+
+
+
+    public List<DMEntity> listTrashedEntities(Integer start, Integer count) throws ConfigException, DataSourceException {
+        Criteria criteria = getSession().createCriteria(DMEntityImpl.class);
+        criteria.setProjection(Projections.distinct(Projections.id()))
+                .add(Restrictions.like("path", TRASH_PREFIX + "%", MatchMode.START))
+                .add(Restrictions.eq("trashed", true))
+                .add(Restrictions.eq("type", 3));
+
+        if(start != null && count != null){
+            criteria.setFirstResult(start);
+            criteria.setMaxResults(count);
+        }
+
+        List uniqueSubList = criteria.list();
+        criteria.setProjection(null);
+        criteria.setFirstResult(0);
+        criteria.setMaxResults(Integer.MAX_VALUE);
+        criteria.add(Restrictions.in("uid", uniqueSubList));
+        criteria.addOrder(Order.asc("creationDate"));
+        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+
+        return criteria.list();
+    }
+
+    public void trash(DMEntityImpl entity) throws ConfigException, DataSourceException {
+        if(entity.getType() == DMEntityType.DOCUMENT){
+            DMEntity p = entity;
+            String oldPath = p.getPath();
+            entity.setPath(TRASH_PREFIX + oldPath);
+            entity.setUpdateDate(new Date());
+            entity.setTrashed(true);
+            getSession().saveOrUpdate(entity);
+            getSession().flush();
+        }
+    }
+
+    public void untrash(DMEntityImpl entity) throws ConfigException, DataSourceException {
+        if(entity.getType() == DMEntityType.DOCUMENT){
+            entity.setPath(entity.getPath().substring(TRASH_PREFIX.length()));
+            entity.setUpdateDate(new Date());
+            entity.setTrashed(false);
+            getSession().saveOrUpdate(entity);
+            getSession().flush();
         }
     }
 }

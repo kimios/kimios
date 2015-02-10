@@ -17,6 +17,7 @@
 package org.kimios.webservices;
 
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
+import org.kimios.kernel.ws.pojo.DMEntity;
 import org.kimios.kernel.ws.pojo.DMEntityAttribute;
 import org.kimios.webservices.exceptions.DMServiceException;
 
@@ -26,10 +27,9 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import java.util.List;
 
 /**
- * Created by IntelliJ IDEA. User: farf Date: 4/1/12 Time: 5:04 PM To change this template use File | Settings | File
- * Templates.
  */
 @Path("/extension")
 @WebService(targetNamespace = "http://kimios.org", serviceName = "ExtensionService")
@@ -70,7 +70,8 @@ public interface ExtensionService
             @QueryParam(value = "dmEntityId") @WebParam(name = "dmEntityId") long dmEntityId,
             @QueryParam(value = "attributeName") @WebParam(name = "attributeName") String attributeName,
             @QueryParam(value = "attributeValue") @WebParam(name = "attributeValue") String attributeValue,
-            @QueryParam(value = "isIndexed") @WebParam(name = "isIndexed") boolean isIndexed) throws DMServiceException;
+            @QueryParam(value = "isIndexed") @WebParam(name = "isIndexed") boolean isIndexed)
+            throws DMServiceException;
 
     @GET
     @Path("/generatePasswordForUser")
@@ -80,4 +81,42 @@ public interface ExtensionService
             @QueryParam(value = "userId") @WebParam(name = "userId") String userId,
             @QueryParam(value = "userSource") @WebParam(name = "userSource") String userSource,
             @QueryParam(value = "sendMail") @WebParam(name = "sendMail") boolean sendMail) throws DMServiceException;
+
+
+    @GET
+    @Path("/trash")
+    @Produces("application/json")
+    public void trashEntity(
+            @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+            @QueryParam(value = "dmEntityId") @WebParam(name = "dmEntityId") long dmEntityId)
+            throws DMServiceException;
+
+    @GET
+    @Path("/listTrash")
+    @Produces("application/json")
+    public List<DMEntity> viewTrash(
+            @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+            @QueryParam(value = "start") @WebParam(name = "start") Integer start,
+            @QueryParam(value = "count") @WebParam(name = "count") Integer count)
+            throws DMServiceException;
+
+    @GET
+    @Path("/restoreFromTrash")
+    @Produces("application/json")
+    public String restoreFromTrash(
+            @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+            @QueryParam(value = "dmEntityId") @WebParam(name = "dmEntityId") Long dmEntityId)
+            throws DMServiceException;
+
+
+    @GET
+    @Path("/createVirtualFolder")
+    @Produces("application/json")
+    public long saveVirtualFolder( @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+                                   @QueryParam(value = "folderId") @WebParam(name = "folderId") Long id,
+                                   @QueryParam(value = "folderName") @WebParam(name = "folderName") String folderName,
+                                   @QueryParam(value = "isSecurityInherited") @WebParam(name = "isSecurityInherited") boolean isSecurityInherited,
+                                   @QueryParam(value = "documentTypeId") @WebParam(name = "documentTypeId") Long documentTypeId,
+                                   @QueryParam(value = "metaItemsJsonString") @WebParam(name = "metaItemsJsonString") String metaItemsJsonString)
+            throws DMServiceException;
 }

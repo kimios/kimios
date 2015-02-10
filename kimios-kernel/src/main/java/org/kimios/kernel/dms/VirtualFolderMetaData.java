@@ -14,10 +14,7 @@
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.kimios.kernel.index.query.model;
-
-import org.kimios.kernel.dms.Folder;
-import org.kimios.kernel.dms.Meta;
+package org.kimios.kernel.dms;
 
 import javax.persistence.*;
 import java.io.Serializable;

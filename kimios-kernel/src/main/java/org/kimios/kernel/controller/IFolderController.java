@@ -17,6 +17,7 @@ package org.kimios.kernel.controller;
 
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.Folder;
+import org.kimios.kernel.dms.MetaValue;
 import org.kimios.kernel.events.annotations.DmsEvent;
 import org.kimios.kernel.events.annotations.DmsEventName;
 import org.kimios.kernel.exception.AccessDeniedException;
@@ -75,4 +76,8 @@ public interface IFolderController {
      */
     public Vector<DMEntityLog<Folder>> getLogs(Session session, long folderUid)
             throws AccessDeniedException, ConfigException, DataSourceException;
+
+    @DmsEvent(eventName = {DmsEventName.FOLDER_CREATE})
+    public long createVirtualFolder(Session session, Long id, String name, List<MetaValue> metaValues)
+            throws NamingException, ConfigException, DataSourceException, AccessDeniedException;
 }
