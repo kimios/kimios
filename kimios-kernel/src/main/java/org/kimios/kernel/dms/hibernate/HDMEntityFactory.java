@@ -25,6 +25,7 @@ import org.kimios.kernel.hibernate.HFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -76,9 +77,15 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory {
                     .setProjection(Projections.distinct(Projections.id()))
                     .list();
 
-            return getSession().createCriteria(DMEntityImpl.class)
-                    .add(Property.forName("uid").in(items))
-                    .list();
+
+            if(items.size() > 0){
+                return getSession().createCriteria(DMEntityImpl.class)
+                        .add(Property.forName("uid").in(items))
+                        .list();
+            } else {
+                return new ArrayList<DMEntity>();
+            }
+
 
 
         } catch (HibernateException e) {
@@ -100,9 +107,13 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory {
                     .setProjection(Projections.distinct(Projections.id()))
                     .list();
 
+            if(items.size() > 0){
             return getSession().createCriteria(DMEntityImpl.class)
                     .add(Property.forName("uid").in(items))
                     .list();
+            } else {
+                return new ArrayList<DMEntityImpl>();
+            }
 
         } catch (HibernateException e) {
             throw new DataSourceException(e, e.getMessage());
@@ -130,9 +141,13 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory {
                     .setProjection(Projections.distinct(Projections.id()))
                     .list();
 
-            return getSession().createCriteria(DMEntityImpl.class)
-                    .add(Property.forName("uid").in(items))
-                    .list();
+            if(items.size()> 0){
+                return getSession().createCriteria(DMEntityImpl.class)
+                        .add(Property.forName("uid").in(items))
+                        .list();
+            } else {
+                return new ArrayList<DMEntity>();
+            }
         } catch (HibernateException e) {
             throw new DataSourceException(e, e.getMessage());
         }
@@ -182,14 +197,22 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory {
                 .setMaxResults(count);
             List uniqueSubList = criteria.list();
 
-            criteria.setProjection(null);
-            criteria.setFirstResult(0);
-            criteria.setMaxResults(Integer.MAX_VALUE);
-            criteria.add(Restrictions.in("uid", uniqueSubList));
-            criteria.addOrder(Order.asc("creationDate"));
-            criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 
-            return criteria.list();
+            if(uniqueSubList.size() > 0){
+                criteria.setProjection(null);
+                criteria.setFirstResult(0);
+                criteria.setMaxResults(Integer.MAX_VALUE);
+                criteria.add(Restrictions.in("uid", uniqueSubList));
+                criteria.addOrder(Order.asc("creationDate"));
+                criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+
+                return criteria.list();
+
+
+            } else {
+                return new ArrayList<DMEntity>();
+            }
+
             /*getSession().createSQLQuery(sql)
                         .addEntity("d", Document.class)
                         .addJoin()
