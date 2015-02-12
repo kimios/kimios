@@ -45,6 +45,9 @@
 
 
 
+    <service interface="org.kimios.webservices.converter.ConverterService" ref="converterServiceBean"/>
+
+
     <!-- Service endpoint -->
     <jaxws:endpoint id="converterServiceWs"
                     implementorClass="org.kimios.webservices.converter.impl.ConverterServiceImpl"

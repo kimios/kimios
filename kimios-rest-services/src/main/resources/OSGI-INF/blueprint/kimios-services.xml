@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ Kimios - Document Management System Software
-  ~ Copyright (C) 2008-2013  DevLib'
-  ~
+  ~ Copyright (C) 2008-2015  DevLib'
   ~ This program is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU Affero General Public License as
   ~ published by the Free Software Foundation, either version 2 of the
@@ -13,7 +12,7 @@
   ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   ~ GNU Affero General Public License for more details.
   ~ You should have received a copy of the GNU Affero General Public License
-  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  ~ aong with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -26,68 +25,61 @@
         http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
   http://cxf.apache.org/blueprint/jaxrs http://cxf.apache.org/schemas/blueprint/jaxrs.xsd
     http://cxf.apache.org/blueprint/jaxws http://cxf.apache.org/schemas/blueprint/jaxws.xsd
-  http://cxf.apache.org/blueprint/core http://cxf.apache.org/schemas/blueprint/core.xsd">
+  http://cxf.apache.org/blueprint/core http://cxf.apache.org/schemas/blueprint/core.xsd"
+        >
 
-    <cxf:bus name="kimios-bus" id="kimios-bus" />
-
-    <reference id="bonitaController"
-               interface="org.kimios.kernel.controller.BonitaController"/>
+    <cxf:bus id="kimios-bus" name="kimios-bus" />
 
     <reference id="serviceHelper"
                interface="org.kimios.webservices.IServiceHelper"/>
 
-    <bean id="bonitaServiceBean" class="org.kimios.webservices.bonita.impl.BonitaServiceImpl">
-        <argument ref="bonitaController" />
-        <argument ref="serviceHelper" />
-    </bean>
 
-    <service interface="org.kimios.webservices.bonita.BonitaService" ref="bonitaServiceBean"/>
 
-   <bean id="jaxws-and-aegis-service-factory" class="org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean"
-          scope="prototype">
-        <property name="dataBinding">
-            <bean class="org.apache.cxf.aegis.databinding.AegisDatabinding">
-                <property name="aegisContext">
-                    <bean class="org.apache.cxf.aegis.AegisContext">
-                        <property name="writeXsiTypes" value="true" />
-                        <property name="rootClassNames">
-                            <list>
-                                <value>org.kimios.webservices.exceptions.DMServiceException</value>
-                                <value>org.kimios.kernel.ws.pojo.Document</value>
-                                <value>org.kimios.kernel.ws.pojo.Folder</value>
-                                <value>org.kimios.kernel.ws.pojo.SymbolicLink</value>
-                                <value>org.kimios.kernel.ws.pojo.Workspace</value>
-                            </list>
-                        </property>
-                    </bean>
-                </property>
-            </bean>
-        </property>
-        <property name="serviceConfigurations">
-            <list>
-                <bean class="org.apache.cxf.jaxws.support.JaxWsServiceConfiguration"/>
-                <bean class="org.apache.cxf.service.factory.DefaultServiceConfiguration"/>
-            </list>
-        </property>
-    </bean>
+    <reference id="administrationServiceBean"
+               interface="org.kimios.webservices.AdministrationService"/>
 
-    <!-- Service endpoint -->
-    <jaxws:endpoint id="bonitaServiceWs"
-                    implementorClass="org.kimios.webservices.bonita.impl.BonitaServiceImpl"
-                    implementor="#bonitaServiceBean"
-                    address="/BonitaService"
-                    endpointName="BonitaService">
-        <jaxws:binding>
-            <soap:soapBinding id="BonitaService"/>
-        </jaxws:binding>
-        <jaxws:serviceFactory>
-            <ref component-id="jaxws-and-aegis-service-factory"/>
-        </jaxws:serviceFactory>
-    </jaxws:endpoint>
+    <reference id="studioServiceBean"
+               interface="org.kimios.webservices.StudioService"/>
+    <reference id="documentServiceBean"
+               interface="org.kimios.webservices.DocumentService"/>
+    <reference id="documentVersionServiceBean"
+               interface="org.kimios.webservices.DocumentVersionService"/>
+
+    <reference id="workspaceServiceBean"
+               interface="org.kimios.webservices.WorkspaceService"/>
+    <reference id="folderServiceBean"
+               interface="org.kimios.webservices.FolderService"/>
 
 
 
-    <!--<jaxrs:server id="kimiosRestServer"
+
+    <reference id="securityServiceBean"
+               interface="org.kimios.webservices.SecurityService"/>
+    <reference id="informationServiceBean"
+               interface="org.kimios.webservices.InformationService"/>
+
+    <reference id="reportingServiceBean"
+               interface="org.kimios.webservices.ReportingService"/>
+    <reference id="logServiceBean"
+               interface="org.kimios.webservices.LogService"/>
+    <reference id="fileTransferServiceBean"
+               interface="org.kimios.webservices.FileTransferService"/>
+    <reference id="extensionServiceBean"
+               interface="org.kimios.webservices.ExtensionService"/>
+
+    <reference id="ruleServiceBean"
+               interface="org.kimios.webservices.RuleService"/>
+    <reference id="notificationServiceBean"
+               interface="org.kimios.webservices.NotificationService"/>
+    <reference id="searchServiceBean"
+               interface="org.kimios.webservices.SearchService"/>
+    <reference id="bonitaServiceBean" interface="org.kimios.webservices.bonita.BonitaService" />
+    <reference id="converterServiceBean" interface="org.kimios.webservices.converter.ConverterService" />
+
+
+
+
+    <jaxrs:server id="kimiosRestServer"
                   address="/rest/">
         <jaxrs:providers>
             <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
@@ -112,11 +104,12 @@
             <ref component-id="notificationServiceBean"/>
             <ref component-id="searchServiceBean"/>
             <ref component-id="bonitaServiceBean" />
+            <ref component-id="converterServiceBean" />
         </jaxrs:serviceBeans>
         <jaxrs:extensionMappings>
             <entry key="json" value="application/json"/>
         </jaxrs:extensionMappings>
-    </jaxrs:server>-->
+    </jaxrs:server>
 
 </blueprint>
 

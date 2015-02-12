@@ -661,7 +661,7 @@
     </jaxws:endpoint>
 
 
-    <jaxrs:server id="kimiosRestServer"
+   <!-- <jaxrs:server id="kimiosRestServer"
                   address="/rest/">
         <jaxrs:providers>
             <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
@@ -689,7 +689,24 @@
         <jaxrs:extensionMappings>
             <entry key="json" value="application/json"/>
         </jaxrs:extensionMappings>
-    </jaxrs:server>
+    </jaxrs:server>-->
+
+
+    <service interface="org.kimios.webservices.AdministrationService" ref="administrationServiceBean"/>
+    <service interface="org.kimios.webservices.StudioService" ref="studioServiceBean"/>
+    <service interface="org.kimios.webservices.SecurityService" ref="securityServiceBean"/>
+    <service interface="org.kimios.webservices.WorkspaceService" ref="workspaceServiceBean"/>
+    <service interface="org.kimios.webservices.FolderService" ref="folderServiceBean"/>
+    <service interface="org.kimios.webservices.DocumentService" ref="documentServiceBean"/>
+    <service interface="org.kimios.webservices.DocumentVersionService" ref="documentVersionServiceBean"/>
+    <service interface="org.kimios.webservices.InformationService" ref="informationServiceBean"/>
+    <service interface="org.kimios.webservices.LogService" ref="logServiceBean"/>
+    <service interface="org.kimios.webservices.ReportingService" ref="reportingServiceBean"/>
+    <service interface="org.kimios.webservices.FileTransferService" ref="fileTransferServiceBean"/>
+    <service interface="org.kimios.webservices.RuleService" ref="ruleServiceBean"/>
+    <service interface="org.kimios.webservices.ExtensionService" ref="extensionServiceBean"/>
+    <service interface="org.kimios.webservices.NotificationService" ref="notificationServiceBean"/>
+    <service interface="org.kimios.webservices.SearchService" ref="searchServiceBean"/>
 
 </blueprint>
 
