@@ -26,7 +26,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-@Path("/converter")
+//@Path("/converter")
 @WebService(targetNamespace = "http://kimios.org", serviceName = "ConverterService")
 @CrossOriginResourceSharing(allowAllOrigins = true)
 public interface ConverterService extends KimiosExtension {

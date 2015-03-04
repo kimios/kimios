@@ -134,7 +134,7 @@
             <artifactId>kimios-services</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
-            <optional>true</optional>
+            <optional>false</optional>
         </dependency>
 
         <dependency>
@@ -142,7 +142,7 @@
             <artifactId>kimios-convert-service</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
-            <optional>true</optional>
+            <optional>false</optional>
         </dependency>
 
         <dependency>
@@ -150,7 +150,7 @@
             <artifactId>kimios-bonita-service</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
-            <optional>true</optional>
+            <optional>false</optional>
         </dependency>
 
     </dependencies>
@@ -254,10 +254,11 @@
                             javax.ws.rs.core,
                             javax.ws.rs.ext,
                             org.kimios.exceptions,
-                            org.kimios.kernel.*,
+                            org.kimios.kernel.index.query.model,
                             org.kimios.kernel.ws.pojo,
                             org.kimios.kernel.controller,
                             org.kimios.kernel.security,
+                            org.kimios.webservices.utils,
                             org.kimios.webservices,
                             org.kimios.webservices.converter,
                             org.kimios.webservices.bonita,
@@ -268,7 +269,8 @@
                             org.apache.cxf.jaxrs.ext.multipart,
                             org.apache.cxf.jaxrs.ext,
                             org.kimios.utils.spring,
-                            org.apache.commons.io
+                            org.apache.commons.io,
+                            *;resolution:=optional
                         </Import-Package>
                     </instructions>
                 </configuration>
@@ -313,32 +315,6 @@
                             <archive>
                                 <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
                             </archive>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.3.2</version>
-                <executions>
-                    <execution>
-                        <id>pojo-gen</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration>
-                            <classifier>interfaces</classifier>
-                            <includes>
-                                <include>org/kimios/webservices/*</include>
-                                <include>org/kimios/webservices/exceptions/*</include>
-                            </includes>
-                            <excludes>
-                                <exclude>org/kimios/webservices/ClientInformationUtil</exclude>
-                                <exclude>org/kimios/webservices/CoreService</exclude>
-                                <exclude>org/kimios/webservices/impl</exclude>
-                            </excludes>
                         </configuration>
                     </execution>
                 </executions>

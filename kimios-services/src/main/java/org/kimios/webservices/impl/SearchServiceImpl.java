@@ -35,6 +35,7 @@ import java.util.List;
 public class SearchServiceImpl
         extends CoreService
         implements SearchService {
+
     private static Logger log = LoggerFactory.getLogger(SearchService.class);
 
     public SearchResponse quickSearch(String sessionUid, String query, long dmEntityUid, int start,

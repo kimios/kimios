@@ -30,7 +30,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import java.util.List;
 
-@Path("/bonita")
+//@Path("/bonita")
 @WebService(targetNamespace = "http://kimios.org", serviceName = "BonitaService", name = "BonitaService")
 public interface BonitaService extends KimiosExtension {
 

@@ -34,7 +34,7 @@
                interface="org.kimios.kernel.controller.BonitaController"/>
 
     <reference id="serviceHelper"
-               interface="org.kimios.webservices.IServiceHelper"/>
+               interface="org.kimios.webservices.IServiceHelper" />
 
     <bean id="bonitaServiceBean" class="org.kimios.webservices.bonita.impl.BonitaServiceImpl">
         <argument ref="bonitaController" />
@@ -85,10 +85,8 @@
         </jaxws:serviceFactory>
     </jaxws:endpoint>
 
-
-
-    <!--<jaxrs:server id="kimiosRestServer"
-                  address="/rest/">
+    <jaxrs:server id="kimiosBonitaRestServer"
+                  address="/rest/bonita/">
         <jaxrs:providers>
             <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
             <bean class="org.kimios.webservices.DateParamConverter"/>
@@ -96,27 +94,11 @@
             <bean id="corsFilter" class="org.apache.cxf.rs.security.cors.CrossOriginResourceSharingFilter" />
         </jaxrs:providers>
         <jaxrs:serviceBeans>
-            <ref component-id="securityServiceBean"/>
-            <ref component-id="workspaceServiceBean"/>
-            <ref component-id="folderServiceBean"/>
-            <ref component-id="documentServiceBean"/>
-            <ref component-id="documentVersionServiceBean"/>
-            <ref component-id="administrationServiceBean"/>
-            <ref component-id="studioServiceBean"/>
-            <ref component-id="informationServiceBean"/>
-            <ref component-id="logServiceBean"/>
-            <ref component-id="reportingServiceBean"/>
-            <ref component-id="fileTransferServiceBean"/>
-            <ref component-id="ruleServiceBean"/>
-            <ref component-id="extensionServiceBean"/>
-            <ref component-id="notificationServiceBean"/>
-            <ref component-id="searchServiceBean"/>
             <ref component-id="bonitaServiceBean" />
         </jaxrs:serviceBeans>
         <jaxrs:extensionMappings>
             <entry key="json" value="application/json"/>
         </jaxrs:extensionMappings>
-    </jaxrs:server>-->
-
+    </jaxrs:server>
 </blueprint>
 

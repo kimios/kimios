@@ -17,6 +17,7 @@
 package org.kimios.webservices;
 
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
+import org.kimios.kernel.index.query.model.Criteria;
 import org.kimios.kernel.index.query.model.SearchRequest;
 import org.kimios.kernel.index.query.model.SearchResponse;
 import org.kimios.kernel.ws.pojo.DMEntity;
@@ -80,7 +81,7 @@ public interface SearchService {
     @Produces("application/json")
     public SearchResponse advancedSearchDocuments(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
-            @WebParam(name = "criterias") List<org.kimios.kernel.index.query.model.Criteria> criterias,
+            @WebParam(name = "criterias") List<Criteria> criterias,
             @QueryParam(value = "start") @WebParam(name = "start") int start,
             @QueryParam(value = "pageSize") @WebParam(name = "pageSize") int pageSize,
             @QueryParam(value = "sortField") @WebParam(name = "sortField") String sortField,

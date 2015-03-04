@@ -45,7 +45,6 @@
 
     <reference id="sessionManager"
             interface="org.kimios.kernel.security.ISessionManager"/>
-
     <reference id="administrationController"
             interface="org.kimios.kernel.controller.IAdministrationController"/>
     <reference id="studioController"
@@ -145,21 +144,7 @@
         <property name="converterController" ref="converterController"/>
 
     </bean>
-    <!-- Service endpoint -->
-    <jaxws:endpoint id="securityServiceWs"
-                    implementorClass="org.kimios.webservices.impl.SecurityServiceImpl"
-                    implementor="#securityServiceBean"
-                    address="/SecurityService"
-                    endpointName="SecurityService"
-            >
 
-        <jaxws:binding>
-            <soap:soapBinding id="SecurityService"/>
-        </jaxws:binding>
-        <jaxws:serviceFactory>
-            <ref component-id="jaxws-and-aegis-service-factory"/>
-        </jaxws:serviceFactory>
-    </jaxws:endpoint>
 
     <bean id="administrationServiceBean" class="org.kimios.webservices.impl.AdministrationServiceImpl">
         <argument ref="kimiosBusManager" />
@@ -217,7 +202,6 @@
                     implementorClass="org.kimios.webservices.impl.DocumentServiceImpl"
                     implementor="#documentServiceBean"
                     address="/DocumentService"
-
                     endpointName="DocumentService"
                     depends-on="documentServiceBean"
             >
@@ -277,13 +261,14 @@
                     address="/SearchService"
                     endpointName="SearchService"
             >
-    <jaxws:binding>
-        <soap:soapBinding id="SearchService"/>
-    </jaxws:binding>
-    <jaxws:serviceFactory>
-        <ref component-id="jaxws-and-aegis-service-factory"/>
-    </jaxws:serviceFactory>
+        <jaxws:binding>
+            <soap:soapBinding id="SearchService"/>
+        </jaxws:binding>
+        <jaxws:serviceFactory>
+            <ref component-id="jaxws-and-aegis-service-factory"/>
+        </jaxws:serviceFactory>
     </jaxws:endpoint>
+
     <jaxws:endpoint id="notificationServiceWs"
                     implementorClass="org.kimios.webservices.impl.NotificationServiceImpl"
                     implementor="#notificationServiceBean"
@@ -340,7 +325,6 @@
         </jaxws:serviceFactory>
     </jaxws:endpoint>
 
-
     <jaxws:endpoint id="ruleServiceWs"
                     implementorClass="org.kimios.webservices.impl.RuleServiceImpl"
                     implementor="#ruleServiceBean"
@@ -355,7 +339,6 @@
         </jaxws:serviceFactory>
     </jaxws:endpoint>
 
-
     <jaxws:endpoint id="reportingServiceWs"
                     implementorClass="org.kimios.webservices.impl.ReportingServiceImpl"
                     implementor="#reportingServiceBean"
@@ -364,6 +347,36 @@
             >
         <jaxws:binding>
             <soap:soapBinding id="ReportingService"/>
+        </jaxws:binding>
+        <jaxws:serviceFactory>
+            <ref component-id="jaxws-and-aegis-service-factory"/>
+        </jaxws:serviceFactory>
+    </jaxws:endpoint>
+
+    <jaxws:endpoint id="fileTransferServiceWs"
+                    implementorClass="org.kimios.webservices.impl.FileTransferServiceImpl"
+                    implementor="#fileTransferServiceBean"
+                    address="/FileTransferService"
+                    endpointName="FileTransferService"
+            >
+        <jaxws:binding>
+            <soap:soapBinding id="FileTransferService"/>
+        </jaxws:binding>
+        <jaxws:serviceFactory>
+            <ref component-id="jaxws-and-aegis-service-factory"/>
+        </jaxws:serviceFactory>
+    </jaxws:endpoint>
+
+    <!-- Service endpoint -->
+    <jaxws:endpoint id="securityServiceWs"
+                    implementorClass="org.kimios.webservices.impl.SecurityServiceImpl"
+                    implementor="#securityServiceBean"
+                    address="/SecurityService"
+                    endpointName="SecurityService"
+            >
+
+        <jaxws:binding>
+            <soap:soapBinding id="SecurityService"/>
         </jaxws:binding>
         <jaxws:serviceFactory>
             <ref component-id="jaxws-and-aegis-service-factory"/>
@@ -453,6 +466,7 @@
         <property name="extensionController" ref="extensionController"/>
         <property name="converterController" ref="converterController"/>
     </bean>
+
     <bean id="workspaceServiceBean" class="org.kimios.webservices.impl.WorkspaceServiceImpl">
         <property name="helper" ref="serviceHelper"/>
         <property name="securityController" ref="securityController"/>
@@ -495,7 +509,6 @@
         <property name="converterController" ref="converterController"/>
     </bean>
 
-
     <bean id="notificationServiceBean" class="org.kimios.webservices.impl.NotificationServiceImpl">
         <property name="helper" ref="serviceHelper"/>
         <property name="securityController" ref="securityController"/>
@@ -516,7 +529,6 @@
         <property name="extensionController" ref="extensionController"/>
         <property name="converterController" ref="converterController"/>
     </bean>
-
 
     <bean id="logServiceBean" class="org.kimios.webservices.impl.LogServiceImpl">
         <property name="helper" ref="serviceHelper"/>
@@ -602,8 +614,7 @@
         <property name="converterController" ref="converterController"/>
     </bean>
 
-    <bean id="reportingServiceBean" class="org.kimios.webservices.impl.ReportingServiceImpl"
-            >
+    <bean id="reportingServiceBean" class="org.kimios.webservices.impl.ReportingServiceImpl" >
         <property name="helper" ref="serviceHelper"/>
         <property name="securityController" ref="securityController"/>
         <property name="documentController" ref="documentController"/>
@@ -623,7 +634,6 @@
         <property name="extensionController" ref="extensionController"/>
         <property name="converterController" ref="converterController"/>
     </bean>
-
 
     <bean id="fileTransferServiceBean" class="org.kimios.webservices.impl.FileTransferServiceImpl">
         <property name="helper" ref="serviceHelper"/>
@@ -645,20 +655,8 @@
         <property name="extensionController" ref="extensionController"/>
         <property name="converterController" ref="converterController"/>
     </bean>
-    <!-- Service endpoint -->
-    <jaxws:endpoint id="fileTransferServiceWs"
-                    implementorClass="org.kimios.webservices.impl.FileTransferServiceImpl"
-                    implementor="#fileTransferServiceBean"
-                    address="/FileTransferService"
-                    endpointName="FileTransferService"
-            >
-        <jaxws:binding>
-            <soap:soapBinding id="FileTransferService"/>
-        </jaxws:binding>
-        <jaxws:serviceFactory>
-            <ref component-id="jaxws-and-aegis-service-factory"/>
-        </jaxws:serviceFactory>
-    </jaxws:endpoint>
+
+
 
 
    <!-- <jaxrs:server id="kimiosRestServer"
@@ -707,6 +705,46 @@
     <service interface="org.kimios.webservices.ExtensionService" ref="extensionServiceBean"/>
     <service interface="org.kimios.webservices.NotificationService" ref="notificationServiceBean"/>
     <service interface="org.kimios.webservices.SearchService" ref="searchServiceBean"/>
+
+
+
+    <!--<reference id="bonitaServiceBean"
+               interface="org.kimios.webservices.bonita.BonitaService" />
+    <reference id="converterServiceBean"
+               interface="org.kimios.webservices.converter.ConverterService" />-->
+
+    <jaxrs:server id="kimiosRestServer"
+                  address="/rest/">
+        <jaxrs:providers>
+            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="org.kimios.webservices.DateParamConverter"/>
+            <bean id="exceptionMapper" class="org.kimios.webservices.JaxRSExceptionMapper"/>
+            <bean id="corsFilter" class="org.apache.cxf.rs.security.cors.CrossOriginResourceSharingFilter" />
+        </jaxrs:providers>
+        <jaxrs:invoker>
+            <bean class="org.kimios.custom.CustomInvoker" />
+        </jaxrs:invoker>
+        <jaxrs:serviceBeans>
+            <ref component-id="securityServiceBean"/>
+            <ref component-id="workspaceServiceBean"/>
+            <ref component-id="folderServiceBean"/>
+            <ref component-id="documentServiceBean"/>
+            <ref component-id="documentVersionServiceBean"/>
+            <ref component-id="administrationServiceBean"/>
+            <ref component-id="studioServiceBean"/>
+            <ref component-id="informationServiceBean"/>
+            <ref component-id="logServiceBean"/>
+            <ref component-id="reportingServiceBean"/>
+            <ref component-id="fileTransferServiceBean"/>
+            <ref component-id="ruleServiceBean"/>
+            <ref component-id="extensionServiceBean"/>
+            <ref component-id="notificationServiceBean"/>
+            <ref component-id="searchServiceBean"/>
+        </jaxrs:serviceBeans>
+        <jaxrs:extensionMappings>
+            <entry key="json" value="application/json"/>
+        </jaxrs:extensionMappings>
+    </jaxrs:server>
 
 </blueprint>
 

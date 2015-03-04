@@ -28,36 +28,31 @@
   http://cxf.apache.org/blueprint/core http://cxf.apache.org/schemas/blueprint/core.xsd"
         >
 
-    <cxf:bus id="kimios-bus" name="kimios-bus" />
+    <cxf:bus>
+        <cxf:features>
+            <cxf:logging/>
+        </cxf:features>
+    </cxf:bus>
 
     <reference id="serviceHelper"
                interface="org.kimios.webservices.IServiceHelper"/>
 
-
-
     <reference id="administrationServiceBean"
                interface="org.kimios.webservices.AdministrationService"/>
-
     <reference id="studioServiceBean"
                interface="org.kimios.webservices.StudioService"/>
     <reference id="documentServiceBean"
                interface="org.kimios.webservices.DocumentService"/>
     <reference id="documentVersionServiceBean"
                interface="org.kimios.webservices.DocumentVersionService"/>
-
     <reference id="workspaceServiceBean"
                interface="org.kimios.webservices.WorkspaceService"/>
     <reference id="folderServiceBean"
                interface="org.kimios.webservices.FolderService"/>
-
-
-
-
     <reference id="securityServiceBean"
                interface="org.kimios.webservices.SecurityService"/>
     <reference id="informationServiceBean"
                interface="org.kimios.webservices.InformationService"/>
-
     <reference id="reportingServiceBean"
                interface="org.kimios.webservices.ReportingService"/>
     <reference id="logServiceBean"
@@ -66,18 +61,52 @@
                interface="org.kimios.webservices.FileTransferService"/>
     <reference id="extensionServiceBean"
                interface="org.kimios.webservices.ExtensionService"/>
-
     <reference id="ruleServiceBean"
                interface="org.kimios.webservices.RuleService"/>
     <reference id="notificationServiceBean"
                interface="org.kimios.webservices.NotificationService"/>
     <reference id="searchServiceBean"
                interface="org.kimios.webservices.SearchService"/>
-    <reference id="bonitaServiceBean" interface="org.kimios.webservices.bonita.BonitaService" />
-    <reference id="converterServiceBean" interface="org.kimios.webservices.converter.ConverterService" />
+    <reference id="bonitaServiceBean"
+               interface="org.kimios.webservices.bonita.BonitaService" />
+    <reference id="converterServiceBean"
+               interface="org.kimios.webservices.converter.ConverterService" />
 
 
 
+
+    <!--<jaxrs:server id="kimiosRestServer"
+                  address="/rest/">
+        <jaxrs:providers>
+            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="org.kimios.webservices.DateParamConverter"/>
+            <bean id="exceptionMapper" class="org.kimios.webservices.JaxRSExceptionMapper"/>
+            <bean id="corsFilter" class="org.apache.cxf.rs.security.cors.CrossOriginResourceSharingFilter" />
+        </jaxrs:providers>
+
+        <jaxrs:serviceBeans>
+            <ref component-id="securityServiceBean"/>
+            <ref component-id="workspaceServiceBean"/>
+            <ref component-id="folderServiceBean"/>
+            <ref component-id="documentServiceBean"/>
+            <ref component-id="documentVersionServiceBean"/>
+            <ref component-id="administrationServiceBean"/>
+            <ref component-id="studioServiceBean"/>
+            <ref component-id="informationServiceBean"/>
+            <ref component-id="logServiceBean"/>
+            <ref component-id="reportingServiceBean"/>
+            <ref component-id="fileTransferServiceBean"/>
+            <ref component-id="ruleServiceBean"/>
+            <ref component-id="extensionServiceBean"/>
+            <ref component-id="notificationServiceBean"/>
+            <ref component-id="searchServiceBean"/>
+            <ref component-id="bonitaServiceBean" />
+            <ref component-id="converterServiceBean" />
+        </jaxrs:serviceBeans>
+        <jaxrs:extensionMappings>
+            <entry key="json" value="application/json"/>
+        </jaxrs:extensionMappings>
+    </jaxrs:server>    -->
 
     <jaxrs:server id="kimiosRestServer"
                   address="/rest/">
@@ -87,7 +116,11 @@
             <bean id="exceptionMapper" class="org.kimios.webservices.JaxRSExceptionMapper"/>
             <bean id="corsFilter" class="org.apache.cxf.rs.security.cors.CrossOriginResourceSharingFilter" />
         </jaxrs:providers>
-        <jaxrs:serviceBeans>
+
+        <jaxrs:invoker>
+            <bean class="org.kimios.custom.CustomInvoker" />
+        </jaxrs:invoker>
+         <jaxrs:serviceBeans>
             <ref component-id="securityServiceBean"/>
             <ref component-id="workspaceServiceBean"/>
             <ref component-id="folderServiceBean"/>

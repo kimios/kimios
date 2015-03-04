@@ -27,6 +27,7 @@ import org.bonitasoft.engine.search.SearchOptions;
 import org.bonitasoft.engine.search.SearchResult;
 import org.bonitasoft.engine.search.impl.SearchOptionsImpl;
 import org.bonitasoft.engine.session.APISession;
+import org.kimios.kernel.bonita.interfaces.IBonitaUsersSynchronizer;
 import org.kimios.kernel.user.*;
 import org.kimios.kernel.user.Group;
 import org.kimios.kernel.user.User;
@@ -38,12 +39,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
-public class BonitaUsersSynchronizer {
+public class BonitaUsersSynchronizer implements IBonitaUsersSynchronizer {
 
     private BonitaSettings bonitaCfg;
 
     private static Logger log = LoggerFactory.getLogger(BonitaUsersSynchronizer.class);
 
+    @Override
     @Transactional
     public void synchronize() throws JobExecutionException {
         try {

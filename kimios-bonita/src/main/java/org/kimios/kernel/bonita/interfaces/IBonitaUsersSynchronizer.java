@@ -14,31 +14,15 @@
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.kimios.kernel.index.query.factory;
+package org.kimios.kernel.bonita.interfaces;
 
-import org.hibernate.HibernateException;
-import org.hibernate.ObjectNotFoundException;
-import org.kimios.kernel.dms.VirtualFolderMetaData;
-import org.kimios.kernel.exception.DataSourceException;
-import org.kimios.kernel.hibernate.HFactory;
+import org.quartz.JobExecutionException;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
- * VirtualFolderFactory
- *
- *
- *
- *
+ * Created by farf on 2/23/15.
  */
-public class VirtualFolderFactory extends HFactory {
-
-
-    public void saveOrUpdateMeta(VirtualFolderMetaData virtualFolderMd){
-        getSession().saveOrUpdate(virtualFolderMd);
-    }
-
-    public void deleteMeta(VirtualFolderMetaData virtualFolderMd){
-        getSession().delete(virtualFolderMd);
-    }
-
-
+public interface IBonitaUsersSynchronizer {
+    @Transactional
+    void synchronize() throws JobExecutionException;
 }

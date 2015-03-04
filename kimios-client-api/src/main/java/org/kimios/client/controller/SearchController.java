@@ -24,6 +24,7 @@ import org.kimios.kernel.ws.pojo.DMEntity;
 import org.kimios.kernel.ws.pojo.Document;
 import org.kimios.webservices.SearchService;
 
+
 import java.util.List;
 
 /**

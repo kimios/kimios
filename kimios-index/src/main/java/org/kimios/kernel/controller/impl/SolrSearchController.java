@@ -1031,8 +1031,24 @@ public class SolrSearchController
 
                                 } else {
 
-                                    String metaStringQuery = "MetaDataString_" + meta.getUid() + ":*" +
-                                            ClientUtils.escapeQueryChars(c.getQuery().toLowerCase()) + "*";
+
+                                    String metaStringQuery = null;
+                                    if(c.getQuery().contains(" ")){
+
+                                        String[] tmpQuery = c.getQuery().split("\\s");
+                                        StringBuilder bld = new StringBuilder();
+                                        for(String u : tmpQuery){
+                                            bld.append("+*");
+                                            bld.append(ClientUtils.escapeQueryChars(u.toLowerCase()));
+                                            bld.append("* ");
+                                        }
+
+                                        metaStringQuery = "MetaDataString_" + meta.getUid() + ":("
+                                                + bld.toString().trim() + ")";
+                                    } else {
+                                        metaStringQuery = "MetaDataString_" + meta.getUid() + ":*" +
+                                                ClientUtils.escapeQueryChars(c.getQuery().toLowerCase()) + "*";
+                                    }
                                     queries.add(metaStringQuery);
 
                                 }
