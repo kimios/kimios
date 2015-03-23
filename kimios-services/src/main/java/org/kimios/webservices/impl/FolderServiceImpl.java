@@ -16,6 +16,7 @@
  */
 package org.kimios.webservices.impl;
 
+import org.kimios.kernel.ws.pojo.MetaValue;
 import org.kimios.kernel.security.Session;
 import org.kimios.kernel.ws.pojo.Folder;
 import org.kimios.webservices.CoreService;
@@ -23,6 +24,7 @@ import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.FolderService;
 
 import javax.jws.WebService;
+import java.util.ArrayList;
 import java.util.List;
 
 @WebService(targetNamespace = "http://kimios.org", serviceName = "FolderService", name = "FolderService")
@@ -90,6 +92,26 @@ public class FolderServiceImpl extends CoreService implements FolderService
         try {
             Session session = getHelper().getSession(sessionUid);
             folderController.deleteFolder(session, folderUid);
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
+
+    @Override
+    public MetaValue[] getFolderMetaValues(String sessionId, long folderId) throws DMServiceException {
+        try {
+            Session session = getHelper().getSession(sessionId);
+            List<org.kimios.kernel.dms.MetaValue> values = folderController.listMetaValues(session, folderId);
+            List<MetaValue> mvArray = new ArrayList<MetaValue>();
+            for(org.kimios.kernel.dms.MetaValue v: values) {
+                org.kimios.kernel.ws.pojo.MetaValue pojo = new org.kimios.kernel.ws.pojo.MetaValue();
+                pojo.setMeta(v.getMeta().toPojo());
+                pojo.setMetaId(v.getMetaUid());
+                pojo.setValue(v.getValue());
+                mvArray.add(pojo);
+            }
+
+            return mvArray.toArray(new MetaValue[]{});
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }

@@ -18,9 +18,12 @@ package org.kimios.kernel.dms.hibernate;
 
 import org.hibernate.HibernateException;
 import org.hibernate.ObjectNotFoundException;
+import org.kimios.kernel.dms.Folder;
 import org.kimios.kernel.dms.VirtualFolderMetaData;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
+
+import java.util.List;
 
 /**
  * VirtualFolderFactory
@@ -37,6 +40,16 @@ public class VirtualFolderFactory extends HFactory {
 
     public void deleteMeta(VirtualFolderMetaData virtualFolderMd){
         getSession().delete(virtualFolderMd);
+    }
+
+
+    public List<VirtualFolderMetaData> virtualFolderMetaDataList(Folder folder){
+        String query = "select m from VirtualFolderMetaData m where m.virtualFolder = :folder";
+        return getSession()
+                .createQuery(query)
+                .setParameter("folder", folder)
+                .list();
+
     }
 
 }

@@ -16,6 +16,7 @@
 
 package org.kimios.kernel.index.query.model;
 
+import org.kimios.kernel.ws.pojo.DMEntity;
 import org.kimios.kernel.ws.pojo.Document;
 
 import java.util.HashMap;
@@ -32,7 +33,7 @@ public class SearchResponse
     {
     }
 
-    public SearchResponse( int results, List<Document> rows )
+    public SearchResponse( int results, List<DMEntity> rows )
     {
         this.results = results;
         this.rows = rows;
@@ -49,7 +50,7 @@ public class SearchResponse
 
     private boolean facetResponse;
 
-    private List<Document> rows;
+    private List<DMEntity> rows;
 
     private List<Long> documentIds;
 
@@ -97,12 +98,12 @@ public class SearchResponse
         this.results = results;
     }
 
-    public List<Document> getRows()
+    public List<DMEntity> getRows()
     {
         return rows;
     }
 
-    public void setRows( List<Document> rows )
+    public void setRows( List<DMEntity> rows )
     {
         this.rows = rows;
     }

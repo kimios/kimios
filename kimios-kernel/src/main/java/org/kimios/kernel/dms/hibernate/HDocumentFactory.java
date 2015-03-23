@@ -135,6 +135,7 @@ public class HDocumentFactory extends HFactory implements DocumentFactory
 
             Criteria c = getSession().createCriteria(Document.class)
                     .add(Restrictions.eq("folderUid", f.getUid()))
+                    .add(Restrictions.ne("trashed", true))
                     .addOrder(Order.asc("name").ignoreCase());
             List<Document> fList = c.list();
 

@@ -88,6 +88,21 @@ public class AddonDataHandler extends GenericEventHandler {
     }
 
 
+    @DmsEvent(eventName = {DmsEventName.FOLDER_CREATE}, when = DmsEventOccur.AFTER)
+    public void folderCreate(Object[] obj, Object retour, EventContext ctx) throws Exception {
+        log.debug("Adding meta datas on folder: " + (Long) obj[1]);
+        Folder f = null;
+        try {
+            f = (Folder)EventContext.getParameters().get("virtualFolder");
+            List<MetaValue> metaValues = (List)EventContext.getParameters().get("virtualFolderMetas");
+            f.setAddOnDatas(generateMetaDatasForFolder(f, metaValues));
+            FactoryInstantiator.getInstance().getFolderFactory().updateFolder(f);
+        } catch (Exception e) {
+            log.error(" index action Exception on folder " + f.getUid(), e);
+        }
+    }
+
+
 
     private String generateMetaDatas(DMEntityImpl entity) {
         /*
@@ -107,6 +122,23 @@ public class AddonDataHandler extends GenericEventHandler {
         }
         return null;
     }
+
+    private String generateMetaDatasForFolder(Folder entity, List<MetaValue> metaValues) {
+        /*
+            Load Document attribute
+         */
+        try {
+            AddonDatasWrapper wrapper = new AddonDatasWrapper();
+            wrapper.setEntityAttributes(entity.getAttributes());
+            wrapper.setEntityMetaValues(metaValues);
+
+            return objectMapper.writeValueAsString(wrapper);
+        } catch (Exception e) {
+            log.error("Error while generating Document addon data", e);
+        }
+        return null;
+    }
+
 
 
     public static abstract class MetaMixIn {

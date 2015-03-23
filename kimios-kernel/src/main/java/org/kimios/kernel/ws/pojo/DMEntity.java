@@ -21,7 +21,8 @@ import org.codehaus.jackson.annotate.JsonTypeInfo;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
-
+import java.util.HashMap;
+import java.util.Map;
 
 
 @JsonTypeInfo(
@@ -51,6 +52,10 @@ public class DMEntity implements Serializable
     protected String ownerSource;
 
     protected String path;
+
+    protected String addonDatas;
+
+    protected Map<String, MetaValue> metaDatas = new HashMap<String, MetaValue>();
 
     public DMEntity()
     {
@@ -162,5 +167,22 @@ public class DMEntity implements Serializable
     {
         this.path = path;
     }
+
+    public Map<String, MetaValue> getMetaDatas() {
+        return metaDatas;
+    }
+
+    public void setMetaDatas(Map<String, MetaValue> metaDatas) {
+        this.metaDatas = metaDatas;
+    }
+
+    public String getAddonDatas() {
+        return addonDatas;
+    }
+
+    public void setAddonDatas(String addonDatas) {
+        this.addonDatas = addonDatas;
+    }
+
 }
 

@@ -19,10 +19,7 @@ import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.configuration.Config;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.IExtensionController;
-import org.kimios.kernel.dms.DMEntity;
-import org.kimios.kernel.dms.DMEntityImpl;
-import org.kimios.kernel.dms.Document;
-import org.kimios.kernel.dms.Lock;
+import org.kimios.kernel.dms.*;
 import org.kimios.kernel.dms.extension.impl.DMEntityAttribute;
 import org.kimios.kernel.events.annotations.DmsEvent;
 import org.kimios.kernel.events.annotations.DmsEventName;
@@ -184,5 +181,7 @@ public class ExtensionController extends AKimiosController implements IExtension
             throw new AccessDeniedException();
         }
     }
+
+
 }
 

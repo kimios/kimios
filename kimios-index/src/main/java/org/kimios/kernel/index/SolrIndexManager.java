@@ -499,6 +499,31 @@ public class SolrIndexManager
             }
         }
         doc.addField( "Attribute_VirtualFolder", "folder");
+
+        if(folder.getAddOnDatas() != null && folder.getAddOnDatas().length() > 0){
+            doc.addField("DocumentRawAddonDatas", folder.getAddOnDatas());
+            log.info("adding current addon data {}", folder.getAddOnDatas());
+        }
+        else {
+            //try to regenerate field
+
+            if((values != null && values.size() > 0) || (folder.getAttributes() != null || folder.getAttributes().size() > 0)){
+                AddonDataHandler.AddonDatasWrapper wrapper = new AddonDataHandler.AddonDatasWrapper();
+                wrapper.setEntityAttributes(folder.getAttributes());
+                wrapper.setEntityMetaValues(values);
+                try{
+                    folder.setAddOnDatas(mp.writeValueAsString(wrapper));
+                    FactoryInstantiator.getInstance().getFolderFactory().saveFolder(folder);
+                }catch (Exception ex){
+                    log.error("error while generation addon meta field", ex);
+                }
+                //update document
+                doc.addField("DocumentRawAddonDatas", folder.getAddOnDatas());
+            } else {
+                log.info("not generating addon field because of no data");
+            }
+        }
+
         Object body = null;
         Map<String, Object> metaDatas = null;
         doc.addField( "DocumentBody", IndexHelper.EMPTY_STRING);

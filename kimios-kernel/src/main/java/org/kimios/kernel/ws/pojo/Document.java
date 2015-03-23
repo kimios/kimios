@@ -59,10 +59,6 @@ public class Document extends DMEntity implements Serializable
 
     private Long documentTypeUid = 0L;
 
-    private String addonDatas;
-
-    private Map<String, MetaValue> metaDatas = new HashMap<String, MetaValue>();
-
     private Float indexScore;
 
     public Document()
@@ -264,13 +260,6 @@ public class Document extends DMEntity implements Serializable
     {
         this.versionUpdateDate = versionUpdateDate;
     }
-    public String getAddonDatas() {
-        return addonDatas;
-    }
-
-    public void setAddonDatas(String addonDatas) {
-        this.addonDatas = addonDatas;
-    }
 
     public Long getLastVersionId() {
         return lastVersionId;
@@ -278,14 +267,6 @@ public class Document extends DMEntity implements Serializable
 
     public void setLastVersionId(Long lastVersionId) {
         this.lastVersionId = lastVersionId;
-    }
-
-    public Map<String, MetaValue> getMetaDatas() {
-        return metaDatas;
-    }
-
-    public void setMetaDatas(Map<String, MetaValue> metaDatas) {
-        this.metaDatas = metaDatas;
     }
 
     public Float getIndexScore() {

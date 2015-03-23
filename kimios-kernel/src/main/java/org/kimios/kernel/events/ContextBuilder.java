@@ -47,7 +47,7 @@ public class ContextBuilder
     private static String[] documentMethod = { "createDocument", "updateDocument", "deleteDocument",
             "checkoutDocument", "checkinDocument", "addRelatedDocument", "removeRelatedDocument", "createDocumentWithProperties", "createDocumentFromFullPathWithProperties" };
 
-    private static String[] folderMethod = { "createFolder", "updateFolder", "deleteFolder" };
+    private static String[] folderMethod = { "createFolder", "updateFolder", "deleteFolder", "createVirtualFolder" };
 
     private static String[] workspaceMethod = { "createWorkspace", "updateWorkspace", "deleteWorkspace" };
 
@@ -116,6 +116,17 @@ public class ContextBuilder
             fold.setParentUid((Long) arguments[2]);
             FactoryInstantiator.getInstance().getDmEntityFactory().generatePath(fold);
             ctx.setEntity(fold);
+        }
+        if(name.equalsIgnoreCase(folderMethod[3])){
+            Folder fold = new Folder();
+            fold.setUid(-1);
+            fold.setName(arguments[2] != null ? arguments[2].toString() : "");
+            if(arguments[3] != null){
+                fold.setParentUid((Long)arguments[3]);
+            }
+            FactoryInstantiator.getInstance().getDmEntityFactory().generatePath(fold);
+            ctx.setEntity(fold);
+
         }
         if (name.equalsIgnoreCase(folderMethod[1])) {
             /*

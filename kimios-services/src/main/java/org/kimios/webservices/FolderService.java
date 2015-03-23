@@ -17,6 +17,7 @@
 package org.kimios.webservices;
 
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
+import org.kimios.kernel.ws.pojo.MetaValue;
 import org.kimios.kernel.ws.pojo.Folder;
 import org.kimios.webservices.exceptions.DMServiceException;
 
@@ -70,4 +71,11 @@ public interface FolderService
     @Produces("application/json")
     public void deleteFolder(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "folderId") @WebParam(name = "folderId") long folderId) throws DMServiceException;
+
+
+    @GET
+    @Path("/getFolderMetaValues")
+    @Produces("application/json")
+    public MetaValue[] getFolderMetaValues(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+                               @QueryParam(value = "folderId") @WebParam(name = "folderId") long folderId) throws DMServiceException;
 }

@@ -231,7 +231,7 @@ public class SearchControllerWeb
     private String retSearchResp( SearchResponse searchResponse )
     {
         Vector<DMEntity> it = new Vector<DMEntity>();
-        for ( Document d : searchResponse.getRows() )
+        for ( org.kimios.kernel.ws.pojo.DMEntity d : searchResponse.getRows() )
         {
             it.add( new DMEntity( d ) );
         }

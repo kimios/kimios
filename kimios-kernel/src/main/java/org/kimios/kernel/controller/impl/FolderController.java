@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Vector;
@@ -173,27 +174,35 @@ public class FolderController extends AKimiosController implements IFolderContro
     }
 
     @DmsEvent(eventName = {DmsEventName.FOLDER_CREATE})
-    public long createVirtualFolder(Session session, Long id, String name, List<MetaValue> metaValues)
+    public long createVirtualFolder(Session session, Long id, String name, Long parentId, List<MetaValue> metaValues)
             throws NamingException, ConfigException, DataSourceException, AccessDeniedException {
 
 
-        Workspace parent = dmsFactoryInstantiator.getWorkspaceFactory().getWorkspace("Public Folders");
-
-
         Folder f = null;
+        DMEntityImpl parent = null;
+        if(parentId != null){
+            parent = (DMEntityImpl)dmsFactoryInstantiator.getDmEntityFactory().getEntity(parentId);
 
+        }
+
+        if(id != null){
+            f = dmsFactoryInstantiator.getFolderFactory().getFolder(id);
+            f.setUpdateDate(new Date());
+        }
         if(id == null){
+            if(parent == null){
+                parent = dmsFactoryInstantiator.getWorkspaceFactory().getWorkspace("Public Folders");
+            }
             Date creationDate = new Date();
             f = new Folder(-1, name, session.getUserName(), session.getUserSource(), creationDate, parent.getUid(),
                     parent.getType());
-
             f.setUpdateDate(creationDate);
-        } else {
-            f = dmsFactoryInstantiator.getFolderFactory().getFolder(id);
         }
 
-        if (getSecurityAgent()
-                .isWritable(parent, session.getUserName(), session.getUserSource(), session.getGroups())) {
+
+
+        if(parent != null && getSecurityAgent()
+                .isWritable(parent, session.getUserName(), session.getUserSource(), session.getGroups())){
             f.setParent(parent);
             dmsFactoryInstantiator.getDmEntityFactory().generatePath(f);
             dmsFactoryInstantiator.getFolderFactory().saveFolder(f);
@@ -219,7 +228,8 @@ public class FolderController extends AKimiosController implements IFolderContro
                 VirtualFolderMetaData virtualFolderMetaData = new VirtualFolderMetaData();
                 virtualFolderMetaData.setVirtualFolderId(f.getUid());
                 virtualFolderMetaData.setMetaId(metaValue.getMetaUid());
-                switch (virtualFolderMetaData.getMeta().getMetaType()) {
+                Meta m = FactoryInstantiator.getInstance().getMetaFactory().getMeta(metaValue.getMetaUid());
+                switch (m.getMetaType()) {
                     case MetaType.STRING:
                         virtualFolderMetaData.setStringValue(metaValue.getValue().toString());
                         break;
@@ -235,12 +245,9 @@ public class FolderController extends AKimiosController implements IFolderContro
             EventContext.get().addParameter("virtualFolderMetas", metaValues);
 
             return f.getUid();
-        } else {
-            throw new AccessDeniedException();
         }
-
-
-
+        else
+            throw new AccessDeniedException();
     }
 
 
@@ -337,6 +344,46 @@ public class FolderController extends AKimiosController implements IFolderContro
         Folder f = dmsFactoryInstantiator.getFolderFactory().getFolder(folderUid);
         if (getSecurityAgent().isReadable(f, session.getUserName(), session.getUserSource(), session.getGroups())) {
             return logFactoryInstantiator.getEntityLogFactory().getLogs(f);
+        } else {
+            throw new AccessDeniedException();
+        }
+    }
+
+    /***
+     *
+     * Load virtual volder meta datas
+     *
+     * @param session
+     * @param folderId
+     * @return
+     * @throws ConfigException
+     * @throws DataSourceException
+     * @throws AccessDeniedException
+     */
+    @Override
+    public List<MetaValue> listMetaValues(Session session, long folderId)
+            throws ConfigException, DataSourceException, AccessDeniedException
+    {
+        Folder f = dmsFactoryInstantiator.getFolderFactory().getFolder(folderId);
+        if (getSecurityAgent().isReadable(f, session.getUserName(), session.getUserSource(), session.getGroups())) {
+            List<VirtualFolderMetaData> virtualFolderMetaDatas = virtualFolderFactory.virtualFolderMetaDataList(f);
+
+            List<MetaValue> metaValues = new ArrayList<MetaValue>();
+            for(VirtualFolderMetaData m: virtualFolderMetaDatas){
+                if(m.getMeta().getMetaType() == MetaType.STRING){
+                    MetaStringValue mv = new MetaStringValue();
+                    mv.setValue(m.getStringValue());
+                    mv.setMeta(m.getMeta());
+                    metaValues.add(mv);
+                } else {
+                    MetaDateValue mv = new MetaDateValue();
+                    mv.setValue(m.getDateValue());
+                    mv.setMeta(m.getMeta());
+                    metaValues.add(mv);
+                }
+            }
+
+            return metaValues;
         } else {
             throw new AccessDeniedException();
         }

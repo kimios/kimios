@@ -19,6 +19,7 @@ package org.kimios.webservices.impl;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.kimios.kernel.dms.extension.impl.DMEntityAttribute;
+import org.kimios.kernel.dms.utils.MetaProcessor;
 import org.kimios.kernel.security.DMEntitySecurity;
 import org.kimios.kernel.security.Session;
 import org.kimios.kernel.ws.pojo.DMEntity;
@@ -32,11 +33,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @WebService(targetNamespace = "http://kimios.org", serviceName = "ExtensionService", name = "ExtensionService")
-public class ExtensionServiceImpl extends CoreService implements ExtensionService
-{
+public class ExtensionServiceImpl extends CoreService implements ExtensionService {
     public String getEntityAttributeValue(String sessionId, long dmEntityId, String attributeName)
-            throws DMServiceException
-    {
+            throws DMServiceException {
         try {
             Session session = getHelper().getSession(sessionId);
             return extensionController.getAttributeValue(session, dmEntityId, attributeName);
@@ -46,8 +45,7 @@ public class ExtensionServiceImpl extends CoreService implements ExtensionServic
     }
 
     public org.kimios.kernel.ws.pojo.DMEntityAttribute getEntityAttribute(String sessionId, long dmEntityId,
-            String attributeName) throws DMServiceException
-    {
+                                                                          String attributeName) throws DMServiceException {
         try {
             Session session = getHelper().getSession(sessionId);
             return extensionController.getAttribute(session, dmEntityId, attributeName).toPojo();
@@ -57,8 +55,7 @@ public class ExtensionServiceImpl extends CoreService implements ExtensionServic
     }
 
     public org.kimios.kernel.ws.pojo.DMEntityAttribute[] getEntityAttributes(String sessionId, long dmEntityId,
-            String attributeName) throws DMServiceException
-    {
+                                                                             String attributeName) throws DMServiceException {
         try {
             Session session = getHelper().getSession(sessionId);
             List<DMEntityAttribute> items = extensionController.getAttributes(session, dmEntityId);
@@ -75,8 +72,7 @@ public class ExtensionServiceImpl extends CoreService implements ExtensionServic
     }
 
     public void setEntityAttribute(String sessionId, long dmEntityId, String attributeName, String attributeValue,
-                                   boolean isIndexed) throws DMServiceException
-    {
+                                   boolean isIndexed) throws DMServiceException {
         try {
             Session session = getHelper().getSession(sessionId);
             extensionController.setAttribute(session, dmEntityId, attributeName, attributeValue, isIndexed);
@@ -86,8 +82,7 @@ public class ExtensionServiceImpl extends CoreService implements ExtensionServic
     }
 
     public String generatePasswordForUser(String sessionId, String userId, String userSource, boolean sendMail)
-            throws DMServiceException
-    {
+            throws DMServiceException {
         try {
             Session session = getHelper().getSession(sessionId);
             return extensionController.generatePasswordForUser(session, userId, userSource, sendMail);
@@ -112,7 +107,7 @@ public class ExtensionServiceImpl extends CoreService implements ExtensionServic
             Session session = getHelper().getSession(sessionId);
             List<org.kimios.kernel.dms.DMEntity> items = extensionController.viewTrash(session, start, count);
             List<DMEntity> toReturn = new ArrayList<DMEntity>();
-            for(org.kimios.kernel.dms.DMEntity d: items){
+            for (org.kimios.kernel.dms.DMEntity d : items) {
                 toReturn.add(d.toPojo());
             }
             return toReturn;
@@ -132,21 +127,29 @@ public class ExtensionServiceImpl extends CoreService implements ExtensionServic
     }
 
     @Override
-    public long saveVirtualFolder(String sessionId, Long id, String folderName,
-                                                               boolean isSecurityInherited, Long documentTypeId, String metaItemsJsonString)
+    public long saveVirtualFolder(String sessionId, Long id, String folderName, Long parentId,
+                                  boolean isSecurityInherited, Long documentTypeId, String metaItemsJsonString)
             throws DMServiceException {
 
         try {
             Session session = getHelper().getSession(sessionId);
-            List<org.kimios.kernel.dms.MetaValue> metaValues =
-                    new ObjectMapper().readValue(metaItemsJsonString, new TypeReference<List<org.kimios.kernel.dms.MetaValue>>() {
-            });
-            return folderController.createVirtualFolder(session, id, folderName, metaValues);
+            List<org.kimios.kernel.dms.MetaValue> metaValues = null;
+            try {
+                metaValues =
+                        new ObjectMapper().readValue(metaItemsJsonString, new TypeReference<List<org.kimios.kernel.dms.MetaValue>>() {
+                        });
+            } catch (Exception ex) {
+
+            }
+            if(metaValues == null){
+                //try xml format
+                metaValues = MetaProcessor.getMetaValuesFromXML(metaItemsJsonString);
+            }
+            return folderController.createVirtualFolder(session, id, folderName, parentId, metaValues);
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }
     }
-
 
 
 }

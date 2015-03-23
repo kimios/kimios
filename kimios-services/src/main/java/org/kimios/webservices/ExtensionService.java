@@ -115,6 +115,7 @@ public interface ExtensionService
     public long saveVirtualFolder( @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
                                    @QueryParam(value = "folderId") @WebParam(name = "folderId") Long id,
                                    @QueryParam(value = "folderName") @WebParam(name = "folderName") String folderName,
+                                   @QueryParam(value = "parentId") @WebParam(name = "parentId") Long parentId,
                                    @QueryParam(value = "isSecurityInherited") @WebParam(name = "isSecurityInherited") boolean isSecurityInherited,
                                    @QueryParam(value = "documentTypeId") @WebParam(name = "documentTypeId") Long documentTypeId,
                                    @QueryParam(value = "metaItemsJsonString") @WebParam(name = "metaItemsJsonString") String metaItemsJsonString)

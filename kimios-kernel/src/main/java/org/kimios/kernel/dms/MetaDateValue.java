@@ -62,7 +62,7 @@ public class MetaDateValue extends MetaValueBean<Date>
     public void setValue(Date value) throws MetaValueTypeException
     {
 
-        if (value != null && value.getClass().equals(Date.class) || value.getClass().equals(Timestamp.class)) {
+        if (value != null && value instanceof Date) {
             this.value = value;
         } else {
             throw new MetaValueTypeException(

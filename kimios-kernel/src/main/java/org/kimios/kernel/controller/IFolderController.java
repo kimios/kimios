@@ -78,6 +78,9 @@ public interface IFolderController {
             throws AccessDeniedException, ConfigException, DataSourceException;
 
     @DmsEvent(eventName = {DmsEventName.FOLDER_CREATE})
-    public long createVirtualFolder(Session session, Long id, String name, List<MetaValue> metaValues)
+    public long createVirtualFolder(Session session, Long id, String name, Long parentId, List<MetaValue> metaValues)
             throws NamingException, ConfigException, DataSourceException, AccessDeniedException;
+
+    public List<MetaValue> listMetaValues(Session session, long folderId)
+            throws ConfigException, DataSourceException, AccessDeniedException;
 }
