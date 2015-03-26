@@ -1,6 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2008-2014  DevLib'
+ * Copyright (C) 2008-2015  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -15,10 +15,7 @@
  */
 package org.kimios.kernel.events.impl;
 
-import org.kimios.kernel.dms.DMEntityImpl;
-import org.kimios.kernel.dms.Document;
-import org.kimios.kernel.dms.Folder;
-import org.kimios.kernel.dms.Workspace;
+import org.kimios.kernel.dms.*;
 import org.kimios.kernel.events.EventContext;
 import org.kimios.kernel.events.GenericEventHandler;
 import org.kimios.kernel.events.annotations.DmsEvent;
@@ -152,6 +149,27 @@ public class ActionLogger extends GenericEventHandler
     public void startDownloadTransaction(Object[] paramsObj, Object returnObj, EventContext ctx)
     {
         saveLog(new DMEntityLog<Document>(), ActionType.READ, ctx);
+    }
+
+    @DmsEvent(eventName = { DmsEventName.DOCUMENT_TRASH }, when = DmsEventOccur.AFTER)
+    public void trashDocument(Object[] paramsObj, Object returnObj, EventContext ctx)
+    {
+        ctx.setEntity((DMEntity)EventContext.getParameters().get("document"));
+        saveLog(new DMEntityLog<Document>(), ActionType.TRASH_DOCUMENT, ctx);
+    }
+
+    @DmsEvent(eventName = { DmsEventName.DOCUMENT_UNTRASH }, when = DmsEventOccur.AFTER)
+    public void untrashDocument(Object[] paramsObj, Object returnObj, EventContext ctx)
+    {
+        ctx.setEntity((DMEntity)EventContext.getParameters().get("document"));
+        saveLog(new DMEntityLog<Document>(), ActionType.UNTRASH_DOCUMENT, ctx);
+    }
+
+    @DmsEvent(eventName = { DmsEventName.DOCUMENT_COPY }, when = DmsEventOccur.AFTER)
+    public void copyDocument(Object[] paramsObj, Object returnObj, EventContext ctx)
+    {
+        ctx.setEntity((DMEntity)EventContext.getParameters().get("document"));
+        saveLog(new DMEntityLog<Document>(), ActionType.COPY_DOCUMENT, ctx);
     }
 
     private <T extends DMEntityImpl> void saveLog(DMEntityLog<T> log, int actionType, EventContext ctx)

@@ -1,6 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2008-2014  DevLib'
+ * Copyright (C) 2008-2015  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -46,12 +46,16 @@ public interface IExtensionController
     public String generatePasswordForUser(Session session, String userId, String userSource, boolean sendMail)
             throws ConfigException, DataSourceException, AccessDeniedException;
 
+
+    @DmsEvent(eventName = {DmsEventName.DOCUMENT_TRASH})
     public void trashEntity(Session session, long dmEntityId)
             throws ConfigException, DataSourceException, AccessDeniedException;
 
     public List<DMEntity> viewTrash(Session session, Integer start, Integer count)
             throws ConfigException, DataSourceException, AccessDeniedException;
 
+
+    @DmsEvent(eventName = {DmsEventName.DOCUMENT_UNTRASH})
     public String restoreEntity(Session session, long dmEntityId)
             throws ConfigException, DataSourceException, AccessDeniedException;
 

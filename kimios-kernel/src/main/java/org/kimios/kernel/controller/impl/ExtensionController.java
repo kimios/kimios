@@ -1,6 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2008-2014  DevLib'
+ * Copyright (C) 2008-2015  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -21,6 +21,7 @@ import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.IExtensionController;
 import org.kimios.kernel.dms.*;
 import org.kimios.kernel.dms.extension.impl.DMEntityAttribute;
+import org.kimios.kernel.events.EventContext;
 import org.kimios.kernel.events.annotations.DmsEvent;
 import org.kimios.kernel.events.annotations.DmsEventName;
 import org.kimios.kernel.exception.AccessDeniedException;
@@ -140,6 +141,7 @@ public class ExtensionController extends AKimiosController implements IExtension
     }
 
     @Override
+    @DmsEvent(eventName = {DmsEventName.DOCUMENT_TRASH})
     public void trashEntity(Session session, long dmEntityId)
             throws ConfigException, DataSourceException, AccessDeniedException {
 
@@ -153,6 +155,7 @@ public class ExtensionController extends AKimiosController implements IExtension
         if (getSecurityAgent().isWritable(d, session.getUserName(), session.getUserSource(), session.getGroups()) &&
                 getSecurityAgent().isWritable(d.getFolder(), session.getUserName(), session.getUserSource(), session.getGroups())) {
             dmsFactoryInstantiator.getDmEntityFactory().trash(d);
+            EventContext.addParameter("document", d);
         } else {
             throw new AccessDeniedException();
         }
@@ -170,12 +173,15 @@ public class ExtensionController extends AKimiosController implements IExtension
 
     }
 
+
     @Override
+    @DmsEvent(eventName = {DmsEventName.DOCUMENT_UNTRASH})
     public String restoreEntity(Session session, long dmEntityId)
             throws ConfigException, DataSourceException, AccessDeniedException {
         Document d = dmsFactoryInstantiator.getDocumentFactory().getDocument(dmEntityId);
         if (getSecurityAgent().isAdmin(session.getUserName(), session.getUserSource())) {
             dmsFactoryInstantiator.getDmEntityFactory().untrash(d);
+            EventContext.addParameter("document", d);
             return d.getPath();
         } else {
             throw new AccessDeniedException();

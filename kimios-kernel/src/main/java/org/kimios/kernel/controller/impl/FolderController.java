@@ -1,6 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2008-2014  DevLib'
+ * Copyright (C) 2008-2015  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -326,6 +326,13 @@ public class FolderController extends AKimiosController implements IFolderContro
                     .hasAnyChildNotWritable(f, session.getUserName(), session.getUserSource(), session.getGroups())) {
                 throw new AccessDeniedException();
             }
+
+
+            List<VirtualFolderMetaData> metaValues = virtualFolderFactory.virtualFolderMetaDataList(f);
+            for(VirtualFolderMetaData metaData: metaValues){
+                virtualFolderFactory.deleteMeta(metaData);
+            }
+            virtualFolderFactory.flush();
 
             // delete full path
             dmsFactoryInstantiator.getDmEntityFactory().deteteEntities(f.getPath());

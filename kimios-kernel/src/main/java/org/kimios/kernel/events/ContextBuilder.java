@@ -1,6 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2008-2014  DevLib'
+ * Copyright (C) 2008-2015  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -45,7 +45,8 @@ public class ContextBuilder
     private static String extension = "EXTENSION";
 
     private static String[] documentMethod = { "createDocument", "updateDocument", "deleteDocument",
-            "checkoutDocument", "checkinDocument", "addRelatedDocument", "removeRelatedDocument", "createDocumentWithProperties", "createDocumentFromFullPathWithProperties" };
+            "checkoutDocument", "checkinDocument", "addRelatedDocument", "removeRelatedDocument", "createDocumentWithProperties",
+            "createDocumentFromFullPathWithProperties", "copyDocument" };
 
     private static String[] folderMethod = { "createFolder", "updateFolder", "deleteFolder", "createVirtualFolder" };
 
@@ -252,6 +253,13 @@ public class ContextBuilder
             ctx.setEntity(doc);
         }
 
+        // copyDocument
+        if (name.equalsIgnoreCase(documentMethod[9])) {
+            Document doc = (Document)EventContext.getParameters().get("document");
+            ctx.setEntity(doc);
+        }
+
+
         return ctx;
     }
 
@@ -336,6 +344,8 @@ public class ContextBuilder
                 log.error("Error while build version context", e);
             }
         }
+
+
         return ctx;
     }
 
@@ -430,6 +440,24 @@ public class ContextBuilder
                 e.printStackTrace();
             }
         } else if (name.equalsIgnoreCase(extensionMethods[2])) {
+            try {
+                DMEntity entity = FactoryInstantiator.getInstance().getDmEntityFactory()
+                        .getEntity((Long)arguments[1]);
+                ctx.setEntity(entity);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        else if (name.equalsIgnoreCase(extensionMethods[3])) {
+            try {
+                DMEntity entity = FactoryInstantiator.getInstance().getDmEntityFactory()
+                        .getEntity((Long)arguments[1]);
+                ctx.setEntity(entity);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        else if (name.equalsIgnoreCase(extensionMethods[4])) {
             try {
                 DMEntity entity = FactoryInstantiator.getInstance().getDmEntityFactory()
                         .getEntity((Long)arguments[1]);

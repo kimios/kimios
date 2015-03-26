@@ -1,6 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2008-2014  DevLib'
+ * Copyright (C) 2008-2015  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -432,15 +432,20 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory {
             criteria.setMaxResults(count);
         }
 
-        List uniqueSubList = criteria.list();
-        criteria.setProjection(null);
-        criteria.setFirstResult(0);
-        criteria.setMaxResults(Integer.MAX_VALUE);
-        criteria.add(Restrictions.in("uid", uniqueSubList));
-        criteria.addOrder(Order.asc("creationDate"));
-        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 
-        return criteria.list();
+
+        List uniqueSubList = criteria.list();
+        if(uniqueSubList.size() > 0 ){
+            criteria.setProjection(null);
+            criteria.setFirstResult(0);
+            criteria.setMaxResults(Integer.MAX_VALUE);
+            criteria.add(Restrictions.in("uid", uniqueSubList));
+            criteria.addOrder(Order.asc("creationDate"));
+            criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+            return criteria.list();
+        } else {
+            return new ArrayList<DMEntity>();
+        }
     }
 
     public void trash(DMEntityImpl entity) throws ConfigException, DataSourceException {
@@ -457,7 +462,7 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory {
 
     public void untrash(DMEntityImpl entity) throws ConfigException, DataSourceException {
         if(entity.getType() == DMEntityType.DOCUMENT){
-            entity.setPath(entity.getPath().substring(TRASH_PREFIX.length()));
+            entity.setPath(entity.getPath().replaceAll(TRASH_PREFIX, ""));
             entity.setUpdateDate(new Date());
             entity.setTrashed(false);
             getSession().saveOrUpdate(entity);

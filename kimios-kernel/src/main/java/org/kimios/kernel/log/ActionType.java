@@ -1,6 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2008-2014  DevLib'
+ * Copyright (C) 2008-2015  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -62,5 +62,7 @@ public class ActionType
     public final static int TRASH_DOCUMENT = 21;
 
     public final static int UNTRASH_DOCUMENT = 22;
+
+    public final static int COPY_DOCUMENT = 23;
 }
 

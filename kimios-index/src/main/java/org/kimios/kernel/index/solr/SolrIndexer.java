@@ -1,6 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2008-2014  DevLib'
+ * Copyright (C) 2008-2015  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -62,6 +62,18 @@ public class SolrIndexer extends GenericEventHandler
         }
     }
 
+    @DmsEvent(eventName = { DmsEventName.DOCUMENT_COPY }, when = DmsEventOccur.AFTER)
+    public void documentCopy(Object[] obj, Object retour, EventContext ctx) throws Exception
+    {
+        log.debug("Indexing document on copy: " + (Long) obj[1]);
+        Document doc = (Document)EventContext.getParameters().get("document");
+        try {
+            indexManager.indexDocument(doc);
+        } catch (Exception e) {
+            log.error(" index action Exception on Document " + doc.getUid(), e);
+        }
+    }
+
     @DmsEvent(eventName = { DmsEventName.DOCUMENT_VERSION_UPDATE }, when = DmsEventOccur.AFTER)
     public void documentVersionUpdate(Object[] obj, Object retour, EventContext ctx) throws Exception
     {
@@ -110,6 +122,8 @@ public class SolrIndexer extends GenericEventHandler
         Folder fold = (Folder) EventContext.getParameters().get("removed");
         try {
             indexManager.deletePath(fold.getPath());
+            //remove folder from index
+            indexManager.deleteDocument(fold);
         } catch (Exception e) {
             log.error(" index removing action Exception on Document on folder remove " + fold.getPath(), e);
         }
@@ -315,6 +329,38 @@ public class SolrIndexer extends GenericEventHandler
     {
         log.debug("Indexing on entity attribute set: " + (Long) obj[1]);
         try {
+            if(ctx.getEntity() != null && ctx.getEntity().getType() == DMEntityType.DOCUMENT){
+                indexManager.indexDocument(ctx.getEntity());
+            }
+
+        } catch (Exception e) {
+            log.error(" index action Exception on entity attribute set");
+        }
+    }
+
+    @DmsEvent( eventName = {DmsEventName.DOCUMENT_TRASH}, when = DmsEventOccur.AFTER)
+    public void trashDocument(Object[] obj, Object retour, EventContext ctx) throws Exception
+    {
+        log.debug("Removind document from index on trash: " + (Long) obj[1]);
+        try {
+            if(ctx.getEntity() == null)
+                ctx.setEntity((DMEntity)EventContext.getParameters().get("document"));
+            if(ctx.getEntity() != null && ctx.getEntity().getType() == DMEntityType.DOCUMENT){
+                indexManager.deleteDocument(ctx.getEntity());
+            }
+
+        } catch (Exception e) {
+            log.error(" index action Exception on entity attribute set");
+        }
+    }
+
+    @DmsEvent( eventName = {DmsEventName.DOCUMENT_UNTRASH}, when = DmsEventOccur.AFTER)
+    public void untrashDocument(Object[] obj, Object retour, EventContext ctx) throws Exception
+    {
+        log.debug("Removing document from trash, so index it back " + (Long) obj[1]);
+        try {
+            if(ctx.getEntity() == null)
+                ctx.setEntity((DMEntity)EventContext.getParameters().get("document"));
             if(ctx.getEntity() != null && ctx.getEntity().getType() == DMEntityType.DOCUMENT){
                 indexManager.indexDocument(ctx.getEntity());
             }

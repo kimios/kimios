@@ -1,6 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2008-2014  DevLib'
+ * Copyright (C) 2008-2015  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -30,6 +30,8 @@ import org.kimios.kernel.exception.*;
 import org.kimios.kernel.filetransfer.DataTransfer;
 import org.kimios.kernel.filetransfer.zip.FileCompressionHelper;
 import org.kimios.kernel.log.DMEntityLog;
+import org.kimios.kernel.repositories.RepositoryManager;
+import org.kimios.kernel.security.DMEntityACL;
 import org.kimios.kernel.security.DMEntitySecurity;
 import org.kimios.kernel.security.DMEntitySecurityFactory;
 import org.kimios.kernel.security.Session;
@@ -41,6 +43,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.Access;
 import java.io.*;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
@@ -399,7 +402,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     }
 
 
-    private long generateEntitiesFromPath(Session s, String path, boolean isSecurityInherited){
+    private long generateEntitiesFromPath(Session s, String path, boolean isSecurityInherited) {
         String targetPath = path;
         Long documentId = null;
         if (path.startsWith("/")) {
@@ -1189,5 +1192,102 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     public org.kimios.kernel.ws.pojo.Document getDocumentPojo(Document document)
             throws AccessDeniedException, ConfigException, DataSourceException {
         return document.toPojo();
+    }
+
+    @DmsEvent(eventName = {DmsEventName.DOCUMENT_COPY})
+    public Document copyDocument(Session session, long sourceDocumentId, String documentCopyName)
+            throws AccessDeniedException, ConfigException, DataSourceException {
+
+
+        Document document = dmsFactoryInstantiator.getDocumentFactory().getDocument(sourceDocumentId);
+        if (document != null
+                && getSecurityAgent().isReadable(document, session.getUserName(), session.getUserSource(), session.getGroups())) {
+
+            Folder parent = dmsFactoryInstantiator.getFolderFactory().getFolder(document.getFolderUid());
+            if (getSecurityAgent().isWritable(parent, session.getUserName(), session.getUserSource(), session.getGroups())) {
+
+
+                if (documentCopyName.equals(document.getName())) {
+                    throw new AccessDeniedException();
+                }
+                Date creationDate = new Date();
+                Document documentCopy =
+                        new Document(documentCopyName,
+                                session.getUserName(),
+                                session.getUserSource(),
+                                creationDate, creationDate, parent.getUid(),
+                                document.getMimeType(),
+                                document.getExtension());
+                documentCopy.setFolder(parent);
+                dmsFactoryInstantiator.getDmEntityFactory().generatePath(documentCopy);
+                dmsFactoryInstantiator.getDocumentFactory().saveDocument(documentCopy);
+
+                DMEntitySecurityFactory dsf = securityFactoryInstantiator.getDMEntitySecurityFactory();
+                List<DMEntitySecurity> acls = dsf.getDMEntitySecurities(document);
+                for (DMEntitySecurity acl : acls) {
+                    DMEntitySecurity aclCopy = new DMEntitySecurity();
+                    aclCopy.setDmEntityType(acl.getDmEntityType());
+                    aclCopy.setDmEntityUid(acl.getDmEntityUid());
+                    aclCopy.setDmEntity(documentCopy);
+                    aclCopy.setFullAccess(acl.isFullAccess());
+                    aclCopy.setWrite(acl.isWrite());
+                    aclCopy.setRead(acl.isRead());
+                    aclCopy.setFullName(acl.getFullName());
+
+                    dsf.saveDMEntitySecurity(aclCopy);
+                }
+
+                DocumentVersion dv = dmsFactoryInstantiator.getDocumentVersionFactory().getLastDocumentVersion(document);
+                DocumentVersion newVersion =
+                        new DocumentVersion(-1, session.getUserName(), session.getUserSource(), new Date(), new Date(),
+                                documentCopy.getUid(), dv.getLength(), dv.getDocumentType());
+                newVersion.setHashMD5(dv.getHashMD5());
+                newVersion.setHashSHA1(dv.getHashSHA1());
+                dmsFactoryInstantiator.getDocumentVersionFactory().saveDocumentVersion(newVersion);
+                RepositoryManager.copyVersion(dv, newVersion);
+                //Copying metas values
+                List<MetaValue> vMetas = dmsFactoryInstantiator.getMetaValueFactory().getMetaValues(dv);
+                Vector<MetaValue> toSave = new Vector<MetaValue>();
+                for (MetaValue m : vMetas) {
+                    switch (m.getMeta().getMetaType()) {
+                        case MetaType.STRING:
+                            toSave.add(new MetaStringValue(newVersion, m.getMeta(),
+                                    (m.getValue() != null ? (String) m.getValue() : "")));
+                            break;
+                        case MetaType.NUMBER:
+                            toSave.add(new MetaNumberValue(newVersion, m.getMeta(),
+                                    (m.getValue() != null ? (Double) m.getValue() : -1)));
+                            break;
+
+                        case MetaType.DATE:
+                            toSave.add(new MetaDateValue(newVersion, m.getMeta(),
+                                    (m.getValue() != null ? (Date) m.getValue() : null)));
+                            break;
+
+                        case MetaType.BOOLEAN:
+                            toSave.add(new MetaBooleanValue(newVersion, m.getMeta(),
+                                    (m.getValue() != null ? (Boolean) m.getValue() : null)));
+                            break;
+                        case MetaType.LIST:
+                            toSave.add(new MetaListValue(newVersion, m.getMeta(),
+                                    (m.getValue() != null ? (List) m.getValue() : null)));
+                            break;
+                    }
+                }
+                MetaValueFactory mvf = dmsFactoryInstantiator.getMetaValueFactory();
+                for (MetaValue b : toSave) {
+                    mvf.saveMetaValue(b);
+                }
+
+
+                EventContext.addParameter("document", document);
+                return document;
+
+            } else
+                throw new AccessDeniedException();
+
+
+        } else
+            throw new AccessDeniedException();
     }
 }
