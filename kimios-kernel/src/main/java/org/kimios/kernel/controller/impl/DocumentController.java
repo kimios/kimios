@@ -158,7 +158,11 @@ public class DocumentController extends AKimiosController implements IDocumentCo
             throw new AccessDeniedException();
         }
         List<Document> d = dmsFactoryInstantiator.getDocumentFactory().getDocuments(folder);
-        return getSecurityAgent().areReadable(d, session.getUserName(), session.getUserSource(), session.getGroups());
+        log.debug("first document load for folder #" + folderUid + ": " + d.size());
+        List<Document> readableItems = getSecurityAgent().areReadable(d, session.getUserName(), session.getUserSource(), session.getGroups());
+        log.debug("after load, readable items are: " + readableItems.size());
+
+        return readableItems;
     }
 
     /* (non-Javadoc)
@@ -1170,6 +1174,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     public List<org.kimios.kernel.ws.pojo.Document> getDocumentsPojos(Session session, long folderUid)
             throws AccessDeniedException, ConfigException, DataSourceException {
         List<Document> docs = this.getDocuments(session, folderUid);
+        log.debug("documents loaded for folder " + folderUid + ": " + docs.size());
         return dmsFactoryInstantiator.getDocumentFactory().getDocumentsPojos(docs);
     }
 
