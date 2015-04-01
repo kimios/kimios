@@ -25,8 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
-public class SecurityAgent
-{
+public class SecurityAgent implements ISecurityAgent {
 
     private static org.slf4j.Logger log = LoggerFactory.getLogger( SecurityAgent.class );
     private static SecurityAgent instance;
@@ -55,8 +54,9 @@ public class SecurityAgent
         this.dmsFactoryInstantiator = dmsFactoryInstantiator;
     }
 
+    @Override
     public <T extends DMEntityImpl> List<T> areReadable(List<T> entities, String userName, String userSource,
-            Vector<Group> groups) throws ConfigException,
+                                                        Vector<Group> groups) throws ConfigException,
             DataSourceException
     {
 
@@ -102,8 +102,9 @@ public class SecurityAgent
         return readables;
     }
 
+    @Override
     public <T extends DMEntityImpl> List<T> areWritable(List<T> entities, String userName, String userSource,
-            Vector<Group> groups) throws ConfigException, DataSourceException
+                                                        Vector<Group> groups) throws ConfigException, DataSourceException
     {
 
         if (isAdmin(userName, userSource)) {
@@ -143,8 +144,9 @@ public class SecurityAgent
         return writables;
     }
 
+    @Override
     public <T extends DMEntityImpl> List<T> areFullAccess(List<T> entities, String userName, String userSource,
-            Vector<Group> groups) throws ConfigException, DataSourceException
+                                                          Vector<Group> groups) throws ConfigException, DataSourceException
     {
 
         if (isAdmin(userName, userSource)) {
@@ -178,6 +180,7 @@ public class SecurityAgent
         return fullAccessAble;
     }
 
+    @Override
     public boolean isReadable(DMEntity dm, String userName, String userSource, Vector<Group> groups)
             throws ConfigException, DataSourceException
     {
@@ -216,6 +219,7 @@ public class SecurityAgent
         return secReturn;
     }
 
+    @Override
     public boolean isWritable(DMEntity dm, String userName, String userSource, Vector<Group> groups)
             throws ConfigException, DataSourceException
     {
@@ -267,6 +271,7 @@ public class SecurityAgent
     /*
     *  Check if one child element is not writable (this method don't check the checked out documents)
     */
+    @Override
     public boolean hasAnyChildNotWritable(DMEntity dm, String userName, String userSource, Vector<Group> groups)
             throws ConfigException, DataSourceException
     {
@@ -299,6 +304,7 @@ public class SecurityAgent
                 .hasAnyChildNotWritable(dm, userName, userSource, writeHash, noAccessUserHash);
     }
 
+    @Override
     public boolean hasAnyChildNotFullAccess(DMEntity dm, String userName, String userSource, Vector<Group> groups)
             throws ConfigException, DataSourceException
     {
@@ -325,12 +331,14 @@ public class SecurityAgent
                 .hasAnyChildNotWritable(dm, userName, userSource, writeHash, noAccessUserHash);
     }
 
+    @Override
     public boolean hasAnyChildCheckedOut(DMEntity dm, String userName, String userSource)
             throws ConfigException, DataSourceException
     {
         return securityFactoryInstantiator.getDMEntitySecurityFactory().hasAnyChildCheckedOut(dm, userName, userSource);
     }
 
+    @Override
     public boolean isFullAccess(DMEntity dm, String userName, String userSource, Vector<Group> groups)
             throws ConfigException, DataSourceException
     {
@@ -371,6 +379,7 @@ public class SecurityAgent
                 .ruleExists(dm, userName, userSource, hashs, noAccessHash);
     }
 
+    @Override
     public boolean isAdmin(String userName, String userSource) throws ConfigException, DataSourceException
     {
         return (securityFactoryInstantiator.getRoleFactory().getRole(Role.ADMIN, userName, userSource) != null);
@@ -413,6 +422,7 @@ public class SecurityAgent
         }
     }
 
+    @Override
     public boolean canCancelWorkFlow(Document doc, String userName, String userSource, Vector<Group> groups)
             throws ConfigException, DataSourceException
     {
@@ -431,6 +441,7 @@ public class SecurityAgent
         }
     }
 
+    @Override
     public boolean isDocumentOutOfWorkflow(Document doc) throws ConfigException, DataSourceException
     {
         DocumentWorkflowStatus dws =

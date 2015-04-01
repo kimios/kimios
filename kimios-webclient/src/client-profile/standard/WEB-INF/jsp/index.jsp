@@ -1,6 +1,7 @@
 <%@ page import="org.kimios.client.controller.SecurityController" %>
-<%@ page import="org.springframework.web.context.WebApplicationContext" %>
-<%@ page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
+<%@ page import="org.slf4j.LoggerFactory" %>
+<%@ page import="org.slf4j.Logger" %>
+<%@ page import="org.kimios.controller.Controller" %>
 <%@ page contentType="text/html" pageEncoding="UTF-8" %>
 <%--
   ~ Kimios - Document Management System Software
@@ -20,6 +21,9 @@
   --%>
 
 <%
+
+
+    Logger logger = LoggerFactory.getLogger("index-kimios");
     //check mobile browser
     String ua = request.getHeader("User-Agent").toLowerCase();
     if (ua.matches(
@@ -30,18 +34,18 @@
         return;
     }
 
-    SecurityController securityController = null;
-    WebApplicationContext wac =
-            WebApplicationContextUtils.getRequiredWebApplicationContext(this.getServletConfig().getServletContext());
-    if (securityController == null) {
-        securityController = (SecurityController) wac.getBean("securityController");
-    }
 
-    // check and redirect to main page if session is alive
-    String sessionUid = (String) request.getSession().getAttribute("sessionUid");
-    if (sessionUid != null && securityController.isSessionAlive(sessionUid)) {
-        response.sendRedirect(request.getContextPath() + "/logged.jsp");
-        return;
+    try{
+        SecurityController securityController = Controller.getSecurityController();
+        logger.info("sec controller inside index " + securityController);
+        // check and redirect to main page if session is alive
+        String sessionUid = (String) request.getSession().getAttribute("sessionUid");
+        if (sessionUid != null && securityController.isSessionAlive(sessionUid)) {
+            response.sendRedirect(request.getContextPath() + "/logged.jsp");
+            return;
+        }
+    }catch (Exception ex){
+        logger.error("Exception ", ex);
     }
     /*
     System.setProperty("javax.net.ssl.keyStore", "/path/to/client.ks");

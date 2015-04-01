@@ -18,6 +18,7 @@ package org.kimios.kernel.index.query.factory;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
+import org.hibernate.SessionFactory;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
 import org.kimios.kernel.index.query.model.Criteria;
@@ -26,6 +27,7 @@ import org.kimios.kernel.security.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 
 /**
@@ -36,10 +38,8 @@ import java.util.List;
  */
 public class SearchRequestFactory extends HFactory {
 
-
-
-
     private static Logger logger = LoggerFactory.getLogger(SearchRequestFactory.class);
+
 
     public Long save(SearchRequest searchRequest) throws DataSourceException {
 

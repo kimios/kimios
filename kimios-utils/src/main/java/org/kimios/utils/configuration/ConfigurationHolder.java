@@ -18,6 +18,7 @@ package org.kimios.utils.configuration;
 import org.kimios.exceptions.ConfigException;
 
 import java.util.List;
+import java.util.Properties;
 
 /**
  * @author Fabien Alin (Farf) <fabien.alin@gmail.com>
@@ -37,4 +38,6 @@ public interface ConfigurationHolder
     public List<String> getValues(String prefix);
 
     public void refresh() throws ConfigException;
+
+    public Properties getAllProperties();
 }

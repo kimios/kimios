@@ -15,8 +15,7 @@
  */
 package org.kimios.kernel.dms;
 
-public class FactoryInstantiator
-{
+public class FactoryInstantiator implements IDmsFactoryInstantiator {
     private static FactoryInstantiator instance;
 
     private FactoryInstantiator()
@@ -71,6 +70,7 @@ public class FactoryInstantiator
 
     SymbolicLinkFactory symbolicLinkFactory;
 
+    @Override
     public DocumentTypeFactory getDocumentTypeFactory()
     {
         return documentTypeFactory;
@@ -81,6 +81,7 @@ public class FactoryInstantiator
         this.documentTypeFactory = documentTypeFactory;
     }
 
+    @Override
     public DMEntityFactory getDmEntityFactory()
     {
         return dmEntityFactory;
@@ -91,6 +92,7 @@ public class FactoryInstantiator
         this.dmEntityFactory = dmEntityFactory;
     }
 
+    @Override
     public DocumentFactory getDocumentFactory()
     {
         return documentFactory;
@@ -101,6 +103,7 @@ public class FactoryInstantiator
         this.documentFactory = documentFactory;
     }
 
+    @Override
     public FolderFactory getFolderFactory()
     {
         return folderFactory;
@@ -111,6 +114,7 @@ public class FactoryInstantiator
         this.folderFactory = folderFactory;
     }
 
+    @Override
     public DocumentVersionFactory getDocumentVersionFactory()
     {
         return documentVersionFactory;
@@ -122,6 +126,7 @@ public class FactoryInstantiator
         this.documentVersionFactory = documentVersionFactory;
     }
 
+    @Override
     public WorkspaceFactory getWorkspaceFactory()
     {
         return workspaceFactory;
@@ -132,6 +137,7 @@ public class FactoryInstantiator
         this.workspaceFactory = workspaceFactory;
     }
 
+    @Override
     public MetaFactory getMetaFactory()
     {
         return metaFactory;
@@ -142,6 +148,7 @@ public class FactoryInstantiator
         this.metaFactory = metaFactory;
     }
 
+    @Override
     public MetaFeedFactory getMetaFeedFactory()
     {
         return metaFeedFactory;
@@ -152,6 +159,7 @@ public class FactoryInstantiator
         this.metaFeedFactory = metaFeedFactory;
     }
 
+    @Override
     public MetaValueFactory getMetaValueFactory()
     {
         return metaValueFactory;
@@ -162,6 +170,7 @@ public class FactoryInstantiator
         this.metaValueFactory = metaValueFactory;
     }
 
+    @Override
     public WorkflowFactory getWorkflowFactory()
     {
         return workflowFactory;
@@ -172,6 +181,7 @@ public class FactoryInstantiator
         this.workflowFactory = workflowFactory;
     }
 
+    @Override
     public WorkflowStatusFactory getWorkflowStatusFactory()
     {
         return workflowStatusFactory;
@@ -182,6 +192,7 @@ public class FactoryInstantiator
         this.workflowStatusFactory = workflowStatusFactory;
     }
 
+    @Override
     public EnumerationValueFactory getEnumerationValueFactory()
     {
         return enumerationValueFactory;
@@ -193,6 +204,7 @@ public class FactoryInstantiator
         this.enumerationValueFactory = enumerationValueFactory;
     }
 
+    @Override
     public BookmarkFactory getBookmarkFactory()
     {
         return bookmarkFactory;
@@ -203,6 +215,7 @@ public class FactoryInstantiator
         this.bookmarkFactory = bookmarkFactory;
     }
 
+    @Override
     public RecentItemsFactory getRecentItemFactory()
     {
         return recentItemFactory;
@@ -213,6 +226,7 @@ public class FactoryInstantiator
         this.recentItemFactory = recentItemFactory;
     }
 
+    @Override
     public LockFactory getLockFactory()
     {
         return lockFactory;
@@ -223,6 +237,7 @@ public class FactoryInstantiator
         this.lockFactory = lockFactory;
     }
 
+    @Override
     public WorkflowStatusManagerFactory getWorkflowStatusManagerFactory()
     {
         return workflowStatusManagerFactory;
@@ -234,6 +249,7 @@ public class FactoryInstantiator
         this.workflowStatusManagerFactory = workflowStatusManagerFactory;
     }
 
+    @Override
     public DocumentWorkflowStatusFactory getDocumentWorkflowStatusFactory()
     {
         return documentWorkflowStatusFactory;
@@ -245,6 +261,7 @@ public class FactoryInstantiator
         this.documentWorkflowStatusFactory = documentWorkflowStatusFactory;
     }
 
+    @Override
     public DocumentWorkflowStatusRequestFactory getDocumentWorkflowStatusRequestFactory()
     {
         return documentWorkflowStatusRequestFactory;
@@ -256,6 +273,7 @@ public class FactoryInstantiator
         this.documentWorkflowStatusRequestFactory = documentWorkflowStatusRequestFactory;
     }
 
+    @Override
     public DocumentCommentFactory getDocumentCommentFactory()
     {
         return documentCommentFactory;
@@ -267,6 +285,7 @@ public class FactoryInstantiator
         this.documentCommentFactory = documentCommentFactory;
     }
 
+    @Override
     public SymbolicLinkFactory getSymbolicLinkFactory()
     {
         return symbolicLinkFactory;

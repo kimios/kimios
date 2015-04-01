@@ -1,5 +1,6 @@
 <%@ page import="java.util.Properties" %>
 <%@ page import="java.io.FileInputStream" %>
+<%@ page import="org.kimios.utils.configuration.ConfigurationManager" %>
 <%@page contentType="text/html" %>
 <%@page pageEncoding="UTF-8" %>
 <%--
@@ -46,9 +47,9 @@
     var clientConfig = {}
 
     <%
-        Properties properties = new Properties();
-        properties.load(new FileInputStream(System.getProperty("kimios.home") + "/" + this.getServletConfig().getServletContext().getInitParameter("kimios.app.name") + "/conf/kimios.properties"));
 
+        //load prop from context
+        Properties properties = ConfigurationManager.allValues();
         for(String p: properties.stringPropertyNames()){
             String pName = p.replaceAll("\\.", "");
             %>

@@ -81,7 +81,7 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- spring -->
+        <!-- spring   -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
@@ -193,34 +193,51 @@
             <version>1.4.7</version>
         </dependency>
 
+
+        <!-- osgi stuff -->
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <version>4.3.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.aries.blueprint</groupId>
+            <artifactId>org.apache.aries.blueprint.core</artifactId>
+            <version>1.0.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.aries.blueprint</groupId>
+            <artifactId>org.apache.aries.blueprint.webosgi</artifactId>
+            <version>1.0.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.compendium</artifactId>
+            <version>4.3.0</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.aries.blueprint</groupId>
+            <artifactId>org.apache.aries.blueprint.cm</artifactId>
+            <version>1.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>2.4</version>
-                <configuration>
-                    <webResources>
-                        <resource>
-                            <directory>src/client-profile/standard</directory>
-                            <targetPath />
-                        </resource>
-                    </webResources>
-                    <!--
-                              Exclude JCL and LOG4J since all logging should go through SLF4J.
-                              Note that we're excluding log4j-<version>.jar but keeping
-                              log4j-over-slf4j-<version>.jar
-                            -->
-                    <packagingExcludes>
-                        WEB-INF/lib/commons-logging-*.jar,
-                        %regex[WEB-INF/lib/log4j-(?!over-slf4j).*.jar]
-                    </packagingExcludes>
-                    <archive>
-                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
-                    </archive>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
@@ -236,7 +253,6 @@
                     </execution>
                 </executions>
                 <configuration>
-
                     <supportedProjectTypes>
                         <supportedProjectType>war</supportedProjectType>
                     </supportedProjectTypes>
@@ -244,17 +260,90 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Version>${project.version}</Bundle-Version>
                         <Bundle-ClassPath>WEB-INF/classes</Bundle-ClassPath>
+                        <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
+                        <Embed-Directory>WEB-INF/lib</Embed-Directory>
                         <Web-ContextPath>kimios-client</Web-ContextPath>
                         <Import-Package>
+                            org.apache.aries.blueprint.web;resolution:=optional,
+                            org.slf4j,
+                            org.osgi.framework,
                             javax.servlet; version="[2.4.0, 4.0.0)",
                             javax.servlet.http; version="[2.4.0, 4.0.0)",
-                            javax.servlet.jsp.jstl.core; version="[1.2,2.0)",
                             javax.servlet.resources; version="[2.4.0, 4.0.0)",
-                            *
+                            org.osgi.service.cm,
+                            org.osgi.service.blueprint.container,
+                            org.osgi.service.blueprint.reflect,
+                            org.apache.aries.blueprint.reflect,
+                            *;resolution:=optional
                         </Import-Package>
                     </instructions>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.6</version>
+                <executions>
+                    <execution>
+                        <id>default-war</id>
+                        <goals>
+                            <goal>war</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <webXml>src/standard/web.xml</webXml>
+                            <webResources>
+                                <resource>
+                                    <directory>src/client-profile/standard</directory>
+                                    <targetPath />
+                                </resource>
+                            </webResources>
+                            <!--
+                                      Exclude JCL and LOG4J since all logging should go through SLF4J.
+                                      Note that we're excluding log4j-<version>.jar but keeping
+                                      log4j-over-slf4j-<version>.jar
+                                    -->
+                            <packagingExcludes>
+                                WEB-INF/lib/commons-logging-*.jar,
+                                %regex[WEB-INF/lib/log4j-(?!over-slf4j).*.jar]
+                            </packagingExcludes>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>war-osgi</id>
+                        <goals>
+                            <goal>war</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <classifier>osgi</classifier>
+                            <webappDirectory>${project.build.directory}/${project.build.finalName}-osgi</webappDirectory>
+                            <webResources>
+                                <resource>
+                                    <directory>src/client-profile/standard</directory>
+                                    <targetPath />
+                                </resource>
+                            </webResources>
+                            <webXml>src/osgi/WEB-INF/web.xml</webXml>
+                            <!--
+                                      Exclude JCL and LOG4J since all logging should go through SLF4J.
+                                      Note that we're excluding log4j-<version>.jar but keeping
+                                      log4j-over-slf4j-<version>.jar
+                                    -->
+                            <packagingExcludes>
+                                WEB-INF/lib/commons-logging-*.jar,
+                                %regex[WEB-INF/lib/log4j-(?!over-slf4j).*.jar]
+                            </packagingExcludes>
+                            <archive>
+                                <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                            </archive>
+                        </configuration>
+                    </execution>
+                </executions>
+
+
+            </plugin>
+
         </plugins>
     </build>
     <profiles>

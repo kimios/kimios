@@ -15,8 +15,7 @@
  */
 package org.kimios.kernel.user;
 
-public class FactoryInstantiator
-{
+public class FactoryInstantiator implements IAuthenticationFactoryInstantiator {
     private static FactoryInstantiator instance;
 
     synchronized public static FactoryInstantiator getInstance()
@@ -35,6 +34,7 @@ public class FactoryInstantiator
 
     private AuthenticationSourceParamsFactory authenticationSourceParamsFactory;
 
+    @Override
     public AuthenticationSourceFactory getAuthenticationSourceFactory()
     {
         return authenticationSourceFactory;
@@ -46,6 +46,7 @@ public class FactoryInstantiator
         this.authenticationSourceFactory = authenticationSourceFactory;
     }
 
+    @Override
     public AuthenticationSourceParamsFactory getAuthenticationSourceParamsFactory()
     {
         return authenticationSourceParamsFactory;

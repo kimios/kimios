@@ -21,25 +21,20 @@
 package org.kimios.controller;
 
 import org.kimios.client.controller.*;
+import org.kimios.core.ApplicationContextProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
-
-import javax.servlet.ServletContext;
 import java.util.Map;
 
 /**
  * @author Fabien Alin
  */
-public abstract class Controller {
+public class Controller {
 
 
     Logger log = LoggerFactory.getLogger(this.getClass().getName());
 
-
-    protected static WebApplicationContext webApplicationContext;
-
+    protected static org.kimios.core.ApplicationContextProvider applicationContextProvider;
 
     protected static AdministrationController administrationController;
     protected static StudioController studioController;
@@ -58,58 +53,61 @@ public abstract class Controller {
     protected static RuleController ruleController;
     protected static BonitaController bonitaController;
 
-    public static void init(ServletContext servletContext) {
-        WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext);
+
+    public Controller(){}
+
+    public synchronized static void init(ApplicationContextProvider appContext) {
+
+        applicationContextProvider = appContext;
+
         if (administrationController == null) {
-            administrationController = (AdministrationController) wac.getBean("administrationController");
+            administrationController = applicationContextProvider.getBean(AdministrationController.class);
         }
         if (studioController == null) {
-            studioController = (StudioController) wac.getBean("studioController");
+            studioController = applicationContextProvider.getBean(StudioController.class);
         }
         if (reportingController == null) {
-            reportingController = (ReportingController) wac.getBean("reportingController");
+            reportingController = applicationContextProvider.getBean(ReportingController.class);
         }
         if (logController == null) {
-            logController = (LogController) wac.getBean("logController");
+            logController = applicationContextProvider.getBean(LogController.class);
         }
         if (securityController == null) {
-            securityController = (SecurityController) wac.getBean("securityController");
+            securityController = applicationContextProvider.getBean(SecurityController.class);
         }
         if (searchController == null) {
-            searchController = (SearchController) wac.getBean("searchController");
+            searchController = applicationContextProvider.getBean(SearchController.class);
         }
         if (documentController == null) {
-            documentController = (DocumentController) wac.getBean("documentController");
+            documentController = applicationContextProvider.getBean(DocumentController.class);
         }
         if (documentVersionController == null) {
-            documentVersionController = (DocumentVersionController) wac.getBean("documentVersionController");
+            documentVersionController = applicationContextProvider.getBean(DocumentVersionController.class);
         }
         if (folderController == null) {
-            folderController = (FolderController) wac.getBean("folderController");
+            folderController = applicationContextProvider.getBean(FolderController.class);
         }
         if (workflowController == null) {
-            workflowController = (WorkflowController) wac.getBean("workflowController");
+            workflowController = applicationContextProvider.getBean(WorkflowController.class);
         }
         if (workspaceController == null) {
-            workspaceController = (WorkspaceController) wac.getBean("workspaceController");
+            workspaceController = applicationContextProvider.getBean(WorkspaceController.class);
         }
         if (serverInformationController == null) {
-            serverInformationController = (ServerInformationController) wac.getBean("serverInformationController");
+            serverInformationController = applicationContextProvider.getBean(ServerInformationController.class);
         }
         if (fileTransferController == null) {
-            fileTransferController = (FileTransferController) wac.getBean("fileTransferController");
+            fileTransferController = applicationContextProvider.getBean(FileTransferController.class);
         }
         if (extensionController == null) {
-            extensionController = (ExtensionController) wac.getBean("extensionController");
+            extensionController = applicationContextProvider.getBean(ExtensionController.class);
         }
         if (ruleController == null) {
-            ruleController = (RuleController) wac.getBean("ruleController");
+            ruleController = applicationContextProvider.getBean(RuleController.class);
         }
         if (bonitaController == null) {
-            bonitaController = (BonitaController) wac.getBean("bonitaController");
+            bonitaController = applicationContextProvider.getBean(BonitaController.class);
         }
-
-
     }
 
 
@@ -126,11 +124,144 @@ public abstract class Controller {
         this.sessionUid = sessionUid;
     }
 
-    public abstract String execute() throws Exception;
+    public String execute() throws Exception {
+        return null;
+    }
 
     public Controller(Map<String, String> parameters) {
         this.parameters = parameters;
         this.action = parameters.get("action");
     }
+
+
+    public static AdministrationController getAdministrationController() {
+        return administrationController;
+    }
+
+    public void setAdministrationController(AdministrationController administrationController) {
+        Controller.administrationController = administrationController;
+    }
+
+    public static StudioController getStudioController() {
+        return studioController;
+    }
+
+    public void setStudioController(StudioController studioController) {
+        Controller.studioController = studioController;
+    }
+
+    public static ReportingController getReportingController() {
+        return reportingController;
+    }
+
+    public void setReportingController(ReportingController reportingController) {
+        Controller.reportingController = reportingController;
+    }
+
+    public static LogController getLogController() {
+        return logController;
+    }
+
+    public void setLogController(LogController logController) {
+        Controller.logController = logController;
+    }
+
+    public static SecurityController getSecurityController() {
+        return securityController;
+    }
+
+    public void setSecurityController(SecurityController securityController) {
+        Controller.securityController = securityController;
+    }
+
+    public static SearchController getSearchController() {
+        return searchController;
+    }
+
+    public void setSearchController(SearchController searchController) {
+        Controller.searchController = searchController;
+    }
+
+    public static DocumentController getDocumentController() {
+        return documentController;
+    }
+
+    public void setDocumentController(DocumentController documentController) {
+        Controller.documentController = documentController;
+    }
+
+    public static DocumentVersionController getDocumentVersionController() {
+        return documentVersionController;
+    }
+
+    public void setDocumentVersionController(DocumentVersionController documentVersionController) {
+        Controller.documentVersionController = documentVersionController;
+    }
+
+    public static FolderController getFolderController() {
+        return folderController;
+    }
+
+    public void setFolderController(FolderController folderController) {
+        Controller.folderController = folderController;
+    }
+
+    public static WorkflowController getWorkflowController() {
+        return workflowController;
+    }
+
+    public void setWorkflowController(WorkflowController workflowController) {
+        Controller.workflowController = workflowController;
+    }
+
+    public static WorkspaceController getWorkspaceController() {
+        return workspaceController;
+    }
+
+    public void setWorkspaceController(WorkspaceController workspaceController) {
+        Controller.workspaceController = workspaceController;
+    }
+
+    public static ServerInformationController getServerInformationController() {
+        return serverInformationController;
+    }
+
+    public void setServerInformationController(ServerInformationController serverInformationController) {
+        Controller.serverInformationController = serverInformationController;
+    }
+
+    public static FileTransferController getFileTransferController() {
+        return fileTransferController;
+    }
+
+    public void setFileTransferController(FileTransferController fileTransferController) {
+        Controller.fileTransferController = fileTransferController;
+    }
+
+    public static ExtensionController getExtensionController() {
+        return extensionController;
+    }
+
+    public void setExtensionController(ExtensionController extensionController) {
+        Controller.extensionController = extensionController;
+    }
+
+    public static RuleController getRuleController() {
+        return ruleController;
+    }
+
+    public void setRuleController(RuleController ruleController) {
+        Controller.ruleController = ruleController;
+    }
+
+    public static BonitaController getBonitaController() {
+        return bonitaController;
+    }
+
+    public void setBonitaController(BonitaController bonitaController) {
+        Controller.bonitaController = bonitaController;
+    }
+
+
 }
 

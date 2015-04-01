@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Kimios - Document Management System Software
+  ~ Copyright (C) 2008-2015  DevLib'
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 2 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ aong with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>kimios-osgi-packages</artifactId>
+        <groupId>org.kimios</groupId>
+        <version>1.1-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>kimios-solr</artifactId>
+    <name>Kimios :: Solr Osgi Bundle</name>
+    <description>Devlib' :: Apache Solr ${solr4j.version}</description>
+    <properties>
+        <solr4j.version>4.6.0</solr4j.version>
+    </properties>
+    <version>${solr4j.version}</version>
+    <dependencies>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <version>4.3.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.solr</groupId>
+            <artifactId>solr-solrj</artifactId>
+            <version>${solr4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.solr</groupId>
+            <artifactId>solr-core</artifactId>
+            <version>${solr4j.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>2.3.7</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <excludeDependencies>
+                        slf4j-api,slf4j-log4j12
+                    </excludeDependencies>
+                    <instructions>
+                        <Bundle-Name>Devlib' :: Apache SolR ${solr4j.version} OSGI</Bundle-Name>
+                        <Bundle-SymbolicName>org.kimios.org.apache.solr</Bundle-SymbolicName>
+                        <Bundle-Version>${solr4j.version}</Bundle-Version>
+                        <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
+                        <Embed-Transitive>true</Embed-Transitive>
+                        <Export-Package>
+                            org.apache.solr*,
+                            org.apache.lucene*,
+                        </Export-Package>
+                        <Import-Package>
+                            !org.mortbay*,
+                            !org.slf4j.impl,
+                            !org.relaxng.datatype,
+                            !org.apache.log,
+                            !javax.portlet,
+                            !javax.jms,
+                            javax.annotation,
+                            javax.crypto,
+                            javax.crypto.spec,
+                            javax.management,
+                            javax.management.remote,
+                            javax.naming, javax.net,
+                            javax.net.ssl,
+                            javax.inject;resolution:=optional, javax.jmdns;resolution:=optional, javax.jms, javax.mail, javax.mail.internet, javax.management.openmbean, javax.naming.directory, javax.script, javax.security.auth, javax.security.auth.callback, javax.security.auth.kerberos, javax.security.auth.login, javax.security.auth.spi, javax.security.auth.x500, javax.security.sasl, javax.servlet, javax.servlet.http, javax.servlet.jsp, javax.swing, javax.swing.border, javax.swing.event, javax.swing.table, javax.swing.text, javax.swing.tree, javax.ws.rs, javax.ws.rs.core, javax.ws.rs.ext,
+                            org.apache.avalon.framework.logger,
+                            org.apache.log4j,
+                            org.osgi.framework,
+                            com.sun*;resolution:=optional,
+                            javax.xml*,
+                            org.w3c.dom,
+                            org.xml.sax*,
+                            org.apache.http*,
+                            org.slf4j;resolution:=optional,
+                            com.ibm.uvm.tools;resolution:=optional,
+                            com.jcraft.jsch;resolution:=optional,
+                            com.vividsolutions.jts.algorithm;resolution:=optional,
+                            com.vividsolutions.jts.geom;resolution:=optional,
+                            com.vividsolutions.jts.io;resolution:=optional,
+                            com.vividsolutions.jts.operation.union;resolution:=optional,
+                            com.vividsolutions.jts.operation.valid;resolution:=optional,
+                            com.vividsolutions.jts.simplify;resolution:=optional,
+                            com.vividsolutions.jts.util;resolution:=optional,
+                            jdiff;resolution:=optional, jline;resolution:=optional,
+                            org.apache.avro;resolution:=optional,
+                            org.apache.avro.data;resolution:=optional,
+                            org.apache.avro.file;resolution:=optional,
+                            org.apache.avro.generic;resolution:=optional,
+                            org.apache.avro.io;resolution:=optional,
+                            org.apache.avro.reflect;resolution:=optional,
+                            org.apache.avro.specific;resolution:=optional,
+                            org.apache.commons.collections.map,
+                            org.apache.commons.configuration;resolution:=optional,
+                            org.apache.commons.daemon;resolution:=optional,
+                            org.apache.commons.httpclient;resolution:=optional,
+                            org.apache.commons.httpclient.util;resolution:=optional,
+                            org.apache.commons.logging,
+                            org.apache.commons.logging.impl,
+                            org.apache.commons.math.util;resolution:=optional,
+                            org.apache.commons.net.ftp;resolution:=optional,
+                            org.apache.commons.net.util;resolution:=optional,
+                            org.apache.jasper.compiler,
+                            org.apache.jasper.runtime,
+                            org.apache.lucene.expressions;resolution:=optional,
+                            org.apache.lucene.expressions.js;resolution:=optional,
+                            org.apache.lucene.sandbox.queries;resolution:=optional,
+                            org.apache.tools.ant;resolution:=optional,
+                            org.apache.tools.ant.types;resolution:=optional,
+                            org.codehaus.jackson, org.codehaus.jackson.map, org.codehaus.jackson.node, org.codehaus.jackson.type, org.codehaus.jackson.util, org.eclipse.jetty.server, org.eclipse.jetty.server.bio, org.eclipse.jetty.server.handler, org.eclipse.jetty.server.nio, org.eclipse.jetty.server.session, org.eclipse.jetty.server.ssl, org.eclipse.jetty.servlet, org.eclipse.jetty.util.component, org.eclipse.jetty.util.log, org.eclipse.jetty.util.ssl, org.eclipse.jetty.util.thread, org.ietf.jgss,
+                            org.jboss.netty.bootstrap;resolution:=optional, org.jboss.netty.buffer;resolution:=optional, org.jboss.netty.channel;resolution:=optional,
+                            org.jboss.netty.channel.group;resolution:=optional, org.jboss.netty.channel.socket.nio;resolution:=optional,
+                            org.jets3t.service;resolution:=optional, org.jets3t.service.impl.rest.httpclient;resolution:=optional, org.jets3t.service.model;resolution:=optional,
+                            org.jets3t.service.security;resolution:=optional, org.joda.convert;resolution:=optional,
+                            org.w3c.dom.ls, org.znerd.xmlenc;resolution:=optional, sun.misc;resolution:=optional, sun.net.dns;resolution:=optional, sun.net.util;resolution:=optional
+                        </Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+
+</project>

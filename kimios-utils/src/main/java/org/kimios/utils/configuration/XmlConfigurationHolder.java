@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  *  @author Fabien Alin (Farf) <fabien.alin@gmail.com>
@@ -38,6 +39,7 @@ import java.util.Map;
  *      Configuration Holder Based on Hold Xml Format. Will be deprecated in the next release
  *
  */
+@Deprecated
 public class XmlConfigurationHolder implements ConfigurationHolder
 {
     private static Logger log = LoggerFactory.getLogger(XmlConfigurationHolder.class);
@@ -105,5 +107,13 @@ public class XmlConfigurationHolder implements ConfigurationHolder
     public void refresh() throws ConfigException
     {
         init(configFilePath);
+    }
+
+    public Properties getAllProperties(){
+        Properties p = new Properties();
+        for(String u: values.keySet()){
+            p.setProperty(u, values.get(u));
+        }
+        return p;
     }
 }

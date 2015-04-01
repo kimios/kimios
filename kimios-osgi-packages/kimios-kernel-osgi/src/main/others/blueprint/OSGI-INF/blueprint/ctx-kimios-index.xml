@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Kimios - Document Management System Software
+  ~ Copyright (C) 2008-2014  DevLib'
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 2 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ aong with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:jpa="http://aries.apache.org/xmlns/jpa/v1.0.0"
+           xmlns:tx="http://aries.apache.org/xmlns/transactions/v1.0.0"
+           xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0
+        http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd" default-activation="eager">
+
+
+    <!-- provide a SolrIndexManager class / No interface here -->
+    <bean id="indexManagerSolrBuilder" class="org.kimios.kernel.index.SolrIndexFactory" scope="singleton"
+          depends-on="eventHandlerManager" destroy-method="shutdownSolr">
+        <property name="serverMode" value="${dms.index.solr.mode.server}"/>
+        <property name="solrHome" value="${dms.index.solr.home}"/>
+        <property name="solrUrl" value="${dms.index.solr.server.url}"/>
+        <property name="coreName" value="${dms.index.corename}"/>
+        <property name="pathController" ref="pathController"/>
+        <property name="solrDocumentFactory" ref="solrDocumentFactory" />
+
+        <property name="addonDataHandler" ref="addonDataHandler" />
+        <property name="sessionEndHandler" ref="sessionEndHandler" />
+
+    </bean>
+    
+    <bean id="indexManagerSolr" class="org.kimios.kernel.index.SolrIndexManager" factory-ref="indexManagerSolrBuilder" factory-method="createInstance" />
+
+
+    <bean id="cstMapperBuilder" class="org.kimios.utils.osgi.ObjectMapperBuilder"/>
+    
+    <bean id="addonDataHandler" class="org.kimios.kernel.events.impl.AddonDataHandler">
+        <argument>
+            <bean class="org.codehaus.jackson.map.ObjectMapper"
+                  factory-ref="cstMapperBuilder"
+                  factory-method="createInstance" />
+        </argument>
+    </bean>
+
+    <bean id="sessionEndHandler" class="org.kimios.kernel.index.SessionEndHandler">
+        <argument ref="searchRequestFactory" />
+    </bean>
+
+
+    <bean id="solrIndexEventHandler" class="org.kimios.kernel.index.solr.SolrIndexer">
+        <property name="indexManager" ref="indexManagerSolr"/>
+    </bean>
+
+    <bean id="searchRequestFactory" class="org.kimios.kernel.index.query.factory.SearchRequestFactory">
+        <property name="provider" ref="dbFactoryProvider"></property>
+    </bean>
+
+    <bean id="solrDocumentFactory" class="org.kimios.kernel.index.query.factory.DocumentFactory" />
+
+    <bean id="searchController" class="org.kimios.kernel.controller.impl.SolrSearchController">
+        <property name="dmsFactoryInstantiator" ref="dmsfi"></property>
+        <property name="securityFactoryInstantiator" ref="securityfi"></property>
+        <property name="authFactoryInstantiator" ref="userfi"></property>
+        <property name="logFactoryInstantiator" ref="logfi"></property>
+        <property name="reportFactoryInstantiator" ref="reportfi"></property>
+        <property name="transferFactoryInstantiator" ref="transferfi"></property>
+        <property name="securityAgent" ref="securityAgent"/>
+        <property name="aclUpdater" ref="aclUpdater"/>
+
+
+        <property name="solrIndexManager" ref="indexManagerSolr"/>
+        <property name="searchRequestFactory" ref="searchRequestFactory" />
+        <property name="searchRequestSecurityFactory" ref="searchRequestSecurityFactory" />
+
+        <tx:transaction method="*" value="Required"/>
+    </bean>
+
+    <bean id="searchManagementController" class="org.kimios.kernel.controller.impl.SearchManagementController">
+        <property name="dmsFactoryInstantiator" ref="dmsfi"></property>
+        <property name="securityFactoryInstantiator" ref="securityfi"></property>
+        <property name="authFactoryInstantiator" ref="userfi"></property>
+        <property name="logFactoryInstantiator" ref="logfi"></property>
+        <property name="reportFactoryInstantiator" ref="reportfi"></property>
+        <property name="transferFactoryInstantiator" ref="transferfi"></property>
+        <property name="securityAgent" ref="securityAgent"/>
+        <property name="aclUpdater" ref="aclUpdater"/>
+
+        <property name="indexManager" ref="indexManagerSolr"/>
+
+        <tx:transaction method="*" value="Required"/>
+    </bean>
+
+
+    <bean id="searchRequestSecurityFactory" class="org.kimios.kernel.index.query.factory.SearchRequestSecurityFactory">
+        <property name="provider" ref="dbFactoryProvider"></property>
+    </bean>
+
+</blueprint>

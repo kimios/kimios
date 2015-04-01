@@ -24,4 +24,6 @@
     <import resource="classpath*:/kimios-ctx-client-setup.xml" />
 
     <import resource="classpath*:/kimios-ctx-client-rest.xml" />
+
+
 </beans>

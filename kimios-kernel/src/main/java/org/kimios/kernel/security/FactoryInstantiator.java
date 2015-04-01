@@ -19,8 +19,7 @@ import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.security.pwdgen.CredentialsGenerator;
 import org.kimios.kernel.security.pwdgen.md5.MD5Generator;
 
-public class FactoryInstantiator
-{
+public class FactoryInstantiator implements ISecurityFactoryInstantiator {
     private static FactoryInstantiator instance;
 
     synchronized public static FactoryInstantiator getInstance()
@@ -37,11 +36,13 @@ public class FactoryInstantiator
 
     private AuthenticatedServiceFactory authenticatedServiceFactory;
 
+    @Override
     public CredentialsGenerator getCredentialsGenerator() throws ConfigException
     {
         return new MD5Generator();
     }
 
+    @Override
     public DMEntitySecurityFactory getDMEntitySecurityFactory()
     {
         return dMEntitySecurityFactory;
@@ -53,6 +54,7 @@ public class FactoryInstantiator
         this.dMEntitySecurityFactory = dmEntitySecurityFactory;
     }
 
+    @Override
     public RoleFactory getRoleFactory()
     {
         return roleFactory;
@@ -63,6 +65,7 @@ public class FactoryInstantiator
         this.roleFactory = roleFactory;
     }
 
+    @Override
     public AuthenticatedServiceFactory getAuthenticatedServiceFactory()
     {
         return authenticatedServiceFactory;

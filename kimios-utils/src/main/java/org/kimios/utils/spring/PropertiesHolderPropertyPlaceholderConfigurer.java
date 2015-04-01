@@ -83,4 +83,9 @@ public class PropertiesHolderPropertyPlaceholderConfigurer extends PropertyPlace
     public void refresh() throws ConfigException {
 
     }
+
+    @Override
+    public Properties getAllProperties() {
+        return getResolvedProperties();
+    }
 }

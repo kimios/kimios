@@ -17,18 +17,13 @@
 
 --%>
 <%@ page import="org.kimios.client.controller.SecurityController" %>
-<%@ page import="org.springframework.web.context.WebApplicationContext" %>
-<%@ page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
+<%@ page import="org.kimios.core.ApplicationContextProvider" %>
+<%@ page import="org.kimios.controller.Controller" %>
 <%@ page contentType="text/html" pageEncoding="UTF-8" %>
 <%
     String sessionUid = null;
     org.kimios.kernel.ws.pojo.User u = null;
-    SecurityController securityController = null;
-    WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(this.getServletConfig().getServletContext());
-    if (securityController == null) {
-        securityController = (SecurityController) wac.getBean("securityController");
-    }
-
+    SecurityController securityController = Controller.getSecurityController();
     try {
         sessionUid = (String) request.getSession().getAttribute("sessionUid");
         if (sessionUid == null)

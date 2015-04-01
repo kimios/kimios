@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Kimios - Document Management System Software
+  ~ Copyright (C) 2008-2014  DevLib'
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 2 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ aong with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:jpa="http://aries.apache.org/xmlns/jpa/v1.0.0"
+           xmlns:tx="http://aries.apache.org/xmlns/transactions/v1.0.0"
+           xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0
+        http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd" default-activation="eager">
+
+    <!--  <bean id="dbFactoryProvider" class="org.kimiostero.hibernate.SaasHFactory" />-->
+    <bean id="dbFactoryProvider" class="org.kimios.kernel.hibernate.JpaHibernateFactory" factory-method="getInstance">
+        <jpa:context unitname="kimiosPu" property="entityManager"/>
+    </bean>
+
+    <!-- Security -->
+    <bean id="authenticatedServiceFactory" class="org.kimios.kernel.security.factory.HAuthenticatedServiceFactory">
+        <property name="provider" ref="dbFactoryProvider"></property>
+    </bean>
+
+    <bean id="securityfi" class="org.kimios.kernel.security.FactoryInstantiator" factory-method="getInstance">
+        <property name="DMEntitySecurityFactory">
+            <bean class="org.kimios.kernel.security.factory.HDMEntitySecurityFactory"
+                  >
+                <property name="provider" ref="dbFactoryProvider"></property>
+            </bean>
+        </property>
+        <property name="roleFactory">
+            <bean class="org.kimios.kernel.security.factory.HRoleFactory">
+                <property name="provider" ref="dbFactoryProvider"></property>
+            </bean>
+        </property>
+        <property name="authenticatedServiceFactory" ref="authenticatedServiceFactory"/>
+    </bean>
+
+    <bean id="securityAgent" class="org.kimios.kernel.security.SecurityAgent" factory-method="getInstance">
+        <property name="dmsFactoryInstantiator" ref="dmsfi"/>
+        <property name="securityFactoryInstantiator" ref="securityfi"/>
+    </bean>
+    <!-- DMS -->
+    <bean id="dmsfi" class="org.kimios.kernel.dms.FactoryInstantiator" factory-method="getInstance">
+        <property name="dmEntityFactory">
+            <bean class="org.kimios.kernel.dms.hibernate.HDMEntityFactory">
+                <property name="provider" ref="dbFactoryProvider"></property>
+             </bean>
+        </property>
+        <property name="documentFactory">
+            <bean class="org.kimios.kernel.dms.hibernate.HDocumentFactory">
+                <property name="provider" ref="dbFactoryProvider"></property>
+             </bean>
+        </property>
+        <property name="folderFactory">
+            <bean class="org.kimios.kernel.dms.hibernate.HFolderFactory">
+                <property name="provider" ref="dbFactoryProvider"></property>
+            </bean>
+        </property>
+        <property name="workspaceFactory">
+            <bean class="org.kimios.kernel.dms.hibernate.HWorkspaceFactory">
+                <property name="provider" ref="dbFactoryProvider"></property>
+            </bean>
+        </property>
+        <property name="documentVersionFactory">
+            <bean class="org.kimios.kernel.dms.hibernate.HDocumentVersionFactory"
+                  >
+                <property name="provider" ref="dbFactoryProvider"></property>
+                  </bean>
+        </property>
+        <property name="metaFactory">
+            <bean class="org.kimios.kernel.dms.hibernate.HMetaFactory" >
+                <property name="provider" ref="dbFactoryProvider"></property>
+            </bean>
+        </property>
+        <property name="metaFeedFactory">
+            <bean class="org.kimios.kernel.dms.hibernate.HMetaFeedFactory">
+                <property name="provider" ref="dbFactoryProvider"></property>
+            </bean>
+        </property>
+        <property name="metaValueFactory">
+            <bean class="org.kimios.kernel.dms.hibernate.HMetaValueFactory">
+                <property name="provider" ref="dbFactoryProvider"></property>
+            </bean>
+        </property>
+        <property name="documentCommentFactory">
+            <bean class="org.kimios.kernel.dms.hibernate.HDocumentCommentFactory"
+                  >
+                <property name="provider" ref="dbFactoryProvider"></property>
+                  </bean>
+        </property>
+        <property name="documentTypeFactory">
+            <bean class="org.kimios.kernel.dms.hibernate.HDocumentTypeFactory"
+                  >
+                <property name="provider" ref="dbFactoryProvider"></property>
+                  </bean>
+        </property>
+        <property name="symbolicLinkFactory">
+            <bean  class="org.kimios.kernel.dms.hibernate.HSymbolicLinkFactory"
+                 >
+                <property name="provider" ref="dbFactoryProvider"></property>
+                 </bean>
+        </property>
+        <property name="workflowFactory">
+            <bean class="org.kimios.kernel.dms.hibernate.HWorkflowFactory">
+                <property name="provider" ref="dbFactoryProvider"></property>
+            </bean>
+        </property>
+        <property name="workflowStatusFactory">
+            <bean class="org.kimios.kernel.dms.hibernate.HWorkflowStatusFactory">
+                <property name="provider" ref="dbFactoryProvider"></property>
+            </bean>
+        </property>
+        <property name="workflowStatusManagerFactory">
+            <bean class="org.kimios.kernel.dms.hibernate.HWorkflowStatusManagerFactory"
+                 >
+                <property name="provider" ref="dbFactoryProvider"></property>
+                 </bean>
+        </property>
+        <property name="documentWorkflowStatusFactory">
+            <bean class="org.kimios.kernel.dms.hibernate.HDocumentWorkflowStatusFactory">
+                <property name="provider" ref="dbFactoryProvider"></property>
+            </bean>
+        </property>
+        <property name="documentWorkflowStatusRequestFactory">
+            <bean class="org.kimios.kernel.dms.hibernate.HDocumentWorkflowStatusRequestFactory" >
+                <property name="provider" ref="dbFactoryProvider"></property>
+            </bean>
+        </property>
+        <property name="bookmarkFactory">
+            <bean class="org.kimios.kernel.dms.hibernate.HBookmarkFactory" >
+                <property name="provider" ref="dbFactoryProvider"></property>
+            </bean>
+        </property>
+        <property name="enumerationValueFactory">
+            <bean class="org.kimios.kernel.dms.hibernate.HEnumerationValueFactory">
+                <property name="provider" ref="dbFactoryProvider"></property>
+            </bean>
+        </property>
+        <property name="lockFactory">
+            <bean class="org.kimios.kernel.dms.hibernate.HLockFactory">
+                <property name="provider" ref="dbFactoryProvider"></property>
+            </bean>
+        </property>
+        <property name="recentItemFactory">
+            <bean class="org.kimios.kernel.dms.hibernate.HRecentItemsFactory">
+                <property name="provider" ref="dbFactoryProvider"></property>
+            </bean>
+        </property>
+    </bean>
+
+
+    <!-- User -->
+    <bean id="authenticationSourceFactory"
+          class="org.kimios.kernel.user.impl.factory.hibernate.HAuthenticationSourceFactory">
+        <property name="provider" ref="dbFactoryProvider"></property>
+          </bean>
+    <bean id="authenticationSourceParamsFactory"
+          class="org.kimios.kernel.user.impl.factory.hibernate.HAuthenticationSourceParamsFactory">
+        <property name="provider" ref="dbFactoryProvider"></property>
+          </bean>
+    <bean id="userfi" class="org.kimios.kernel.user.FactoryInstantiator" factory-method="getInstance">
+        <property name="authenticationSourceFactory" ref="authenticationSourceFactory">
+        </property>
+        <property name="authenticationSourceParamsFactory" ref="authenticationSourceParamsFactory">
+        </property>
+    </bean>
+    <!-- Log -->
+    <bean id="logfi" class="org.kimios.kernel.log.FactoryInstantiator" factory-method="getInstance">
+        <property name="logFactory">
+            <bean class="org.kimios.kernel.log.factory.HLogFactory">
+                <property name="provider" ref="dbFactoryProvider"></property>
+            </bean>
+        </property>
+        <property name="entityLogFactory">
+            <bean class="org.kimios.kernel.log.factory.HDMEntityLogFactory">
+                <property name="provider" ref="dbFactoryProvider"></property>
+            </bean>
+        </property>
+    </bean>
+    <!-- Transfer -->
+    <bean id="transferfi" class="org.kimios.kernel.filetransfer.FactoryInstantiator" factory-method="getInstance">
+        <property name="dataTransferFactory">
+            <bean class="org.kimios.kernel.filetransfer.HDataTransferFactory">
+                <property name="provider" ref="dbFactoryProvider"></property>
+            </bean>
+        </property>
+    </bean>
+    <!-- Rules -->
+    <bean id="ruleFactory" class="org.kimios.kernel.rules.RuleBeanFactory">
+        <property name="provider" ref="dbFactoryProvider"></property>
+    </bean>
+
+    <!-- Factory Aware bean (abstract)
+    <bean id="kimiosCoreCtrl" abstract="true" class="org.kimios.kernel.controller.AKimiosController">
+        <property name="dmsFactoryInstantiator" ref="dmsfi"></property>
+        <property name="securityFactoryInstantiator" ref="securityfi"></property>
+        <property name="authFactoryInstantiator" ref="userfi"></property>
+        <property name="logFactoryInstantiator" ref="logfi"></property>
+        <property name="reportFactoryInstantiator" ref="reportfi"></property>
+        <property name="transferFactoryInstantiator" ref="transferfi"></property>
+        <property name="securityAgent" ref="securityAgent"/>
+        <property name="aclUpdater" ref="aclUpdater"/>
+    </bean>  -->
+
+    <bean id="sessionManager" class="org.kimios.kernel.security.SessionManager" factory-method="getInstance">
+        <property name="provider" ref="dbFactoryProvider"></property>
+        <property name="authenticationSourceFactory" ref="authenticationSourceFactory"/>
+        <property name="authenticatedServiceFactory" ref="authenticatedServiceFactory"/>
+
+        <tx:transaction method="*" value="Required"/>
+    </bean>
+    <bean id="securityController" class="org.kimios.kernel.controller.impl.SecurityController">
+    <property name="dmsFactoryInstantiator" ref="dmsfi"></property>
+    <property name="securityFactoryInstantiator" ref="securityfi"></property>
+    <property name="authFactoryInstantiator" ref="userfi"></property>
+    <property name="logFactoryInstantiator" ref="logfi"></property>
+    <property name="reportFactoryInstantiator" ref="reportfi"></property>
+    <property name="transferFactoryInstantiator" ref="transferfi"></property>
+    <property name="securityAgent" ref="securityAgent"/>
+    <property name="aclUpdater" ref="aclUpdater"/>
+
+        <tx:transaction method="*" value="Required"/>
+    </bean>
+    <bean id="documentController" class="org.kimios.kernel.controller.impl.DocumentController">
+        <property name="dmsFactoryInstantiator" ref="dmsfi"></property>
+        <property name="securityFactoryInstantiator" ref="securityfi"></property>
+        <property name="authFactoryInstantiator" ref="userfi"></property>
+        <property name="logFactoryInstantiator" ref="logfi"></property>
+        <property name="reportFactoryInstantiator" ref="reportfi"></property>
+        <property name="transferFactoryInstantiator" ref="transferfi"></property>
+        <property name="securityAgent" ref="securityAgent"/>
+        <property name="aclUpdater" ref="aclUpdater"/>
+
+        <property name="wksCtrl" ref="workspaceController"/>
+        <property name="fldCtrl" ref="folderController"/>
+        <property name="secCtrl" ref="securityController"/>
+        <property name="vrsCtrl" ref="documentVersionController"/>
+        <property name="ftCtrl" ref="fileTransferController"/>
+
+        <tx:transaction method="*" value="Required"/>
+    </bean>
+    <bean id="documentVersionController" class="org.kimios.kernel.controller.impl.DocumentVersionController">
+        <property name="dmsFactoryInstantiator" ref="dmsfi"></property>
+        <property name="securityFactoryInstantiator" ref="securityfi"></property>
+        <property name="authFactoryInstantiator" ref="userfi"></property>
+        <property name="logFactoryInstantiator" ref="logfi"></property>
+        <property name="reportFactoryInstantiator" ref="reportfi"></property>
+        <property name="transferFactoryInstantiator" ref="transferfi"></property>
+        <property name="securityAgent" ref="securityAgent"/>
+        <property name="aclUpdater" ref="aclUpdater"/>
+
+        <tx:transaction method="*" value="Required"/>
+    </bean>
+    <bean id="folderController" class="org.kimios.kernel.controller.impl.FolderController">
+        <property name="dmsFactoryInstantiator" ref="dmsfi"></property>
+        <property name="securityFactoryInstantiator" ref="securityfi"></property>
+        <property name="authFactoryInstantiator" ref="userfi"></property>
+        <property name="logFactoryInstantiator" ref="logfi"></property>
+        <property name="reportFactoryInstantiator" ref="reportfi"></property>
+        <property name="transferFactoryInstantiator" ref="transferfi"></property>
+        <property name="securityAgent" ref="securityAgent"/>
+        <property name="aclUpdater" ref="aclUpdater"/>
+        <property name="virtualFolderFactory" ref="virtualFolderFactory" />
+
+        <tx:transaction method="*" value="Required"/>
+    </bean>
+    <bean id="workspaceController" class="org.kimios.kernel.controller.impl.WorkspaceController">
+        <property name="dmsFactoryInstantiator" ref="dmsfi"></property>
+        <property name="securityFactoryInstantiator" ref="securityfi"></property>
+        <property name="authFactoryInstantiator" ref="userfi"></property>
+        <property name="logFactoryInstantiator" ref="logfi"></property>
+        <property name="reportFactoryInstantiator" ref="reportfi"></property>
+        <property name="transferFactoryInstantiator" ref="transferfi"></property>
+        <property name="securityAgent" ref="securityAgent"/>
+        <property name="aclUpdater" ref="aclUpdater"/>
+
+        <tx:transaction method="*" value="Required"/>
+    </bean>
+    <bean id="pathController" class="org.kimios.kernel.controller.impl.PathController">
+        <property name="dmsFactoryInstantiator" ref="dmsfi"></property>
+        <property name="securityFactoryInstantiator" ref="securityfi"></property>
+        <property name="authFactoryInstantiator" ref="userfi"></property>
+        <property name="logFactoryInstantiator" ref="logfi"></property>
+        <property name="reportFactoryInstantiator" ref="reportfi"></property>
+        <property name="transferFactoryInstantiator" ref="transferfi"></property>
+        <property name="securityAgent" ref="securityAgent"/>
+        <property name="aclUpdater" ref="aclUpdater"/>
+
+        <tx:transaction method="*" value="Required"/>
+    </bean>
+    <bean id="informationController" class="org.kimios.kernel.controller.impl.ServerInformationController">
+        <property name="dmsFactoryInstantiator" ref="dmsfi"></property>
+        <property name="securityFactoryInstantiator" ref="securityfi"></property>
+        <property name="authFactoryInstantiator" ref="userfi"></property>
+        <property name="logFactoryInstantiator" ref="logfi"></property>
+        <property name="reportFactoryInstantiator" ref="reportfi"></property>
+        <property name="transferFactoryInstantiator" ref="transferfi"></property>
+        <property name="securityAgent" ref="securityAgent"/>
+        <property name="aclUpdater" ref="aclUpdater"/>
+
+        <tx:transaction method="*" value="Required"/>
+    </bean>
+    <bean id="workflowController" class="org.kimios.kernel.controller.impl.WorkflowController">
+        <property name="dmsFactoryInstantiator" ref="dmsfi"></property>
+        <property name="securityFactoryInstantiator" ref="securityfi"></property>
+        <property name="authFactoryInstantiator" ref="userfi"></property>
+        <property name="logFactoryInstantiator" ref="logfi"></property>
+        <property name="reportFactoryInstantiator" ref="reportfi"></property>
+        <property name="transferFactoryInstantiator" ref="transferfi"></property>
+        <property name="securityAgent" ref="securityAgent"/>
+        <property name="aclUpdater" ref="aclUpdater"/>
+
+        <tx:transaction method="*" value="Required"/>
+    </bean>
+    <bean id="studioController" class="org.kimios.kernel.controller.impl.StudioController">
+        <property name="dmsFactoryInstantiator" ref="dmsfi"></property>
+        <property name="securityFactoryInstantiator" ref="securityfi"></property>
+        <property name="authFactoryInstantiator" ref="userfi"></property>
+        <property name="logFactoryInstantiator" ref="logfi"></property>
+        <property name="reportFactoryInstantiator" ref="reportfi"></property>
+        <property name="transferFactoryInstantiator" ref="transferfi"></property>
+        <property name="securityAgent" ref="securityAgent"/>
+        <property name="aclUpdater" ref="aclUpdater"/>
+
+        <property name="metaFeedManager" ref="metaFeedManager" />
+
+        <tx:transaction method="*" value="Required"/>
+    </bean>
+    <bean id="fileTransferController" class="org.kimios.kernel.controller.impl.FileTransferController">
+        <property name="dmsFactoryInstantiator" ref="dmsfi"></property>
+        <property name="securityFactoryInstantiator" ref="securityfi"></property>
+        <property name="authFactoryInstantiator" ref="userfi"></property>
+        <property name="logFactoryInstantiator" ref="logfi"></property>
+        <property name="reportFactoryInstantiator" ref="reportfi"></property>
+        <property name="transferFactoryInstantiator" ref="transferfi"></property>
+        <property name="securityAgent" ref="securityAgent"/>
+        <property name="aclUpdater" ref="aclUpdater"/>
+
+        <tx:transaction method="*" value="Required"/>
+    </bean>
+    <bean id="reportingController" class="org.kimios.kernel.controller.impl.ReportingController">
+        <property name="dmsFactoryInstantiator" ref="dmsfi"></property>
+        <property name="securityFactoryInstantiator" ref="securityfi"></property>
+        <property name="authFactoryInstantiator" ref="userfi"></property>
+        <property name="logFactoryInstantiator" ref="logfi"></property>
+        <property name="reportFactoryInstantiator" ref="reportfi"></property>
+        <property name="transferFactoryInstantiator" ref="transferfi"></property>
+        <property name="securityAgent" ref="securityAgent"/>
+        <property name="aclUpdater" ref="aclUpdater"/>
+        <property name="documentTransactionsReportFactory" ref="dtrFactory"/>
+
+        <tx:transaction method="*" value="Required"/>
+    </bean>
+    <bean id="administrationController" class="org.kimios.kernel.controller.impl.AdministrationController">
+        <property name="dmsFactoryInstantiator" ref="dmsfi"></property>
+        <property name="securityFactoryInstantiator" ref="securityfi"></property>
+        <property name="authFactoryInstantiator" ref="userfi"></property>
+        <property name="logFactoryInstantiator" ref="logfi"></property>
+        <property name="reportFactoryInstantiator" ref="reportfi"></property>
+        <property name="transferFactoryInstantiator" ref="transferfi"></property>
+        <property name="securityAgent" ref="securityAgent"/>
+        <property name="aclUpdater" ref="aclUpdater"/>
+
+        <tx:transaction method="*" value="Required"/>
+    </bean>
+    <bean id="rulesController" class="org.kimios.kernel.controller.impl.RuleManagementController">
+        <property name="dmsFactoryInstantiator" ref="dmsfi"></property>
+        <property name="securityFactoryInstantiator" ref="securityfi"></property>
+        <property name="authFactoryInstantiator" ref="userfi"></property>
+        <property name="logFactoryInstantiator" ref="logfi"></property>
+        <property name="reportFactoryInstantiator" ref="reportfi"></property>
+        <property name="transferFactoryInstantiator" ref="transferfi"></property>
+        <property name="securityAgent" ref="securityAgent"/>
+        <property name="aclUpdater" ref="aclUpdater"/>
+        <property name="ruleFactory" ref="ruleFactory"/>
+
+        <tx:transaction method="*" value="Required"/>
+    </bean>
+    <bean id="extensionController" class="org.kimios.kernel.controller.impl.ExtensionController">
+        <property name="dmsFactoryInstantiator" ref="dmsfi"></property>
+        <property name="securityFactoryInstantiator" ref="securityfi"></property>
+        <property name="authFactoryInstantiator" ref="userfi"></property>
+        <property name="logFactoryInstantiator" ref="logfi"></property>
+        <property name="reportFactoryInstantiator" ref="reportfi"></property>
+        <property name="transferFactoryInstantiator" ref="transferfi"></property>
+        <property name="securityAgent" ref="securityAgent"/>
+        <property name="aclUpdater" ref="aclUpdater"/>
+
+        <tx:transaction method="*" value="Required"/>
+    </bean>
+
+    <bean id="aclUpdater" class="org.kimios.kernel.jobs.security.ACLUpdater"/>
+
+
+    <!-- jobs -->
+
+    <bean class="org.kimios.kernel.system.RepositoryCleaner" depends-on="configurationManager" init-method="startJob" destroy-method="stopJob">
+        <property name="versionController" ref="documentVersionController"/>
+
+        <tx:transaction method="*" value="Required"/>
+
+    </bean>
+
+    <bean class="org.kimios.kernel.security.SessionCleaner" depends-on="configurationManager" init-method="startJob" destroy-method="stopJob">
+        <property name="sessionManager" ref="sessionManager"/>
+
+        <tx:transaction method="*" value="Required"/>
+    </bean>
+
+    <!-- meta feeds manager -->
+    <bean id="metaFeedManager" class="org.kimios.kernel.dms.metafeeds.MetaFeedManager" init-method="init"/>
+
+
+    <!-- virtual folder factory -->
+    <bean id="virtualFolderFactory" class="org.kimios.kernel.dms.hibernate.VirtualFolderFactory">
+        <property name="provider" ref="dbFactoryProvider"></property>
+    </bean>
+
+
+</blueprint>
+

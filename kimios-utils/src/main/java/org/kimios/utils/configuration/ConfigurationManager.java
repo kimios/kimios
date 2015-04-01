@@ -22,6 +22,7 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ApplicationContext;
 
 import java.util.List;
+import java.util.Properties;
 
 public class ConfigurationManager implements FactoryBean<ConfigurationManager>
 {
@@ -52,10 +53,7 @@ public class ConfigurationManager implements FactoryBean<ConfigurationManager>
         ConfigurationManager cfg = new ConfigurationManager();
         cfg.holder = getHolder();
         ConfigurationManager.instance = cfg;
-
-
-        log.info("While building Configuration Manager: " + getHolder() + " ==> " + cfg.holder);
-
+        log.debug("While building Configuration Manager: " + getHolder() + " ==> " + cfg.holder);
         return cfg;
     }
 
@@ -86,10 +84,12 @@ public class ConfigurationManager implements FactoryBean<ConfigurationManager>
 
     public static String getValue(String key) throws ConfigException
     {
+
+        log.debug("called configuration manager get value on instance " + instance);
         if (instance.holder.exists(key)) {
             return instance.holder.getStringValue(key);
         } else {
-            log.warn("[Kimios Kernel] Key " + key + " cannot be found in global configuration");
+            log.warn("[Kimios Configuration] Key " + key + " cannot be found in global configuration");
             return null;
         }
     }
@@ -100,9 +100,13 @@ public class ConfigurationManager implements FactoryBean<ConfigurationManager>
         if (instance != null && instance.holder != null && instance.holder.exists(key)) {
             return instance.holder.getValues(key);
         } else {
-            log.warn("[Kimios Kernel] Key " + key + " cannot be found in global configuration");
+            log.warn("[Kimios  Configuration Key " + key + " cannot be found in global configuration");
             return null;
         }
+    }
+
+    public static Properties allValues(){
+        return instance.holder.getAllProperties();
     }
 }
 

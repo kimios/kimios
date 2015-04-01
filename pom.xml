@@ -65,7 +65,7 @@
         <velocity.version>1.6.4</velocity.version>
         <javamail.version>1.4.5</javamail.version>
         <solr4j.version>4.6.0</solr4j.version>
-        <aspectj.version>1.7.2</aspectj.version>
+        <aspectj.version>1.7.4</aspectj.version>
         <logback.version>1.1.1</logback.version>
         <javaassist.version>3.18.0-GA</javaassist.version>
         <cglib.version>2.2</cglib.version>
@@ -108,6 +108,7 @@
         <module>kimios-dolibarr</module>
         <module>kimios-convert-service</module>
         <module>kimios-rest-services</module>
+        <module>kimios-osgi-packages</module>
     </modules>
     <packaging>pom</packaging>
     <dependencies>

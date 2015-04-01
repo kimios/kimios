@@ -17,8 +17,7 @@ package org.kimios.kernel.reporting;
 
 import org.kimios.kernel.reporting.impl.factory.DocumentTransactionsReportFactory;
 
-public class FactoryInstantiator
-{
+public class FactoryInstantiator implements IReportFactoryInstantiator {
     private static FactoryInstantiator instance;
 
     synchronized public static FactoryInstantiator getInstance()
@@ -35,6 +34,7 @@ public class FactoryInstantiator
 
     private DocumentTransactionsReportFactory dtrFactory;
 
+    @Override
     public DocumentTransactionsReportFactory getDtrFactory()
     {
         return dtrFactory;

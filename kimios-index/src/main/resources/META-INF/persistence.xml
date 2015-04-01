@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Kimios - Document Management System Software
+  ~ Copyright (C) 2008-2015  DevLib'
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 2 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ aong with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<persistence version="2.0"
+             xmlns="http://java.sun.com/xml/ns/persistence"
+             xmlns:orm="http://java.sun.com/xml/ns/persistence/orm"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd">
+
+    <persistence-unit name="kimiosIndexPu" transaction-type="JTA">
+        <provider>org.hibernate.ejb.HibernatePersistence</provider>
+        <jta-data-source>osgi:service/javax.sql.DataSource/(osgi.jndi.service.name=jdbc/kimiosds)</jta-data-source>
+        <class>org.kimios.kernel.index.query.model.SearchRequest</class>
+        <class>org.kimios.kernel.index.query.model.SearchRequestACL</class>
+        <class>org.kimios.kernel.security.DMSecurityRule</class>
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
+
+        <properties>
+            <!-- <property name="hibernate.archive.autodetection" value="class"/>-->
+            <property name="hibernate.hbm2ddl.auto" value="update" />
+            <property name="hibernate.show_sql" value="false" />
+            <!-- The following line is what's used in Hibernate 4 instead of a TransactionManagerLookup class -->
+            <property name="hibernate.transaction.jta.platform" value="org.kimios.utils.osgi.OsgiJtaPlatform" />
+            <property name="hibernate.current_session_context_class" value="jta" />
+            <property name="hibernate.connection.release_mode" value="after_statement"/>
+            <property name="hibernate.transaction.flush_before_completion" value="true" />
+            <property name="hibernate.jdbc.use_streams_for_binary" value="true" />
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL82Dialect"/>
+
+        </properties>
+    </persistence-unit>
+</persistence>

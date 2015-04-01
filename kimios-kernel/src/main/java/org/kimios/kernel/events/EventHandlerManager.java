@@ -67,6 +67,10 @@ public class EventHandlerManager extends ExtensionRegistry<GenericEventHandler>
         return handlerList;
     }
 
+    public List<GenericEventHandler> updatableHandlers(){
+        return handlers;
+    }
+
     @Override
     protected void handleAdd(Class<? extends GenericEventHandler> classz) {
         try {

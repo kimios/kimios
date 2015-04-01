@@ -48,7 +48,7 @@ import java.util.List;
 public class DocumentController {
 
 
-    private DocumentService client;
+    protected DocumentService client;
 
     public DocumentService getClient() {
         return client;

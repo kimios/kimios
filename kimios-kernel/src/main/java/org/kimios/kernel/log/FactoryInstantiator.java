@@ -15,8 +15,7 @@
  */
 package org.kimios.kernel.log;
 
-public class FactoryInstantiator
-{
+public class FactoryInstantiator implements ILogFactoryInstantiator {
     private static FactoryInstantiator instance;
 
     synchronized public static FactoryInstantiator getInstance()
@@ -35,6 +34,7 @@ public class FactoryInstantiator
 
     private DMEntityLogFactory entityLogFactory;
 
+    @Override
     public LogFactory getLogFactory()
     {
         return logFactory;
@@ -45,6 +45,7 @@ public class FactoryInstantiator
         this.logFactory = logFactory;
     }
 
+    @Override
     public DMEntityLogFactory getEntityLogFactory()
     {
         return entityLogFactory;

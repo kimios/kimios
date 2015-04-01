@@ -15,12 +15,13 @@
  */
 package org.kimios.kernel.controller;
 
+import org.kimios.kernel.security.ISecurityAgent;
 import org.kimios.kernel.security.SecurityAgent;
 
 public interface DmsController
 {
-    public SecurityAgent getSecurityAgent();
+    public ISecurityAgent getSecurityAgent();
 
-    public void setSecurityAgent(SecurityAgent securityAgent);
+    public void setSecurityAgent(ISecurityAgent securityAgent);
 }
 

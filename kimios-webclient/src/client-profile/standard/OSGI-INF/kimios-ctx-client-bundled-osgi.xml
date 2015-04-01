@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~ Kimios - Document Management System Software
+  ~ Copyright (C) 2008-2015  DevLib'
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 2 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ aong with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
+           xmlns:cxf="http://cxf.apache.org/blueprint/core"
+           xmlns:jaxrs="http://cxf.apache.org/blueprint/jaxrs"
+           default-activation="eager">
+
+
+    <cm:property-placeholder id="kimiosClientCfg" persistent-id="org.kimios.client.app" update-strategy="reload" activation="eager"  >
+    </cm:property-placeholder>
+
+
+    <bean  id="propertyConfigurer" class="org.kimios.utils.configuration.OsgiConfigurationHolder" depends-on="kimiosClientCfg">
+        <argument ref="blueprintBundleContext" />
+        <argument value="org.kimios.client.app" />
+    </bean>
+
+
+    <bean id="configurationManagerHolder" class="org.kimios.utils.configuration.ConfigurationManagerBuilder">
+        <property name="holder" ref="propertyConfigurer" />
+    </bean>
+
+    <bean id="configurationManager" class="org.kimios.utils.configuration.ConfigurationManager"
+          factory-ref="configurationManagerHolder"
+          factory-method="createInstance" depends-on="kimiosClientCfg">
+    </bean>
+
+    <!--
+  <reference id="administrationServiceBean" interface="org.kimios.webservices.AdministrationService"/>
+  <reference id="studioServiceBean" interface="org.kimios.webservices.StudioService"/>
+  <reference id="securityServiceBean" interface="org.kimios.webservices.SecurityService"/>
+  <reference id="workspaceServiceBean" interface="org.kimios.webservices.WorkspaceService"/>
+  <reference id="folderServiceBean" interface="org.kimios.webservices.FolderService"/>
+  <reference id="documentServiceBean" interface="org.kimios.webservices.DocumentService"/>
+  <reference id="documentVersionServiceBean" interface="org.kimios.webservices.DocumentVersionService"/>
+  <reference id="informationServiceBean" interface="org.kimios.webservices.InformationService"/>
+  <reference id="logServiceBean" interface="org.kimios.webservices.LogService"/>
+  <reference id="reportingServiceBean" interface="org.kimios.webservices.ReportingService"/>
+  <reference id="ruleServiceBean" interface="org.kimios.webservices.RuleService" />
+  <reference id="extensionServiceBean" interface="org.kimios.webservices.ExtensionService"/>
+  <reference id="notificationServiceBean" interface="org.kimios.webservices.NotificationService"/>
+  <reference id="searchServiceBean" interface="org.kimios.webservices.SearchService" />
+  <reference id="bonitaServiceBean" interface="org.kimios.webservices.bonita.BonitaService" />
+  <reference id="fileTransferServiceBean" interface="org.kimios.webservices.FileTransferService"/>
+
+
+  util file to bundle client with server in one app -->
+
+    <jaxrs:client threadSafe="true" id="administrationServiceBean"
+                  serviceClass="org.kimios.webservices.AdministrationService"
+                  address="${server.url}${service.context}/rest/">
+        <jaxrs:providers>
+            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
+        </jaxrs:providers>
+        <jaxrs:headers>
+            <entry key="Accept" value="application/json"/>
+        </jaxrs:headers>
+    </jaxrs:client>
+
+    <jaxrs:client threadSafe="true" id="securityServiceBean" serviceClass="org.kimios.webservices.SecurityService"
+                  address="${server.url}${service.context}/rest/">
+        <jaxrs:providers>
+            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
+        </jaxrs:providers>
+        <jaxrs:headers>
+            <entry key="Accept" value="application/json"/>
+        </jaxrs:headers>
+    </jaxrs:client>
+
+    <jaxrs:client threadSafe="true" id="studioServiceBean" serviceClass="org.kimios.webservices.StudioService"
+                  address="${server.url}${service.context}/rest/">
+        <jaxrs:providers>
+            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
+        </jaxrs:providers>
+        <jaxrs:headers>
+            <entry key="Accept" value="application/json"/>
+        </jaxrs:headers>
+    </jaxrs:client>
+
+    <jaxrs:client threadSafe="true" id="documentServiceBean" serviceClass="org.kimios.webservices.DocumentService"
+                  address="${server.url}${service.context}/rest/">
+        <jaxrs:providers>
+            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
+        </jaxrs:providers>
+        <jaxrs:headers>
+            <entry key="Accept" value="application/json"/>
+        </jaxrs:headers>
+    </jaxrs:client>
+
+    <jaxrs:client threadSafe="true" id="documentVersionServiceBean"
+                  serviceClass="org.kimios.webservices.DocumentVersionService"
+                  address="${server.url}${service.context}/rest/">
+        <jaxrs:providers>
+            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
+        </jaxrs:providers>
+        <jaxrs:headers>
+            <entry key="Accept" value="application/json"/>
+        </jaxrs:headers>
+    </jaxrs:client>
+
+    <jaxrs:client threadSafe="true" id="folderServiceBean" serviceClass="org.kimios.webservices.FolderService"
+                  address="${server.url}${service.context}/rest/">
+        <jaxrs:providers>
+            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
+        </jaxrs:providers>
+        <jaxrs:headers>
+            <entry key="Accept" value="application/json"/>
+        </jaxrs:headers>
+    </jaxrs:client>
+
+    <jaxrs:client threadSafe="true" id="workspaceServiceBean" serviceClass="org.kimios.webservices.WorkspaceService"
+                  address="${server.url}${service.context}/rest/">
+        <jaxrs:providers>
+            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
+        </jaxrs:providers>
+        <jaxrs:headers>
+            <entry key="Accept" value="application/json"/>
+        </jaxrs:headers>
+    </jaxrs:client>
+
+    <jaxrs:client threadSafe="true" id="notificationServiceBean" serviceClass="org.kimios.webservices.NotificationService"
+                  address="${server.url}${service.context}/rest/" bus="cxf">
+        <jaxrs:providers>
+            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
+            <bean class="org.kimios.webservices.DateParamConverter"/>
+        </jaxrs:providers>
+        <jaxrs:headers>
+            <entry key="Accept" value="application/json"/>
+        </jaxrs:headers>
+    </jaxrs:client>
+
+    <jaxrs:client threadSafe="true" id="reportingServiceBean" serviceClass="org.kimios.webservices.ReportingService"
+                  address="${server.url}${service.context}/rest/">
+        <jaxrs:providers>
+            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
+        </jaxrs:providers>
+        <jaxrs:headers>
+            <entry key="Accept" value="application/json"/>
+        </jaxrs:headers>
+    </jaxrs:client>
+
+    <jaxrs:client threadSafe="true" id="fileTransferServiceBean" serviceClass="org.kimios.webservices.FileTransferService"
+                  address="${server.url}${service.context}/rest/">
+        <jaxrs:providers>
+            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
+        </jaxrs:providers>
+        <jaxrs:headers>
+            <entry key="Accept" value="*/*"/>
+        </jaxrs:headers>
+    </jaxrs:client>
+
+    <jaxrs:client threadSafe="true" id="extensionServiceBean" serviceClass="org.kimios.webservices.ExtensionService"
+                  address="${server.url}${service.context}/rest/">
+        <jaxrs:providers>
+            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
+        </jaxrs:providers>
+        <jaxrs:headers>
+            <entry key="Accept" value="application/json"/>
+        </jaxrs:headers>
+    </jaxrs:client>
+
+    <jaxrs:client threadSafe="true" id="logServiceBean" serviceClass="org.kimios.webservices.LogService"
+                  address="${server.url}${service.context}/rest/">
+        <jaxrs:providers>
+            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
+        </jaxrs:providers>
+        <jaxrs:headers>
+            <entry key="Accept" value="application/json"/>
+        </jaxrs:headers>
+    </jaxrs:client>
+
+    <jaxrs:client threadSafe="true" id="informationServiceBean" serviceClass="org.kimios.webservices.InformationService"
+                  address="${server.url}${service.context}/rest/">
+        <jaxrs:providers>
+            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
+        </jaxrs:providers>
+        <jaxrs:headers>
+            <entry key="Accept" value="application/json"/>
+        </jaxrs:headers>
+    </jaxrs:client>
+
+    <jaxrs:client threadSafe="true" id="searchServiceBean" serviceClass="org.kimios.webservices.SearchService"
+                  address="${server.url}${service.context}/rest/">
+        <jaxrs:providers>
+            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
+        </jaxrs:providers>
+        <jaxrs:headers>
+            <entry key="Accept" value="application/json"/>
+        </jaxrs:headers>
+    </jaxrs:client>
+
+    <jaxrs:client threadSafe="true" id="ruleServiceBean" serviceClass="org.kimios.webservices.RuleService"
+                  address="${server.url}${service.context}/rest/">
+        <jaxrs:providers>
+            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
+        </jaxrs:providers>
+        <jaxrs:headers>
+            <entry key="Accept" value="application/json"/>
+        </jaxrs:headers>
+    </jaxrs:client>
+
+
+    <jaxrs:client threadSafe="true" id="bonitaServiceBean" serviceClass="org.kimios.webservices.bonita.BonitaService"
+                  address="${server.url}${service.context}/rest/">
+        <jaxrs:providers>
+            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
+        </jaxrs:providers>
+        <jaxrs:headers>
+            <entry key="Accept" value="application/json"/>
+        </jaxrs:headers>
+    </jaxrs:client>
+
+
+
+
+
+    <bean id="administrationController" class="org.kimios.client.controller.AdministrationController" activation="eager">
+        <property name="client" ref="administrationServiceBean"/>
+    </bean>
+
+    <bean id="securityController" class="org.kimios.client.controller.SecurityController" activation="eager">
+        <property name="client" ref="securityServiceBean"/>
+    </bean>
+    <bean id="studioController" class="org.kimios.client.controller.StudioController" activation="eager">
+        <property name="client" ref="studioServiceBean"/>
+    </bean>
+    <bean id="workspaceController" class="org.kimios.client.controller.WorkspaceController" activation="eager">
+        <property name="client" ref="workspaceServiceBean"/>
+    </bean>
+    <bean id="folderController" class="org.kimios.client.controller.FolderController" activation="eager">
+        <property name="client" ref="folderServiceBean"/>
+    </bean>
+    <bean id="documentController" class="org.kimios.client.controller.DocumentController" activation="eager">
+        <property name="client" ref="documentServiceBean"/>
+    </bean>
+    <bean id="documentVersionController" class="org.kimios.client.controller.DocumentVersionController" activation="eager">
+        <property name="client" ref="documentVersionServiceBean"/>
+    </bean>
+
+    <bean id="logController" class="org.kimios.client.controller.LogController" activation="eager">
+        <property name="client" ref="logServiceBean"/>
+    </bean>
+
+    <bean id="fileTransferController" class="org.kimios.client.controller.FileTransferController" activation="eager">
+        <property name="restMode" value="true" />
+        <property name="temporaryFilesPath" value="${temp.directory}"/>
+        <property name="chunkSize" value="${transfer.chunksize}"/>
+        <property name="client" ref="fileTransferServiceBean"/>
+        <property name="documentVersionClient" ref="documentVersionServiceBean"/>
+    </bean>
+
+    <bean id="extensionController" class="org.kimios.client.controller.ExtensionController" activation="eager">
+        <property name="client" ref="extensionServiceBean"/>
+    </bean>
+
+    <bean id="reportingController" class="org.kimios.client.controller.ReportingController" activation="eager">
+        <property name="client" ref="reportingServiceBean"/>
+    </bean>
+
+
+    <bean id="serverInformationController" class="org.kimios.client.controller.ServerInformationController" activation="eager">
+        <property name="client" ref="informationServiceBean"/>
+    </bean>
+
+    <bean id="searchController" class="org.kimios.client.controller.SearchController" activation="eager">
+        <property name="client" ref="searchServiceBean"/>
+    </bean>
+
+    <bean id="workflowController" class="org.kimios.client.controller.WorkflowController" activation="eager">
+        <property name="restMode" value="true" />
+        <property name="client" ref="notificationServiceBean"/>
+    </bean>
+
+    <bean id="ruleController" class="org.kimios.client.controller.RuleController" activation="eager">
+        <property name="client" ref="ruleServiceBean"/>
+    </bean>
+
+    <bean id="bonitaController" class="org.kimios.client.controller.BonitaController" activation="eager">
+        <property name="client" ref="bonitaServiceBean"/>
+    </bean>
+
+
+    <bean id="baseController" class="org.kimios.controller.Controller">
+        <property name="securityController" ref="securityController" />
+        <property name="administrationController" ref="administrationController" />
+        <property name="studioController" ref="studioController" />
+        <property name="documentController" ref="documentController" />
+        <property name="documentVersionController" ref="documentVersionController" />
+        <property name="folderController" ref="folderController" />
+        <property name="workspaceController" ref="workspaceController" />
+        <property name="logController" ref="logController" />
+        <property name="fileTransferController" ref="fileTransferController" />
+        <property name="extensionController" ref="extensionController" />
+        <property name="reportingController" ref="reportingController" />
+        <property name="serverInformationController" ref="serverInformationController" />
+        <property name="searchController" ref="searchController" />
+        <property name="workflowController" ref="workflowController" />
+        <property name="ruleController" ref="ruleController" />
+        <property name="bonitaController" ref="bonitaController" />
+    </bean>
+
+
+
+
+
+</blueprint>

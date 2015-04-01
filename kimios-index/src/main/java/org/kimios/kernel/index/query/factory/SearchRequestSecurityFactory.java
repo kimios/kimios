@@ -32,6 +32,7 @@ import org.kimios.kernel.user.FactoryInstantiator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -39,6 +40,7 @@ import java.util.Vector;
 public class SearchRequestSecurityFactory extends HFactory
 {
     final Logger log = LoggerFactory.getLogger(SearchRequestSecurityFactory.class);
+
 
 
     public  List<SearchRequest> authorizedReadRequests(List<SearchRequest> e, String userName, String userSource,

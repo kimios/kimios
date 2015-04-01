@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Fabien Alin <fabien.alin@gmail.com>
@@ -56,31 +57,20 @@ public class CssController extends HttpServlet
                List extension
             */
 
-            String fileIconsPath = this.getServletContext().getRealPath("/images/fileicons");
+            String iconPath = "/images/fileicons/";
+            Set<String> iconItems = this.getServletContext().getResourcePaths(iconPath);
+            for (String f : iconItems) {
 
-            File iconsDirectory = new File(fileIconsPath);
-
-            FilenameFilter pngFilter = new FilenameFilter()
-            {
-                public boolean accept(File file, String s)
-                {
-                    return s.endsWith(".png");
+                if(f.endsWith("png")){
+                    String fileName = f.substring(iconPath.length(),
+                            f.lastIndexOf(".")
+                    );
+                    availablesIcons.add( fileName );
+                    cssContainer.append(
+                            String.format(cssTpl, fileName, this.getServletContext().getContextPath(), fileName)
+                    );
+                    cssContainer.append("\n");
                 }
-            };
-
-            List<File> pngFiles = Arrays.asList(iconsDirectory.listFiles(pngFilter));
-            for (File f : pngFiles) {
-
-
-
-                String fileName = f.getName().substring(0,
-                        f.getName().lastIndexOf(".")
-                );
-                availablesIcons.add( fileName );
-                cssContainer.append(
-                        String.format(cssTpl, fileName, this.getServletContext().getContextPath(), fileName)
-                );
-                cssContainer.append("\n");
             }
         }
 

@@ -536,8 +536,8 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
             for (var key in fields) {
                 var value = null;
 
-                console.log(key);
-                console.log(form.metaFieldsMapping);
+                /*console.log(key);
+                console.log(form.metaFieldsMapping);*/
                 // is date
                 if (fields[key] && fields[key] instanceof Date)
                     value = fields[key] ? fields[key].format('Y-m-d') : '';
@@ -1011,7 +1011,7 @@ function loadAddonCols(handler){
                                             if(record.data.metaDatas && record.data.metaDatas.length > 0){
 
                                             } else {
-                                                console.log(value);
+                                                //console.log(value);
                                                 var obj = Ext.decode(value);
                                                 if (obj && obj.entityMetaValues) {
                                                     var v = metaValueRenderer(tName, obj.entityMetaValues);

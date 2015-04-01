@@ -186,7 +186,9 @@
     <bean id="documentVersionController" class="org.kimios.kernel.controller.impl.DocumentVersionController"
             parent="kimiosCoreCtrl">
     </bean>
-    <bean id="folderController" class="org.kimios.kernel.controller.impl.FolderController" parent="kimiosCoreCtrl"/>
+    <bean id="folderController" class="org.kimios.kernel.controller.impl.FolderController" parent="kimiosCoreCtrl">
+           <property name="virtualFolderFactory" ref="virtualFolderFactory" />
+    </bean>
     <bean id="workspaceController" class="org.kimios.kernel.controller.impl.WorkspaceController"
             parent="kimiosCoreCtrl"/>
     <bean id="pathController" class="org.kimios.kernel.controller.impl.PathController" parent="kimiosCoreCtrl"/>
@@ -228,4 +230,7 @@
 
     <!-- meta feeds manager -->
     <bean id="metaFeedManager" class="org.kimios.kernel.dms.metafeeds.MetaFeedManager" init-method="init"/>
+
+    <!-- virtual folder factory -->
+    <bean id="virtualFolderFactory" class="org.kimios.kernel.dms.hibernate.VirtualFolderFactory" parent="hfactory" />
 </beans>

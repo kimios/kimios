@@ -16,97 +16,98 @@
 package org.kimios.kernel.controller;
 
 import org.kimios.kernel.jobs.security.IACLUpdater;
+import org.kimios.kernel.security.ISecurityAgent;
 import org.kimios.kernel.security.SecurityAgent;
 
 public abstract class AKimiosController implements DmsController
 {
-    private SecurityAgent securityAgent;
+    private ISecurityAgent securityAgent;
 
     protected IACLUpdater aclUpdater;
 
-    protected org.kimios.kernel.dms.FactoryInstantiator dmsFactoryInstantiator;
+    protected org.kimios.kernel.dms.IDmsFactoryInstantiator dmsFactoryInstantiator;
 
-    protected org.kimios.kernel.security.FactoryInstantiator securityFactoryInstantiator;
+    protected org.kimios.kernel.security.ISecurityFactoryInstantiator securityFactoryInstantiator;
 
-    protected org.kimios.kernel.user.FactoryInstantiator authFactoryInstantiator;
+    protected org.kimios.kernel.user.IAuthenticationFactoryInstantiator authFactoryInstantiator;
 
-    protected org.kimios.kernel.log.FactoryInstantiator logFactoryInstantiator;
+    protected org.kimios.kernel.log.ILogFactoryInstantiator logFactoryInstantiator;
 
-    protected org.kimios.kernel.filetransfer.FactoryInstantiator transferFactoryInstantiator;
+    protected org.kimios.kernel.filetransfer.IFileTransferFactoryInstantiator transferFactoryInstantiator;
 
-    protected org.kimios.kernel.reporting.FactoryInstantiator reportFactoryInstantiator;
+    protected org.kimios.kernel.reporting.IReportFactoryInstantiator reportFactoryInstantiator;
 
-    public org.kimios.kernel.reporting.FactoryInstantiator getReportFactoryInstantiator()
+    public org.kimios.kernel.reporting.IReportFactoryInstantiator getReportFactoryInstantiator()
     {
         return reportFactoryInstantiator;
     }
 
     public void setReportFactoryInstantiator(
-            org.kimios.kernel.reporting.FactoryInstantiator reportFactoryInstantiator)
+            org.kimios.kernel.reporting.IReportFactoryInstantiator reportFactoryInstantiator)
     {
         this.reportFactoryInstantiator = reportFactoryInstantiator;
     }
 
-    public org.kimios.kernel.filetransfer.FactoryInstantiator getTransferFactoryInstantiator()
+    public org.kimios.kernel.filetransfer.IFileTransferFactoryInstantiator getTransferFactoryInstantiator()
     {
         return transferFactoryInstantiator;
     }
 
     public void setTransferFactoryInstantiator(
-            org.kimios.kernel.filetransfer.FactoryInstantiator transferFactoryInstantiator)
+            org.kimios.kernel.filetransfer.IFileTransferFactoryInstantiator transferFactoryInstantiator)
     {
         this.transferFactoryInstantiator = transferFactoryInstantiator;
     }
 
-    public org.kimios.kernel.log.FactoryInstantiator getLogFactoryInstantiator()
+    public org.kimios.kernel.log.ILogFactoryInstantiator getLogFactoryInstantiator()
     {
         return logFactoryInstantiator;
     }
 
     public void setLogFactoryInstantiator(
-            org.kimios.kernel.log.FactoryInstantiator logFactoryInstantiator)
+            org.kimios.kernel.log.ILogFactoryInstantiator logFactoryInstantiator)
     {
         this.logFactoryInstantiator = logFactoryInstantiator;
     }
 
-    public org.kimios.kernel.user.FactoryInstantiator getAuthFactoryInstantiator()
+    public org.kimios.kernel.user.IAuthenticationFactoryInstantiator getAuthFactoryInstantiator()
     {
         return authFactoryInstantiator;
     }
 
     public void setAuthFactoryInstantiator(
-            org.kimios.kernel.user.FactoryInstantiator authFactoryInstantiator)
+            org.kimios.kernel.user.IAuthenticationFactoryInstantiator authFactoryInstantiator)
     {
         this.authFactoryInstantiator = authFactoryInstantiator;
     }
 
-    public org.kimios.kernel.security.FactoryInstantiator getSecurityFactoryInstantiator()
+    public org.kimios.kernel.security.ISecurityFactoryInstantiator getSecurityFactoryInstantiator()
     {
         return securityFactoryInstantiator;
     }
 
     public void setSecurityFactoryInstantiator(
-            org.kimios.kernel.security.FactoryInstantiator securityFactoryInstantiator)
+            org.kimios.kernel.security.ISecurityFactoryInstantiator securityFactoryInstantiator)
     {
         this.securityFactoryInstantiator = securityFactoryInstantiator;
     }
 
-    public org.kimios.kernel.dms.FactoryInstantiator getDmsFactoryInstantiator()
+    public org.kimios.kernel.dms.IDmsFactoryInstantiator getDmsFactoryInstantiator()
     {
         return dmsFactoryInstantiator;
     }
 
-    public void setDmsFactoryInstantiator(org.kimios.kernel.dms.FactoryInstantiator dmsFactoryInstantiator)
+    public void setDmsFactoryInstantiator(org.kimios.kernel.dms.IDmsFactoryInstantiator dmsFactoryInstantiator)
     {
         this.dmsFactoryInstantiator = dmsFactoryInstantiator;
     }
 
-    public SecurityAgent getSecurityAgent()
+    public ISecurityAgent getSecurityAgent()
     {
         return this.securityAgent;
     }
 
-    public void setSecurityAgent(SecurityAgent securityAgent)
+    public void setSecurityAgent(ISecurityAgent securityAgent)
     {
         this.securityAgent = securityAgent;
     }

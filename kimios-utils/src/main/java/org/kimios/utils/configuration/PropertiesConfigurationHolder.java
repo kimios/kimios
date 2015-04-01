@@ -132,4 +132,8 @@ public class PropertiesConfigurationHolder implements ConfigurationHolder
     {
         init(configFilePath);
     }
+
+    public Properties getAllProperties(){
+        return values;
+    }
 }

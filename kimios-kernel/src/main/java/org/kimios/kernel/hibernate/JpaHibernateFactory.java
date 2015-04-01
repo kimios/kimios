@@ -80,7 +80,6 @@ public class JpaHibernateFactory extends AbstractDBFactory  {
         if (instance == null) {
             instance = new JpaHibernateFactory();
         }
-
         return instance;
     }
 }

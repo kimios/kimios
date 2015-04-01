@@ -1,7 +1,6 @@
 <%@page import="org.kimios.client.controller.SecurityController" %>
 <%@page import="org.kimios.kernel.ws.pojo.AuthenticationSource" %>
-<%@ page import="org.springframework.web.context.WebApplicationContext" %>
-<%@ page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
+<%@ page import="org.kimios.controller.Controller" %>
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%--
   ~ Kimios - Document Management System Software
@@ -21,12 +20,7 @@
   --%>
 
 <%
-    SecurityController securityController = null;
-    WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(this.getServletConfig().getServletContext());
-    if (securityController == null) {
-        securityController = (SecurityController) wac.getBean("securityController");
-    }
-    // check and redirect to  if session is alive
+    SecurityController securityController = Controller.getSecurityController();
     String sessionUid = (String) request.getSession().getAttribute("sessionUid");
     if (sessionUid != null && securityController.isSessionAlive(sessionUid)) {
         response.sendRedirect(request.getContextPath() + "/mobile/logged.jsp");

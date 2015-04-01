@@ -103,6 +103,20 @@ public class AddonDataHandler extends GenericEventHandler {
     }
 
 
+    @DmsEvent(eventName = {DmsEventName.DOCUMENT_COPY}, when = DmsEventOccur.AFTER)
+    public void documentCopy(Object[] obj, Object retour, EventContext ctx) throws Exception {
+        Document doc = (Document)EventContext.getParameters().get("document");
+        try {
+            if(doc != null){
+                doc.setAddOnDatas(generateMetaDatas(doc));
+                FactoryInstantiator.getInstance().getDocumentFactory().updateDocument(doc);
+            }
+        } catch (Exception e) {
+            log.error(" index action Exception on Document " + doc.getUid(), e);
+        }
+    }
+
+
 
     private String generateMetaDatas(DMEntityImpl entity) {
         /*

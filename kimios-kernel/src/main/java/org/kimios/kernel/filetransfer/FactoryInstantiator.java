@@ -15,8 +15,7 @@
  */
 package org.kimios.kernel.filetransfer;
 
-public class FactoryInstantiator
-{
+public class FactoryInstantiator implements IFileTransferFactoryInstantiator {
     private static FactoryInstantiator instance;
 
     synchronized public static FactoryInstantiator getInstance()
@@ -29,6 +28,7 @@ public class FactoryInstantiator
 
     private DataTransferFactory dataTransferFactory;
 
+    @Override
     public DataTransferFactory getDataTransferFactory()
     {
         return dataTransferFactory;
