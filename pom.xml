@@ -72,7 +72,7 @@
         <!-- releases properties -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <KIMIOS_VERSION>1.0-SNAPSHOT</KIMIOS_VERSION>
-        <releaseRepoUrl>http://maven.devlib.infra/repository/kimios-releases</releaseRepoUrl>
+        <releaseRepoUrl>http://repositories.k.devlib.fr/repository/kimios-private</releaseRepoUrl>
         <snapshotRepoUrl>http://repositories.k.devlib.fr/repository/kimios-private</snapshotRepoUrl>
         <deployRepoUrl>${releaseRepoUrl}</deployRepoUrl>
         <releaseRepoId>kimios-releases</releaseRepoId>
