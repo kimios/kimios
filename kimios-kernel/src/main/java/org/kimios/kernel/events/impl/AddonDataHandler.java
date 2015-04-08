@@ -90,13 +90,16 @@ public class AddonDataHandler extends GenericEventHandler {
 
     @DmsEvent(eventName = {DmsEventName.FOLDER_CREATE}, when = DmsEventOccur.AFTER)
     public void folderCreate(Object[] obj, Object retour, EventContext ctx) throws Exception {
-        log.debug("Adding meta datas on folder: " + (Long) obj[1]);
         Folder f = null;
         try {
             f = (Folder)EventContext.getParameters().get("virtualFolder");
             List<MetaValue> metaValues = (List)EventContext.getParameters().get("virtualFolderMetas");
-            f.setAddOnDatas(generateMetaDatasForFolder(f, metaValues));
-            FactoryInstantiator.getInstance().getFolderFactory().updateFolder(f);
+            if(f != null && metaValues != null){
+                log.debug("Adding meta datas on virtual folder");
+                f.setAddOnDatas(generateMetaDatasForFolder(f, metaValues));
+                FactoryInstantiator.getInstance().getFolderFactory().updateFolder(f);
+            }
+
         } catch (Exception e) {
             log.error(" index action Exception on folder " + f.getUid(), e);
         }

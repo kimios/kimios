@@ -20,6 +20,7 @@ import org.apache.commons.collections.map.ListOrderedMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.util.ClientUtils;
+import org.apache.solr.util.DateMathParser;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.kimios.exceptions.ConfigException;
@@ -402,7 +403,7 @@ public class SolrSearchController
             searchRequest.setUpdateDate(new Date());
         } else {
             searchRequest.setCreationDate(new Date());
-            searchRequest.setUpdateDate(searchRequest.getUpdateDate());
+            searchRequest.setUpdateDate(searchRequest.getCreationDate());
         }
         searchRequest.setOwner(session.getUserName());
         searchRequest.setOwnerSource(session.getUserSource());
@@ -410,18 +411,18 @@ public class SolrSearchController
         searchRequestFactory.save(searchRequest);
         searchRequestFactory.getSession().flush();
         //process security
+        searchRequestSecurityFactory.cleanACL(searchRequest);
         if (searchRequest.getSecurities() != null && searchRequest.getSecurities().size() > 0) {
-
-            searchRequestSecurityFactory.cleanACL(searchRequest);
             for (SearchRequestSecurity secItem : securities) {
                 secItem.setSearchRequest(searchRequest);
                 searchRequestSecurityFactory.saveSearchRequestSecurity(secItem);
                 log.debug("saving search request acl " + secItem);
-
-
             }
             // Views is supposed to be published, because of rights definition
             searchRequest.setPublished(true);
+            searchRequest.setTemporary(false);
+        } else {
+            searchRequest.setPublished(false);
             searchRequest.setTemporary(false);
         }
         searchRequestFactory.save(searchRequest);
