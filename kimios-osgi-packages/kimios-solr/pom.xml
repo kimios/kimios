@@ -28,6 +28,7 @@
     <artifactId>kimios-solr</artifactId>
     <name>Kimios :: Solr Osgi Bundle</name>
     <description>Devlib' :: Apache Solr ${solr4j.version}</description>
+    <packaging>bundle</packaging>
     <properties>
         <solr4j.version>4.6.0</solr4j.version>
     </properties>
