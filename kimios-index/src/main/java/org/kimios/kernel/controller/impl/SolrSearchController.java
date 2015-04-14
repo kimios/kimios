@@ -634,9 +634,9 @@ public class SolrSearchController
                                     .replaceAll("\\[\"", "")
                                     .replaceAll("\",\"", ",")
                                     .replaceAll("\\[\\]", "");
-                            tmpAppendName = tmpAppendName.replaceAll("\"\"", "") + "\"";
+                            tmpAppendName = tmpAppendName.replaceAll("\"\"", "") + "\",";
                         } else {
-                            tmpAppendName += "\"" + c.getQuery() + "\"";
+                            tmpAppendName += "\"" + c.getQuery() + "\",";
                         }
 
                     } else if (c.getRangeMin() != null || c.getRangeMax() != null) {
@@ -648,7 +648,6 @@ public class SolrSearchController
                                 tmpAppendName += c.getRangeMin()
                                         + " to " + c.getRangeMax();
                             }
-
                         } else if (StringUtils.isNotBlank(c.getRangeMin())) {
                             if(isDateField){
                                 tmpAppendName += convertDateString(c.getRangeMin());
@@ -661,10 +660,12 @@ public class SolrSearchController
                                 tmpAppendName += c.getRangeMax();
                         }
                     }
-                appendName += StringUtils.isNotBlank(tmpAppendName) ? tmpAppendName + ", " : "";
+                appendName += StringUtils.isNotBlank(tmpAppendName) ? tmpAppendName + "," : "";
             }
-            appendName = appendName.replaceAll("\"\"", "");
-            appendName = appendName.replaceAll(",,","");
+
+            appendName = appendName.replace("\"\"", "");
+            appendName = appendName.replace(",,","");
+            appendName = appendName.replace("\"\"", "\",\"");
             if (appendName.trim().endsWith(",")) {
                 appendName = appendName.substring(0, appendName.lastIndexOf(","));
             }
