@@ -59,5 +59,8 @@ public interface IExtensionController
     public String restoreEntity(Session session, long dmEntityId)
             throws ConfigException, DataSourceException, AccessDeniedException;
 
+    public boolean canHandleAutomaticDocumentDeposit(Session session)
+            throws ConfigException, DataSourceException, AccessDeniedException;
+
 
 }

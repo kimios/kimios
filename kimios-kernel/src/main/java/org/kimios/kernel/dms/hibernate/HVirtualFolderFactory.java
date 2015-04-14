@@ -32,17 +32,24 @@ import java.util.List;
  *
  *
  */
-public class VirtualFolderFactory extends HFactory {
+public class HVirtualFolderFactory extends HFactory implements org.kimios.kernel.dms.VirtualFolderFactory {
 
+    @Override
     public void saveOrUpdateMeta(VirtualFolderMetaData virtualFolderMd){
+
         getSession().saveOrUpdate(virtualFolderMd);
+        flush();
     }
 
+    @Override
     public void deleteMeta(VirtualFolderMetaData virtualFolderMd){
+
         getSession().delete(virtualFolderMd);
+        flush();
     }
 
 
+    @Override
     public List<VirtualFolderMetaData> virtualFolderMetaDataList(Folder folder){
         String query = "select m from VirtualFolderMetaData m where m.virtualFolder = :folder";
         return getSession()

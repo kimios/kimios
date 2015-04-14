@@ -20,7 +20,7 @@ import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.IFolderController;
 import org.kimios.kernel.controller.utils.PathUtils;
 import org.kimios.kernel.dms.*;
-import org.kimios.kernel.dms.hibernate.VirtualFolderFactory;
+import org.kimios.kernel.dms.hibernate.HVirtualFolderFactory;
 import org.kimios.kernel.events.EventContext;
 import org.kimios.kernel.events.annotations.DmsEvent;
 import org.kimios.kernel.events.annotations.DmsEventName;
@@ -28,6 +28,7 @@ import org.kimios.kernel.exception.AccessDeniedException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.NamingException;
 import org.kimios.kernel.exception.TreeException;
+import org.kimios.kernel.hibernate.HFactory;
 import org.kimios.kernel.log.DMEntityLog;
 import org.kimios.kernel.security.DMEntitySecurity;
 import org.kimios.kernel.security.Session;
@@ -46,15 +47,7 @@ public class FolderController extends AKimiosController implements IFolderContro
     private static Logger log = LoggerFactory.getLogger(FolderController.class);
 
 
-    private VirtualFolderFactory virtualFolderFactory;
 
-    public VirtualFolderFactory getVirtualFolderFactory() {
-        return virtualFolderFactory;
-    }
-
-    public void setVirtualFolderFactory(VirtualFolderFactory virtualFolderFactory) {
-        this.virtualFolderFactory = virtualFolderFactory;
-    }
 
     /* (non-Javadoc)
         * @see org.kimios.kernel.controller.impl.IFolderController#getFolder(org.kimios.kernel.security.Session, long)
@@ -237,12 +230,14 @@ public class FolderController extends AKimiosController implements IFolderContro
                         virtualFolderMetaData.setDateValue((Date) metaValue.getValue());
                         break;
                 }
-                virtualFolderFactory.save(virtualFolderMetaData);
+                dmsFactoryInstantiator.getVirtualFolderFactory().saveOrUpdateMeta(virtualFolderMetaData);
             }
 
 
-            EventContext.get().addParameter("virtualFolder", f);
-            EventContext.get().addParameter("virtualFolderMetas", metaValues);
+            EventContext.get().addParameter("virtualFolder",
+                    dmsFactoryInstantiator.getFolderFactory().getFolder(f.getUid()));
+            EventContext.get().addParameter("virtualFolderMetas",
+                    dmsFactoryInstantiator.getVirtualFolderFactory().virtualFolderMetaDataList(f));
 
             return f.getUid();
         }
@@ -328,11 +323,11 @@ public class FolderController extends AKimiosController implements IFolderContro
             }
 
 
-            List<VirtualFolderMetaData> metaValues = virtualFolderFactory.virtualFolderMetaDataList(f);
+            List<VirtualFolderMetaData> metaValues = dmsFactoryInstantiator.getVirtualFolderFactory().virtualFolderMetaDataList(f);
             for(VirtualFolderMetaData metaData: metaValues){
-                virtualFolderFactory.deleteMeta(metaData);
+                dmsFactoryInstantiator.getVirtualFolderFactory().deleteMeta(metaData);
             }
-            virtualFolderFactory.flush();
+            ((HFactory)dmsFactoryInstantiator.getVirtualFolderFactory()).flush();
 
             // delete full path
             dmsFactoryInstantiator.getDmEntityFactory().deteteEntities(f.getPath());
@@ -373,7 +368,8 @@ public class FolderController extends AKimiosController implements IFolderContro
     {
         Folder f = dmsFactoryInstantiator.getFolderFactory().getFolder(folderId);
         if (getSecurityAgent().isReadable(f, session.getUserName(), session.getUserSource(), session.getGroups())) {
-            List<VirtualFolderMetaData> virtualFolderMetaDatas = virtualFolderFactory.virtualFolderMetaDataList(f);
+            List<VirtualFolderMetaData> virtualFolderMetaDatas =
+                    dmsFactoryInstantiator.getVirtualFolderFactory().virtualFolderMetaDataList(f);
 
             List<MetaValue> metaValues = new ArrayList<MetaValue>();
             for(VirtualFolderMetaData m: virtualFolderMetaDatas){

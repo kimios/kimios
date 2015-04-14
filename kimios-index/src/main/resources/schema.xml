@@ -20,6 +20,10 @@
     <types>
         <fieldType name="string" class="solr.StrField" sortMissingLast="true" omitNorms="true"/>
         <fieldType name="string_ci" class="solr.TextField" sortMissingLast="true" omitNorms="true">
+            <analyzer type="index">
+                <tokenizer class="solr.KeywordTokenizerFactory"/>
+                <filter class="solr.LowerCaseFilterFactory"/>
+            </analyzer>
             <analyzer type="query">
                 <tokenizer class="solr.KeywordTokenizerFactory"/>
                 <filter class="solr.LowerCaseFilterFactory"/>
@@ -67,10 +71,10 @@
         <field name="DocumentNameDisplayed" type="string" indexed="false" stored="true" required="true"/>
         <field name="DocumentName" type="string" indexed="true" stored="true" required="true"/>
         <field name="DocumentNameAnalysed" type="text" indexed="true" stored="true" required="false"/>
-        <field name="DocumentExtension" type="string" indexed="true" stored="true" required="false"/>
-        <field name="DocumentOwner" type="string" indexed="true" stored="true" required="true"/>
-        <field name="DocumentOwnerId" type="string" indexed="true" stored="true" required="true"/>
-        <field name="DocumentOwnerSource" type="string" indexed="true" stored="true" required="true"/>
+        <field name="DocumentExtension" type="string_ci" indexed="true" stored="true" required="false"/>
+        <field name="DocumentOwner" type="string_ci" indexed="true" stored="true" required="true"/>
+        <field name="DocumentOwnerId" type="string_ci" indexed="true" stored="true" required="true"/>
+        <field name="DocumentOwnerSource" type="string_ci" indexed="true" stored="true" required="true"/>
         <field name="DocumentPath" type="string" indexed="true" stored="true" required="true"/>
         <field name="DocumentParent" type="string" indexed="true" stored="true" required="true"/>
         <field name="DocumentParentId" type="tlong" indexed="true" stored="true" required="true"/>
@@ -79,9 +83,9 @@
         <field name="DocumentVersionId" type="tlong" indexed="true" stored="true" required="true"/>
         <field name="DocumentVersionCreationDate" type="tdate" indexed="true" stored="true" required="true"/>
         <field name="DocumentVersionUpdateDate" type="tdate" indexed="true" stored="true" required="true"/>
-        <field name="DocumentVersionOwner" type="string" indexed="true" stored="true" required="true"/>
-        <field name="DocumentVersionOwnerId" type="string" indexed="true" stored="true" required="true"/>
-        <field name="DocumentVersionOwnerSource" type="string" indexed="true" stored="true" required="true"/>
+        <field name="DocumentVersionOwner" type="string_ci" indexed="true" stored="true" required="true"/>
+        <field name="DocumentVersionOwnerId" type="string_ci" indexed="true" stored="true" required="true"/>
+        <field name="DocumentVersionOwnerSource" type="string_ci" indexed="true" stored="true" required="true"/>
         <field name="DocumentVersionLength" type="tlong" indexed="true" stored="true" required="false" />
         <field name="DocumentVersionHash" type="string" indexed="true" stored="true" required="false" />
         <field name="DocumentTypeUid" type="tlong" indexed="true" stored="true" required="false" multiValued="true"/>
@@ -90,9 +94,9 @@
         <field name="DocumentACL" type="string" indexed="true" stored="true" required="false" multiValued="true"/>
         <field name="DocumentCheckout" type="boolean" indexed="true" stored="true" required="false" />
         <field name="DocumentCheckoutDate" type="tdate" indexed="true" stored="true" required="false" />
-        <field name="DocumentCheckoutOwnerId" type="string" indexed="true" stored="true" required="false" />
-        <field name="DocumentCheckoutOwnerSource" type="string" indexed="true" stored="true" required="false" />
-        <field name="DocumentWorkflowStatusName" type="string" indexed="true" stored="true" required="false" />
+        <field name="DocumentCheckoutOwnerId" type="string_ci" indexed="true" stored="true" required="false" />
+        <field name="DocumentCheckoutOwnerSource" type="string_ci" indexed="true" stored="true" required="false" />
+        <field name="DocumentWorkflowStatusName" type="string_ci" indexed="true" stored="true" required="false" />
         <field name="DocumentWorkflowStatusUid" type="tlong" indexed="true" stored="true" required="false" />
         <field name="DocumentOutWorkflow" type="boolean" indexed="true" stored="true" required="false" />
         <field name="DocumentRawAddonDatas" type="string" indexed="false" stored="true" required="false" />

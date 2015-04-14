@@ -49,6 +49,9 @@
         <command>
             <action class="org.kimios.osgi.karaf.BonitaSyncCommand" />
         </command>
+        <command>
+            <action class="org.kimios.osgi.karaf.PathElementCommand" />
+        </command>
     </command-bundle>
 
     <bean id="lockCompleter" class="org.kimios.osgi.karaf.CheckedOutCompleter">

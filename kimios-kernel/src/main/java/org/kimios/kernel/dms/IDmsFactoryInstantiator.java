@@ -59,4 +59,8 @@ public interface IDmsFactoryInstantiator {
     DocumentCommentFactory getDocumentCommentFactory();
 
     SymbolicLinkFactory getSymbolicLinkFactory();
+
+    PathTemplateFactory getPathTemplateFactory();
+
+    VirtualFolderFactory getVirtualFolderFactory();
 }

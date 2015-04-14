@@ -218,11 +218,21 @@ public class DocumentController extends AKimiosController implements IDocumentCo
 
         //parse metas
         List<MetaValue> values = MetaProcessor.getMetaValuesFromXML(metasXmlStream);
-        String path = new MetaPathHandler().path(new Date(), values, extension);
-        log.info("generated path: {}", path);
+        /*
+            Load path structure setup
+         */
+        PathTemplate pathTemplate = dmsFactoryInstantiator.getPathTemplateFactory().getDefaultPathTemplate();
+        if (pathTemplate == null) {
+            log.error("default path template not available. can't evaluate path. please contact your administrator");
+            throw new AccessDeniedException();
+        }
+        log.debug("loaded path template #{} - {}", pathTemplate.getId(), pathTemplate.getTemplateName());
+
+        String path = new MetaPathHandler().path(new Date(), pathTemplate.getPathElements(), values, extension);
+        log.debug("generated path: {}", path);
         long documentId = generateEntitiesFromPath(s, path, isSecurityInherited);
         Document document = dmsFactoryInstantiator.getDocumentFactory().getDocument(documentId);
-        log.info("Adding document " + document + " to event context");
+        log.debug("Adding document " + document + " to event context");
         EventContext.addParameter("document", document);
         EventContext.get().setEntity(document);
 
@@ -469,7 +479,16 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                 /*
                     Generate Path from meta
                  */
-                path = new MetaPathHandler().path(new Date(), values, path.substring(path.lastIndexOf("\\.")));
+                 /*
+            Load path structure setup
+                 */
+                PathTemplate pathTemplate = dmsFactoryInstantiator.getPathTemplateFactory().getDefaultPathTemplate();
+                if (pathTemplate == null) {
+                    log.error("default path template not available. can't evaluate path. please contact your administrator");
+                    throw new AccessDeniedException();
+                }
+                log.debug("loaded path template #{} - {}", pathTemplate.getId(), pathTemplate.getTemplateName());
+                path = new MetaPathHandler().path(new Date(), pathTemplate.getPathElements(), values, path.substring(path.lastIndexOf("\\.")));
                 log.info("generated path: {}", path);
 
             }
@@ -611,7 +630,16 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                  /*
                     Generate Path from meta
                  */
-                path = new MetaPathHandler().path(new Date(), metaValues, path.substring(path.lastIndexOf("\\."))) + "/" + path;
+                 /*
+            Load path structure setup
+         */
+                PathTemplate pathTemplate = dmsFactoryInstantiator.getPathTemplateFactory().getDefaultPathTemplate();
+                if (pathTemplate == null) {
+                    log.error("default path template not available. can't evaluate path. please contact your administrator");
+                    throw new AccessDeniedException();
+                }
+                log.debug("loaded path template #{} - {}", pathTemplate.getId(), pathTemplate.getTemplateName());
+                path = new MetaPathHandler().path(new Date(), pathTemplate.getPathElements(), metaValues, path.substring(path.lastIndexOf("\\."))) + "/" + path;
                 log.info("generated path: {}", path);
             }
             documentId = generateEntitiesFromPath(s, path, isSecurityInherited);

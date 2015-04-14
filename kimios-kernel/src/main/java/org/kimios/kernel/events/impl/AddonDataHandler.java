@@ -29,6 +29,7 @@ import org.kimios.kernel.events.annotations.DmsEventOccur;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -93,7 +94,7 @@ public class AddonDataHandler extends GenericEventHandler {
         Folder f = null;
         try {
             f = (Folder)EventContext.getParameters().get("virtualFolder");
-            List<MetaValue> metaValues = (List)EventContext.getParameters().get("virtualFolderMetas");
+            List<VirtualFolderMetaData> metaValues = (List)EventContext.getParameters().get("virtualFolderMetas");
             if(f != null && metaValues != null){
                 log.debug("Adding meta datas on virtual folder");
                 f.setAddOnDatas(generateMetaDatasForFolder(f, metaValues));
@@ -140,14 +141,33 @@ public class AddonDataHandler extends GenericEventHandler {
         return null;
     }
 
-    private String generateMetaDatasForFolder(Folder entity, List<MetaValue> metaValues) {
+    private String generateMetaDatasForFolder(Folder entity, List<VirtualFolderMetaData> metaValues) {
         /*
             Load Document attribute
          */
         try {
             AddonDatasWrapper wrapper = new AddonDatasWrapper();
             wrapper.setEntityAttributes(entity.getAttributes());
-            wrapper.setEntityMetaValues(metaValues);
+            List<MetaValue> metaValuesFinal = new ArrayList<MetaValue>();
+            for(VirtualFolderMetaData m: metaValues){
+                log.debug("generating folder metavalue for meta " + m.getMeta() + " (" + (m.getMeta() != null ? m.getMeta().getMetaType() : " no meta )"));
+                if(m.getMeta() == null){
+                    //load manually
+                    m.setMeta(FactoryInstantiator.getInstance().getMetaFactory().getMeta(m.getMetaId()));
+                }
+                if(m.getMeta().getMetaType() == MetaType.STRING){
+                    MetaStringValue mv = new MetaStringValue();
+                    mv.setValue(m.getStringValue());
+                    mv.setMeta(m.getMeta());
+                    metaValuesFinal.add(mv);
+                } else {
+                    MetaDateValue mv = new MetaDateValue();
+                    mv.setValue(m.getDateValue());
+                    mv.setMeta(m.getMeta());
+                    metaValuesFinal.add(mv);
+                }
+            }
+            wrapper.setEntityMetaValues(metaValuesFinal);
 
             return objectMapper.writeValueAsString(wrapper);
         } catch (Exception e) {

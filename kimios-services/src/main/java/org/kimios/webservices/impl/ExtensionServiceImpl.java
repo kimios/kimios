@@ -151,5 +151,17 @@ public class ExtensionServiceImpl extends CoreService implements ExtensionServic
     }
 
 
+    @Override
+    public boolean canHandleAutomaticPathDeposit(String sessionId)
+            throws DMServiceException{
+        try {
+            Session session = getHelper().getSession(sessionId);
+            return extensionController.canHandleAutomaticDocumentDeposit(session);
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
+
+
 }
 

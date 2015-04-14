@@ -16,10 +16,16 @@
 
 package org.kimios.kernel.dms.utils;
 
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by farf on 11/13/14.
  */
-public class PathElement {      ;
+public class PathElement {
 
 
     public final static int CREATION_DATE = 0;
@@ -27,8 +33,6 @@ public class PathElement {      ;
     public final static int INDEX_FIELD = 2;
 
     public final static int VALUE_CURRENT_DATE = 3;
-
-
 
 
     private boolean isDocumentName;
@@ -70,4 +74,14 @@ public class PathElement {      ;
     public void setDocumentName(boolean isDocumentName) {
         this.isDocumentName = isDocumentName;
     }
+
+    public static List<PathElement> parseElementsFromStructure(String jsonStructure) throws Exception {
+        return new ObjectMapper().readValue(jsonStructure, new TypeReference<ArrayList<PathElement>>(){});
+    }
+
+    public static String convertStructureToString(List<PathElement> pathElements) throws Exception{
+        String pathStructure = new ObjectMapper().writeValueAsString(pathElements);
+        return pathStructure;
+    }
+
 }

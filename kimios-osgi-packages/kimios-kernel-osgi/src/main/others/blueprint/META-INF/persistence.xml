@@ -53,6 +53,7 @@
         <class>org.kimios.kernel.dms.extension.impl.DMEntityAttribute</class>
         <class>org.kimios.kernel.dms.metafeeds.impl.Enumeration</class>
         <class>org.kimios.kernel.dms.metafeeds.impl.UserMetaFeed</class>
+        <class>org.kimios.kernel.dms.PathTemplate</class>
         <class>org.kimios.kernel.filetransfer.DataTransfer</class>
         <class>org.kimios.kernel.index.query.model.SearchRequest</class>
         <class>org.kimios.kernel.index.query.model.SearchRequestACL</class>

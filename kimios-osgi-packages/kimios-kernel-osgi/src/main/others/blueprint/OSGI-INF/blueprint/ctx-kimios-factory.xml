@@ -157,6 +157,16 @@
                 <property name="provider" ref="dbFactoryProvider"></property>
             </bean>
         </property>
+        <property name="pathTemplateFactory">
+            <bean class="org.kimios.kernel.dms.hibernate.HPathTemplateFactory">
+                <property name="provider" ref="dbFactoryProvider"></property>
+            </bean>
+        </property>
+        <property name="virtualFolderFactory">
+            <bean class="org.kimios.kernel.dms.hibernate.HVirtualFolderFactory">
+                <property name="provider" ref="dbFactoryProvider"></property>
+            </bean>
+        </property>
     </bean>
 
 
@@ -271,7 +281,6 @@
         <property name="transferFactoryInstantiator" ref="transferfi"></property>
         <property name="securityAgent" ref="securityAgent"/>
         <property name="aclUpdater" ref="aclUpdater"/>
-        <property name="virtualFolderFactory" ref="virtualFolderFactory" />
 
         <tx:transaction method="*" value="Required"/>
     </bean>
@@ -420,13 +429,6 @@
 
     <!-- meta feeds manager -->
     <bean id="metaFeedManager" class="org.kimios.kernel.dms.metafeeds.MetaFeedManager" init-method="init"/>
-
-
-    <!-- virtual folder factory -->
-    <bean id="virtualFolderFactory" class="org.kimios.kernel.dms.hibernate.VirtualFolderFactory">
-        <property name="provider" ref="dbFactoryProvider"></property>
-    </bean>
-
 
 </blueprint>
 

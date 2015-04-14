@@ -421,6 +421,8 @@ public class SolrSearchController
             // Views is supposed to be published, because of rights definition
             searchRequest.setPublished(true);
             searchRequest.setTemporary(false);
+            searchRequest.setSearchSessionId(null);
+
         } else {
             searchRequest.setPublished(false);
             searchRequest.setTemporary(false);

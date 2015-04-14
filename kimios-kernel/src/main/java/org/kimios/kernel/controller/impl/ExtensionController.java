@@ -188,6 +188,18 @@ public class ExtensionController extends AKimiosController implements IExtension
         }
     }
 
+    @Override
+    public boolean canHandleAutomaticDocumentDeposit(Session session)
+        throws ConfigException, DataSourceException, AccessDeniedException {
+        try {
+            PathTemplate template =
+                    FactoryInstantiator.getInstance().getPathTemplateFactory().getDefaultPathTemplate();
+            return  template != null;
+        }catch (Exception ex){
+            return false;
+        }
+    }
+
 
 }
 

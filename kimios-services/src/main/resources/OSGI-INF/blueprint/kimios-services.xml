@@ -720,9 +720,9 @@
             <bean id="exceptionMapper" class="org.kimios.webservices.JaxRSExceptionMapper"/>
             <bean id="corsFilter" class="org.apache.cxf.rs.security.cors.CrossOriginResourceSharingFilter" />
         </jaxrs:providers>
-        <jaxrs:invoker>
+       <!-- <jaxrs:invoker>
             <bean class="org.kimios.custom.CustomInvoker" />
-        </jaxrs:invoker>
+        </jaxrs:invoker>-->
         <jaxrs:serviceBeans>
             <ref component-id="securityServiceBean"/>
             <ref component-id="workspaceServiceBean"/>

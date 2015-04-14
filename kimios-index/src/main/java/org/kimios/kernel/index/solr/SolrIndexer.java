@@ -214,7 +214,7 @@ public class SolrIndexer extends GenericEventHandler
 
 
             Folder f2 = (Folder)ctx.getParameters().get("virtualFolder");
-            List<MetaValue> values = (List)ctx.getParameters().get("virtualFolderMetas");
+            List<VirtualFolderMetaData> values = (List)ctx.getParameters().get("virtualFolderMetas");
             if(f2 != null && values != null && values.size() > 0 && indexManager instanceof SolrIndexManager){
                 log.debug("start virtual folder index !!!!!");
                 ((SolrIndexManager)indexManager).indexFolder(f, values);
@@ -231,7 +231,7 @@ public class SolrIndexer extends GenericEventHandler
         log.debug("handling virtual folder add for index");
         try {
             Folder f = (Folder)ctx.getParameters().get("virtualFolder");
-            List<MetaValue> values = (List)ctx.getParameters().get("virtualFolderMetas");
+            List<VirtualFolderMetaData> values = (List)ctx.getParameters().get("virtualFolderMetas");
             if(f != null && values != null && values.size() > 0 && indexManager instanceof SolrIndexManager){
                 log.debug("start virtual folder index !!!!!");
                 ((SolrIndexManager)indexManager).indexFolder(f, values);

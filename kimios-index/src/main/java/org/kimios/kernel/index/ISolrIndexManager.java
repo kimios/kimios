@@ -19,6 +19,7 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.DMEntity;
 import org.kimios.kernel.dms.MetaValue;
+import org.kimios.kernel.dms.VirtualFolderMetaData;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.IndexException;
 import org.kimios.kernel.index.query.model.SearchResponse;
@@ -43,7 +44,7 @@ public interface ISolrIndexManager
     public List<String> filterFields();
 
 
-    void indexFolder( DMEntity documentEntity, List<MetaValue> metaValues )
+    void indexFolder( DMEntity documentEntity, List<VirtualFolderMetaData> metaValues )
             throws IndexException, DataSourceException, ConfigException;
 
 }

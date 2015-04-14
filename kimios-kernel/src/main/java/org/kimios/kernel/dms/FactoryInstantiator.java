@@ -70,6 +70,10 @@ public class FactoryInstantiator implements IDmsFactoryInstantiator {
 
     SymbolicLinkFactory symbolicLinkFactory;
 
+    PathTemplateFactory pathTemplateFactory;
+
+    VirtualFolderFactory virtualFolderFactory;
+
     @Override
     public DocumentTypeFactory getDocumentTypeFactory()
     {
@@ -294,6 +298,28 @@ public class FactoryInstantiator implements IDmsFactoryInstantiator {
     public void setSymbolicLinkFactory(SymbolicLinkFactory symbolicLinkFactory)
     {
         this.symbolicLinkFactory = symbolicLinkFactory;
+    }
+
+    @Override
+    public PathTemplateFactory getPathTemplateFactory()
+    {
+        return pathTemplateFactory;
+    }
+
+    public void setPathTemplateFactory(PathTemplateFactory pathTemplateFactory)
+    {
+        this.pathTemplateFactory = pathTemplateFactory;
+    }
+
+    @Override
+    public VirtualFolderFactory getVirtualFolderFactory()
+    {
+        return virtualFolderFactory;
+    }
+
+    public void setVirtualFolderFactory(VirtualFolderFactory virtualFolderFactory)
+    {
+        this.virtualFolderFactory = virtualFolderFactory;
     }
 }
 

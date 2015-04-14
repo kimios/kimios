@@ -32,9 +32,10 @@ public class Folder extends DMEntity implements Serializable
     }
 
     public Folder(long uid, String name, String owner, String ownerSource,
-            Date creationDate, Date updateDate, long parentUid, int parentType, String path)
+            Date creationDate, Date updateDate, long parentUid, int parentType, String path, String addonDatas)
     {
         super(uid, 2, name, owner, ownerSource, creationDate, updateDate, path);
+        this.addonDatas = addonDatas;
         this.parentUid = parentUid;
         this.parentType = parentType;
     }

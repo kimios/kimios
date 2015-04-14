@@ -119,4 +119,12 @@ public interface ExtensionService
                                    @QueryParam(value = "documentTypeId") @WebParam(name = "documentTypeId") Long documentTypeId,
                                    @QueryParam(value = "metaItemsJsonString") @WebParam(name = "metaItemsJsonString") String metaItemsJsonString)
             throws DMServiceException;
+
+
+    @GET
+    @Path("/canHandleAutomaticPathDeposit")
+    @Produces("application/json")
+    public boolean canHandleAutomaticPathDeposit(
+            @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId)
+            throws DMServiceException;
 }

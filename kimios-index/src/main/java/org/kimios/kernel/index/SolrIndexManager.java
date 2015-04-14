@@ -180,7 +180,7 @@ public class SolrIndexManager
         utcDateParser.setTimeZone(TimeZone.getTimeZone("UTC"));
         SimpleDateFormat utcDateTimeParser = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         utcDateTimeParser.setTimeZone(TimeZone.getTimeZone("UTC"));
-        log.info("processing document {} for path {}", document.getUid(), document.getPath());
+        log.debug("processing document {} for path {}", document.getUid(), document.getPath());
         SolrInputDocument doc = new SolrInputDocument();
         doc.addField( "DocumentUid", document.getUid() );
         doc.addField( "DocumentName", document.getName().toLowerCase() );
@@ -255,11 +255,11 @@ public class SolrIndexManager
         List<MetaValue> values = null;
         if ( version.getDocumentType() != null )
         {
-            log.info( "Document Type Found for version" );
+            log.debug("Document Type Found for version");
             doc.addField( "DocumentTypeUid", version.getDocumentType().getUid() );
             doc.addField( "DocumentTypeName", version.getDocumentType().getName() );
             values = FactoryInstantiator.getInstance().getMetaValueFactory().getMetaValues( version );
-            log.info( "Meta Values Found for version " + values.size() + " / " + values );
+            log.debug("Meta Values Found for version " + values.size() + " / " + values);
             for ( MetaValue value : values )
             {
                 switch ( value.getMeta().getMetaType() )
@@ -412,7 +412,7 @@ public class SolrIndexManager
         return doc;
     }
 
-    private SolrInputDocument toSolrInputDocument( Folder folder, List<MetaValue> metaValues )
+    private SolrInputDocument toSolrInputDocument( Folder folder, List<VirtualFolderMetaData> metaValues )
             throws DataSourceException, ConfigException
     {
 
@@ -422,7 +422,7 @@ public class SolrIndexManager
         utcDateParser.setTimeZone(TimeZone.getTimeZone("UTC"));
         SimpleDateFormat utcDateTimeParser = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         utcDateTimeParser.setTimeZone(TimeZone.getTimeZone("UTC"));
-        log.info("processing folder {} for path {}", folder.getUid(), folder.getPath());
+        log.debug("processing folder {} for path {}", folder.getUid(), folder.getPath());
         SolrInputDocument doc = new SolrInputDocument();
         doc.addField( "DocumentUid", folder.getUid() );
         doc.addField( "DocumentName", folder.getName().toLowerCase() );
@@ -451,49 +451,61 @@ public class SolrIndexManager
         List<MetaValue> values = null;
         if ( metaValues.size() > 0 )
         {
-            log.info( "Document Type Found for version" );
-            doc.addField( "DocumentTypeUid", -1 );
-            doc.addField( "DocumentTypeName", -1 );
+            log.debug("Document Type Found for version");
 
-            for ( MetaValue value : metaValues )
+
+            String documentTypeName = null;
+            Long documentTypeUid = null;
+            for ( VirtualFolderMetaData folderMetaData : metaValues )
             {
-                switch ( value.getMeta().getMetaType() )
+
+
+
+
+                if(documentTypeName == null && documentTypeUid == null){
+                    documentTypeName = folderMetaData.getMeta().getDocumentType().getName();
+                    documentTypeUid = folderMetaData.getMeta().getDocumentTypeUid();
+                    doc.addField( "DocumentTypeUid", documentTypeUid);
+                    doc.addField( "DocumentTypeName", documentTypeName );
+                }
+                switch ( folderMetaData.getMeta().getMetaType() )
                 {
+
                     case MetaType.STRING:
-                        doc.addField( "MetaDataString_" + value.getMetaUid(),
-                                value.getValue() != null ? ( (String) value.getValue().toString() ) : null);
+                        doc.addField( "MetaDataString_" + folderMetaData.getMetaId(),
+                                folderMetaData.getStringValue());
                         break;
-                    case MetaType.BOOLEAN:
+                    /*case MetaType.BOOLEAN:
                         doc.addField( "MetaDataBoolean_" + value.getMetaUid(), value.getValue() );
                         break;
                     case MetaType.NUMBER:
                         doc.addField( "MetaDataNumber_" + value.getMetaUid(), value.getValue() );
-                        break;
+                        break;*/
                     case MetaType.DATE:
 
                         Calendar cal = Calendar.getInstance( TimeZone.getTimeZone( "UTC" ) );
-                        if(value != null && value.getValue() != null){
+                        if(folderMetaData.getDateValue() != null){
                             //reparse date for local
-                            String dateString = dateParser.format(value.getValue());
+                            String dateString = dateParser.format(folderMetaData.getDateValue());
                             log.debug("meta parsed on re-index: " + dateString);
                             try{
                                 cal.setTime(  utcDateParser.parse(dateString) );
                                 log.debug("meta parsed on re-index: " + dateString + " ==> Cal:" + cal.getTime());
-                                doc.addField( "MetaDataDate_" + value.getMetaUid(), cal.getTime() );
+                                doc.addField( "MetaDataDate_" + folderMetaData.getMetaId(), cal.getTime() );
                             }   catch (Exception ex){
-                                log.error("error while reparsing meta data date {} {} {}", value.getMeta().getName(), value, dateString);
+                                log.error("error while reparsing meta data date {} {} {}", folderMetaData.getMeta().getName(), folderMetaData.getDateValue(), dateString);
                             }
                         }
                         break;
-                    case MetaType.LIST:
+                    /*case MetaType.LIST:
                         if(value != null && value.getValue() != null){
                             List<String> items = ((MetaListValue)value).getValue();
                             for(String u: items)
                                 doc.addField( "MetaDataList_" + value.getMetaUid(),u);
                         }
-                        break;
+                        break;*/
                     default:
-                        doc.addField( "MetaData_" + value.getMetaUid(), value.getValue() );
+                        doc.addField( "MetaData_" + folderMetaData.getMetaId(), folderMetaData.getStringValue() );
                         break;
                 }
             }
@@ -502,7 +514,7 @@ public class SolrIndexManager
 
         if(folder.getAddOnDatas() != null && folder.getAddOnDatas().length() > 0){
             doc.addField("DocumentRawAddonDatas", folder.getAddOnDatas());
-            log.info("adding current addon data {}", folder.getAddOnDatas());
+            log.debug("adding current addon data {}", folder.getAddOnDatas());
         }
         else {
             //try to regenerate field
@@ -520,7 +532,7 @@ public class SolrIndexManager
                 //update document
                 doc.addField("DocumentRawAddonDatas", folder.getAddOnDatas());
             } else {
-                log.info("not generating addon field because of no data");
+                log.debug("not generating addon field because of no data");
             }
         }
 
@@ -588,7 +600,7 @@ public class SolrIndexManager
     }
 
 
-    public void indexFolder( DMEntity documentEntity, List<MetaValue> metaValues )
+    public void indexFolder( DMEntity documentEntity, List<VirtualFolderMetaData> metaValues )
             throws IndexException, DataSourceException, ConfigException
     {
         try

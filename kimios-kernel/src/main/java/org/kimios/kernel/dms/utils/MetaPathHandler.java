@@ -38,51 +38,10 @@ public class MetaPathHandler {
 
     private static Logger logger = LoggerFactory.getLogger(MetaPathHandler.class);
 
-    public static List<PathElement> pathElements;
-
-    static {
-        pathElements = new ArrayList<PathElement>();
 
 
-        PathElement p = new PathElement();
-        p.setElementType(PathElement.FIXED_STRING);
-        p.setElementValue("SPORTS");
 
-        pathElements.add(p);
-
-        p = new PathElement();
-        p.setElementType(PathElement.CREATION_DATE);
-        p.setElementFormat("yyyy");
-        pathElements.add(p);
-
-
-        p = new PathElement();
-        p.setElementType(PathElement.CREATION_DATE);
-        p.setElementFormat("MM");
-        pathElements.add(p);
-
-
-        p = new PathElement();
-        p.setElementType(PathElement.CREATION_DATE);
-        p.setElementFormat("dd");
-        pathElements.add(p);
-
-        p = new PathElement();
-        p.setElementType(PathElement.INDEX_FIELD);
-        p.setElementValue("Sports");
-        pathElements.add(p);
-
-
-        p = new PathElement();
-        p.setElementType(PathElement.CREATION_DATE);
-        p.setElementFormat("yyyy-MM-dd-hh-mm-ss");
-        p.setDocumentName(true);
-        pathElements.add(p);
-
-    }
-
-
-    public String path(Date creationDate, List<MetaValue> metas, String mimeTypeOrExtension) {
+    public String path(Date creationDate, List<PathElement> pathElements, List<MetaValue> metas, String mimeTypeOrExtension) {
         StringBuffer buffer = new StringBuffer();
 
         for (PathElement e : pathElements) {
@@ -123,7 +82,7 @@ public class MetaPathHandler {
                 buffer.append("." + mimeTypeOrExtension);
             }
         }
-        logger.info("generated path {}", buffer);
+        logger.debug("generated path {}", buffer);
         return buffer.toString();
     }
 

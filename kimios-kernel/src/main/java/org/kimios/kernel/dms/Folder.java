@@ -107,7 +107,7 @@ public class Folder extends DMEntityImpl
     public org.kimios.kernel.ws.pojo.Folder toPojo()
     {
         return new org.kimios.kernel.ws.pojo.Folder(this.uid, this.name, this.owner,
-                this.ownerSource, this.creationDate, this.updateDate, this.parentUid, this.parentType, this.path);
+                this.ownerSource, this.creationDate, this.updateDate, this.parentUid, this.parentType, this.path, this.addOnDatas);
     }
 }
 
