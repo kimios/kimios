@@ -35,9 +35,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 /**
  * Search Management Controller
@@ -46,7 +44,7 @@ import java.util.concurrent.Future;
 public class SearchManagementController extends AKimiosController implements ISearchManagementController {
 
 
-    private Logger log = LoggerFactory.getLogger(SearchManagementController.class);
+    private static Logger log = LoggerFactory.getLogger(SearchManagementController.class);
 
     private ISolrIndexManager indexManager;
 
@@ -72,10 +70,7 @@ public class SearchManagementController extends AKimiosController implements ISe
     }
 
 
-
     private ExecutorService executor = null;
-    private Map<String, ReindexerProcess> items = null;
-    private List<Future<ReindexerProcess.ReindexResult>> list = null;
 
     /* (non-Javadoc)
         * @see org.kimios.kernel.controller.impl.IAdministrationController#reindex(org.kimios.kernel.security.Session, java.lang.String)
@@ -89,24 +84,18 @@ public class SearchManagementController extends AKimiosController implements ISe
                     ? blockSize : 20;
 
 
-            if(executor == null){
-               executor = Executors.newFixedThreadPool(8);
-                list = new ArrayList<Future<ReindexerProcess.ReindexResult>>();
-                items = new HashMap<String, ReindexerProcess>();
+            if (executor == null || executor.isTerminated()) {
+                executor = new CustomThreadPoolExecutor(8, 8,
+                        0L, TimeUnit.MILLISECONDS,
+                        new LinkedBlockingQueue<Runnable>());
                 for (String u : paths) {
                     ReindexerProcess osgiReindexer = new ReindexerProcess(
                             indexManager,
                             u,
                             block
                     );
-                    Future<ReindexerProcess.ReindexResult> future = executor.submit(osgiReindexer);
-                    list.add(future);
-                    items.put(u, osgiReindexer);
+                    executor.submit(osgiReindexer);
                 }
-                executor.shutdown();
-                executor = null;
-                items = null;
-                list = null;
             } else {
                 log.error("an index process is already running.");
                 throw new AccessDeniedException();
@@ -122,22 +111,45 @@ public class SearchManagementController extends AKimiosController implements ISe
             throws AccessDeniedException, IndexException, ConfigException, DataSourceException {
         if (securityFactoryInstantiator.getRoleFactory()
                 .getRole(Role.ADMIN, session.getUserName(), session.getUserSource()) != null) {
-            if(executor != null){
+            if (executor != null && !executor.isTerminated()) {
 
-               List<ReindexerProcess.ReindexResult> reindexResults = new ArrayList<ReindexerProcess.ReindexResult>();
-               for(ReindexerProcess z: items.values()) {
-                   reindexResults.add(z.getReindexResult());
-               }
-               return reindexResults;
-            }  else {
-                log.error("an index process is already running.");
-                throw new AccessDeniedException();
+                Map<String, ReindexerProcess> reindexResults = ((CustomThreadPoolExecutor) executor).getItems();
+                List<ReindexerProcess.ReindexResult> values = new ArrayList<ReindexerProcess.ReindexResult>();
+                for (ReindexerProcess rp : reindexResults.values()) {
+                    values.add(rp.getReindexResult());
+                }
+
+                return values;
+            } else {
+                log.info("no index process are running.");
+                return new ArrayList<ReindexerProcess.ReindexResult>();
             }
-        }  else {
+        } else {
             throw new AccessDeniedException();
         }
     }
 
+
+    public void killAndCleanReindexProcess(Session session)
+            throws AccessDeniedException, IndexException, ConfigException, DataSourceException {
+
+        if (securityFactoryInstantiator.getRoleFactory()
+                .getRole(Role.ADMIN, session.getUserName(), session.getUserSource()) != null) {
+            if (executor != null) {
+                List<Runnable> items = executor.shutdownNow();
+                for (Runnable r : items) {
+                    log.info("runnable item kill/removed {}", r);
+                }
+                executor = null;
+            } else {
+                log.info("no index process are running");
+
+            }
+        } else {
+            throw new AccessDeniedException();
+        }
+
+    }
 
 
     /* (non-Javadoc)

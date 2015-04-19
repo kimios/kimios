@@ -52,5 +52,8 @@ public interface ISearchManagementController {
     public void parallelReindex(Session session, List<String> paths, Integer blockSize)
             throws AccessDeniedException, IndexException, ConfigException, DataSourceException;
 
+    public void killAndCleanReindexProcess(Session session)
+            throws AccessDeniedException, IndexException, ConfigException, DataSourceException;
+
 }
 
