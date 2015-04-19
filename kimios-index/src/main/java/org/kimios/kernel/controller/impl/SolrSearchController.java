@@ -960,13 +960,10 @@ public class SolrSearchController
                         }
                         queries.add("DocumentBody:(" + bld.toString().trim() + ")");
                     } else if (c.getFieldName().equals("DocumentUid")) {
-                        //filterQueries.add("DocumentUid:" + c.getQuery());
                         filtersMap.put(c, "DocumentUid:" + c.getQuery());
                     } else if (c.getFieldName().equals("DocumentOwner")) {
-                        //filterQueries.add("DocumentUid:" + c.getQuery());
-                        filtersMap.put(c, "DocumentOwner:" + c.getQuery());
+                        filtersMap.put(c, "DocumentOwner:*" + c.getQuery() + "*");
                     } else if (c.getFieldName().equals("DocumentParent")) {
-                        //filterQueries.add(QueryBuilder.documentParentQuery(c.getQuery()));
                         filtersMap.put(c, QueryBuilder.documentParentQuery(c.getQuery()));
                     } else if (c.getFieldName().equals("DocumentVersionUpdateDate")) {
                         queries.add(

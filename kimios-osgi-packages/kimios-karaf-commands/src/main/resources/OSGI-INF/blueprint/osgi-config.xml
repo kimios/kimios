@@ -43,7 +43,10 @@
             <action class="org.kimios.osgi.karaf.ReindexCommand" />
         </command>
         <command>
-            <action class="org.kimios.osgi.karaf.ReindexOsgiCommand" />
+            <action class="org.kimios.osgi.karaf.ReindexParallelCommand" />
+        </command>
+        <command>
+            <action class="org.kimios.osgi.karaf.ReindexViewCommand" />
         </command>
 
         <command>

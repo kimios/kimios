@@ -17,7 +17,6 @@ package org.kimios.kernel.index;
 
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.util.ClientUtils;
-import org.kimios.kernel.controller.IPathController;
 import org.kimios.kernel.dms.DMEntity;
 import org.kimios.kernel.dms.DMEntityType;
 import org.kimios.kernel.dms.FactoryInstantiator;
@@ -28,7 +27,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-public class ReindexerOsgi implements Callable<ReindexerOsgi.ReindexResult> {
+public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult> {
 
 
 
@@ -37,13 +36,24 @@ public class ReindexerOsgi implements Callable<ReindexerOsgi.ReindexResult> {
         private long reindexedCount;
         private long duration;
         private int entitiesCount;
+        private int reindexProgression = 0;
         private Exception exception;
+        private String path;
 
-        public ReindexResult(long reindexedCount, long duration, int entitiesCount, Exception ex) {
+        public ReindexResult(String path, long reindexedCount, long duration, int entitiesCount, Exception ex) {
+            this.path = path;
             this.reindexedCount = reindexedCount;
             this.duration = duration;
             this.exception = ex;
             this.entitiesCount = entitiesCount;
+        }
+
+        public int getReindexProgression() {
+            return reindexProgression;
+        }
+
+        public void setReindexProgression(int reindexProgression) {
+            this.reindexProgression = reindexProgression;
         }
 
         public long getReindexedCount() {
@@ -78,18 +88,27 @@ public class ReindexerOsgi implements Callable<ReindexerOsgi.ReindexResult> {
             this.entitiesCount = entitiesCount;
         }
 
+        public String getPath() {
+            return path;
+        }
+
+        public void setPath(String path) {
+            this.path = path;
+        }
+
         @Override
         public String toString() {
             return "ReindexResult{" +
                     "reindexedCount=" + reindexedCount +
-                    ", duration=" + (duration/1000/60) + " min." + ((duration/1000) % 60) + " secs." +
+                    ", duration=" + duration +
                     ", entitiesCount=" + entitiesCount +
                     ", exception=" + exception +
+                    ", path='" + path + '\'' +
                     '}';
         }
     }
 
-    private static Logger log = LoggerFactory.getLogger(ReindexerOsgi.class);
+    private static Logger log = LoggerFactory.getLogger(ReindexerProcess.class);
 
     private int reindexProgression = -1;
 
@@ -97,14 +116,11 @@ public class ReindexerOsgi implements Callable<ReindexerOsgi.ReindexResult> {
 
     private ISolrIndexManager indexManager;
 
-    private IPathController pathController;
-
     private int blockSize;
 
-    public ReindexerOsgi(ISolrIndexManager indexManager, IPathController pathController, String path, int blockSize) {
+    public ReindexerProcess(ISolrIndexManager indexManager, String path, int blockSize) {
         this.indexManager = indexManager;
         this.finalPath = path;
-        this.pathController = pathController;
         this.blockSize = blockSize;
     }
 
@@ -125,7 +141,7 @@ public class ReindexerOsgi implements Callable<ReindexerOsgi.ReindexResult> {
         int total = 0;
         long start = System.currentTimeMillis();
         long duration = 0;
-        ReindexResult r = new ReindexResult(indexed, duration, total, null);
+        ReindexResult r = new ReindexResult(finalPath, indexed, duration, total, null);
         this.reindexResult = r;
         try {
 
@@ -209,6 +225,9 @@ public class ReindexerOsgi implements Callable<ReindexerOsgi.ReindexResult> {
 
                 if(reindexProgression < 100){
                     reindexProgression = (int) Math.round((double) indexed / (double) total * 100);
+                    r.setReindexProgression(reindexProgression);
+                } else {
+                    r.setReindexProgression(reindexProgression);
                 }
 
             }
