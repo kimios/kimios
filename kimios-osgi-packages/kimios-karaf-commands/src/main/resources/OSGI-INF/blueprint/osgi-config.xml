@@ -48,7 +48,9 @@
         <command>
             <action class="org.kimios.osgi.karaf.ReindexViewCommand" />
         </command>
-
+        <command>
+            <action class="org.kimios.osgi.karaf.ReindexCleanCommand" />
+        </command>
         <command>
             <action class="org.kimios.osgi.karaf.BonitaSyncCommand" />
         </command>

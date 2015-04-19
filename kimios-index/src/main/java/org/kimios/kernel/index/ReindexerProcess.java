@@ -30,6 +30,10 @@ import java.util.concurrent.Callable;
 public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult> {
 
 
+    private int indexed;
+    private int total;
+    private long start;
+    private long duration;
 
     public class ReindexResult{
 
@@ -122,6 +126,11 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
         this.indexManager = indexManager;
         this.finalPath = path;
         this.blockSize = blockSize;
+        indexed = 0;
+        total = 0;
+        start = System.currentTimeMillis();
+        duration = 0;
+        this.reindexResult = new ReindexResult(finalPath, indexed, duration, total, null);
     }
 
 
@@ -137,12 +146,6 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
 
     public ReindexResult call() {
 
-        int indexed = 0;
-        int total = 0;
-        long start = System.currentTimeMillis();
-        long duration = 0;
-        ReindexResult r = new ReindexResult(finalPath, indexed, duration, total, null);
-        this.reindexResult = r;
         try {
 
             reindexProgression = 0;
@@ -175,7 +178,7 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
 
             //total = entities.size();
             log.debug("Entities to index: " + total);
-            r.setEntitiesCount(total);
+            this.reindexResult.setEntitiesCount(total);
             int documentBlockSize = blockSize;
             int indexingBlockCount = total / documentBlockSize;
             int docLeak = total % documentBlockSize;
@@ -183,8 +186,7 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
             if(docLeak > 0)
                 indexingBlockCount++;
 
-
-            log.info("Reindexing " + total + " documents: block size " + documentBlockSize + "  / blcok count " + indexingBlockCount);
+            log.debug("Reindexing " + total + " documents: block size " + documentBlockSize + "  / blcok count " + indexingBlockCount);
 
             /*
             log.info("Reindexing documents count {} by block of {} ({} blocks, with {} leak)", total,documentBlockSize, indexingBlockCount, docLeak);
@@ -220,20 +222,20 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
                         .getDmEntityFactory().getEntitiesByPathAndType(finalPath, DMEntityType.DOCUMENT, u * documentBlockSize, ((docLeak > 0 && u == (indexingBlockCount - 1)) ? docLeak : documentBlockSize));
                 indexManager.indexDocumentList(entityList);
                 indexed += entityList.size();
-                r.setReindexedCount(indexed);
+                this.reindexResult.setReindexedCount(indexed);
                 th.loadTxManager().commit();
 
                 if(reindexProgression < 100){
                     reindexProgression = (int) Math.round((double) indexed / (double) total * 100);
-                    r.setReindexProgression(reindexProgression);
+                    this.reindexResult.setReindexProgression(reindexProgression);
                 } else {
-                    r.setReindexProgression(reindexProgression);
+                    this.reindexResult.setReindexProgression(reindexProgression);
                 }
 
             }
         } catch (Exception ex) {
             log.error("Exception during reindex! Process stopped", ex);
-            r.setException(ex);
+            this.reindexResult.setException(ex);
         } finally {
             try {
                 new OsgiTransactionHelper().commit();
@@ -241,11 +243,11 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
                 //
             }
             duration = System.currentTimeMillis() - start;
-            r.setDuration(duration);
-            r.setEntitiesCount(total);
-            r.setReindexedCount(indexed);
+            this.reindexResult.setDuration(duration);
+            this.reindexResult.setEntitiesCount(total);
+            this.reindexResult.setReindexedCount(indexed);
             reindexProgression = -1;
-            return r;
+            return this.reindexResult;
         }
     }
 

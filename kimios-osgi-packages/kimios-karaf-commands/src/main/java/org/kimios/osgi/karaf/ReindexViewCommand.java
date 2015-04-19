@@ -51,6 +51,13 @@ public class ReindexViewCommand extends KimiosCommand {
                         + ". Indexed "
                         + item.getReindexedCount() + " on "
                         + item.getEntitiesCount());
+
+                System.out.println("Indexing "
+                        + item.getPath()
+                        + " : " + item.getReindexProgression() + " %. "
+                        + ". Indexed "
+                        + item.getReindexedCount() + " on "
+                        + item.getEntitiesCount());
             }
         }
 
