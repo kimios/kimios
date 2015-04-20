@@ -84,21 +84,34 @@ public class SearchManagementController extends AKimiosController implements ISe
                     ? blockSize : 20;
 
 
+            List<String> finalPaths = null;
             if (executor == null || executor.isTerminated()) {
                 executor = new CustomThreadPoolExecutor(8, 8,
                         0L, TimeUnit.MILLISECONDS,
                         new LinkedBlockingQueue<Runnable>());
-                for (String u : paths) {
-                    ReindexerProcess osgiReindexer = new ReindexerProcess(
-                            indexManager,
-                            u,
-                            block
-                    );
-                    executor.submit(osgiReindexer);
-                }
+
+                finalPaths = paths;
+
             } else {
-                log.error("an index process is already running.");
-                throw new AccessDeniedException();
+                //check existing running task
+                Map<String, ReindexerProcess> reindexResults = ((CustomThreadPoolExecutor) executor).getItems();
+                finalPaths = new ArrayList<String>();
+                for (String iPath : paths) {
+                    if(!reindexResults.keySet().contains(iPath)){
+                        finalPaths.add(iPath);
+                        log.info("will start reindex for {}", iPath);
+                    } else {
+                        log.error("path {} is already processed by index: stage {}%", iPath, reindexResults.get(iPath).getReindexProgression());
+                    }
+                }
+            }
+            for (String u : finalPaths) {
+                ReindexerProcess osgiReindexer = new ReindexerProcess(
+                        indexManager,
+                        u,
+                        block
+                );
+                executor.submit(osgiReindexer);
             }
 
         } else {

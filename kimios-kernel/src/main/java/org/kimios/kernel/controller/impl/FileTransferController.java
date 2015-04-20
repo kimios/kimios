@@ -176,13 +176,13 @@ public class FileTransferController
                 } else {
                 }
             }
-        } else {
-            if (twoLast.size() == 1 && twoLast.contains(dv)) {
-                dv.setHashMD5(hashMD5);
-                dv.setHashSHA1(hashSHA1);
-                dv.writeData(in);
-            }
+        } else if (twoLast.size() == 1 && twoLast.contains(dv)
+                && !hashMD5.equalsIgnoreCase(dv.getHashMD5()) && !hashSHA1.equalsIgnoreCase(dv.getHashSHA1())) {
+            dv.setHashMD5(hashMD5);
+            dv.setHashSHA1(hashSHA1);
+            dv.writeData(in);
         }
+
         new File(ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH) + transac.getFilePath()).delete();
         if (transac.isHasBeenCheckedOutOnStart()) {
             dmsFactoryInstantiator.getLockFactory().checkin(d, u);

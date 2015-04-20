@@ -36,6 +36,7 @@ public class CustomThreadPoolExecutor extends ThreadPoolExecutor {
             new AbortPolicy();
 
 
+
     public CustomThreadPoolExecutor(int corePoolSize,
                                     int maximumPoolSize,
                                     long keepAliveTime,
@@ -55,7 +56,6 @@ public class CustomThreadPoolExecutor extends ThreadPoolExecutor {
             logger.error("error while ending runnable", t);
         }
 
-        super.afterExecute(r, t);
     }
 
     @Override

@@ -323,7 +323,7 @@ public class SolrIndexManager
         }
         if(document.getAddOnDatas() != null && document.getAddOnDatas().length() > 0){
             doc.addField("DocumentRawAddonDatas", document.getAddOnDatas());
-            log.info("adding current addon data {}", document.getAddOnDatas());
+            log.debug("adding current addon data {}", document.getAddOnDatas());
         }
         else {
             //try to regenerate field
@@ -335,14 +335,14 @@ public class SolrIndexManager
                 try{
                     document.setAddOnDatas(mp.writeValueAsString(wrapper));
                     FactoryInstantiator.getInstance().getDocumentFactory().saveDocumentNoFlush(document);
-                    log.info("updating addon data with " + document.getAddOnDatas());
+                    log.debug("updating addon data with " + document.getAddOnDatas());
                 }catch (Exception ex){
                     log.error("error while generation addon meta field", ex);
                 }
                 //update document
                 doc.addField("DocumentRawAddonDatas", document.getAddOnDatas());
             } else {
-                log.info("not generating addon field because of no data");
+                log.debug("not generating addon field because of no data");
             }
         }
         Object body = null;

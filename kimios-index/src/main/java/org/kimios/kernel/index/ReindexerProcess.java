@@ -220,16 +220,28 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
 
                 List<DMEntity> entityList = FactoryInstantiator.getInstance()
                         .getDmEntityFactory().getEntitiesByPathAndType(finalPath, DMEntityType.DOCUMENT, u * documentBlockSize, ((docLeak > 0 && u == (indexingBlockCount - 1)) ? docLeak : documentBlockSize));
-                indexManager.indexDocumentList(entityList);
-                indexed += entityList.size();
+                try {
+                    indexManager.indexDocumentList(entityList);
+                    indexed += entityList.size();
+                }catch (Exception ex){
+                    log.error("an error happen during indexing for block {} / {}", u+1, indexingBlockCount);
+                }
+
                 this.reindexResult.setReindexedCount(indexed);
                 th.loadTxManager().commit();
 
+
+
                 if(reindexProgression < 100){
                     reindexProgression = (int) Math.round((double) indexed / (double) total * 100);
-                    this.reindexResult.setReindexProgression(reindexProgression);
-                } else {
-                    this.reindexResult.setReindexProgression(reindexProgression);
+
+                }
+                this.reindexResult.setReindexProgression(reindexProgression);
+
+
+                if(Thread.interrupted()){
+                    log.info("reindex thread for path {} has been canceled", finalPath);
+                    return this.reindexResult;
                 }
 
             }
