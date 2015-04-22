@@ -593,8 +593,14 @@ public class SolrSearchController
 
 
     public List<SearchRequest> searchRequestList(Session session) {
-        log.debug("Calling Global Search Request List");
+        log.debug("Calling Published Search Request List");
         return searchRequestFactory.loadSearchRequest(session.getUserName(), session.getUid());
+    }
+
+
+    public List<SearchRequest> searchPublicRequestList(Session session) {
+        log.debug("Calling Public Search Request List");
+        return searchRequestFactory.listPublicSearchRequest();
     }
 
     public List<SearchRequest> loadMysSearchQueriesNotPublished(Session session)

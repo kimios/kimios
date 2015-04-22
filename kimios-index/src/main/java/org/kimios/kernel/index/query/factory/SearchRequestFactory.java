@@ -67,29 +67,31 @@ public class SearchRequestFactory extends HFactory {
     }
 
     public List<SearchRequest> loadSearchRequest(String userId, String userSource) {
-
-
         String query = "from SearchRequest fetch all properties where temporary is false " +
-                "and (publicAccess is true or published is true) order by publicAccess, name";
+                "and (publicAccess is false and published is true) order by name";
         List<SearchRequest> requests =  getSession().createQuery(query)
-                //.setString("userId", userId)
-                //.setString("userSource", userSource)
                 .list();
-        logger.debug("loading search request {}", requests.size());
+        return requests;
+    }
+
+    public List<SearchRequest> listPublicSearchRequest() {
+        String query = "from SearchRequest fetch all properties where temporary is false " +
+                "and (publicAccess is true) order by name";
+        List<SearchRequest> requests =  getSession().createQuery(query)
+                .list();
         return requests;
     }
 
     public List<SearchRequest> loadMySearchRequestNotPublished(Session session) {
         String query = "from SearchRequest fetch all properties where " +
                 "publicAccess is false and ((searchSessionId = :searchSessionId and temporary is true) " +
-                " or (owner = :userId and ownerSource = :userSource and published is false))  order by temporary, creationDate, name";
+                " or (owner = :userId and ownerSource = :userSource and published is false))  " +
+                " order by creationDate asc";
         List<SearchRequest> requests =  getSession().createQuery(query)
                 .setString("searchSessionId", session.getUid())
                 .setString("userId", session.getUserName())
                 .setString("userSource", session.getUserSource())
                 .list();
-
-        logger.debug("loading my search request {}", requests.size());
 
         return requests;
     }

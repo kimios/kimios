@@ -129,6 +129,13 @@ public interface SearchService {
 
 
     @GET
+    @Path("/listPublicSearchQueries")
+    @Produces("application/json")
+    public List<SearchRequest> listPublicSearchQueries(
+            @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId )
+            throws DMServiceException;
+
+    @GET
     @Path("/loadSearchQuery")
     @Produces("application/json")
     public SearchRequest loadSearchQuery(

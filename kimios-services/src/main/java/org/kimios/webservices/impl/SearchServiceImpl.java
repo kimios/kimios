@@ -73,7 +73,7 @@ public class SearchServiceImpl
         {
             Session s = getHelper().getSession( sessionUid );
             org.kimios.kernel.ws.pojo.DMEntity entity = null;
-            return pathController.getDMEntityPojoFromPath( s, path );
+            return pathController.getDMEntityPojoFromPath(s, path);
         }
         catch ( Exception e )
         {
@@ -101,7 +101,7 @@ public class SearchServiceImpl
     {
         try
         {
-            Session s = getHelper().getSession( sessionId );
+            Session s = getHelper().getSession(sessionId);
             return searchController.advancedSearchDocuments( s, criterias, start, pageSize, sortField, sortDir,
                                                              virtualPath, requestId, mustSave );
         }
@@ -135,7 +135,7 @@ public class SearchServiceImpl
         try
         {
             Session s = getHelper().getSession( sessionId );
-            searchController.deleteSearchQuery( s, id );
+            searchController.deleteSearchQuery(s, id);
         }
         catch ( Exception e )
         {
@@ -164,7 +164,21 @@ public class SearchServiceImpl
         try
         {
             Session s = getHelper().getSession( sessionId );
-            return searchController.loadMysSearchQueriesNotPublished( s );
+            return searchController.loadMysSearchQueriesNotPublished(s);
+        }
+        catch ( Exception e )
+        {
+            throw getHelper().convertException( e );
+        }
+    }
+
+    public List<SearchRequest> listPublicSearchQueries( String sessionId )
+            throws DMServiceException
+    {
+        try
+        {
+            Session s = getHelper().getSession( sessionId );
+            return searchController.searchPublicRequestList( s );
         }
         catch ( Exception e )
         {
