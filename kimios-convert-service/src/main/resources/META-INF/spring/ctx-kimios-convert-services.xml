@@ -69,7 +69,4 @@
         </jaxrs:extensionMappings>
     </jaxrs:server>
 
-
-
-
 </beans>
