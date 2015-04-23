@@ -63,7 +63,7 @@
                 <prop key="hibernate.current_session_context_class">jta</prop>
                 <prop key="hibernate.connection.release_mode">after_statement</prop>
                 <prop key="hibernate.transaction.factory_class">org.hibernate.engine.transaction.internal.jta.JtaTransactionFactory</prop>
-                <prop key="hibernate.transaction.jta.platform">org.kimios.utils.osgi.OsgiJtaPlatform</prop>
+                <prop key="hibernate.transaction.jta.platform">org.hibernate.osgi.OsgiJtaPlatform</prop>
                 <prop key="hibernate.jdbc.use_streams_for_binary">true</prop>
             </props>
         </property>

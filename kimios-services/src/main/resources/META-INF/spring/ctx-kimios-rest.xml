@@ -104,11 +104,12 @@
 
     <!-- JAXRS Bean Services List Merge :
         Any bean of type org.kimios.webservices.KimiosExtension will be added to serviceBeans property of bean kimiosRestServer
-    -->
+
     <bean class="org.kimios.utils.spring.MergePostProcessor" id="kimiosExtensionServiceHandler">
         <property name="beanToMerge" value="kimiosRestServer"></property>
         <property name="beanPropertyToMerge" value="serviceBeans"></property>
         <property name="beanTypeToLoad" value="org.kimios.webservices.KimiosExtension"></property>
     </bean>
+    -->
 
 </beans>

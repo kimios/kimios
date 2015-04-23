@@ -169,7 +169,7 @@
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox</artifactId>
-            <version>1.8.2</version>
+            <version>${apache.pdfbox.version}</version>
         </dependency>
 
         <dependency>
@@ -307,6 +307,14 @@
                                 WEB-INF/lib/commons-logging-*.jar,
                                 %regex[WEB-INF/lib/log4j-(?!over-slf4j).*.jar]
                             </packagingExcludes>
+                            <archive>
+                                <manifest>
+                                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                </manifest>
+                                <manifestEntries>
+                                    <git-SHA-1>${buildNumber}</git-SHA-1>
+                                </manifestEntries>
+                            </archive>
                         </configuration>
                     </execution>
                     <execution>
@@ -336,6 +344,12 @@
                             </packagingExcludes>
                             <archive>
                                 <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                                <manifest>
+                                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                </manifest>
+                                <manifestEntries>
+                                    <git-SHA-1>${buildNumber}</git-SHA-1>
+                                </manifestEntries>
                             </archive>
                         </configuration>
                     </execution>

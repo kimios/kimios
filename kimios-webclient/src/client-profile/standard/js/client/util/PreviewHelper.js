@@ -32,7 +32,7 @@ kimios.util.PreviewHelper = {
            }],
            docx: [{
                 target: 'html',
-                conv:'org.kimios.kernel.converter.impl.DocxToHTML'
+                conv:'org.kimios.kernel.converter.impl.Docx4jDocxToHTML'
            }],
            eml: [{
                target: 'html',

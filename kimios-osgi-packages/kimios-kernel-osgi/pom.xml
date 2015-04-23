@@ -76,12 +76,6 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>fr.devlib</groupId>
-            <artifactId>hibernate-osgi</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>javax.transaction</groupId>
             <artifactId>jta</artifactId>
             <version>1.1</version>
@@ -108,12 +102,12 @@
         <dependency>
             <groupId>org.apache.tika</groupId>
             <artifactId>tika-core</artifactId>
-            <version>1.4</version>
+            <version>${apache.tika.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.tika</groupId>
             <artifactId>tika-parsers</artifactId>
-            <version>1.4</version>
+            <version>${apache.tika.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.aspectj</groupId>
@@ -209,7 +203,7 @@
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox</artifactId>
-            <version>1.8.2</version>
+            <version>${apache.pdfbox.version}</version>
         </dependency>
 
         <dependency>
@@ -218,11 +212,25 @@
             <version>5.0.6</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- for Docx handling only -->
         <dependency>
             <groupId>fr.opensagres.xdocreport</groupId>
             <artifactId>org.apache.poi.xwpf.converter.xhtml</artifactId>
             <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.docx4j</groupId>
+            <artifactId>docx4j</artifactId>
+            <version>3.2.1</version>
             <scope>compile</scope>
         </dependency>
 
@@ -456,6 +464,7 @@
                         quartz,xerces,xercesImpl,dom4j,commons-codec,commons-collections,commons-lang,javassist,xml-apis,stax-api,commons-logging,slf4j-api,log4j,servlet-api
                     </excludeDependencies>
                     <instructions>
+                        <Implementation-Build>${buildNumber}</Implementation-Build>
                         <Bundle-SymbolicName>kimios-kernel</Bundle-SymbolicName>
                         <Bundle-Activator>org.kimios.utils.osgi.KimiosActivator</Bundle-Activator>
                         <Bundle-Name>${project.name}</Bundle-Name>

@@ -352,6 +352,14 @@
                         WEB-INF/lib/bc*-jdk14*.jar,
                         %regex[WEB-INF/lib/log4j-(?!over-slf4j).*.jar]
                     </packagingExcludes>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                        <manifestEntries>
+                            <git-SHA-1>${buildNumber}</git-SHA-1>
+                        </manifestEntries>
+                    </archive>
                 </configuration>
             </plugin>
         </plugins>

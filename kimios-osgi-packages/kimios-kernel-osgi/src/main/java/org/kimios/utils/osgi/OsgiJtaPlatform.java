@@ -16,7 +16,7 @@
 
 package org.kimios.utils.osgi;
 
-import org.hibernate.service.jta.platform.internal.AbstractJtaPlatform;
+//import org.hibernate.service.jta.platform.internal.AbstractJtaPlatform;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.util.tracker.ServiceTracker;
@@ -28,13 +28,12 @@ import javax.transaction.UserTransaction;
 
 /**
  */
-public class OsgiJtaPlatform extends AbstractJtaPlatform
+public class OsgiJtaPlatform /*extends AbstractJtaPlatform*/
 {
 
 
     private static Logger logger = LoggerFactory.getLogger(OsgiJtaPlatform.class);
 
-    @Override
     protected TransactionManager locateTransactionManager()
     {
 
@@ -62,7 +61,6 @@ public class OsgiJtaPlatform extends AbstractJtaPlatform
         }
     }
 
-    @Override
     protected UserTransaction locateUserTransaction()
     {
         try {

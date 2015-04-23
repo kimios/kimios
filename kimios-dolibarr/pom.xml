@@ -34,6 +34,7 @@
             <groupId>org.kimios</groupId>
             <artifactId>kimios-kernel</artifactId>
             <version>1.1-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>
@@ -49,7 +50,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.1</version>
+            <version>${slfj.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

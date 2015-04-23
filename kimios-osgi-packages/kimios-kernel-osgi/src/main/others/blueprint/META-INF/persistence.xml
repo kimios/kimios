@@ -77,7 +77,7 @@
             <property name="hibernate.hbm2ddl.auto" value="update" />
             <property name="hibernate.show_sql" value="false" />
             <!-- The following line is what's used in Hibernate 4 instead of a TransactionManagerLookup class -->
-            <property name="hibernate.transaction.jta.platform" value="org.kimios.utils.osgi.OsgiJtaPlatform" />
+            <property name="hibernate.transaction.jta.platform" value="org.hibernate.osgi.OsgiJtaPlatform" />
             <property name="hibernate.current_session_context_class" value="jta" />
             <property name="hibernate.connection.release_mode" value="after_statement"/>
             <property name="hibernate.transaction.flush_before_completion" value="true" />
