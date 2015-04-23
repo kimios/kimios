@@ -158,4 +158,16 @@ public interface ISecurityController
 
     public Session impersonnate(Session session, String userName, String userSource)
             throws AccessDeniedException, ConfigException, DataSourceException;
+
+    public List<DMEntitySecurity> getDefaultDMSecurityEntities(Session session, String objectType)
+            throws ConfigException,
+            DataSourceException;
+
+    public void saveDefaultDMSecurityEntities(Session session, String xmlStream, String objectType, String entityPath)
+            throws ConfigException,
+            DataSourceException;
+
+    public void saveDefaultDMSecurityEntities(Session session, List<DMEntitySecurity> des, String objectType, String entityPath)
+            throws ConfigException,
+            DataSourceException;
 }

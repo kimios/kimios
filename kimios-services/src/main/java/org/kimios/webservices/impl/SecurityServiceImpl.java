@@ -57,6 +57,33 @@ public class SecurityServiceImpl extends CoreService implements SecurityService
             throw getHelper().convertException(e);
         }
     }
+    public DMEntitySecurity[] getDefaultDMEntitySecurities(String sessionId, String objectType) throws
+            DMServiceException
+    {
+        try {
+            Session session = getHelper().getSession(sessionId);
+            List<org.kimios.kernel.security.DMEntitySecurity> v =
+                    securityController.getDefaultDMSecurityEntities(session, objectType);
+            DMEntitySecurity[] r = new DMEntitySecurity[v.size()];
+            for (int i = 0; i < v.size(); i++) {
+                r[i] = v.get(i).toPojo();
+            }
+            return r;
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
+
+    public void updateDefaultDMEntitySecurities(String sessionId, String xmlStream, String objectType)
+            throws DMServiceException
+    {
+        try {
+            Session session = getHelper().getSession(sessionId);
+            securityController.saveDefaultDMSecurityEntities(session, xmlStream, objectType, null);
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
 
     public boolean canRead(String sessionId, long dmEntityId) throws DMServiceException
     {

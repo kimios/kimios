@@ -25,9 +25,6 @@ import java.util.Vector;
 
 public interface DMEntitySecurityFactory
 {
-    public DMEntitySecurity getDMEntitySecurity(DMEntity e, String name, String source, int type)
-            throws ConfigException,
-            DataSourceException;
 
     public Vector<DMEntitySecurity> getDMEntitySecurities(DMEntity e) throws ConfigException, DataSourceException;
 
@@ -53,6 +50,12 @@ public interface DMEntitySecurityFactory
             String noAccessHash) throws ConfigException, DataSourceException;
 
     public boolean hasAnyChildCheckedOut(DMEntity e, String userName, String userSource)
+            throws ConfigException, DataSourceException;
+
+    public List<DMEntitySecurity> getDefaultDMEntitySecurity(String objectType, String entityPath)
+            throws ConfigException, DataSourceException;
+
+    public void saveDefaultDMEntitySecurity(DMEntitySecurity des, String objectType, String entityPath)
             throws ConfigException, DataSourceException;
 }
 

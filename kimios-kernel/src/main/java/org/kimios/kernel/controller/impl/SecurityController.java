@@ -60,6 +60,48 @@ public class SecurityController extends AKimiosController implements ISecurityCo
         return v;
     }
 
+    public List<DMEntitySecurity> getDefaultDMSecurityEntities(Session session, String objectType)
+            throws ConfigException,
+            DataSourceException
+    {
+
+        return securityFactoryInstantiator.getDMEntitySecurityFactory().getDefaultDMEntitySecurity(objectType, null);
+    }
+
+    public void saveDefaultDMSecurityEntities(Session session, String xmlStream, String objectType, String entityPath)
+            throws ConfigException,
+            DataSourceException
+    {
+        if(securityFactoryInstantiator.getRoleFactory()
+                .getRole(Role.ADMIN, session.getUserName(), session.getUserSource()) != null) {
+
+            List<DMEntitySecurity> des = DMEntitySecurityUtil.getDMentitySecuritesFromXml(xmlStream, null);
+            for(DMEntitySecurity security: des){
+                securityFactoryInstantiator.getDMEntitySecurityFactory()
+                        .saveDefaultDMEntitySecurity(security, objectType, entityPath);
+            }
+
+        }else {
+            throw new AccessDeniedException();
+        }
+    }
+
+    public void saveDefaultDMSecurityEntities(Session session, List<DMEntitySecurity> des, String objectType, String entityPath)
+            throws ConfigException,
+            DataSourceException
+    {
+        if(securityFactoryInstantiator.getRoleFactory()
+                .getRole(Role.ADMIN, session.getUserName(), session.getUserSource()) != null) {
+            for(DMEntitySecurity security: des){
+                securityFactoryInstantiator.getDMEntitySecurityFactory()
+                        .saveDefaultDMEntitySecurity(security, objectType, entityPath);
+            }
+
+        }else {
+            throw new AccessDeniedException();
+        }
+    }
+
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.ISecurityController#updateDMEntitySecurities(org.kimios.kernel.security.Session, long, int, java.lang.String, boolean)
     */

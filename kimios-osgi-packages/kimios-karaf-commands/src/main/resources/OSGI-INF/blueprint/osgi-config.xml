@@ -57,6 +57,9 @@
         <command>
             <action class="org.kimios.osgi.karaf.PathElementCommand" />
         </command>
+        <command>
+            <action class="org.kimios.osgi.karaf.AddDefaultSecurityRuleCommand" />
+        </command>
     </command-bundle>
 
     <bean id="lockCompleter" class="org.kimios.osgi.karaf.CheckedOutCompleter">

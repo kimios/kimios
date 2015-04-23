@@ -361,23 +361,7 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
         }
     }
 
-    public DMEntitySecurity getDMEntitySecurity(DMEntity e, String name,
-            String source, int type) throws ConfigException,
-            DataSourceException
-    {
-        try {
-            DMEntitySecurity d = (DMEntitySecurity) getSession().createCriteria(DMEntitySecurity.class)
-                    .add(Restrictions.eq("dmEntityUid", e.getUid()))
-                    .add(Restrictions.eq("dmEntityType", e.getType()))
-                    .add(Restrictions.eq("name", name))
-                    .add(Restrictions.eq("source", source))
-                    .add(Restrictions.eq("type", type))
-                    .uniqueResult();
-            return d;
-        } catch (HibernateException ex) {
-            throw new DataSourceException(ex);
-        }
-    }
+
 
     public List<DMEntityACL> saveDMEntitySecurity(DMEntitySecurity des)
             throws ConfigException, DataSourceException
@@ -444,6 +428,117 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
             throw new DataSourceException(e);
         }
     }
+
+
+    public List<DMEntitySecurity> getDefaultDMEntitySecurity(String objectType, String entityPath)
+            throws ConfigException, DataSourceException
+    {
+        try {
+            String query =
+                    "select rule from DMDefaultSecurityRule rule where rule.objectType = :objectType" +
+                            " order by rule.securityEntityUid, rule.securityEntitySource, rule.securityEntityType";
+            List<DMDefaultSecurityRule> list = getSession().createQuery(query)
+                    .setString("objectType", objectType)
+                    .list();
+
+            List<DMEntitySecurity> vDes = new ArrayList<DMEntitySecurity>();
+            for (DMDefaultSecurityRule rule : list) {
+                DMEntitySecurity tt = null;
+                for (DMEntitySecurity secEnt : vDes) {
+                    if (secEnt.getName().equalsIgnoreCase(rule.getSecurityEntityUid())
+                            && secEnt.getSource().equalsIgnoreCase(rule.getSecurityEntitySource())
+                            && secEnt.getType() == rule.getSecurityEntityType())
+                    {
+                        tt = secEnt;
+                        break;
+                    }
+                }
+                if (tt == null) {
+                    tt = new DMEntitySecurity();
+                    tt.setName(rule.getSecurityEntityUid());
+                    tt.setSource(rule.getSecurityEntitySource());
+                    tt.setType(rule.getSecurityEntityType());
+                    AuthenticationSource source = FactoryInstantiator.getInstance()
+                            .getAuthenticationSourceFactory()
+                            .getAuthenticationSource(rule.getSecurityEntitySource());
+                    SecurityEntity securityEntity = null;
+                    switch (rule.getSecurityEntityType()) {
+                        case SecurityEntityType.USER:
+                            securityEntity = source.getUserFactory().getUser(rule.getSecurityEntityUid());
+                            break;
+                        case SecurityEntityType.GROUP:
+                            securityEntity = source.getGroupFactory().getGroup(rule.getSecurityEntityUid());
+                            break;
+                        default:
+                            ;
+                    }
+                    if (securityEntity != null) {
+                        tt.setFullName(securityEntity.getName());
+                    }
+                    vDes.add(tt);
+                }
+                if (rule.getRights() == DMSecurityRule.READRULE) {
+                    tt.setRead(true);
+                }
+                if (rule.getRights() == DMSecurityRule.WRITERULE) {
+                    tt.setWrite(true);
+                }
+                if (rule.getRights() == DMSecurityRule.FULLRULE) {
+                    tt.setFullAccess(true);
+                }
+                if (rule.getRights() == DMSecurityRule.NOACCESS) {
+                    tt.setFullAccess(false);
+                    tt.setWrite(false);
+                    tt.setRead(false);
+                }
+            }
+            return vDes;
+        } catch (HibernateException ex) {
+            throw new DataSourceException(ex);
+        }
+    }
+
+
+    public void saveDefaultDMEntitySecurity(DMEntitySecurity des, String objectType, String entityPath)
+            throws ConfigException, DataSourceException
+    {
+
+        try {
+            createSecurityEntityRules(des.getName(), des.getSource(), des.getType());
+
+            if (des.isRead()) {
+                DMDefaultSecurityRule dr = DMDefaultSecurityRule
+                        .getInstance(des.getName(), des.getSource(), des.getType(), DMSecurityRule.READRULE, objectType, entityPath);
+
+                getSession().save(dr);
+            }
+            if (des.isWrite()) {
+                DMDefaultSecurityRule dr = DMDefaultSecurityRule
+                        .getInstance(des.getName(), des.getSource(), des.getType(), DMSecurityRule.WRITERULE, objectType, entityPath);
+
+                getSession().save(dr);
+            }
+            if (des.isFullAccess()) {
+                DMDefaultSecurityRule dr = DMDefaultSecurityRule
+                        .getInstance(des.getName(), des.getSource(), des.getType(), DMSecurityRule.FULLRULE, objectType, entityPath);
+
+                getSession().save(dr);
+            }
+
+            if (!des.isFullAccess() && !des.isRead() && !des.isWrite()) {
+                DMDefaultSecurityRule dr = DMDefaultSecurityRule
+                        .getInstance(des.getName(), des.getSource(), des.getType(), DMSecurityRule.NOACCESS, objectType, entityPath);
+                getSession().save(dr);
+            }
+
+
+
+            getSession().flush();
+        } catch (HibernateException e) {
+            throw new DataSourceException(e);
+        }
+    }
+
 
     public <T extends DMEntityImpl> DMEntity entityFromRule(long dmEntityUid, Vector<String> hashs,
             Vector<String> noAccessHashs) throws ConfigException, DataSourceException

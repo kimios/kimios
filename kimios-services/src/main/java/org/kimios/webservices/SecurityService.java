@@ -54,6 +54,23 @@ public interface SecurityService
             throws DMServiceException;
 
     @GET
+    @Path("/getDefaultDMEntitySecurities")
+    @Produces("application/json")
+    public DMEntitySecurity[] getDefaultDMEntitySecurities(
+            @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+            @QueryParam(value = "objectType") @WebParam(name = "objectType") String objectType)
+            throws DMServiceException;
+
+    @GET
+    @Path("/updateDefaultDMEntitySecurities")
+    @Produces("application/json")
+    public void updateDefaultDMEntitySecurities(
+            @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+            @QueryParam(value = "xmlStream") @WebParam(name = "xmlStream") String xmlStream,
+            @QueryParam(value = "objectType") @WebParam(name = "objectType") String objectType)
+            throws DMServiceException;
+
+    @GET
     @Path("/canRead")
     @Produces("application/json")
     public boolean canRead(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
