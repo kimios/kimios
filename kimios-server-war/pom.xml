@@ -297,6 +297,13 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.compendium</artifactId>
+            <version>4.3.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
             <version>${hibernate.version}</version>
@@ -327,6 +334,18 @@
                         <weaveDependency>
                             <groupId>org.kimios</groupId>
                             <artifactId>kimios-kernel</artifactId>
+                        </weaveDependency>
+                        <weaveDependency>
+                            <groupId>org.kimios</groupId>
+                            <artifactId>kimios-index</artifactId>
+                        </weaveDependency>
+                        <weaveDependency>
+                            <groupId>org.kimios</groupId>
+                            <artifactId>kimios-convert</artifactId>
+                        </weaveDependency>
+                        <weaveDependency>
+                            <groupId>org.kimios</groupId>
+                            <artifactId>kimios-bonita</artifactId>
                         </weaveDependency>
                     </weaveDependencies>
                 </configuration>
