@@ -141,8 +141,13 @@ public class SolrIndexManager
         }
     }
 
-
     private SolrInputDocument toSolrInputDocument(Document document, SolrDocument previousSolrDocument)
+            throws DataSourceException, ConfigException {
+        return toSolrInputDocument(document, previousSolrDocument, false);
+    }
+
+
+    private SolrInputDocument toSolrInputDocument(Document document, SolrDocument previousSolrDocument, boolean flush)
             throws DataSourceException, ConfigException {
 
         SimpleDateFormat dateParser = new SimpleDateFormat("dd-MM-yyyy");
@@ -294,7 +299,10 @@ public class SolrIndexManager
                 wrapper.setEntityMetaValues(values);
                 try {
                     document.setAddOnDatas(mp.writeValueAsString(wrapper));
-                    FactoryInstantiator.getInstance().getDocumentFactory().saveDocumentNoFlush(document);
+                    if(flush){
+                        FactoryInstantiator.getInstance().getDocumentFactory().saveDocument(document);
+                    } else
+                        FactoryInstantiator.getInstance().getDocumentFactory().saveDocumentNoFlush(document);
                     log.debug("updating addon data with " + document.getAddOnDatas());
                 } catch (Exception ex) {
                     log.error("error while generation addon meta field", ex);
