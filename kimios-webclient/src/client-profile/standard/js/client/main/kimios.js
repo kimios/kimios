@@ -338,6 +338,14 @@ kimios = {
             return Ext.getCmp('kimios-queries-panel');
         },
 
+        getPublicSearchRequestsPanel: function () {
+            return Ext.getCmp('kimios-queries-panel3');
+        },
+
+        getPublishedSearchRequestsPanel: function () {
+            return Ext.getCmp('kimios-queries-panel2');
+        },
+
         getBookmarksPanel: function () {
             return Ext.getCmp('kimios-bookmarks-panel');
         },

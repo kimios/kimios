@@ -18,8 +18,13 @@
 kimios.explorer.SearchQueryPanel = Ext.extend( Ext.grid.GridPanel, {
     constructor: function ( config )
     {
-        this.id = 'kimios-queries-panel';
-        this.title = kimios.lang('SearchTab');
+        this.id = config.id;
+        this.queriesLoadAction = config.queriesLoadAction ? config.queriesLoadAction : 'ListMyQueries';
+
+
+
+        this.titleKey = config.titleKey;
+        this.title = config.titleKey ? kimios.lang(config.titleKey) : kimios.lang('SearchTab');
         this.iconCls = 'search';
         this.autoScroll = true;
 //        this.stripeRows = true;
@@ -28,11 +33,13 @@ kimios.explorer.SearchQueryPanel = Ext.extend( Ext.grid.GridPanel, {
 //    this.ddGroup = 'firstGridDDGroup';
 //    this.enableDragDrop = true;
 
+
+        var loadAction = this.queriesLoadAction;
         this.store = new DmsJsonStore( {
                                            url: 'Search',
                                            fields: kimios.record.SearchRecord.queryRecord,
                                            baseParams: {
-                                               action: 'ListQueries'
+                                               action: loadAction
                                            },
                                            autoLoad: false,
                                            sortInfo: {
@@ -108,7 +115,7 @@ kimios.explorer.SearchQueryPanel = Ext.extend( Ext.grid.GridPanel, {
 
     refreshLanguage: function ()
     {
-        this.setTitle( kimios.lang( 'SearchTab' ) );
+        this.setTitle( kimios.lang( this.titleKey ) );
         this.noContentNode.setText( kimios.lang( 'NoBookmark' ) );
         this.doLayout();
     },

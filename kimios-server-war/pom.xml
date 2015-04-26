@@ -369,7 +369,8 @@
                     <packagingExcludes>
                         WEB-INF/lib/commons-logging-*.jar,
                         WEB-INF/lib/bc*-jdk14*.jar,
-                        %regex[WEB-INF/lib/log4j-(?!over-slf4j).*.jar]
+                        %regex[WEB-INF/lib/log4j-(?!over-slf4j).*.jar],
+                        %regex[WEB-INF/lib/slf4j-log4j12-*.jar]
                     </packagingExcludes>
                     <archive>
                         <manifest>

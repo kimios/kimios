@@ -305,7 +305,8 @@
                                     -->
                             <packagingExcludes>
                                 WEB-INF/lib/commons-logging-*.jar,
-                                %regex[WEB-INF/lib/log4j-(?!over-slf4j).*.jar]
+                                %regex[WEB-INF/lib/log4j-(?!over-slf4j).*.jar],
+                                %regex[WEB-INF/lib/slf4j-log4j*.jar]
                             </packagingExcludes>
                             <archive>
                                 <manifest>
@@ -317,7 +318,7 @@
                             </archive>
                         </configuration>
                     </execution>
-                    <execution>
+                    <!--<execution>
                         <id>war-osgi</id>
                         <goals>
                             <goal>war</goal>
@@ -333,11 +334,6 @@
                                 </resource>
                             </webResources>
                             <webXml>src/osgi/WEB-INF/web.xml</webXml>
-                            <!--
-                                      Exclude JCL and LOG4J since all logging should go through SLF4J.
-                                      Note that we're excluding log4j-<version>.jar but keeping
-                                      log4j-over-slf4j-<version>.jar
-                                    -->
                             <packagingExcludes>
                                 WEB-INF/lib/commons-logging-*.jar,
                                 %regex[WEB-INF/lib/log4j-(?!over-slf4j).*.jar]
@@ -352,7 +348,7 @@
                                 </manifestEntries>
                             </archive>
                         </configuration>
-                    </execution>
+                    </execution>-->
                 </executions>
 
 

@@ -146,6 +146,8 @@
     <script type="text/javascript"
             src="<%=request.getContextPath()%>/js/client/properties/PropertiesWindow.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/properties/PropertiesPanel.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/properties/RequestPropertiesWindow.js"></script>
+
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/properties/DMEntityPanel.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/properties/MetaDataPanel.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/properties/VersionsPanel.js"></script>

@@ -44,10 +44,10 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
     },
 
     executeAfterBuild: function () {
-        if(clientConfig.defaultdocumenttype){
+        if (clientConfig.defaultdocumenttype) {
             loadAddonCols(this.newTab);
         } else {
-            if (this.afterBuild)  {
+            if (this.afterBuild) {
                 this.afterBuild();
 
             }
@@ -64,11 +64,9 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
     initComponent: function () {
 
 
-
-
         kimios.explorer.Viewport.superclass.initComponent.apply(this, arguments);
         Ext.state.Manager.setProvider(new Ext.state.CookieProvider({
-            expires: new Date(new Date().getTime()+(1000*60*60*24*30)) //7 days from now
+            expires: new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * 30)) //7 days from now
         }));
         this.mask = new kimios.LoadMask(Ext.getBody());
         kimios.mask();
@@ -96,9 +94,46 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                 this.recentItemsPanel = new kimios.explorer.RecentItemsPanel({
                     border: false
                 });
-                this.searchBookmarkPanel = new kimios.explorer.SearchQueryPanel({
+
+
+
+
+
+                var myQueriesPanel = new kimios.explorer.SearchQueryPanel({
+                    id: 'kimios-queries-panel',
+                    queriesLoadAction : 'ListMyQueries',
+                    titleKey: 'MyQueries',
                     border: false
                 });
+                var publishedQueriesPanel = new kimios.explorer.SearchQueryPanel({
+                    id: 'kimios-queries-panel2',
+                    queriesLoadAction : 'ListPublishedQueries',
+                    titleKey: 'PublishedQueries',
+                    border: false
+                });
+
+                var commonQueriesPanel = new kimios.explorer.SearchQueryPanel({
+                    id: 'kimios-queries-panel3',
+                    queriesLoadAction : 'ListPublicQueries',
+                    titleKey: 'PublicQueries',
+                    border: false
+                });
+
+                this.searchBookmarkPanel = new Ext.TabPanel({
+                        id: 'searchQueriesPanel',
+                        title: kimios.lang('SearchTab'),
+                        activeTab: 0,
+                        pending: 0,
+                        assigned: 0,
+                        items: [
+                            myQueriesPanel,
+                            publishedQueriesPanel,
+                            commonQueriesPanel
+                        ],
+                        refresh: function (p, a) {
+                        }
+                    }
+                );
 
 
                 this.kimiosTasksPanel = new kimios.tasks.TasksPanel({});
@@ -128,7 +163,7 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                         items: [this.cartPanel]
                     }
                 ];
-                if(bonitaEnabled){
+                if (bonitaEnabled) {
                     groupPanelItems.push({
                         hidden: true,
                         visible: false,
@@ -159,14 +194,14 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                                         var assigned = '';
                                         if (this.pending == '?') {
                                             pending = '<span style="color:gray;text-decoration: line-through;">' +
-                                                this.pending + ' ' + kimios.lang('BonitaPendingTasks') + '</span>';
+                                            this.pending + ' ' + kimios.lang('BonitaPendingTasks') + '</span>';
                                         } else {
                                             pending = this.pending + ' ' + kimios.lang('BonitaPendingTasks');
                                         }
 
                                         if (this.assigned == '?') {
                                             assigned = '<span style="color:gray;text-decoration: line-through;">' +
-                                                this.assigned + ' ' + kimios.lang('BonitaAssignedTasks') + '</span>';
+                                            this.assigned + ' ' + kimios.lang('BonitaAssignedTasks') + '</span>';
                                         } else {
                                             assigned = this.assigned + ' ' + kimios.lang('BonitaAssignedTasks');
                                         }
@@ -179,19 +214,19 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                                         }
                                         if (this.pending == '?' && this.assigned == '?') {
                                             this.setTitle('<span style="color:gray;text-decoration: line-through;">' +
-                                                kimios.lang('MyTasks') + '</span>');
+                                            kimios.lang('MyTasks') + '</span>');
                                         } else {
                                             this.setTitle(kimios.lang('MyTasks') + ' (' + total + ')<br/>' +
-                                                '<div style="font-size:.9em;font-weight:normal;"> ' +
-                                                pending + '<br/>' +
-                                                assigned + '</div>');
+                                            '<div style="font-size:.9em;font-weight:normal;"> ' +
+                                            pending + '<br/>' +
+                                            assigned + '</div>');
                                         }
                                     }
                                 }
                             })
                         ]
                     });
-                }else {
+                } else {
 
                     groupPanelItems.push({
                         items: [this.kimiosTasksPanel]
@@ -333,7 +368,7 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                 this.executeAfterBuild();
 
                 // start tasks checker thread (also used to check session)
-                if(bonitaEnabled){
+                if (bonitaEnabled) {
                     this.tasksChecker = {
                         run: function () {
                             Ext.getCmp('kimios-tasks-panel').refresh();

@@ -19,10 +19,13 @@ import flexjson.JSONSerializer;
 import flexjson.transformer.DateTransformer;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang.time.DateUtils;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 import org.kimios.core.wrappers.DMEntity;
 import org.kimios.core.wrappers.VirtualTreeEntity;
 import org.kimios.kernel.index.query.model.Criteria;
 import org.kimios.kernel.index.query.model.SearchRequest;
+import org.kimios.kernel.index.query.model.SearchRequestSecurity;
 import org.kimios.kernel.index.query.model.SearchResponse;
 import org.kimios.kernel.ws.pojo.Document;
 import org.slf4j.Logger;
@@ -38,14 +41,12 @@ import java.util.regex.Pattern;
  * @author Fabien Alin
  */
 public class SearchControllerWeb
-    extends Controller
-{
+        extends Controller {
 
-    private static Logger log = LoggerFactory.getLogger( SearchControllerWeb.class );
+    private static Logger log = LoggerFactory.getLogger(SearchControllerWeb.class);
 
-    public SearchControllerWeb( Map<String, String> parameters )
-    {
-        super( parameters );
+    public SearchControllerWeb(Map<String, String> parameters) {
+        super(parameters);
     }
 
 
@@ -64,143 +65,168 @@ public class SearchControllerWeb
 
 
     public String execute()
-        throws Exception
-    {
+            throws Exception {
         SearchResponse searchResponse = null;
 
         // Quick
-        if ( action.equalsIgnoreCase( "Quick" ) )
-        {
+        if (action.equalsIgnoreCase("Quick")) {
 
             long dmEntityUid = -1;
-            try
-            {
-                dmEntityUid = Long.parseLong( parameters.get( "dmEntityUid" ) );
-            }
-            catch ( Exception e )
-            {
+            try {
+                dmEntityUid = Long.parseLong(parameters.get("dmEntityUid"));
+            } catch (Exception e) {
             }
             int dmEntityType = -1;
-            try
-            {
-                dmEntityType = Integer.parseInt( parameters.get( "dmEntityType" ) );
-            }
-            catch ( Exception e )
-            {
+            try {
+                dmEntityType = Integer.parseInt(parameters.get("dmEntityType"));
+            } catch (Exception e) {
                 dmEntityType = -1;
             }
-            if ( dmEntityUid <= 0 )
-            {
+            if (dmEntityUid <= 0) {
                 dmEntityUid = -1;
                 dmEntityType = -1;
             }
 
-            int page = parameters.get( "start" ) != null ? Integer.parseInt( parameters.get( "start" ) ) : -1;
-            int pageSize = parameters.get( "limit" ) != null ? Integer.parseInt( parameters.get( "limit" ) ) : -1;
+            int page = parameters.get("start") != null ? Integer.parseInt(parameters.get("start")) : -1;
+            int pageSize = parameters.get("limit") != null ? Integer.parseInt(parameters.get("limit")) : -1;
 
-            String sort = parameters.get( "sort" ) != null ? sortFieldMapping.get( parameters.get( "sort" ) ) : null;
-            String sortDir = parameters.get( "dir" ) != null ? parameters.get( "dir" ).toLowerCase() : null;
+            String sort = parameters.get("sort") != null ? sortFieldMapping.get(parameters.get("sort")) : null;
+            String sortDir = parameters.get("dir") != null ? parameters.get("dir").toLowerCase() : null;
 
             searchResponse =
-                searchController.quickSearch( sessionUid, dmEntityType, dmEntityUid, parameters.get( "name" ), page,
-                                              pageSize, sort, sortDir );
-            log.debug( "Quick search in uid: " + dmEntityUid + " [Type: " + dmEntityType + "]: "
-                           + searchResponse.getRows().size() + " results / " + searchResponse.getResults() );
+                    searchController.quickSearch(sessionUid, dmEntityType, dmEntityUid, parameters.get("name"), page,
+                            pageSize, sort, sortDir);
+            log.debug("Quick search in uid: " + dmEntityUid + " [Type: " + dmEntityType + "]: "
+                    + searchResponse.getRows().size() + " results / " + searchResponse.getResults());
 
-            return retSearchResp( searchResponse );
+            return retSearchResp(searchResponse);
         }
 
         // Advanced
-        else if ( action.equalsIgnoreCase( "Advanced" ) )
-        {
+        else if (action.equalsIgnoreCase("Advanced")) {
 
             // ######### keep below for simulate quick search
-            String positionUidS = parameters.get( "dmEntityUid" );
-            String positionTypeS = parameters.get( "dmEntityType" );
+            String positionUidS = parameters.get("dmEntityUid");
+            String positionTypeS = parameters.get("dmEntityType");
             long positionUid = -1;
-            try
-            {
-                positionUid = Long.parseLong( positionUidS );
-            }
-            catch ( Exception e )
-            {
+            try {
+                positionUid = Long.parseLong(positionUidS);
+            } catch (Exception e) {
             }
             int positionType = -1;
-            try
-            {
-                positionType = Integer.parseInt( positionTypeS );
-            }
-            catch ( Exception e )
-            {
+            try {
+                positionType = Integer.parseInt(positionTypeS);
+            } catch (Exception e) {
             }
             // ######### end of: keep below for simulate quick search
 
-            List<Criteria> criteriaList = parseCriteriaList( parameters );
+            List<Criteria> criteriaList = parseCriteriaList(parameters);
 
-            int page = parameters.get( "start" ) != null ? Integer.parseInt( parameters.get( "start" ) ) : -1;
-            int pageSize = parameters.get( "limit" ) != null ? Integer.parseInt( parameters.get( "limit" ) ) : -1;
+            int page = parameters.get("start") != null ? Integer.parseInt(parameters.get("start")) : -1;
+            int pageSize = parameters.get("limit") != null ? Integer.parseInt(parameters.get("limit")) : -1;
 
-            String sort = parameters.get( "sort" ) != null ? sortFieldMapping.get( parameters.get( "sort" ) ) : null;
-            String sortDir = parameters.get( "dir" ) != null ? parameters.get( "dir" ).toLowerCase() : null;
-            String virtualPath = parameters.get( "virtualPath" );
+            String sort = parameters.get("sort") != null ? sortFieldMapping.get(parameters.get("sort")) : null;
+            String sortDir = parameters.get("dir") != null ? parameters.get("dir").toLowerCase() : null;
+            String virtualPath = parameters.get("virtualPath");
             searchResponse =
-                searchController.advancedSearchDocument( sessionUid, criteriaList, page, pageSize, sort, sortDir,
-                                                         virtualPath, -1, false );
-            log.debug( "Advanced search in uid: " + positionUid + " [Type: " + positionType + "]: "
-                           + searchResponse.getRows().size() + " results / " + searchResponse.getResults() );
+                    searchController.advancedSearchDocument(sessionUid, criteriaList, page, pageSize, sort, sortDir,
+                            virtualPath, -1, false);
+            log.debug("Advanced search in uid: " + positionUid + " [Type: " + positionType + "]: "
+                    + searchResponse.getRows().size() + " results / " + searchResponse.getResults());
 
-            return retSearchResp( searchResponse );
+            return retSearchResp(searchResponse);
 
         }
 
         // SaveQuery
-        else if ( action.equalsIgnoreCase( "SaveQuery" ) )
-        {
-            String sort = parameters.get( "sort" ) != null ? sortFieldMapping.get( parameters.get( "sort" ) ) : null;
-            String sortDir = parameters.get( "dir" ) != null ? parameters.get( "dir" ).toLowerCase() : null;
+        else if (action.equalsIgnoreCase("SaveQuery")) {
+            String sort = parameters.get("sort") != null ? sortFieldMapping.get(parameters.get("sort")) : null;
+            String sortDir = parameters.get("dir") != null ? parameters.get("dir").toLowerCase() : null;
+
+
+            String securities = parameters.get("securities") != null ? parameters.get("securities") : null;
+
+
+            log.debug("read securities: {}", securities);
 
             Long queryId =
-                parameters.get( "searchQueryId" ) != null ? Long.parseLong( parameters.get( "searchQueryId" ) ) : null;
-            String queryName = parameters.get( "searchQueryName" );
+                    parameters.get("searchQueryId") != null ? Long.parseLong(parameters.get("searchQueryId")) : null;
+            String queryName = parameters.get("searchQueryName");
 
-            List<Criteria> criteriaList = parseCriteriaList( parameters );
-            searchController.saveQuery( sessionUid, queryId, queryName, criteriaList, sort, sortDir );
+            List<Criteria> criteriaList = parseCriteriaList(parameters);
+
+
+            SearchRequest request = null;
+            if (queryId != null) {
+                //reparse
+                request = searchController.getQuery(sessionUid, queryId);
+            } else {
+                request = new SearchRequest();
+            }
+
+            request.setId(queryId);
+            request.setName(queryName);
+            request.setCriteriaList(criteriaList);
+            request.setSortDir(sortDir);
+            request.setSortField(sort);
+
+
+            List<SearchRequestSecurity> searchRequestSecurities = null;
+            if (securities != null) {
+                searchRequestSecurities
+                        = new ObjectMapper().readValue(securities, new TypeReference<List<SearchRequestSecurity>>() {
+                });
+            }
+            if (searchRequestSecurities != null && searchRequestSecurities.size() > 0) {
+                request.setSecurities(searchRequestSecurities);
+            }
+            searchController.saveQuery(sessionUid, queryId, queryName, criteriaList, sort, sortDir);
             return "";
         }
 
         // ListQueries
-        else if ( action.equalsIgnoreCase( "ListQueries" ) )
-        {
-            List<SearchRequest> items = searchController.listQueries( sessionUid );
-            return new JSONSerializer().exclude( "class" ).serialize( items );
+        else if (action.equalsIgnoreCase("ListMyQueries")) {
+            List<SearchRequest> items = searchController.listMyQueries(sessionUid);
+            return new JSONSerializer().exclude("class").serialize(items);
+        } else if (action.equalsIgnoreCase("ListPublishedQueries")) {
+            List<SearchRequest> items = searchController.listPublishedQueries(sessionUid);
+            return new JSONSerializer().exclude("class").serialize(items);
+        } else if (action.equalsIgnoreCase("ListPublicQueries")) {
+            List<SearchRequest> items = searchController.listPublicQueries(sessionUid);
+            return new JSONSerializer().exclude("class").serialize(items);
+        } else if (action.equalsIgnoreCase("GetSearchRequestSecurities")) {
+            Long id = Long.parseLong(parameters.get("queryId"));
+            List<SearchRequestSecurity> searchRequestSecurities = searchController.getSecurities(sessionUid, id);
+            return new JSONSerializer().exclude("class").serialize(searchRequestSecurities);
+        } else if (action.equalsIgnoreCase("LoadQuery")) {
+            Long id = Long.parseLong(parameters.get("queryId"));
+            SearchRequest request = searchController.getQuery(sessionUid, id);
+            return new JSONSerializer().exclude("class").serialize(request);
         }
-
         // DeleteQuery
-        else if ( action.equalsIgnoreCase( "DeleteQuery" ) )
-        {
-            Long id = Long.parseLong( parameters.get( "queryId" ) );
-            searchController.deleteQuery( sessionUid, id );
+        else if (action.equalsIgnoreCase("DeleteQuery")) {
+            Long id = Long.parseLong(parameters.get("queryId"));
+            searchController.deleteQuery(sessionUid, id);
             return "";
         }
 
         // ExecuteSaved
-        else if ( action.equalsIgnoreCase( "ExecuteSaved" ) )
-        {
-            Long queryId = Long.parseLong( parameters.get( "queryId" ) );
-            int page = parameters.get( "start" ) != null ? Integer.parseInt( parameters.get( "start" ) ) : -1;
-            int pageSize = parameters.get( "limit" ) != null ? Integer.parseInt( parameters.get( "limit" ) ) : -1;
+        else if (action.equalsIgnoreCase("ExecuteSaved")) {
+            Long queryId = Long.parseLong(parameters.get("queryId"));
+            int page = parameters.get("start") != null ? Integer.parseInt(parameters.get("start")) : -1;
+            int pageSize = parameters.get("limit") != null ? Integer.parseInt(parameters.get("limit")) : -1;
 
-            String sort = parameters.get( "sort" ) != null ? sortFieldMapping.get( parameters.get( "sort" ) ) : null;
-            String sortDir = parameters.get( "dir" ) != null ? parameters.get( "dir" ).toLowerCase() : null;
+            String sort = parameters.get("sort") != null ? sortFieldMapping.get(parameters.get("sort")) : null;
+            String sortDir = parameters.get("dir") != null ? parameters.get("dir").toLowerCase() : null;
 
-            String virtualPath = parameters.get( "virtualPath" );
+            String virtualPath = parameters.get("virtualPath");
 
             searchResponse =
-                searchController.executeSearchQuery( sessionUid, queryId, page, pageSize, sort, sortDir, virtualPath );
-            log.debug( "Advanced search in uid: " + searchResponse.getRows().size() + " results / "
-                           + searchResponse.getResults() );
+                    searchController.executeSearchQuery(sessionUid, queryId, page, pageSize, sort, sortDir, virtualPath);
+            log.debug("Advanced search in uid: " + searchResponse.getRows().size() + " results / "
+                    + searchResponse.getResults());
 
-            return retSearchResp( searchResponse );
+            return retSearchResp(searchResponse);
 
         }
         /*else if ( action.equalsIgnoreCase( "SearchPath" ) )
@@ -221,24 +247,20 @@ public class SearchControllerWeb
             return retSearchResp( searchResponse );
 
         }*/
-        else
-        {
+        else {
             return "NOACTION";
         }
     }
 
 
-    private String retSearchResp( SearchResponse searchResponse )
-    {
+    private String retSearchResp(SearchResponse searchResponse) {
         Vector<DMEntity> it = new Vector<DMEntity>();
-        for ( org.kimios.kernel.ws.pojo.DMEntity d : searchResponse.getRows() )
-        {
-            it.add( new DMEntity( d ) );
+        for (org.kimios.kernel.ws.pojo.DMEntity d : searchResponse.getRows()) {
+            it.add(new DMEntity(d));
         }
 
         List<VirtualTreeEntity> vEntities = new ArrayList<VirtualTreeEntity>();
-        if ( searchResponse.getFacetsData() != null && searchResponse.getFacetsData().size() > 0 )
-        {
+        if (searchResponse.getFacetsData() != null && searchResponse.getFacetsData().size() > 0) {
 
             /*
                 Create virtual entities
@@ -246,22 +268,20 @@ public class SearchControllerWeb
 
             int vUid = 0;
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-            for ( Object facetInfo : searchResponse.getFacetsData().keySet() )
-            {
+            for (Object facetInfo : searchResponse.getFacetsData().keySet()) {
                 vUid++;
                 String virtualPath = searchResponse.getVirtualPath() + "/" + facetInfo;
-                ArrayList fInfo = (ArrayList) searchResponse.getFacetsData().get( facetInfo );
-                String virtualName = fInfo.get( 0 ).toString();
-                Number count = (Number) fInfo.get( 1 );
+                ArrayList fInfo = (ArrayList) searchResponse.getFacetsData().get(facetInfo);
+                String virtualName = fInfo.get(0).toString();
+                Number count = (Number) fInfo.get(1);
 
                 /*
                     Parse date query
                  */
-                try{
-                    if(facetInfo.toString().contains(" TO ")){
+                try {
+                    if (facetInfo.toString().contains(" TO ")) {
                         String[] parts = facetInfo.toString().split(" TO ");
                         Date dateItem = sdf.parse(parts[0]);
-
 
 
                         Calendar calendar = Calendar.getInstance();
@@ -270,39 +290,39 @@ public class SearchControllerWeb
                         Date now = new Date();
 
                         String today = null;
-                        if(DateUtils.isSameDay(dateItem, now)){
+                        if (DateUtils.isSameDay(dateItem, now)) {
                             today = "Today";
                         }
                         // Get unit for date facet
-                        if(log.isDebugEnabled()){
+                        if (log.isDebugEnabled()) {
                             log.info(dateItem.toString());
                         }
                         Pattern pattern = Pattern.compile("(DAY|MONTH|YEAR|WEEK)");
                         Matcher m = pattern.matcher(parts[1]);
                         DateFormatSymbols dfs = new DateFormatSymbols(Locale.getDefault());
-                        while (m.find()){
+                        while (m.find()) {
                             String res = m.group();
-                            if(res.equals("DAY")){
-                                if(today != null){
-                                    virtualName = "Today (" +  DateFormatUtils.format(calendar, "dd-MM-yyyy") + ")";
+                            if (res.equals("DAY")) {
+                                if (today != null) {
+                                    virtualName = "Today (" + DateFormatUtils.format(calendar, "dd-MM-yyyy") + ")";
                                 } else
                                     virtualName = dfs.getWeekdays()[calendar.get(Calendar.DAY_OF_WEEK)] + " (" + DateFormatUtils.format(calendar, "dd-MM-yyyy") + " - Week " + calendar.get(Calendar.WEEK_OF_YEAR) + ")";
-                            } else if(res.equals("MONTH")){
+                            } else if (res.equals("MONTH")) {
                                 virtualName = dfs.getMonths()[calendar.get(Calendar.MONTH)] + " " + String.valueOf(calendar.get(Calendar.YEAR));
-                            } else if(res.equals("YEAR")){
+                            } else if (res.equals("YEAR")) {
                                 virtualName = String.valueOf(calendar.get(Calendar.YEAR));
                             }
-                            if(log.isDebugEnabled()){
+                            if (log.isDebugEnabled()) {
                                 log.debug(" > Translated value " + virtualName);
                             }
                         }
                     }
-                }  catch (Exception e){
+                } catch (Exception e) {
                     log.error(" > Exception while translating facets", e);
                 }
 
-                VirtualTreeEntity vEntity = new VirtualTreeEntity( vUid, virtualName, virtualPath, count.longValue() );
-                vEntities.add( vEntity );
+                VirtualTreeEntity vEntity = new VirtualTreeEntity(vUid, virtualName, virtualPath, count.longValue());
+                vEntities.add(vEntity);
 
             }
         }
@@ -310,115 +330,91 @@ public class SearchControllerWeb
         String jsonResp =
 
                 new JSONSerializer().exclude("class")
-                    .serialize(it);
+                        .serialize(it);
         String virtualTree =
-            new JSONSerializer().exclude( "class" ).transform( new DateTransformer( "MM/dd/yyyy hh:mm:ss" ),
-                                                               "creationDate" ).transform(
-                new DateTransformer( "MM/dd/yyyy hh:mm:ss" ), "checkoutDate" ).serialize( vEntities );
+                new JSONSerializer().exclude("class").transform(new DateTransformer("MM/dd/yyyy hh:mm:ss"),
+                        "creationDate").transform(
+                        new DateTransformer("MM/dd/yyyy hh:mm:ss"), "checkoutDate").serialize(vEntities);
         String fullResp =
-            "{\"total\":" + searchResponse.getResults() + ",\"list\":" + jsonResp + ",\"virtualTreeRows\":"
-                + virtualTree + "}";
+                "{\"total\":" + searchResponse.getResults() + ",\"list\":" + jsonResp + ",\"virtualTreeRows\":"
+                        + virtualTree + "}";
         return fullResp;
     }
 
 
-    private List<Criteria> parseCriteriaList( Map<String, String> parameters )
-    {
+    private List<Criteria> parseCriteriaList(Map<String, String> parameters) {
         boolean dateRangeOk = false;
         List<Long> alreayParsedMeta = new ArrayList<Long>();
         List<Criteria> criteriaList = new ArrayList<Criteria>();
-        for ( String k : parameters.keySet() )
-        {
-            if ( parameters.get( k ) != null && parameters.get( k ).trim().length() > 0 && ( k.startsWith( "MetaData" )
-                || k.startsWith( "Document" ) ) )
-            {
+        for (String k : parameters.keySet()) {
+            if (parameters.get(k) != null && parameters.get(k).trim().length() > 0 && (k.startsWith("MetaData")
+                    || k.startsWith("Document"))) {
                 Criteria c = new Criteria();
-                c.setFieldName( k );
-                c.setLevel( 0 );
-                c.setPosition( 0 );
+                c.setFieldName(k);
+                c.setLevel(0);
+                c.setPosition(0);
 
-                if ( k.startsWith( "MetaData" ) )
-                {
+                if (k.startsWith("MetaData")) {
 
-                    String metaUid = k.split( "_" )[1];
-                    if ( !alreayParsedMeta.contains( Long.parseLong( metaUid ) ) )
-                    {
-                        c.setMetaId( Long.parseLong( metaUid ) );
-                        if ( k.contains( "String" ) )
-                        {
-                            c.setMetaType( new Long( 1 ) );
+                    String metaUid = k.split("_")[1];
+                    if (!alreayParsedMeta.contains(Long.parseLong(metaUid))) {
+                        c.setMetaId(Long.parseLong(metaUid));
+                        if (k.contains("String")) {
+                            c.setMetaType(new Long(1));
                         }
-                        if ( k.contains( "Number" ) )
-                        {
-                            c.setMetaType( new Long( 2 ) );
-                            c.setFieldName( "MetaDataNumber_" + metaUid );
+                        if (k.contains("Number")) {
+                            c.setMetaType(new Long(2));
+                            c.setFieldName("MetaDataNumber_" + metaUid);
                         }
-                        if ( k.contains( "Date" ) )
-                        {
-                            c.setMetaType( new Long( 3 ) );
-                            c.setFieldName( "MetaDataDate_" + metaUid );
+                        if (k.contains("Date")) {
+                            c.setMetaType(new Long(3));
+                            c.setFieldName("MetaDataDate_" + metaUid);
                         }
-                        if ( k.contains( "Boolean" ) )
-                        {
-                            c.setMetaType( new Long( 4 ) );
+                        if (k.contains("Boolean")) {
+                            c.setMetaType(new Long(4));
                         }
 
-                        if ( k.contains( "Date" ) || k.contains( "Number" ) )
-                        {
-                            String fromKey = k.split( "_" )[0] + "_" + metaUid + "_from";
-                            String toKey = k.split( "_" )[0] + "_" + metaUid + "_to";
-                            if ( parameters.get( fromKey ) != null )
-                            {
-                                c.setRangeMin( parameters.get( fromKey ) );
+                        if (k.contains("Date") || k.contains("Number")) {
+                            String fromKey = k.split("_")[0] + "_" + metaUid + "_from";
+                            String toKey = k.split("_")[0] + "_" + metaUid + "_to";
+                            if (parameters.get(fromKey) != null) {
+                                c.setRangeMin(parameters.get(fromKey));
                             }
-                            if ( parameters.get( toKey ) != null )
-                            {
-                                c.setRangeMax( parameters.get( toKey ) );
+                            if (parameters.get(toKey) != null) {
+                                c.setRangeMax(parameters.get(toKey));
                             }
+                        } else {
+                            c.setQuery(parameters.get(k));
                         }
-                        else
-                        {
-                            c.setQuery( parameters.get( k ) );
-                        }
-                        criteriaList.add( c );
-                        alreayParsedMeta.add( Long.parseLong( metaUid ) );
-                        log.debug( "Criteria (MetaData): " + c );
+                        criteriaList.add(c);
+                        alreayParsedMeta.add(Long.parseLong(metaUid));
+                        log.debug("Criteria (MetaData): " + c);
 
-                    }
-                    else
-                    {
+                    } else {
                         /* In case of meta already parsed: continue to next criteria */
                         continue;
                     }
 
-                }
-                else
-                {
-                    if ( k.startsWith( "DocumentVersionUpdateDate" ) )
-                    {
-                        if ( dateRangeOk )
-                        {
+                } else {
+                    if (k.startsWith("DocumentVersionUpdateDate")) {
+                        if (dateRangeOk) {
                             continue;
                         }
-                        String dateFrom = parameters.get( "DocumentVersionUpdateDate_from" );
-                        String dateTo = parameters.get( "DocumentVersionUpdateDate_to" );
-                        c.setFieldName( "DocumentVersionUpdateDate" );
-                        if ( dateFrom != null )
-                        {
-                            c.setRangeMin( dateFrom );
+                        String dateFrom = parameters.get("DocumentVersionUpdateDate_from");
+                        String dateTo = parameters.get("DocumentVersionUpdateDate_to");
+                        c.setFieldName("DocumentVersionUpdateDate");
+                        if (dateFrom != null) {
+                            c.setRangeMin(dateFrom);
                         }
-                        if ( dateTo != null )
-                        {
-                            c.setRangeMax( dateTo );
+                        if (dateTo != null) {
+                            c.setRangeMax(dateTo);
                         }
                         dateRangeOk = true;
+                    } else {
+                        c.setQuery(parameters.get(k));
                     }
-                    else
-                    {
-                        c.setQuery( parameters.get( k ) );
-                    }
-                    criteriaList.add( c );
-                    log.debug( "Criteria:" + c );
+                    criteriaList.add(c);
+                    log.debug("Criteria:" + c);
                         /* No meta value... do nothing */
                     continue;
                 }

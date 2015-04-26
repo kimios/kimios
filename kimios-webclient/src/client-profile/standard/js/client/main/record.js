@@ -233,6 +233,37 @@ kimios.record = {
         }
     ]),
 
+    searchRequestSecurityRecord: Ext.data.Record.create([
+        {
+            name: 'searchRequestId',
+            type: 'int'
+        },
+        {
+            name: 'read',
+            type: 'boolean'
+        },
+        {
+            name: 'write',
+            type: 'boolean'
+        },
+        {
+            name: 'fullAccess',
+            type: 'boolean'
+        },
+        {
+            name: 'type',
+            type: 'int'
+        },
+        {
+            name: 'name',
+            type: 'string'
+        },
+        {
+            name: 'source',
+            type: 'string'
+        }
+    ]),
+
     bookmarksRecord: Ext.data.Record.create([
         {
             name: 'checkoutDate',

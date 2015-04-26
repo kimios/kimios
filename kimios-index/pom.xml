@@ -117,7 +117,7 @@
     <dependency>
       <groupId>org.apache.tika</groupId>
       <artifactId>tika-core</artifactId>
-      <version>1.5</version>
+      <version>${apache.tika.version}</version>
       <exclusions>
           <exclusion>
               <groupId>org.bouncycastle</groupId>
@@ -128,7 +128,7 @@
     <dependency>
       <groupId>org.apache.tika</groupId>
       <artifactId>tika-parsers</artifactId>
-      <version>1.5</version>
+      <version>${apache.tika.version}</version>
       <exclusions>
           <exclusion>
               <groupId>org.aspectj</groupId>

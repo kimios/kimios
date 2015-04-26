@@ -16,6 +16,7 @@
  */
 
 
+
 kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
     constructor: function (config) {
         var _this = this;
@@ -56,9 +57,32 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
 
         this.tbar = this.contextToolbar;
 
-        this.pagingSize = 10;
+        this.pagingSize = 20;
 
         /* dummy paging init */
+        var comboPageSize = new Ext.form.ComboBox({
+            name : 'perpage',
+            width: 40,
+            store: new Ext.data.ArrayStore({
+                fields: ['id'],
+                data  : [
+                    ['20'],
+                    ['50'],
+                    ['100'],
+                    ['200'],
+                    ['300'],
+                    ['500']
+                ]
+            }),
+            mode : 'local',
+            value: '20',
+            listWidth     : 40,
+            triggerAction : 'all',
+            displayField  : 'id',
+            valueField    : 'id',
+            editable      : false,
+            forceSelection: true
+        });
 
         this.pagingToolBar = new Ext.PagingToolbar({
             store: this.entityStore,
@@ -66,8 +90,13 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
             pageSize: this.pagingSize,
             displayMsg: '',
             emptyMsg: '',
-            prependButtons: true,
-            hidden: true
+            prependButtons: false,
+            hidden: true,
+            items:   [
+            '-',
+            'Page Size ',
+            comboPageSize
+            ]
             /*items: [
              new Ext.form.ComboBox({
              mode: 'local',
@@ -83,6 +112,12 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
         // hide specific refresh button
         this.pagingToolBar.refresh.hideParent = true;
         this.pagingToolBar.refresh.hide();
+
+
+        comboPageSize.on('select', function(combo, record) {
+            this.pagingToolBar.pageSize = parseInt(record.get('id'), 10);
+            this.pagingToolBar.doLoad(this.pagingToolBar.cursor);
+        }, this);
 
         this.commentsPanel = new kimios.explorer.CommentsPanel({
             collapsed: true,

@@ -1025,7 +1025,8 @@ kimios.ContextMenu = new function () {
                 asp.documentDateFromField.setValue("");
                 asp.documentDateToField.setValue("");
                 asp.documentTypeField.setValue("");
-                asp.form2.reCAll();
+                asp.ownerField.setValue("");
+                asp.form2.removeAll();
             }
         });
     };
@@ -1048,6 +1049,8 @@ kimios.ContextMenu = new function () {
                                 },
                                 function () {
                                     kimios.explorer.getSearchRequestsPanel().refresh();
+                                    kimios.explorer.getPublicSearchRequestsPanel().refresh();
+                                    kimios.explorer.getPublishedSearchRequestsPanel().refresh();
                                 }
                             );
                         }
@@ -1405,6 +1408,8 @@ kimios.ContextMenu = new function () {
                 var bookmarks = kimios.explorer.getBookmarksPanel();
                 var recentItems = kimios.explorer.getRecentItemsPanel();
                 var searchRequests = kimios.explorer.getSearchRequestsPanel();
+                var searchRequests3 = kimios.explorer.getPublicSearchRequestsPanel();
+                var searchRequests2 = kimios.explorer.getPublishedSearchRequestsPanel();
                 var cartPanel = kimios.explorer.getCartPanel();
 
                 if (context == undefined || context == 'default'
@@ -1413,6 +1418,8 @@ kimios.ContextMenu = new function () {
                 } else if (context == 'searchRequests'
                     || context == 'searchRequestsContainer') {
                     searchRequests.refresh();
+                    searchRequests2.refresh();
+                    searchRequests3
                 } else if (context == 'bookmarks'
                     || context == 'bookmarksContainer') {
                     bookmarks.refresh();

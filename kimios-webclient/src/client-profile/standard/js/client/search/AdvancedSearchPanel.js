@@ -72,10 +72,6 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                 var obj = "({";
                 for (var key in fields) {
                     var value = null;
-
-                    // is date
-                    console.log(key);
-                    console.log(this.form2.metaFieldsMapping);
                     if (fields[key] && fields[key] instanceof Date)
                         value = fields[key] ? fields[key].format('Y-m-d') : '';
                     else
@@ -103,6 +99,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                 params.DocumentUid = this.uidField.getValue();
                 params.DocumentTypeUid = this.documentTypeField.getValue() == -1 ? '' : this.documentTypeField.getValue();
                 params.DocumentParent = this.locationField.getValue();
+                params.DocumentOwner = this.ownerField.getValue();
                 if (this.documentDateFromField.getValue())
                     params.DocumentVersionUpdateDate_from = this.documentDateFromField.getValue().format('Y-m-d');
                 if (this.documentDateToField.getValue())
@@ -111,6 +108,10 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                 var searchRequestId = this.searchRequestId;
                 var searchRequestName = this.searchRequestName;
                 var _this = this;
+
+
+                params.securities = this.searchRequestSecurities ?
+                    JSON.stringify(this.searchRequestSecurities): null;
 
                 Ext.MessageBox.prompt(
                     kimios.lang('SearchSaveButton'),
@@ -131,6 +132,40 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                     this, false, searchRequestName ? searchRequestName : kimios.lang('SearchNewBookmark'));
             }
         });
+
+
+
+
+        this.securityButton = new Ext.Button({
+            text: kimios.lang('SecurityEntities'),
+            scope: this,
+            //disabled: true,
+            iconCls: 'group-icon',
+            handler: function(){
+
+                // add security tab
+                this.securityEntityPanel = new kimios.properties.SecurityEntityPanel({
+                    searchRequest: {
+                        id: _t.searchRequestId
+                    }
+                });
+                var secPanel = this.securityEntityPanel;
+                new kimios.properties.RequestPropertiesWindow({
+                    title: kimios.lang('SecurityEntities'),
+                    iconCls: 'group-icon',
+                    items: [this.securityEntityPanel],
+                    listeners: {
+                        close: function(w){
+                            if(console){
+                                console.log(secPanel.getJsonSecurityValues);
+                                _t.securities = secPanel.getJsonSecurityValues();
+                            }
+
+                        }
+                    }
+                }).show();
+            }
+        })
 
         this.clearButton = new Ext.Button({
             text: kimios.lang('ClearField'),
@@ -158,7 +193,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
             },
             bodyStyle: 'background-color:transparent;padding:10px 0 10px 10px;',
             buttonAlign: 'left',
-            fbar: [this.saveButton, '->', this.clearButton, this.submitButton]
+            fbar: [this.saveButton, this.securityButton, '->', this.clearButton, this.submitButton]
         });
 
         this.form2 = new kimios.FormPanel({
@@ -237,9 +272,15 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                 this.searchRequestId = searchRequest.id;
                 this.searchRequestName = searchRequest.name;
 
+                this.searchRequestSecurities = searchRequest.data.securities;
+
+                if(console)console.log(searchRequest);
+                if(console) console.log(this.searchRequestSecurities);
+
                 this.nameField.setValue("");
                 this.uidField.setValue("");
                 this.textField.setValue("");
+                this.ownerField.setValue("");
                 this.locationField.setValue("");
                 this.documentTypeField.setValue("");
                 this.documentDateFromField.setValue("");
@@ -266,9 +307,11 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                         this.uidField.setValue(query);
                     } else if (fieldName == 'DocumentBody') {
                         this.textField.setValue(query);
+                    } else if (fieldName == 'DocumentOwner') {
+                        this.ownerField.setValue(query);
                     } else if (fieldName == 'DocumentParent') {
                         this.locationField.setValue(query);
-                    } else if (fieldName == 'DocumentVersionUpdateDate') {
+                    }  else if (fieldName == 'DocumentVersionUpdateDate') {
                         this.documentDateFromField.setValue(rangeMin);
                         this.documentDateToField.setValue(rangeMax);
                     } else if (fieldName == 'DocumentTypeUid') {
@@ -348,6 +391,12 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
         this.textField = new Ext.form.TextField({
             name: 'DocumentBody',
             fieldLabel: kimios.lang('SearchText'),
+            labelSeparator: kimios.lang('LabelSeparator'),
+            setFieldLabel: setFieldLabelHandler
+        });
+        this.ownerField = new Ext.form.TextField({
+            name: 'DocumentOwner',
+            fieldLabel: kimios.lang('DocumentOwner'),
             labelSeparator: kimios.lang('LabelSeparator'),
             setFieldLabel: setFieldLabelHandler
         });
@@ -500,6 +549,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
         this.form1.add(this.nameField);
         this.form1.add(this.uidField);
         this.form1.add(this.textField);
+        this.form1.add(this.ownerField);
         this.form1.add(this.locationField);
         this.form1.add(this.documentDateFromField);
         this.form1.add(this.documentDateToField);
@@ -576,6 +626,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
         this.nameField.setFieldLabel(kimios.lang('DocumentName'));
         this.uidField.setFieldLabel(kimios.lang('DocNum'));
         this.textField.setFieldLabel(kimios.lang('SearchText'));
+        this.ownerField.setFieldLabel(kimios.lang('DocumentOwner'));
         this.locationField.setFieldLabel(kimios.lang('InFolder'));
         this.documentTypeField.setFieldLabel(kimios.lang('DocumentType'));
 

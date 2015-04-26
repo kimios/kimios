@@ -19,6 +19,7 @@ import org.kimios.client.exception.DMSException;
 import org.kimios.client.exception.ExceptionHelper;
 import org.kimios.kernel.index.query.model.Criteria;
 import org.kimios.kernel.index.query.model.SearchRequest;
+import org.kimios.kernel.index.query.model.SearchRequestSecurity;
 import org.kimios.kernel.index.query.model.SearchResponse;
 import org.kimios.kernel.ws.pojo.DMEntity;
 import org.kimios.kernel.ws.pojo.Document;
@@ -69,7 +70,7 @@ public class SearchController
     {
         try
         {
-            return client.advancedSearch( sessionId, xmlStream, dmEntityId );
+            return client.advancedSearch(sessionId, xmlStream, dmEntityId);
         }
         catch ( Exception e )
         {
@@ -85,7 +86,7 @@ public class SearchController
     {
         try
         {
-            return client.getPathFromDMEntity( sessionId, dmEntityId );
+            return client.getPathFromDMEntity(sessionId, dmEntityId);
         }
         catch ( Exception e )
         {
@@ -101,7 +102,7 @@ public class SearchController
     {
         try
         {
-            return client.getDMentityFromPath( sessionId, path );
+            return client.getDMentityFromPath(sessionId, path);
         }
         catch ( Exception e )
         {
@@ -117,8 +118,9 @@ public class SearchController
     {
         try
         {
-            return client.advancedSearchDocuments( sessionId, criteriaList, start, pageSize, sort, sortDir,
-                                                   virtualPath, reqId, mustSave );
+            return client.advancedSearchDocuments(sessionId, criteriaList, start, pageSize, sort, sortDir,
+                    virtualPath, reqId, mustSave);
+
         }
         catch ( Exception e )
         {
@@ -144,13 +146,61 @@ public class SearchController
 
     }
 
-    public List<SearchRequest> listQueries( String sessionId )
+    public void advancedSaveQuery( String sessionId, SearchRequest searchRequest )
+            throws Exception
+    {
+
+        try
+        {
+            client.advancedSaveSearchQuery( sessionId, searchRequest );
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
+        }
+
+
+    }
+
+    public List<SearchRequest> listPublicQueries( String sessionId )
         throws Exception
     {
 
         try
         {
-            return client.listSearchQueries( sessionId );
+            return client.listPublicSearchQueries( sessionId );
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
+        }
+
+
+    }
+
+    public List<SearchRequest> listMyQueries( String sessionId )
+            throws Exception
+    {
+
+        try
+        {
+            return client.listMySearchQueries(sessionId);
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
+        }
+
+
+    }
+
+    public List<SearchRequest> listPublishedQueries( String sessionId )
+            throws Exception
+    {
+
+        try
+        {
+            return client.listSearchQueries(sessionId);
         }
         catch ( Exception e )
         {
@@ -185,6 +235,31 @@ public class SearchController
         try
         {
             return client.executeSearchQuery( sessionId, savedQueryId, start, pageSize, sort, sortDir, virtualPath );
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
+        }
+    }
+
+
+    public List<SearchRequestSecurity> getSecurities(String sessionId, Long requestId)
+            throws Exception {
+        try
+        {
+            return client.loadSearchQuery(sessionId, requestId).getSecurities();
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
+        }
+    }
+
+    public SearchRequest getQuery(String sessionId, Long requestId)
+            throws Exception {
+        try
+        {
+            return client.loadSearchQuery(sessionId, requestId);
         }
         catch ( Exception e )
         {

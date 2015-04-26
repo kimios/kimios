@@ -27,6 +27,8 @@ kimios.properties.SecurityEntityPanel = Ext.extend(Ext.Panel, {
         this.buttonAlign = 'left';
         this.border = false;
 
+        this.searchRequest = config.searchRequest;
+
         this.centerContainer = new Ext.Panel({
             border: false,
             region: 'center',
@@ -49,6 +51,8 @@ kimios.properties.SecurityEntityPanel = Ext.extend(Ext.Panel, {
             }
         });
         this.items = [this.southContainer, this.centerContainer];
+
+
 
         this.addSecurityEntityButton = new Ext.Button({
             text: kimios.lang('Add'),
@@ -90,7 +94,7 @@ kimios.properties.SecurityEntityPanel = Ext.extend(Ext.Panel, {
             tooltip: kimios.lang('Refresh'),
             scope: this,
             handler: function () {
-                if (this.dmEntityPojo && this.dmEntityPojo.uid)
+                if ((this.dmEntityPojo && this.dmEntityPojo.uid) || (this.searchRequest && this.searchRequest.id))
                     this.grid.store.reload();
                 else
                     this.grid.store.removeAll();
@@ -145,13 +149,30 @@ kimios.properties.SecurityEntityPanel = Ext.extend(Ext.Panel, {
             fixed: true
         });
 
-        this.grid = new Ext.grid.EditorGridPanel({
-            region: 'center',
-            border: true,
-            margins: '-1 -1 0 -1',
-            stripeRows: false,
-            viewConfig: {forceFit: true, scrollOffset: 0},
-            store: new DmsJsonStore({
+        var store = null;
+        if(this.searchRequest){
+            if(this.searchRequest.id && this.searchRequest.securities){
+                store = new DmsJsonStore({
+                    fields: kimios.record.searchRequestSecurityRecord,
+                    url: 'Search',
+                    baseParams: {
+                        action: 'GetSearchRequestSecurities',
+                        queryId: this.searchRequest.id
+                    }
+                })
+            } else {
+                store = new DmsJsonStore({
+                    fields: kimios.record.searchRequestSecurityRecord,
+                    url: 'Search',
+                    baseParams: {
+                        action: 'GetSearchRequestSecurities',
+                        queryId: this.searchRequest.id
+                    }
+                })
+            }
+
+        }   else {
+            store = new DmsJsonStore({
                 fields: kimios.record.securityEntityRecord,
                 url: 'DmsSecurity',
                 baseParams: {
@@ -159,7 +180,18 @@ kimios.properties.SecurityEntityPanel = Ext.extend(Ext.Panel, {
                     dmEntityType: this.dmEntityPojo.type,
                     dmEntityUid: this.dmEntityPojo.uid
                 }
-            }),
+            })
+        }
+
+
+
+        this.grid = new Ext.grid.EditorGridPanel({
+            region: 'center',
+            border: true,
+            margins: '-1 -1 0 -1',
+            stripeRows: false,
+            viewConfig: {forceFit: true, scrollOffset: 0},
+            store: store,
             plugins: [readCheckColumn, writeCheckColumn, fullAccessCheckColumn],
             sm: new Ext.grid.RowSelectionModel({
                 singleSelect: true
@@ -172,14 +204,15 @@ kimios.properties.SecurityEntityPanel = Ext.extend(Ext.Panel, {
         this.isRecursiveField = new Ext.form.Checkbox({
             fieldLabel: kimios.lang('ApplyToChildren'),
             name: 'isRecursive',
-            disabled: !(this.dmEntityPojo instanceof Array ||
+            disabled: !this.dmEntityPojo || !(this.dmEntityPojo instanceof Array ||
                 (this.dmEntityPojo.uid != null && (this.dmEntityPojo.type == 1 || this.dmEntityPojo.type == 2))),
-            checked: false
+            checked: false,
+            hidden: !this.dmEntityPojo
         });
         this.southContainer.add(this.isRecursiveField);
 
         this.on('activate', function () {
-            if (this.loaded == false && this.dmEntityPojo.uid != undefined) {
+            if (this.loaded == false && (this.dmEntityPojo.uid != undefined || (this.searchRequest && this.searchRequest.id))) {
                 this.grid.store.load();
             }
         }, this);
@@ -228,7 +261,20 @@ kimios.properties.SecurityEntityPanel = Ext.extend(Ext.Panel, {
     getJsonSecurityValues: function () {
         var out = [];
         if (this.grid.store != null) {
-            this.grid.store.each(function (rec) {
+
+            if(this.searchRequest){
+                this.grid.store.each(function (rec) {
+                    out.push({
+                        name: rec.get('name'),
+                        source: rec.get('source'),
+                        type: rec.get('type'),
+                        searchQueryId: rec.get('searchRequestId'),
+                        read: rec.get('read'),
+                        write: rec.get('write'),
+                        fullAccess: rec.get('fullAccess')
+                    });
+                });
+            } else this.grid.store.each(function (rec) {
                 out.push({
                     name: rec.get('name'),
                     source: rec.get('source'),
