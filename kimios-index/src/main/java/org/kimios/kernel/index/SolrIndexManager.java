@@ -143,11 +143,11 @@ public class SolrIndexManager
 
     private SolrInputDocument toSolrInputDocument(Document document, SolrDocument previousSolrDocument)
             throws DataSourceException, ConfigException {
-        return toSolrInputDocument(document, previousSolrDocument, false);
+        return toSolrInputDocument(document, previousSolrDocument, false, true);
     }
 
 
-    private SolrInputDocument toSolrInputDocument(Document document, SolrDocument previousSolrDocument, boolean flush)
+    private SolrInputDocument toSolrInputDocument(Document document, SolrDocument previousSolrDocument, boolean flush, boolean updateMetasWrapper)
             throws DataSourceException, ConfigException {
 
         SimpleDateFormat dateParser = new SimpleDateFormat("dd-MM-yyyy");
@@ -293,25 +293,28 @@ public class SolrIndexManager
         } else {
             //try to regenerate field
 
-            if ((values != null && values.size() > 0) || (document.getAttributes() != null || document.getAttributes().size() > 0)) {
-                AddonDataHandler.AddonDatasWrapper wrapper = new AddonDataHandler.AddonDatasWrapper();
-                wrapper.setEntityAttributes(document.getAttributes());
-                wrapper.setEntityMetaValues(values);
-                try {
-                    document.setAddOnDatas(mp.writeValueAsString(wrapper));
-                    if(flush){
-                        FactoryInstantiator.getInstance().getDocumentFactory().saveDocument(document);
-                    } else
-                        FactoryInstantiator.getInstance().getDocumentFactory().saveDocumentNoFlush(document);
-                    log.debug("updating addon data with " + document.getAddOnDatas());
-                } catch (Exception ex) {
-                    log.error("error while generation addon meta field", ex);
+            if(updateMetasWrapper){
+                if ((values != null && values.size() > 0) || (document.getAttributes() != null || document.getAttributes().size() > 0)) {
+                    AddonDataHandler.AddonDatasWrapper wrapper = new AddonDataHandler.AddonDatasWrapper();
+                    wrapper.setEntityAttributes(document.getAttributes());
+                    wrapper.setEntityMetaValues(values);
+                    try {
+                        document.setAddOnDatas(mp.writeValueAsString(wrapper));
+                        if(flush){
+                            FactoryInstantiator.getInstance().getDocumentFactory().saveDocument(document);
+                        } else
+                            FactoryInstantiator.getInstance().getDocumentFactory().saveDocumentNoFlush(document);
+                        log.debug("updating addon data with " + document.getAddOnDatas());
+                    } catch (Exception ex) {
+                        log.error("error while generation addon meta field", ex);
+                    }
+                    //update document
+                    doc.addField("DocumentRawAddonDatas", document.getAddOnDatas());
+                } else {
+                    log.debug("not generating addon field because of no data");
                 }
-                //update document
-                doc.addField("DocumentRawAddonDatas", document.getAddOnDatas());
-            } else {
-                log.debug("not generating addon field because of no data");
             }
+
         }
         Object body = null;
         Map<String, Object> metaDatas = null;
@@ -568,7 +571,9 @@ public class SolrIndexManager
     }
 
 
-    public void threadedIndexDocumentList(List<DMEntity> documentEntities, long readVersionTimeOut, TimeUnit readVersionTimeoutTimeUnit)
+    public void threadedIndexDocumentList(List<DMEntity> documentEntities,
+                                          long readVersionTimeOut, TimeUnit readVersionTimeoutTimeUnit,
+                                          final boolean updateDocsMetaWrapper)
             throws IndexException, DataSourceException, ConfigException {
         try {
 
@@ -591,7 +596,8 @@ public class SolrIndexManager
                     public SolrInputDocument call() throws Exception {
                         log.debug("started solr input document for doc #" + docId
                                 + " (" + docPath + ")");
-                        SolrInputDocument solrInputDocument = toSolrInputDocument((Document) doc, null);
+                        SolrInputDocument solrInputDocument = toSolrInputDocument((Document) doc, null,
+                                false, updateDocsMetaWrapper);
                         return solrInputDocument;
                     }
                 };

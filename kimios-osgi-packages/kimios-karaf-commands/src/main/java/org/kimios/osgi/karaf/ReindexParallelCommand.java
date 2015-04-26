@@ -39,7 +39,12 @@ public class ReindexParallelCommand extends KimiosCommand {
             required = false, multiValued = false)
     Long readTimeOut = null;
 
-    @Option(name = "-u",
+    @Option(name = "-g",
+            description = "--regenerate-metas-wrapper",
+            required = false, multiValued = false)
+    boolean regenerateMetaWrapper = false;
+
+    @Option(name = "-s",
             description = "--read-timeout-unit",
             required = false, multiValued = false)
     String readTimeOutUnit = null;
@@ -64,7 +69,8 @@ public class ReindexParallelCommand extends KimiosCommand {
                     extensionExcluded != null ? Arrays.asList(extensionExcluded) : new ArrayList<String>(),
                     block,
                     readTimeOut,
-                    TimeUnit.valueOf(readTimeOutUnit)
+                    TimeUnit.valueOf(readTimeOutUnit),
+                    regenerateMetaWrapper
             );
         }
     }

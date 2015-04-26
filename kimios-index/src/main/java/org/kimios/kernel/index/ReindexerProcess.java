@@ -130,8 +130,10 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
 
     private TimeUnit threadReadTimeoutTimeUnit;
 
+    private boolean updateDocsMetaWrapper;
+
     public ReindexerProcess(ISolrIndexManager indexManager, String path, int blockSize, List<Long> excludedIds, List<String> extensionsExcluded,
-                            Long threadReadTimeOut, TimeUnit threadReadTimeoutTimeUnit) {
+                            Long threadReadTimeOut, TimeUnit threadReadTimeoutTimeUnit, boolean updateDocsMetaWrapper) {
         this.indexManager = indexManager;
         this.finalPath = path;
         this.blockSize = blockSize;
@@ -144,6 +146,7 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
         this.threadReadTimeOut = threadReadTimeOut;
         this.threadReadTimeoutTimeUnit = threadReadTimeoutTimeUnit;
         this.extensionsExcluded = extensionsExcluded;
+        this.updateDocsMetaWrapper = updateDocsMetaWrapper;
     }
 
 
@@ -214,7 +217,7 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
                                 extensionsExcluded);
                 try {
                     if (threadReadTimeoutTimeUnit != null && threadReadTimeOut != null) {
-                        indexManager.threadedIndexDocumentList(entityList, threadReadTimeOut, threadReadTimeoutTimeUnit);
+                        indexManager.threadedIndexDocumentList(entityList, threadReadTimeOut, threadReadTimeoutTimeUnit, updateDocsMetaWrapper);
                     } else
                         indexManager.indexDocumentList(entityList);
                     indexed += entityList.size();
@@ -223,7 +226,10 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
                 }
 
                 this.reindexResult.setReindexedCount(indexed);
-                th.loadTxManager().commit();
+                if(updateDocsMetaWrapper)
+                    th.loadTxManager().commit();
+                else
+                    th.loadTxManager().rollback();
 
 
                 if (reindexProgression < 100) {

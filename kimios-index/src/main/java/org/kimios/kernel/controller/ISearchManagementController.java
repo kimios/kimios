@@ -53,7 +53,8 @@ public interface ISearchManagementController {
     public void parallelReindex(Session session, List<String> paths, List<Long> excludedDocuments, List<String> excludedExtensions,
                                 Integer blockSize,
                                 Long readFileTimeOut,
-                                TimeUnit readFileTimeoutUnit)
+                                TimeUnit readFileTimeoutUnit,
+                                boolean updateDocsMetaWrapper)
             throws AccessDeniedException, IndexException, ConfigException, DataSourceException;
 
     public void killAndCleanReindexProcess(Session session)

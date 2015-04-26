@@ -38,7 +38,9 @@ public interface ISolrIndexManager
     public void indexDocumentList(List<DMEntity> documentEntities)
             throws IndexException, DataSourceException, ConfigException;
 
-    public void threadedIndexDocumentList(List<DMEntity> documentEntities, long readVersionTimeOut, TimeUnit readVersionTimeoutTimeUnit)
+    public void threadedIndexDocumentList(List<DMEntity> documentEntities,
+                                          long readVersionTimeOut, TimeUnit readVersionTimeoutTimeUnit,
+                                          boolean updateDocsMetaWrapper)
             throws IndexException, DataSourceException, ConfigException;
 
 
