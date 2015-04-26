@@ -25,9 +25,25 @@ public class ReindexParallelCommand extends KimiosCommand {
     Integer blockSize = null;
 
     @Option(name = "-x",
-            description = "--exclude",
+            description = "--exclude-id",
             required = false, multiValued = true)
     Long[] idsExcluded = null;
+
+    @Option(name = "-e",
+            description = "--exclude-extension",
+            required = false, multiValued = true)
+    String[] extensionExcluded = null;
+
+    @Option(name = "-t",
+            description = "--read-timeout",
+            required = false, multiValued = false)
+    Long readTimeOut = null;
+
+    @Option(name = "-u",
+            description = "--read-timeout-unit",
+            required = false, multiValued = false)
+    String readTimeOutUnit = null;
+
 
     @Argument(index = 0, name = "path",
             description = "Kimios Path to reindex",
@@ -45,7 +61,10 @@ public class ReindexParallelCommand extends KimiosCommand {
                     this.getCurrentSession(),
                     Arrays.asList(paths),
                     idsExcluded != null ? Arrays.asList(idsExcluded) : new ArrayList<Long>(),
-                    block
+                    extensionExcluded != null ? Arrays.asList(extensionExcluded) : new ArrayList<String>(),
+                    block,
+                    readTimeOut,
+                    TimeUnit.valueOf(readTimeOutUnit)
             );
         }
     }

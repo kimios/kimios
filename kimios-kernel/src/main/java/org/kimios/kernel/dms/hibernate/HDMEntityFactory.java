@@ -72,20 +72,19 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory {
                 finalPath += "/%";
             }
 
-            List<Long> items =  getSession().createCriteria(DMEntityImpl.class)
+            List<Long> items = getSession().createCriteria(DMEntityImpl.class)
                     .add(Restrictions.like("path", finalPath, MatchMode.START))
                     .setProjection(Projections.distinct(Projections.id()))
                     .list();
 
 
-            if(items.size() > 0){
+            if (items.size() > 0) {
                 return getSession().createCriteria(DMEntityImpl.class)
                         .add(Property.forName("uid").in(items))
                         .list();
             } else {
                 return new ArrayList<DMEntity>();
             }
-
 
 
         } catch (HibernateException e) {
@@ -107,10 +106,10 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory {
                     .setProjection(Projections.distinct(Projections.id()))
                     .list();
 
-            if(items.size() > 0){
-            return getSession().createCriteria(DMEntityImpl.class)
-                    .add(Property.forName("uid").in(items))
-                    .list();
+            if (items.size() > 0) {
+                return getSession().createCriteria(DMEntityImpl.class)
+                        .add(Property.forName("uid").in(items))
+                        .list();
             } else {
                 return new ArrayList<DMEntityImpl>();
             }
@@ -134,14 +133,13 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory {
             /**/
 
 
-
             List<Long> items = getSession().createCriteria(DMEntityImpl.class)
                     .add(Restrictions.like("path", finalPath, MatchMode.START))
                     .add(Restrictions.eq("type", dmEntityType))
                     .setProjection(Projections.distinct(Projections.id()))
                     .list();
 
-            if(items.size()> 0){
+            if (items.size() > 0) {
                 return getSession().createCriteria(DMEntityImpl.class)
                         .add(Property.forName("uid").in(items))
                         .list();
@@ -164,7 +162,7 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory {
                 finalPath += "/%";
             }
 
-            return (Long)getSession().createCriteria(DMEntityImpl.class)
+            return (Long) getSession().createCriteria(DMEntityImpl.class)
                     .add(Restrictions.like("path", finalPath, MatchMode.START))
                     .add(Restrictions.eq("type", dmEntityType))
                     .setProjection(Projections.rowCount()).uniqueResult();
@@ -174,7 +172,7 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory {
     }
 
 
-    public Long getEntitiesByPathAndTypeCount(String path, int dmEntityType,  List<Long> excludedIds)
+    public Long getEntitiesByPathAndTypeCount(String path, int dmEntityType, List<Long> excludedIds, List<String> excludedExtensions)
             throws ConfigException, DataSourceException {
         try {
             String finalPath = path != null ? path : "";
@@ -184,20 +182,26 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory {
                 finalPath += "/%";
             }
 
-            return (Long)getSession().createCriteria(DMEntityImpl.class)
+            Criteria criteria = getSession().createCriteria(DMEntityImpl.class)
                     .add(Restrictions.like("path", finalPath, MatchMode.START))
-                    .add(Restrictions.eq("type", dmEntityType))
-                    .add(Restrictions.not(Restrictions.in("uid", excludedIds)))
-                    .setProjection(Projections.rowCount()).uniqueResult();
+                    .add(Restrictions.eq("type", dmEntityType));
+
+            if (excludedIds != null && excludedIds.size() > 0) {
+                criteria.add(Restrictions.not(Restrictions.in("uid", excludedIds)));
+            }
+            if (excludedExtensions != null && excludedExtensions.size() > 0) {
+                criteria.add(Restrictions.not(Restrictions.in("extension", excludedExtensions)));
+            }
+            criteria.setProjection(Projections.rowCount()).uniqueResult();
+            return (Long)criteria.uniqueResult();
         } catch (HibernateException e) {
             throw new DataSourceException(e, e.getMessage());
         }
     }
 
 
-
     public List<DMEntity> getEntitiesByPathAndType(String path, int dmEntityType, int start, int count,
-                                                   List<Long> excludedIds)
+                                                   List<Long> excludedIds, List<String> excludedExtensions)
             throws ConfigException, DataSourceException {
         try {
             String finalPath = path != null ? path : "";
@@ -213,15 +217,23 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory {
 
             Criteria criteria = getSession().createCriteria(DMEntityImpl.class);
             criteria.setProjection(Projections.distinct(Projections.id()))
-                .add(Restrictions.like("path", finalPath, MatchMode.START))
-                .add(Restrictions.eq("type", dmEntityType))
-                .add(Restrictions.not(Restrictions.in("uid", excludedIds)))
-                .setFirstResult(start)
-                .setMaxResults(count);
+                    .add(Restrictions.like("path", finalPath, MatchMode.START))
+                    .add(Restrictions.eq("type", dmEntityType));
+
+            if (excludedIds != null && excludedIds.size() > 0) {
+                criteria.add(Restrictions.not(Restrictions.in("uid", excludedIds)));
+            }
+            if (excludedExtensions != null && excludedExtensions.size() > 0) {
+                criteria.add(Restrictions.not(Restrictions.in("extension", excludedExtensions)));
+            }
+
+
+            criteria.setFirstResult(start)
+                    .setMaxResults(count);
             List uniqueSubList = criteria.list();
 
 
-            if(uniqueSubList.size() > 0){
+            if (uniqueSubList.size() > 0) {
                 criteria.setProjection(null);
                 criteria.setFirstResult(0);
                 criteria.setMaxResults(Integer.MAX_VALUE);
@@ -271,7 +283,7 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory {
             List uniqueSubList = criteria.list();
 
 
-            if(uniqueSubList.size() > 0){
+            if (uniqueSubList.size() > 0) {
                 criteria.setProjection(null);
                 criteria.setFirstResult(0);
                 criteria.setMaxResults(Integer.MAX_VALUE);
@@ -492,7 +504,6 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory {
     public static String TRASH_PREFIX = "__TRASHED_ENTITY__";
 
 
-
     public List<DMEntity> listTrashedEntities(Integer start, Integer count) throws ConfigException, DataSourceException {
         Criteria criteria = getSession().createCriteria(DMEntityImpl.class);
         criteria.setProjection(Projections.distinct(Projections.id()))
@@ -500,15 +511,14 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory {
                 .add(Restrictions.eq("trashed", true))
                 .add(Restrictions.eq("type", 3));
 
-        if(start != null && count != null){
+        if (start != null && count != null) {
             criteria.setFirstResult(start);
             criteria.setMaxResults(count);
         }
 
 
-
         List uniqueSubList = criteria.list();
-        if(uniqueSubList.size() > 0 ){
+        if (uniqueSubList.size() > 0) {
             criteria.setProjection(null);
             criteria.setFirstResult(0);
             criteria.setMaxResults(Integer.MAX_VALUE);
@@ -522,7 +532,7 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory {
     }
 
     public void trash(DMEntityImpl entity) throws ConfigException, DataSourceException {
-        if(entity.getType() == DMEntityType.DOCUMENT){
+        if (entity.getType() == DMEntityType.DOCUMENT) {
             DMEntity p = entity;
             String oldPath = p.getPath();
             entity.setPath(TRASH_PREFIX + oldPath);
@@ -534,7 +544,7 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory {
     }
 
     public void untrash(DMEntityImpl entity) throws ConfigException, DataSourceException {
-        if(entity.getType() == DMEntityType.DOCUMENT){
+        if (entity.getType() == DMEntityType.DOCUMENT) {
             entity.setPath(entity.getPath().replaceAll(TRASH_PREFIX, ""));
             entity.setUpdateDate(new Date());
             entity.setTrashed(false);

@@ -25,26 +25,30 @@ import org.kimios.kernel.exception.IndexException;
 import org.kimios.kernel.index.query.model.SearchResponse;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Solr Index Manager Interface
  */
 public interface ISolrIndexManager
-    extends AbstractIndexManager
-{
-    public SearchResponse executeSolrQuery( SolrQuery query )
-        throws IndexException;
+        extends AbstractIndexManager {
+    public SearchResponse executeSolrQuery(SolrQuery query)
+            throws IndexException;
 
-    public void indexDocumentList( List<DMEntity> documentEntities )
-        throws IndexException, DataSourceException, ConfigException;
+    public void indexDocumentList(List<DMEntity> documentEntities)
+            throws IndexException, DataSourceException, ConfigException;
 
-    public void deleteByQuery( String query )
-        throws IndexException;
+    public void threadedIndexDocumentList(List<DMEntity> documentEntities, long readVersionTimeOut, TimeUnit readVersionTimeoutTimeUnit)
+            throws IndexException, DataSourceException, ConfigException;
+
+
+    public void deleteByQuery(String query)
+            throws IndexException;
 
     public List<String> filterFields();
 
 
-    void indexFolder( DMEntity documentEntity, List<VirtualFolderMetaData> metaValues )
+    void indexFolder(DMEntity documentEntity, List<VirtualFolderMetaData> metaValues)
             throws IndexException, DataSourceException, ConfigException;
 
 }

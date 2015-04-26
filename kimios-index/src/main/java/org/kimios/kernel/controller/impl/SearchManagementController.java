@@ -75,7 +75,12 @@ public class SearchManagementController extends AKimiosController implements ISe
     /* (non-Javadoc)
         * @see org.kimios.kernel.controller.impl.IAdministrationController#reindex(org.kimios.kernel.security.Session, java.lang.String)
         */
-    synchronized public void parallelReindex(Session session, List<String> paths, List<Long> excludedIds, Integer blockSize)
+    synchronized public void parallelReindex(Session session, List<String> paths,
+                                             List<Long> excludedIds,
+                                             List<String> excludedExtensions,
+                                             Integer blockSize,
+                                             Long readFileTimeOut,
+                                             TimeUnit readFileTimeoutUnit)
             throws AccessDeniedException, IndexException, ConfigException, DataSourceException {
         if (securityFactoryInstantiator.getRoleFactory()
                 .getRole(Role.ADMIN, session.getUserName(), session.getUserSource()) != null) {
@@ -110,7 +115,10 @@ public class SearchManagementController extends AKimiosController implements ISe
                         indexManager,
                         u,
                         block,
-                        excludedIds
+                        excludedIds,
+                        excludedExtensions,
+                        readFileTimeOut,
+                        readFileTimeoutUnit
                 );
                 executor.submit(osgiReindexer);
             }

@@ -24,6 +24,7 @@ import org.kimios.kernel.index.ReindexerProcess;
 import org.kimios.kernel.security.Session;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 public interface ISearchManagementController {
@@ -49,7 +50,10 @@ public interface ISearchManagementController {
     public List<ReindexerProcess.ReindexResult> viewIndexingProcess(Session session)
             throws AccessDeniedException, IndexException, ConfigException, DataSourceException;
 
-    public void parallelReindex(Session session, List<String> paths, List<Long> excludedDocuments, Integer blockSize)
+    public void parallelReindex(Session session, List<String> paths, List<Long> excludedDocuments, List<String> excludedExtensions,
+                                Integer blockSize,
+                                Long readFileTimeOut,
+                                TimeUnit readFileTimeoutUnit)
             throws AccessDeniedException, IndexException, ConfigException, DataSourceException;
 
     public void killAndCleanReindexProcess(Session session)

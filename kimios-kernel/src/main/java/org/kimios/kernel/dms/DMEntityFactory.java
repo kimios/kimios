@@ -34,7 +34,8 @@ public interface DMEntityFactory {
     public List<DMEntity> getEntitiesByPathAndType(String path, int dmEntityType)
             throws ConfigException, DataSourceException;
 
-    public Long getEntitiesByPathAndTypeCount(String path, int dmEntityType, List<Long> excludedIds)
+    public Long getEntitiesByPathAndTypeCount(String path, int dmEntityType, List<Long> excludedIds,
+                                              List<String> excludedExtension)
             throws ConfigException, DataSourceException;
 
     public Long getEntitiesByPathAndTypeCount(String path, int dmEntityType)
@@ -44,7 +45,7 @@ public interface DMEntityFactory {
             throws ConfigException, DataSourceException;
 
     public List<DMEntity> getEntitiesByPathAndType(String path, int dmEntityType, int start, int count,
-                                                   List<Long> excludedIds)
+                                                   List<Long> excludedIds, List<String> excludedExtension)
             throws ConfigException, DataSourceException;
 
 

@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 
 public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult> {
 
@@ -123,7 +124,14 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
 
     private int blockSize;
 
-    public ReindexerProcess(ISolrIndexManager indexManager, String path, int blockSize, List<Long> excludedIds) {
+    private List<String> extensionsExcluded;
+
+    private Long threadReadTimeOut;
+
+    private TimeUnit threadReadTimeoutTimeUnit;
+
+    public ReindexerProcess(ISolrIndexManager indexManager, String path, int blockSize, List<Long> excludedIds, List<String> extensionsExcluded,
+                            Long threadReadTimeOut, TimeUnit threadReadTimeoutTimeUnit) {
         this.indexManager = indexManager;
         this.finalPath = path;
         this.blockSize = blockSize;
@@ -133,6 +141,9 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
         duration = 0;
         this.reindexResult = new ReindexResult(finalPath, indexed, duration, total, null);
         this.excludedIds = excludedIds;
+        this.threadReadTimeOut = threadReadTimeOut;
+        this.threadReadTimeoutTimeUnit = threadReadTimeoutTimeUnit;
+        this.extensionsExcluded = extensionsExcluded;
     }
 
 
@@ -174,17 +185,10 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
             th.startNew(null);
             //List<DMEntity> entities =
 
-            if (excludedIds != null && excludedIds.size() > 0) {
-                total = FactoryInstantiator.getInstance()
-                        .getDmEntityFactory()
-                        .getEntitiesByPathAndTypeCount(finalPath, DMEntityType.DOCUMENT, excludedIds)
-                        .intValue();
-            } else
-                total = FactoryInstantiator.getInstance()
-                        .getDmEntityFactory()
-                        .getEntitiesByPathAndTypeCount(finalPath, DMEntityType.DOCUMENT)
-                        .intValue();
-
+            total = FactoryInstantiator.getInstance()
+                    .getDmEntityFactory()
+                    .getEntitiesByPathAndTypeCount(finalPath, DMEntityType.DOCUMENT, excludedIds, extensionsExcluded)
+                    .intValue();
             //total = entities.size();
             log.debug("Entities to index: " + total);
             this.reindexResult.setEntitiesCount(total);
@@ -203,14 +207,16 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
                 th.loadTxManager().begin();
 
                 List<DMEntity> entityList = null;
-                if (excludedIds != null && excludedIds.size() > 0) {
-                    entityList = FactoryInstantiator.getInstance()
-                            .getDmEntityFactory().getEntitiesByPathAndType(finalPath, DMEntityType.DOCUMENT, u * documentBlockSize, ((docLeak > 0 && u == (indexingBlockCount - 1)) ? docLeak : documentBlockSize), excludedIds);
-                } else
-                    entityList = FactoryInstantiator.getInstance()
-                            .getDmEntityFactory().getEntitiesByPathAndType(finalPath, DMEntityType.DOCUMENT, u * documentBlockSize, ((docLeak > 0 && u == (indexingBlockCount - 1)) ? docLeak : documentBlockSize));
+                entityList = FactoryInstantiator.getInstance()
+                        .getDmEntityFactory().getEntitiesByPathAndType(finalPath, DMEntityType.DOCUMENT, u * documentBlockSize,
+                                ((docLeak > 0 && u == (indexingBlockCount - 1)) ? docLeak : documentBlockSize),
+                                excludedIds,
+                                extensionsExcluded);
                 try {
-                    indexManager.indexDocumentList(entityList);
+                    if (threadReadTimeoutTimeUnit != null && threadReadTimeOut != null) {
+                        indexManager.threadedIndexDocumentList(entityList, threadReadTimeOut, threadReadTimeoutTimeUnit);
+                    } else
+                        indexManager.indexDocumentList(entityList);
                     indexed += entityList.size();
                 } catch (Exception ex) {
                     log.error("an error happen during indexing for block {} / {}", u + 1, indexingBlockCount);
