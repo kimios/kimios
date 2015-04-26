@@ -24,26 +24,22 @@ import org.springframework.context.ApplicationContext;
 import java.util.List;
 import java.util.Properties;
 
-public class ConfigurationManager implements FactoryBean<ConfigurationManager>
-{
+public class ConfigurationManager implements FactoryBean<ConfigurationManager> {
     private static Logger log = LoggerFactory.getLogger(ConfigurationManager.class);
 
     private ConfigurationHolder holder;
 
-    public ConfigurationHolder getHolder()
-    {
+    public ConfigurationHolder getHolder() {
         return holder;
     }
 
-    public void setHolder(ConfigurationHolder holder)
-    {
+    public void setHolder(ConfigurationHolder holder) {
         this.holder = holder;
     }
 
     private static ConfigurationManager instance;
 
-    protected ConfigurationManager()
-    {
+    protected ConfigurationManager() {
         instance = this;
         log.info("Creating Kimios Configuration Manager");
     }
@@ -54,6 +50,22 @@ public class ConfigurationManager implements FactoryBean<ConfigurationManager>
         cfg.holder = getHolder();
         ConfigurationManager.instance = cfg;
         log.debug("While building Configuration Manager: " + getHolder() + " ==> " + cfg.holder);
+        /*
+            Set properties as system properties to handle custom SolR properties
+         */
+
+        Properties properties = cfg.holder.getAllProperties();
+        for (Object o : properties.keySet()) {
+            System.setProperty("kimios." + o.toString(), properties.getProperty(o.toString()));
+        }
+        for (Object u : System.getProperties().keySet()) {
+            if (u.toString().startsWith("kimios.")) {
+                log.debug("java system properties set: {} => {}", u.toString(), System.getProperty(u.toString()
+                ));
+            }
+        }
+
+
         return cfg;
     }
 
@@ -67,8 +79,7 @@ public class ConfigurationManager implements FactoryBean<ConfigurationManager>
         return true;
     }
 
-    public static void init(ApplicationContext springContext) throws ConfigException
-    {
+    public static void init(ApplicationContext springContext) throws ConfigException {
         /*
             Look for spring instantiated ConfigHolder
          */
@@ -82,8 +93,7 @@ public class ConfigurationManager implements FactoryBean<ConfigurationManager>
         }
     }
 
-    public static String getValue(String key) throws ConfigException
-    {
+    public static String getValue(String key) throws ConfigException {
 
         log.debug("called configuration manager get value on instance " + instance);
         if (instance.holder.exists(key)) {
@@ -94,8 +104,7 @@ public class ConfigurationManager implements FactoryBean<ConfigurationManager>
         }
     }
 
-    public static List<String> getListValue(String key) throws ConfigException
-    {
+    public static List<String> getListValue(String key) throws ConfigException {
         log.info("Instance " + instance + ". " + (instance != null ? instance.holder : " No instance"));
         if (instance != null && instance.holder != null && instance.holder.exists(key)) {
             return instance.holder.getValues(key);
@@ -105,7 +114,7 @@ public class ConfigurationManager implements FactoryBean<ConfigurationManager>
         }
     }
 
-    public static Properties allValues(){
+    public static Properties allValues() {
         return instance.holder.getAllProperties();
     }
 }

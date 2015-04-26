@@ -40,14 +40,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Spring factory to instantiate the @see SolrIndexManager
+ * Factory to instantiate the @see SolrIndexManager.
  *
  * @author Fabien Alin
  * @version 1.0
  * @see org.kimios.kernel.index.SolrIndexManager
  */
-public class SolrIndexFactory
-{
+public class SolrIndexFactory {
     private static Logger log = LoggerFactory.getLogger(SolrIndexFactory.class);
 
     private static SolrServer solrServer;
@@ -96,72 +95,65 @@ public class SolrIndexFactory
         this.solrIndexer = solrIndexer;
     }
 
-    public DocumentFactory getSolrDocumentFactory()
-    {
+    public DocumentFactory getSolrDocumentFactory() {
         return solrDocumentFactory;
     }
 
-    public void setSolrDocumentFactory( DocumentFactory solrDocumentFactory )
-    {
+    public void setSolrDocumentFactory(DocumentFactory solrDocumentFactory) {
         this.solrDocumentFactory = solrDocumentFactory;
     }
 
-    public IPathController getPathController()
-    {
+    public IPathController getPathController() {
         return pathController;
     }
 
-    public void setPathController(IPathController pathController)
-    {
+    public void setPathController(IPathController pathController) {
         this.pathController = pathController;
     }
 
-    public String getCoreName()
-    {
+    public String getCoreName() {
         return coreName;
     }
 
-    public void setCoreName(String coreName)
-    {
+    public void setCoreName(String coreName) {
         this.coreName = coreName;
     }
 
-    public boolean isServerMode()
-    {
+    public boolean isServerMode() {
         return serverMode;
     }
 
-    public void setServerMode(boolean serverMode)
-    {
+    public void setServerMode(boolean serverMode) {
         this.serverMode = serverMode;
     }
 
-    public String getSolrHome()
-    {
+    public String getSolrHome() {
         return solrHome;
     }
 
-    public void setSolrHome(String solrHome)
-    {
+    public void setSolrHome(String solrHome) {
         this.solrHome = solrHome;
     }
 
-    public String getSolrUrl()
-    {
+    public String getSolrUrl() {
         return solrUrl;
     }
 
-    public void setSolrUrl(String solrUrl)
-    {
+    public void setSolrUrl(String solrUrl) {
         this.solrUrl = solrUrl;
     }
 
-    private static SolrServer initLocalServer(String solrHome, String coreName)
-    {
+    private static SolrServer initLocalServer(String solrHome, String coreName) {
         try {
 
             log.info("Kimios Solr Home " + solrHome);
-            URL sorlHomeUrl = new URL("file://" + solrHome);
+            String os = System.getProperty("os.name").toLowerCase();
+            URL sorlHomeUrl = null;
+            if(os.contains("win") && !os.contains("darwin")){
+                //windos url
+                sorlHomeUrl = new URL("file:///" + solrHome);
+            } else
+                sorlHomeUrl = new URL("file://" + solrHome);
             File home = new File(sorlHomeUrl.getFile());
             checkSolrXmlFile(home, coreName);
             /*
@@ -170,7 +162,8 @@ public class SolrIndexFactory
             File f = new File(home, "solr.xml");
 
             Thread.currentThread().setContextClassLoader(SolrIndexFactory.class.getClassLoader());
-            coreContainer = CoreContainer.createAndLoad(solrHome, f);;
+            coreContainer = CoreContainer.createAndLoad(solrHome, f);
+            ;
             EmbeddedSolrServer server = new EmbeddedSolrServer(coreContainer, coreName);
             return server;
         } catch (Exception ex) {
@@ -179,8 +172,7 @@ public class SolrIndexFactory
         }
     }
 
-    private static void checkSolrXmlFile(File solrHome, String coreName) throws IOException, IndexException
-    {
+    private static void checkSolrXmlFile(File solrHome, String coreName) throws IOException, IndexException {
         if (!solrHome.exists()) {
             log.debug("Solr home doesn't exist. Path " + solrHome.getAbsolutePath() + " not found");
             if (!solrHome.mkdirs()) {
@@ -255,8 +247,7 @@ public class SolrIndexFactory
         }
     }
 
-    private static SolrServer initSolrServer(String serverUrl)
-    {
+    private static SolrServer initSolrServer(String serverUrl) {
         try {
             HttpSolrServer server = new HttpSolrServer(serverUrl);
             return server;
@@ -266,15 +257,13 @@ public class SolrIndexFactory
         }
     }
 
-    public static void shutdownSolr()
-    {
+    public static void shutdownSolr() {
         if (coreContainer != null) {
             coreContainer.shutdown();
         }
     }
 
-    public SolrIndexManager createInstance() throws Exception
-    {
+    public SolrIndexManager createInstance() throws Exception {
 
         if (solrServer == null) {
             if (serverMode) {
@@ -286,12 +275,7 @@ public class SolrIndexFactory
 
         SolrIndexManager manager = new SolrIndexManager(solrServer);
         manager.setPathController(pathController);
-        manager.setSolrDocumentFactory( solrDocumentFactory );
-
-
-        //add event handlers
-
-        // clean
+        manager.setSolrDocumentFactory(solrDocumentFactory);
 
         EventHandlerManager.getInstance().addHandler(addonDataHandler);
         SolrIndexer si = new SolrIndexer();
@@ -305,13 +289,11 @@ public class SolrIndexFactory
         return manager;
     }
 
-    public Class<SolrIndexManager> getObjectType()
-    {
+    public Class<SolrIndexManager> getObjectType() {
         return SolrIndexManager.class;
     }
 
-    public boolean isSingleton()
-    {
+    public boolean isSingleton() {
         return true;
     }
 }

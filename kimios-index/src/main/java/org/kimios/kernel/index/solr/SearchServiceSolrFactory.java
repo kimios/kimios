@@ -126,7 +126,6 @@ public class SearchServiceSolrFactory implements FactoryBean<SolrIndexManager>
 
             log.info("Kimios Solr Home " + solrHome);
             String os = System.getProperty("os.name").toLowerCase();
-
             URL sorlHomeUrl = null;
             if(os.contains("win") && !os.contains("darwin")){
                 //windos url

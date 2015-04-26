@@ -28,9 +28,9 @@
             class="${solr.directoryFactory:solr.StandardDirectoryFactory}"/>
     <indexConfig>
         <useCompoundFile>false</useCompoundFile>
-        <mergeFactor>${dms.index.mergefactor:10}</mergeFactor>
-        <maxIndexingThreads>${dms.index.threadcount:2}</maxIndexingThreads>
-        <ramBufferSizeMB>${dms.index.rambuffersize:512}</ramBufferSizeMB>
+        <mergeFactor>${kimios.dms.index.mergefactor:10}</mergeFactor>
+        <maxIndexingThreads>${kimios.dms.index.threadcount:4}</maxIndexingThreads>
+        <ramBufferSizeMB>${kimios.dms.index.rambuffersize:512}</ramBufferSizeMB>
         <maxFieldLength>1000000</maxFieldLength>
         <writeLockTimeout>1000</writeLockTimeout>
         <commitLockTimeout>10000</commitLockTimeout>

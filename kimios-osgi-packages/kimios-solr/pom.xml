@@ -61,7 +61,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <excludeDependencies>
-                        slf4j-api,slf4j-log4j12
+                        slf4j-api,slf4j-log4j12,log4j
                     </excludeDependencies>
                     <instructions>
                         <Bundle-Name>Devlib' :: Apache SolR ${solr4j.version} OSGI</Bundle-Name>
@@ -69,13 +69,12 @@
                         <Bundle-Version>${solr4j.version}</Bundle-Version>
                         <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
-                        <Export-Package>
+                        <_exportcontents>
                             org.apache.solr*,
                             org.apache.lucene*,
-                        </Export-Package>
+                        </_exportcontents>
                         <Import-Package>
                             !org.mortbay*,
-                            !org.slf4j.impl,
                             !org.relaxng.datatype,
                             !org.apache.log,
                             !javax.portlet,
@@ -89,13 +88,14 @@
                             javax.net.ssl,
                             javax.inject;resolution:=optional, javax.jmdns;resolution:=optional, javax.jms, javax.mail, javax.mail.internet, javax.management.openmbean, javax.naming.directory, javax.script, javax.security.auth, javax.security.auth.callback, javax.security.auth.kerberos, javax.security.auth.login, javax.security.auth.spi, javax.security.auth.x500, javax.security.sasl, javax.servlet, javax.servlet.http, javax.servlet.jsp, javax.swing, javax.swing.border, javax.swing.event, javax.swing.table, javax.swing.text, javax.swing.tree, javax.ws.rs, javax.ws.rs.core, javax.ws.rs.ext,
                             org.apache.avalon.framework.logger,
-                            org.apache.log4j,
+                            org.apache.log4j;resolution:=optional,
+                            org.slf4j.impl;resolution:=optional,
                             org.osgi.framework,
                             com.sun*;resolution:=optional,
                             javax.xml*,
                             org.w3c.dom,
                             org.xml.sax*,
-                            org.apache.http*,
+                            org.apache.http*;resolution:=optional,
                             org.slf4j;resolution:=optional,
                             com.ibm.uvm.tools;resolution:=optional,
                             com.jcraft.jsch;resolution:=optional,
@@ -136,7 +136,8 @@
                             org.jboss.netty.channel.group;resolution:=optional, org.jboss.netty.channel.socket.nio;resolution:=optional,
                             org.jets3t.service;resolution:=optional, org.jets3t.service.impl.rest.httpclient;resolution:=optional, org.jets3t.service.model;resolution:=optional,
                             org.jets3t.service.security;resolution:=optional, org.joda.convert;resolution:=optional,
-                            org.w3c.dom.ls, org.znerd.xmlenc;resolution:=optional, sun.misc;resolution:=optional, sun.net.dns;resolution:=optional, sun.net.util;resolution:=optional
+                            org.w3c.dom.ls, org.znerd.xmlenc;resolution:=optional, sun.misc;resolution:=optional, sun.net.dns;resolution:=optional, sun.net.util;resolution:=optional,
+                            *;resolution:=optional
                         </Import-Package>
                     </instructions>
                 </configuration>

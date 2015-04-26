@@ -19,6 +19,8 @@ package org.kimios.utils.configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Properties;
+
 /**
  * Created by farf on 6/17/14.
  */
@@ -39,7 +41,22 @@ public class ConfigurationManagerBuilder {
     public ConfigurationManager createInstance() {
         ConfigurationManager cfg = new ConfigurationManager();
         cfg.setHolder(holder);
-        log.info("While building Configuration Manager: " + getHolder() + " ==> " + holder);
+        log.debug("While building Configuration Manager: " + getHolder() + " ==> " + holder);
+        /*
+            Set properties as system properties to handle custom SolR properties
+         */
+
+        Properties properties = holder.getAllProperties();
+        log.debug("loaded properties: {} (keyset: {})", properties.size(), properties.keySet().size());
+        for (Object o : properties.keySet()) {
+            System.setProperty("kimios." + o.toString(), properties.getProperty(o.toString()));
+        }
+        for (Object u : System.getProperties().keySet()) {
+            if (u.toString().startsWith("kimios.")) {
+                log.debug("java system properties set: {} => {}", u.toString(), System.getProperty(u.toString()
+                ));
+            }
+        }
         return cfg;
     }
 }
