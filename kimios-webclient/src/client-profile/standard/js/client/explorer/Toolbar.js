@@ -26,7 +26,10 @@ kimios.explorer.Toolbar = Ext.extend(Ext.Toolbar, {
             iconCls: 'search',
             enableToggle: true,
             toggleHandler: function (b, s) {
+
+
                 var vp = kimios.explorer.getActivePanel();
+
                 if (vp == null || !vp.advancedSearchPanel) {
 //                    this.toggle(false, true);
 //                    return false;

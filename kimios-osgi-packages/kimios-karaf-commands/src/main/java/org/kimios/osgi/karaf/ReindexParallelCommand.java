@@ -24,10 +24,17 @@ public class ReindexParallelCommand extends KimiosCommand {
             required = false, multiValued = false)
     Integer blockSize = null;
 
+    @Option(name = "-x",
+            description = "--exclude",
+            required = false, multiValued = true)
+    Long[] idsExcluded = null;
+
     @Argument(index = 0, name = "path",
             description = "Kimios Path to reindex",
             required = false, multiValued = true)
     String[] paths = null;
+
+
 
     @Override
     protected void doExecuteKimiosCommand() throws Exception {
@@ -37,6 +44,7 @@ public class ReindexParallelCommand extends KimiosCommand {
             searchManagementController.parallelReindex(
                     this.getCurrentSession(),
                     Arrays.asList(paths),
+                    idsExcluded != null ? Arrays.asList(idsExcluded) : new ArrayList<Long>(),
                     block
             );
         }

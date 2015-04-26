@@ -49,7 +49,7 @@ public interface ISearchManagementController {
     public List<ReindexerProcess.ReindexResult> viewIndexingProcess(Session session)
             throws AccessDeniedException, IndexException, ConfigException, DataSourceException;
 
-    public void parallelReindex(Session session, List<String> paths, Integer blockSize)
+    public void parallelReindex(Session session, List<String> paths, List<Long> excludedDocuments, Integer blockSize)
             throws AccessDeniedException, IndexException, ConfigException, DataSourceException;
 
     public void killAndCleanReindexProcess(Session session)

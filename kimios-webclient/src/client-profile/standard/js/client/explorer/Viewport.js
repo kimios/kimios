@@ -102,7 +102,7 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                 var myQueriesPanel = new kimios.explorer.SearchQueryPanel({
                     id: 'kimios-queries-panel',
                     queriesLoadAction : 'ListMyQueries',
-                    titleKey: 'MyQueries',
+                    titleKey: 'MySearchQueries',
                     border: false
                 });
                 var publishedQueriesPanel = new kimios.explorer.SearchQueryPanel({

@@ -17,6 +17,7 @@ package org.kimios.controller;
 
 import flexjson.JSONSerializer;
 import flexjson.transformer.DateTransformer;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -146,9 +147,6 @@ public class SearchControllerWeb
 
             String securities = parameters.get("securities") != null ? parameters.get("securities") : null;
 
-
-            log.debug("read securities: {}", securities);
-
             Long queryId =
                     parameters.get("searchQueryId") != null ? Long.parseLong(parameters.get("searchQueryId")) : null;
             String queryName = parameters.get("searchQueryName");
@@ -172,15 +170,22 @@ public class SearchControllerWeb
 
 
             List<SearchRequestSecurity> searchRequestSecurities = null;
-            if (securities != null) {
+            if (StringUtils.isNotBlank(securities)) {
+                securities = new ObjectMapper().readValue(securities, String.class);
+                log.debug("read securities: {}", securities);
                 searchRequestSecurities
                         = new ObjectMapper().readValue(securities, new TypeReference<List<SearchRequestSecurity>>() {
                 });
+                log.debug("securities object: {}", searchRequestSecurities.size());
             }
             if (searchRequestSecurities != null && searchRequestSecurities.size() > 0) {
                 request.setSecurities(searchRequestSecurities);
             }
-            searchController.saveQuery(sessionUid, queryId, queryName, criteriaList, sort, sortDir);
+            if(searchRequestSecurities.size() > 0){
+                searchController.saveQuery(sessionUid, queryId, queryName, criteriaList, sort, sortDir);
+            } else {
+                searchController.advancedSaveQuery(sessionUid, request);
+            }
             return "";
         }
 

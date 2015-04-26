@@ -174,8 +174,30 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory {
     }
 
 
+    public Long getEntitiesByPathAndTypeCount(String path, int dmEntityType,  List<Long> excludedIds)
+            throws ConfigException, DataSourceException {
+        try {
+            String finalPath = path != null ? path : "";
+            if (finalPath.endsWith("/")) {
+                finalPath += "%";
+            } else {
+                finalPath += "/%";
+            }
 
-    public List<DMEntity> getEntitiesByPathAndType(String path, int dmEntityType, int start, int count)
+            return (Long)getSession().createCriteria(DMEntityImpl.class)
+                    .add(Restrictions.like("path", finalPath, MatchMode.START))
+                    .add(Restrictions.eq("type", dmEntityType))
+                    .add(Restrictions.not(Restrictions.in("uid", excludedIds)))
+                    .setProjection(Projections.rowCount()).uniqueResult();
+        } catch (HibernateException e) {
+            throw new DataSourceException(e, e.getMessage());
+        }
+    }
+
+
+
+    public List<DMEntity> getEntitiesByPathAndType(String path, int dmEntityType, int start, int count,
+                                                   List<Long> excludedIds)
             throws ConfigException, DataSourceException {
         try {
             String finalPath = path != null ? path : "";
@@ -193,8 +215,59 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory {
             criteria.setProjection(Projections.distinct(Projections.id()))
                 .add(Restrictions.like("path", finalPath, MatchMode.START))
                 .add(Restrictions.eq("type", dmEntityType))
+                .add(Restrictions.not(Restrictions.in("uid", excludedIds)))
                 .setFirstResult(start)
                 .setMaxResults(count);
+            List uniqueSubList = criteria.list();
+
+
+            if(uniqueSubList.size() > 0){
+                criteria.setProjection(null);
+                criteria.setFirstResult(0);
+                criteria.setMaxResults(Integer.MAX_VALUE);
+                criteria.add(Restrictions.in("uid", uniqueSubList));
+                criteria.addOrder(Order.asc("creationDate"));
+                criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+
+                return criteria.list();
+
+
+            } else {
+                return new ArrayList<DMEntity>();
+            }
+
+            /*getSession().createSQLQuery(sql)
+                        .addEntity("d", Document.class)
+                        .addJoin()
+                        .setString("fpath", finalPath)
+                        .setInteger("type", dmEntityType)
+                        .*/
+
+        } catch (HibernateException e) {
+            throw new DataSourceException(e, e.getMessage());
+        }
+    }
+
+    public List<DMEntity> getEntitiesByPathAndType(String path, int dmEntityType, int start, int count)
+            throws ConfigException, DataSourceException {
+        try {
+            String finalPath = path != null ? path : "";
+            if (finalPath.endsWith("/")) {
+                finalPath += "%";
+            } else {
+                finalPath += "/%";
+            }
+
+
+            /*String sql = "select distinct d.dm_entity_id as uid, {d.*} " +
+                    "from dm_entity d where d.dm_entity_type = :dmtype and d.dm_entity_path like :fpath order by d.creation_date offset " + start + " limit " + count;*/
+
+            Criteria criteria = getSession().createCriteria(DMEntityImpl.class);
+            criteria.setProjection(Projections.distinct(Projections.id()))
+                    .add(Restrictions.like("path", finalPath, MatchMode.START))
+                    .add(Restrictions.eq("type", dmEntityType))
+                    .setFirstResult(start)
+                    .setMaxResults(count);
             List uniqueSubList = criteria.list();
 
 

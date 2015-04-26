@@ -76,14 +76,14 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                         value = fields[key] ? fields[key].format('Y-m-d') : '';
                     else
                     //handle meta feed linked field (String or List)
-                    if(this.form2.metaFieldsMapping.filter(function(it){
-                        return it.crit == key;
-                         }).length == 1){
+                    if (this.form2.metaFieldsMapping.filter(function (it) {
+                            return it.crit == key;
+                        }).length == 1) {
                         var tmpVal = fields[key];
-                        if(tmpVal.indexOf(',') > -1){
+                        if (tmpVal.indexOf(',') > -1) {
                             value = JSON.stringify(tmpVal.split(','));
                         } else {
-                            value = JSON.stringify([ fields[key] ]);
+                            value = JSON.stringify([fields[key]]);
                         }
                     } else
                         value = fields[key] ? fields[key] : '';
@@ -111,7 +111,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
 
 
                 params.securities = this.searchRequestSecurities ?
-                    JSON.stringify(this.searchRequestSecurities): null;
+                    JSON.stringify(this.searchRequestSecurities) : null;
 
                 Ext.MessageBox.prompt(
                     kimios.lang('SearchSaveButton'),
@@ -134,15 +134,12 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
         });
 
 
-
-
         this.securityButton = new Ext.Button({
             text: kimios.lang('SecurityEntities'),
             scope: this,
             //disabled: true,
             iconCls: 'group-icon',
-            handler: function(){
-
+            handler: function () {
                 // add security tab
                 this.securityEntityPanel = new kimios.properties.SecurityEntityPanel({
                     searchRequest: {
@@ -152,17 +149,26 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                 var secPanel = this.securityEntityPanel;
                 new kimios.properties.RequestPropertiesWindow({
                     title: kimios.lang('SecurityEntities'),
+                    id: 'sreqwindow',
                     iconCls: 'group-icon',
                     items: [this.securityEntityPanel],
-                    listeners: {
-                        close: function(w){
-                            if(console){
-                                console.log(secPanel.getJsonSecurityValues);
-                                _t.securities = secPanel.getJsonSecurityValues();
+                    buttons : [
+                        {
+                            text: 'Save',
+                            handler: function(){
+                                if (console) {
+                                    console.log(secPanel.getJsonSecurityValues());
+                                }
+                                _t.searchRequestSecurities = secPanel.getJsonSecurityValues();
+                                Ext.getCmp('sreqwindow').close();
                             }
-
+                        }, {
+                            text: 'Cancel',
+                            handler: function(){
+                                Ext.getCmp('sreqwindow').close();
+                            }
                         }
-                    }
+                    ]
                 }).show();
             }
         })
@@ -229,7 +235,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                             if (f.name == fieldName) {
 
                                 f.setValue(query);
-                                if(f.refreshValue){
+                                if (f.refreshValue) {
                                     f.refreshValue(query);
                                 }
 
@@ -274,8 +280,8 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
 
                 this.searchRequestSecurities = searchRequest.data.securities;
 
-                if(console)console.log(searchRequest);
-                if(console) console.log(this.searchRequestSecurities);
+                if (console)console.log(searchRequest);
+                if (console) console.log(this.searchRequestSecurities);
 
                 this.nameField.setValue("");
                 this.uidField.setValue("");
@@ -311,7 +317,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                         this.ownerField.setValue(query);
                     } else if (fieldName == 'DocumentParent') {
                         this.locationField.setValue(query);
-                    }  else if (fieldName == 'DocumentVersionUpdateDate') {
+                    } else if (fieldName == 'DocumentVersionUpdateDate') {
                         this.documentDateFromField.setValue(rangeMin);
                         this.documentDateToField.setValue(rangeMax);
                     } else if (fieldName == 'DocumentTypeUid') {
@@ -324,10 +330,11 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                         if (fieldName.indexOf('MetaDataList') == 0) {
                             var tabData = eval('(' + criteria.query + ')');
                             var strQ = '';
-                            for(var u = 0; u < tabData.length; u++){
+                            for (var u = 0; u < tabData.length; u++) {
                                 strQ += tabData[u] + ','
-                            };
-                            if(strQ.length > 0){
+                            }
+                            ;
+                            if (strQ.length > 0) {
                                 strQ = strQ.substr(0, strQ.length - 1);
                             }
                             criteria.query = strQ;
@@ -437,7 +444,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                 this.form2.removeAll();
                 var fields = [];
                 var metaFieldsMapping = [];
-                this.form2.metaFieldsMapping =  metaFieldsMapping;
+                this.form2.metaFieldsMapping = metaFieldsMapping;
                 Ext.each(metasRecords, function (record, index) {
                     var type = record.get('type');
                     var uid = record.get('uid');
@@ -457,12 +464,12 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                                 }));
                             } else {
                                 /*fields.push(new kimios.form.MetaFeedField({
-                                    name: 'MetaDataString_' + uid,
-                                    metaFeedUid: metaFeedUid,
-                                    fieldLabel: name,
-                                    value: value,
-                                    labelSeparator: kimios.lang('LabelSeparator')
-                                }));*/
+                                 name: 'MetaDataString_' + uid,
+                                 metaFeedUid: metaFeedUid,
+                                 fieldLabel: name,
+                                 value: value,
+                                 labelSeparator: kimios.lang('LabelSeparator')
+                                 }));*/
                                 metaFieldsMapping.push({crit: 'MetaDataString_' + uid, metaFeed: metaFeedUid});
                                 fields.push(new kimios.form.MetaFeedMultiField({
                                     name: 'MetaDataString_' + uid,

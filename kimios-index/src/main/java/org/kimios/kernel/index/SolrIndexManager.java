@@ -638,20 +638,27 @@ public class SolrIndexManager
             List<String> updatedDocumentIds = new ArrayList<String>();
             for ( DMEntity doc : documentEntities )
             {
+
+
+                if(log.isDebugEnabled())               {
+                    log.debug( "Start Adding Document doc: #" + doc.getUid() + " "  +
+                        doc.getName() + " " + doc.getPath());
+                }
                 SolrInputDocument solrInputDocument = toSolrInputDocument( (Document) doc, null );
                 if ( solrInputDocument != null )
                 {
                     updatedDocumentIds.add( String.valueOf( doc.getUid() ) );
-                    updatedDocument.add( solrInputDocument );
+                    updatedDocument.add(solrInputDocument);
 
 
-                    if(log.isDebugEnabled())               {
-                        log.debug( "Solr Added doc: #" + solrInputDocument.getFieldValue("DocumentId"));
+                    log.debug( "Solr Added doc: #" + solrInputDocument.getFieldValue("DocumentId"));
+
+                    if(log.isTraceEnabled())               {
+
                         for(String field: solrInputDocument.getFieldNames()){
                             if(!field.equals("DocumentBody")){
-                                log.debug( "Solr result doc: ======> {} : {}", field, solrInputDocument.getFieldValue(field));
+                                log.trace( "Solr result doc: ======> {} : {}", field, solrInputDocument.getFieldValue(field));
                             }
-
                         }
 
                     }

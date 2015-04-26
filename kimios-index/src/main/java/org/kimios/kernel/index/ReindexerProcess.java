@@ -34,8 +34,9 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
     private int total;
     private long start;
     private long duration;
+    private List<Long> excludedIds = null;
 
-    public class ReindexResult{
+    public class ReindexResult {
 
         private long reindexedCount;
         private long duration;
@@ -122,7 +123,7 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
 
     private int blockSize;
 
-    public ReindexerProcess(ISolrIndexManager indexManager, String path, int blockSize) {
+    public ReindexerProcess(ISolrIndexManager indexManager, String path, int blockSize, List<Long> excludedIds) {
         this.indexManager = indexManager;
         this.finalPath = path;
         this.blockSize = blockSize;
@@ -131,6 +132,7 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
         start = System.currentTimeMillis();
         duration = 0;
         this.reindexResult = new ReindexResult(finalPath, indexed, duration, total, null);
+        this.excludedIds = excludedIds;
     }
 
 
@@ -156,7 +158,7 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
             String indexPath = this.finalPath != null ? this.finalPath.trim() : "/";
             try {
                 String fPath = ClientUtils.escapeQueryChars(indexPath);
-                if(fPath.endsWith(ClientUtils.escapeQueryChars("/")))
+                if (fPath.endsWith(ClientUtils.escapeQueryChars("/")))
                     indexPath = fPath + "*";
                 else
                     indexPath = fPath;
@@ -171,10 +173,17 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
             OsgiTransactionHelper th = new OsgiTransactionHelper();
             th.startNew(null);
             //List<DMEntity> entities =
-            total =   FactoryInstantiator.getInstance()
-                            .getDmEntityFactory()
-                            .getEntitiesByPathAndTypeCount(finalPath, DMEntityType.DOCUMENT)
-                            .intValue();
+
+            if (excludedIds != null && excludedIds.size() > 0) {
+                total = FactoryInstantiator.getInstance()
+                        .getDmEntityFactory()
+                        .getEntitiesByPathAndTypeCount(finalPath, DMEntityType.DOCUMENT, excludedIds)
+                        .intValue();
+            } else
+                total = FactoryInstantiator.getInstance()
+                        .getDmEntityFactory()
+                        .getEntitiesByPathAndTypeCount(finalPath, DMEntityType.DOCUMENT)
+                        .intValue();
 
             //total = entities.size();
             log.debug("Entities to index: " + total);
@@ -183,63 +192,42 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
             int indexingBlockCount = total / documentBlockSize;
             int docLeak = total % documentBlockSize;
 
-            if(docLeak > 0)
+            if (docLeak > 0)
                 indexingBlockCount++;
 
             log.debug("Reindexing " + total + " documents: block size " + documentBlockSize + "  / blcok count " + indexingBlockCount);
 
-            /*
-            log.info("Reindexing documents count {} by block of {} ({} blocks, with {} leak)", total,documentBlockSize, indexingBlockCount, docLeak);
-               Sub listing
-
-            log.info("Reindexing: " + documentBlockSize + " / " + indexingBlockCount + " / " + docLeak);
-            List<List<DMEntity>> blockItems = new ArrayList<List<DMEntity>>();
-            for (int cbl = 0; cbl < indexingBlockCount; cbl++) {
-                blockItems.add(
-                        entities.subList(cbl * documentBlockSize,
-                                (cbl * documentBlockSize)
-                                + ( (docLeak > 0 && cbl == (indexingBlockCount -1)) ? docLeak : documentBlockSize))
-                );
-            }    */
-            /*
-               Add remaining docs
-
-            log.info("Remaining docs: " + docLeak);
-            if (docLeak > 0) {
-                List<DMEntity> remaining = new ArrayList<DMEntity>();
-                for (int u = (entities.size() - docLeak);
-                     u < entities.size(); u++) {
-                    remaining.add(entities.get(u));
-                }
-                blockItems.add(remaining);
-            }      */
             th.loadTxManager().getTransaction().rollback();
 
             for (int u = 0; u < indexingBlockCount; u++) {
                 th.loadTxManager().begin();
 
-                List<DMEntity> entityList = FactoryInstantiator.getInstance()
-                        .getDmEntityFactory().getEntitiesByPathAndType(finalPath, DMEntityType.DOCUMENT, u * documentBlockSize, ((docLeak > 0 && u == (indexingBlockCount - 1)) ? docLeak : documentBlockSize));
+                List<DMEntity> entityList = null;
+                if (excludedIds != null && excludedIds.size() > 0) {
+                    entityList = FactoryInstantiator.getInstance()
+                            .getDmEntityFactory().getEntitiesByPathAndType(finalPath, DMEntityType.DOCUMENT, u * documentBlockSize, ((docLeak > 0 && u == (indexingBlockCount - 1)) ? docLeak : documentBlockSize), excludedIds);
+                } else
+                    entityList = FactoryInstantiator.getInstance()
+                            .getDmEntityFactory().getEntitiesByPathAndType(finalPath, DMEntityType.DOCUMENT, u * documentBlockSize, ((docLeak > 0 && u == (indexingBlockCount - 1)) ? docLeak : documentBlockSize));
                 try {
                     indexManager.indexDocumentList(entityList);
                     indexed += entityList.size();
-                }catch (Exception ex){
-                    log.error("an error happen during indexing for block {} / {}", u+1, indexingBlockCount);
+                } catch (Exception ex) {
+                    log.error("an error happen during indexing for block {} / {}", u + 1, indexingBlockCount);
                 }
 
                 this.reindexResult.setReindexedCount(indexed);
                 th.loadTxManager().commit();
 
 
-
-                if(reindexProgression < 100){
+                if (reindexProgression < 100) {
                     reindexProgression = (int) Math.round((double) indexed / (double) total * 100);
 
                 }
                 this.reindexResult.setReindexProgression(reindexProgression);
 
 
-                if(Thread.interrupted()){
+                if (Thread.interrupted()) {
                     log.info("reindex thread for path {} has been canceled", finalPath);
                     return this.reindexResult;
                 }

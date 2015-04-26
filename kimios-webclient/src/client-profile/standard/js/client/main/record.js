@@ -940,6 +940,8 @@ kimios.record = {
             },{
                 name: 'virtualTree',
                 type: 'boolean'
+            }, {
+                name:'securities'
             }
         ]) ,
         virtualEntityRecord: Ext.data.Record.create([
