@@ -25,6 +25,8 @@ public class BookmarkPK implements Serializable
 
     private long uid;
 
+    private int ownerType;
+
     public String getOwner()
     {
         return owner;
@@ -56,37 +58,36 @@ public class BookmarkPK implements Serializable
     }
 
     @Override
-    public boolean equals(Object o)
-    {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
         BookmarkPK that = (BookmarkPK) o;
 
-        if (uid != that.uid) {
-            return false;
-        }
-        if (owner != null ? !owner.equals(that.owner) : that.owner != null) {
-            return false;
-        }
-        if (ownerSource != null ? !ownerSource.equals(that.ownerSource) : that.ownerSource != null) {
-            return false;
-        }
+        if (uid != that.uid) return false;
+        if (ownerType != that.ownerType) return false;
+        if (!owner.equals(that.owner)) return false;
+        return ownerSource.equals(that.ownerSource);
 
-        return true;
     }
 
     @Override
-    public int hashCode()
-    {
-        int result = owner != null ? owner.hashCode() : 0;
-        result = 31 * result + (ownerSource != null ? ownerSource.hashCode() : 0);
+    public int hashCode() {
+        int result = owner.hashCode();
+        result = 31 * result + ownerSource.hashCode();
         result = 31 * result + (int) (uid ^ (uid >>> 32));
+        result = 31 * result + ownerType;
         return result;
     }
+
+    public int getOwnerType() {
+
+        return ownerType;
+    }
+
+    public void setOwnerType(int ownerType) {
+        this.ownerType = ownerType;
+    }
+
 }
 

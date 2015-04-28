@@ -464,6 +464,9 @@ public class DocumentServiceImpl extends CoreService implements DocumentService 
         }
     }
 
+
+
+
     /**
      * @param sessionId
      * @param dmEntityId
@@ -538,6 +541,45 @@ public class DocumentServiceImpl extends CoreService implements DocumentService 
             throw getHelper().convertException(e);
         }
     }
+
+    /**
+     * @param sessionId
+     * @param dmEntityId
+     * @param groupId
+     * @param groupSource
+     * @throws DMServiceException
+     */
+    public void removeGroupBookmark(String sessionId, long dmEntityId, String groupId, String groupSource) throws DMServiceException {
+
+        try {
+
+            Session session = getHelper().getSession(sessionId);
+
+            documentController.removeGroupBoomark(session, dmEntityId, groupId, groupSource);
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
+
+    /**
+     * @param sessionId
+     * @param dmEntityId
+     * @param groupId
+     * @param groupSource
+     * @throws DMServiceException
+     */
+    public void addGroupBookmark(String sessionId, long dmEntityId, String groupId, String groupSource) throws DMServiceException {
+
+        try {
+
+            Session session = getHelper().getSession(sessionId);
+
+            documentController.addGroupBookmark(session, dmEntityId, groupId, groupSource);
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
+
 
     /**
      * @param sessionId

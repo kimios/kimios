@@ -206,6 +206,18 @@ public interface IDocumentController {
             throws AccessDeniedException, DataSourceException, ConfigException;
 
     /**
+     * Create a new bookmark for the given group
+     */
+    public void addGroupBookmark(Session session, long dmEntityUid, String groupId, String groupSource)
+            throws AccessDeniedException, DataSourceException, ConfigException;
+
+    /**
+     * Remove a bookmark for the given group
+     */
+    public void removeGroupBoomark(Session session, long dmEntityUid, String groupId, String groupSource)
+            throws AccessDeniedException, DataSourceException, ConfigException;
+
+    /**
      * Get the last consulted items for the given user
      */
     public List<Bookmark> getRecentItems(Session session)

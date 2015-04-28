@@ -17,19 +17,24 @@ package org.kimios.kernel.dms;
 
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.exception.DataSourceException;
+import org.kimios.kernel.user.Group;
 
+import java.util.List;
 import java.util.Vector;
 
 public interface BookmarkFactory
 {
-    public void addBookmark(String userName, String userSource, long dmentityUid, int dmentityType)
+    public void addBookmark(String userName, String userSource, int securityEntityType, long dmentityUid, int dmentityType)
             throws ConfigException,
             DataSourceException;
 
-    public void removeBookmark(String userName, String userSource, long dmentityUid, int dmentityType)
+    public void removeBookmark(String userName, String userSource, int securityEntityType, long dmentityUid, int dmentityType)
             throws ConfigException, DataSourceException;
 
-    public Vector<DMEntity> getBookmarks(String userName, String userSource)
+    public List<DMEntity> getUserBookmarks(String userName, String userSource)
+            throws ConfigException, DataSourceException;
+
+    public List<DMEntity> getBookmarks(String userName, String userSource, List<Group> groups)
             throws ConfigException, DataSourceException;
 }
 

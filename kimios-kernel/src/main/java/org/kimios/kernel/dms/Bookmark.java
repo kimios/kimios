@@ -29,6 +29,9 @@ public class Bookmark implements Serializable
     @Id @Column(name = "bk_owner_source")
     private String ownerSource;
 
+    @Id @Column(name = "bk_owner_type")
+    private int ownerType;
+
     @Id @Column(name = "dm_entity_id")
     private long uid;
 
@@ -59,9 +62,10 @@ public class Bookmark implements Serializable
     {
     }
 
-    public Bookmark(String owner, String ownerSource, long uid, int type)
+    public Bookmark(String owner, String ownerSource, int ownerType, long uid, int type)
     {
         this.owner = owner;
+        this.ownerType = ownerType;
         this.ownerSource = ownerSource;
         this.uid = uid;
         this.type = type;
@@ -75,6 +79,14 @@ public class Bookmark implements Serializable
     public String getOwnerSource()
     {
         return ownerSource;
+    }
+
+    public int getOwnerType() {
+        return ownerType;
+    }
+
+    public void setOwnerType(int ownerType) {
+        this.ownerType = ownerType;
     }
 
     public int getType()

@@ -15,25 +15,31 @@
  */
 package org.kimios.kernel.dms.hibernate;
 
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
+import org.hibernate.criterion.Conjunction;
+import org.hibernate.criterion.LogicalExpression;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.*;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
+import org.kimios.kernel.security.SecurityEntityType;
+import org.kimios.kernel.user.Group;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
 public class HBookmarkFactory extends HFactory implements BookmarkFactory
 {
-    public void addBookmark(String userName, String userSource,
+    public void addBookmark(String userName, String userSource, int securityEntityType,
             long dmentityUid, int dmentityType) throws ConfigException,
             DataSourceException
     {
         try {
-            getSession().save(new Bookmark(userName, userSource, dmentityUid, dmentityType));
+            getSession().save(new Bookmark(userName, userSource, securityEntityType, dmentityUid, dmentityType));
             getSession().flush();
         } catch (HibernateException e) {
             boolean integrity = e instanceof ConstraintViolationException;
@@ -41,7 +47,7 @@ public class HBookmarkFactory extends HFactory implements BookmarkFactory
         }
     }
 
-    public Vector<DMEntity> getBookmarks(String userName, String userSource)
+    public List<DMEntity> getUserBookmarks(String userName, String userSource)
             throws ConfigException, DataSourceException
     {
         try {
@@ -67,7 +73,7 @@ public class HBookmarkFactory extends HFactory implements BookmarkFactory
                 if (t != null) {
                     bookmarks.add(t);
                 } else {
-                    removeBookmark(userName, userSource, b.getUid(), b.getType());
+                    removeBookmark(userName, userSource, 1, b.getUid(), b.getType());
                 }
             }
             return bookmarks;
@@ -76,12 +82,70 @@ public class HBookmarkFactory extends HFactory implements BookmarkFactory
         }
     }
 
-    public void removeBookmark(String userName, String userSource,
+    public List<DMEntity> getBookmarks(String userName, String userSource, List<Group> groups)
+            throws ConfigException, DataSourceException
+    {
+        try {
+            FactoryInstantiator fc = FactoryInstantiator.getInstance();
+            Vector<DMEntity> bookmarks = new Vector<DMEntity>();
+
+            Criteria mainCriteria = getSession().createCriteria(Bookmark.class);
+
+            LogicalExpression expression = Restrictions.and(
+                    Restrictions.eq("owner", userName),
+                    Restrictions.eq("ownerSource", userSource)
+            );
+
+            List<Conjunction> groupsExpression = new ArrayList<Conjunction>();
+            for(Group gr: groups){
+                groupsExpression.add(Restrictions.and(
+                        Restrictions.eq("owner", gr.getGid()),
+                        Restrictions.eq("ownerSource", gr.getAuthenticationSourceName()),
+                        Restrictions.eq("ownerType", SecurityEntityType.GROUP)
+                ));
+            }
+
+            List<Bookmark> lBookmarks = mainCriteria.add(
+                    Restrictions.or(
+                            expression,
+                            Restrictions.or(groupsExpression.toArray(new Conjunction[]{}))
+                    )
+            ).list();
+
+
+
+            DMEntity t = null;
+            for (Bookmark b : lBookmarks) {
+                switch (b.getType()) {
+                    case DMEntityType.WORKSPACE:
+                        t = fc.getWorkspaceFactory().getWorkspace(b.getUid());
+                        break;
+                    case DMEntityType.FOLDER:
+                        t = fc.getFolderFactory().getFolder(b.getUid());
+                        break;
+                    case DMEntityType.DOCUMENT:
+                        t = fc.getDocumentFactory().getDocument(b.getUid());
+                        break;
+                }
+                if (t != null) {
+                    bookmarks.add(t);
+                } else {
+                    removeBookmark(userName, userSource, 1, b.getUid(), b.getType());
+                    removeBookmark(userName, userSource, 2, b.getUid(), b.getType());
+                }
+            }
+            return bookmarks;
+        } catch (HibernateException e) {
+            throw new DataSourceException(e);
+        }
+    }
+
+    public void removeBookmark(String userName, String userSource, int securityEntityType,
             long dmentityUid, int dmentityType) throws ConfigException,
             DataSourceException
     {
         try {
-            Bookmark b = new Bookmark(userName, userSource, dmentityUid, dmentityType);
+            Bookmark b = new Bookmark(userName, userSource, securityEntityType, dmentityUid, dmentityType);
             try {
                 b = (Bookmark) getSession().merge(b);
             } catch (Exception e) {

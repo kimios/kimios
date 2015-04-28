@@ -31,10 +31,7 @@ import org.kimios.kernel.filetransfer.DataTransfer;
 import org.kimios.kernel.filetransfer.zip.FileCompressionHelper;
 import org.kimios.kernel.log.DMEntityLog;
 import org.kimios.kernel.repositories.RepositoryManager;
-import org.kimios.kernel.security.DMEntityACL;
-import org.kimios.kernel.security.DMEntitySecurity;
-import org.kimios.kernel.security.DMEntitySecurityFactory;
-import org.kimios.kernel.security.Session;
+import org.kimios.kernel.security.*;
 import org.kimios.kernel.user.User;
 import org.kimios.kernel.utils.HashCalculator;
 import org.kimios.utils.configuration.ConfigurationManager;
@@ -945,12 +942,13 @@ public class DocumentController extends AKimiosController implements IDocumentCo
      * Get the bookmarks list of the given user
      */
     public List<Bookmark> getBookmarks(Session session) throws DataSourceException, ConfigException {
-        Vector<DMEntity> bl = dmsFactoryInstantiator.getBookmarkFactory()
-                .getBookmarks(session.getUserName(), session.getUserSource());
+        List<DMEntity> bl = dmsFactoryInstantiator.getBookmarkFactory()
+                .getBookmarks(session.getUserName(), session.getUserSource(), session.getGroups());
         Vector<Bookmark> vBookmarks = new Vector<Bookmark>();
         for (DMEntity d : bl) {
             if (getSecurityAgent().isReadable(d, session.getUserName(), session.getUserSource(), session.getGroups())) {
-                vBookmarks.add(new Bookmark(session.getUserName(), session.getUserSource(), d.getUid(), d.getType()));
+                vBookmarks.add(new Bookmark(session.getUserName(), session.getUserSource(), SecurityEntityType.USER,
+                        d.getUid(), d.getType()));
             }
         }
         return vBookmarks;
@@ -964,11 +962,35 @@ public class DocumentController extends AKimiosController implements IDocumentCo
         DMEntity d = dmsFactoryInstantiator.getDmEntityFactory().getEntity(dmEntityUid);
         if (getSecurityAgent().isReadable(d, session.getUserName(), session.getUserSource(), session.getGroups())) {
             dmsFactoryInstantiator.getBookmarkFactory()
-                    .addBookmark(session.getUserName(), session.getUserSource(), d.getUid(), d.getType());
+                    .addBookmark(session.getUserName(), session.getUserSource(), 1, d.getUid(), d.getType());
         } else {
             throw new AccessDeniedException();
         }
     }
+
+    public void addGroupBookmark(Session session, long dmEntityUid, String groupId, String groupSource)
+            throws AccessDeniedException, DataSourceException, ConfigException {
+        DMEntity d = dmsFactoryInstantiator.getDmEntityFactory().getEntity(dmEntityUid);
+        if (getSecurityAgent().isReadable(d, session.getUserName(), session.getUserSource(), session.getGroups())) {
+            dmsFactoryInstantiator.getBookmarkFactory()
+                    .addBookmark(groupId, groupSource, 2, d.getUid(), d.getType());
+        } else {
+            throw new AccessDeniedException();
+        }
+    }
+
+
+    public void removeGroupBoomark(Session session, long dmEntityUid, String groupId, String groupSource)
+            throws AccessDeniedException, DataSourceException, ConfigException {
+        DMEntity d = dmsFactoryInstantiator.getDmEntityFactory().getEntity(dmEntityUid);
+        if (getSecurityAgent().isReadable(d, session.getUserName(), session.getUserSource(), session.getGroups())) {
+            dmsFactoryInstantiator.getBookmarkFactory()
+                    .removeBookmark(groupId, groupSource, 2, d.getUid(), d.getType());
+        } else {
+            throw new AccessDeniedException();
+        }
+    }
+
 
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IDocumentController#removeBoomark(org.kimios.kernel.security.Session, long, int)
@@ -978,7 +1000,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
         DMEntity d = dmsFactoryInstantiator.getDmEntityFactory().getEntity(dmEntityUid);
         if (getSecurityAgent().isReadable(d, session.getUserName(), session.getUserSource(), session.getGroups())) {
             dmsFactoryInstantiator.getBookmarkFactory()
-                    .removeBookmark(session.getUserName(), session.getUserSource(), d.getUid(), d.getType());
+                    .removeBookmark(session.getUserName(), session.getUserSource(), 2, d.getUid(), d.getType());
         } else {
             throw new AccessDeniedException();
         }
@@ -993,7 +1015,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
         Vector<Bookmark> vBookmarks = new Vector<Bookmark>();
         for (DMEntity d : ri) {
             if (getSecurityAgent().isReadable(d, session.getUserName(), session.getUserSource(), session.getGroups())) {
-                vBookmarks.add(new Bookmark(session.getUserName(), session.getUserSource(), d.getUid(), d.getType()));
+                vBookmarks.add(new Bookmark(session.getUserName(), session.getUserSource(), 1, d.getUid(), d.getType()));
             }
         }
         return vBookmarks;

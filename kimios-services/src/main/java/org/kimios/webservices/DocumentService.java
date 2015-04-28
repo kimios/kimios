@@ -245,6 +245,26 @@ public interface DocumentService {
                                @QueryParam(value = "dmEntityId") @WebParam(name = "dmEntityId") long dmEntityUid)
             throws DMServiceException;
 
+
+    @GET
+    @Path("/addGroupBookmark")
+    @Produces("application/json")
+    public void addGroupBookmark(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+                            @QueryParam(value = "dmEntityId") @WebParam(name = "dmEntityId") long dmEntityUid,
+                            @QueryParam(value = "groupId") @WebParam(name = "groupId") String groupId,
+                            @QueryParam(value = "groupSource") @WebParam(name = "groupSource") String groupSource)
+            throws DMServiceException;
+
+    @GET
+    @Path("/removeGroupBookmark")
+    @Produces("application/json")
+    public void removeGroupBookmark(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+                               @QueryParam(value = "dmEntityId") @WebParam(name = "dmEntityId") long dmEntityUid,
+                               @QueryParam(value = "groupId") @WebParam(name = "groupId") String groupId,
+                               @QueryParam(value = "groupSource") @WebParam(name = "groupSource") String groupSource)
+            throws DMServiceException;
+
+
     @GET
     @Path("/getRecentItems")
     @Produces("application/json")
