@@ -108,10 +108,12 @@ public class SearchRequestFactory extends HFactory {
                     .uniqueResult();
 
 
-            List<Criteria> criteriaList = objectMapper.readValue(
-                searchRequest.getCriteriasListJson(),
-                new TypeReference<List<Criteria>>(){});
+            if(searchRequest != null && searchRequest.getCriteriasListJson() != null){
+                List<Criteria> criteriaList = objectMapper.readValue(
+                        searchRequest.getCriteriasListJson(),
+                        new TypeReference<List<Criteria>>(){});
                 searchRequest.setCriteriaList(criteriaList);
+            }
 
             return searchRequest;
         }catch ( Exception ex ){

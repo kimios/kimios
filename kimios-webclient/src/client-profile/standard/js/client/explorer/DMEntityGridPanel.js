@@ -16,7 +16,6 @@
  */
 
 
-
 kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
     constructor: function (config) {
         var _this = this;
@@ -31,20 +30,23 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
         this.entityStore = kimios.store.getEntityStore();
         this.breadcrumbToolbar = new kimios.explorer.BreadcrumbToolbar({height: 26});
         this.searchToolbar = new kimios.search.SearchToolbar({height: 26});
+
+        this.breadCrumbPanel = new Ext.Panel({
+            border: false,
+            region: 'center',
+            items: [new Ext.Panel({
+                border: false,
+                items: [this.breadcrumbToolbar]
+            })]
+        })
         this.contextToolbar = new Ext.Panel({
             border: false,
             layout: 'border',
             height: 26,
             defaults: {height: 26},
             items: [
-                new Ext.Panel({
-                    border: false,
-                    region: 'center',
-                    items: [new Ext.Panel({
-                        border: false,
-                        items: [this.breadcrumbToolbar]
-                    })]
-                }),
+                this.breadCrumbPanel
+                ,
                 new Ext.Panel({
                     border: false,
                     width: 205,
@@ -61,11 +63,11 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
 
         /* dummy paging init */
         var comboPageSize = new Ext.form.ComboBox({
-            name : 'perpage',
-            width: 40,
+            name: 'perpage',
+            width: 100,
             store: new Ext.data.ArrayStore({
                 fields: ['id'],
-                data  : [
+                data: [
                     ['20'],
                     ['50'],
                     ['100'],
@@ -74,14 +76,44 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
                     ['500']
                 ]
             }),
-            mode : 'local',
-            value: '20',
-            listWidth     : 40,
-            triggerAction : 'all',
-            displayField  : 'id',
-            valueField    : 'id',
-            editable      : false,
+            mode: 'local',
+            value: this.pagingSize + '',
+            listWidth: 100,
+            triggerAction: 'all',
+            displayField: 'id',
+            valueField: 'id',
+            editable: false,
             forceSelection: true
+        });
+
+        this.editSearchButton = new Ext.Button({
+            text: 'Edit Search Query',
+            handler: function(){
+                if(this.searchRequest){
+                    //alert edit
+
+                    var windowSearch = new kimios.search.AdvancedSearchPanel({
+                        title: this.searchRequest.name +  ' - Edit',
+                        listeners: {
+                            close: function(){
+
+                            }
+                        }
+                    });
+                    //panEdit.loadForm(this.searchRequest)
+                    windowSearch.on('reqlaunched', function(tmpReq){
+                        windowSearch.close();
+                        this.refreshSearchRequestData(tmpReq);
+                    },this)
+                    windowSearch.on('reqreload', function(searchRequest){
+                        windowSearch.close();
+                        this.refreshSearchRequestData(searchRequest);
+                    }, this)
+                    windowSearch.show();
+                    windowSearch.loadForm(this.searchRequest)
+                }
+            },
+            scope: this
         });
 
         this.pagingToolBar = new Ext.PagingToolbar({
@@ -92,21 +124,13 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
             emptyMsg: '',
             prependButtons: false,
             hidden: true,
-            items:   [
-            '-',
-            'Page Size ',
-            comboPageSize
+
+            items: [
+                '-',
+                this.editSearchButton,
+                'Page Size ',
+                comboPageSize,
             ]
-            /*items: [
-             new Ext.form.ComboBox({
-             mode: 'local',
-             typeAhead: true,
-             triggerAction: 'all',
-             width: 140,
-             editable: false,
-             allowBlank: false
-             })
-             ]*/
         });
 
         // hide specific refresh button
@@ -114,10 +138,13 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
         this.pagingToolBar.refresh.hide();
 
 
-        comboPageSize.on('select', function(combo, record) {
+        comboPageSize.on('select', function (combo, record) {
             this.pagingToolBar.pageSize = parseInt(record.get('id'), 10);
             this.pagingToolBar.doLoad(this.pagingToolBar.cursor);
         }, this);
+
+
+
 
         this.commentsPanel = new kimios.explorer.CommentsPanel({
             collapsed: true,
@@ -126,12 +153,12 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
             region: 'east',
             margins: '-1 -1 -1 0'
         });
-        this.advancedSearchPanel = new kimios.search.AdvancedSearchPanel({
+        /*this.advancedSearchPanel = new kimios.search.AdvancedSearchPanel({
             region: 'north',
             height: 250,
             hidden: true,
             border: false
-        });
+        });*/
         this.gridPanel = new Ext.grid.GridPanel({
             region: 'center',
             border: true,
@@ -162,7 +189,7 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
                         var me = this;
 
                         Ext.EventManager.on(this.getEl().id, 'dragover', handleDragOver);
-                        Ext.EventManager.addListener(this.getEl().id, 'drop', function(evt){
+                        Ext.EventManager.addListener(this.getEl().id, 'drop', function (evt) {
                             var elem = me;
                             handleFileSelect(evt, elem)
                         });
@@ -172,12 +199,12 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
 
 
                         /*var dropZone = document.getElementById(this.getEl().id);
-                        dropZone.addEventListener('dragover', handleDragOver, false);
-                        var me = this;
-                        dropZone.addEventListener('drop', function (evt) {
-                            var elem = me;
-                            handleFileSelect(evt, elem);
-                        }, false);*/
+                         dropZone.addEventListener('dragover', handleDragOver, false);
+                         var me = this;
+                         dropZone.addEventListener('drop', function (evt) {
+                         var elem = me;
+                         handleFileSelect(evt, elem);
+                         }, false);*/
                     }
                 },
                 "render": {
@@ -255,7 +282,7 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
             return ret;
         }
 
-        this.gridPanel.applyState = function(state) {
+        this.gridPanel.applyState = function (state) {
             var cs = state.columns;
             if (cs.length !== 0) {
                 for (var i = 0, len = cs.length; i < len; i++) {
@@ -302,7 +329,8 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
             layout: 'border',
             items: [this.gridPanel, this.northCenterContainer]
         });
-        this.items = [this.advancedSearchPanel, this.centerContainer, this.commentsPanel ];
+        this.items = [//this.advancedSearchPanel,
+                this.centerContainer, this.commentsPanel];
 
         kimios.explorer.DMEntityGridPanel.superclass.constructor.call(this, config);
     },
@@ -313,8 +341,8 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
             this.northCenterContainer.setVisible(true);
             this.doLayout();
         } else {
-            if (kimios.explorer.getActivePanel().advancedSearchPanel.isVisible())
-                kimios.explorer.getActivePanel().advancedSearchPanel.hidePanel();
+            /*if (kimios.explorer.getActivePanel().advancedSearchPanel.isVisible())
+                kimios.explorer.getActivePanel().advancedSearchPanel.hidePanel();*/
 
             this.northCenterContainer.removeAll(false);
             this.northCenterContainer.add(this.virtualTreePanel);
@@ -354,17 +382,42 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
 
         this.searchToolbar.enable();
         this.doLayout();
-
-
         this.virtualTreeEnabled = false;
 
     },
+    refreshSearchRequestData: function (savedReq) {
+        this.lockSearch = true;
+        if(savedReq) {
+            this.searchRequest = savedReq;
+            //this.advancedSearchPanel.searchRequest = savedReq;
+        }
+        this.setTitle(this.searchRequest.name + ' - ' + kimios.lang('DocumentsFound') + ' ('
+        + this.gridPanel.getStore().getTotalCount() + ')');
+        this.setIconClass('view');
+    },
+    loadAndExecuteQuery: function (searchRequest) {
+        this.searchRequest = searchRequest;
+        this.gridPanel.getStore().on('load', function(){
+            this.refreshSearchRequestData(searchRequest);
+        }, this);
+        /*this.advancedSearchPanel.removeListener('reqreload', this.refreshSearchRequestData,  this);
+        this.advancedSearchPanel.on('reqreload', this.refreshSearchRequestData, this)*/
+        this.pagingToolBar.refresh.show();
+        this.contextToolbar.hide();
+        this.gridPanel.getStore().load({
+                scope: this,
+                params: {
+                    start: 0,
+                    limit: this.pagingToolBar.pageSize
+                }
+            }
+        );
+
+    },
     initComponent: function () {
-
-
         kimios.explorer.DMEntityGridPanel.superclass.initComponent.apply(this, arguments);
-
         // synchronize explorer with active tab
+
         this.on('activate', function () {
             if (this.alreadyLoad == true) {
                 kimios.explorer.getTreePanel().synchronize(this.path);
@@ -375,7 +428,6 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
             sf.setValue(sf.getValue());
             this.doLayout();
         }, this);
-
         this.gridPanel.on('containercontextmenu', function (grid, e) {
             e.preventDefault();
             kimios.ContextMenu.show(new kimios.DMEntityPojo({
@@ -516,6 +568,8 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
             }
             this.pagingToolBar.setVisible(true);
             this.pagingToolBar.enable();
+            this.pagingToolBar.refresh.show();
+            this.contextToolbar.hide();
         } else {
             this.pagingToolBar.disable();
             this.pagingToolBar.hide();
@@ -537,9 +591,10 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
         this.breadcrumbToolbar.virtualMode = false;
         this.breadcrumbToolbar.standardMode = true;
         this.hideVirtualTree();
+        this.contextToolbar.show();
     },
 
-    advancedSearch: function (searchConfig, form) {
+    advancedSearch: function (searchConfig, form, existingRequest) {
 
         // search by document body
         this.hideVirtualTree();
@@ -572,18 +627,18 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
                 var value = null;
 
                 /*console.log(key);
-                console.log(form.metaFieldsMapping);*/
+                 console.log(form.metaFieldsMapping);*/
                 // is date
                 if (fields[key] && fields[key] instanceof Date)
                     value = fields[key] ? fields[key].format('Y-m-d') : '';
-                else  if(form.metaFieldsMapping && form.metaFieldsMapping.filter(function(it){
-                    return it.crit == key;
-                }).length == 1){
+                else if (form.metaFieldsMapping && form.metaFieldsMapping.filter(function (it) {
+                        return it.crit == key;
+                    }).length == 1) {
                     var tmpVal = fields[key];
                     if (tmpVal.indexOf(',') > -1) {
                         value = JSON.stringify(tmpVal.split(','));
                     } else {
-                        value = JSON.stringify([ fields[key] ]);
+                        value = JSON.stringify([fields[key]]);
                     }
                 } else
                     value = fields[key] ? fields[key] : '';
@@ -603,10 +658,30 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
             params.DocumentUid = searchConfig.DocumentUid;
             params.DocumentTypeUid = searchConfig.DocumentTypeUid;
             params.DocumentParent = searchConfig.DocumentParent;
+            params.DocumentOwner = searchConfig.DocumentOwner;
             params.DocumentVersionUpdateDate_from = searchConfig.DocumentVersionUpdateDate_from;
             params.DocumentVersionUpdateDate_to = searchConfig.DocumentVersionUpdateDate_to;
 
+
+            params.autoSave = form.autoSave;
+
             var searchStore = kimios.store.getAdvancedSearchStore(params);
+
+
+            var tempSearchRequest = existingRequest ? existingRequest : {};
+
+            tempSearchRequest.criteriasList = [];
+            for(var p in params){
+
+                var crit = {
+                    fieldName: p,
+                    query: params[p]
+                }
+                tempSearchRequest.criteriasList.push(crit);
+
+            }
+
+            tempSearchRequest.criteriasListJson = Ext.util.JSON.encode(tempSearchRequest.criteriasList);
 
             this.gridPanel.reconfigure(searchStore, this.gridPanel.getColumnModel());
 
@@ -616,15 +691,27 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
             };
 
             this.displayPagingToolBar(this.gridPanel.getStore());
-            this.gridPanel.getStore().load({
+
+            //load config:
+
+            var cfg = {
                 scope: this,
-                params: pParams,
-                callback: function (records, options, success) {
+                params: pParams
+            }
+            if(!existingRequest || !existingRequest.id){
+
+                cfg.callback =  function (records, options, success) {
                     this.lockSearch = true;
                     this.setTitle(kimios.lang('DocumentsFound') + ' (' + this.gridPanel.getStore().getTotalCount() + ')');
                     this.setIconClass('view');
                 }
-            });
+            }
+
+            this.gridPanel.getStore().load(cfg);
+
+            this.searchRequest = tempSearchRequest;
+
+            return tempSearchRequest;
 
         }
     },
@@ -635,10 +722,11 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
 
     loadEntity: function (entityConfig, me) {
         var tab = kimios.explorer.getActivePanel();
+        tab.contextToolbar.show();
         if (tab.searchToolbar.searchField.isSearchMode == true) {
             tab.searchToolbar.searchField.onTrigger2Click();
 
-        } else if (tab.advancedSearchPanel.isSearchMode == true) {
+        } else if (tab.advancedSearchPanel && tab.advancedSearchPanel.isSearchMode == true) {
             tab.advancedSearchPanel.search();
         } else {
 
@@ -728,7 +816,7 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
     refreshLanguage: function () {
         this.breadcrumbToolbar.refreshLanguage();
         this.searchToolbar.refreshLanguage();
-        this.advancedSearchPanel.refreshLanguage();
+        //this.advancedSearchPanel.refreshLanguage();
         this.gridPanel.reconfigure(this.gridPanel.getStore(), this.getColumns());
         this.gridPanel.getView().refresh(true);
         this.contextToolbar.doLayout();
@@ -852,7 +940,7 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
                 align: 'left',
                 renderer: function (val, metaData, record, rowIndex, colIndex, store) {
                     if (record.data.type == 7) {
-                        return  record.data.targetEntity.owner + '@' + record.data.targetEntity.ownerSource;
+                        return record.data.targetEntity.owner + '@' + record.data.targetEntity.ownerSource;
                     }
                     return val + '@' + record.get('ownerSource');
                 }
@@ -970,8 +1058,8 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
             });
         }
 
-        if(addonColumns){
-            for(var z = 0; z < addonColumns.length; z++){
+        if (addonColumns) {
+            for (var z = 0; z < addonColumns.length; z++) {
                 cmArray.push(addonColumns[z]);
             }
         }
@@ -1005,7 +1093,7 @@ var metaValueRenderer = function (metaName, data) {
 
 
 var addonColumns = undefined;
-function loadAddonCols(handler){
+function loadAddonCols(handler) {
     if (clientConfig && clientConfig.defaultdocumenttype && !addonColumns) {
         //load default doctype
         /*
@@ -1043,7 +1131,7 @@ function loadAddonCols(handler){
                                         var tName = hName;
                                         var dataItem = record.get('type') == 7 ? record.data.targetEntity : record.data;
                                         if (record.get('type') == 3 || record.get('type') == 7) {
-                                            if(record.data.metaDatas && record.data.metaDatas.length > 0){
+                                            if (record.data.metaDatas && record.data.metaDatas.length > 0) {
 
                                             } else {
                                                 //console.log(value);
@@ -1062,7 +1150,7 @@ function loadAddonCols(handler){
                             }
                             addonColumns.push(createHeaderFunc(met.data.name));
                         }
-                        if(handler){
+                        if (handler) {
                             handler();
                         }
                         doctypeSet = true;
@@ -1071,8 +1159,8 @@ function loadAddonCols(handler){
 
                 }
             }
-            if(!doctypeSet){
-                if(handler){
+            if (!doctypeSet) {
+                if (handler) {
                     handler();
                 }
             }

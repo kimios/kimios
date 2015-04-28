@@ -146,13 +146,13 @@ public class SearchController
 
     }
 
-    public void advancedSaveQuery( String sessionId, SearchRequest searchRequest )
+    public Long advancedSaveQuery( String sessionId, SearchRequest searchRequest )
             throws Exception
     {
 
         try
         {
-            client.advancedSaveSearchQuery( sessionId, searchRequest );
+            return client.advancedSaveSearchQuery( sessionId, searchRequest );
         }
         catch ( Exception e )
         {

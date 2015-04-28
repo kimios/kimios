@@ -288,11 +288,11 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                                 scope: this,
                                 tabchange: function (panel, tab) {
                                     var panel = kimios.explorer.getActivePanel();
-                                    if (panel && panel instanceof kimios.explorer.DMEntityGridPanel) {
+                                    /*if (panel && panel instanceof kimios.explorer.DMEntityGridPanel) {
                                         kimios.explorer.getToolbar().advancedSearchButton.toggle(panel.advancedSearchPanel && panel.advancedSearchPanel.isVisible(), true);
                                     } else {
                                         kimios.explorer.getToolbar().advancedSearchButton.toggle(false, true);
-                                    }
+                                    }*/
                                 },
                                 contextmenu: function (panel, tab, e) {
                                     new Ext.menu.Menu({

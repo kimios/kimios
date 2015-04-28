@@ -24,7 +24,35 @@ kimios.explorer.Toolbar = Ext.extend(Ext.Toolbar, {
         this.advancedSearchButton = new Ext.Button({
             text: kimios.lang('SearchButton'),
             iconCls: 'search',
-            enableToggle: true,
+            handler: function(){
+
+                /*var panEdit = new kimios.search.AdvancedSearchPanel({
+                    hidden: false,
+                    border: false,
+                    title: 'New Search'
+                });*/
+                var windowSearch = new kimios.search.AdvancedSearchPanel({
+                    title: 'New Search',
+                    listeners: {
+                        close: function(){
+
+                            if(windowSearch.shouldUpdateRights){
+
+                            }
+                        }
+                    }
+                });
+                //panEdit.loadForm(this.searchRequest)
+                windowSearch.on('reqlaunched', function(){
+                    windowSearch.close();
+                })
+                windowSearch.on('reqreload', function(){
+                    windowSearch.close();
+                });
+                windowSearch.show();
+
+            }
+            /*,
             toggleHandler: function (b, s) {
 
 
@@ -59,7 +87,7 @@ kimios.explorer.Toolbar = Ext.extend(Ext.Toolbar, {
                 vp.searchToolbar.searchField.setValue('');
 
                 vp.doLayout();
-            }
+            }*/
         });
 
         this.cartButton = new Ext.Button({

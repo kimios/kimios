@@ -28,6 +28,9 @@ kimios.properties.SecurityEntityPanel = Ext.extend(Ext.Panel, {
         this.border = false;
 
         this.searchRequest = config.searchRequest;
+        if(config.updatedRecords){
+            this.updatedRecords = config.updatedRecords;
+        }
 
         this.centerContainer = new Ext.Panel({
             border: false,
@@ -151,25 +154,42 @@ kimios.properties.SecurityEntityPanel = Ext.extend(Ext.Panel, {
 
         var store = null;
         if(this.searchRequest){
-            if(this.searchRequest.id && this.searchRequest.securities){
-                store = new DmsJsonStore({
-                    fields: kimios.record.searchRequestSecurityRecord,
-                    url: 'Search',
-                    baseParams: {
-                        action: 'GetSearchRequestSecurities',
-                        queryId: this.searchRequest.id
+            if(!this.updatedRecords){
+                if(this.searchRequest.id){
+                    store = new DmsJsonStore({
+                        fields: kimios.record.searchRequestSecurityRecord,
+                        url: 'Search',
+                        baseParams: {
+                            action: 'GetSearchRequestSecurities',
+                            queryId: this.searchRequest.id
+                        }
+                    })
+                    store.load();
+                } else {
+                    var dataSec = {
+                        success:true,
+                        data: []
                     }
-                })
+                    store = new DmsJsonStore({
+                        fields: kimios.record.searchRequestSecurityRecord,
+                        data: dataSec,
+                        root: 'data'
+                    })
+                }
             } else {
+
+
+                var dataSec = {
+                    success:true,
+                    data: this.updatedRecords
+                }
+
                 store = new DmsJsonStore({
                     fields: kimios.record.searchRequestSecurityRecord,
-                    url: 'Search',
-                    baseParams: {
-                        action: 'GetSearchRequestSecurities',
-                        queryId: this.searchRequest.id
-                    }
+                    data: dataSec,
+                    root: 'data'
                 })
-            }
+                            }
 
         }   else {
             store = new DmsJsonStore({
@@ -242,6 +262,7 @@ kimios.properties.SecurityEntityPanel = Ext.extend(Ext.Panel, {
         this.grid.on('containercontextmenu', function (grid, e) {
             e.preventDefault();
         }, this);
+
     },
 
     isRecursiveSecurity: function () {
@@ -268,7 +289,7 @@ kimios.properties.SecurityEntityPanel = Ext.extend(Ext.Panel, {
                         name: rec.get('name'),
                         source: rec.get('source'),
                         type: rec.get('type'),
-                        searchQueryId: rec.get('searchRequestId'),
+                        searchRequestId: rec.get('searchRequestId'),
                         read: rec.get('read'),
                         write: rec.get('write'),
                         fullAccess: rec.get('fullAccess')
@@ -288,6 +309,38 @@ kimios.properties.SecurityEntityPanel = Ext.extend(Ext.Panel, {
             });
         }
         return Ext.util.JSON.encode(out);
+    },
+
+    getSecurityValues: function () {
+        var out = [];
+        if (this.grid.store != null) {
+
+            if(this.searchRequest){
+                this.grid.store.each(function (rec) {
+                    out.push({
+                        name: rec.get('name'),
+                        source: rec.get('source'),
+                        type: rec.get('type'),
+                        searchRequestId: rec.get('searchRequestId'),
+                        read: rec.get('read'),
+                        write: rec.get('write'),
+                        fullAccess: rec.get('fullAccess')
+                    });
+                });
+            } else this.grid.store.each(function (rec) {
+                out.push({
+                    name: rec.get('name'),
+                    source: rec.get('source'),
+                    type: rec.get('type'),
+                    dmEntityType: rec.get('dmEntityType'),
+                    dmEntityUid: rec.get('dmEntityUid'),
+                    read: rec.get('read'),
+                    write: rec.get('write'),
+                    fullAccess: rec.get('fullAccess')
+                });
+            });
+        }
+        return out;
     },
 
     getColumns: function (readCheckColumn, writeCheckColumn, fullAccessCheckColumn) {

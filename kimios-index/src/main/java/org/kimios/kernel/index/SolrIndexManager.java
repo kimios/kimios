@@ -147,7 +147,8 @@ public class SolrIndexManager
     }
 
 
-    private SolrInputDocument toSolrInputDocument(Document document, SolrDocument previousSolrDocument, boolean flush, boolean updateMetasWrapper)
+    private SolrInputDocument toSolrInputDocument(Document document, SolrDocument previousSolrDocument,
+                                                  boolean flush, boolean updateMetasWrapper)
             throws DataSourceException, ConfigException {
 
         SimpleDateFormat dateParser = new SimpleDateFormat("dd-MM-yyyy");

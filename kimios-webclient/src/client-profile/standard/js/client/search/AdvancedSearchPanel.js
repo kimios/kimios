@@ -14,21 +14,40 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
+kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Window, {
     isSearchMode: false,
 
     search: function () {
         this.isSearchMode = true;
-        kimios.explorer.getActivePanel().advancedSearch({
+
+        var vp = kimios.explorer.getActivePanel();
+
+        if (vp == null || (vp.searchRequest  && ((!this.searchRequest) || (vp.searchRequest.id != this.searchRequestId)))) {
+            vp = new kimios.explorer.DMEntityGridPanel({
+                emptyPanel: true
+            });
+            var centerPanel = Ext.getCmp('kimios-center-panel');
+            centerPanel.add(vp);
+            centerPanel.setActiveTab(vp);
+
+            vp.contextToolbar.hide();
+        }
+
+
+        this.form2.autoSave = this.autoSaveCheckbox.getValue();
+        var tmpSearchReq = kimios.explorer.getActivePanel().advancedSearch({
             DocumentName: this.nameField.getValue(),
             DocumentBody: this.textField.getValue(),
             DocumentUid: this.uidField.getValue(),
             DocumentParent: this.locationField.getValue(),
+            DocumentOwner: this.ownerField.getValue(),
             DocumentTypeUid: this.documentTypeField.getValue() == -1 ? '' : this.documentTypeField.getValue(),
             DocumentVersionUpdateDate_from: this.documentDateFromField.getValue() ? this.documentDateFromField.getValue().format('Y-m-d') : null,
             DocumentVersionUpdateDate_to: this.documentDateToField.getValue() ? this.documentDateToField.getValue().format('Y-m-d') : null
-        }, this.form2);
+        }, this.form2, this.searchRequest);
         this.clearButton.setDisabled(false);
+        vp.searchRequest = tmpSearchReq;
+        this.fireEvent('reqlaunched', tmpSearchReq);
     },
 
     clearForm: function () {
@@ -50,17 +69,38 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
 
 
     constructor: function (config) {
-        var _t = this;
         this.layout = 'border';
         this.bodyStyle = 'background-color:#eee;';
+        this.closable = true;
+        this.border = true;
+        this.width = 800,
+        this.height = 400,
+        this.layout = 'border';
+        this.maximizable = true;
+        this.modal = true;
+        kimios.search.AdvancedSearchPanel.superclass.constructor.call(this, config);
+    },
 
+    initComponent: function () {
+        var _t = this;
+        this.addEvents('reqreload');
+        this.addEvents('reqlaunched');
         this.submitButton = new Ext.Button({
             text: kimios.lang('SearchEmptyText'),
             scope: this,
             iconCls: 'search',
             handler: function () {
                 this.search();
+
             }
+        });
+
+
+        this.publickCheckBox = new Ext.form.Checkbox({
+            boxLabel: 'Save as Public'
+        });
+        this.autoSaveCheckbox = new Ext.form.Checkbox({
+            boxLabel: 'Automatic Query Save'
         });
 
         this.saveButton = new Ext.Button({
@@ -113,6 +153,9 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                 params.securities = this.searchRequestSecurities ?
                     JSON.stringify(this.searchRequestSecurities) : null;
 
+
+                params.publicSave = this.publickCheckBox.getValue();
+
                 Ext.MessageBox.prompt(
                     kimios.lang('SearchSaveButton'),
                     kimios.lang('SearchEnterName'),
@@ -122,14 +165,24 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                                 params.searchQueryId = searchRequestId;
                             params.action = 'SaveQuery';
                             params.searchQueryName = value;
-                            kimios.ajaxRequest('Search', params, function () {
+                            kimios.ajaxRequestWithAnswer('Search', params, function (resp) {
+
+                                /*
+
+                                 */
+                                var savedReq = Ext.util.JSON.decode(resp.responseText);
+
                                 kimios.Info.msg(kimios.lang('SearchTab'), kimios.lang('SearchSaveDone'));
                                 Ext.getCmp('kimios-queries-panel').getStore().reload();
-                                _this.saveButton.setTooltip(kimios.lang('Update'));
+                                Ext.getCmp('kimios-queries-panel2').getStore().reload();
+                                Ext.getCmp('kimios-queries-panel3').getStore().reload();
+                                _t.saveButton.setTooltip(kimios.lang('Update'));
+                                _t.fireEvent('reqreload', savedReq);
+
                             });
                         }
                     },
-                    this, false, searchRequestName ? searchRequestName : kimios.lang('SearchNewBookmark'));
+                    this, false, this.searchRequest && this.searchRequest.name ? this.searchRequest.name : kimios.lang('SearchNewBookmark'));
             }
         });
 
@@ -141,11 +194,13 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
             iconCls: 'group-icon',
             handler: function () {
                 // add security tab
-                this.securityEntityPanel = new kimios.properties.SecurityEntityPanel({
-                    searchRequest: {
-                        id: _t.searchRequestId
-                    }
-                });
+                var config = {
+                    searchRequest: this.searchRequest ? this.searchRequest : { securities: []}
+                };
+                if(_t.searchRequestSecurities){
+                    config.updatedRecords = _t.searchRequestSecurities;
+                }
+                this.securityEntityPanel = new kimios.properties.SecurityEntityPanel(config);
                 var secPanel = this.securityEntityPanel;
                 new kimios.properties.RequestPropertiesWindow({
                     title: kimios.lang('SecurityEntities'),
@@ -154,12 +209,11 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                     items: [this.securityEntityPanel],
                     buttons : [
                         {
-                            text: 'Save',
+                            text: 'Validate',
                             handler: function(){
-                                if (console) {
-                                    console.log(secPanel.getJsonSecurityValues());
-                                }
-                                _t.searchRequestSecurities = secPanel.getJsonSecurityValues();
+                                var tempSec = secPanel.getJsonSecurityValues;
+                                _t.shouldUpdateRights = Ext.encode(tempSec) !== Ext.encode(_t.previousSearchRequestSecurities);
+                                _t.searchRequestSecurities = secPanel.getSecurityValues();
                                 Ext.getCmp('sreqwindow').close();
                             }
                         }, {
@@ -185,7 +239,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
 
         this.form1 = new kimios.FormPanel({
             region: 'west',
-            width: 350,
+            width: 400,
             autoScroll: true,
             border: false,
             margins: '5 10 5 10',
@@ -199,7 +253,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
             },
             bodyStyle: 'background-color:transparent;padding:10px 0 10px 10px;',
             buttonAlign: 'left',
-            fbar: [this.saveButton, this.securityButton, '->', this.clearButton, this.submitButton]
+            fbar: [this.saveButton, this.securityButton, '->', this.clearButton, this.submitButton            ]
         });
 
         this.form2 = new kimios.FormPanel({
@@ -261,10 +315,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
 
         this.buttonAlign = 'left';
         this.items = [this.form1, this.form2];
-        kimios.search.AdvancedSearchPanel.superclass.constructor.call(this, config);
-    },
-
-    initComponent: function () {
+        this.buttons = [this.publickCheckBox, this.autoSaveCheckbox]
         kimios.search.AdvancedSearchPanel.superclass.initComponent.apply(this, arguments);
         this.build();
     },
@@ -275,13 +326,16 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
             scope: this,
             callback: function () {
                 // for update
+
+
+
+                this.searchRequest = searchRequest;
                 this.searchRequestId = searchRequest.id;
                 this.searchRequestName = searchRequest.name;
 
-                this.searchRequestSecurities = searchRequest.data.securities;
 
-                if (console)console.log(searchRequest);
-                if (console) console.log(this.searchRequestSecurities);
+                this.previousSearchRequestSecurities = searchRequest.securities;
+                this.searchRequestSecurities = searchRequest.securities;
 
                 this.nameField.setValue("");
                 this.uidField.setValue("");
@@ -320,7 +374,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                     } else if (fieldName == 'DocumentVersionUpdateDate') {
                         this.documentDateFromField.setValue(rangeMin);
                         this.documentDateToField.setValue(rangeMax);
-                    } else if (fieldName == 'DocumentTypeUid') {
+                    } else if (fieldName == 'DocumentTypeUid' && query != '') {
                         this.documentTypeField.setValue(query);
                         this.documentTypeField.fireEvent('select');
                     }
@@ -350,12 +404,18 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
                     this.searchRequestId ? kimios.lang('Update') : kimios.lang('Create')
                 );
 
+                this.saveButton.setText(
+                    this.searchRequestId ? kimios.lang('Update') : kimios.lang('Create')
+                );
+
                 // to fix location field resize on loadForm
                 this.locationField.setValue(this.locationField.getValue());
 
                 this.clearButton.setDisabled(false);
             }
         });
+
+
 
 
     },
@@ -403,7 +463,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
         });
         this.ownerField = new Ext.form.TextField({
             name: 'DocumentOwner',
-            fieldLabel: kimios.lang('DocumentOwner'),
+            fieldLabel: kimios.lang('SearchDocumentOwner'),
             labelSeparator: kimios.lang('LabelSeparator'),
             setFieldLabel: setFieldLabelHandler
         });
@@ -568,7 +628,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
 
     showPanel: function () {
         kimios.explorer.getActivePanel().searchToolbar.searchField.isSearchMode = false;
-        kimios.explorer.getActivePanel().advancedSearchPanel.isSearchMode = true;
+        //kimios.explorer.getActivePanel().advancedSearchPanel.isSearchMode = true;
 
         this.setVisible(true);
         var st = kimios.explorer.getActivePanel().searchToolbar;
@@ -576,7 +636,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
         st.disable();
         bt.disable();
         kimios.explorer.getActivePanel().contextToolbar.hide();
-        kimios.explorer.getToolbar().advancedSearchButton.toggle(true, true);
+        //kimios.explorer.getToolbar().advancedSearchButton.toggle(true, true);
         kimios.explorer.getViewport().centerPanel.doLayout();
 
         // auto set document parent
@@ -605,7 +665,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Panel, {
         st.enable();
         bt.enable();
         kimios.explorer.getActivePanel().contextToolbar.show();
-        kimios.explorer.getToolbar().advancedSearchButton.toggle(false, true);
+        //kimios.explorer.getToolbar().advancedSearchButton.toggle(false, true);
         st.searchField.setValue(st.searchField.getValue()); // fix
 //        st.searchField.setValue('');
 

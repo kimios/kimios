@@ -85,7 +85,7 @@ kimios.explorer.SearchQueryPanel = Ext.extend( Ext.grid.GridPanel, {
 
 
         this.sm = new Ext.grid.RowSelectionModel( {
-                                                      singleSelect: true
+                                                      singleSelect: false
                                                   } );
 
         this.viewConfig = {
@@ -136,64 +136,54 @@ kimios.explorer.SearchQueryPanel = Ext.extend( Ext.grid.GridPanel, {
                 return false;
 
             var selected = grid.getStore().getAt( rowIndex );
-            if ( kimios.explorer.getActivePanel() == null || !(kimios.explorer.getActivePanel() instanceof kimios.explorer.DMEntityGridPanel))
-            {
-                var tabbed = new kimios.explorer.DMEntityGridPanel( {} );
-                var centerPanel = Ext.getCmp( 'kimios-center-panel' );
-                centerPanel.add( tabbed );
-                centerPanel.setActiveTab( tabbed );
-            }
 
-            var virtTree = selected.data.virtualTree;
+            //reload
 
-            if ( !virtTree )
-            {
-                kimios.explorer.getActivePanel().hideVirtualTree();
-                kimios.explorer.getActivePanel().advancedSearchPanel.loadForm( selected.data );
-            } // auto load
+            kimios.ajaxRequestWithAnswer('Search', {queryId: selected.data.id, action: 'LoadQuery'}, function(resp){
+
+                selected = Ext.util.JSON.decode(resp.responseText);
+                if ( kimios.explorer.getActivePanel() == null || !(kimios.explorer.getActivePanel() instanceof kimios.explorer.DMEntityGridPanel))
+                {
+                    var tabbed = new kimios.explorer.DMEntityGridPanel( {} );
+                    var centerPanel = Ext.getCmp( 'kimios-center-panel' );
+                    centerPanel.add( tabbed );
+                    centerPanel.setActiveTab( tabbed );
+                }
+
+                var virtTree = selected.virtualTree;
+
+                if ( !virtTree )
+                {
+                    kimios.explorer.getActivePanel().hideVirtualTree();
+                    //kimios.explorer.getActivePanel().advancedSearchPanel.loadForm( selected );
+                } // auto load
 
 
-            /*
-             execute saved query
-             */
+                /*
+                 execute saved query
+                 */
 
-            var searchStore = kimios.store.getSavedQueryExecStore( {
-                   queryId: selected.get( 'id' )
-             });
-            //TODO: generalize paging Size
-            this.pagingSize = 10;
-            var dispPanel = kimios.explorer.getActivePanel();
-            var gridPanel = dispPanel.gridPanel;
-            gridPanel.reconfigure( searchStore, gridPanel.getColumnModel());
-            if(virtTree){
-                dispPanel.displayVirtualTree(selected.get('id'), searchStore);
-                dispPanel.displayPagingToolBar( searchStore, true );
-                //init load with paging
-                gridPanel.getStore().load( {
-                    scope: this,
-                    params: {
-                        start: 0,
-                        limit: this.pagingSize
-                    }
-                } );
-            } else{
-                dispPanel.hideVirtualTree();
-                dispPanel.displayPagingToolBar( searchStore, false );
-                gridPanel.getStore().load( {
-                   scope: this,
-                   params: {
-                       start: 0,
-                       limit: this.pagingSize
-                   },
-                   callback: function ( records, options, success )
-                   {
-                       dispPanel.lockSearch = true;
-                       dispPanel.setTitle( kimios.lang( 'DocumentsFound' ) + ' ('
-                                                   + searchStore.getTotalCount() + ')' );
-                       dispPanel.setIconClass( 'view' );
-                   }
-               } );
-            }
+                var searchStore = kimios.store.getSavedQueryExecStore( {
+                    queryId: selected.id
+                });
+                //TODO: generalize paging Size
+                this.pagingSize = 20;
+                var dispPanel = kimios.explorer.getActivePanel();
+                var gridPanel = dispPanel.gridPanel;
+                gridPanel.reconfigure( searchStore, gridPanel.getColumnModel());
+                if(virtTree){
+                    dispPanel.displayVirtualTree(selected.id, searchStore);
+                    dispPanel.displayPagingToolBar( searchStore, true );
+                    //init load with paging
+
+                } else{
+                    dispPanel.hideVirtualTree();
+                    dispPanel.displayPagingToolBar( searchStore, false );
+                }
+                dispPanel.loadAndExecuteQuery(selected, searchStore);
+            })
+
+
 
         }, this );
 
@@ -203,8 +193,13 @@ kimios.explorer.SearchQueryPanel = Ext.extend( Ext.grid.GridPanel, {
             if (grid.getStore().getAt(rowIndex).data.type == 9)
                 return false;
             var sm = grid.getSelectionModel();
-            sm.selectRow( rowIndex );
-            kimios.ContextMenu.show( sm.getSelected().data, e, 'searchRequests' );
+            if(sm.getSelections().length > 1){
+                kimios.ContextMenu.showMultiple( sm.getSelected().data, e, 'searchRequests', sm.getSelections() );
+            } else {
+                sm.selectRow( rowIndex );
+                kimios.ContextMenu.show( sm.getSelected().data, e, 'searchRequests' );
+            }
+
         }, this );
 
         this.on( 'containercontextmenu', function ( grid, e )

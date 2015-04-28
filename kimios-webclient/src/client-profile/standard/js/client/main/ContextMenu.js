@@ -67,7 +67,12 @@ kimios.ContextMenu = new function () {
     /**
      * Return instance menu depending on context
      */
-    this.getInstance = function (dmEntityPojo, context) {
+    this.getInstance = function (dmEntityPojo, context, records) {
+
+        if (records && records.length > 1) {
+            this.multipleRecords = records;
+        }
+
         this.dmEntityPojo = dmEntityPojo;
         this.context = context;
 
@@ -243,6 +248,10 @@ kimios.ContextMenu = new function () {
         this.getInstance(dmEntityPojo, context).showAt(e.getXY());
     };
 
+    this.showMultiple = function (dmEntityPojo, e, context, records) {
+        this.getInstance(dmEntityPojo, context, records).showAt(e.getXY());
+    };
+
     this.initHomeMenu = function (config) {
         this.homeMenu = new Ext.menu.Menu(config);
         if (kimios.explorer.getViewport().rights.isWorkspaceCreator) {
@@ -298,7 +307,7 @@ kimios.ContextMenu = new function () {
         this.viewableSymlinkDocumentMenu = new Ext.menu.Menu(config);
 
         /*
-            add commons items for viewable document
+         add commons items for viewable document
          */
         this.getViewableDocMenuItemsList(this.viewableSymlinkDocumentMenu, ['delete', 'move']);
 
@@ -324,17 +333,18 @@ kimios.ContextMenu = new function () {
         menu.addSeparator();
         menu.add(this.getUpdateCurrentVersionItem());
         menu.add(this.getCheckInCheckOutItem());
-        if(bonitaEnabled){
+        if (bonitaEnabled) {
             menu.add(this.getStartProcessItem());
-        }  else {
+        } else {
             menu.add(this.getStartWorkflowItem());
-        };
+        }
+        ;
 
 
-        if(!hiddenItems || hiddenItems.indexOf('move') == -1){
+        if (!hiddenItems || hiddenItems.indexOf('move') == -1) {
             menu.add(this.getMoveItem());
         }
-        if(!hiddenItems || hiddenItems.indexOf('delete') == -1){
+        if (!hiddenItems || hiddenItems.indexOf('delete') == -1) {
             menu.add(this.getDeleteItem());
         }
         menu.add(this.getAddToBookmarksItem());
@@ -347,8 +357,8 @@ kimios.ContextMenu = new function () {
         menu.addSeparator();
         menu.add(this.getPropertiesItem());
     };
-    
-    this.getViewableDocMenuItemsList = function(menu, hiddenItems){
+
+    this.getViewableDocMenuItemsList = function (menu, hiddenItems) {
         menu.add(this.getViewDocumentItem());
         menu.add(this.getGetDocumentItem());
         menu.add(this.getBarcodeDocumentItem());
@@ -356,15 +366,15 @@ kimios.ContextMenu = new function () {
         menu.add(this.getUpdateCurrentVersionItem());
         menu.add(this.getCheckInCheckOutItem());
 
-        if(bonitaEnabled){
+        if (bonitaEnabled) {
             menu.add(this.getStartProcessItem());
-        }  else {
+        } else {
             menu.add(this.getStartWorkflowItem());
         }
-        if(!hiddenItems || hiddenItems.indexOf('move') == -1){
+        if (!hiddenItems || hiddenItems.indexOf('move') == -1) {
             menu.add(this.getMoveItem());
         }
-        if(!hiddenItems || hiddenItems.indexOf('delete') == -1){
+        if (!hiddenItems || hiddenItems.indexOf('delete') == -1) {
             menu.add(this.getDeleteItem());
         }
         menu.add(this.getAddToBookmarksItem());
@@ -377,7 +387,6 @@ kimios.ContextMenu = new function () {
         menu.addSeparator();
         menu.add(this.getPropertiesItem());
     }
-
 
 
     this.initWorkspaceMultipleMenu = function (config) {
@@ -664,7 +673,7 @@ kimios.ContextMenu = new function () {
                     buttonText: kimios.lang('CreateSymlink')
                 });
                 picker.on('entitySelected', function (node) {
-                    if(this.multiple == true){
+                    if (this.multiple == true) {
                         return false;
                     }
                     if (node.attributes.type == undefined) {
@@ -896,7 +905,7 @@ kimios.ContextMenu = new function () {
                 new kimios.properties.PropertiesWindow({
                     dmEntityPojo: entity,
                     versionsMode: this.context == 'versions' ? true : false,
-                    switchBonitaTab:true
+                    switchBonitaTab: true
 
                 }).show();
 
@@ -987,7 +996,7 @@ kimios.ContextMenu = new function () {
                         if (btn == 'yes') {
                             if (this.multiple == true) {
                                 var it = [];
-                                for(var u = 0; u < this.dmEntityPojo.length; u++)
+                                for (var u = 0; u < this.dmEntityPojo.length; u++)
                                     it.push(this.dmEntityPojo.type == 7 ? this.dmEntityPojo.targetEntity : this.dmEntityPojo);
                                 kimios.request.addAllToBookmarks(it);
                             } else {
@@ -1043,16 +1052,31 @@ kimios.ContextMenu = new function () {
                     kimios.lang('ConfirmDelete'),
                     function (btn) {
                         if (btn == 'yes') {
-                            kimios.ajaxRequest('Search', {
-                                    action: 'DeleteQuery',
-                                    queryId: _t.dmEntityPojo.id
-                                },
-                                function () {
-                                    kimios.explorer.getSearchRequestsPanel().refresh();
-                                    kimios.explorer.getPublicSearchRequestsPanel().refresh();
-                                    kimios.explorer.getPublishedSearchRequestsPanel().refresh();
+                            if (_t.multipleRecords) {
+                                for (var i = 0; i < _t.multipleRecords.length; i++) {
+                                    kimios.ajaxRequest('Search', {
+                                            action: 'DeleteQuery',
+                                            queryId: _t.multipleRecords[i].data.id
+                                        },
+                                        function () {
+                                            kimios.explorer.getSearchRequestsPanel().refresh();
+                                            kimios.explorer.getPublicSearchRequestsPanel().refresh();
+                                            kimios.explorer.getPublishedSearchRequestsPanel().refresh();
+                                        }
+                                    );
                                 }
-                            );
+
+                            } else
+                                kimios.ajaxRequest('Search', {
+                                        action: 'DeleteQuery',
+                                        queryId: _t.dmEntityPojo.id
+                                    },
+                                    function () {
+                                        kimios.explorer.getSearchRequestsPanel().refresh();
+                                        kimios.explorer.getPublicSearchRequestsPanel().refresh();
+                                        kimios.explorer.getPublishedSearchRequestsPanel().refresh();
+                                    }
+                                );
                         }
                     },
                     this
@@ -1242,7 +1266,8 @@ kimios.ContextMenu = new function () {
                             );
                         }
                     }, this);
-            }});
+            }
+        });
     };
 
     this.getCheckBonitaTask = function () {
@@ -1259,7 +1284,7 @@ kimios.ContextMenu = new function () {
 
 
                 /*
-                    Take it before doing it
+                 Take it before doing it
                  */
                 kimios.ajaxRequest('Workflow', {
                         action: 'takeTask',
@@ -1281,17 +1306,17 @@ kimios.ContextMenu = new function () {
                             items: [
                                 {
                                     html: '<iframe id="reportframe" border="0" width="100%" height="100%" ' +
-                                        'frameborder="0" marginheight="12" marginwidth="16" scrolling="auto" ' +
-                                        'style="padding: 16px" ' +
-                                        'src="' + url + '"></iframe>'
+                                    'frameborder="0" marginheight="12" marginwidth="16" scrolling="auto" ' +
+                                    'style="padding: 16px" ' +
+                                    'src="' + url + '"></iframe>'
                                 }
                             ],
                             fbar: [
                                 {
                                     text: kimios.lang('Close'),
-                                    scope:this,
+                                    scope: this,
                                     handler: function () {
-                                        if(console) console.log('cloooose');
+                                        if (console) console.log('cloooose');
                                         iframe.close();
                                         Ext.getCmp('kimios-tasks-panel').refresh();
                                         Ext.getCmp('kimios-assigned-tasks-panel').refresh();
@@ -1306,7 +1331,6 @@ kimios.ContextMenu = new function () {
 
                     }
                 );
-
 
 
             }
@@ -1419,7 +1443,7 @@ kimios.ContextMenu = new function () {
                     || context == 'searchRequestsContainer') {
                     searchRequests.refresh();
                     searchRequests2.refresh();
-                    searchRequests3
+                    searchRequests3.refresh();
                 } else if (context == 'bookmarks'
                     || context == 'bookmarksContainer') {
                     bookmarks.refresh();

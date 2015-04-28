@@ -129,9 +129,11 @@ public class SearchControllerWeb
             String sort = parameters.get("sort") != null ? sortFieldMapping.get(parameters.get("sort")) : null;
             String sortDir = parameters.get("dir") != null ? parameters.get("dir").toLowerCase() : null;
             String virtualPath = parameters.get("virtualPath");
+
+            boolean autoSave = parameters.get("autoSave") != null ? Boolean.parseBoolean(parameters.get("autoSave")) : false;
             searchResponse =
                     searchController.advancedSearchDocument(sessionUid, criteriaList, page, pageSize, sort, sortDir,
-                            virtualPath, -1, false);
+                            virtualPath, -1, autoSave);
             log.debug("Advanced search in uid: " + positionUid + " [Type: " + positionType + "]: "
                     + searchResponse.getRows().size() + " results / " + searchResponse.getResults());
 
@@ -153,6 +155,10 @@ public class SearchControllerWeb
 
             List<Criteria> criteriaList = parseCriteriaList(parameters);
 
+            boolean publicQuery = parameters.get("publicSave") != null ? Boolean.parseBoolean(parameters.get("publicSave")) : false;
+
+
+
 
             SearchRequest request = null;
             if (queryId != null) {
@@ -160,7 +166,11 @@ public class SearchControllerWeb
                 request = searchController.getQuery(sessionUid, queryId);
             } else {
                 request = new SearchRequest();
+                request.setPublished(false);
+                request.setPublicAccess(false);
             }
+
+
 
             request.setId(queryId);
             request.setName(queryName);
@@ -168,25 +178,21 @@ public class SearchControllerWeb
             request.setSortDir(sortDir);
             request.setSortField(sort);
 
+            request.setPublicAccess(publicQuery);
+
 
             List<SearchRequestSecurity> searchRequestSecurities = null;
             if (StringUtils.isNotBlank(securities)) {
-                securities = new ObjectMapper().readValue(securities, String.class);
-                log.debug("read securities: {}", securities);
                 searchRequestSecurities
                         = new ObjectMapper().readValue(securities, new TypeReference<List<SearchRequestSecurity>>() {
                 });
                 log.debug("securities object: {}", searchRequestSecurities.size());
             }
-            if (searchRequestSecurities != null && searchRequestSecurities.size() > 0) {
-                request.setSecurities(searchRequestSecurities);
-            }
-            if(searchRequestSecurities.size() > 0){
-                searchController.saveQuery(sessionUid, queryId, queryName, criteriaList, sort, sortDir);
-            } else {
-                searchController.advancedSaveQuery(sessionUid, request);
-            }
-            return "";
+            request.setSecurities(searchRequestSecurities);
+            Long newReqId = searchController.advancedSaveQuery(sessionUid, request);
+            request.setId(newReqId);
+            request.setCriteriasListJson(new ObjectMapper().writeValueAsString(request.getCriteriaList()));
+            return new JSONSerializer().include("securities").exclude("securities.class").exclude("class").serialize(request);
         }
 
         // ListQueries
@@ -205,8 +211,13 @@ public class SearchControllerWeb
             return new JSONSerializer().exclude("class").serialize(searchRequestSecurities);
         } else if (action.equalsIgnoreCase("LoadQuery")) {
             Long id = Long.parseLong(parameters.get("queryId"));
-            SearchRequest request = searchController.getQuery(sessionUid, id);
-            return new JSONSerializer().exclude("class").serialize(request);
+            SearchRequest searchRequest = searchController.getQuery(sessionUid, id);
+            log.info("" + (searchRequest.getSecurities() != null ? searchRequest.getSecurities().size() : " no securities"));
+            if (searchRequest.getSecurities() != null && searchRequest.getSecurities().size() > 0) {
+                for (SearchRequestSecurity s : searchRequest.getSecurities())
+                    s.setSearchRequest(null);
+            }
+            return new JSONSerializer().include("securities").exclude("securities.class").exclude("class").serialize(searchRequest);
         }
         // DeleteQuery
         else if (action.equalsIgnoreCase("DeleteQuery")) {
