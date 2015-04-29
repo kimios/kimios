@@ -1000,7 +1000,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
         DMEntity d = dmsFactoryInstantiator.getDmEntityFactory().getEntity(dmEntityUid);
         if (getSecurityAgent().isReadable(d, session.getUserName(), session.getUserSource(), session.getGroups())) {
             dmsFactoryInstantiator.getBookmarkFactory()
-                    .removeBookmark(session.getUserName(), session.getUserSource(), 2, d.getUid(), d.getType());
+                    .removeBookmark(session.getUserName(), session.getUserSource(), 1, d.getUid(), d.getType());
         } else {
             throw new AccessDeniedException();
         }
