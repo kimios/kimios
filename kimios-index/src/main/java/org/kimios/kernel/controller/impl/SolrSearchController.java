@@ -1252,9 +1252,9 @@ public class SolrSearchController
                                                      String sortField, String sortDir, String virtualPath)
             throws AccessDeniedException, DataSourceException, ConfigException, IndexException, IOException, ParseException {
         SearchRequest searchRequest = searchRequestFactory.loadById(id);
-        log.info(" >> " + searchRequest.toString());
         if (searchRequest == null || (!(searchRequest.getOwner().equals(session.getUserName())
-                && searchRequest.getOwnerSource().equals(session.getUserSource())) && !searchRequest.getPublicAccess())) {
+                && searchRequest.getOwnerSource().equals(session.getUserSource())) && !searchRequest.getPublicAccess())
+                || !canRead(session, searchRequest)) {
             throw new AccessDeniedException();
         }
         ObjectMapper objectMapper = new ObjectMapper();
