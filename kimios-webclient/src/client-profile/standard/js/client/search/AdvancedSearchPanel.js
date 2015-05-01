@@ -399,6 +399,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Window, {
 
                     }
                 }
+                console.log(this.loadedMetadatas);
 
                 this.saveButton.setTooltip(
                     this.searchRequestId ? kimios.lang('Update') : kimios.lang('Create')
@@ -511,6 +512,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Window, {
                     var name = record.get('name');
                     var value = record.get('value');
                     var metaFeedUid = record.get('metaFeedUid');
+
 
                     switch (type) {
                         case 1:
