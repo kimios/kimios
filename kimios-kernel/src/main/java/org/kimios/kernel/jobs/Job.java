@@ -17,7 +17,9 @@ package org.kimios.kernel.jobs;
 
 import org.kimios.kernel.security.Session;
 
-public interface Job extends Runnable
+import java.util.concurrent.Callable;
+
+public interface Job extends Callable
 {
     public static final int FINISHED = 0;
     public static final int STOPPED_IN_ERROR = 2;
@@ -31,7 +33,7 @@ public interface Job extends Runnable
     /*
     *  Start
     */
-    public Object execute(Session session, Object... params) throws Exception;
+    public Object execute() throws Exception;
 
     /*
     *  Return the session owner of the started job
@@ -63,10 +65,5 @@ public interface Job extends Runnable
     */
     public void throwException() throws Exception;
 
-    /*
-    *  Set launch parameters
-    *
-    */
-    public void setParams(Object[] params);
 }
 

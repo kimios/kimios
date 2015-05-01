@@ -38,29 +38,8 @@ public class ACLUpdater implements IACLUpdater
     public List<DMEntityACL> updateAclsRecursiveMode(Session session, String xmlStream, DMEntity entity)
             throws Exception
     {
-
-        DMEntitySecurityFactory fact =
-                org.kimios.kernel.security.FactoryInstantiator.getInstance().getDMEntitySecurityFactory();
         Vector<DMEntitySecurity> des = DMEntitySecurityUtil.getDMentitySecuritesFromXml(xmlStream, entity);
-        List<DMEntityACL> listAclToIndex = new ArrayList<DMEntityACL>();
-        fact.cleanACLRecursive(entity);
-        for (DMEntitySecurity acl : des) {
-            listAclToIndex.addAll(fact.saveDMEntitySecurity(acl));
-        }
-        List<DMEntity> items = FactoryInstantiator.getInstance().getDmEntityFactory().getEntities(entity.getPath());
-        for (DMEntity it : items) {
-            //generate sec for childrens, from previouslys created sec (to avoid xml parsing on each loop)
-            for (DMEntitySecurity sec : des) {
-                DMEntitySecurity nSec =
-                        new DMEntitySecurity(it.getUid(), it.getType(), sec.getName(), sec.getSource(), sec.getType(),
-                                sec.isRead(), sec.isWrite(), sec.isFullAccess(), it);
-                listAclToIndex.addAll(fact.saveDMEntitySecurity(nSec));
-            }
-        }
-
-        //Load symbolic links mapper
-
-
+        List<DMEntityACL> listAclToIndex = updateAclsRecursiveMode(session, des, entity);
         return listAclToIndex;
     }
 
@@ -74,11 +53,15 @@ public class ACLUpdater implements IACLUpdater
                 org.kimios.kernel.security.FactoryInstantiator.getInstance().getDMEntitySecurityFactory();
         List<DMEntityACL> listAclToIndex = new ArrayList<DMEntityACL>();
         fact.cleanACLRecursive(entity);
+        log.debug("entity existing acls have been removed");
         for (DMEntitySecurity acl : securityItems) {
             acl.setDmEntity(entity);
             listAclToIndex.addAll(fact.saveDMEntitySecurity(acl));
+            log.debug("added acl {} for {}", (acl.getType() == 1 ? "user " : "group ") + acl.getName() + "@" + acl.getSource(), entity.getPath());
         }
         List<DMEntity> items = FactoryInstantiator.getInstance().getDmEntityFactory().getEntities(entity.getPath());
+
+        log.debug("loaded child entities: {}", items.size());
         for (DMEntity it : items) {
             //generate sec for childrens, from previouslys created sec (to avoid xml parsing on each loop)
             for (DMEntitySecurity sec : securityItems) {
@@ -86,6 +69,7 @@ public class ACLUpdater implements IACLUpdater
                         new DMEntitySecurity(it.getUid(), it.getType(), sec.getName(), sec.getSource(), sec.getType(),
                                 sec.isRead(), sec.isWrite(), sec.isFullAccess(), it);
                 listAclToIndex.addAll(fact.saveDMEntitySecurity(nSec));
+                log.debug("added acl {} for {}", (nSec.getType() == 1 ? "user " : "group ") + nSec.getName() + "@" + nSec.getSource(), it.getPath());
             }
         }
         return listAclToIndex;

@@ -17,15 +17,13 @@ package org.kimios.kernel.jobs;
 
 import org.kimios.kernel.security.Session;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public class ThreadManager
 {
     private static ThreadManager manager = new ThreadManager();
 
-    private ThreadPoolExecutor executor;
+    private ExecutorService executor;
 
     synchronized public static ThreadManager getInstance()
     {
@@ -38,16 +36,20 @@ public class ThreadManager
 
     private ThreadManager()
     {
-        //TODO: manage pool executor conf
-        executor = new ThreadPoolExecutor(1, 5, 10000, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(100));
+        executor = Executors.newFixedThreadPool(5);
     }
 
-    public void startJob(Session session, Job job, String name, Object... params)
+    public void startJob(Session session, Job job)
     {
-        //TODO: mange thread llist...(Extend thread pool executor ???)
-        job.setParams(params);
         job.setSession(session);
-        executor.execute(job);
+        executor.submit(job);
+    }
+
+
+    public void shutDown(){
+        if(executor != null){
+            executor.shutdownNow();
+        }
     }
 }
 

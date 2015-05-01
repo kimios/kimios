@@ -124,10 +124,9 @@ public class SecurityController extends AKimiosController implements ISecurityCo
                     }
                 }
                 if (isRecursive) {
-                    /*ACLUpdateJob job =
-                            ApplicationContextProvider.prototypeBean("aclUpdaterThreadJob", ACLUpdateJob.class, null);*/
+
                     ThreadManager.getInstance()
-                            .startJob(session, new ACLUpdateJob(aclUpdater), "UpdateACL", xmlStream, entity);
+                            .startJob(session, new ACLUpdateJob(aclUpdater, session, entity, xmlStream));
                 } else {
                     DMEntitySecurityFactory fact = FactoryInstantiator.getInstance().getDMEntitySecurityFactory();
                     Vector<DMEntitySecurity> des = DMEntitySecurityUtil.getDMentitySecuritesFromXml(xmlStream, entity);
@@ -169,10 +168,8 @@ public class SecurityController extends AKimiosController implements ISecurityCo
                     }
                 }
                 if (isRecursive) {
-                    /*ACLUpdateJob job =
-                            ApplicationContextProvider.prototypeBean("aclUpdaterThreadJob", ACLUpdateJob.class, null);*/
                     ThreadManager.getInstance()
-                            .startJob(session, new ACLUpdateJob(aclUpdater), "UpdateACL", items, entity);
+                            .startJob(session, new ACLUpdateJob(aclUpdater, session, entity, items));
                 } else {
                     DMEntitySecurityFactory fact = FactoryInstantiator.getInstance().getDMEntitySecurityFactory();
                     fact.cleanACL(entity);

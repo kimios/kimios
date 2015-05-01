@@ -39,7 +39,6 @@ public class JobRunner extends Thread
     {
         this.myJob.setStatus(Job.PROCESSING);
         try {
-            this.myJob.execute(this.session, params);
             this.myJob.setStatus(Job.FINISHED);
         } catch (Exception e) {
             e.printStackTrace();

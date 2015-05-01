@@ -381,10 +381,12 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
                         .getInstance(des.getName(), des.getSource(), des.getType(), DMSecurityRule.READRULE);
                 readAcl.setRuleHash(dr.getRuleHash());
                 try {
-                    getSession().save(readAcl);
+                    getSession().saveOrUpdate(readAcl);
                     ret.add(readAcl);
                 } catch (NonUniqueObjectException o) {
+                    log.error("already existing acl! entity " + des.getDmEntity().getPath()  + " {} - {}@{}", "read", des.getName(), des.getSource());
                     readAcl = (DMEntityACL) getSession().merge(readAcl);
+                    ret.add(readAcl);
                 }
             }
             if (des.isWrite()) {
@@ -392,10 +394,12 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
                         .getInstance(des.getName(), des.getSource(), des.getType(), DMSecurityRule.WRITERULE)
                         .getRuleHash());
                 try {
-                    getSession().save(writeAcl);
+                    getSession().saveOrUpdate(writeAcl);
                     ret.add(writeAcl);
                 } catch (NonUniqueObjectException o) {
+                    log.error("already existing acl! entity " + des.getDmEntity().getPath()  + " {} - {}@{}", "write", des.getName(), des.getSource());
                     writeAcl = (DMEntityACL) getSession().merge(writeAcl);
+                    ret.add(writeAcl);
                 }
             }
             if (des.isFullAccess()) {
@@ -403,10 +407,12 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
                         .getInstance(des.getName(), des.getSource(), des.getType(), DMSecurityRule.FULLRULE)
                         .getRuleHash());
                 try {
-                    getSession().save(fullAcl);
+                    getSession().saveOrUpdate(fullAcl);
                     ret.add(fullAcl);
                 } catch (NonUniqueObjectException e) {
+                    log.error("already existing acl! entity " + des.getDmEntity().getPath()  + " {} - {}@{}", "fullaccess", des.getName(), des.getSource());
                     fullAcl = (DMEntityACL) getSession().merge(fullAcl);
+                    ret.add(fullAcl);
                 }
             }
             if (!des.isFullAccess() && !des.isRead() && !des.isWrite()) {
@@ -414,10 +420,12 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
                         .getInstance(des.getName(), des.getSource(), des.getType(), DMSecurityRule.NOACCESS)
                         .getRuleHash());
                 try {
-                    getSession().save(noAcl);
+                    getSession().saveOrUpdate(noAcl);
                     ret.add(noAcl);
                 } catch (NonUniqueObjectException e) {
+                    log.error("already existing acl! entity " + des.getDmEntity().getPath()  + " {} - {}@{}", "noaccess", des.getName(), des.getSource());
                     noAcl = (DMEntityACL) getSession().merge(noAcl);
+                    ret.add(noAcl);
                 }
             }
 

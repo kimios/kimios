@@ -16,8 +16,9 @@
 package org.kimios.kernel.jobs;
 
 import org.kimios.kernel.security.Session;
+import org.slf4j.LoggerFactory;
 
-public abstract class JobImpl implements Job
+public abstract class JobImpl<T> implements Job
 {
     private Session session;
 
@@ -25,27 +26,27 @@ public abstract class JobImpl implements Job
 
     private int status;
 
-    private Object[] params;
-
-    public final void setSession(Session session)
+        public final void setSession(Session session)
     {
         this.session = session;
     }
 
-    final public void run()
+    public T call()
     {
         status = PROCESSING;
         try {
-            execute(this.session, this.params);
+            T ret =  execute();
             status = FINISHED;
+            return ret;
         } catch (Exception e) {
-            e.printStackTrace();
+            LoggerFactory.getLogger(this.getClass().getName()).error("exception during job execution", e);
             status = STOPPED_IN_ERROR;
             setStackTrace(e);
         }
+        return null;
     }
 
-    abstract public Object execute(Session session, Object... params) throws Exception;
+    abstract public T execute() throws Exception;
 
     abstract public Object getInformation() throws Exception;
 
@@ -74,9 +75,5 @@ public abstract class JobImpl implements Job
         throw exception;
     }
 
-    public void setParams(Object[] params)
-    {
-        this.params = params;
-    }
 }
 
