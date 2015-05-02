@@ -186,6 +186,11 @@ public class AddonDataHandler extends GenericEventHandler {
         @JsonIgnore
         abstract MetaFeedImpl getMetaFeed();
 
+        @JsonIgnore
+        abstract DocumentType getDocumentType();
+
+
+
     }
 
     public static class AddonDatasWrapper {

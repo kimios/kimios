@@ -1124,7 +1124,7 @@ function loadAddonCols(handler) {
                                     readOnly: true,
                                     hidden: true,
                                     hideable: true,
-                                    sortable: false,
+                                    sortable: true,
                                     menuDisabled: false,
                                     align: 'left',
                                     renderer: function (value, metaData, record, rowIndex, colIndex, store) {

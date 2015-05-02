@@ -109,7 +109,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Window, {
             iconCls: 'save',
             handler: function () {
                 var fields = this.form2.getForm().getFieldValues();
-                var obj = "({";
+                var objOk = {};
                 for (var key in fields) {
                     var value = null;
                     if (fields[key] && fields[key] instanceof Date)
@@ -128,12 +128,9 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Window, {
                     } else
                         value = fields[key] ? fields[key] : '';
 
-                    obj += "'" + key + "':'" + value + "',";
+                    objOk[key] = value
                 }
-                if (obj.length > 2) {
-                    obj = obj.substring(0, obj.length - 1);
-                }
-                var params = eval(obj + "})");
+                var params = objOk;
                 params.DocumentBody = this.textField.getValue();
                 params.DocumentName = this.nameField.getValue();
                 params.DocumentUid = this.uidField.getValue();
