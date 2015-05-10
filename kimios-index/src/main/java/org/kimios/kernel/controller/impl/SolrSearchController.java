@@ -490,8 +490,8 @@ public class SolrSearchController
     private boolean canRead(Session session, SearchRequest searchRequest) {
         if (!SecurityAgent.getInstance().isAdmin(session.getUserName(), session.getUserSource())) {
              /*
-            filter rights
-         */
+                filter rights
+             */
             List<String> hashs = new ArrayList<String>();
             List<String> noAccessHash = new ArrayList<String>();
             noAccessHash.add(DMSecurityRule
@@ -536,8 +536,10 @@ public class SolrSearchController
             throws AccessDeniedException, DataSourceException, ConfigException, IndexException, IOException {
         SearchRequest searchRequest = searchRequestFactory.loadById(id);
 
-        if ((searchRequest.getPublicAccess() != null && searchRequest.getPublicAccess()) ||
-                canRead(session, searchRequest)) {
+        if ((searchRequest.getPublicAccess() != null && searchRequest.getPublicAccess())
+                || canRead(session, searchRequest)
+                || (searchRequest.getOwner().equals(session.getUserName())
+                    && searchRequest.getOwnerSource().equals(session.getUserSource()))) {
             //load securities
             List<SearchRequestSecurity> securities = searchRequestSecurityFactory.getSearchRequestSecurities(searchRequest);
             for (SearchRequestSecurity sec : securities)
@@ -583,7 +585,8 @@ public class SolrSearchController
                         .getInstance(g.getGid(), g.getAuthenticationSourceName(), SecurityEntityType.GROUP,
                                 DMSecurityRule.FULLRULE).getRuleHash());
             }
-            List<SearchRequest> readables = searchRequestSecurityFactory.authorizedReadRequests(requests, session.getUserName(), session.getUserSource(), hashs, noAccessHash);
+            List<SearchRequest> readables = searchRequestSecurityFactory
+                    .authorizedRequests(requests, session.getUserName(), session.getUserSource(), hashs, noAccessHash);
             return readables;
         } catch (Exception e) {
             log.error("error while loading queries", e);
@@ -594,7 +597,14 @@ public class SolrSearchController
 
     public List<SearchRequest> searchRequestList(Session session) {
         log.debug("Calling Published Search Request List");
-        return searchRequestFactory.loadSearchRequest(session.getUserName(), session.getUid());
+        List<SearchRequest> searchRequestList = searchRequestFactory.loadSearchRequest(session.getUserName(), session.getUid());
+
+        List<SearchRequest> searchRequests = new ArrayList<SearchRequest>();
+        for(SearchRequest searchRequest: searchRequestList){
+            if(canRead(session, searchRequest))
+                searchRequests.add(searchRequest);
+        }
+        return searchRequests;
     }
 
 
@@ -1252,9 +1262,9 @@ public class SolrSearchController
                                                      String sortField, String sortDir, String virtualPath)
             throws AccessDeniedException, DataSourceException, ConfigException, IndexException, IOException, ParseException {
         SearchRequest searchRequest = searchRequestFactory.loadById(id);
-        if (searchRequest == null || (!(searchRequest.getOwner().equals(session.getUserName())
-                && searchRequest.getOwnerSource().equals(session.getUserSource())) && !searchRequest.getPublicAccess())
-                || !canRead(session, searchRequest)) {
+        if (searchRequest == null
+                 || !(searchRequest.getPublicAccess()
+                    || canRead(session, searchRequest))) {
             throw new AccessDeniedException();
         }
         ObjectMapper objectMapper = new ObjectMapper();

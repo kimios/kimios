@@ -69,7 +69,7 @@ public class ReindexParallelCommand extends KimiosCommand {
                     extensionExcluded != null ? Arrays.asList(extensionExcluded) : new ArrayList<String>(),
                     block,
                     readTimeOut,
-                    TimeUnit.valueOf(readTimeOutUnit),
+                    readTimeOutUnit != null ? TimeUnit.valueOf(readTimeOutUnit) : null,
                     regenerateMetaWrapper
             );
         }

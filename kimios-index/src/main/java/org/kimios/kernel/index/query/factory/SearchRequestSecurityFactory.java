@@ -37,60 +37,32 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-public class SearchRequestSecurityFactory extends HFactory
-{
+public class SearchRequestSecurityFactory extends HFactory {
     final Logger log = LoggerFactory.getLogger(SearchRequestSecurityFactory.class);
 
 
-
-    public  List<SearchRequest> authorizedReadRequests(List<SearchRequest> e, String userName, String userSource,
-                                                   List<String> hashs, List<String> noAccessHash)
-            throws ConfigException, DataSourceException
-    {
+    public List<SearchRequest> authorizedRequests(List<SearchRequest> e, String userName, String userSource,
+                                                  List<String> hashs, List<String> noAccessHash)
+            throws ConfigException, DataSourceException {
         try {
 
-            String rightQuery =
-                    "select distinct s.id from searches s left join search_request_acl acl on " +
-                            "(s.id = acl.search_request_id) where " +
-                            " (acl.rule_hash in (:hash) or (s.owner = :userName and s.owner_source = :userSource) or (s.search_public is true))"
-                            +
-                            " and s.id not in (select no.search_request_id from search_request_acl no inner join searches sid " +
-                            "on (sid.id = no.search_request_id) "
-                            + "where no.rule_hash in (:noAccessHash))";
 
-            List<Long> idsList = getSession().createSQLQuery(rightQuery)
-                    .addScalar("id", LongType.INSTANCE)
-                    .setParameterList("hash", hashs)
-                    .setString("userName", userName)
-                    .setString("userSource", userSource)
-                    .setParameterList("noAccessHash", noAccessHash)
-                    .list();
-
-            if (idsList == null || idsList.size() == 0) {
+            if (e.size() == 0)
                 return new ArrayList<SearchRequest>();
-            }
-            return getSession().createQuery("from SearchRequest where id in (:idList)")
-                    .setParameterList("idList", idsList)
-                    .list();
-        } catch (HibernateException ex) {
-            throw new DataSourceException(ex);
-        }
-    }
 
-    public  List<SearchRequest> authorizedRequests(List<SearchRequest> e, String userName, String userSource,
-                                                   List<String> hashs, List<String> noAccessHash)
-            throws ConfigException, DataSourceException
-    {
-        try {
+            List<Long> requestsIds = new ArrayList<Long>();
+            for (SearchRequest z : e) {
+                requestsIds.add(z.getId());
+            }
 
             String rightQuery =
                     "select distinct s.id from searches s left join search_request_acl acl on " +
                             "(s.id = acl.search_request_id) where " +
                             " (acl.rule_hash in (:hash) or (s.owner = :userName and s.owner_source = :userSource))"
-                            +
+                            + " and s.id in (:requestIds) " +
                             " and s.id not in (select no.search_request_id from search_request_acl no inner join searches sid " +
                             "on (sid.id = no.search_request_id) "
-                            + "where no.rule_hash in (:noAccessHash))";
+                            + "where no.rule_hash in (:noAccessHash) and no.search_request_id in (:requestIds))";
 
             List<Long> idsList = getSession().createSQLQuery(rightQuery)
                     .addScalar("id", LongType.INSTANCE)
@@ -98,6 +70,7 @@ public class SearchRequestSecurityFactory extends HFactory
                     .setString("userName", userName)
                     .setString("userSource", userSource)
                     .setParameterList("noAccessHash", noAccessHash)
+                    .setParameterList("requestIds", requestsIds)
                     .list();
 
             if (idsList == null || idsList.size() == 0) {
@@ -114,8 +87,7 @@ public class SearchRequestSecurityFactory extends HFactory
 
     public boolean ruleExists(SearchRequest e, String userName, String userSource, List<String> hashs,
                               List<String> noAccessHash)
-            throws ConfigException, DataSourceException
-    {
+            throws ConfigException, DataSourceException {
         try {
 
             String rightQuery = "select distinct s.id "
@@ -123,9 +95,10 @@ public class SearchRequestSecurityFactory extends HFactory
                     + "left join search_request_acl acl "
                     + "on (s.id = acl.search_request_id) "
                     + "where "
-                    + " ((acl.rule_hash in (:hash)) "
+                    + " (acl.rule_hash in (:hash) "
                     + "or "
-                    + "((s.owner = :userName and s.owner_source = :userSource)))"
+                    + "(s.owner = :userName and s.owner_source = :userSource))"
+                    + " and s.id = :requestId "
                     + " and "
                     + "s.id not in "
                     + "("
@@ -133,9 +106,10 @@ public class SearchRequestSecurityFactory extends HFactory
                     + "from search_request_acl no "
                     + "inner join searches sid "
                     + "on (sid.id = no.search_request_id) "
-                    + "where no.rule_hash in (:noAccessHash))";
+                    + "where no.rule_hash in (:noAccessHash) and no.search_request_id = :requestId)";
 
             Integer t = getSession().createSQLQuery(rightQuery)
+                    .setLong("requestId", e.getId())
                     .setString("userName", userName)
                     .setString("userSource", userSource)
                     .setParameterList("hash", hashs)
@@ -150,10 +124,8 @@ public class SearchRequestSecurityFactory extends HFactory
     }
 
 
-
     public void createSecurityEntityRules(String secEntityName, String secEntitySource, int secEntityType)
-            throws ConfigException, DataSourceException
-    {
+            throws ConfigException, DataSourceException {
         try {
             DMSecurityRule read =
                     DMSecurityRule.getInstance(secEntityName, secEntitySource, secEntityType, DMSecurityRule.READRULE);
@@ -180,8 +152,7 @@ public class SearchRequestSecurityFactory extends HFactory
     }
 
     public void addAclToSearchRequest(SecurityEntity sec,
-            SearchRequest a, short rule)
-    {
+                                      SearchRequest a, short rule) {
         try {
             SearchRequestACL acl = new SearchRequestACL(a);
             acl.setRuleHash(DMSecurityRule.getInstance(
@@ -193,8 +164,7 @@ public class SearchRequestSecurityFactory extends HFactory
     }
 
     public void cleanACL(SearchRequest searchRequest)
-            throws ConfigException, DataSourceException
-    {
+            throws ConfigException, DataSourceException {
         try {
             String q = "delete from SearchRequestACL where searchRequestId = :reqId";
             getSession().createQuery(q)
@@ -206,8 +176,7 @@ public class SearchRequestSecurityFactory extends HFactory
     }
 
     public void deleteSearchRequestACL(SearchRequestSecurity des)
-            throws ConfigException, DataSourceException
-    {
+            throws ConfigException, DataSourceException {
         try {
             SearchRequestACL acl = new SearchRequestACL(des.getSearchRequest());
             getSession().delete(acl);
@@ -217,8 +186,7 @@ public class SearchRequestSecurityFactory extends HFactory
     }
 
     public List<SearchRequestSecurity> getSearchRequestSecurities(SearchRequest e)
-            throws ConfigException, DataSourceException
-    {
+            throws ConfigException, DataSourceException {
         try {
 //      String query = "select rule from DMEntityACL acl, DMSecurityRule rule where acl.path like :path and rule.ruleHash = acl.ruleHash";
             String query =
@@ -236,8 +204,7 @@ public class SearchRequestSecurityFactory extends HFactory
                 for (SearchRequestSecurity secEnt : vDes) {
                     if (secEnt.getName().equalsIgnoreCase(rule.getSecurityEntityUid())
                             && secEnt.getSource().equalsIgnoreCase(rule.getSecurityEntitySource())
-                            && secEnt.getType() == rule.getSecurityEntityType())
-                    {
+                            && secEnt.getType() == rule.getSecurityEntityType()) {
                         tt = secEnt;
                         break;
                     }
@@ -289,8 +256,7 @@ public class SearchRequestSecurityFactory extends HFactory
     }
 
     public List<SearchRequestACL> getSearchRequestACL(SearchRequest e)
-            throws ConfigException, DataSourceException
-    {
+            throws ConfigException, DataSourceException {
         try {
             String query = "from SearchRequestACL acl where searchRequestId = :sid";
             return getSession().createQuery(query)
@@ -302,9 +268,8 @@ public class SearchRequestSecurityFactory extends HFactory
     }
 
     public SearchRequestSecurity getSearchRequestSecurity(SearchRequest e, String name,
-            String source, int type) throws ConfigException,
-            DataSourceException
-    {
+                                                          String source, int type) throws ConfigException,
+            DataSourceException {
         try {
             SearchRequestSecurity d = (SearchRequestSecurity) getSession().createCriteria(SearchRequestSecurity.class)
                     .add(Restrictions.eq("searchRequestId", e.getId()))
@@ -319,8 +284,7 @@ public class SearchRequestSecurityFactory extends HFactory
     }
 
     public List<SearchRequestACL> saveSearchRequestSecurity(SearchRequestSecurity des)
-            throws ConfigException, DataSourceException
-    {
+            throws ConfigException, DataSourceException {
 
         List<SearchRequestACL> ret = new ArrayList<SearchRequestACL>();
         SearchRequestACL readAcl = new SearchRequestACL(des.getSearchRequest());
