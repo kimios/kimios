@@ -218,5 +218,38 @@ public class DMEntitySecurity implements Serializable
                 this.write,
                 this.fullAccess);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DMEntitySecurity security = (DMEntitySecurity) o;
+
+        if (dmEntityUid != security.dmEntityUid) return false;
+        if (dmEntityType != security.dmEntityType) return false;
+        if (type != security.type) return false;
+        if (read != security.read) return false;
+        if (write != security.write) return false;
+        if (fullAccess != security.fullAccess) return false;
+        if (!name.equals(security.name)) return false;
+        if (!source.equals(security.source)) return false;
+        return fullName.equals(security.fullName);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (dmEntityUid ^ (dmEntityUid >>> 32));
+        result = 31 * result + dmEntityType;
+        result = 31 * result + name.hashCode();
+        result = 31 * result + source.hashCode();
+        result = 31 * result + fullName.hashCode();
+        result = 31 * result + type;
+        result = 31 * result + (read ? 1 : 0);
+        result = 31 * result + (write ? 1 : 0);
+        result = 31 * result + (fullAccess ? 1 : 0);
+        return result;
+    }
 }
 

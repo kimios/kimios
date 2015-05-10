@@ -234,7 +234,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
         EventContext.get().setEntity(document);
 
         if (!isSecurityInherited)
-            secCtrl.updateDMEntitySecurities(s, documentId, securitiesXmlStream, false);
+            secCtrl.updateDMEntitySecurities(s, documentId, securitiesXmlStream, false, false);
 
         long versionId = vrsCtrl.createDocumentVersion(s, documentId);
 
@@ -296,7 +296,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
             EventContext.addParameter("document", document);
 
             if (!isSecurityInherited)
-                secCtrl.updateDMEntitySecurities(s, documentId, securitiesXmlStream, isRecursive);
+                secCtrl.updateDMEntitySecurities(s, documentId, securitiesXmlStream, isRecursive, false);
 
 
             long versionId = vrsCtrl.createDocumentVersion(s, documentId);
@@ -494,7 +494,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
             log.info("Adding document " + document + " to event context");
             EventContext.addParameter("document", document);
             if (!isSecurityInherited)
-                secCtrl.updateDMEntitySecurities(s, documentId, securitiesXmlStream, isRecursive);
+                secCtrl.updateDMEntitySecurities(s, documentId, securitiesXmlStream, isRecursive, false);
 
             vrsCtrl.createDocumentVersion(s, documentId);
             DataTransfer dt = ftCtrl.startUploadTransaction(s, documentId, false);
@@ -645,7 +645,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
             log.info("EventContext info " + EventContext.get().getEntity() + " " + EventContext.get().getEntity());
             EventContext.addParameter("document", document);
             if (!isSecurityInherited)
-                secCtrl.updateDMEntitySecurities(s, documentId, items, isRecursive);
+                secCtrl.updateDMEntitySecurities(s, documentId, items, isRecursive, false);
             vrsCtrl.createDocumentVersion(s, documentId);
             DataTransfer dt = ftCtrl.startUploadTransaction(s, documentId, false);
             DataTransfer transac = transferFactoryInstantiator.getDataTransferFactory().getDataTransfer(dt.getUid());

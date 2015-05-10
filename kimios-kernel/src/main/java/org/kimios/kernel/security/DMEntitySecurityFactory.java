@@ -23,8 +23,7 @@ import org.kimios.kernel.exception.DataSourceException;
 import java.util.List;
 import java.util.Vector;
 
-public interface DMEntitySecurityFactory
-{
+public interface DMEntitySecurityFactory {
 
     public Vector<DMEntitySecurity> getDMEntitySecurities(DMEntity e) throws ConfigException, DataSourceException;
 
@@ -37,17 +36,17 @@ public interface DMEntitySecurityFactory
     public void deleteDMEntitySecurity(DMEntitySecurity des) throws ConfigException, DataSourceException;
 
     public boolean ruleExists(DMEntity e, String userName, String userSource, Vector<String> hashs,
-            Vector<String> noAccessHash) throws ConfigException, DataSourceException;
+                              Vector<String> noAccessHash) throws ConfigException, DataSourceException;
 
     public void cleanACL(DMEntity e) throws ConfigException, DataSourceException;
 
     public void cleanACLRecursive(DMEntity d) throws ConfigException, DataSourceException;
 
     public <T extends DMEntityImpl> List<T> authorizedEntities(List<T> e, String userName, String userSource,
-            Vector<String> hashs, Vector<String> noAccessHash) throws ConfigException, DataSourceException;
+                                                               Vector<String> hashs, Vector<String> noAccessHash) throws ConfigException, DataSourceException;
 
     public boolean hasAnyChildNotWritable(DMEntity e, String userName, String userSource, Vector<String> writeHash,
-            String noAccessHash) throws ConfigException, DataSourceException;
+                                          String noAccessHash) throws ConfigException, DataSourceException;
 
     public boolean hasAnyChildCheckedOut(DMEntity e, String userName, String userSource)
             throws ConfigException, DataSourceException;
@@ -57,5 +56,11 @@ public interface DMEntitySecurityFactory
 
     public void saveDefaultDMEntitySecurity(DMEntitySecurity des, String objectType, String entityPath)
             throws ConfigException, DataSourceException;
+
+    public List<DMEntityACL> generateDMEntityAclsFromSecuritiesObject(List<DMEntitySecurity> securities, DMEntity entity);
+
+    public List<DMEntitySecurity> generateDMEntitySecuritiesFromAcls(List<DMEntityACL> acls, DMEntity entity)
+            throws ConfigException, DataSourceException;
+
 }
 

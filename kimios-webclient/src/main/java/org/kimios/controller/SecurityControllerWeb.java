@@ -123,7 +123,7 @@ public class SecurityControllerWeb extends Controller {
       entitySecurities.add(entitySecurity);
     }
     
-    securityController.updateDMEntitySecurities(sessionUid, uid, type, false, entitySecurities);
+    securityController.updateDMEntitySecurities(sessionUid, uid, type, false, false, entitySecurities);
   }
 
 }

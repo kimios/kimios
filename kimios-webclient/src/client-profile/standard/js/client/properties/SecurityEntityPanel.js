@@ -221,15 +221,38 @@ kimios.properties.SecurityEntityPanel = Ext.extend(Ext.Panel, {
 
         this.centerContainer.add(this.grid);
 
+        this.isRecursiveAppendModeField = new Ext.form.Checkbox({
+            fieldLabel: kimios.lang('ApplyToChildrenAppendMode'),
+            name: 'appendMode',
+            disabled: !this.dmEntityPojo || !(this.dmEntityPojo instanceof Array ||
+            (this.dmEntityPojo.uid != null && (this.dmEntityPojo.type == 1 || this.dmEntityPojo.type == 2))),
+            checked: true,
+            hidden: false
+        });
+
+        var appendModeField = this.isRecursiveAppendModeField;
+
         this.isRecursiveField = new Ext.form.Checkbox({
             fieldLabel: kimios.lang('ApplyToChildren'),
             name: 'isRecursive',
             disabled: !this.dmEntityPojo || !(this.dmEntityPojo instanceof Array ||
                 (this.dmEntityPojo.uid != null && (this.dmEntityPojo.type == 1 || this.dmEntityPojo.type == 2))),
             checked: false,
-            hidden: !this.dmEntityPojo
+            hidden: !this.dmEntityPojo,
+            listeners: {
+                check : function(it, checked){
+                    if(checked){
+                        appendModeField.show()
+                    } else {
+                        appendModeField.hide();
+                    }
+                }
+            }
         });
-        this.southContainer.add(this.isRecursiveField);
+
+
+
+        this.southContainer.add(this.isRecursiveField, this.isRecursiveAppendModeField);
 
         this.on('activate', function () {
             if (this.loaded == false && (this.dmEntityPojo.uid != undefined || (this.searchRequest && this.searchRequest.id))) {
@@ -267,6 +290,10 @@ kimios.properties.SecurityEntityPanel = Ext.extend(Ext.Panel, {
 
     isRecursiveSecurity: function () {
         return this.isRecursiveField.checked;
+    },
+
+    isRecursiveAppendMode: function(){
+        return this.isRecursiveAppendModeField.checked;
     },
 
     isEmpty: function () {

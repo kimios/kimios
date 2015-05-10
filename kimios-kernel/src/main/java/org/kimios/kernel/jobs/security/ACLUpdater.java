@@ -19,6 +19,7 @@ import org.kimios.kernel.dms.DMEntity;
 import org.kimios.kernel.dms.FactoryInstantiator;
 import org.kimios.kernel.events.annotations.DmsEvent;
 import org.kimios.kernel.events.annotations.DmsEventName;
+import org.kimios.kernel.hibernate.HFactory;
 import org.kimios.kernel.security.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,40 +30,47 @@ import java.util.List;
 import java.util.Vector;
 
 @Transactional
-public class ACLUpdater implements IACLUpdater
-{
+public class ACLUpdater implements IACLUpdater {
     private static Logger log = LoggerFactory.getLogger(IACLUpdater.class);
 
     //TODO: FIX Potential trouble Regarding Ended Transaction before end of clean. Should ENHANCE Performance
-    @DmsEvent(eventName = { DmsEventName.ENTITY_ACL_UPDATE })
-    public List<DMEntityACL> updateAclsRecursiveMode(Session session, String xmlStream, DMEntity entity)
-            throws Exception
-    {
-        Vector<DMEntitySecurity> des = DMEntitySecurityUtil.getDMentitySecuritesFromXml(xmlStream, entity);
-        List<DMEntityACL> listAclToIndex = updateAclsRecursiveMode(session, des, entity);
-        return listAclToIndex;
-    }
-
-
-    @DmsEvent(eventName = { DmsEventName.ENTITY_ACL_UPDATE })
-    public List<DMEntityACL> updateAclsRecursiveMode(Session session, List<DMEntitySecurity> securityItems, DMEntity entity)
-            throws Exception
-    {
+    @DmsEvent(eventName = {DmsEventName.ENTITY_ACL_UPDATE})
+    public List<DMEntityACL> updateAclsRecursiveMode(Session session, List<DMEntitySecurity> securityItems, DMEntity entity,
+                                                     boolean addMode, List<DMEntityACL> removedAcls)
+            throws Exception {
 
         DMEntitySecurityFactory fact =
                 org.kimios.kernel.security.FactoryInstantiator.getInstance().getDMEntitySecurityFactory();
         List<DMEntityACL> listAclToIndex = new ArrayList<DMEntityACL>();
-        fact.cleanACLRecursive(entity);
-        log.debug("entity existing acls have been removed");
+
+        if (!addMode) {
+            fact.cleanACLRecursive(entity);
+            log.debug("entity existing acls have been removed, because of not in append mode");
+        } else {
+            log.debug("existing acls are kept!, but some may be removed : {}", removedAcls.size());
+
+
+
+        }
+
+
         for (DMEntitySecurity acl : securityItems) {
             acl.setDmEntity(entity);
             listAclToIndex.addAll(fact.saveDMEntitySecurity(acl));
             log.debug("added acl {} for {}", (acl.getType() == 1 ? "user " : "group ") + acl.getName() + "@" + acl.getSource(), entity.getPath());
         }
+
+        if(addMode){
+            //process removed items
+
+        }
+
         List<DMEntity> items = FactoryInstantiator.getInstance().getDmEntityFactory().getEntities(entity.getPath());
 
         log.debug("loaded child entities: {}", items.size());
+        List<Long> childLists = new ArrayList<Long>();
         for (DMEntity it : items) {
+            childLists.add(it.getUid());
             //generate sec for childrens, from previouslys created sec (to avoid xml parsing on each loop)
             for (DMEntitySecurity sec : securityItems) {
                 DMEntitySecurity nSec =
@@ -72,6 +80,31 @@ public class ACLUpdater implements IACLUpdater
                 log.debug("added acl {} for {}", (nSec.getType() == 1 ? "user " : "group ") + nSec.getName() + "@" + nSec.getSource(), it.getPath());
             }
         }
+
+        if(addMode && removedAcls.size() > 0){
+
+            //add main entity
+            childLists.add(entity.getUid());
+            List<String> hashToRemove = new ArrayList<String>();
+            for(DMEntityACL r: removedAcls) {
+                hashToRemove.add(r.getRuleHash());
+            }
+
+            String deleteRemovedAclsQuery = "delete from DMEntityACL acl where acl.ruleHash in (:removedHashList) " +
+                    " and acl.dmEntityUid in (:childList)";
+
+            int removedItems = ((HFactory)FactoryInstantiator.getInstance()
+                    .getDocumentFactory())
+                    .getSession().createQuery(deleteRemovedAclsQuery)
+                    .setParameterList("childList", childLists)
+                    .setParameterList("removedHashList", hashToRemove)
+                    .executeUpdate();
+
+            log.debug("removed acls for children: {}", removedItems);
+
+        }
+
+
         return listAclToIndex;
     }
 }

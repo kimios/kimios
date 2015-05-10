@@ -47,12 +47,13 @@ public class SecurityServiceImpl extends CoreService implements SecurityService
         }
     }
 
-    public void updateDMEntitySecurities(String sessionId, long dmEntityId, String xmlStream, boolean isRecursive)
+    public void updateDMEntitySecurities(String sessionId, long dmEntityId, String xmlStream, boolean isRecursive,
+                                         boolean appendMode)
             throws DMServiceException
     {
         try {
             Session session = getHelper().getSession(sessionId);
-            securityController.updateDMEntitySecurities(session, dmEntityId, xmlStream, isRecursive);
+            securityController.updateDMEntitySecurities(session, dmEntityId, xmlStream, isRecursive, appendMode);
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }

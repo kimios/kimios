@@ -50,7 +50,8 @@ public interface SecurityService
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "dmEntityId") @WebParam(name = "dmEntityId") long dmEntityId,
             @QueryParam(value = "xmlStream") @WebParam(name = "xmlStream") String xmlStream,
-            @QueryParam(value = "isRecursive") @WebParam(name = "isRecursive") boolean isRecursive)
+            @QueryParam(value = "isRecursive") @WebParam(name = "isRecursive") boolean isRecursive,
+            @DefaultValue(value = "false") @QueryParam(value = "appendMode") @WebParam(name = "appendMode") boolean appendMode)
             throws DMServiceException;
 
     @GET

@@ -57,7 +57,9 @@ public class FolderActionHandler extends Controller {
     long folderUid = fsm.createFolder(sessionUid, f, isSecurityInherited);
     f.setUid(folderUid);
     if (!isSecurityInherited) {
-      securityController.updateDMEntitySecurities(sessionUid, folderUid, 2, false, DMEntitySecuritiesParser.parseFromJson(this.parameters.get("sec"),
+      securityController.updateDMEntitySecurities(sessionUid, folderUid, 2, false,
+                       false,
+              DMEntitySecuritiesParser.parseFromJson(this.parameters.get("sec"),
           folderUid, 2));
     }
   }
@@ -69,13 +71,17 @@ public class FolderActionHandler extends Controller {
     f.setName(parameters.get("name"));
     fsm.updateFolder(sessionUid, f);
     boolean recursive = false;
+    boolean appendSecMode = true;
     recursive = parameters.get("isRecursive") != null && parameters.get("isRecursive").equals("true");
     if (securityController.hasFullAccess(sessionUid, f.getUid(), 2)) {
       boolean changeSecurity = true;
       if (parameters.get("changeSecurity") != null)
         changeSecurity = Boolean.parseBoolean(parameters.get("changeSecurity"));
+      if (parameters.get("appendMode") != null)
+          appendSecMode = Boolean.parseBoolean(parameters.get("appendSecMode"));
       if  (changeSecurity == true)
-        securityController.updateDMEntitySecurities(sessionUid, folderUid, 2, recursive, DMEntitySecuritiesParser.parseFromJson(parameters.get("sec"), folderUid, 2));
+        securityController.updateDMEntitySecurities(sessionUid, folderUid, 2, recursive, appendSecMode,
+                DMEntitySecuritiesParser.parseFromJson(parameters.get("sec"), folderUid, 2));
     }
   }
 }

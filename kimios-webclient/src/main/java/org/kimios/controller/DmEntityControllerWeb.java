@@ -307,6 +307,8 @@ public class DmEntityControllerWeb extends Controller
                             securityController.updateDMEntitySecurities(sessionUid, dmEntityUid, 1,
                                     (parameters.get("isRecursive") != null && parameters.get(
                                             "isRecursive").equals("true")),
+                                    (parameters.get("appendMode") != null && parameters.get(
+                                            "appendMode").equals("false")),
                                     DMEntitySecuritiesParser.parseFromJson(parameters.get("sec"), dmEntityUid, 1));
                         }
                     }
@@ -324,7 +326,9 @@ public class DmEntityControllerWeb extends Controller
                             changeSecurity = Boolean.parseBoolean(parameters.get("changeSecurity"));
                         }
                         if (changeSecurity == true) {
-                            securityController.updateDMEntitySecurities(sessionUid, dmEntityUid, 2, recursive,
+                            securityController.updateDMEntitySecurities(sessionUid, dmEntityUid, 2,
+                                    recursive,
+                                    true,
                                     DMEntitySecuritiesParser.parseFromJson(
                                             parameters.get("sec"), dmEntityUid, 2));
                         }
@@ -345,7 +349,8 @@ public class DmEntityControllerWeb extends Controller
                     if (parameters.get("changeSecurity") != null &&
                             Boolean.parseBoolean(parameters.get("changeSecurity")) == true)
                     {
-                        securityController.updateDMEntitySecurities(sessionUid, dmEntityUid, 3, false,
+
+                        securityController.updateDMEntitySecurities(sessionUid, dmEntityUid, 3, false, false,
                                 DMEntitySecuritiesParser.parseFromJson(sec, dmEntityUid, 3));
                     }
                     Map<Meta, String> mMetasValues = DMEntitySecuritiesParser

@@ -308,7 +308,7 @@ public class SecurityController
     /**
      * Update rights for a given entity from an xml descriptor
      */
-    public void updateDMEntitySecurities( String sessionId, long dmEntityId, int dmEntityType, boolean isRecursive,
+    public void updateDMEntitySecurities( String sessionId, long dmEntityId, int dmEntityType, boolean isRecursive, boolean appendMode,
                                           Vector<DMEntitySecurity> des )
         throws Exception, AccessDeniedException, DMSException
     {
@@ -329,7 +329,7 @@ public class SecurityController
             }
             xmlStream += "</security-rules>";
             des = null;
-            client.updateDMEntitySecurities( sessionId, dmEntityId, xmlStream, isRecursive );
+            client.updateDMEntitySecurities( sessionId, dmEntityId, xmlStream, isRecursive, appendMode );
         }
         catch ( Exception e )
         {

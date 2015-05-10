@@ -60,24 +60,26 @@ kimios.request = {
         }, handle);
     },
 
-    updateWorkspace: function (uid, name, sec, isRecursive, handle, changeSecurity) {
+    updateWorkspace: function (uid, name, sec, isRecursive, isRecursiveAppendMode, handle, changeSecurity) {
         kimios.ajaxRequest('Workspace', {
             action: 'UpdateWorkspace',
             uid: uid,
             name: name,
             sec: sec,
             isRecursive: isRecursive,
+            appendMode: isRecursiveAppendMode,
             changeSecurity: changeSecurity
         }, handle);
     },
 
-    updateFolder: function (uid, name, sec, isRecursive, handle, changeSecurity) {
+    updateFolder: function (uid, name, sec, isRecursive, isRecursiveAppendMode, handle, changeSecurity) {
         kimios.ajaxRequest('Folder', {
             action: 'UpdateFolder',
             uid: uid,
             name: name,
             sec: sec,
             isRecursive: isRecursive,
+            appendMode: isRecursiveAppendMode,
             changeSecurity: changeSecurity
         }, handle);
     },
@@ -95,7 +97,7 @@ kimios.request = {
         }, handle);
     },
 
-    updateEntities: function (dmEntityPojos, jsonSecurityValues, isRecursive, documentTypeUid, jsonMetaValues, handle, changeSecurity) {
+    updateEntities: function (dmEntityPojos, jsonSecurityValues, isRecursive, isRecursiveAppendMode, documentTypeUid, jsonMetaValues, handle, changeSecurity) {
         if (documentTypeUid == undefined || documentTypeUid == null || documentTypeUid == '') documentTypeUid = -1;
         kimios.ajaxRequest('DmsEntity', {
             action: 'UpdateEntities',
@@ -104,6 +106,7 @@ kimios.request = {
             metaValues: jsonMetaValues,
             sec: jsonSecurityValues,
             isRecursive: isRecursive,
+            appendMode: isRecursiveAppendMode,
             changeSecurity: changeSecurity
         }, handle);
     },

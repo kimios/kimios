@@ -22,59 +22,66 @@ import org.kimios.kernel.ws.pojo.Workspace;
 import java.util.Calendar;
 import java.util.Map;
 
-public class WorkspaceActionHandler extends Controller{
+public class WorkspaceActionHandler extends Controller {
 
     public WorkspaceActionHandler(Map<String, String> parameters) {
         super(parameters);
     }
 
-  public String execute() throws Exception{
-      if(action!=null){
-        if(action.equals("NewWorkspace"))
-          addWorkspace();
-        if(action.equals("UpdateWorkspace"))
-          updateWorkspace();
+    public String execute() throws Exception {
+        if (action != null) {
+            if (action.equals("NewWorkspace"))
+                addWorkspace();
+            if (action.equals("UpdateWorkspace"))
+                updateWorkspace();
 
-                return "";
-      }else
-                return "NOACTION";
-  }
-        
-        
-  private void addWorkspace() throws Exception {
-    User user=securityController.getUser(sessionUid);
-    WorkspaceController fsm = workspaceController;
-    Workspace w = new Workspace();
-    w.setName(parameters.get("name"));
-    w.setCreationDate(Calendar.getInstance());
-    w.setOwner(user.getUid());
-    w.setOwnerSource(user.getSource());
-    w.setUid(-1);
-    long workspaceUid=fsm.createWorkspace(sessionUid, w);
-    w.setUid(workspaceUid);
-                
-    securityController.updateDMEntitySecurities(sessionUid, workspaceUid, 1, false,
+            return "";
+        } else
+            return "NOACTION";
+    }
+
+
+    private void addWorkspace() throws Exception {
+        User user = securityController.getUser(sessionUid);
+        WorkspaceController fsm = workspaceController;
+        Workspace w = new Workspace();
+        w.setName(parameters.get("name"));
+        w.setCreationDate(Calendar.getInstance());
+        w.setOwner(user.getUid());
+        w.setOwnerSource(user.getSource());
+        w.setUid(-1);
+        long workspaceUid = fsm.createWorkspace(sessionUid, w);
+        w.setUid(workspaceUid);
+
+        securityController.updateDMEntitySecurities(sessionUid, workspaceUid, 1, false, false,
+                DMEntitySecuritiesParser.parseFromJson(parameters.get("sec"), workspaceUid, 1));
+
+    }
+
+    private void updateWorkspace() throws Exception {
+        WorkspaceController fsm = workspaceController;
+        long workspaceUid = Long.parseLong(parameters.get("uid"));
+        Workspace w = fsm.getWorkspace(sessionUid, workspaceUid);
+        w.setName(parameters.get("name"));
+        fsm.updateWorkspace(sessionUid, w);
+        if (securityController.hasFullAccess(sessionUid, workspaceUid, 1)) {
+            boolean changeSecurity = true;
+            if (parameters.get("changeSecurity") != null)
+                changeSecurity = Boolean.parseBoolean(parameters.get("changeSecurity"));
+
+            if (changeSecurity == true) {
+                boolean appendMode = true;
+                if (parameters.get("appendMode") != null) {
+                    appendMode = Boolean.parseBoolean(parameters.get("appendMode"));
+                }
+                securityController.updateDMEntitySecurities(sessionUid, workspaceUid, 1,
+
+                        (parameters.get("isRecursive") != null && parameters.get("isRecursive").equals("true")),
+                        appendMode,
                         DMEntitySecuritiesParser.parseFromJson(parameters.get("sec"), workspaceUid, 1));
-
-  }
-  
-  private void updateWorkspace() throws Exception {
-      WorkspaceController fsm = workspaceController;
-      long workspaceUid=Long.parseLong(parameters.get("uid"));
-      Workspace w = fsm.getWorkspace(sessionUid, workspaceUid);
-      w.setName(parameters.get("name"));
-      fsm.updateWorkspace(sessionUid, w);
-      if(securityController.hasFullAccess(sessionUid, workspaceUid, 1)){
-        boolean changeSecurity = true;
-        if (parameters.get("changeSecurity") != null)
-          changeSecurity = Boolean.parseBoolean(parameters.get("changeSecurity"));
-        
-        if (changeSecurity == true){
-          securityController.updateDMEntitySecurities(sessionUid, workspaceUid, 1, (parameters.get("isRecursive")!=null && parameters.get("isRecursive").equals("true")),
-                                          DMEntitySecuritiesParser.parseFromJson(parameters.get("sec"), workspaceUid, 1));
+            }
         }
-      }
-  }
+    }
 
 }
 

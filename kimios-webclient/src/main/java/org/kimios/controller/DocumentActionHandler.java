@@ -311,7 +311,7 @@ public class DocumentActionHandler
 
         if ( changeSecurity == true )
         {
-            securityController.updateDMEntitySecurities( sessionUid, docUid, 3, false,
+            securityController.updateDMEntitySecurities( sessionUid, docUid, 3, false, false,
                                                          DMEntitySecuritiesParser.parseFromJson( sec, docUid, 3 ) );
         }
         if ( newVersion )

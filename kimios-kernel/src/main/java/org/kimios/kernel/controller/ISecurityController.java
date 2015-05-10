@@ -41,14 +41,15 @@ public interface ISecurityController
      * Update rights for a given entity from an xml descriptor
      */
     @DmsEvent(eventName = { DmsEventName.ENTITY_ACL_UPDATE })
-    public void updateDMEntitySecurities(Session session, long dmEntityUid, String xmlStream, boolean isRecursive)
+    public void updateDMEntitySecurities(Session session, long dmEntityUid, String xmlStream,
+                                         boolean isRecursive, boolean appendMode)
             throws AccessDeniedException, ConfigException, DataSourceException,
             XMLException;
 
 
     @DmsEvent(eventName = { DmsEventName.ENTITY_ACL_UPDATE })
     public void updateDMEntitySecurities(Session session, long dmEntityUid, List<DMEntitySecurity> items,
-                             boolean isRecursive) throws AccessDeniedException, ConfigException, DataSourceException;
+                             boolean isRecursive, boolean appendMode) throws AccessDeniedException, ConfigException, DataSourceException;
 
     /**
      * Can given user read the given entity ?

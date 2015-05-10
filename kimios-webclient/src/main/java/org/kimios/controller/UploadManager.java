@@ -268,7 +268,7 @@ public class UploadManager extends Controller {
                     d.setUid(-1);
                     long docUid = documentController.createDocument(sessionUid, d, isSecurityInherited);
                     if (!isSecurityInherited) {
-                        securityController.updateDMEntitySecurities(sessionUid, docUid, 3, false,
+                        securityController.updateDMEntitySecurities(sessionUid, docUid, 3, false, false,
                                 DMEntitySecuritiesParser.parseFromJson(sec, docUid, 3));
                     }
 

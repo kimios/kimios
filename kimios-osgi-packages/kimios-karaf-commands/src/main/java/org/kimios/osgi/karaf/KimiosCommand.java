@@ -119,7 +119,9 @@ public abstract class KimiosCommand extends OsgiCommandSupport
             connected = false;
         }
         if(!connected){
-            logger.error("Kimios Session unavailable. You should connect with kimios:admin");
+            String message = "Kimios Session unavailable. You should connect with kimios:admin";
+            logger.error(message);
+            System.out.println(message);
         }
         return connected;
     }

@@ -102,16 +102,13 @@ public class SecurityController extends AKimiosController implements ISecurityCo
         }
     }
 
-    /* (non-Javadoc)
-    * @see org.kimios.kernel.controller.impl.ISecurityController#updateDMEntitySecurities(org.kimios.kernel.security.Session, long, int, java.lang.String, boolean)
-    */
-    @DmsEvent(eventName = { DmsEventName.ENTITY_ACL_UPDATE })
-    public void updateDMEntitySecurities(Session session, long dmEntityUid, String xmlStream,
-            boolean isRecursive) throws AccessDeniedException, ConfigException, DataSourceException,
-            XMLException
-    {
+
+    private void processDMEntitySecurityUpdate(Session session, long dmEntityUid, String xmlStream,
+                                               boolean isRecursive, boolean appendMode){
         DMEntity entity = this.getDMEntity(dmEntityUid);
+
         if (entity != null) {
+            DMEntitySecurityFactory fact = FactoryInstantiator.getInstance().getDMEntitySecurityFactory();
             if (getSecurityAgent()
                     .isFullAccess(entity, session.getUserName(), session.getUserSource(), session.getGroups()))
             {
@@ -123,16 +120,40 @@ public class SecurityController extends AKimiosController implements ISecurityCo
                         throw new AccessDeniedException();
                     }
                 }
-                if (isRecursive) {
+                List<DMEntitySecurity> submittedSecurities =
+                        DMEntitySecurityUtil.getDMentitySecuritesFromXml(xmlStream, entity);
 
+                if (isRecursive) {
+                    List<DMEntitySecurity> newSubmittedSecurities = null;
+                    List<DMEntityACL> removedAcls = null;
+                    if(appendMode){
+                        List<DMEntityACL> acls = fact.generateDMEntityAclsFromSecuritiesObject(submittedSecurities, entity);
+                        List<DMEntityACL> currentAcls = fact.getDMEntityACL(entity);
+
+
+                        //identify removed acls  and isolate in a list
+                        List<DMEntityACL> aclsCopys = new ArrayList<DMEntityACL>(acls);
+                        removedAcls = new ArrayList<DMEntityACL>(currentAcls);
+                        removedAcls.removeAll(aclsCopys);
+
+                        log.info("submitted securities count: {} - existing securities {}",
+                                acls.size(), currentAcls.size());
+                        acls.removeAll(currentAcls);
+                        //generate securities from acls
+                        newSubmittedSecurities = fact.generateDMEntitySecuritiesFromAcls(acls, entity);
+
+                        log.info("after clean, new submitted acls / securities count {} - {}",
+                                acls.size(), newSubmittedSecurities.size());
+
+                    } else {
+                        newSubmittedSecurities = submittedSecurities;
+                    }
                     ThreadManager.getInstance()
-                            .startJob(session, new ACLUpdateJob(aclUpdater, session, entity, xmlStream));
+                            .startJob(session, new ACLUpdateJob(aclUpdater, session, entity, newSubmittedSecurities, removedAcls, appendMode));
                 } else {
-                    DMEntitySecurityFactory fact = FactoryInstantiator.getInstance().getDMEntitySecurityFactory();
-                    Vector<DMEntitySecurity> des = DMEntitySecurityUtil.getDMentitySecuritesFromXml(xmlStream, entity);
                     fact.cleanACL(entity);
                     List<DMEntityACL> nAcls = new ArrayList<DMEntityACL>();
-                    for (DMEntitySecurity acl : des) {
+                    for (DMEntitySecurity acl : submittedSecurities) {
                         nAcls.addAll(fact.saveDMEntitySecurity(acl));
                     }
                     //set acl in the context for event handler
@@ -146,16 +167,13 @@ public class SecurityController extends AKimiosController implements ISecurityCo
         }
     }
 
-    /* (non-Javadoc)
-    * @see org.kimios.kernel.controller.impl.ISecurityController#updateDMEntitySecurities(org.kimios.kernel.security.Session, long, int, java.lang.String, boolean)
-    */
-    @DmsEvent(eventName = { DmsEventName.ENTITY_ACL_UPDATE })
-    public void updateDMEntitySecurities(Session session, long dmEntityUid, List<DMEntitySecurity> items,
-                                         boolean isRecursive) throws AccessDeniedException, ConfigException, DataSourceException,
-            XMLException
-    {
+
+    private void processDMEntitySecurityUpdate(Session session, long dmEntityUid, List<DMEntitySecurity> submittedSecurities,
+                                               boolean isRecursive, boolean appendMode){
         DMEntity entity = this.getDMEntity(dmEntityUid);
+
         if (entity != null) {
+            DMEntitySecurityFactory fact = FactoryInstantiator.getInstance().getDMEntitySecurityFactory();
             if (getSecurityAgent()
                     .isFullAccess(entity, session.getUserName(), session.getUserSource(), session.getGroups()))
             {
@@ -167,15 +185,44 @@ public class SecurityController extends AKimiosController implements ISecurityCo
                         throw new AccessDeniedException();
                     }
                 }
+
+
+                for(DMEntitySecurity sec: submittedSecurities)
+                    sec.setDmEntity(entity);
+
+
                 if (isRecursive) {
+                    List<DMEntityACL> removedAcls = null;
+                    List<DMEntitySecurity> newSubmittedSecurities = null;
+                    if(appendMode){
+
+                        List<DMEntityACL> currentAcls = fact.getDMEntityACL(entity);
+                        List<DMEntityACL> acls = fact.generateDMEntityAclsFromSecuritiesObject(submittedSecurities, entity);
+
+                        //identify removed acls  and isolate in a list
+                        List<DMEntityACL> aclsCopys = new ArrayList<DMEntityACL>(acls);
+                        removedAcls = new ArrayList<DMEntityACL>(currentAcls);
+                        removedAcls.removeAll(aclsCopys);
+
+                        log.info("submitted securities count: {} - existing securities {}",
+                                acls.size(), currentAcls.size());
+                        acls.removeAll(currentAcls);
+                        //generate securities from acls
+                        newSubmittedSecurities = fact.generateDMEntitySecuritiesFromAcls(acls, entity);
+
+                        log.info("after clean, new submitted acls / securities count / removed acls {} - {} - {}",
+                                acls.size(), newSubmittedSecurities.size(), removedAcls.size());
+
+                    } else {
+                        newSubmittedSecurities = submittedSecurities;
+                        removedAcls = new ArrayList<DMEntityACL>();
+                    }
                     ThreadManager.getInstance()
-                            .startJob(session, new ACLUpdateJob(aclUpdater, session, entity, items));
+                            .startJob(session, new ACLUpdateJob(aclUpdater, session, entity, newSubmittedSecurities, removedAcls, appendMode));
                 } else {
-                    DMEntitySecurityFactory fact = FactoryInstantiator.getInstance().getDMEntitySecurityFactory();
                     fact.cleanACL(entity);
                     List<DMEntityACL> nAcls = new ArrayList<DMEntityACL>();
-                    for (DMEntitySecurity acl : items) {
-                        acl.setDmEntity(entity);
+                    for (DMEntitySecurity acl : submittedSecurities) {
                         nAcls.addAll(fact.saveDMEntitySecurity(acl));
                     }
                     //set acl in the context for event handler
@@ -187,6 +234,27 @@ public class SecurityController extends AKimiosController implements ISecurityCo
         } else {
             throw new AccessDeniedException();
         }
+    }
+
+
+    @DmsEvent(eventName = { DmsEventName.ENTITY_ACL_UPDATE })
+    public void updateDMEntitySecurities(Session session, long dmEntityUid, String xmlStream,
+                                         boolean isRecursive, boolean appendMode) throws AccessDeniedException, ConfigException, DataSourceException,
+            XMLException
+    {
+        processDMEntitySecurityUpdate(session, dmEntityUid, xmlStream, isRecursive, appendMode);
+    }
+
+    /* (non-Javadoc)
+    * @see org.kimios.kernel.controller.impl.ISecurityController#updateDMEntitySecurities(org.kimios.kernel.security.Session, long, int, java.lang.String, boolean)
+    */
+    @DmsEvent(eventName = { DmsEventName.ENTITY_ACL_UPDATE })
+    public void updateDMEntitySecurities(Session session, long dmEntityUid, List<DMEntitySecurity> items,
+                                         boolean isRecursive, boolean appendMode)
+                        throws AccessDeniedException, ConfigException, DataSourceException,
+            XMLException
+    {
+        processDMEntitySecurityUpdate(session, dmEntityUid, items, isRecursive, appendMode);
     }
 
     /**

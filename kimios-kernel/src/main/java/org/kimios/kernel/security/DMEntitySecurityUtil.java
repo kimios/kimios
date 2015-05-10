@@ -24,6 +24,8 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 public class DMEntitySecurityUtil
@@ -63,6 +65,39 @@ public class DMEntitySecurityUtil
             throw new XMLException();
         }
         return v;
+    }
+
+
+    private static boolean equalsSecurityEntity(DMEntitySecurity a, DMEntitySecurity security){
+
+        if (a.getDmEntityUid() != security.getDmEntityUid()) return false;
+        if (a.getDmEntityType() != security.getDmEntityType()) return false;
+        if (a.getType() != security.getType()) return false;
+        if (!a.getName().equals(security.getName())) return false;
+        if (!a.getSource().equals(security.getSource())) return false;
+        return true;
+    }
+
+
+    public static List<DMEntitySecurity> filterNewSecurityItem(List<DMEntitySecurity> currentSecurities, List<DMEntitySecurity> submittedSecurities){
+        List<DMEntitySecurity> dmEntitySecurities = new ArrayList<DMEntitySecurity>();
+        List<DMEntitySecurity> existingInBothList = new ArrayList<DMEntitySecurity>();
+        for(DMEntitySecurity security: currentSecurities){
+            for(DMEntitySecurity submittedSecurity: submittedSecurities){
+                if(equalsSecurityEntity(security, submittedSecurity)){
+                    //do nothing
+                    existingInBothList.add(security);
+                }
+            }
+        }
+
+        for(DMEntitySecurity sub: submittedSecurities){
+            if(!existingInBothList.contains(sub)){
+                dmEntitySecurities.add(sub);
+            }
+        }
+
+        return dmEntitySecurities;
     }
 }
 

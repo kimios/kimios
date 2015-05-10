@@ -26,11 +26,9 @@ import java.util.List;
 
 public interface IACLUpdater
 {
-    @DmsEvent(eventName = { DmsEventName.ENTITY_ACL_UPDATE })
-    public List<DMEntityACL> updateAclsRecursiveMode(Session session, String xmlStream, DMEntity entity)
-            throws Exception;
 
     @DmsEvent(eventName = { DmsEventName.ENTITY_ACL_UPDATE })
-    public List<DMEntityACL> updateAclsRecursiveMode(Session session, List<DMEntitySecurity> securityItems, DMEntity entity)
+    public List<DMEntityACL> updateAclsRecursiveMode(Session session, List<DMEntitySecurity> securityItems, DMEntity entity,
+                                                     boolean addMode, List<DMEntityACL> removedAcls)
             throws Exception;
 }

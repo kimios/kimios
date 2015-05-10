@@ -470,6 +470,7 @@ kimios.properties.PropertiesPanel = Ext.extend(Ext.TabPanel, {
                     this.dmEntityPanel.nameField.getValue(),
                     this.window != undefined ? (this.securityEntityPanel != undefined ? this.securityEntityPanel.getJsonSecurityValues() : undefined) : undefined,
                     this.window != undefined ? (this.securityEntityPanel != undefined ? this.securityEntityPanel.isRecursiveSecurity() : undefined) : false,
+                    this.window != undefined ? (this.securityEntityPanel != undefined ? this.securityEntityPanel.isRecursiveAppendMode() : undefined) : false,
                     function () {
                         kimios.Info.msg(kimios.lang('Workspace'), kimios.lang('UpdateWorkspaceOK'));
                         kimios.explorer.getViewport().refreshGrids();
@@ -484,6 +485,7 @@ kimios.properties.PropertiesPanel = Ext.extend(Ext.TabPanel, {
                     this.dmEntityPanel.nameField.getValue(),
                     this.window != undefined ? (this.securityEntityPanel != undefined ? this.securityEntityPanel.getJsonSecurityValues() : undefined) : undefined,
                     this.window != undefined ? (this.securityEntityPanel != undefined ? this.securityEntityPanel.isRecursiveSecurity() : undefined) : false,
+                    this.window != undefined ? (this.securityEntityPanel != undefined ? this.securityEntityPanel.isRecursiveAppendMode() : undefined) : false,
                     function () {
                         kimios.Info.msg(kimios.lang('Folder'), kimios.lang('UpdateFolderOK'));
                         kimios.explorer.getViewport().refreshGrids();
@@ -526,6 +528,7 @@ kimios.properties.PropertiesPanel = Ext.extend(Ext.TabPanel, {
                 this.dmEntityPojo,
                 this.securityEntityPanel.getJsonSecurityValues(),
                 this.securityEntityPanel.isRecursiveSecurity(),
+                this.securityEntityPanel.isRecursiveAppendMode(),
                 this.metaDataPanel == undefined ? undefined : this.metaDataPanel.documentTypeUid,
                 this.metaDataPanel == undefined ? undefined : this.metaDataPanel.getJsonMetaValues(),
                 function () {

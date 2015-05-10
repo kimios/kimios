@@ -35,14 +35,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecurityFactory
-{
+public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecurityFactory {
     final Logger log = LoggerFactory.getLogger(HDMEntitySecurityFactory.class);
 
     public <T extends DMEntityImpl> List<T> authorizedEntities(List<T> e, String userName, String userSource,
-            Vector<String> hashs, Vector<String> noAccessHash)
-            throws ConfigException, DataSourceException
-    {
+                                                               Vector<String> hashs, Vector<String> noAccessHash)
+            throws ConfigException, DataSourceException {
         try {
 
             Vector<String> paths = new Vector<String>();
@@ -82,9 +80,8 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
     }
 
     public boolean ruleExists(DMEntity e, String userName, String userSource, Vector<String> hashs,
-            Vector<String> noAccessHash)
-            throws ConfigException, DataSourceException
-    {
+                              Vector<String> noAccessHash)
+            throws ConfigException, DataSourceException {
         try {
 
             String rightQuery = "select distinct dm.dm_entity_id, dm.dm_entity_path "
@@ -123,8 +120,7 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
     }
 
     public boolean hasAnyChildCheckedOut(DMEntity e, String userName, String userSource)
-            throws ConfigException, DataSourceException
-    {
+            throws ConfigException, DataSourceException {
         try {
             if (e.getType() == 2 || e.getType() == 1) {
                 String hqlQuery = "select count(dm) from Document dm, Lock lck where lck.uid = dm.uid " +
@@ -145,8 +141,7 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
     }
 
     public boolean hasAnyChildNotWritable(DMEntity e, String userName, String userSource, Vector<String> writeHash,
-            String noAccessHash) throws ConfigException, DataSourceException
-    {
+                                          String noAccessHash) throws ConfigException, DataSourceException {
         try {
             if (e.getType() == 2 || e.getType() == 1) {
                 String sqlQuery = ""
@@ -197,8 +192,7 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
     }
 
     public void createSecurityEntityRules(String secEntityName, String secEntitySource, int secEntityType)
-            throws ConfigException, DataSourceException
-    {
+            throws ConfigException, DataSourceException {
         try {
             DMSecurityRule read =
                     DMSecurityRule.getInstance(secEntityName, secEntitySource, secEntityType, DMSecurityRule.READRULE);
@@ -225,8 +219,7 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
     }
 
     public void addACLToDmEntity(SecurityEntity sec,
-            DMEntityImpl a, short rule)
-    {
+                                 DMEntityImpl a, short rule) {
         try {
             DMEntityACL acl = new DMEntityACL(a);
             acl.setRuleHash(DMSecurityRule.getInstance(
@@ -238,8 +231,7 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
     }
 
     public void cleanACL(DMEntity d)
-            throws ConfigException, DataSourceException
-    {
+            throws ConfigException, DataSourceException {
         try {
             String q = "delete from DMEntityACL where dmEntityUid = :dm_entity_id";
             getSession().createQuery(q).setLong("dm_entity_id", d.getUid()).executeUpdate();
@@ -250,8 +242,7 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
     }
 
     public void cleanACLRecursive(DMEntity d)
-            throws ConfigException, DataSourceException
-    {
+            throws ConfigException, DataSourceException {
         try {
             String qRecursive =
                     "delete from DMEntityACL acl where acl.dmEntityUid in (select uid from DMEntityImpl where path = :path or path like :pathRecursive)";
@@ -266,8 +257,7 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
     }
 
     public void deleteDMEntitySecurity(DMEntitySecurity des)
-            throws ConfigException, DataSourceException
-    {
+            throws ConfigException, DataSourceException {
         try {
             DMEntityACL acl = new DMEntityACL(des.getDmEntity());
             getSession().delete(acl);
@@ -276,9 +266,97 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
         }
     }
 
+    public List<DMEntitySecurity> generateDMEntitySecuritiesFromAcls(List<DMEntityACL> acls, DMEntity entity)
+            throws ConfigException, DataSourceException {
+        try {
+
+            if(acls.size() == 0){
+                return new ArrayList<DMEntitySecurity>();
+
+            }
+            List<String> hashAcls = new ArrayList<String>();
+            for(DMEntityACL acl: acls) {
+                if(!hashAcls.contains(acl.getRuleHash()))
+                    hashAcls.add(acl.getRuleHash());
+            }
+
+
+            log.debug("unique hash acls processed: {}", hashAcls.size());
+
+            String query =
+                    "select rule from DMSecurityRule rule " +
+                            "where rule.ruleHash in (:hashList) " +
+                            " order by rule.securityEntityUid, rule.securityEntitySource, rule.securityEntityType";
+            List<DMSecurityRule> list = getSession().createQuery(query)
+                    .setParameterList("hashList", hashAcls)
+                    .list();
+
+            log.debug("security rules loaded from hash {}", list.size());
+
+            List<DMEntitySecurity> vDes = new ArrayList<DMEntitySecurity>();
+            for (DMSecurityRule rule : list) {
+                DMEntitySecurity tt = null;
+
+
+                log.debug("processing rule {}", rule.getSecurityEntityUid() + "@" + rule.getSecurityEntitySource());
+
+                for (DMEntitySecurity secEnt : vDes) {
+                    if (secEnt.getName().equalsIgnoreCase(rule.getSecurityEntityUid())
+                            && secEnt.getSource().equalsIgnoreCase(rule.getSecurityEntitySource())
+                            && secEnt.getType() == rule.getSecurityEntityType()) {
+                        tt = secEnt;
+                        break;
+                    }
+                }
+                if (tt == null) {
+                    tt = new DMEntitySecurity();
+                    tt.setName(rule.getSecurityEntityUid());
+                    tt.setSource(rule.getSecurityEntitySource());
+                    tt.setType(rule.getSecurityEntityType());
+                    tt.setDmEntity(entity);
+                    AuthenticationSource source = FactoryInstantiator.getInstance()
+                            .getAuthenticationSourceFactory()
+                            .getAuthenticationSource(rule.getSecurityEntitySource());
+                    SecurityEntity securityEntity = null;
+                    switch (rule.getSecurityEntityType()) {
+                        case SecurityEntityType.USER:
+                            securityEntity = source.getUserFactory().getUser(rule.getSecurityEntityUid());
+                            break;
+                        case SecurityEntityType.GROUP:
+                            securityEntity = source.getGroupFactory().getGroup(rule.getSecurityEntityUid());
+                            break;
+                        default:
+                            ;
+                    }
+                    if (securityEntity != null) {
+                        tt.setFullName(securityEntity.getName());
+                    }
+                    vDes.add(tt);
+                }
+                if (rule.getRights() == DMSecurityRule.READRULE) {
+                    tt.setRead(true);
+                }
+                if (rule.getRights() == DMSecurityRule.WRITERULE) {
+                    tt.setWrite(true);
+                }
+                if (rule.getRights() == DMSecurityRule.FULLRULE) {
+                    tt.setFullAccess(true);
+                }
+                if (rule.getRights() == DMSecurityRule.NOACCESS) {
+                    tt.setFullAccess(false);
+                    tt.setWrite(false);
+                    tt.setRead(false);
+                }
+            }
+            log.debug("returning sec list {}", vDes.size());
+            return vDes;
+        } catch (HibernateException ex) {
+            throw new DataSourceException(ex);
+        }
+    }
+
     public Vector<DMEntitySecurity> getDMEntitySecurities(DMEntity e)
-            throws ConfigException, DataSourceException
-    {
+            throws ConfigException, DataSourceException {
         try {
 //      String query = "select rule from DMEntityACL acl, DMSecurityRule rule where acl.path like :path and rule.ruleHash = acl.ruleHash";
             String query =
@@ -296,8 +374,7 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
                 for (DMEntitySecurity secEnt : vDes) {
                     if (secEnt.getName().equalsIgnoreCase(rule.getSecurityEntityUid())
                             && secEnt.getSource().equalsIgnoreCase(rule.getSecurityEntitySource())
-                            && secEnt.getType() == rule.getSecurityEntityType())
-                    {
+                            && secEnt.getType() == rule.getSecurityEntityType()) {
                         tt = secEnt;
                         break;
                     }
@@ -349,8 +426,7 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
     }
 
     public List<DMEntityACL> getDMEntityACL(DMEntity e)
-            throws ConfigException, DataSourceException
-    {
+            throws ConfigException, DataSourceException {
         try {
             String query = "from DMEntityACL acl where dmEntityUid = :dmEntityUid";
             return getSession().createQuery(query)
@@ -362,10 +438,8 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
     }
 
 
-
     public List<DMEntityACL> saveDMEntitySecurity(DMEntitySecurity des)
-            throws ConfigException, DataSourceException
-    {
+            throws ConfigException, DataSourceException {
 
         List<DMEntityACL> ret = new ArrayList<DMEntityACL>();
         DMEntityACL readAcl = new DMEntityACL(des.getDmEntity());
@@ -384,7 +458,7 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
                     getSession().saveOrUpdate(readAcl);
                     ret.add(readAcl);
                 } catch (NonUniqueObjectException o) {
-                    log.error("already existing acl! entity " + des.getDmEntity().getPath()  + " {} - {}@{}", "read", des.getName(), des.getSource());
+                    log.error("already existing acl! entity " + des.getDmEntity().getPath() + " {} - {}@{}", "read", des.getName(), des.getSource());
                     readAcl = (DMEntityACL) getSession().merge(readAcl);
                     ret.add(readAcl);
                 }
@@ -397,7 +471,7 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
                     getSession().saveOrUpdate(writeAcl);
                     ret.add(writeAcl);
                 } catch (NonUniqueObjectException o) {
-                    log.error("already existing acl! entity " + des.getDmEntity().getPath()  + " {} - {}@{}", "write", des.getName(), des.getSource());
+                    log.error("already existing acl! entity " + des.getDmEntity().getPath() + " {} - {}@{}", "write", des.getName(), des.getSource());
                     writeAcl = (DMEntityACL) getSession().merge(writeAcl);
                     ret.add(writeAcl);
                 }
@@ -410,7 +484,7 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
                     getSession().saveOrUpdate(fullAcl);
                     ret.add(fullAcl);
                 } catch (NonUniqueObjectException e) {
-                    log.error("already existing acl! entity " + des.getDmEntity().getPath()  + " {} - {}@{}", "fullaccess", des.getName(), des.getSource());
+                    log.error("already existing acl! entity " + des.getDmEntity().getPath() + " {} - {}@{}", "fullaccess", des.getName(), des.getSource());
                     fullAcl = (DMEntityACL) getSession().merge(fullAcl);
                     ret.add(fullAcl);
                 }
@@ -423,7 +497,7 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
                     getSession().saveOrUpdate(noAcl);
                     ret.add(noAcl);
                 } catch (NonUniqueObjectException e) {
-                    log.error("already existing acl! entity " + des.getDmEntity().getPath()  + " {} - {}@{}", "noaccess", des.getName(), des.getSource());
+                    log.error("already existing acl! entity " + des.getDmEntity().getPath() + " {} - {}@{}", "noaccess", des.getName(), des.getSource());
                     noAcl = (DMEntityACL) getSession().merge(noAcl);
                     ret.add(noAcl);
                 }
@@ -437,10 +511,57 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
         }
     }
 
+    public List<DMEntityACL> generateDMEntityAclsFromSecuritiesObject(List<DMEntitySecurity> securities, DMEntity entity) {
+
+        if(entity != null){
+            //reset entity properly
+            for(DMEntitySecurity sec: securities)
+                sec.setDmEntity(entity);
+        }
+
+        List<DMEntityACL> ret = new ArrayList<DMEntityACL>();
+        for(DMEntitySecurity des: securities) {
+            //create rules if it doesn't exists
+            createSecurityEntityRules(des.getName(), des.getSource(), des.getType());
+            DMEntityACL readAcl = new DMEntityACL(des.getDmEntity());
+            DMEntityACL writeAcl = new DMEntityACL(des.getDmEntity());
+            DMEntityACL fullAcl = new DMEntityACL(des.getDmEntity());
+            DMEntityACL noAcl = new DMEntityACL(des.getDmEntity());
+
+
+
+            if (des.isRead()) {
+                DMSecurityRule dr = DMSecurityRule
+                        .getInstance(des.getName(), des.getSource(), des.getType(), DMSecurityRule.READRULE);
+                readAcl.setRuleHash(dr.getRuleHash());
+                ret.add(readAcl);
+            }
+            if (des.isWrite()) {
+                writeAcl.setRuleHash(DMSecurityRule
+                        .getInstance(des.getName(), des.getSource(), des.getType(), DMSecurityRule.WRITERULE)
+                        .getRuleHash());
+                ret.add(writeAcl);
+            }
+            if (des.isFullAccess()) {
+                fullAcl.setRuleHash(DMSecurityRule
+                        .getInstance(des.getName(), des.getSource(), des.getType(), DMSecurityRule.FULLRULE)
+                        .getRuleHash());
+                ret.add(fullAcl);
+            }
+            if (!des.isFullAccess() && !des.isRead() && !des.isWrite()) {
+                noAcl.setRuleHash(DMSecurityRule
+                        .getInstance(des.getName(), des.getSource(), des.getType(), DMSecurityRule.NOACCESS)
+                        .getRuleHash());
+                ret.add(noAcl);
+            }
+        }
+
+        return ret;
+    }
+
 
     public List<DMEntitySecurity> getDefaultDMEntitySecurity(String objectType, String entityPath)
-            throws ConfigException, DataSourceException
-    {
+            throws ConfigException, DataSourceException {
         try {
             String query =
                     "select rule from DMDefaultSecurityRule rule where rule.objectType = :objectType" +
@@ -455,8 +576,7 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
                 for (DMEntitySecurity secEnt : vDes) {
                     if (secEnt.getName().equalsIgnoreCase(rule.getSecurityEntityUid())
                             && secEnt.getSource().equalsIgnoreCase(rule.getSecurityEntitySource())
-                            && secEnt.getType() == rule.getSecurityEntityType())
-                    {
+                            && secEnt.getType() == rule.getSecurityEntityType()) {
                         tt = secEnt;
                         break;
                     }
@@ -508,8 +628,7 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
 
 
     public void saveDefaultDMEntitySecurity(DMEntitySecurity des, String objectType, String entityPath)
-            throws ConfigException, DataSourceException
-    {
+            throws ConfigException, DataSourceException {
 
         try {
             createSecurityEntityRules(des.getName(), des.getSource(), des.getType());
@@ -540,7 +659,6 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
             }
 
 
-
             getSession().flush();
         } catch (HibernateException e) {
             throw new DataSourceException(e);
@@ -549,8 +667,7 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
 
 
     public <T extends DMEntityImpl> DMEntity entityFromRule(long dmEntityUid, Vector<String> hashs,
-            Vector<String> noAccessHashs) throws ConfigException, DataSourceException
-    {
+                                                            Vector<String> noAccessHashs) throws ConfigException, DataSourceException {
         try {
 
 //      String sqlQ = "from DMEntityImpl en, DMEntityACL acl where en.path = acl.path and en.uid = :uid and acl.ruleHash in (:hash) and  " + 
@@ -574,8 +691,7 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
     }
 
     public void updateDMEntitySecurity(DMEntitySecurity des)
-            throws ConfigException, DataSourceException
-    {
+            throws ConfigException, DataSourceException {
         try {
             getSession().update(des);
         } catch (HibernateException e) {

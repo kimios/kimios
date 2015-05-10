@@ -26,8 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-public class ACLUpdateJob extends JobImpl<List<DMEntityACL>>
-{
+public class ACLUpdateJob extends JobImpl<List<DMEntityACL>> {
     private static Logger log = LoggerFactory.getLogger(ACLUpdateJob.class);
 
     private IACLUpdater updater;
@@ -37,32 +36,24 @@ public class ACLUpdateJob extends JobImpl<List<DMEntityACL>>
 
     private List<DMEntitySecurity> securities;
 
-    private String xmlStream;
+    private boolean appendMode = false;
 
-    public ACLUpdateJob(IACLUpdater updater, Session session, DMEntity dmEntity, List<DMEntitySecurity> securities){
+    private List<DMEntityACL> removedAcls;
+
+    public ACLUpdateJob(IACLUpdater updater, Session session, DMEntity dmEntity,
+                        List<DMEntitySecurity> securities, List<DMEntityACL> removedAcls, boolean appendMode) {
         this.updater = updater;
         this.dmEntity = dmEntity;
         this.securities = securities;
         this.setSession(session);
+        this.appendMode = appendMode;
+        this.removedAcls = removedAcls;
     }
-
-    public ACLUpdateJob(IACLUpdater updater, Session session, DMEntity dmEntity, String xmlStream){
-        this.updater = updater;
-        this.xmlStream = xmlStream;
-        this.dmEntity = dmEntity;
-        this.setSession(session);
-    }
-
 
     public List<DMEntityACL> execute() throws Exception {
         log.debug("Starting ACL Recursive Mode Update job execution for entity {}", dmEntity.getPath());
         List<DMEntityACL> acls = null;
-
-        if(securities == null) {
-            acls = updater.updateAclsRecursiveMode(getUserSession(), xmlStream, dmEntity);
-        } else {
-            acls = updater.updateAclsRecursiveMode(getUserSession(), securities, dmEntity);
-        }
+        acls = updater.updateAclsRecursiveMode(getUserSession(), securities, dmEntity, appendMode, removedAcls);
         EventContext.addParameter("acls", acls);
         log.debug("Ending job execution");
         return acls;
@@ -70,8 +61,7 @@ public class ACLUpdateJob extends JobImpl<List<DMEntityACL>>
 
 
     @Override
-    public Object getInformation() throws Exception
-    {
+    public Object getInformation() throws Exception {
         return null;
     }
 }
