@@ -23,6 +23,8 @@ import org.kimios.kernel.dms.DMEntity;
 import org.kimios.kernel.dms.FactoryInstantiator;
 import org.kimios.kernel.dms.utils.PathElement;
 import org.kimios.kernel.security.DMEntitySecurity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +61,8 @@ public class MassiveSecurityUpdate extends KimiosCommand {
 
     @Override
     protected void doExecuteKimiosCommand() throws Exception {
+
+
 
 
         List<DMEntitySecurity> securities = (List) this.session.get("currentAddedSecurities");
@@ -102,16 +106,29 @@ public class MassiveSecurityUpdate extends KimiosCommand {
             } else {
                 //defined for entity
                 if (paths != null && paths.length > 0) {
-                    for (String p : paths) {
+                    for (final String p : paths) {
                         //load entity and add securities
-                        List<DMEntity> entities = FactoryInstantiator.getInstance().getDmEntityFactory().getEntities(p);
-                        for (DMEntity entity : entities) {
-                            for (DMEntitySecurity dmEntitySecurity : securities) {
-                                dmEntitySecurity.setDmEntity(entity);
-                                org.kimios.kernel.security.FactoryInstantiator.getInstance().getDMEntitySecurityFactory()
-                                        .saveDMEntitySecurity(dmEntitySecurity);
+
+                        final List<DMEntitySecurity> itemSecurities = securities;
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                List<DMEntity> entities = FactoryInstantiator.getInstance().getDmEntityFactory().getEntities(p);
+                                int count = 0;
+                                int size = entities.size();
+                                for (DMEntity entity : entities) {
+                                    for (DMEntitySecurity dmEntitySecurity : itemSecurities) {
+                                        dmEntitySecurity.setDmEntity(entity);
+                                        org.kimios.kernel.security.FactoryInstantiator.getInstance().getDMEntitySecurityFactory()
+                                                .saveDMEntitySecurity(dmEntitySecurity);
+                                    }
+                                    count++;
+                                    if(logger.isDebugEnabled()){
+                                        logger.debug("processed entity {} over {} for path {}",count,size,p);
+                                    }
+                                }
                             }
-                        }
+                        }).start();
                     }
                 } else {
                     System.out.println("No entities defined");
@@ -119,4 +136,6 @@ public class MassiveSecurityUpdate extends KimiosCommand {
             }
         }
     }
+
+    private static Logger logger = LoggerFactory.getLogger(MassiveSecurityUpdate.class);
 }
