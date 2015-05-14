@@ -59,6 +59,10 @@ public class MassiveSecurityUpdate extends KimiosCommand {
     String[] paths;
 
 
+    @Option(name = "-t", aliases = "--entity-type", required =  false, multiValued = true)
+    int[] entityTypes = new int[]{3};
+
+
     @Override
     protected void doExecuteKimiosCommand() throws Exception {
 
@@ -113,7 +117,13 @@ public class MassiveSecurityUpdate extends KimiosCommand {
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                List<DMEntity> entities = FactoryInstantiator.getInstance().getDmEntityFactory().getEntities(p);
+                                List<DMEntity> entities = new ArrayList<DMEntity>();
+
+                                for(int entityType: entityTypes){
+                                     entities.addAll(FactoryInstantiator.getInstance().getDmEntityFactory()
+                                             .getEntitiesByPathAndType(p, entityType));
+                                }
+
                                 int count = 0;
                                 int size = entities.size();
                                 for (DMEntity entity : entities) {
