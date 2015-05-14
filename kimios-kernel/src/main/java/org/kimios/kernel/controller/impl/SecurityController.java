@@ -105,6 +105,10 @@ public class SecurityController extends AKimiosController implements ISecurityCo
 
     private void processDMEntitySecurityUpdate(Session session, long dmEntityUid, String xmlStream,
                                                boolean isRecursive, boolean appendMode){
+
+
+
+
         DMEntity entity = this.getDMEntity(dmEntityUid);
 
         if (entity != null) {
@@ -151,13 +155,17 @@ public class SecurityController extends AKimiosController implements ISecurityCo
                     ThreadManager.getInstance()
                             .startJob(session, new ACLUpdateJob(aclUpdater, session, entity, newSubmittedSecurities, removedAcls, appendMode));
                 } else {
-                    fact.cleanACL(entity);
-                    List<DMEntityACL> nAcls = new ArrayList<DMEntityACL>();
-                    for (DMEntitySecurity acl : submittedSecurities) {
-                        nAcls.addAll(fact.saveDMEntitySecurity(acl));
+                    try {
+                        fact.cleanACL(entity);
+                        List<DMEntityACL> nAcls = new ArrayList<DMEntityACL>();
+                        for (DMEntitySecurity acl : submittedSecurities) {
+                            nAcls.addAll(fact.saveDMEntitySecurity(acl));
+                        }
+                        //set acl in the context for event handler
+                        EventContext.addParameter("acls", nAcls);
+                    }catch (Exception ex){
+                        log.error("an error happen during entity update", ex);
                     }
-                    //set acl in the context for event handler
-                    EventContext.addParameter("acls", nAcls);
                 }
             } else {
                 throw new AccessDeniedException();
