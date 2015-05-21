@@ -24,6 +24,7 @@ import org.kimios.kernel.security.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.transaction.TransactionManager;
 
 
 /**
@@ -47,6 +48,9 @@ public abstract class KimiosCommand extends OsgiCommandSupport
     protected ISolrIndexManager indexManager;
 
     protected IBonitaUsersSynchronizer bonitaUsersSynchronizer;
+
+
+    protected TransactionManager transactionManager;
 
 
     private static Logger logger = LoggerFactory.getLogger(KimiosCommand.class);
@@ -80,6 +84,12 @@ public abstract class KimiosCommand extends OsgiCommandSupport
 
         Class<ISolrIndexManager> cSolrIdx = ISolrIndexManager.class;
         indexManager = getService(cSolrIdx);
+
+
+
+        Class<TransactionManager> cTransactionManager = TransactionManager.class;
+        transactionManager = getService(cTransactionManager);
+
 
         if (securityController == null) {
             logger.error("Kimios Security service is unavailable.");

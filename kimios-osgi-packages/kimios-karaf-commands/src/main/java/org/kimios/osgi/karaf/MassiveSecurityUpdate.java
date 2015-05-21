@@ -26,6 +26,7 @@ import org.kimios.kernel.security.DMEntitySecurity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.transaction.TransactionManager;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,14 +60,12 @@ public class MassiveSecurityUpdate extends KimiosCommand {
     String[] paths;
 
 
-    @Option(name = "-t", aliases = "--entity-type", required =  false, multiValued = true)
+    @Option(name = "-t", aliases = "--entity-type", required = false, multiValued = true)
     int[] entityTypes = new int[]{3};
 
 
     @Override
     protected void doExecuteKimiosCommand() throws Exception {
-
-
 
 
         List<DMEntitySecurity> securities = (List) this.session.get("currentAddedSecurities");
@@ -114,27 +113,43 @@ public class MassiveSecurityUpdate extends KimiosCommand {
                         //load entity and add securities
 
                         final List<DMEntitySecurity> itemSecurities = securities;
+                        final TransactionManager currentTxMngr = transactionManager;
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                List<DMEntity> entities = new ArrayList<DMEntity>();
 
-                                for(int entityType: entityTypes){
-                                     entities.addAll(FactoryInstantiator.getInstance().getDmEntityFactory()
-                                             .getEntitiesByPathAndType(p, entityType));
-                                }
 
-                                int count = 0;
-                                int size = entities.size();
-                                for (DMEntity entity : entities) {
-                                    for (DMEntitySecurity dmEntitySecurity : itemSecurities) {
-                                        dmEntitySecurity.setDmEntity(entity);
-                                        org.kimios.kernel.security.FactoryInstantiator.getInstance().getDMEntitySecurityFactory()
-                                                .saveDMEntitySecurity(dmEntitySecurity);
+                                try {
+                                    currentTxMngr.begin();
+                                    List<DMEntity> entities = new ArrayList<DMEntity>();
+
+                                    for (int entityType : entityTypes) {
+                                        entities.addAll(FactoryInstantiator.getInstance().getDmEntityFactory()
+                                                .getEntitiesByPathAndType(p, entityType));
                                     }
-                                    count++;
-                                    if(logger.isDebugEnabled()){
-                                        logger.debug("processed entity {} over {} for path {}",count,size,p);
+
+                                    int count = 0;
+                                    int size = entities.size();
+                                    for (DMEntity entity : entities) {
+                                        for (DMEntitySecurity dmEntitySecurity : itemSecurities) {
+                                            dmEntitySecurity.setDmEntity(entity);
+                                            org.kimios.kernel.security.FactoryInstantiator.getInstance().getDMEntitySecurityFactory()
+                                                    .saveDMEntitySecurity(dmEntitySecurity);
+                                        }
+                                        count++;
+                                        if (logger.isDebugEnabled()) {
+                                            logger.debug("processed entity {} over {} for path {}", count, size, p);
+                                        }
+                                    }
+
+                                    currentTxMngr.getTransaction().commit();
+
+                                } catch (Exception e) {
+                                    logger.error("error while processing securities", e);
+                                    try {
+                                        currentTxMngr.rollback();
+                                    }catch (Exception ex){
+                                        logger.error("error while rollbacking transaction", ex);
                                     }
                                 }
                             }
