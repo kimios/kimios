@@ -62,5 +62,7 @@ public interface DMEntitySecurityFactory {
     public List<DMEntitySecurity> generateDMEntitySecuritiesFromAcls(List<DMEntityACL> acls, DMEntity entity)
             throws ConfigException, DataSourceException;
 
+    public void createSecurityEntityRules(String secEntityName, String secEntitySource, int secEntityType);
+
 }
 

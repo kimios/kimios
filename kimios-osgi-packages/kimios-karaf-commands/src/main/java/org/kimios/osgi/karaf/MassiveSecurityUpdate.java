@@ -22,7 +22,11 @@ import org.apache.karaf.shell.commands.Option;
 import org.kimios.kernel.dms.DMEntity;
 import org.kimios.kernel.dms.FactoryInstantiator;
 import org.kimios.kernel.dms.utils.PathElement;
+import org.kimios.kernel.hibernate.HFactory;
+import org.kimios.kernel.security.DMEntityACL;
 import org.kimios.kernel.security.DMEntitySecurity;
+import org.kimios.kernel.security.DMSecurityRule;
+import org.kimios.kernel.security.factory.HDMEntitySecurityFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -107,6 +111,22 @@ public class MassiveSecurityUpdate extends KimiosCommand {
             if (securities == null || securities.size() == 0) {
                 System.out.println("No securities defined");
             } else {
+
+                //save rules
+
+
+                transactionManager.begin();
+
+
+                for (DMEntitySecurity sec : securities) {
+                    org.kimios.kernel.security.FactoryInstantiator.getInstance().getDMEntitySecurityFactory()
+                            .createSecurityEntityRules(sec.getName(), sec.getSource(), sec.getType());
+                }
+
+
+                transactionManager.commit();
+
+
                 //defined for entity
                 if (paths != null && paths.length > 0) {
                     for (final String p : paths) {
@@ -125,16 +145,28 @@ public class MassiveSecurityUpdate extends KimiosCommand {
 
                                     for (int entityType : entityTypes) {
                                         entities.addAll(FactoryInstantiator.getInstance().getDmEntityFactory()
-                                                .getEntitiesByPathAndType(p, entityType));
+                                                .getEntitiesByPathAndType(p, entityType, 0, Integer.MAX_VALUE));
                                     }
 
                                     int count = 0;
                                     int size = entities.size();
                                     for (DMEntity entity : entities) {
                                         for (DMEntitySecurity dmEntitySecurity : itemSecurities) {
-                                            dmEntitySecurity.setDmEntity(entity);
-                                            org.kimios.kernel.security.FactoryInstantiator.getInstance().getDMEntitySecurityFactory()
-                                                    .saveDMEntitySecurity(dmEntitySecurity);
+                                            //generate acl objects
+                                            String baseHashMapKey = dmEntitySecurity.getName() + "_" + dmEntitySecurity.getSource() + "_" + dmEntitySecurity.getType() + "_" + dmEntitySecurity.getType();
+
+                                            if(dmEntitySecurity.isRead())
+                                                saveAcl(baseHashMapKey, entity, DMSecurityRule.READRULE);
+
+                                            if(dmEntitySecurity.isWrite())
+                                                saveAcl(baseHashMapKey, entity, DMSecurityRule.WRITERULE);
+
+                                            if(dmEntitySecurity.isFullAccess())
+                                                saveAcl(baseHashMapKey, entity, DMSecurityRule.FULLRULE);
+
+                                            if (!dmEntitySecurity.isFullAccess() && !dmEntitySecurity.isRead() && !dmEntitySecurity.isWrite()) {
+                                                saveAcl(baseHashMapKey, entity, DMSecurityRule.NOACCESS);
+                                            }
                                         }
                                         count++;
                                         if (logger.isDebugEnabled()) {
@@ -148,7 +180,7 @@ public class MassiveSecurityUpdate extends KimiosCommand {
                                     logger.error("error while processing securities", e);
                                     try {
                                         currentTxMngr.rollback();
-                                    }catch (Exception ex){
+                                    } catch (Exception ex) {
                                         logger.error("error while rollbacking transaction", ex);
                                     }
                                 }
@@ -160,6 +192,17 @@ public class MassiveSecurityUpdate extends KimiosCommand {
                 }
             }
         }
+    }
+
+
+    private void saveAcl(String baseHashMapKey, DMEntity entity, short ruleType) {
+        DMEntityACL acl = new DMEntityACL(entity);
+        String key = baseHashMapKey + "_" + ruleType;
+        acl.setRuleHash(HDMEntitySecurityFactory.rules.get(key).getRuleHash());
+        ((HFactory) org.kimios.kernel.security.FactoryInstantiator.getInstance()
+                .getDMEntitySecurityFactory())
+                .getSession().saveOrUpdate(acl);
+
     }
 
     private static Logger logger = LoggerFactory.getLogger(MassiveSecurityUpdate.class);

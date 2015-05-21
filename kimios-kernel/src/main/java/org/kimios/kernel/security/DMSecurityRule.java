@@ -19,6 +19,7 @@ import org.kimios.kernel.utils.HashCalculator;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Map;
 
 @Entity
 @IdClass(DMSecurityRulePK.class)
@@ -127,5 +128,18 @@ public class DMSecurityRule implements Serializable
     {
         this.rights = rights;
     }
+
+    public static boolean securityRuleEquals(DMSecurityRule rule1, DMSecurityRule rule2){
+
+        if (rule1 == rule2) return true;
+        if (rule2 == null || rule1 == null || rule1.getClass() != rule2.getClass()) return false;
+        if (rule1.securityEntityType != rule2.securityEntityType) return false;
+        if (rule1.rights != rule2.rights) return false;
+        if (!rule1.securityEntityUid.equals(rule2.securityEntityUid)) return false;
+        return rule1.securityEntitySource.equals(rule2.securityEntitySource);
+    }
+
+
+
 }
 

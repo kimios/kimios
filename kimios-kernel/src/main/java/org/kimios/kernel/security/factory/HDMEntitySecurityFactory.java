@@ -31,9 +31,7 @@ import org.kimios.kernel.user.FactoryInstantiator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
 
 public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecurityFactory {
     final Logger log = LoggerFactory.getLogger(HDMEntitySecurityFactory.class);
@@ -191,9 +189,18 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
         }
     }
 
+
+    public static HashMap<String, DMSecurityRule> rules;
+
+    static {
+        rules = new HashMap<String, DMSecurityRule>();
+    }
+
     public void createSecurityEntityRules(String secEntityName, String secEntitySource, int secEntityType)
             throws ConfigException, DataSourceException {
         try {
+
+            List<DMSecurityRule> rulesItems = new ArrayList<DMSecurityRule>();
             DMSecurityRule read =
                     DMSecurityRule.getInstance(secEntityName, secEntitySource, secEntityType, DMSecurityRule.READRULE);
             DMSecurityRule write =
@@ -203,20 +210,39 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
             DMSecurityRule access =
                     DMSecurityRule.getInstance(secEntityName, secEntitySource, secEntityType, DMSecurityRule.NOACCESS);
 
+
+
+            rulesItems.add(read);
+            rulesItems.add(write);
+            rulesItems.add(full);
+            rulesItems.add(access);
+
+
+            //put in cache
+
             try {
                 getSession().saveOrUpdate(read);
                 getSession().saveOrUpdate(write);
                 getSession().saveOrUpdate(full);
                 getSession().saveOrUpdate(access);
-
                 getSession().flush();
             } catch (NonUniqueObjectException e) {
 
             }
+
+
+            //put in cache
+            for(DMSecurityRule rule: rulesItems){
+                String ruleMapKey = rule.getSecurityEntityUid() + "_" + rule.getSecurityEntitySource() + "_" + rule.getSecurityEntityType() + "_" + rule.getRights();
+                rules.put(ruleMapKey, rule);
+            }
+
         } catch (HibernateException ex) {
             throw new DataSourceException(ex);
         }
     }
+
+
 
     public void addACLToDmEntity(SecurityEntity sec,
                                  DMEntityImpl a, short rule) {
@@ -451,6 +477,7 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
             createSecurityEntityRules(des.getName(), des.getSource(), des.getType());
 
             if (des.isRead()) {
+
                 DMSecurityRule dr = DMSecurityRule
                         .getInstance(des.getName(), des.getSource(), des.getType(), DMSecurityRule.READRULE);
                 readAcl.setRuleHash(dr.getRuleHash());
