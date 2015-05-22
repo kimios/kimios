@@ -139,6 +139,21 @@ public class MassiveSecurityUpdate extends KimiosCommand {
                             public void run() {
 
 
+                                if(logger.isDebugEnabled()){
+                                    //display rule cache
+                                    if(HDMEntitySecurityFactory.rules != null){
+                                        for(String z: HDMEntitySecurityFactory.rules.keySet()){
+                                            logger.debug("{} ==> {} {} ", z,
+                                                    HDMEntitySecurityFactory.rules.get(z).getSecurityEntityUid() +  "@" +
+                                            HDMEntitySecurityFactory.rules.get(z).getSecurityEntitySource(), HDMEntitySecurityFactory.rules.get(z)
+                                            .getRights());
+                                        }
+                                    }   else {
+
+                                    }
+                                }
+
+
                                 try {
                                     currentTxMngr.begin();
                                     List<DMEntity> entities = new ArrayList<DMEntity>();
@@ -153,7 +168,7 @@ public class MassiveSecurityUpdate extends KimiosCommand {
                                     for (DMEntity entity : entities) {
                                         for (DMEntitySecurity dmEntitySecurity : itemSecurities) {
                                             //generate acl objects
-                                            String baseHashMapKey = dmEntitySecurity.getName() + "_" + dmEntitySecurity.getSource() + "_" + dmEntitySecurity.getType() + "_" + dmEntitySecurity.getType();
+                                            String baseHashMapKey = dmEntitySecurity.getName() + "_" + dmEntitySecurity.getSource() + "_" + dmEntitySecurity.getType();
 
                                             if(dmEntitySecurity.isRead())
                                                 saveAcl(baseHashMapKey, entity, DMSecurityRule.READRULE);
@@ -199,6 +214,9 @@ public class MassiveSecurityUpdate extends KimiosCommand {
         DMEntityACL acl = new DMEntityACL(entity);
         String key = baseHashMapKey + "_" + ruleType;
         acl.setRuleHash(HDMEntitySecurityFactory.rules.get(key).getRuleHash());
+        if( logger.isDebugEnabled() ){
+            logger.debug("processing rule " + acl.getRuleHash() + " for entity " + entity.getPath());
+        }
         ((HFactory) org.kimios.kernel.security.FactoryInstantiator.getInstance()
                 .getDMEntitySecurityFactory())
                 .getSession().saveOrUpdate(acl);
