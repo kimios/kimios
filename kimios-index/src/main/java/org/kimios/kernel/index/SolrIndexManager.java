@@ -225,11 +225,9 @@ public class SolrIndexManager
         doc.addField("DocumentOutWorkflow", outOfWorkflow);
         List<MetaValue> values = null;
         if (version.getDocumentType() != null) {
-            log.debug("Document Type Found for version");
             doc.addField("DocumentTypeUid", version.getDocumentType().getUid());
             doc.addField("DocumentTypeName", version.getDocumentType().getName());
             values = FactoryInstantiator.getInstance().getMetaValueFactory().getMetaValues(version);
-            log.debug("Meta Values Found for version " + values.size() + " / " + values);
             for (MetaValue value : values) {
                 switch (value.getMeta().getMetaType()) {
                     case MetaType.STRING:
@@ -248,10 +246,8 @@ public class SolrIndexManager
                         if (value != null && value.getValue() != null) {
                             //reparse date for local
                             String dateString = dateParser.format(value.getValue());
-                            log.debug("meta parsed on re-index: " + dateString);
                             try {
                                 cal.setTime(utcDateParser.parse(dateString));
-                                log.debug("meta parsed on re-index: " + dateString + " ==> Cal:" + cal.getTime());
                                 doc.addField("MetaDataDate_" + value.getMetaUid(), cal.getTime());
                             } catch (Exception ex) {
                                 log.error("error while reparsing meta data date {} {} {}", value.getMeta().getName(), value, dateString);
@@ -272,14 +268,12 @@ public class SolrIndexManager
             }
         }
         for (String attribute : document.getAttributes().keySet()) {
-
             if (attribute.equals("SearchTag")) {
                 //Custom parsing
                 String[] tags = document.getAttributes().get(attribute) != null &&
                         document.getAttributes().get(attribute).getValue() != null ?
                         document.getAttributes().get(attribute).getValue().split("\\|\\|\\|") : new String[]{};
                 for (String tag : tags) {
-                    log.debug("adding field Attribute_SEARCHTAG {} ", tag);
                     doc.addField("Attribute_SEARCHTAG", tag);
                 }
             } else {
@@ -288,83 +282,53 @@ public class SolrIndexManager
             }
 
         }
+
+        if (updateMetasWrapper) {
+            if ((values != null && values.size() > 0) || (document.getAttributes() != null || document.getAttributes().size() > 0)) {
+                AddonDataHandler.AddonDatasWrapper wrapper = new AddonDataHandler.AddonDatasWrapper();
+                wrapper.setEntityAttributes(document.getAttributes());
+                wrapper.setEntityMetaValues(values);
+                try {
+                    document.setAddOnDatas(mp.writeValueAsString(wrapper));
+                    if (flush) {
+                        FactoryInstantiator.getInstance().getDocumentFactory().saveDocument(document);
+                    } else
+                        FactoryInstantiator.getInstance().getDocumentFactory().saveDocumentNoFlush(document);
+                    log.debug("updating addon data with " + document.getAddOnDatas());
+                } catch (Exception ex) {
+                    log.error("error while generation addon meta field", ex);
+                }
+            } else {
+                log.debug("not generating addon field because of no data");
+            }
+        }
+
         if (document.getAddOnDatas() != null && document.getAddOnDatas().length() > 0) {
             doc.addField("DocumentRawAddonDatas", document.getAddOnDatas());
             log.debug("adding current addon data {}", document.getAddOnDatas());
-        } else {
-            //try to regenerate field
-
-            if(updateMetasWrapper){
-                if ((values != null && values.size() > 0) || (document.getAttributes() != null || document.getAttributes().size() > 0)) {
-                    AddonDataHandler.AddonDatasWrapper wrapper = new AddonDataHandler.AddonDatasWrapper();
-                    wrapper.setEntityAttributes(document.getAttributes());
-                    wrapper.setEntityMetaValues(values);
-                    try {
-                        document.setAddOnDatas(mp.writeValueAsString(wrapper));
-                        if(flush){
-                            FactoryInstantiator.getInstance().getDocumentFactory().saveDocument(document);
-                        } else
-                            FactoryInstantiator.getInstance().getDocumentFactory().saveDocumentNoFlush(document);
-                        log.debug("updating addon data with " + document.getAddOnDatas());
-                    } catch (Exception ex) {
-                        log.error("error while generation addon meta field", ex);
-                    }
-                    //update document
-                    doc.addField("DocumentRawAddonDatas", document.getAddOnDatas());
-                } else {
-                    log.debug("not generating addon field because of no data");
-                }
-            }
-
         }
         Object body = null;
         Map<String, Object> metaDatas = null;
 
-        /*
-            check old pojo for hash
-         */
-        boolean shouldReindexBody = true;
-        if (previousSolrDocument != null) {
-            log.debug("matching " + doc.getFieldValue("DocumentVersionHash") + " against " + previousSolrDocument.getFieldValue("DocumentVersionHash"));
-            String oldCombinedHash = previousSolrDocument.getFieldValue("DocumentVersionHash").toString();
-            if (doc.getFieldValue("DocumentVersionHash").equals(oldCombinedHash)) {
-                log.debug("old version matched on " + oldCombinedHash);
-                /*
-                    get old datas
-                 */
-                doc.addField("DocumentBody", previousSolrDocument.getFieldValue("DocumentBody"));
-                for (String fileMetaFieldName : previousSolrDocument.getFieldNames()) {
-                    if (fileMetaFieldName.startsWith("FileMetaData_")) {
-                        doc.addField(fileMetaFieldName, previousSolrDocument.getFieldValue(fileMetaFieldName));
-                        log.debug("added previous field " + fileMetaFieldName + " ==> " + previousSolrDocument.getFieldValue(fileMetaFieldName));
-                    }
-                }
-
-                shouldReindexBody = false;
+        try {
+            GlobalFilter globalFilter = new GlobalFilter();
+            body = globalFilter.getFileBody(document, version.getInputStream());
+            metaDatas = globalFilter.getMetaDatas();
+        } catch (Throwable ex) {
+            log.debug("Error while getting body", ex);
+        }
+        if (body == null) {
+            body = IndexHelper.EMPTY_STRING;
+        }
+        if (body instanceof String) {
+            doc.addField("DocumentBody", (String) body);
+        }
+        if (metaDatas != null) {
+            for (String mKey : metaDatas.keySet()) {
+                doc.addField("FileMetaData_" + mKey, metaDatas.get(mKey));
             }
         }
 
-        if (shouldReindexBody) {
-            log.debug("previous document version unavailable in index. will process document body");
-            try {
-                GlobalFilter globalFilter = new GlobalFilter();
-                body = globalFilter.getFileBody(document, version.getInputStream());
-                metaDatas = globalFilter.getMetaDatas();
-            } catch (Throwable ex) {
-                log.debug("Error while getting body", ex);
-            }
-            if (body == null) {
-                body = IndexHelper.EMPTY_STRING;
-            }
-            if (body instanceof String) {
-                doc.addField("DocumentBody", (String) body);
-            }
-            if (metaDatas != null) {
-                for (String mKey : metaDatas.keySet()) {
-                    doc.addField("FileMetaData_" + mKey, metaDatas.get(mKey));
-                }
-            }
-        }
         List<DMEntityACL> acls =
                 org.kimios.kernel.security.FactoryInstantiator.getInstance().getDMEntitySecurityFactory().getDMEntityACL(
                         document);
