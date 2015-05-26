@@ -211,7 +211,6 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
                     DMSecurityRule.getInstance(secEntityName, secEntitySource, secEntityType, DMSecurityRule.NOACCESS);
 
 
-
             rulesItems.add(read);
             rulesItems.add(write);
             rulesItems.add(full);
@@ -232,7 +231,7 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
 
 
             //put in cache
-            for(DMSecurityRule rule: rulesItems){
+            for (DMSecurityRule rule : rulesItems) {
                 String ruleMapKey = rule.getSecurityEntityUid() + "_" + rule.getSecurityEntitySource() + "_" + rule.getSecurityEntityType() + "_" + rule.getRights();
                 rules.put(ruleMapKey, rule);
             }
@@ -241,7 +240,6 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
             throw new DataSourceException(ex);
         }
     }
-
 
 
     public void addACLToDmEntity(SecurityEntity sec,
@@ -296,13 +294,13 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
             throws ConfigException, DataSourceException {
         try {
 
-            if(acls.size() == 0){
+            if (acls.size() == 0) {
                 return new ArrayList<DMEntitySecurity>();
 
             }
             List<String> hashAcls = new ArrayList<String>();
-            for(DMEntityACL acl: acls) {
-                if(!hashAcls.contains(acl.getRuleHash()))
+            for (DMEntityACL acl : acls) {
+                if (!hashAcls.contains(acl.getRuleHash()))
                     hashAcls.add(acl.getRuleHash());
             }
 
@@ -346,16 +344,33 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
                     SecurityEntity securityEntity = null;
                     switch (rule.getSecurityEntityType()) {
                         case SecurityEntityType.USER:
-                            securityEntity = source.getUserFactory().getUser(rule.getSecurityEntityUid());
+                            try {
+                                securityEntity = source.getUserFactory().getUser(rule.getSecurityEntityUid());
+                            } catch (Exception ex) {
+                                log.error("while generating securities from acls: for " +
+                                        rule.getSecurityEntityUid() + "@"
+                                        + rule.getSecurityEntitySource()
+                                        + " an error happen", ex);
+                            }
                             break;
                         case SecurityEntityType.GROUP:
-                            securityEntity = source.getGroupFactory().getGroup(rule.getSecurityEntityUid());
+                            try {
+                                securityEntity = source.getGroupFactory().getGroup(rule.getSecurityEntityUid());
+                            } catch (Exception ex) {
+                                log.error("while generating securities from acls: for " +
+                                        rule.getSecurityEntityUid() + "@"
+                                        + rule.getSecurityEntitySource()
+                                        + " an error happen", ex);
+                            }
                             break;
                         default:
                             ;
                     }
                     if (securityEntity != null) {
                         tt.setFullName(securityEntity.getName());
+                    } else {
+                        log.warn("warn {}@{} isn't readable from security source",
+                                rule.getSecurityEntityUid(), rule.getSecurityEntitySource());
                     }
                     vDes.add(tt);
                 }
@@ -417,16 +432,33 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
                     SecurityEntity securityEntity = null;
                     switch (rule.getSecurityEntityType()) {
                         case SecurityEntityType.USER:
-                            securityEntity = source.getUserFactory().getUser(rule.getSecurityEntityUid());
+                            try {
+                                securityEntity = source.getUserFactory().getUser(rule.getSecurityEntityUid());
+                            } catch (Exception ex) {
+                                log.error("while generating securities from acls: for " +
+                                        rule.getSecurityEntityUid() + "@"
+                                        + rule.getSecurityEntitySource()
+                                        + " an error happen", ex);
+                            }
                             break;
                         case SecurityEntityType.GROUP:
-                            securityEntity = source.getGroupFactory().getGroup(rule.getSecurityEntityUid());
+                            try {
+                                securityEntity = source.getGroupFactory().getGroup(rule.getSecurityEntityUid());
+                            } catch (Exception ex) {
+                                log.error("while generating securities from acls: for " +
+                                        rule.getSecurityEntityUid() + "@"
+                                        + rule.getSecurityEntitySource()
+                                        + " an error happen", ex);
+                            }
                             break;
                         default:
                             ;
                     }
                     if (securityEntity != null) {
                         tt.setFullName(securityEntity.getName());
+                    } else {
+                        log.warn("warn {}@{} isn't readable from security source",
+                                rule.getSecurityEntityUid(), rule.getSecurityEntitySource());
                     }
                     vDes.add(tt);
                 }
@@ -540,21 +572,20 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
 
     public List<DMEntityACL> generateDMEntityAclsFromSecuritiesObject(List<DMEntitySecurity> securities, DMEntity entity) {
 
-        if(entity != null){
+        if (entity != null) {
             //reset entity properly
-            for(DMEntitySecurity sec: securities)
+            for (DMEntitySecurity sec : securities)
                 sec.setDmEntity(entity);
         }
 
         List<DMEntityACL> ret = new ArrayList<DMEntityACL>();
-        for(DMEntitySecurity des: securities) {
+        for (DMEntitySecurity des : securities) {
             //create rules if it doesn't exists
             createSecurityEntityRules(des.getName(), des.getSource(), des.getType());
             DMEntityACL readAcl = new DMEntityACL(des.getDmEntity());
             DMEntityACL writeAcl = new DMEntityACL(des.getDmEntity());
             DMEntityACL fullAcl = new DMEntityACL(des.getDmEntity());
             DMEntityACL noAcl = new DMEntityACL(des.getDmEntity());
-
 
 
             if (des.isRead()) {

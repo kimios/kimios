@@ -43,15 +43,15 @@ public interface SecurityService
             @QueryParam(value = "dmEntityId") @WebParam(name = "dmEntityId") long dmEntityId)
             throws DMServiceException;
 
-    @GET
+    @POST
     @Path("/updateDMEntitySecurities")
     @Produces("application/json")
     public void updateDMEntitySecurities(
-            @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
-            @QueryParam(value = "dmEntityId") @WebParam(name = "dmEntityId") long dmEntityId,
-            @QueryParam(value = "xmlStream") @WebParam(name = "xmlStream") String xmlStream,
-            @QueryParam(value = "isRecursive") @WebParam(name = "isRecursive") boolean isRecursive,
-            @DefaultValue(value = "false") @QueryParam(value = "appendMode") @WebParam(name = "appendMode") boolean appendMode)
+            @FormParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+            @FormParam(value = "dmEntityId") @WebParam(name = "dmEntityId") long dmEntityId,
+            @FormParam(value = "xmlStream") @WebParam(name = "xmlStream") String xmlStream,
+            @FormParam(value = "isRecursive") @WebParam(name = "isRecursive") boolean isRecursive,
+            @DefaultValue(value = "false") @FormParam(value = "appendMode") @WebParam(name = "appendMode") boolean appendMode)
             throws DMServiceException;
 
     @GET
@@ -62,13 +62,13 @@ public interface SecurityService
             @QueryParam(value = "objectType") @WebParam(name = "objectType") String objectType)
             throws DMServiceException;
 
-    @GET
+    @POST
     @Path("/updateDefaultDMEntitySecurities")
     @Produces("application/json")
     public void updateDefaultDMEntitySecurities(
-            @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
-            @QueryParam(value = "xmlStream") @WebParam(name = "xmlStream") String xmlStream,
-            @QueryParam(value = "objectType") @WebParam(name = "objectType") String objectType)
+            @FormParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+            @FormParam(value = "xmlStream") @WebParam(name = "xmlStream") String xmlStream,
+            @FormParam(value = "objectType") @WebParam(name = "objectType") String objectType)
             throws DMServiceException;
 
     @GET
