@@ -18,6 +18,7 @@ package org.kimios.kernel.user.impl.factory.genericldaplayer;
 import com.sun.jndi.ldap.ctl.VirtualListViewControl;
 import org.kimios.kernel.security.SecurityEntityType;
 import org.kimios.kernel.user.impl.GenericLDAPImpl;
+import org.kimios.utils.configuration.ConfigurationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -230,6 +231,27 @@ public abstract class GenericLDAPFactory
         env.put(Context.SECURITY_PRINCIPAL, ldapUser);
         env.put(Context.SECURITY_CREDENTIALS, ldapPassword);
         env.put(Context.REFERRAL, ldapReferralMode);
+
+
+
+        try{
+            int cnxTimeout = Integer.parseInt(ConfigurationManager.getValue("dms.ldap.cnx.timeout"));
+            env.put("com.sun.jndi.ldap.connect.timeout", Integer.toString(cnxTimeout));
+
+        } catch (Exception ex){
+
+        }
+
+        try{
+            int cnxReadTimeout = Integer.parseInt(ConfigurationManager.getValue("dms.ldap.cnx.read.timeout"));
+            env.put("com.sun.jndi.ldap.read.timeout", Integer.toString(cnxReadTimeout));
+
+        } catch (Exception ex){
+
+        }
+
+
+
         return new InitialDirContext(env);
     }
 
@@ -245,8 +267,21 @@ public abstract class GenericLDAPFactory
         env.put(Context.SECURITY_PRINCIPAL, ldapUser);
         env.put(Context.SECURITY_CREDENTIALS, ldapPassword);
         env.put(Context.REFERRAL, ldapReferralMode);
+        try{
+            int cnxTimeout = Integer.parseInt(ConfigurationManager.getValue("dms.ldap.cnx.timeout"));
+            env.put("com.sun.jndi.ldap.connect.timeout", Integer.toString(cnxTimeout));
 
+        } catch (Exception ex){
 
+        }
+
+        try{
+            int cnxReadTimeout = Integer.parseInt(ConfigurationManager.getValue("dms.ldap.cnx.read.timeout"));
+            env.put("com.sun.jndi.ldap.read.timeout", Integer.toString(cnxReadTimeout));
+
+        } catch (Exception ex){
+
+        }
 
         return new InitialLdapContext(env, null);
     }

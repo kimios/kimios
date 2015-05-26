@@ -109,7 +109,11 @@ public class HUserFactory implements UserFactory
             ConfigException
     {
         try {
-            AbstractDBFactory.getInstance().getSession().delete(user);
+            User u  = (User)AbstractDBFactory.getInstance().getSession()
+                    .createCriteria(User.class)
+                    .add(Restrictions.eq("uid", user.getUid()))
+                    .uniqueResult();
+            AbstractDBFactory.getInstance().getSession().delete(u);
         } catch (HibernateException e) {
             throw new DataSourceException(e, e.getMessage());
         }
