@@ -95,7 +95,6 @@ public class ConfigurationManager implements FactoryBean<ConfigurationManager> {
 
     public static String getValue(String key) throws ConfigException {
 
-        log.debug("called configuration manager get value on instance " + instance);
         if (instance.holder.exists(key)) {
             return instance.holder.getStringValue(key);
         } else {
