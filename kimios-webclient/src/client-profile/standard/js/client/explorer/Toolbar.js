@@ -163,6 +163,27 @@ kimios.explorer.Toolbar = Ext.extend(Ext.Toolbar, {
             }
         });
 
+        this.trashButton = new Ext.Button({
+            text: kimios.lang('Trash'),
+            iconCls: 'trash',
+            hidden: true,
+            handler: function () {
+                new Ext.Window({
+                    id: 'kimios-trash',
+                    title: kimios.lang('Trash'),
+                    iconCls: 'trash',
+                    closable: true,
+                    border: true,
+                    layout: 'fit',
+                    maximizable: false,
+                    modal: true,
+                    width: 350,
+                    height: 300,
+                    items: [new kimios.explorer.TrashPanel({})]
+                }).show();
+            }
+        });
+
         kimios.explorer.Toolbar.superclass.constructor.call(this, config);
     },
 
@@ -183,6 +204,7 @@ kimios.explorer.Toolbar = Ext.extend(Ext.Toolbar, {
         this.add(' ');
 
         var buttonsArray = [];
+        buttonsArray.push(this.trashButton);
         buttonsArray.push(this.advancedSearchButton);
         buttonsArray.push(this.cartButton);
         buttonsArray.push(this.myTasksButton);
@@ -209,6 +231,7 @@ kimios.explorer.Toolbar = Ext.extend(Ext.Toolbar, {
                 }
                 var isVisible = kimios.getImplPackage() == 'org.kimios.kernel.user.impl.HAuthenticationSource';
                 this.myTasksButton.setVisible(true);
+                this.trashButton.setVisible(kimios.explorer.getViewport().rights.isAdmin);
                 this.myAccountButton.setVisible(isVisible);
                 this.toolsMenu.setVisible(!Ext.getCmp('kimios-tools').simpleUser);
                 this.logoutButton.setVisible(true);
@@ -235,6 +258,7 @@ kimios.explorer.Toolbar = Ext.extend(Ext.Toolbar, {
         this.myAccountButton.setText(kimios.lang('MyAccount'));
         this.logoutButton.setTooltip(kimios.lang('Logout'));
         this.loggedAsLabel.setValue(lg != undefined ? lg : this.getLoggedAsString());
+        this.trashButton.setText(kimios.lang('Trash'));
         this.doLayout();
     },
 

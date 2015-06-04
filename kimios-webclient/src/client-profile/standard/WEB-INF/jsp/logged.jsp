@@ -128,6 +128,7 @@
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/explorer/ExplorerPanel.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/util/UplDragDrop.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/explorer/DMEntityGridPanel.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/explorer/TrashPanel.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/explorer/CommentsPanel.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/explorer/BreadcrumbToolbar.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/explorer/BookmarksPanel.js"></script>

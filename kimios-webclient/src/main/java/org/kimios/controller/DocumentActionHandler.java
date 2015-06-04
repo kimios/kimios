@@ -58,11 +58,11 @@ public class DocumentActionHandler
             {
                 jsonResp = lastVersion();
             }
-            if ( action.equals( "version" ) )
+            if ( action.equals("version") )
             {
                 jsonResp = version();
             }
-            if ( action.equalsIgnoreCase( "metaValues" ) )
+            if ( action.equalsIgnoreCase("metaValues") )
             {
                 jsonResp = loadVersionMetaValues();
             }
@@ -89,6 +89,18 @@ public class DocumentActionHandler
             if ( action.equalsIgnoreCase( "recents" ) )
             {
                 jsonResp = recentItems();
+            }
+            if ( action.equalsIgnoreCase( "viewTrash" ) )
+            {
+                jsonResp = viewTrash();
+            }
+            if ( action.equalsIgnoreCase( "restoreFromTrash" ) )
+            {
+                restoreFromTrash();
+            }
+            if ( action.equalsIgnoreCase( "addToTrash" ) )
+            {
+                addToTrash();
             }
             if ( action.equals( "AddBookmarkItem" ) )
             {
@@ -129,7 +141,7 @@ public class DocumentActionHandler
     {
         org.kimios.kernel.ws.pojo.Document doc =
             documentController.getDocument( sessionUid, Long.parseLong( parameters.get( "documentUid" ) ) );
-        DocumentVersion dv = documentVersionController.getLastDocumenVersion( sessionUid, doc.getUid() );
+        DocumentVersion dv = documentVersionController.getLastDocumenVersion(sessionUid, doc.getUid());
         DocumentVersionJSON dvj = new DocumentVersionJSON( dv );
         String jsonResp = "[" + new JSONSerializer().serialize( dvj ) + "]";
         return jsonResp;
@@ -138,8 +150,8 @@ public class DocumentActionHandler
     private String getVersions()
         throws Exception
     {
-        DocumentVersion[] versions = documentVersionController.getDocumentVersions( sessionUid, Long.parseLong(
-            parameters.get( "documentUid" ) ) );
+        DocumentVersion[] versions = documentVersionController.getDocumentVersions(sessionUid, Long.parseLong(
+                parameters.get("documentUid")));
         List<DocumentVersionJSON> vJson = new ArrayList<DocumentVersionJSON>();
         for ( DocumentVersion v : versions )
         {
@@ -152,19 +164,19 @@ public class DocumentActionHandler
     private String version()
         throws Exception
     {
-        DocumentVersion dv = documentVersionController.getDocumentVersion( sessionUid, Long.parseLong(
-            parameters.get( "versionUid" ) ) );
+        DocumentVersion dv = documentVersionController.getDocumentVersion(sessionUid, Long.parseLong(
+                parameters.get("versionUid")));
         DocumentVersionJSON dvj = new DocumentVersionJSON( dv );
-        String jsonResp = "[" + new JSONSerializer().serialize( dvj ) + "]";
+        String jsonResp = "[" + new JSONSerializer().serialize(dvj) + "]";
         return jsonResp;
     }
 
     private String loadVersionMetaValues()
         throws Exception
     {
-        DocumentVersion dv = documentVersionController.getDocumentVersion( sessionUid, Long.parseLong(
-            parameters.get( "versionUid" ) ) );
-        List<Meta> metaValues = loadVersionMetaValues( dv );
+        DocumentVersion dv = documentVersionController.getDocumentVersion(sessionUid, Long.parseLong(
+                parameters.get("versionUid")));
+        List<Meta> metaValues = loadVersionMetaValues(dv);
         String jsonResp = "{'documentTypeUid':" + dv.getDocumentTypeUid() + ",'metaValues':";
         jsonResp += new JSONSerializer().transform( new DateTranformerExt(
             InternationalizationManager.getSingleValue( parameters.get( "selected_lang" ), "SimpleDateForm" ) ),
@@ -176,13 +188,13 @@ public class DocumentActionHandler
         throws Exception
     {
         org.kimios.kernel.ws.pojo.Document doc =
-            documentController.getDocument( sessionUid, Long.parseLong( parameters.get( "uid" ) ) );
+            documentController.getDocument(sessionUid, Long.parseLong(parameters.get("uid")));
 
-        DocumentVersion docVersion = documentVersionController.getLastDocumenVersion( sessionUid, doc.getUid() );
+        DocumentVersion docVersion = documentVersionController.getLastDocumenVersion(sessionUid, doc.getUid());
 
 
 
-        List<Meta> items = loadVersionMetaValues( docVersion );
+        List<Meta> items = loadVersionMetaValues(docVersion);
 
         return "{'lastMetaValues':" + new JSONSerializer().transform( new DateTranformerExt(
             InternationalizationManager.getSingleValue( parameters.get( "selected_lang" ), "SimpleDateForm" ) ),
@@ -195,8 +207,8 @@ public class DocumentActionHandler
     {
         List<Meta> metaValues = new ArrayList<Meta>();
         org.kimios.kernel.ws.pojo.Meta[] mServ =
-            documentVersionController.getMetas( sessionUid, docVersion.getDocumentTypeUid() );
-        List<MetaValue> values = documentVersionController.getMetaValues( sessionUid, docVersion.getUid() );
+            documentVersionController.getMetas(sessionUid, docVersion.getDocumentTypeUid());
+        List<MetaValue> values = documentVersionController.getMetaValues(sessionUid, docVersion.getUid());
         List<org.kimios.kernel.ws.pojo.Meta> toRemove = new ArrayList<org.kimios.kernel.ws.pojo.Meta>();
         for ( MetaValue mValue : values )
         {
@@ -236,7 +248,7 @@ public class DocumentActionHandler
         throws Exception
     {
         org.kimios.kernel.ws.pojo.Document[] rels =
-            documentController.getRelatedDocuments( sessionUid, Long.parseLong( parameters.get( "documentUid" ) ) );
+            documentController.getRelatedDocuments(sessionUid, Long.parseLong(parameters.get("documentUid")));
         ArrayList<DMEntity> relDocs = new ArrayList<DMEntity>();
         for ( org.kimios.kernel.ws.pojo.Document d : rels )
         {
@@ -247,6 +259,37 @@ public class DocumentActionHandler
                 "class" ).serialize( relDocs );
         return jsonResp;
     }
+
+    private String viewTrash()
+            throws Exception
+    {
+        List<org.kimios.kernel.ws.pojo.DMEntity> trashedItems =
+                extensionController.viewTrash(sessionUid, 0, Integer.MAX_VALUE);
+        ArrayList<DMEntity> relDocs = new ArrayList<DMEntity>();
+        for ( org.kimios.kernel.ws.pojo.DMEntity d : trashedItems )
+        {
+            relDocs.add( new DMEntity( d ) );
+        }
+        String jsonResp =
+                new JSONSerializer().exclude(
+                        "class" ).serialize( relDocs );
+        return jsonResp;
+    }
+
+    private void restoreFromTrash()
+            throws Exception
+    {
+        Long documentId = Long.parseLong(parameters.get("documentId"));
+        extensionController.restoreDocumentFromTrash(sessionUid, documentId);
+    }
+
+    private void addToTrash()
+            throws Exception
+    {
+        Long documentId = Long.parseLong(parameters.get("documentId"));
+        extensionController.addDocumentToTrash(sessionUid, documentId);
+    }
+
 
     private String bookmarks()
         throws Exception

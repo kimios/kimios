@@ -148,13 +148,23 @@ kimios.request = {
                 kimios.explorer.getViewport().refreshGrids();
             };
         }
-        kimios.ajaxRequest('DmsEntity', {
-            action: 'moveEntity',
-            uid: uid,
-            type: type,
-            targetUid: targetUid,
-            targetType: targetType
-        }, hdl, eHdl);
+
+        Ext.MessageBox.confirm(
+            kimios.lang('Move'),
+            kimios.lang('ConfirmMoveJS'),
+            function (btn) {
+                if (btn == 'yes') {
+                    kimios.ajaxRequest('DmsEntity', {
+                        action: 'moveEntity',
+                        uid: uid,
+                        type: type,
+                        targetUid: targetUid,
+                        targetType: targetType
+                    }, hdl, eHdl);
+                }
+            }
+        );
+
     },
 
     moveDMEntities: function (dmEntityPojos, targetUid, targetType, hdl) {
@@ -165,12 +175,20 @@ kimios.request = {
                 Ext.getCmp('kimios-dm-entity-tree-panel').refresh();
             }
         }
-        kimios.ajaxRequest('DmsEntity', {
-            action: 'moveEntities',
-            dmEntityPojosJson: Ext.util.JSON.encode(dmEntityPojos),
-            targetUid: targetUid,
-            targetType: targetType
-        }, hdl);
+        Ext.MessageBox.confirm(
+            kimios.lang('Move'),
+            kimios.lang('ConfirmMoveJS'),
+            function (btn) {
+                if (btn == 'yes') {
+                    kimios.ajaxRequest('DmsEntity', {
+                        action: 'moveEntities',
+                        dmEntityPojosJson: Ext.util.JSON.encode(dmEntityPojos),
+                        targetUid: targetUid,
+                        targetType: targetType
+                    }, hdl);
+                }
+            }
+        );
     },
 
     deleteDMEntity: function (uid, type, name, handle, parentId) {

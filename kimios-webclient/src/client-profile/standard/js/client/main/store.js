@@ -169,6 +169,16 @@ kimios.store = {
         });
     },
 
+    getTrashStore: function () {
+        return new DmsJsonStore({
+            url: 'Version',
+            fields: kimios.record.dmEntityRecord,
+            baseParams: {
+                action: 'viewTrash'
+            }
+        });
+    },
+
     getQuickSearchStore: function (searchParams) {
 
         var baseParams = searchParams;

@@ -28,6 +28,7 @@ import org.kimios.client.controller.WorkspaceController;
 import org.kimios.client.controller.helpers.XMLGenerators;
 import org.kimios.core.wrappers.DMEntity;
 import org.kimios.kernel.ws.pojo.*;
+import org.kimios.utils.configuration.ConfigurationManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,6 +73,9 @@ public class DmEntityControllerWeb extends Controller
         if(action.equalsIgnoreCase("createSymbolicLink")){
             createSymbolikLink();
         }
+        if(action.equalsIgnoreCase("permanentDelete")){
+            permanentDocumentDelete();
+        }
         return "";
     }
 
@@ -112,7 +116,12 @@ public class DmEntityControllerWeb extends Controller
                 folderController.deleteFolder(sessionUid, dmEntityUid);
                 break;
             case 3:
-                documentController.deleteDocument(sessionUid, dmEntityUid);
+                //mode to trash
+                if(ConfigurationManager.getValue("dms.enable.trash") != null && ConfigurationManager.getValue("dms.enable.trash").equals("true")){
+                    extensionController.addDocumentToTrash(sessionUid, dmEntityUid);
+                }else {
+                    documentController.deleteDocument(sessionUid, dmEntityUid);
+                }
                 break;
             case 7:
                 long parentId = Long.parseLong(parameters.get("parentId"));
@@ -223,7 +232,7 @@ public class DmEntityControllerWeb extends Controller
         if (dmType == 3) {
             Document doc = documentController.getDocument(sessionUid, dmEntityUid);
             if (doc != null && targetType == 2) {
-                documentController.createSymbolicLink(sessionUid, dmEntityUid, targetUid, doc.getName() );
+                documentController.createSymbolicLink(sessionUid, dmEntityUid, targetUid, doc.getName());
             }
         }
     }
@@ -276,10 +285,21 @@ public class DmEntityControllerWeb extends Controller
                     folderController.deleteFolder(sessionUid, dmEntityUid);
                     break;
                 case 3:
-                    documentController.deleteDocument(sessionUid, dmEntityUid);
+                    if(ConfigurationManager.getValue("dms.enable.trash") != null && ConfigurationManager.getValue("dms.enable.trash").equals("true")){
+                        extensionController.addDocumentToTrash(sessionUid, dmEntityUid);
+                    }else {
+                        documentController.deleteDocument(sessionUid, dmEntityUid);
+                    }
                     break;
             }
         }
+    }
+
+    private void permanentDocumentDelete() throws Exception {
+
+        long dmEntityUid = Long.parseLong(parameters.get("dmEntityUid"));
+
+        documentController.deleteDocument(sessionUid, dmEntityUid);
     }
 
     private void updateEntities() throws Exception

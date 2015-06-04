@@ -16,8 +16,11 @@
 package org.kimios.client.controller;
 
 import org.kimios.client.exception.ExceptionHelper;
+import org.kimios.kernel.ws.pojo.DMEntity;
 import org.kimios.kernel.ws.pojo.DMEntityAttribute;
 import org.kimios.webservices.ExtensionService;
+
+import java.util.List;
 
 public class ExtensionController {
 
@@ -46,6 +49,35 @@ public class ExtensionController {
             throws Exception {
         try {
             client.setEntityAttribute(sessionId, dmEntityId, dmEntityAttributeName, dmEntityAttributeValue, isIndexed);
+        } catch (Exception e) {
+            throw new ExceptionHelper().convertException(e);
+        }
+    }
+
+
+
+    public void addDocumentToTrash(String sessionId, long documentId)
+        throws Exception {
+        try {
+            client.trashEntity(sessionId, documentId);
+        } catch (Exception e) {
+            throw new ExceptionHelper().convertException(e);
+        }
+    }
+
+    public void restoreDocumentFromTrash(String sessionId, long documentId)
+            throws Exception {
+        try {
+            client.restoreFromTrash(sessionId, documentId);
+        } catch (Exception e) {
+            throw new ExceptionHelper().convertException(e);
+        }
+    }
+
+    public List<DMEntity> viewTrash(String sessionId, int start, int count)
+            throws Exception {
+        try {
+            return client.viewTrash(sessionId, start, count);
         } catch (Exception e) {
             throw new ExceptionHelper().convertException(e);
         }
