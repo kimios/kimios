@@ -538,17 +538,17 @@ public class SolrIndexManager
 
     public void threadedIndexDocumentList(List<DMEntity> documentEntities,
                                           long readVersionTimeOut, TimeUnit readVersionTimeoutTimeUnit,
-                                          final boolean updateDocsMetaWrapper)
+                                          final boolean updateDocsMetaWrapper, int poolSize, boolean disableThreading)
             throws IndexException, DataSourceException, ConfigException {
         try {
 
-            ExecutorService executorService = Executors.newFixedThreadPool(8);
+            ExecutorService executorService = null;
+            if(!disableThreading)
+                 executorService = Executors.newFixedThreadPool(poolSize);
             List<SolrInputDocument> updatedDocument = new ArrayList<SolrInputDocument>();
             List<String> updatedDocumentIds = new ArrayList<String>();
             Map<Long, Future<SolrInputDocument>> dataFutures = new HashMap<Long, Future<SolrInputDocument>>();
             for (final DMEntity doc : documentEntities) {
-
-
                 final long docId = doc.getUid();
                 final String docPath = doc.getPath();
                 if (log.isDebugEnabled()) {
@@ -556,47 +556,53 @@ public class SolrIndexManager
                             doc.getName() + " " + doc.getPath());
                 }
 
-                Callable<SolrInputDocument> solrInputDocumentCallable = new Callable<SolrInputDocument>() {
-                    @Override
-                    public SolrInputDocument call() throws Exception {
-                        log.debug("started solr input document for doc #" + docId
-                                + " (" + docPath + ")");
-                        SolrInputDocument solrInputDocument = toSolrInputDocument((Document) doc, null,
-                                false, updateDocsMetaWrapper);
-                        return solrInputDocument;
-                    }
-                };
 
-                Future<SolrInputDocument> solrInputDocumentFuture =
-                        executorService.submit(solrInputDocumentCallable);
+                if(!disableThreading && executorService != null){
+                    Callable<SolrInputDocument> solrInputDocumentCallable = new Callable<SolrInputDocument>() {
+                        @Override
+                        public SolrInputDocument call() throws Exception {
+                            log.debug("started solr input document for doc #" + docId
+                                    + " (" + docPath + ")");
+                            SolrInputDocument solrInputDocument = toSolrInputDocument((Document) doc, null,
+                                    false, updateDocsMetaWrapper);
+                            return solrInputDocument;
+                        }
+                    };
 
-                dataFutures.put(doc.getUid(), solrInputDocumentFuture);
+                    Future<SolrInputDocument> solrInputDocumentFuture =
+                            executorService.submit(solrInputDocumentCallable);
 
-            }
-
-            for (Long item : dataFutures.keySet()) {
-                Future<SolrInputDocument> future = dataFutures.get(item);
-                try {
-                    updatedDocument.add(future.get(readVersionTimeOut, readVersionTimeoutTimeUnit));
-                    updatedDocumentIds.add(String.valueOf(item));
-                    log.debug("thread read success. added contentn for doc #{}", item);
-                } catch (TimeoutException ex) {
-                    log.debug("timeout for thread while reading doc #{}", item);
-                    if (!future.isCancelled()) {
-                        future.cancel(true);
-                    }
-                } catch (Exception ex) {
-                    log.debug("timeout for thread while reading doc #{}", item);
+                    dataFutures.put(doc.getUid(), solrInputDocumentFuture);
+                }  else {
+                    updatedDocument.add(toSolrInputDocument((Document)doc, null));
+                    updatedDocumentIds.add(String.valueOf(doc.getUid()));
                 }
             }
 
-            try {
+            if(!disableThreading){
+                for (Long item : dataFutures.keySet()) {
+                    Future<SolrInputDocument> future = dataFutures.get(item);
+                    try {
+                        updatedDocument.add(future.get(readVersionTimeOut, readVersionTimeoutTimeUnit));
+                        updatedDocumentIds.add(String.valueOf(item));
+                        log.debug("thread read success. added contentn for doc #{}", item);
+                    } catch (TimeoutException ex) {
+                        log.debug("timeout for thread while reading doc #{}", item);
+                        if (!future.isCancelled()) {
+                            future.cancel(true);
+                        }
+                    } catch (Exception ex) {
+                        log.debug("timeout for thread while reading doc #{}", item);
+                    }
+                }
 
-                executorService.shutdownNow();
-            } catch (Exception ex) {
+                try {
 
+                    executorService.shutdownNow();
+                } catch (Exception ex) {
+
+                }
             }
-
             if (updatedDocumentIds.size() != documentEntities.size()) {
                 log.debug("{} documents won't be indexed", (documentEntities.size() - updatedDocument.size()));
             }

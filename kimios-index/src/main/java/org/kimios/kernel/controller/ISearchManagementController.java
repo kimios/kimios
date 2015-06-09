@@ -54,7 +54,9 @@ public interface ISearchManagementController {
                                 Integer blockSize,
                                 Long readFileTimeOut,
                                 TimeUnit readFileTimeoutUnit,
-                                boolean updateDocsMetaWrapper)
+                                int threadPoolSize,
+                                boolean updateDocsMetaWrapper,
+                                boolean disableThreading)
             throws AccessDeniedException, IndexException, ConfigException, DataSourceException;
 
     public void killAndCleanReindexProcess(Session session)

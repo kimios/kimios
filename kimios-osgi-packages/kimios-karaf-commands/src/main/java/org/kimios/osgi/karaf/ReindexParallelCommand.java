@@ -44,10 +44,22 @@ public class ReindexParallelCommand extends KimiosCommand {
             required = false, multiValued = false)
     boolean regenerateMetaWrapper = false;
 
+    @Option(name = "-nt",
+            description = "--no-threading",
+            required = false, multiValued = false)
+    boolean disableThreading = false;
+
     @Option(name = "-s",
             description = "--read-timeout-unit",
             required = false, multiValued = false)
     String readTimeOutUnit = null;
+
+
+    @Option(name = "-tps",
+            aliases = "--thread-pool-size",
+            description = "Thread Pool Size",
+            required = false, multiValued = false)
+    Integer threadPoolSize = null;
 
 
     @Argument(index = 0, name = "path",
@@ -70,7 +82,9 @@ public class ReindexParallelCommand extends KimiosCommand {
                     block,
                     readTimeOut,
                     readTimeOutUnit != null ? TimeUnit.valueOf(readTimeOutUnit) : null,
-                    regenerateMetaWrapper
+                    threadPoolSize,
+                    regenerateMetaWrapper,
+                    disableThreading
             );
         }
     }

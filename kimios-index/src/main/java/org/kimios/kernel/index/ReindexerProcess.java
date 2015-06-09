@@ -132,8 +132,14 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
 
     private boolean updateDocsMetaWrapper;
 
+    private boolean disableThreading;
+
+    private int threadPoolSize;
+
     public ReindexerProcess(ISolrIndexManager indexManager, String path, int blockSize, List<Long> excludedIds, List<String> extensionsExcluded,
-                            Long threadReadTimeOut, TimeUnit threadReadTimeoutTimeUnit, boolean updateDocsMetaWrapper) {
+                            Long threadReadTimeOut, TimeUnit threadReadTimeoutTimeUnit, int threadPoolSize,
+                            boolean updateDocsMetaWrapper,
+                            boolean disableThreading) {
         this.indexManager = indexManager;
         this.finalPath = path;
         this.blockSize = blockSize;
@@ -147,6 +153,8 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
         this.threadReadTimeoutTimeUnit = threadReadTimeoutTimeUnit;
         this.extensionsExcluded = extensionsExcluded;
         this.updateDocsMetaWrapper = updateDocsMetaWrapper;
+        this.disableThreading = disableThreading;
+        this.threadPoolSize = threadPoolSize;
     }
 
 
@@ -217,7 +225,8 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
                                 extensionsExcluded);
                 try {
                     if (threadReadTimeoutTimeUnit != null && threadReadTimeOut != null) {
-                        indexManager.threadedIndexDocumentList(entityList, threadReadTimeOut, threadReadTimeoutTimeUnit, updateDocsMetaWrapper);
+                        indexManager.threadedIndexDocumentList(entityList, threadReadTimeOut, threadReadTimeoutTimeUnit,
+                                updateDocsMetaWrapper, threadPoolSize, disableThreading);
                     } else
                         indexManager.indexDocumentList(entityList);
                     indexed += entityList.size();
