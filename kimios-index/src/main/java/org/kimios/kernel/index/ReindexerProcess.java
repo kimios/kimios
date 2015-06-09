@@ -230,6 +230,14 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
                     } else
                         indexManager.indexDocumentList(entityList);
                     indexed += entityList.size();
+                    if(log.isInfoEnabled()){
+                        log.info("Indexing "
+                                + this.reindexResult.getPath()
+                                + " : " + this.reindexResult.getReindexProgression() + " %. "
+                                + ". Indexed "
+                                + this.reindexResult.getReindexedCount() + " on "
+                                + this.reindexResult.getEntitiesCount());
+                    }
                 } catch (Exception ex) {
                     log.error("an error happen during indexing for block {} / {}", u + 1, indexingBlockCount);
                 }
