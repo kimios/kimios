@@ -80,7 +80,8 @@ public class SearchManagementController extends AKimiosController implements ISe
                                              TimeUnit readFileTimeoutUnit,
                                              int threadPoolSize,
                                              boolean updateDocsMetaWrapper,
-                                             boolean disableThreading)
+                                             boolean disableThreading,
+                                             boolean asyncDocumentRead)
             throws AccessDeniedException, IndexException, ConfigException, DataSourceException {
         if (securityFactoryInstantiator.getRoleFactory()
                 .getRole(Role.ADMIN, session.getUserName(), session.getUserSource()) != null) {
@@ -121,7 +122,8 @@ public class SearchManagementController extends AKimiosController implements ISe
                         readFileTimeoutUnit,
                         threadPoolSize,
                         updateDocsMetaWrapper,
-                        disableThreading
+                        disableThreading,
+                        asyncDocumentRead
 
                 );
                 executor.submit(osgiReindexer);

@@ -53,7 +53,7 @@ public class GlobalFilter
     }
 
     public Object getFileBody( Document document, InputStream inputStream )
-        throws FileFilterException, IOException
+        throws Throwable
     {
         try
         {

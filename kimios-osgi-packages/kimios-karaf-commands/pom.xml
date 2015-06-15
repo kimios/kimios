@@ -89,6 +89,13 @@
         </dependency>
 
         <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-utils</artifactId>
+            <version>${kimios.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.hibernate.javax.persistence</groupId>
             <artifactId>hibernate-jpa-2.0-api</artifactId>
             <version>1.0.1.Final</version>
@@ -161,6 +168,7 @@
                         <Import-Package>
                             org.apache.karaf.shell.console,
                             org.apache.karaf.shell.commands,
+                            org.kimios.utils.extension,
                             *
                         </Import-Package>
                         <Bundle-SymbolicName>org.kimios.osgi.commands</Bundle-SymbolicName>

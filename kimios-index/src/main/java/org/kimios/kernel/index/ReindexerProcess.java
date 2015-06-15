@@ -136,10 +136,13 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
 
     private int threadPoolSize;
 
+    private boolean asyncDocumentRead;
+
     public ReindexerProcess(ISolrIndexManager indexManager, String path, int blockSize, List<Long> excludedIds, List<String> extensionsExcluded,
                             Long threadReadTimeOut, TimeUnit threadReadTimeoutTimeUnit, int threadPoolSize,
                             boolean updateDocsMetaWrapper,
-                            boolean disableThreading) {
+                            boolean disableThreading,
+                            boolean asyncDocumentRead) {
         this.indexManager = indexManager;
         this.finalPath = path;
         this.blockSize = blockSize;
@@ -155,6 +158,7 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
         this.updateDocsMetaWrapper = updateDocsMetaWrapper;
         this.disableThreading = disableThreading;
         this.threadPoolSize = threadPoolSize;
+        this.asyncDocumentRead = asyncDocumentRead;
     }
 
 
@@ -225,8 +229,9 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
                                 extensionsExcluded);
                 try {
                     if (threadReadTimeoutTimeUnit != null && threadReadTimeOut != null) {
-                        indexManager.threadedIndexDocumentList(entityList, threadReadTimeOut, threadReadTimeoutTimeUnit,
-                                updateDocsMetaWrapper, threadPoolSize, disableThreading);
+                        indexManager.threadedIndexDocumentList(entityList, threadReadTimeOut,
+                                threadReadTimeoutTimeUnit,
+                                updateDocsMetaWrapper, threadPoolSize, disableThreading, asyncDocumentRead);
                     } else
                         indexManager.indexDocumentList(entityList);
                     indexed += entityList.size();
@@ -239,7 +244,7 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
                                 + this.reindexResult.getEntitiesCount());
                     }
                 } catch (Exception ex) {
-                    log.error("an error happen during indexing for block {} / {}", u + 1, indexingBlockCount);
+                    log.error("an error happen during indexing for block " +  u + 1 + " / " + indexingBlockCount, ex);
                 }
 
                 this.reindexResult.setReindexedCount(indexed);

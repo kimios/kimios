@@ -24,6 +24,7 @@ import org.kimios.kernel.controller.IPathController;
 import org.kimios.kernel.exception.IndexException;
 import org.kimios.kernel.index.SolrIndexManager;
 import org.kimios.kernel.index.query.factory.DocumentFactory;
+import org.kimios.kernel.index.query.factory.DocumentIndexStatusFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
@@ -58,7 +59,17 @@ public class SearchServiceSolrFactory implements FactoryBean<SolrIndexManager>
 
     private DocumentFactory solrDocumentFactory;
 
+    private DocumentIndexStatusFactory documentIndexStatusFactory;
+
     private boolean serverMode = false;
+
+    public DocumentIndexStatusFactory getDocumentIndexStatusFactory() {
+        return documentIndexStatusFactory;
+    }
+
+    public void setDocumentIndexStatusFactory(DocumentIndexStatusFactory documentIndexStatusFactory) {
+        this.documentIndexStatusFactory = documentIndexStatusFactory;
+    }
 
     public DocumentFactory getSolrDocumentFactory()
     {
@@ -119,6 +130,8 @@ public class SearchServiceSolrFactory implements FactoryBean<SolrIndexManager>
     {
         this.solrUrl = solrUrl;
     }
+
+
 
     private static SolrServer initLocalServer(String solrHome, String coreName)
     {
@@ -255,6 +268,7 @@ public class SearchServiceSolrFactory implements FactoryBean<SolrIndexManager>
         SolrIndexManager manager = new SolrIndexManager(solrServer);
         manager.setPathController(pathController);
         manager.setSolrDocumentFactory( solrDocumentFactory );
+        manager.setDocumentIndexStatusFactory( documentIndexStatusFactory );
 
         return manager;
     }

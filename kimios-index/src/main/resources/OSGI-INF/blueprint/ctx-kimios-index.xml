@@ -58,6 +58,7 @@
         <property name="coreName" value="${dms.index.corename}"/>
         <property name="pathController" ref="pathController"/>
         <property name="solrDocumentFactory" ref="solrDocumentFactory" />
+        <property name="documentIndexStatusFactory" ref="documentIndexStatusFactory" />
 
         <property name="addonDataHandler" ref="addonDataHandler" />
         <property name="sessionEndHandler" ref="sessionEndHandler" />
@@ -128,6 +129,10 @@
 
 
     <bean id="searchRequestSecurityFactory" class="org.kimios.kernel.index.query.factory.SearchRequestSecurityFactory">
+        <property name="provider" ref="dbFactoryProvider"></property>
+    </bean>
+
+    <bean id="documentIndexStatusFactory" class="org.kimios.kernel.index.query.factory.DocumentIndexStatusFactory">
         <property name="provider" ref="dbFactoryProvider"></property>
     </bean>
 

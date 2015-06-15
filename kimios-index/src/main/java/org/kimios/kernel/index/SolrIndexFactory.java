@@ -30,6 +30,7 @@ import org.kimios.kernel.events.EventHandlerManager;
 import org.kimios.kernel.events.impl.AddonDataHandler;
 import org.kimios.kernel.exception.IndexException;
 import org.kimios.kernel.index.query.factory.DocumentFactory;
+import org.kimios.kernel.index.query.factory.DocumentIndexStatusFactory;
 import org.kimios.kernel.index.solr.SolrIndexer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,6 +63,8 @@ public class SolrIndexFactory {
     private IPathController pathController;
 
     private DocumentFactory solrDocumentFactory;
+
+    private DocumentIndexStatusFactory documentIndexStatusFactory;
 
     private boolean serverMode = false;
 
@@ -101,6 +104,14 @@ public class SolrIndexFactory {
 
     public void setSolrDocumentFactory(DocumentFactory solrDocumentFactory) {
         this.solrDocumentFactory = solrDocumentFactory;
+    }
+
+    public DocumentIndexStatusFactory getDocumentIndexStatusFactory() {
+        return documentIndexStatusFactory;
+    }
+
+    public void setDocumentIndexStatusFactory(DocumentIndexStatusFactory documentIndexStatusFactory) {
+        this.documentIndexStatusFactory = documentIndexStatusFactory;
     }
 
     public IPathController getPathController() {
@@ -276,6 +287,7 @@ public class SolrIndexFactory {
         SolrIndexManager manager = new SolrIndexManager(solrServer);
         manager.setPathController(pathController);
         manager.setSolrDocumentFactory(solrDocumentFactory);
+        manager.setDocumentIndexStatusFactory(documentIndexStatusFactory);
 
         EventHandlerManager.getInstance().addHandler(addonDataHandler);
         SolrIndexer si = new SolrIndexer();

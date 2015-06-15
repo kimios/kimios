@@ -28,6 +28,7 @@
     <property name="coreName" value="${dms.index.corename}"/>
     <property name="pathController" ref="pathController"/>
     <property name="solrDocumentFactory" ref="solrDocumentFactory" />
+    <property name="documentIndexStatusFactory" ref="documentIndexStatusFactory" />
   </bean>
 
 
@@ -61,23 +62,27 @@
 
     <bean id="searchRequestSecurityFactory" class="org.kimios.kernel.index.query.factory.SearchRequestSecurityFactory" parent="hfactory" />
 
-
-  <!-- index filter mapping Old filter mapping loading method. Now replaced with Unified Tika Filter
-  <bean class="org.kimios.kernel.index.FiltersMapper" factory-method="getInstance"
-        init-method="loadFiltersMapping"/>
+    <bean id="documentIndexStatusFactory" class="org.kimios.kernel.index.query.factory.DocumentIndexStatusFactory" parent="hfactory" />
 
 
-  <aop:config>
-    <aop:pointcut id="searchService"
-                  expression="execution(* org.kimios.kernel.controller.ISearchController.*(..))"/>
-
-      <aop:pointcut id="searchMngService"
-                    expression="execution(* org.kimios.kernel.controller.ISearchManagementController.*(..))"/>
-
-        <aop:advisor advice-ref="txAdvice" pointcut-ref="searchService"/>
 
 
-      <aop:advisor advice-ref="txAdvice" pointcut-ref="searchMngService"/>
-  </aop:config> -->
+    <!-- index filter mapping Old filter mapping loading method. Now replaced with Unified Tika Filter
+    <bean class="org.kimios.kernel.index.FiltersMapper" factory-method="getInstance"
+          init-method="loadFiltersMapping"/>
+
+
+    <aop:config>
+      <aop:pointcut id="searchService"
+                    expression="execution(* org.kimios.kernel.controller.ISearchController.*(..))"/>
+
+        <aop:pointcut id="searchMngService"
+                      expression="execution(* org.kimios.kernel.controller.ISearchManagementController.*(..))"/>
+
+          <aop:advisor advice-ref="txAdvice" pointcut-ref="searchService"/>
+
+
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="searchMngService"/>
+    </aop:config> -->
 
 </beans>

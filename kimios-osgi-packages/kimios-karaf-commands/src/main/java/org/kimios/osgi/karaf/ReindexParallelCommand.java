@@ -37,7 +37,7 @@ public class ReindexParallelCommand extends KimiosCommand {
     @Option(name = "-t",
             description = "--read-timeout",
             required = false, multiValued = false)
-    Long readTimeOut = null;
+    Long readTimeOut = 30L;
 
     @Option(name = "-g",
             description = "--regenerate-metas-wrapper",
@@ -47,12 +47,17 @@ public class ReindexParallelCommand extends KimiosCommand {
     @Option(name = "-nt",
             description = "--no-threading",
             required = false, multiValued = false)
-    boolean disableThreading = false;
+    boolean disableThreading = true;
+
+    @Option(name = "-ad",
+            description = "--async-doc-read",
+            required = false, multiValued = false)
+    boolean asyncDocumentRead = true;
 
     @Option(name = "-s",
             description = "--read-timeout-unit",
             required = false, multiValued = false)
-    String readTimeOutUnit = null;
+    String readTimeOutUnit = "SECONDS";
 
 
     @Option(name = "-tps",
@@ -82,9 +87,10 @@ public class ReindexParallelCommand extends KimiosCommand {
                     block,
                     readTimeOut,
                     readTimeOutUnit != null ? TimeUnit.valueOf(readTimeOutUnit) : null,
-                    threadPoolSize,
+                    threadPoolSize != null ? threadPoolSize : 5,
                     regenerateMetaWrapper,
-                    disableThreading
+                    disableThreading,
+                    asyncDocumentRead
             );
         }
     }

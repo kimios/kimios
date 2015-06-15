@@ -45,7 +45,10 @@ import org.kimios.kernel.events.impl.AddonDataHandler;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.IndexException;
 import org.kimios.kernel.index.filters.impl.GlobalFilter;
+import org.kimios.kernel.index.filters.impl.ThreadedGlobalFilter;
 import org.kimios.kernel.index.query.factory.DocumentFactory;
+import org.kimios.kernel.index.query.factory.DocumentIndexStatusFactory;
+import org.kimios.kernel.index.query.model.DocumentIndexStatus;
 import org.kimios.kernel.index.query.model.SearchResponse;
 import org.kimios.kernel.security.DMEntityACL;
 import org.slf4j.Logger;
@@ -53,6 +56,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.*;
@@ -78,6 +83,12 @@ public class SolrIndexManager
         this.solrDocumentFactory = solrDocumentFactory;
     }
 
+
+    private DocumentIndexStatusFactory documentIndexStatusFactory;
+
+    public void setDocumentIndexStatusFactory(DocumentIndexStatusFactory documentIndexStatusFactory) {
+        this.documentIndexStatusFactory = documentIndexStatusFactory;
+    }
 
     private ObjectMapper mp;
 
@@ -141,15 +152,29 @@ public class SolrIndexManager
         }
     }
 
-    private SolrInputDocument toSolrInputDocument(Document document, SolrDocument previousSolrDocument)
+    private SolrInputDocument toSolrInputDocument(Document document,
+                                                  SolrDocument previousSolrDocument,
+                                                  boolean asyncDocumentRead,
+                                                  long readTimeOut,
+                                                  TimeUnit timeUnit)
             throws DataSourceException, ConfigException {
-        return toSolrInputDocument(document, previousSolrDocument, false, true);
+        return toSolrInputDocument(document, previousSolrDocument, false, true, asyncDocumentRead, readTimeOut, timeUnit);
     }
 
 
-    private SolrInputDocument toSolrInputDocument(Document document, SolrDocument previousSolrDocument,
-                                                  boolean flush, boolean updateMetasWrapper)
+    private SolrInputDocument toSolrInputDocument(Document document,
+                                                  SolrDocument previousSolrDocument,
+                                                  boolean flush,
+                                                  boolean updateMetasWrapper,
+                                                  boolean asyncDocumentRead,
+                                                  long readTimeOut,
+                                                  TimeUnit timeUnit)
             throws DataSourceException, ConfigException {
+
+
+        DocumentIndexStatus documentIndexStatus = new DocumentIndexStatus();
+        documentIndexStatus.setEntityId(document.getUid());
+
 
         SimpleDateFormat dateParser = new SimpleDateFormat("dd-MM-yyyy");
         SimpleDateFormat dateTimeParser = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
@@ -310,24 +335,64 @@ public class SolrIndexManager
         Object body = null;
         Map<String, Object> metaDatas = null;
 
-        try {
-            GlobalFilter globalFilter = new GlobalFilter();
-            body = globalFilter.getFileBody(document, version.getInputStream());
-            metaDatas = globalFilter.getMetaDatas();
-        } catch (Throwable ex) {
-            log.debug("Error while getting body", ex);
-        }
-        if (body == null) {
-            body = IndexHelper.EMPTY_STRING;
-        }
-        if (body instanceof String) {
-            doc.addField("DocumentBody", (String) body);
-        }
-        if (metaDatas != null) {
-            for (String mKey : metaDatas.keySet()) {
-                doc.addField("FileMetaData_" + mKey, metaDatas.get(mKey));
+        if(!asyncDocumentRead){
+            try {
+                GlobalFilter globalFilter = new GlobalFilter();
+                body = globalFilter.getFileBody(document, version.getInputStream());
+                metaDatas = globalFilter.getMetaDatas();
+            } catch (Throwable ex) {
+                log.debug("Error while getting body", ex);
+                documentIndexStatus.setBodyIndexed(false);
+                StringWriter stringWriterStackTrace = new StringWriter();
+                PrintWriter prw = new PrintWriter(stringWriterStackTrace);
+                ex.printStackTrace(prw);
+                documentIndexStatus.setError(ex.getMessage() + " ==> "
+                        + stringWriterStackTrace);
+            }
+            if (body == null) {
+                body = IndexHelper.EMPTY_STRING;
+            }
+            if (body instanceof String) {
+                doc.addField("DocumentBody", body);
+                documentIndexStatus.setBodyIndexed(true);
+            }
+            if (metaDatas != null) {
+                for (String mKey : metaDatas.keySet()) {
+                    doc.addField("FileMetaData_" + mKey, metaDatas.get(mKey));
+                }
+            }
+        } else {
+            try {
+                ThreadedGlobalFilter globalFilter =
+                        new ThreadedGlobalFilter(readTimeOut, timeUnit);
+                //launch threaded file read
+                body = globalFilter.getFileBody(document, version.getInputStream());
+                metaDatas = globalFilter.getMetaDatas();
+            } catch (Throwable ex) {
+                log.debug("Error while getting body", ex);
+                documentIndexStatus.setBodyIndexed(false);
+                StringWriter stringWriterStackTrace = new StringWriter();
+                PrintWriter prw = new PrintWriter(stringWriterStackTrace);
+                ex.printStackTrace(prw);
+                documentIndexStatus.setError(ex.getMessage()  + " ==> "
+                    + stringWriterStackTrace);
+
+            }
+            if (body == null) {
+                body = IndexHelper.EMPTY_STRING;
+            }
+            if (body instanceof String) {
+                doc.addField("DocumentBody", body);
+                documentIndexStatus.setBodyIndexed(true);
+            }
+            if (metaDatas != null) {
+                for (String mKey : metaDatas.keySet()) {
+                    doc.addField("FileMetaData_" + mKey, metaDatas.get(mKey));
+                }
             }
         }
+
+
 
         List<DMEntityACL> acls =
                 org.kimios.kernel.security.FactoryInstantiator.getInstance().getDMEntitySecurityFactory().getDMEntityACL(
@@ -336,6 +401,11 @@ public class SolrIndexManager
         for (int i = 0; i < acls.size(); i++) {
             doc.addField("DocumentACL", acls.get(i).getRuleHash());
         }
+
+
+
+
+        documentIndexStatusFactory.saveItem(documentIndexStatus);
 
         return doc;
     }
@@ -495,7 +565,8 @@ public class SolrIndexManager
                 previousRecord = searchResponse.get(0);
             }
             this.deleteDocument(document);
-            SolrInputDocument solrInputDocument = toSolrInputDocument(document, previousRecord);
+            SolrInputDocument solrInputDocument = toSolrInputDocument(document, previousRecord, true, 2,
+                    TimeUnit.MINUTES);
             this.solr.add(solrInputDocument);
 
             this.solr.commit();
@@ -537,8 +608,12 @@ public class SolrIndexManager
 
 
     public void threadedIndexDocumentList(List<DMEntity> documentEntities,
-                                          long readVersionTimeOut, TimeUnit readVersionTimeoutTimeUnit,
-                                          final boolean updateDocsMetaWrapper, int poolSize, boolean disableThreading)
+                                          final long readVersionTimeOut,
+                                          final TimeUnit readVersionTimeoutTimeUnit,
+                                          final boolean updateDocsMetaWrapper,
+                                          int poolSize,
+                                          final boolean disableThreading,
+                                          final boolean asyncDocumentRead)
             throws IndexException, DataSourceException, ConfigException {
         try {
 
@@ -563,8 +638,13 @@ public class SolrIndexManager
                         public SolrInputDocument call() throws Exception {
                             log.debug("started solr input document for doc #" + docId
                                     + " (" + docPath + ")");
-                            SolrInputDocument solrInputDocument = toSolrInputDocument((Document) doc, null,
-                                    false, updateDocsMetaWrapper);
+                            SolrInputDocument solrInputDocument = toSolrInputDocument((Document) doc,
+                                    null,
+                                    false,
+                                    updateDocsMetaWrapper,
+                                    asyncDocumentRead,
+                                    readVersionTimeOut,
+                                    readVersionTimeoutTimeUnit);
                             return solrInputDocument;
                         }
                     };
@@ -574,7 +654,8 @@ public class SolrIndexManager
 
                     dataFutures.put(doc.getUid(), solrInputDocumentFuture);
                 }  else {
-                    updatedDocument.add(toSolrInputDocument((Document)doc, null));
+                    updatedDocument.add(toSolrInputDocument((Document)doc, null, false,
+                            updateDocsMetaWrapper, asyncDocumentRead, readVersionTimeOut, readVersionTimeoutTimeUnit ));
                     updatedDocumentIds.add(String.valueOf(doc.getUid()));
                 }
             }
@@ -631,7 +712,7 @@ public class SolrIndexManager
                     log.debug("Start Adding Document doc: #" + doc.getUid() + " " +
                             doc.getName() + " " + doc.getPath());
                 }
-                SolrInputDocument solrInputDocument = toSolrInputDocument((Document) doc, null);
+                SolrInputDocument solrInputDocument = toSolrInputDocument((Document) doc, null, true, 2, TimeUnit.MINUTES);
                 if (solrInputDocument != null) {
                     updatedDocumentIds.add(String.valueOf(doc.getUid()));
                     updatedDocument.add(solrInputDocument);

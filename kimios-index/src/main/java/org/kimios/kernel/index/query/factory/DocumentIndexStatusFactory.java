@@ -14,25 +14,17 @@
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.kimios.kernel.index.filters;
+package org.kimios.kernel.index.query.factory;
 
-import org.kimios.kernel.dms.Document;
-import org.kimios.kernel.index.FileFilterException;
+import org.kimios.kernel.hibernate.HFactory;
+import org.kimios.kernel.index.query.model.DocumentIndexStatus;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Map;
+/**
+ * Created by farf on 15/06/15.
+ */
+public class DocumentIndexStatusFactory extends HFactory {
 
-public interface Filter
-{
-
-    public String[] handledExtensions();
-
-    public String[] handledMimeTypes();
-
-    public Object getFileBody( Document document, InputStream inputStream )
-        throws Throwable;
-
-    public Map<String, Object> getMetaDatas()
-        throws FileFilterException;
+    public void saveItem(DocumentIndexStatus status){
+        getSession().saveOrUpdate(status);
+    }
 }
