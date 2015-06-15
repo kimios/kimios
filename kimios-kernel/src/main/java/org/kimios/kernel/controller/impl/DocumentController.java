@@ -1116,7 +1116,13 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                 .isReadable(linked, session.getUserName(), session.getUserSource(), session.getGroups())) {
             throw new AccessDeniedException();
         }
-        dmsFactoryInstantiator.getSymbolicLinkFactory().removeSymbolicLink(dmEntityUid);
+        SymbolicLink link = new SymbolicLink();
+        link.setDmEntityType(linked.getType());
+        link.setDmEntityUid(dmEntityUid);
+        link.setParentType(parent.getType());
+        link.setParentUid(parentUid);
+
+        dmsFactoryInstantiator.getSymbolicLinkFactory().removeSymbolicLink(link);
     }
 
     /* (non-Javadoc)

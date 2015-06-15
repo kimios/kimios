@@ -123,7 +123,11 @@ public class HSymbolicLinkFactory extends HFactory implements SymbolicLinkFactor
     public void removeSymbolicLink(SymbolicLink sl) throws ConfigException, DataSourceException
     {
         try {
-            getSession().delete(sl);
+            String delQuery = "delete SymbolicLink sl where sl.dmEntityUid = :targetUid and sl.parentUid =  :parentUid";
+            getSession().createQuery(delQuery)
+                        .setParameter("targetUid", sl.getDmEntityUid())
+                        .setLong("parentUid", sl.getParentUid())
+                        .executeUpdate();
         } catch (HibernateException e) {
             boolean integrity = e instanceof ConstraintViolationException;
             throw new DataSourceException(e, e.getMessage());
