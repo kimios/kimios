@@ -21,6 +21,7 @@ package org.kimios.kernel.index;
  */
 
 
+import org.apache.commons.io.IOUtils;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
@@ -222,13 +223,21 @@ public class SolrIndexFactory {
             File f = new File(fCore, "conf");
             f.mkdir();
 
-            FileOutputStream fos = new FileOutputStream(f.getAbsolutePath() + "/schema.xml");
-            InputStream schemaStream = SolrIndexFactory.class.getResourceAsStream("/schema.xml");
-            /*
-            InputStream cfgStream = SearchServiceSolrFactory.class.getResourceAsStream("/solrconfig.xml");
-            InputStream mappingAccent = SearchServiceSolrFactory.class.getResourceAsStream("/mapping-ISOLatin1Accent.txt");*/
 
-            int readBytes;
+            InputStream schemaStream = SolrIndexFactory.class.getResourceAsStream("/schema.xml");
+            InputStream cfgStream = SolrIndexFactory.class.getResourceAsStream("/solrconfig.xml");
+            InputStream mappingAccent = SolrIndexFactory.class.getResourceAsStream("/mapping-ISOLatin1Accent.txt");
+
+
+            IOUtils.copy(schemaStream, new FileOutputStream(new File(f, "schema.xml")));
+            IOUtils.copy(cfgStream, new FileOutputStream(new File(f, "solrconfig.xml")));
+            IOUtils.copy(mappingAccent, new FileOutputStream(new File(f, "mapping-ISOLatin1Accent.txt")));
+
+
+
+            /*
+
+             int readBytes;
             byte[] bArray = new byte[2048];
             while ((readBytes = schemaStream.read(bArray)) != -1) {
                 fos.write(bArray, 0, readBytes);
@@ -236,7 +245,7 @@ public class SolrIndexFactory {
             fos.flush();
             fos.close();
 
-            /*fos = new FileOutputStream(f.getAbsolutePath() + "/solrconfig.xml");
+            fos = new FileOutputStream(f.getAbsolutePath() + "/solrconfig.xml");
             while ((readBytes = cfgStream.read(bArray)) != -1) {
                 fos.write(bArray, 0, readBytes);
             }

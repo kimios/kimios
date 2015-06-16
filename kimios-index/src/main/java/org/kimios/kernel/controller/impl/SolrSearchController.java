@@ -799,17 +799,27 @@ public class SolrSearchController
 
         for (Criteria c : criteriaList) {
 
-            String queryValue = null;
-            if (StringUtils.isNotBlank(c.getQuery())) {
+
+            if (StringUtils.isNotBlank(c.getQuery()) && (StringUtils.isBlank(c.getFieldName()) || c.getFieldName().startsWith("__multi"))) {
+                String queryValue = null;
                 if (c.isRawQuery()) {
                     queryValue = c.getQuery();
                 } else {
                     queryValue = ClientUtils.escapeQueryChars(c.getQuery());
                 }
-            }
 
 
-            if (c.isFaceted()) {
+                if (c.getFieldName().startsWith("__multi")) {
+                    //indexQuery
+                    String fieldsName = c.getFieldName().substring("__multi".length());
+                    indexQuery.setRequestHandler("search-def");
+                    indexQuery.set("qf", fieldsName);
+                    queries.add(c.getQuery());
+                } else {
+                    queries.add(queryValue);
+                }
+
+            } else   if (c.isFaceted()) {
 
 
                 log.info(" > Required level " + requiredDepth + ". Path Index Size: " + pathIndex.size() + " " + virtualPath + "  / c: " + c.getLevel() + " => " + c.getFieldName());
@@ -1245,6 +1255,8 @@ public class SolrSearchController
         } else {
             indexQuery.setRows(Integer.MAX_VALUE);
         }
+
+
 
         return indexQuery;
 
