@@ -50,9 +50,12 @@ public class ThreadedGlobalFilter implements Filter {
 
     private TimeUnit timeUnit;
 
-    public ThreadedGlobalFilter(long timeout, TimeUnit timeUnit) {
+    private ExecutorService fileReadExecutor;
+
+    public ThreadedGlobalFilter(long timeout, TimeUnit timeUnit, ExecutorService fileReadExecutor) {
         this.timeout = timeout;
         this.timeUnit = timeUnit;
+        this.fileReadExecutor = fileReadExecutor;
     }
 
     @Override
@@ -118,8 +121,7 @@ public class ThreadedGlobalFilter implements Filter {
 
             };
             try {
-                Future<Map<String, Object>> futureParsingData = Executors.newFixedThreadPool(1)
-                        .submit(rn);
+                Future<Map<String, Object>> futureParsingData = fileReadExecutor.submit(rn);
                 Map<String, Object> item = futureParsingData.get(timeout, timeUnit);
                 //set values on filter
                 String parsedBody = (String) item.get("body");

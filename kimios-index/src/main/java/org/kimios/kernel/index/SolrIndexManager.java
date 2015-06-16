@@ -73,11 +73,17 @@ public class SolrIndexManager
 
     private IPathController pathController;
 
+    private int fileReadThreadPoolSize = 10;
+
     private org.kimios.kernel.index.query.factory.DocumentFactory solrDocumentFactory;
 
     public DocumentFactory getSolrDocumentFactory() {
         return solrDocumentFactory;
     }
+
+
+
+    private ExecutorService fileReaderExecutor;
 
     public void setSolrDocumentFactory(DocumentFactory solrDocumentFactory) {
         this.solrDocumentFactory = solrDocumentFactory;
@@ -362,9 +368,15 @@ public class SolrIndexManager
                 }
             }
         } else {
+            if(fileReaderExecutor == null || fileReaderExecutor.isTerminated() || fileReaderExecutor.isShutdown()){
+                final BlockingQueue<Runnable> queue = new ArrayBlockingQueue<Runnable>(100);
+                fileReaderExecutor = new ThreadPoolExecutor(5, fileReadThreadPoolSize,
+                        0L, TimeUnit.MILLISECONDS,
+                        queue);
+            }
             try {
                 ThreadedGlobalFilter globalFilter =
-                        new ThreadedGlobalFilter(readTimeOut, timeUnit);
+                        new ThreadedGlobalFilter(readTimeOut, timeUnit, fileReaderExecutor);
                 //launch threaded file read
                 body = globalFilter.getFileBody(document, version.getInputStream());
                 metaDatas = globalFilter.getMetaDatas();
