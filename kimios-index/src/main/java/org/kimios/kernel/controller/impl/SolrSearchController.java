@@ -386,6 +386,9 @@ public class SolrSearchController
         } else {
             searchRequest.setUpdateDate(new Date());
         }
+        if(searchRequest.getTemporary() != null && searchRequest.getTemporary()){
+            searchRequest.setSearchSessionId(session.getUid());
+        }
         searchRequestFactory.save(searchRequest);
         searchRequestFactory.getSession().flush();
         return searchRequest.getId();
@@ -408,6 +411,10 @@ public class SolrSearchController
         searchRequest.setOwner(session.getUserName());
         searchRequest.setOwnerSource(session.getUserSource());
 
+        if(searchRequest.getTemporary() != null && searchRequest.getTemporary()){
+            searchRequest.setSearchSessionId(session.getUid());
+        }
+
         searchRequestFactory.save(searchRequest);
         searchRequestFactory.getSession().flush();
         //process security
@@ -425,7 +432,11 @@ public class SolrSearchController
 
         } else {
             searchRequest.setPublished(false);
-            searchRequest.setTemporary(false);
+            if(searchRequest.getTemporary() != null && searchRequest.getTemporary()){
+                searchRequest.setSearchSessionId(session.getUid());
+            } else {
+                searchRequest.setTemporary(false);
+            }
         }
         searchRequestFactory.save(searchRequest);
         searchRequestFactory.getSession().flush();
@@ -539,7 +550,7 @@ public class SolrSearchController
         if ((searchRequest.getPublicAccess() != null && searchRequest.getPublicAccess())
                 || canRead(session, searchRequest)
                 || (searchRequest.getOwner().equals(session.getUserName())
-                    && searchRequest.getOwnerSource().equals(session.getUserSource()))) {
+                && searchRequest.getOwnerSource().equals(session.getUserSource()))) {
             //load securities
             List<SearchRequestSecurity> securities = searchRequestSecurityFactory.getSearchRequestSecurities(searchRequest);
             for (SearchRequestSecurity sec : securities)
@@ -596,12 +607,10 @@ public class SolrSearchController
 
 
     public List<SearchRequest> searchRequestList(Session session) {
-        log.debug("Calling Published Search Request List");
         List<SearchRequest> searchRequestList = searchRequestFactory.loadSearchRequest(session.getUserName(), session.getUid());
-
         List<SearchRequest> searchRequests = new ArrayList<SearchRequest>();
-        for(SearchRequest searchRequest: searchRequestList){
-            if(canRead(session, searchRequest))
+        for (SearchRequest searchRequest : searchRequestList) {
+            if (canRead(session, searchRequest))
                 searchRequests.add(searchRequest);
         }
         return searchRequests;
@@ -609,18 +618,13 @@ public class SolrSearchController
 
 
     public List<SearchRequest> searchPublicRequestList(Session session) {
-        log.debug("Calling Public Search Request List");
         return searchRequestFactory.listPublicSearchRequest();
     }
 
     public List<SearchRequest> loadMysSearchQueriesNotPublished(Session session)
             throws DataSourceException, ConfigException {
-        log.debug("Calling My Search Request List");
         return searchRequestFactory.loadMySearchRequestNotPublished(session);
     }
-
-
-
 
     private String convertDateString(String input) throws ParseException {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -628,10 +632,9 @@ public class SolrSearchController
 
         return targetDateFormat.format(dateFormat.parse(input));
     }
+
     private String temporarySearchNameUpdate(List<Criteria> criteriaList) {
         try {
-
-
             String appendName = "";
             for (Criteria c : criteriaList) {
                 boolean isDateField = c.getFieldName().startsWith("MetaDataDate") ||
@@ -657,7 +660,7 @@ public class SolrSearchController
 
                     } else if (c.getRangeMin() != null || c.getRangeMax() != null) {
                         if (StringUtils.isNotBlank(c.getRangeMin()) && StringUtils.isNotBlank(c.getRangeMax())) {
-                            if(isDateField){
+                            if (isDateField) {
                                 tmpAppendName += convertDateString(c.getRangeMin())
                                         + " to " + convertDateString(c.getRangeMax());
                             } else {
@@ -665,12 +668,12 @@ public class SolrSearchController
                                         + " to " + c.getRangeMax();
                             }
                         } else if (StringUtils.isNotBlank(c.getRangeMin())) {
-                            if(isDateField){
+                            if (isDateField) {
                                 tmpAppendName += convertDateString(c.getRangeMin());
                             } else
                                 tmpAppendName += c.getRangeMin();
                         } else if (StringUtils.isNotBlank(c.getRangeMax())) {
-                            if(isDateField){
+                            if (isDateField) {
                                 tmpAppendName += convertDateString(c.getRangeMax());
                             } else
                                 tmpAppendName += c.getRangeMax();
@@ -680,7 +683,7 @@ public class SolrSearchController
             }
 
             appendName = appendName.replace("\"\"", "");
-            appendName = appendName.replace(",,","");
+            appendName = appendName.replace(",,", "");
             appendName = appendName.replace("\"\"", "\",\"");
             if (appendName.trim().endsWith(",")) {
                 appendName = appendName.substring(0, appendName.lastIndexOf(","));
@@ -819,7 +822,7 @@ public class SolrSearchController
                     queries.add(queryValue);
                 }
 
-            } else   if (c.isFaceted()) {
+            } else if (c.isFaceted()) {
 
 
                 log.info(" > Required level " + requiredDepth + ". Path Index Size: " + pathIndex.size() + " " + virtualPath + "  / c: " + c.getLevel() + " => " + c.getFieldName());
@@ -912,50 +915,50 @@ public class SolrSearchController
 
                     //reparse date if necessary
 
-                    if(c.getFieldName().contains("Date")){
+                    if (c.getFieldName().contains("Date")) {
 
                         String finalDateQuery = "";
                         SimpleDateFormat sdfTmp = new SimpleDateFormat(c.getDateFormat());
                         sdfTmp.setTimeZone(TimeZone.getTimeZone("UTC"));
 
-                        SimpleDateFormat solrFormat = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ss'Z'");
-                        solrFormat.setTimeZone(TimeZone.getTimeZone("UTC") );
+                        SimpleDateFormat solrFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+                        solrFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
-                        if(c.getQuery().toLowerCase().contains(" to ")){
-                            finalDateQuery +="[";
+                        if (c.getQuery().toLowerCase().contains(" to ")) {
+                            finalDateQuery += "[";
                             String[] tQueryParts = c.getQuery().toLowerCase().split(" to ");
                             Date date1 = null;
                             Date date2 = null;
-                            try{
+                            try {
                                 date1 = sdfTmp.parse(tQueryParts[0]);
-                                finalDateQuery+= solrFormat.format(date1);
-                            }   catch(Exception ex){
+                                finalDateQuery += solrFormat.format(date1);
+                            } catch (Exception ex) {
                                 finalDateQuery += tQueryParts[0].toUpperCase();
                             }
-                            try{
+                            try {
                                 date2 = sdfTmp.parse(tQueryParts[1]);
                                 finalDateQuery += " TO " + solrFormat.format(date2);
-                            }   catch(Exception ex){
+                            } catch (Exception ex) {
                                 finalDateQuery += " TO " + tQueryParts[1].toUpperCase();
                             }
 
-                            finalDateQuery +="]";
+                            finalDateQuery += "]";
                         } else {
                             Date date1 = null;
-                            try{
+                            try {
                                 date1 = sdfTmp.parse(c.getQuery());
-                                finalDateQuery+= solrFormat.format(date1);
+                                finalDateQuery += solrFormat.format(date1);
                                 //only one date, so add current day
 
                                 Calendar calendar = Calendar.getInstance();
                                 calendar.setTimeInMillis(date1.getTime());
                                 calendar.add(Calendar.DATE, 1);
                                 calendar.add(Calendar.MILLISECOND, -1);
-                                String endDate =   solrFormat.format( calendar.getTime() );
+                                String endDate = solrFormat.format(calendar.getTime());
                                 finalDateQuery = "[" + finalDateQuery + " TO " + endDate + "]";
 
-                            }   catch(Exception ex){
-                                finalDateQuery+=c.getQuery();
+                            } catch (Exception ex) {
+                                finalDateQuery += c.getQuery();
                             }
 
                         }
@@ -969,8 +972,6 @@ public class SolrSearchController
                     }
 
 
-
-
                 } else {
 
                     if (c.getFieldName().equals("DocumentName")) {
@@ -979,7 +980,7 @@ public class SolrSearchController
                         //build query
                         String[] tmpQuery = c.getQuery().split("\\s");
                         StringBuilder bld = new StringBuilder();
-                        for(String u : tmpQuery){
+                        for (String u : tmpQuery) {
                             bld.append("+");
                             bld.append(ClientUtils.escapeQueryChars(u));
                             bld.append(" ");
@@ -1060,11 +1061,11 @@ public class SolrSearchController
 
 
                                     String metaStringQuery = null;
-                                    if(c.getQuery().contains(" ")){
+                                    if (c.getQuery().contains(" ")) {
 
                                         String[] tmpQuery = c.getQuery().split("\\s");
                                         StringBuilder bld = new StringBuilder();
-                                        for(String u : tmpQuery){
+                                        for (String u : tmpQuery) {
                                             bld.append("+*");
                                             bld.append(ClientUtils.escapeQueryChars(u.toLowerCase()));
                                             bld.append("* ");
@@ -1189,8 +1190,8 @@ public class SolrSearchController
                     ? SolrQuery.ORDER.valueOf(sortDir.toLowerCase())
                     : SolrQuery.ORDER.asc);
         }
-        if(!indexQuery.getSorts().contains(new SolrQuery.SortClause("score", SolrQuery.ORDER.desc)) &&
-                !indexQuery.getSorts().contains(new SolrQuery.SortClause("score", SolrQuery.ORDER.asc))){
+        if (!indexQuery.getSorts().contains(new SolrQuery.SortClause("score", SolrQuery.ORDER.desc)) &&
+                !indexQuery.getSorts().contains(new SolrQuery.SortClause("score", SolrQuery.ORDER.asc))) {
             indexQuery.addSort("score", SolrQuery.ORDER.desc);
         }
         StringBuilder sQuery = new StringBuilder();
@@ -1257,7 +1258,6 @@ public class SolrSearchController
         }
 
 
-
         return indexQuery;
 
     }
@@ -1275,8 +1275,8 @@ public class SolrSearchController
             throws AccessDeniedException, DataSourceException, ConfigException, IndexException, IOException, ParseException {
         SearchRequest searchRequest = searchRequestFactory.loadById(id);
         if (searchRequest == null
-                 || !(searchRequest.getPublicAccess()
-                    || canRead(session, searchRequest))) {
+                || !(searchRequest.getPublicAccess()
+                || canRead(session, searchRequest))) {
             throw new AccessDeniedException();
         }
         ObjectMapper objectMapper = new ObjectMapper();
