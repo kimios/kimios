@@ -943,11 +943,19 @@ public class SolrIndexManager
                 List<SolrInputDocument> documentList = new ArrayList<SolrInputDocument>();
                 this.solr.deleteByQuery(q.toString());
                 for (SolrDocument doc : items) {
-                    String path = doc.getFieldValue("DocumentParent").toString();
+                    String parentPath = doc.getFieldValue("DocumentParent").toString();
+                    parentPath = newPath + parentPath.substring(oldPath.length() + 1);
+
+                    String path = doc.getFieldValue("DocumentPath").toString();
                     path = newPath + path.substring(oldPath.length() + 1);
+
+
+                    doc.removeFields("DocumentPath");
                     doc.removeFields("DocumentParent");
+                    doc.removeFields("score");
                     SolrInputDocument updatedDocument = ClientUtils.toSolrInputDocument(doc);
-                    updatedDocument.addField("DocumentParent", path);
+                    updatedDocument.addField("DocumentParent", parentPath);
+                    updatedDocument.addField("DocumentPath", path);
                     documentList.add(updatedDocument);
                 }
                 this.solr.add(documentList);
