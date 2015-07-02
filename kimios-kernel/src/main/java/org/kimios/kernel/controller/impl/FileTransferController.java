@@ -19,8 +19,7 @@ import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.configuration.Config;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.IFileTransferController;
-import org.kimios.kernel.dms.Document;
-import org.kimios.kernel.dms.DocumentVersion;
+import org.kimios.kernel.dms.*;
 import org.kimios.kernel.events.annotations.DmsEvent;
 import org.kimios.kernel.events.annotations.DmsEventName;
 import org.kimios.kernel.exception.*;
@@ -38,6 +37,7 @@ import java.io.*;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 import java.util.Vector;
 
@@ -321,6 +321,42 @@ public class FileTransferController
             }
         } else {
             throw new AccessDeniedException();
+        }
+    }
+
+    public DocumentWrapper getDocumentVersionWrapper( Session session, long transactionId, List<Long> metaIds)
+            throws ConfigException, AccessDeniedException, DataSourceException, IOException{
+        if(metaIds == null || metaIds.size() == 0){
+            return getDocumentVersionWrapper(session, transactionId);
+        } else {
+            DataTransfer transac = transferFactoryInstantiator.getDataTransferFactory().getDataTransfer(transactionId);
+            if (transac != null && transac.getTransferMode() == DataTransfer.DOWNLOAD) {
+                DocumentVersion dv = dmsFactoryInstantiator.getDocumentVersionFactory().getDocumentVersion(
+                        transac.getDocumentVersionUid());
+                if (getSecurityAgent().isReadable(dv.getDocument(), session.getUserName(), session.getUserSource(),
+                        session.getGroups())) {
+                        String finalName = "";
+                        for(Long metaId: metaIds){
+                            Meta m = dmsFactoryInstantiator.getMetaFactory().getMeta(metaId);
+                            MetaValue v = dmsFactoryInstantiator.getMetaValueFactory().getMetaValue(dv, m);
+                            if(v.getMeta().getMetaType() == MetaType.STRING){
+                                finalName = (v.getValue() != null && v.getValue().toString().length() > 0 ? v.getValue().toString() : dv.getDocument().getName())
+                                        +  "." + dv.getDocument().getExtension();
+
+                            }  else
+                                throw new AccessDeniedException();
+                        }
+                        return new DocumentWrapper(ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH) + "/" +
+                                dv.getStoragePath(), finalName, dv.getLength());
+                } else {
+                    throw new AccessDeniedException();
+                }
+            } else {
+                throw new AccessDeniedException();
+            }
+
+
+
         }
     }
 

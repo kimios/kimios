@@ -32,6 +32,7 @@ import javax.ws.rs.core.StreamingOutput;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 @WebService(targetNamespace = "http://kimios.org", serviceName = "FileTransferService", name = "FileTransferService")
 public class FileTransferServiceImpl
@@ -174,12 +175,20 @@ public class FileTransferServiceImpl
         }
     }
 
+
     @WebMethod(exclude = true)
     public Response downloadDocument(String sessionId, final long transactionId, Boolean inline)
             throws DMServiceException {
+        return this.downloadDocument(sessionId, transactionId, inline, null);
+    }
+
+
+    @WebMethod(exclude = true)
+    public Response downloadDocument(String sessionId, final long transactionId, Boolean inline, List<Long> metaIds)
+            throws DMServiceException {
         try {
             final Session session = getHelper().getSession(sessionId);
-            DocumentWrapper dw = transferController.getDocumentVersionWrapper(session, transactionId);
+            DocumentWrapper dw = transferController.getDocumentVersionWrapper(session, transactionId, metaIds);
             StreamingOutput sOutput = new StreamingOutput() {
                 @Override
                 public void write(OutputStream output) throws IOException, WebApplicationException {

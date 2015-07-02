@@ -27,6 +27,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 public interface IFileTransferController
 {
@@ -83,6 +84,12 @@ public interface IFileTransferController
       Get document version stream for direct version read
     */
     public DocumentWrapper getDocumentVersionWrapper( Session session, long transactionId )
+            throws ConfigException, AccessDeniedException, DataSourceException, IOException;
+
+    /*
+      Get document version stream for direct version read with custom name
+    */
+    public DocumentWrapper getDocumentVersionWrapper( Session session, long transactionId, List<Long> metaIds )
             throws ConfigException, AccessDeniedException, DataSourceException, IOException;
 
     /*

@@ -26,6 +26,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.InputStream;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA. User: farf Date: 4/1/12 Time: 4:58 PM
@@ -101,12 +102,22 @@ public interface FileTransferService
                                                 @DefaultValue("true") @QueryParam("inline") Boolean inline)
             throws DMServiceException;
 
+
     @GET
     @Path( "/downloadDocument" )
     @Produces( MediaType.APPLICATION_OCTET_STREAM )
     public Response downloadDocument( @QueryParam("sessionId") String sessionId,
+                                      @QueryParam("transactionId") long transactionId,
+                                      @DefaultValue("true") @QueryParam("inline") Boolean inline)
+            throws DMServiceException;
+
+    @GET
+    @Path( "/downloadDocumentWithCustomFileName" )
+    @Produces( MediaType.APPLICATION_OCTET_STREAM )
+    public Response downloadDocument( @QueryParam("sessionId") String sessionId,
                                                 @QueryParam("transactionId") long transactionId,
-                                                @DefaultValue("true") @QueryParam("inline") Boolean inline)
+                                                @DefaultValue("true") @QueryParam("inline") Boolean inline,
+                                                @DefaultValue("") @QueryParam("metaIds") List<Long> metaIds)
             throws DMServiceException;
 
 
