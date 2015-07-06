@@ -16,6 +16,8 @@
 
 package org.kimios.kernel.index.query.model;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.kimios.kernel.dms.DMEntityImpl;
 
 import javax.persistence.*;
@@ -50,6 +52,7 @@ public class DocumentIndexStatus {
 
     @ManyToOne(targetEntity = DMEntityImpl.class)
     @JoinColumn(name = "dm_entity_id", updatable = false, insertable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private DMEntityImpl dmEntity;
 
     public DMEntityImpl getDmEntity() {
