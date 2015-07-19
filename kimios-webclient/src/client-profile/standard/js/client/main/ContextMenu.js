@@ -702,7 +702,7 @@ kimios.ContextMenu = new function () {
                 if (this.multiple == true) {
                     return;
                 } else {
-                    kimios.request.deleteDMEntity(this.dmEntityPojo.uid, this.dmEntityPojo.type, this.dmEntityPojo.name, null, this.dmEntityPojo.parentUid);
+                    kimios.request.deleteDMEntity(this.dmEntityPojo.target.uid, this.dmEntityPojo.type, this.dmEntityPojo.name, null, this.dmEntityPojo.parentUid);
                 }
             }
         });

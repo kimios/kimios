@@ -17,6 +17,7 @@ package org.kimios.webservices.impl;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
+import org.kimios.kernel.dms.Document;
 import org.kimios.kernel.dms.extension.impl.DMEntityAttribute;
 import org.kimios.kernel.dms.utils.MetaProcessor;
 import org.kimios.kernel.security.DMEntitySecurity;
@@ -105,11 +106,8 @@ public class ExtensionServiceImpl extends CoreService implements ExtensionServic
         try {
             Session session = getHelper().getSession(sessionId);
             List<org.kimios.kernel.dms.DMEntity> items = extensionController.viewTrash(session, start, count);
-            List<DMEntity> toReturn = new ArrayList<DMEntity>();
-            for (org.kimios.kernel.dms.DMEntity d : items) {
-                toReturn.add(d.toPojo());
-            }
-            return toReturn;
+            List<? extends DMEntity> toReturn = documentController.convertToPojos(session, (List)items);
+            return (List)toReturn;
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }
