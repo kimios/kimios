@@ -110,6 +110,8 @@
         <module>kimios-convert-service</module>
         <module>kimios-rest-services</module>
         <module>kimios-osgi-packages</module>
+        <module>kimios-csv-metafeed</module>
+        <module>kimios-share</module>
     </modules>
     <packaging>pom</packaging>
     <dependencies>
