@@ -148,4 +148,12 @@ public class DefaultRepositoryAccessor implements RepositoryAccessor {
             throw new RepositoryException(e);
         }
     }
+
+    public File directFileAccess(DocumentVersion version){
+        File file =  new File(defaultRepositoryPath + version.getStoragePath());
+        if(!file.exists()){
+            throw new RepositoryException("document version file doesn't exist");
+        }
+        return file;
+    }
 }

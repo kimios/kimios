@@ -16,55 +16,40 @@
 
 package org.kimios.kernel.share.mail;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.mail.DefaultAuthenticator;
-import org.apache.commons.mail.EmailException;
-import org.apache.commons.mail.MultiPartEmail;
+import org.apache.commons.mail.*;
+import org.kimios.kernel.dms.Document;
+import org.kimios.kernel.dms.DocumentVersion;
+import org.kimios.kernel.repositories.RepositoryManager;
 
-import java.util.List;
-import java.util.Map;
+import javax.activation.FileDataSource;
 
-/**
- * Created by farf on 10/07/15.
- */
 public class EmailFactory {
-
-
-    private String publicUrl;
-
-    private String mailerSender = "Sendlib'";
-
-    private String mailerSenderMail = "fabien.alin@gmail.com";
 
     private String mailServer = "smtp.googlemail.com";
 
-    private String mailAccount = "fabien.alin";
+    private String mailAccount = "my.email";
 
-    private String mailAccountPassword = "150385farfou75018";
+    private String mailAccountPassword = "password";
 
     private int mailServerPort = 465;
 
     private boolean mailServerSsl = true;
 
-    private boolean sendlibDebugMode = false;
-
-    private String sendlibDebugTestAddress = "test@sendlib.com";
-
-
-
-
-
-    public void getEmailObject(){
-
-    }
-
-
-    public void getMultipartEmailObject() throws EmailException {
+    public MultiPartEmail getMultipartEmailObject() throws EmailException {
         MultiPartEmail email = new MultiPartEmail();
         email.setHostName(mailServer);
         email.setSmtpPort(mailServerPort);
         email.setAuthenticator(new DefaultAuthenticator(mailAccount, mailAccountPassword));
         email.setSSLOnConnect(mailServerSsl);
+        return email;
+    }
+
+
+    public void addDocumentVersionAttachment(MultiPartEmail email, Document document, DocumentVersion documentVersion)
+        throws  Exception {
+        FileDataSource fileDataSource = new FileDataSource(RepositoryManager.directFileAccess(documentVersion));
+        email.attach(fileDataSource, document.getPath().substring(document.getPath().lastIndexOf("/") + 1),
+                "", EmailAttachment.ATTACHMENT);
     }
 
 

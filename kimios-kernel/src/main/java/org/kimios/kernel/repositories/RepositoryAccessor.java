@@ -47,4 +47,7 @@ public interface RepositoryAccessor {
 
     public void readVersionToStream(DocumentVersion version, OutputStream out)
             throws DataSourceException, ConfigException, RepositoryException;
+
+    public File directFileAccess(DocumentVersion documentVersion)
+            throws RepositoryException;
 }

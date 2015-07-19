@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  ~ Kimios - Document Management System Software
+  ~ Copyright (C) 2008-2015  DevLib'
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 2 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ aong with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<schema name="kimios-contact" version="1.3">
+    <types>
+        <fieldType name="string" class="solr.StrField" sortMissingLast="true" omitNorms="true"/>
+        <fieldType name="tlong" class="solr.TrieLongField" precisionStep="8" omitNorms="true" positionIncrementGap="0"/>
+        <fieldType name="email" class="solr.TextField" positionIncrementGap="100" autoGeneratePhraseQueries="true">
+            <analyzer>
+                <tokenizer class="solr.StandardTokenizerFactory"/>
+                <filter class="solr.LowerCaseFilterFactory"/>
+
+                <filter class="solr.PatternReplaceFilterFactory" pattern="\." replacement=" DOT " replace="all" />
+                <filter class="solr.PatternReplaceFilterFactory" pattern="@" replacement=" AT " replace="all" />
+                <filter class="solr.WordDelimiterFilterFactory" />
+            </analyzer>
+        </fieldType>
+    </types>
+    <fields>
+        <field name="IdentityId" type="tlong" indexed="true" stored="true" required="true"/>
+        <field name="IdentityEmail" type="email" indexed="true" stored="true" required="true"/>
+        <field name="IdentityFirstName" type="string" indexed="true" stored="true" required="true"/>
+        <field name="IdentityLastName" type="string" indexed="true" stored="true" required="false"/>
+    </fields>
+    <uniqueKey>IdentityId</uniqueKey>
+    <defaultSearchField>IdentityEmail</defaultSearchField>
+    <solrQueryParser defaultOperator="OR"/>
+</schema>
+

@@ -106,6 +106,11 @@ public class RepositoryManager
         return init().defaultAccessor.accessOutputStreamVersion(version);
     }
 
+    public static File directFileAccess(DocumentVersion version) throws Exception
+    {
+        return init().defaultAccessor.directFileAccess(version);
+    }
+
     public static RandomAccessFile randomAccessFile(DocumentVersion version, String mode) throws Exception
     {
         return init().defaultAccessor.randomAccessFile(version, mode);

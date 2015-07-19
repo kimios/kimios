@@ -176,4 +176,8 @@ public class PgpRepository implements RepositoryAccessor {
         }
     }
 
+    @Override
+    public File directFileAccess(DocumentVersion documentVersion) throws RepositoryException {
+        throw new RepositoryException("method not available");
+    }
 }
