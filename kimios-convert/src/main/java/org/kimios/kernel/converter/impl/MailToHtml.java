@@ -62,14 +62,9 @@ public class MailToHtml extends ConverterImpl {
                 // Convert file located to sourcePath into HTML web content
                 String targetPath = temporaryRepository + "/" +
                         FileNameGenerator.generate() + ".html";
-
-
                 StringBuilder buffer = new StringBuilder();
 
                 Multipart multipart = (Multipart) message.getContent();
-
-
-
 
                 for (int x = 0; x < multipart.getCount(); x++) {
                     BodyPart bodyPart = multipart.getBodyPart(x);
@@ -92,10 +87,6 @@ public class MailToHtml extends ConverterImpl {
                 CleanerProperties props = cleaner.getProperties();
                 props.setCharset("UTF-8");
 
-                // Clean HTML taken from simple string, file, URL, input stream,
-                // input source or reader. Result is root node of created
-                // tree-like structure. Single cleaner instance may be safely used
-                // multiple times.
                 TagNode node = cleaner.clean(buffer.toString());
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 new PrettyXmlSerializer(props).writeToStream(node, out);
@@ -123,7 +114,6 @@ public class MailToHtml extends ConverterImpl {
                 return result;
 
             }
-
         } catch (Exception exception) {
             throw new ConverterException(exception);
         }
