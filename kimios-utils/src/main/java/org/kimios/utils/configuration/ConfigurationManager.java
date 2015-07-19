@@ -24,7 +24,8 @@ import org.springframework.context.ApplicationContext;
 import java.util.List;
 import java.util.Properties;
 
-public class ConfigurationManager implements FactoryBean<ConfigurationManager> {
+public class ConfigurationManager  {
+
     private static Logger log = LoggerFactory.getLogger(ConfigurationManager.class);
 
     private ConfigurationHolder holder;
@@ -42,55 +43,6 @@ public class ConfigurationManager implements FactoryBean<ConfigurationManager> {
     protected ConfigurationManager() {
         instance = this;
         log.info("Creating Kimios Configuration Manager");
-    }
-
-    @Override
-    public ConfigurationManager getObject() throws Exception {
-        ConfigurationManager cfg = new ConfigurationManager();
-        cfg.holder = getHolder();
-        ConfigurationManager.instance = cfg;
-        log.debug("While building Configuration Manager: " + getHolder() + " ==> " + cfg.holder);
-        /*
-            Set properties as system properties to handle custom SolR properties
-         */
-
-        Properties properties = cfg.holder.getAllProperties();
-        for (Object o : properties.keySet()) {
-            System.setProperty("kimios." + o.toString(), properties.getProperty(o.toString()));
-        }
-        for (Object u : System.getProperties().keySet()) {
-            if (u.toString().startsWith("kimios.")) {
-                log.debug("java system properties set: {} => {}", u.toString(), System.getProperty(u.toString()
-                ));
-            }
-        }
-
-
-        return cfg;
-    }
-
-    @Override
-    public Class<?> getObjectType() {
-        return ConfigurationManager.class;
-    }
-
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
-    public static void init(ApplicationContext springContext) throws ConfigException {
-        /*
-            Look for spring instantiated ConfigHolder
-         */
-        if (instance.holder == null) {
-            log.info("Configuration not defined. Looking for default implementation");
-            instance.holder = springContext.getBean(ConfigurationHolder.class);
-            if (instance.holder == null) {
-                log.error("No config holder found");
-                throw new RuntimeException("No config holder found");
-            }
-        }
     }
 
     public static String getValue(String key) throws ConfigException {

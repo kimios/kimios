@@ -17,16 +17,13 @@
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
-           xmlns:jpa="http://aries.apache.org/xmlns/jpa/v1.0.0"
-           xmlns:tx="http://aries.apache.org/xmlns/transactions/v1.0.0"
            xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0
         http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd" default-activation="eager">
 
 
-    <cm:property-placeholder id="kimiosServerCfg" persistent-id="org.kimios.server.app" update-strategy="reload"
+    <cm:property-placeholder id="kimiosServerCfg" persistent-id="org.kimios.server.app" update-strategy="none"
                              activation="eager">
     </cm:property-placeholder>
-
 
     <bean id="propertyConfigurer" class="org.kimios.utils.configuration.OsgiConfigurationHolder"
           depends-on="kimiosServerCfg">
@@ -34,18 +31,13 @@
         <argument value="org.kimios.server.app"/>
     </bean>
 
-
     <bean id="configurationManagerHolder" class="org.kimios.utils.configuration.ConfigurationManagerBuilder">
         <property name="holder" ref="propertyConfigurer"/>
     </bean>
 
     <bean id="configurationManager" class="org.kimios.utils.configuration.ConfigurationManager"
           factory-ref="configurationManagerHolder"
-          factory-method="createInstance" depends-on="kimiosServerCfg">
-    </bean>
-
-    <bean id="ruleManager" class="org.kimios.kernel.rules.RuleManager">
-        <property name="ruleBeanFactory" ref="ruleFactory"></property>
+          factory-method="createInstance">
     </bean>
 
     <bean id="eventHandlerManager" class="org.kimios.kernel.events.EventHandlerManager" factory-method="getInstance"
@@ -53,89 +45,94 @@
         <property name="configurationManager" ref="configurationManager"/>
     </bean>
 
-    <bean id="eventInterceptor" class="org.kimios.kernel.events.interceptors.GenericInterceptor" init-method="init">
-        <property name="ruleManager" ref="ruleManager"></property>
-    </bean>
+    <bean id="ruleManager" class="org.kimios.kernel.rules.RuleManager">
+         <property name="ruleBeanFactory" ref="ruleFactory"></property>
+     </bean>
 
-    <bean id="appContextProvider" class="org.kimios.utils.spring.ApplicationContextProvider"/>
+     <bean id="eventInterceptor" class="org.kimios.kernel.events.interceptors.GenericInterceptor" init-method="init">
+         <argument ref="eventHandlerManager" />
+         <argument ref="ruleManager" />
+     </bean>
 
-    <!--<reference id="kimiosDataSource" interface="javax.sql.DataSource"
-               filter="(osgi.jndi.service.name=jdbc/kimiosds)"/> -->
+     <bean id="kernelAspect" class="org.kimios.kernel.events.interceptors.KimiosKernelAspect" factory-method="aspectOf">
+         <property name="ruleManager" ref="ruleManager" />
+         <property name="eventHandlerManager" ref="eventHandlerManager" />
+     </bean>
 
-    <service id="adminCtrlOsgi" ref="administrationController"
-             interface="org.kimios.kernel.controller.IAdministrationController"/>
-    <service id="studioCtrlOsgi" ref="studioController"
-             interface="org.kimios.kernel.controller.IStudioController"/>
-    <service id="docCtrlOsgi" ref="documentController"
-             interface="org.kimios.kernel.controller.IDocumentController"/>
-    <service id="versionCtrlOsgi" ref="documentVersionController"
-             interface="org.kimios.kernel.controller.IDocumentVersionController"/>
-    <service id="wksCtrlOsgi" ref="workspaceController"
-             interface="org.kimios.kernel.controller.IWorkspaceController"/>
-    <service id="fldCtrlOsgi" ref="folderController"
-             interface="org.kimios.kernel.controller.IFolderController"/>
-    <service id="fileTransferCtrlOsgi" ref="fileTransferController"
-             interface="org.kimios.kernel.controller.IFileTransferController"/>
-    <service id="reportCtrlOsgi" ref="reportingController"
-             interface="org.kimios.kernel.controller.IReportingController"/>
-    <service id="rulesCtrlOsgi" ref="rulesController"
-             interface="org.kimios.kernel.controller.IRuleManagementController"/>
-    <service id="secCtrlOsgi" ref="securityController"
-             interface="org.kimios.kernel.controller.ISecurityController"/>
-    <service id="infoCtrlOsgi" ref="informationController"
-             interface="org.kimios.kernel.controller.IServerInformationController"/>
-    <service id="wkfCtrlOsgi" ref="workflowController"
-             interface="org.kimios.kernel.controller.IWorkflowController"/>
-    <service id="extensionCtrlOsgi" ref="extensionController"
-             interface="org.kimios.kernel.controller.IExtensionController"/>
+     <service id="adminCtrlOsgi" ref="administrationController"
+              interface="org.kimios.kernel.controller.IAdministrationController"/>
+     <service id="studioCtrlOsgi" ref="studioController"
+              interface="org.kimios.kernel.controller.IStudioController"/>
+     <service id="docCtrlOsgi" ref="documentController"
+              interface="org.kimios.kernel.controller.IDocumentController"/>
+     <service id="versionCtrlOsgi" ref="documentVersionController"
+              interface="org.kimios.kernel.controller.IDocumentVersionController"/>
+     <service id="wksCtrlOsgi" ref="workspaceController"
+              interface="org.kimios.kernel.controller.IWorkspaceController"/>
+     <service id="fldCtrlOsgi" ref="folderController"
+              interface="org.kimios.kernel.controller.IFolderController"/>
+     <service id="fileTransferCtrlOsgi" ref="fileTransferController"
+              interface="org.kimios.kernel.controller.IFileTransferController"/>
+     <service id="reportCtrlOsgi" ref="reportingController"
+              interface="org.kimios.kernel.controller.IReportingController"/>
+     <service id="rulesCtrlOsgi" ref="rulesController"
+              interface="org.kimios.kernel.controller.IRuleManagementController"/>
+     <service id="secCtrlOsgi" ref="securityController"
+              interface="org.kimios.kernel.controller.ISecurityController"/>
+     <service id="infoCtrlOsgi" ref="informationController"
+              interface="org.kimios.kernel.controller.IServerInformationController"/>
+     <service id="wkfCtrlOsgi" ref="workflowController"
+              interface="org.kimios.kernel.controller.IWorkflowController"/>
+     <service id="extensionCtrlOsgi" ref="extensionController"
+              interface="org.kimios.kernel.controller.IExtensionController"/>
 
-    <service id="sessMngOsgi" ref="sessionManager"
-             interface="org.kimios.kernel.security.ISessionManager"/>
+     <service id="sessMngOsgi" ref="sessionManager"
+              interface="org.kimios.kernel.security.ISessionManager"/>
 
-    <service id="pathCtrlOsgi" ref="pathController"
-             interface="org.kimios.kernel.controller.IPathController"/>
-
-
-    <service id="convertControllerOsgi" ref="converterController"
-             interface="org.kimios.kernel.controller.IConverterController"/>
-
-
-    <service id="bonitaControllerOsgi" ref="bonitaController"
-             interface="org.kimios.kernel.controller.BonitaController"/>
+     <service id="pathCtrlOsgi" ref="pathController"
+              interface="org.kimios.kernel.controller.IPathController"/>
 
 
-    <service id="aclUpdaterOsgi" ref="aclUpdater"
-             interface="org.kimios.kernel.jobs.security.IACLUpdater"/>
-
-    <service id="securityAgentOsgi" ref="securityAgent"
-             interface="org.kimios.kernel.security.ISecurityAgent"/>
+     <service id="convertControllerOsgi" ref="converterController"
+              interface="org.kimios.kernel.controller.IConverterController"/>
 
 
-    <service id="dmsFactoryInstantiatorOsgi" ref="dmsfi"
-             interface="org.kimios.kernel.dms.IDmsFactoryInstantiator"></service>
-    <service id="securityFactoryInstantiatorOsgi" ref="securityfi"
-             interface="org.kimios.kernel.security.ISecurityFactoryInstantiator"></service>
-    <service id="authFactoryInstantiatorOsgi" ref="userfi"
-             interface="org.kimios.kernel.user.IAuthenticationFactoryInstantiator"></service>
-    <service id="logFactoryInstantiatorOsgi" ref="logfi"
-             interface="org.kimios.kernel.log.ILogFactoryInstantiator"></service>
-    <service id="reportFactoryInstantiatorOsgi" ref="reportfi"
-             interface="org.kimios.kernel.reporting.IReportFactoryInstantiator"></service>
-    <service id="transferFactoryInstantiatorOsgi" ref="transferfi"
-             interface="org.kimios.kernel.filetransfer.IFileTransferFactoryInstantiator"></service>
+     <service id="bonitaControllerOsgi" ref="bonitaController"
+              interface="org.kimios.kernel.controller.BonitaController"/>
 
 
-    <service id="dbFactoryProviderOsgi" ref="dbFactoryProvider"
-             interface="org.kimios.kernel.hibernate.IDBFactory"/>
+     <service id="aclUpdaterOsgi" ref="aclUpdater"
+              interface="org.kimios.kernel.jobs.security.IACLUpdater"/>
+
+     <service id="securityAgentOsgi" ref="securityAgent"
+              interface="org.kimios.kernel.security.ISecurityAgent"/>
 
 
-    <service id="searchCtrlosgi" ref="searchController"
-             interface="org.kimios.kernel.controller.ISearchController"/>
+     <service id="dmsFactoryInstantiatorOsgi" ref="dmsfi"
+              interface="org.kimios.kernel.dms.IDmsFactoryInstantiator"></service>
+     <service id="securityFactoryInstantiatorOsgi" ref="securityfi"
+              interface="org.kimios.kernel.security.ISecurityFactoryInstantiator"></service>
+     <service id="authFactoryInstantiatorOsgi" ref="userfi"
+              interface="org.kimios.kernel.user.IAuthenticationFactoryInstantiator"></service>
+     <service id="logFactoryInstantiatorOsgi" ref="logfi"
+              interface="org.kimios.kernel.log.ILogFactoryInstantiator"></service>
+     <service id="reportFactoryInstantiatorOsgi" ref="reportfi"
+              interface="org.kimios.kernel.reporting.IReportFactoryInstantiator"></service>
+     <service id="transferFactoryInstantiatorOsgi" ref="transferfi"
+              interface="org.kimios.kernel.filetransfer.IFileTransferFactoryInstantiator"></service>
 
-    <service id="searchMngCtrlosgi" ref="searchManagementController"
-             interface="org.kimios.kernel.controller.ISearchManagementController"/>
-    <service id="idxMngrOsgi" ref="indexManagerSolr"
-             interface="org.kimios.kernel.index.ISolrIndexManager"/>
+
+     <service id="dbFactoryProviderOsgi" ref="dbFactoryProvider"
+              interface="org.kimios.kernel.hibernate.IDBFactory"/>
+
+
+     <service id="searchCtrlosgi" ref="searchController"
+              interface="org.kimios.kernel.controller.ISearchController"/>
+
+     <service id="searchMngCtrlosgi" ref="searchManagementController"
+              interface="org.kimios.kernel.controller.ISearchManagementController"/>
+     <service id="idxMngrOsgi" ref="indexManagerSolr"
+              interface="org.kimios.kernel.index.ISolrIndexManager"/>
 
 
 </blueprint>

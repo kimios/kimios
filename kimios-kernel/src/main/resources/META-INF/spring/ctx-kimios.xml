@@ -31,8 +31,15 @@
         </property>
     </bean>
 
-    <bean id="configurationManager" class="org.kimios.utils.configuration.ConfigurationManager">
+    <bean id="configurationManagerBuilder"
+          class="org.kimios.utils.configuration.ConfigurationManagerBuilder">
         <property name="holder" ref="propertyConfigurer" />
+    </bean>
+
+    <bean id="configurationManager"
+          class="org.kimios.utils.configuration.ConfigurationManager"
+          factory-bean="configurationManagerBuilder"
+          factory-method="createInstance">
     </bean>
 
     <bean id="sessionFactory"
@@ -95,7 +102,13 @@
     </bean>
 
     <bean id="eventInterceptor" class="org.kimios.kernel.events.interceptors.GenericInterceptor" init-method="init">
-        <property name="ruleManager" ref="ruleManager"></property>
+        <constructor-arg ref="eventHandlerManager" />
+        <constructor-arg ref="ruleManager" />
+    </bean>
+
+    <bean id="kernelAspect" class="org.kimios.kernel.events.interceptors.KimiosKernelAspect" factory-method="aspectOf">
+        <property name="ruleManager" ref="ruleManager" />
+        <property name="eventHandlerManager" ref="eventHandlerManager" />
     </bean>
 
     <aop:config>

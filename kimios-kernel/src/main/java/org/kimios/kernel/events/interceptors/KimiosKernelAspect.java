@@ -29,7 +29,6 @@ import org.kimios.kernel.events.annotations.DmsEvent;
 import org.kimios.kernel.events.annotations.DmsEventOccur;
 import org.kimios.kernel.rules.RuleBean;
 import org.kimios.kernel.rules.RuleManager;
-import org.kimios.utils.spring.ApplicationContextProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,6 +43,8 @@ public class KimiosKernelAspect {
 
     private RuleManager ruleManager;
 
+    private EventHandlerManager eventHandlerManager;
+
     private boolean rulesManagementEnabled;
 
     public RuleManager getRuleManager()
@@ -53,7 +54,19 @@ public class KimiosKernelAspect {
 
     public void setRuleManager(RuleManager ruleManager)
     {
+
         this.ruleManager = ruleManager;
+        log.debug("====> RULE MANAGER DEFINED TO " + ruleManager);
+
+    }
+
+    public EventHandlerManager getEventHandlerManager() {
+        return eventHandlerManager;
+    }
+
+    public void setEventHandlerManager(EventHandlerManager eventHandlerManager) {
+        this.eventHandlerManager = eventHandlerManager;
+        log.debug("====> EVENT HANDLER MANAGER DEFINED TO " + eventHandlerManager);
     }
 
     public void init()
@@ -66,7 +79,6 @@ public class KimiosKernelAspect {
     public Object wrap(ProceedingJoinPoint pjp) throws Throwable {
 
 
-        ruleManager = ApplicationContextProvider.loadBean(RuleManager.class);
         rulesManagementEnabled = ruleManager != null;
 
         Method method = null;
@@ -90,7 +102,7 @@ public class KimiosKernelAspect {
 
             ctx.setCurrentOccur(DmsEventOccur.BEFORE);
             //process events (before state)
-            for (GenericEventHandler it : EventHandlerManager.getInstance().handlers()) {
+            for (GenericEventHandler it : eventHandlerManager.handlers()) {
                 log.trace("Event Before Context: " + ctx.getEntity());
                 it.process(method, pjp.getArgs(), DmsEventOccur.BEFORE, null, ctx);
             }
@@ -109,7 +121,7 @@ public class KimiosKernelAspect {
                 ruleManager.processRulesAfter(rulesBeans, ctx);
             }
             //process handler after
-            for (GenericEventHandler it : EventHandlerManager.getInstance().handlers()) {
+            for (GenericEventHandler it : eventHandlerManager.handlers()) {
                 log.trace("Event After Context: " + ctx.getEntity());
                 it.process(method, pjp.getArgs(), DmsEventOccur.AFTER, ret, ctx);
             }

@@ -38,7 +38,7 @@ public class ConfigurationManagerBuilder {
         this.holder = holder;
     }
 
-    public ConfigurationManager createInstance() {
+    public synchronized ConfigurationManager createInstance() {
         ConfigurationManager cfg = new ConfigurationManager();
         cfg.setHolder(holder);
         log.debug("While building Configuration Manager: " + getHolder() + " ==> " + holder);

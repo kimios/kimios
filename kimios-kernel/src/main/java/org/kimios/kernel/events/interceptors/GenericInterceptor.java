@@ -34,19 +34,18 @@ public class GenericInterceptor implements MethodInterceptor
 {
     private static Logger log = LoggerFactory.getLogger(GenericInterceptor.class);
 
+
+    public GenericInterceptor(EventHandlerManager eventHandlerManager, RuleManager ruleManager){
+        this.ruleManager = ruleManager;
+        this.eventHandlerManager = eventHandlerManager;
+    }
+
+    private EventHandlerManager eventHandlerManager;
+
     private RuleManager ruleManager;
 
     private boolean rulesManagementEnabled;
 
-    public RuleManager getRuleManager()
-    {
-        return ruleManager;
-    }
-
-    public void setRuleManager(RuleManager ruleManager)
-    {
-        this.ruleManager = ruleManager;
-    }
 
     public void init()
     {
@@ -67,7 +66,7 @@ public class GenericInterceptor implements MethodInterceptor
 
         ctx.setCurrentOccur(DmsEventOccur.BEFORE);
         //process events (before state)
-        for (GenericEventHandler it : EventHandlerManager.getInstance().handlers()) {
+        for (GenericEventHandler it : eventHandlerManager.handlers()) {
             it.process(arg0.getMethod(), arg0.getArguments(),  DmsEventOccur.BEFORE, null, ctx);
         }
         //process rules before (before state)
@@ -85,7 +84,7 @@ public class GenericInterceptor implements MethodInterceptor
             ruleManager.processRulesAfter(rulesBeans, ctx);
         }
         //process handler after
-        for (GenericEventHandler it : EventHandlerManager.getInstance().handlers()) {
+        for (GenericEventHandler it : eventHandlerManager.handlers()) {
             it.process(arg0.getMethod(), arg0.getArguments(), DmsEventOccur.AFTER, ret, ctx);
         }
         EventContext.clear();
