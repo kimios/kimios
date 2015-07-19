@@ -1,0 +1,17 @@
+kimios-start = {
+ list = [ "kimios-kernel" "hibernate-osgi" "org.kimios.osgi.commands" "kimios-services" "kimios-convert-service" "kimios-bonita-service" ]
+ echo "Stopping Kimios Kernel & Services"
+ each ($list) { bundle:stop $it }
+ echo "Updating Kimios Kernel & Services"
+ each ($list) {
+        if { NOT($it equals "hibernate-osgi") } {
+                bundle:update $it
+                echo "$it updated"
+        }
+ }
+ each ($list) { bundle:refresh $it }
+ echo "Restarting Kimios Kernel & Services"
+ each ($list) { bundle:restart $it }
+ echo "Kimios Kernel And Core Restarted"
+} ;
+

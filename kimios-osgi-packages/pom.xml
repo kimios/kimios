@@ -31,6 +31,7 @@
         <module>kimios-solr</module>
         <module>kimios-kernel-osgi</module>
         <module>kimios-karaf-commands</module>
+        <module>kimios-karaf-features</module>
     </modules>
 
 </project>
