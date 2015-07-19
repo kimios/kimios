@@ -15,10 +15,10 @@
  */
 package org.kimios.utils.configuration;
 
+import org.apache.commons.lang.StringUtils;
 import org.kimios.exceptions.ConfigException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -124,7 +124,7 @@ public class PropertiesConfigurationHolder implements ConfigurationHolder
     public List<String> getValues(String prefix)
     {
         String valuesItems = values.getProperty(prefix);
-        List<String> valuesItemList = Arrays.asList(StringUtils.tokenizeToStringArray(valuesItems, ","));
+        List<String> valuesItemList = Arrays.asList(StringUtils.split(valuesItems, ","));
         return valuesItemList;
     }
 
