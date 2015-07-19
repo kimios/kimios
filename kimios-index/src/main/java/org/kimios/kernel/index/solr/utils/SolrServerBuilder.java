@@ -56,13 +56,19 @@ public class SolrServerBuilder {
 
             log.info("Kimios Solr Home " + solrHome);
             String os = System.getProperty("os.name").toLowerCase();
-            URL sorlHomeUrl = null;
+            URL solrHomeUrl = null;
             if(os.contains("win") && !os.contains("darwin")){
                 //windos url
-                sorlHomeUrl = new URL("file:///" + solrHome);
-            } else
-                sorlHomeUrl = new URL("file://" + solrHome);
-            File home = new File(sorlHomeUrl.getFile());
+                solrHomeUrl = new URL("file:///" + solrHome);
+            } else {
+                if(solrHome.startsWith("/")){
+                    solrHomeUrl = new URL("file://" + solrHome);
+                } else {
+                    solrHomeUrl = new URL("file://" + System.getProperty("user.dir").toString() + "/" + solrHome);
+                }
+
+            }
+            File home = new File(solrHomeUrl.getFile());
             checkSolrXmlFile(home, coreName);
             /*
                 Check solr.xml existence. If not exist (create it)
@@ -122,6 +128,11 @@ public class SolrServerBuilder {
             }
         }   */
 
+        log.info("checking solr home {}", solrHome.getPath());
+        if(!solrHome.exists()){
+            log.info("initialisze empty directory for solr instance");
+            solrHome.mkdirs();
+        }
         File solrConfFile = new File(solrHome, "solr.xml");
         if (!solrConfFile.exists()) {
             BufferedReader reader = new BufferedReader(

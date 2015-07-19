@@ -57,6 +57,13 @@ public class RepositoryManager
                 log.warn("Repository error: no default repository set. Setting to default");
                 defaultRepositoryPath = ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH);
                 defaultAccessor = new DefaultRepositoryAccessor(defaultRepositoryPath);
+                /*
+                    Create default repo
+                 */
+                File repoDir = new File(defaultRepositoryPath);
+                if(!repoDir.exists()){
+                    repoDir.mkdirs();
+                }
             } else {
                 defaultRepository = repository;
                 defaultRepositoryPath = repository.getPath();
