@@ -18,12 +18,11 @@
 <configuration scan="true" scanPeriod="30 seconds">
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <layout class="ch.qos.logback.classic.PatternLayout">
-            <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
-        </layout>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
     </appender>
 
-    <logger name="org.springframework" level="ERROR"/>
 
 
     <root level="INFO">
@@ -33,8 +32,9 @@
 
     <!-- third parties dependencies -->
     <logger name="com.atomikos" level="ERROR" />
-    <logger name="org.springframework" level="INFO"/>
+    <logger name="org.springframework" level="DEBUG"/>
     <logger name="org.hibernate" level="INFO" />
+    <logger name="org.apache.cxf" level="ERROR" />
 
     <!-- kimios -->
     <logger name="kimios" level="DEBUG" />
