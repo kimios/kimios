@@ -24,13 +24,6 @@
         http://cxf.apache.org/schemas/jaxrs-client.xsd"
        default-autowire="byName">
 
-  <!--  <cxf:bus>
-        <cxf:features>
-            <cxf:logging/>
-        </cxf:features>
-    </cxf:bus>-->
-
-
     <jaxrs:client threadSafe="true" id="administrationService"
                   serviceClass="org.kimios.webservices.AdministrationService"
                   address="${server.url}${service.context}/rest/">
