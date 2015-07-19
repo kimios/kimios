@@ -116,7 +116,8 @@ public class EventHandlerManager extends ExtensionRegistry<GenericEventHandler>
         try{
              /*
             Load handlers from spring context
-         */
+            */
+
             Map<String, GenericEventHandler> springInstantiatedHandlers =
                     ApplicationContextProvider.loadBeans(GenericEventHandler.class);
             for (GenericEventHandler manager : springInstantiatedHandlers.values()) {
@@ -137,7 +138,11 @@ public class EventHandlerManager extends ExtensionRegistry<GenericEventHandler>
                         Class<?> cHandler = Class.forName(handlerClass, true, cLoader);
                         GenericEventHandler handler = (GenericEventHandler) cHandler.newInstance();
                         handlers.add(handler);
-                    } catch (Exception e) {
+                    }
+                    catch (ClassNotFoundException cnf){
+                        log.error("{} can't be loaded due to classlaoder error", handlerClass);
+                    }
+                    catch (Exception e) {
                         log.error("Error while loading event handler " + handlerClass, e);
                     }
                 }
