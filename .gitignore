@@ -10,3 +10,4 @@ Thumbs.db
 .DS_Store
 kimios-home/server/txlogs
 rebel.xml
+kimios-server-war/profiles/dev/*
