@@ -63,6 +63,9 @@
         <command>
             <action class="org.kimios.osgi.karaf.MassiveSecurityUpdate" />
         </command>
+        <command>
+            <action class="org.kimios.osgi.karaf.MetaFeedRegistryViewCommand" />
+        </command>
     </command-bundle>
 
     <bean id="lockCompleter" class="org.kimios.osgi.karaf.CheckedOutCompleter">
