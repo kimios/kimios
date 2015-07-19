@@ -22,6 +22,7 @@ package org.kimios.kernel.index;
 
 
 import org.apache.commons.io.IOUtils;
+//import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
@@ -33,6 +34,7 @@ import org.kimios.kernel.exception.IndexException;
 import org.kimios.kernel.index.query.factory.DocumentFactory;
 import org.kimios.kernel.index.query.factory.DocumentIndexStatusFactory;
 import org.kimios.kernel.index.solr.SolrIndexer;
+import org.kimios.kernel.index.solr.utils.SolrServerBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +42,7 @@ import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * Factory to instantiate the @see SolrIndexManager.
@@ -49,11 +52,10 @@ import java.util.List;
  * @see org.kimios.kernel.index.SolrIndexManager
  */
 public class SolrIndexFactory {
+
     private static Logger log = LoggerFactory.getLogger(SolrIndexFactory.class);
 
     private static SolrServer solrServer;
-
-    private static CoreContainer coreContainer;
 
     private String solrUrl;
 
@@ -73,7 +75,17 @@ public class SolrIndexFactory {
 
     private SolrIndexer solrIndexer;
 
+    private EventHandlerManager eventHandlerManager;
+
     private SessionEndHandler sessionEndHandler;
+
+    public EventHandlerManager getEventHandlerManager() {
+        return eventHandlerManager;
+    }
+
+    public void setEventHandlerManager(EventHandlerManager eventHandlerManager) {
+        this.eventHandlerManager = eventHandlerManager;
+    }
 
     public SessionEndHandler getSessionEndHandler() {
         return sessionEndHandler;
@@ -155,131 +167,11 @@ public class SolrIndexFactory {
         this.solrUrl = solrUrl;
     }
 
-    private static SolrServer initLocalServer(String solrHome, String coreName) {
-        try {
-
-            log.info("Kimios Solr Home " + solrHome);
-            String os = System.getProperty("os.name").toLowerCase();
-            URL sorlHomeUrl = null;
-            if(os.contains("win") && !os.contains("darwin")){
-                //windos url
-                sorlHomeUrl = new URL("file:///" + solrHome);
-            } else
-                sorlHomeUrl = new URL("file://" + solrHome);
-            File home = new File(sorlHomeUrl.getFile());
-            checkSolrXmlFile(home, coreName);
-            /*
-                Check solr.xml existence. If not exist (create it)
-                */
-            File f = new File(home, "solr.xml");
-
-            Thread.currentThread().setContextClassLoader(SolrIndexFactory.class.getClassLoader());
-            coreContainer = CoreContainer.createAndLoad(solrHome, f);
-            ;
-            EmbeddedSolrServer server = new EmbeddedSolrServer(coreContainer, coreName);
-            return server;
-        } catch (Exception ex) {
-            log.error("Error initializing SOLR server", ex);
-            return null;
-        }
-    }
-
-    private static void checkSolrXmlFile(File solrHome, String coreName) throws IOException, IndexException {
-        if (!solrHome.exists()) {
-            log.debug("Solr home doesn't exist. Path " + solrHome.getAbsolutePath() + " not found");
-            if (!solrHome.mkdirs()) {
-                log.error("Unable to create solr Home");
-                throw new IndexException("Unable to create solr home " + solrHome.getAbsolutePath());
-            }
-        }
-
-        File solrConfFile = new File(solrHome, "solr.xml");
-        if (!solrConfFile.exists()) {
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(SolrIndexFactory.class.getClassLoader().getResourceAsStream(
-                            "solr.xml")));
-
-            StringBuffer content = new StringBuffer();
-            String item = null;
-            while ((item = reader.readLine()) != null) {
-                content.append(item);
-            }
-            /*
-               Replace with coreName
-            */
-            String solrSettings = content.toString().replaceAll("\\{core-name\\}", coreName);
-            if (solrConfFile.createNewFile()) {
-                FileWriter fw = new FileWriter(solrConfFile);
-                fw.append(solrSettings);
-                fw.flush();
-                fw.close();
-            } else {
-                throw new IndexException("Unable to create solr conf file");
-            }
-
-            File fCore = new File(solrHome, coreName);
-            fCore.mkdir();
-
-            File f = new File(fCore, "conf");
-            f.mkdir();
-
-
-            InputStream schemaStream = SolrIndexFactory.class.getResourceAsStream("/schema.xml");
-            InputStream cfgStream = SolrIndexFactory.class.getResourceAsStream("/solrconfig.xml");
-            InputStream mappingAccent = SolrIndexFactory.class.getResourceAsStream("/mapping-ISOLatin1Accent.txt");
-
-
-            IOUtils.copy(schemaStream, new FileOutputStream(new File(f, "schema.xml")));
-            IOUtils.copy(cfgStream, new FileOutputStream(new File(f, "solrconfig.xml")));
-            IOUtils.copy(mappingAccent, new FileOutputStream(new File(f, "mapping-ISOLatin1Accent.txt")));
-
-
-
-            /*
-
-             int readBytes;
-            byte[] bArray = new byte[2048];
-            while ((readBytes = schemaStream.read(bArray)) != -1) {
-                fos.write(bArray, 0, readBytes);
-            }
-            fos.flush();
-            fos.close();
-
-            fos = new FileOutputStream(f.getAbsolutePath() + "/solrconfig.xml");
-            while ((readBytes = cfgStream.read(bArray)) != -1) {
-                fos.write(bArray, 0, readBytes);
-            }
-            fos.flush();
-            fos.close();  */
-
-            List<String> items = new ArrayList<String>();
-            items.add("protwords.txt");
-            items.add("synonyms.txt");
-            items.add("spellings.txt");
-            items.add("stopwords.txt");
-            items.add("misspelled_words.txt");
-            items.add("spellingAdditions.txt");
-
-            for (String fileToTouch : items) {
-                File fConf = new File(f.getAbsolutePath() + "/" + fileToTouch);
-                fConf.createNewFile();
-            }
-        }
-    }
-
-    private static SolrServer initSolrServer(String serverUrl) {
-        try {
-            HttpSolrServer server = new HttpSolrServer(serverUrl);
-            return server;
-        } catch (Exception ex) {
-            log.error("Error initializing SOLR server", ex);
-            return null;
-        }
-    }
-
     public static void shutdownSolr() {
-        if (coreContainer != null) {
-            coreContainer.shutdown();
+        if(solrServer instanceof EmbeddedSolrServer){
+            ((EmbeddedSolrServer)solrServer).getCoreContainer().shutdown();
+        } else {
+            solrServer.shutdown();
         }
     }
 
@@ -287,9 +179,9 @@ public class SolrIndexFactory {
 
         if (solrServer == null) {
             if (serverMode) {
-                solrServer = initSolrServer(solrUrl);
+                solrServer = SolrServerBuilder.initHttpServer(solrUrl);
             } else {
-                solrServer = initLocalServer(solrHome, coreName);
+                solrServer = SolrServerBuilder.initLocalServer(solrHome, coreName);
             }
         }
 
@@ -298,23 +190,13 @@ public class SolrIndexFactory {
         manager.setSolrDocumentFactory(solrDocumentFactory);
         manager.setDocumentIndexStatusFactory(documentIndexStatusFactory);
 
-        EventHandlerManager.getInstance().addHandler(addonDataHandler);
+        eventHandlerManager.addHandler(addonDataHandler);
         SolrIndexer si = new SolrIndexer();
         si.setIndexManager(manager);
-        EventHandlerManager.getInstance().addHandler(si);
-
-
+        eventHandlerManager.addHandler(si);
         log.debug("adding session event handler {}", sessionEndHandler);
-        EventHandlerManager.getInstance().addHandler(sessionEndHandler);
-
+        eventHandlerManager.addHandler(sessionEndHandler);
         return manager;
     }
 
-    public Class<SolrIndexManager> getObjectType() {
-        return SolrIndexManager.class;
-    }
-
-    public boolean isSingleton() {
-        return true;
-    }
 }

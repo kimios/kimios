@@ -16,10 +16,7 @@
 package org.kimios.kernel.index;
 
 import org.apache.lucene.search.Query;
-import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrResponse;
-import org.apache.solr.client.solrj.SolrServer;
-import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.*;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.RangeFacet;
@@ -765,7 +762,7 @@ public class SolrIndexManager
                 list.add((Long) dc.getFieldValue("DocumentUid"));
             }
             return list;
-        } catch (SolrServerException ex) {
+        } catch (Exception ex) {
             throw new IndexException(ex, ex.getMessage());
         }
     }
@@ -780,7 +777,7 @@ public class SolrIndexManager
             SolrDocumentList documentList = rsp.getResults();
             return documentList;
 
-        } catch (SolrServerException ex) {
+        } catch (Exception ex) {
             throw new IndexException(ex, ex.getMessage());
         }
     }
@@ -859,7 +856,7 @@ public class SolrIndexManager
             }
             searchResponse.setFacetsData(facetsData);
             return searchResponse;
-        } catch (SolrServerException ex) {
+        } catch (Exception ex) {
             throw new IndexException(ex, ex.getMessage());
         }
     }

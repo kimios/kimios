@@ -16,15 +16,13 @@
   -->
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-           xmlns:jpa="http://aries.apache.org/xmlns/jpa/v1.0.0"
            xmlns:tx="http://aries.apache.org/xmlns/transactions/v1.0.0"
            xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0
         http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd" default-activation="eager">
 
 
     <!-- provide a SolrIndexManager class / No interface here -->
-    <bean id="indexManagerSolrBuilder" class="org.kimios.kernel.index.SolrIndexFactory" scope="singleton"
-          depends-on="eventHandlerManager" destroy-method="shutdownSolr">
+    <bean id="indexManagerSolrBuilder" class="org.kimios.kernel.index.SolrIndexFactory" scope="singleton" destroy-method="shutdownSolr">
         <property name="serverMode" value="${dms.index.solr.mode.server}"/>
         <property name="solrHome" value="${dms.index.solr.home}"/>
         <property name="solrUrl" value="${dms.index.solr.server.url}"/>
@@ -33,6 +31,8 @@
         <property name="solrDocumentFactory" ref="solrDocumentFactory" />
         <property name="documentIndexStatusFactory" ref="documentIndexStatusFactory" />
 
+
+        <property name="eventHandlerManager" ref="eventHandlerManager" />
         <property name="addonDataHandler" ref="addonDataHandler" />
         <property name="sessionEndHandler" ref="sessionEndHandler" />
 
