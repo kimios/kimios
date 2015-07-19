@@ -38,7 +38,6 @@ public abstract class ExtensionRegistry<T> {
     public ExtensionRegistry(){
         this.registryClass = (Class<T>) ((ParameterizedType) getClass()
                 .getGenericSuperclass()).getActualTypeArguments()[0];
-
         ExtensionRegistryManager.registerRegistry(this);
     }
 

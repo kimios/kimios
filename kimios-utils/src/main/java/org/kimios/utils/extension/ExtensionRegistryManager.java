@@ -52,10 +52,10 @@ public class ExtensionRegistryManager {
         ExtensionRegistry toAddRegistry = null;
         Class spClass = clazz;
         while(!spClass.equals(Object.class)){
-            logger.info("processing registry for class");
+            logger.info("processing registry for class {} (registry manager instance {} - registry instance {})", spClass, _registryManager, _registryManager._registry);
             if (_registryManager._registry.get(spClass) != null){
                 toAddRegistry = _registryManager._registry.get(spClass);
-                logger.info("found registry for {}", spClass);
+                logger.info("found registry for {}: {}", spClass, toAddRegistry);
                 break;
             }
             spClass = spClass.getSuperclass();
@@ -79,8 +79,10 @@ public class ExtensionRegistryManager {
             logger.warn("registry for type {} was already in. previous setup wil be crushed",
                     registry.registryClass.getName());
         }
-        //check if class already available
 
+
+
+        //check if class already available
         List<Class> _toRemove = new ArrayList<Class>();
         for(Class _c: _registryManager._tempItems) {
             if(registry.registryClass.isAssignableFrom(_c) && _c != null){
@@ -90,10 +92,10 @@ public class ExtensionRegistryManager {
         }
         _registryManager._tempItems.removeAll(_toRemove);
 
+        logger.info("Setting registry for class: {} in registryManager (manager: {}", registry.registryClass, registry.getClass());
         _registryManager._registry.put(registry.registryClass.getName(), registry);
 
     }
-
 
     public static Collection<String> itemsAsString(Class classz) {
         if (_registryManager._registry.containsKey(classz.getName())) {
