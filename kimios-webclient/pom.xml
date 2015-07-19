@@ -269,7 +269,7 @@
                             org.osgi.framework,
                             javax.servlet; version="[2.4.0, 4.0.0)",
                             javax.servlet.http; version="[2.4.0, 4.0.0)",
-                            javax.servlet.resources; version="[2.4.0, 4.0.0)",
+                            javax.servlet.resources;version="[2.4.0, 4.0.0)";resolution:=optional,
                             org.osgi.service.cm,
                             org.osgi.service.blueprint.container,
                             org.osgi.service.blueprint.reflect,
@@ -306,7 +306,7 @@
                             <packagingExcludes>
                                 WEB-INF/lib/commons-logging-*.jar,
                                 %regex[WEB-INF/lib/log4j-(?!over-slf4j).*.jar],
-                                %regex[WEB-INF/lib/slf4j-log4j*.jar]
+                                %regex[WEB-INF/lib/slf4j-log4j*.jar],
                             </packagingExcludes>
                             <archive>
                                 <manifest>
@@ -326,6 +326,7 @@
                         <phase>package</phase>
                         <configuration>
                             <classifier>osgi</classifier>
+
                             <webappDirectory>${project.build.directory}/${project.build.finalName}-osgi</webappDirectory>
                             <webResources>
                                 <resource>
@@ -334,10 +335,16 @@
                                 </resource>
                             </webResources>
                             <webXml>src/osgi/WEB-INF/web.xml</webXml>
+
                             <packagingExcludes>
                                 WEB-INF/lib/commons-logging-*.jar,
+                                WEB-INF/lib/cxf-*.jar,
+                                WEB-INF/lib/slf4j*.jar,
+                                WEB-INF/lib/logback*.jar,
+                                WEB-INF/lib/aspectj*.jar,
                                 %regex[WEB-INF/lib/log4j-(?!over-slf4j).*.jar]
                             </packagingExcludes>
+
                             <archive>
                                 <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
                                 <manifest>
