@@ -16,11 +16,12 @@
 
 package org.kimios.utils.osgi;
 
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleActivator;
-import org.osgi.framework.BundleContext;
+import org.osgi.framework.*;
+import org.osgi.service.cm.ManagedService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Hashtable;
 
 /**
  * Created by farf on 6/20/14.
@@ -33,15 +34,27 @@ public class KimiosActivator implements BundleActivator {
 
     private KimiosExtender kimiosExtender;
 
+
+    private static String CONFIG_PID = "org.kimios.server.app";
+
+
+    private ServiceRegistration configUpdateServiceRegistration;
+
     public void start(BundleContext context) throws Exception {
 
         logger.info("Kimios starting");
 
 
+        Hashtable<String, Object> properties = new Hashtable<String, Object>();
+        properties.put(Constants.SERVICE_PID, CONFIG_PID);
+        configUpdateServiceRegistration = context.registerService(ManagedService.class.getName(),
+                new KimiosConfigUpdater(), properties);
+
+
+
         int trackStates = Bundle.STARTING | Bundle.STOPPING | Bundle.RESOLVED | Bundle.INSTALLED | Bundle.UNINSTALLED;
         kimiosExtender = new KimiosExtender(context, trackStates, null);
         kimiosExtender.open();
-
         logger.info("Kimios Extender Loaded");
     }
 
@@ -49,5 +62,9 @@ public class KimiosActivator implements BundleActivator {
 
         kimiosExtender.close();
         logger.info("Kimios Extender Closed");
+
+        if(configUpdateServiceRegistration != null){
+            configUpdateServiceRegistration.unregister();
+        }
     }
 }

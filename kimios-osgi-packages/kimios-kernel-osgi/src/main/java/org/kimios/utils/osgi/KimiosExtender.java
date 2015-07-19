@@ -39,8 +39,6 @@ public class KimiosExtender extends BundleTracker {
         super(context, stateMask, customizer);
         //load registry
         ExtensionRegistryManager.init();
-
-
     }
 
     @Override

@@ -280,6 +280,30 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>1.4.7</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>aopalliance</groupId>
+            <artifactId>aopalliance</artifactId>
+            <version>1.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.solr</groupId>
+            <artifactId>solr-core</artifactId>
+            <version>${solr4j.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-core</artifactId>
+            <version>${solr4j.version}</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <profiles>
@@ -488,8 +512,6 @@
                             org.quartz.simpl,
                             org.quartz.spi,
                             org.bonitasoft*,
-                            org.springframework.scheduling,
-                            org.springframework.scheduling.quartz,
                             org.w3c.dom,
                             org.w3c.dom.xpath,
                             org.w3c.dom.views,
@@ -505,48 +527,8 @@
                             org.apache.commons.io.output,
                             org.apache.commons.io.monitor,
                             org.apache.commons.io.input,
-                            org.springframework.context,
-                            org.springframework.context.weaving,
-                            org.springframework.core.io,
-                            org.springframework.core.io.support,
-                            org.springframework.beans,
-                            org.springframework.beans.factory,
-                            org.springframework.beans.factory.config,
-                            org.springframework.core,
-                            org.springframework.core.env,
-                            org.springframework.orm,
-                            org.springframework.orm.hibernate4,
-                            org.springframework.dao,
-                            org.springframework.dao.support,
-                            org.springframework.jndi,
-                            org.springframework.transaction,
-                            org.springframework.transaction.jta,
-                            org.springframework.transaction.config,
-                            org.springframework.aop,
-                            org.springframework.aop.support,
-                            org.springframework.aop.framework,
-                            org.springframework.aop.aspectj,
-                            org.springframework.aop.aspectj.annotation,
-                            org.springframework.transaction.interceptor,
                             org.aopalliance.aop,
                             org.aopalliance.intercept,
-                            org.springframework.instrument,
-                            org.springframework.instrument.classloading,
-                            org.springframework.beans.factory.xml,
-                            org.springframework.beans.propertyeditors,
-                            org.springframework.osgi.context,
-                            org.springframework.osgi.context.support,
-                            org.springframework.osgi.context.event,
-                            org.springframework.osgi.service.exporter,
-                            org.springframework.osgi.service.exporter.support,
-                            org.springframework.osgi.service.importer.support,
-                            org.springframework.jdbc,
-                            org.springframework.jdbc.datasource,
-                            org.springframework.jdbc.core,
-                            org.springframework.jdbc.config,
-                            org.springframework.jdbc.object,
-                            org.springframework.jdbc.support,
-                            org.springframework.osgi.io;resolution:=optional,
                             javassist.util.proxy,
                             org.apache.solr,
                             org.apache.solr.client.solrj,
@@ -570,18 +552,20 @@
                             org.apache.solr.update,
                             org.apache.solr.update.processor,
                             org.apache.solr.search,
-                            org.apache.solr.search.similarities,
+                            org.apache.solr.search.similarities;resolution:=optional,
                             org.apache.solr.search.join,
                             org.apache.solr.search.grouping,
                             org.apache.solr.search.function,
+                            org.apache.solr.search.mlt;resolution:=optional,
+                            org.apache.solr.search.facet;resolution:=optional,
+                            org.apache.solr.search.stats;resolution:=optional,
                             org.apache.solr.schema,
                             org.apache.solr.logging,
                             org.apache.solr.store.blockcache,
                             org.apache.solr.response,
                             org.apache.solr.request,
+                            org.apache.lucene.search,
                             org.apache.lucene.index,
-                            org.apache.lucene.index.sorter,
-                            org.apache.lucene.index.memory,
                             org.apache.lucene.analysis,
                             org.apache.lucene.analysis.util,
                             org.apache.lucene.analysis.synonym,
