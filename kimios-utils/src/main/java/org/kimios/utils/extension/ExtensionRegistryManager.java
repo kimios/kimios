@@ -63,10 +63,10 @@ public class ExtensionRegistryManager {
         if(toAddRegistry == null){
             if(!_registryManager._tempItems.contains(clazz)){
                 _registryManager._tempItems.add(clazz);
-                logger.info("temporarily added extension {}", clazz);
+                logger.info("temporarily added extension for type {}: {}", spClass, clazz);
             }
         } else {
-            logger.info("adding class to registry {}", clazz);
+            logger.info("adding class to registry {}: {}",spClass, clazz);
             toAddRegistry.addClass(clazz);
         }
     }
