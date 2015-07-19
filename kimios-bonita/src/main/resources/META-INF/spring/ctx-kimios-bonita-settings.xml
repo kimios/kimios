@@ -29,13 +29,8 @@
         <property name="bonitaApplicationName" value="${bonita.appname}"/>
         <property name="bonitaKimiosRoleName" value="${bonita.kimiosrole}"/>
         <property name="bonitaProfileUsers" value="User"/>
-        <property name="validDomainsToSynchronize">
-            <bean class="org.springframework.util.StringUtils" factory-method="commaDelimitedListToSet">
-                <constructor-arg type="java.lang.String" value="${bonita.domain.list}"/>
-            </bean>
-        </property>
+        <property name="commasSeparatedListDomains" value="${bonita.domain.list}"/>
         <property name="bonitaEnabled" value="${bonita.enabled}" />
-
     </bean>
 
 </beans>

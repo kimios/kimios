@@ -19,6 +19,7 @@ package org.kimios.kernel.bonita;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
@@ -33,6 +34,16 @@ public class BonitaSettings {
     private String bonitaKimiosRoleName;
     private String bonitaProfileUsers;
     private Set<String> validDomainsToSynchronize;
+
+    private String commasSeparatedListDomains;
+
+    public String getCommasSeparatedListDomains() {
+        return commasSeparatedListDomains;
+    }
+
+    public void setCommasSeparatedListDomains(String commasSeparatedListDomains) {
+        this.commasSeparatedListDomains = commasSeparatedListDomains;
+    }
 
     private boolean bonitaEnabled = false;
 
@@ -64,6 +75,15 @@ public class BonitaSettings {
             System.out.println("Using server configuration " + properties);
             System.setProperty("bonita.home", homeFolder.getAbsolutePath());
         }
+
+        //set domain list
+        if(commasSeparatedListDomains != null && commasSeparatedListDomains.length() > 0){
+            String[] domainsList = commasSeparatedListDomains.split(",");
+            validDomainsToSynchronize = new HashSet<String>();
+            for(String d: domainsList)
+                validDomainsToSynchronize.add(d);
+        }
+
     }
 
     public String getBonitaUserName() {
