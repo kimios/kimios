@@ -18,12 +18,15 @@ package org.kimios.kernel.controller;
 import org.kimios.kernel.jobs.security.IACLUpdater;
 import org.kimios.kernel.security.ISecurityAgent;
 import org.kimios.kernel.security.SecurityAgent;
+import org.kimios.utils.configuration.ConfigurationManager;
 
 public abstract class AKimiosController implements DmsController
 {
     private ISecurityAgent securityAgent;
 
     protected IACLUpdater aclUpdater;
+
+    protected ConfigurationManager configurationManager;
 
     protected org.kimios.kernel.dms.IDmsFactoryInstantiator dmsFactoryInstantiator;
 
@@ -122,5 +125,12 @@ public abstract class AKimiosController implements DmsController
         this.aclUpdater = aclUpdater;
     }
 
+    public ConfigurationManager getConfigurationManager() {
+        return configurationManager;
+    }
+
+    public void setConfigurationManager(ConfigurationManager configurationManager) {
+        this.configurationManager = configurationManager;
+    }
 }
 

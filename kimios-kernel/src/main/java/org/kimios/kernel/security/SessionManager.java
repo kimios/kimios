@@ -25,7 +25,6 @@ import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
 import org.kimios.kernel.user.*;
 import org.kimios.kernel.utils.ClientInformationUtil;
-import org.kimios.utils.spring.ApplicationContextProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,6 +54,11 @@ public class SessionManager extends HFactory implements ISessionManager
             return null;
         }
     }
+
+
+    protected List<Authenticator> authenticators = new ArrayList<Authenticator>();
+
+
 
     protected AuthenticationSourceFactory authenticationSourceFactory;
 
@@ -138,6 +142,15 @@ public class SessionManager extends HFactory implements ISessionManager
 
     }
 
+
+    public List<Authenticator> getAuthenticators() {
+        return authenticators;
+    }
+
+    public void setAuthenticators(List<Authenticator> authenticators) {
+        this.authenticators = authenticators;
+    }
+
     public Session startSession(String uid, String userSource) throws DataSourceException, ConfigException
     {
         AuthenticationSource authenticationSource = authenticationSourceFactory.getAuthenticationSource(userSource);
@@ -162,10 +175,9 @@ public class SessionManager extends HFactory implements ISessionManager
     public Session startSession(String externalToken) throws DataSourceException, ConfigException
     {
         /* Load Authenticator */
-        Map<String, Authenticator> authenticators = ApplicationContextProvider.loadBeans(Authenticator.class);
         Session session = null;
-        for(Authenticator authenticator: authenticators.values()){
-            log.info("Attempt to log on " + authenticator.getClass().getMethods() + " authenticator");
+        for(Authenticator authenticator: authenticators){
+            log.info("Attempt to log on " + authenticator.getClass() + " authenticator");
             try{
                 String userName = authenticator.authenticate(externalToken);
                 if(userName != null){

@@ -19,7 +19,7 @@
            xmlns:jpa="http://aries.apache.org/xmlns/jpa/v1.0.0"
            xmlns:tx="http://aries.apache.org/xmlns/transactions/v1.0.0"
            xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0
-        http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd" default-activation="eager">
+        http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
 
     <!--  <bean id="dbFactoryProvider" class="org.kimiostero.hibernate.SaasHFactory" />-->
     <bean id="dbFactoryProvider" class="org.kimios.kernel.hibernate.JpaHibernateFactory" factory-method="getInstance">
@@ -223,13 +223,7 @@
         <property name="aclUpdater" ref="aclUpdater"/>
     </bean>  -->
 
-    <bean id="sessionManager" class="org.kimios.kernel.security.SessionManager" factory-method="getInstance">
-        <property name="provider" ref="dbFactoryProvider"></property>
-        <property name="authenticationSourceFactory" ref="authenticationSourceFactory"/>
-        <property name="authenticatedServiceFactory" ref="authenticatedServiceFactory"/>
 
-        <tx:transaction method="*" value="Required"/>
-    </bean>
     <bean id="securityController" class="org.kimios.kernel.controller.impl.SecurityController">
     <property name="dmsFactoryInstantiator" ref="dmsfi"></property>
     <property name="securityFactoryInstantiator" ref="securityfi"></property>
@@ -269,6 +263,7 @@
         <property name="transferFactoryInstantiator" ref="transferfi"></property>
         <property name="securityAgent" ref="securityAgent"/>
         <property name="aclUpdater" ref="aclUpdater"/>
+        <property name="configurationManager" ref="configurationManager" />
 
         <tx:transaction method="*" value="Required"/>
     </bean>
@@ -412,22 +407,34 @@
     <bean id="aclUpdater" class="org.kimios.kernel.jobs.security.ACLUpdater"/>
 
 
+
+
+    <!-- session manager -->
+    <bean id="sessionManager" class="org.kimios.kernel.security.SessionManager" factory-method="getInstance">
+        <property name="provider" ref="dbFactoryProvider"></property>
+        <property name="authenticationSourceFactory" ref="authenticationSourceFactory"/>
+        <property name="authenticatedServiceFactory" ref="authenticatedServiceFactory"/>
+
+        <tx:transaction method="*" value="Required"/>
+    </bean>
+
     <!-- jobs -->
 
-    <bean class="org.kimios.kernel.system.RepositoryCleaner" depends-on="configurationManager" init-method="startJob" destroy-method="stopJob">
+    <bean class="org.kimios.kernel.system.RepositoryCleaner" init-method="startJob" destroy-method="stopJob">
         <property name="versionController" ref="documentVersionController"/>
 
         <tx:transaction method="*" value="Required"/>
 
     </bean>
 
-    <bean class="org.kimios.kernel.security.SessionCleaner" depends-on="configurationManager" init-method="startJob" destroy-method="stopJob">
+    <bean class="org.kimios.kernel.security.SessionCleaner" init-method="startJob" destroy-method="stopJob">
         <property name="sessionManager" ref="sessionManager"/>
+        <property name="configurationManager" ref="configurationManager" />
 
         <tx:transaction method="*" value="Required"/>
     </bean>
 
-    <!-- meta feeds manager -->
+    <!-- meta feeds manager-->
     <bean id="metaFeedManager" class="org.kimios.kernel.dms.metafeeds.MetaFeedManager" init-method="init"/>
 
 </blueprint>

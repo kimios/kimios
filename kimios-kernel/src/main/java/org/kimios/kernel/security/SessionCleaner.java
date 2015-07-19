@@ -30,6 +30,8 @@ public class SessionCleaner implements Runnable
 
     private ISessionManager sessionManager;
 
+    private ConfigurationManager configurationManager;
+
     public ISessionManager getSessionManager()
     {
         return sessionManager;
@@ -38,6 +40,14 @@ public class SessionCleaner implements Runnable
     public void setSessionManager(ISessionManager sessionManager)
     {
         this.sessionManager = sessionManager;
+    }
+
+    public ConfigurationManager getConfigurationManager() {
+        return configurationManager;
+    }
+
+    public void setConfigurationManager(ConfigurationManager configurationManager) {
+        this.configurationManager = configurationManager;
     }
 
     public synchronized void stop()
@@ -62,8 +72,7 @@ public class SessionCleaner implements Runnable
             }
             log.info("[SESSIONCLEANNER] - Starded !");
 
-            long sessionExpire = Long.parseLong(ConfigurationManager.getValue(Config.DEFAULT_SESSION_TIMEOUT)) * 60000;
-
+            long sessionExpire = Long.parseLong(configurationManager.getValue(Config.DEFAULT_SESSION_TIMEOUT)) * 60000;
             while (!this.stop) {
                 try {
                     Thread.sleep(1000);
@@ -100,6 +109,7 @@ public class SessionCleaner implements Runnable
 
     public void stopJob()
     {
+
         log.info("Kimios Session Cleaner - Closing ...");
         this.stop();
         try {

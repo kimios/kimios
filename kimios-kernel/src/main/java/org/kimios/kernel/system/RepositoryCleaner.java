@@ -51,6 +51,7 @@ public class RepositoryCleaner implements Runnable
     {
         try {
 
+            log.info("Repo Cleaner (I am " + this + ". Thread " + thrc + "(" + Thread.currentThread().getId() +" ) ");
             while (!this.stop) {
                 List<DocumentVersion> versions = versionController.getOprhansDocumentVersion();
                 for (DocumentVersion v: versions) {
@@ -93,10 +94,12 @@ public class RepositoryCleaner implements Runnable
 
     public void startJob()
     {
+        log.info("Kimios Repository Cleaner - Starting job.");
         synchronized (this) {
             thrc = new Thread(this, "Kimios Repository Cleaner");
             thrc.start();
         }
+        log.info("Kimios Repository Cleaner - Started job.");
     }
 
     public void stopJob()

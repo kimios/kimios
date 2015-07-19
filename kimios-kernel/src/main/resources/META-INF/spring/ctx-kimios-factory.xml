@@ -181,6 +181,11 @@
         <property name="authenticatedServiceFactory">
             <ref bean="authenticatedServiceFactory"/>
         </property>
+        <property name="authenticators">
+          <list>
+               <ref bean="jasigCasAuthenticator" />
+           </list>
+        </property>
     </bean>
     <bean id="securityController" class="org.kimios.kernel.controller.impl.SecurityController" parent="kimiosCoreCtrl"/>
     <bean id="documentController" class="org.kimios.kernel.controller.impl.DocumentController" parent="kimiosCoreCtrl">
@@ -224,15 +229,16 @@
 
     <!-- jobs -->
 
-    <bean class="org.kimios.kernel.system.RepositoryCleaner" init-method="startJob" destroy-method="stopJob"
-            depends-on="sessionFactory,eventHandlerManager">
+    <bean id="repositoryCleaner" class="org.kimios.kernel.system.RepositoryCleaner" init-method="startJob" destroy-method="stopJob">
         <property name="versionController" ref="documentVersionController"/>
 
     </bean>
 
-    <bean class="org.kimios.kernel.security.SessionCleaner" init-method="startJob" destroy-method="stopJob"
-            depends-on="sessionFactory,eventHandlerManager">
+
+    <!-- jobs -->
+    <bean id="sessionCleaner" class="org.kimios.kernel.security.SessionCleaner" init-method="startJob" destroy-method="stopJob">
         <property name="sessionManager" ref="sessionManager"/>
+        <property name="configurationManager" ref="configurationManager" />
     </bean>
 
     <!-- meta feeds manager -->
