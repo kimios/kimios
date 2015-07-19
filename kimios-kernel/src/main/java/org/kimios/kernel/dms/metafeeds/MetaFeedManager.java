@@ -31,11 +31,11 @@ public class MetaFeedManager extends ExtensionRegistry<MetaFeedImpl>
 {
     private static Logger log = LoggerFactory.getLogger(MetaFeedManager.class);
 
+    private List<String> metaFeedClass = new ArrayList<String>();
 
-    private static List<String> metaFeedClass = new ArrayList<String>();
-
-    public void init()
+    public synchronized void init()
     {
+        metaFeedManager = this;
         log.info("[kimios MetaFeed Manager] - Starting ...");
         metaFeedClass.clear();
         Collection<Class<? extends MetaFeedImpl>> classes = ClassFinder.findImplement("org.kimios", MetaFeedImpl.class);
@@ -51,10 +51,19 @@ public class MetaFeedManager extends ExtensionRegistry<MetaFeedImpl>
         }
     }
 
-    public static List<String> getMetasFeedClasses()
+    public List<String> getMetasFeedClasses()
     {
+        log.debug("current metafeed manager ref: {}", this);
         List<String> classz = new ArrayList<String>(ExtensionRegistryManager.itemsAsString(MetaFeedImpl.class));
         return classz;
+    }
+
+    private static MetaFeedManager metaFeedManager;
+
+    public static MetaFeedManager getMetaFeedManager(){
+
+        return metaFeedManager;
+
     }
 }
 
