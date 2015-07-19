@@ -15,7 +15,6 @@
  */
 package org.kimios.client.controller;
 
-import org.apache.cxf.jaxrs.client.Client;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.InputStreamDataSource;
@@ -115,7 +114,7 @@ public class DocumentController {
 //            client.createDocumentWithProperties(sessionId, name, extension, mimeType, folderUid, isSecurityInherited,
 //                    securitiesXmlStream, isRecursive, documentTypeId, metasXmlStream, hashMD5, hashSHA1, documentStream);
 
-            Client upClient = WebClient.client(client);
+            org.apache.cxf.jaxrs.client.Client upClient = WebClient.client(client);
             WebClient wcl = WebClient.fromClient(upClient);
 
 

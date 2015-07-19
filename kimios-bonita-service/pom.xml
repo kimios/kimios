@@ -172,7 +172,9 @@
                             org.apache.cxf.bus.resource,
                             org.apache.cxf.bus.osgi,
                             org.apache.cxf.bus.managers,
-                            org.apache.cxf.endpoint, org.apache.cxf.feature, org.apache.cxf.interceptor,
+                            org.apache.cxf.endpoint,
+                            org.apache.cxf.feature,
+                            org.apache.cxf.interceptor,
                             javax.ws.rs,
                             javax.jws,
                             java.lang,
@@ -197,7 +199,7 @@
                             org.apache.cxf.aegis,
                             org.apache.cxf.aegis.databinding,
                             org.apache.cxf.jaxws.support,
-                            org.apache.cxf.service.factory,
+                            org.apache.cxf.wsdl.service.factory,
                             org.apache.cxf.jaxrs.ext.multipart,
                             org.codehaus.jackson.jaxrs,
                             org.osgi.service.blueprint,
@@ -205,7 +207,11 @@
                             org.apache.cxf.jaxrs.ext,
                             org.kimios.utils.spring,
                             org.apache.commons.io,
-                            org.bonitasoft.engine.api, org.bonitasoft.engine.bpm.comment, org.bonitasoft.engine.bpm.flownode, org.bonitasoft.engine.bpm.process, org.bonitasoft.engine.identity
+                            org.bonitasoft.engine.api,
+                            org.bonitasoft.engine.bpm.comment,
+                            org.bonitasoft.engine.bpm.flownode,
+                            org.bonitasoft.engine.bpm.process,
+                            org.bonitasoft.engine.identity
                         </Import-Package>
                     </instructions>
                 </configuration>

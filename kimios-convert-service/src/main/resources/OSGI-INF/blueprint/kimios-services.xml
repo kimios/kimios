@@ -85,7 +85,7 @@
         <property name="serviceConfigurations">
             <list>
                 <bean class="org.apache.cxf.jaxws.support.JaxWsServiceConfiguration"/>
-                <bean class="org.apache.cxf.service.factory.DefaultServiceConfiguration"/>
+                <bean class="org.apache.cxf.wsdl.service.factory.DefaultServiceConfiguration"/>
             </list>
         </property>
     </bean>

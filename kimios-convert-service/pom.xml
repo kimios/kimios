@@ -189,7 +189,7 @@
                             org.apache.cxf.aegis,
                             org.apache.cxf.aegis.databinding,
                             org.apache.cxf.jaxws.support,
-                            org.apache.cxf.service.factory,
+                            org.apache.cxf.wsdl.service.factory,
                             org.apache.cxf.jaxrs.ext.multipart,
                             org.codehaus.jackson.jaxrs,
                             org.osgi.service.blueprint,
