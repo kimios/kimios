@@ -16,12 +16,7 @@
 package org.kimios.kernel.index;
 
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.Field.Index;
-import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.search.BooleanClause.Occur;
-import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.WildcardQuery;
 import org.apache.lucene.util.Version;
@@ -29,34 +24,30 @@ import org.apache.solr.parser.QueryParser;
 import org.apache.solr.search.SyntaxError;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.configuration.Config;
-import org.kimios.kernel.exception.IndexException;
-import org.kimios.kernel.security.DMSecurityRule;
-import org.kimios.kernel.security.SecurityEntityType;
-import org.kimios.kernel.security.Session;
-import org.kimios.kernel.user.Group;
 import org.kimios.utils.configuration.ConfigurationManager;
 
-import java.io.Reader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.sql.Timestamp;
-import java.util.Calendar;
 import java.util.Date;
 
 public class IndexHelper
 {
+
+
+    private static final Version LuceneVersion = Version.LUCENE_46;
+
     public static String EMPTY_STRING = "";
 
     public static Query getLongRangeQuery(String fieldName, long min, long max) throws SyntaxError
     {
         String q = fieldName + ":[" + NumberUtils.pad(min) + " TO " + NumberUtils.pad(max) + "]";
-        return new QueryParser(Version.LUCENE_46, fieldName, null).parse(q);
+        return new QueryParser(LuceneVersion, fieldName, null).parse(q);
     }
 
     public static Query getDateRangeQuery(String fieldName, Date min, Date max) throws SyntaxError
     {
         String q = fieldName + ":[" + NumberUtils.pad(min.getTime()) + " TO " + NumberUtils.pad(max.getTime()) + "]";
-        return new QueryParser(Version.LUCENE_46, fieldName, null).parse(q);
+        return new QueryParser(LuceneVersion, fieldName, null).parse(q);
     }
 
 
@@ -64,7 +55,7 @@ public class IndexHelper
     public static Query getStandardQuery(String fieldName, String clause, Analyzer a) throws SyntaxError
     {
         String q = fieldName + ":" + clause;
-        return new QueryParser(Version.LUCENE_46, fieldName, null).parse(q);
+        return new QueryParser(LuceneVersion, fieldName, null).parse(q);
     }
 
     public static Query getWildCardQuery(String fieldName, String clause) throws SyntaxError
@@ -82,56 +73,14 @@ public class IndexHelper
                 r += "AND (" + q[i].toString() + ")";
             }
         }
-        return new QueryParser(Version.LUCENE_46, "body", null).parse(r);
+        return new QueryParser(LuceneVersion, "body", null).parse(r);
     }
-
-    public static Field getAnalyzedField(String fieldName, String value)
-    {
-        return new Field(fieldName, value, Store.YES, Index.ANALYZED);
-    }
-
-    public static Field getAnalyzedNotStoredField(String fieldName, String value)
-    {
-        return new Field(fieldName, value, Store.NO, Index.ANALYZED);
-    }
-
-    public static Field getAnalyzedNotStoredFromReaderField(String fieldName, Reader value)
-    {
-        Field f = new Field(fieldName, EMPTY_STRING, Store.NO, Index.ANALYZED);
-        f.setReaderValue(value);
-        return f;
-    }
-
-    public static Field getUnanalyzedField(String fieldName, Object value)
-    {
-        if (value.getClass().equals(Date.class)) {
-            return new Field(fieldName, NumberUtils.pad(((Date) value).getTime()), Store.YES, Index.NOT_ANALYZED);
-        }
-        if (value.getClass().equals(Calendar.class)) {
-            return new Field(fieldName, NumberUtils.pad(((Calendar) value).getTime().getTime()), Store.YES,
-                    Index.NOT_ANALYZED);
-        }
-        if (value.getClass().equals(Timestamp.class)) {
-            return new Field(fieldName, NumberUtils.pad(((Timestamp) value).getTime()), Store.YES, Index.NOT_ANALYZED);
-        }
-        if (value.getClass().equals(Long.class)) {
-            return new Field(fieldName, NumberUtils.pad((Long) value), Store.YES, Index.NOT_ANALYZED);
-        }
-        if (value.getClass().equals(Integer.class)) {
-            return new Field(fieldName, NumberUtils.pad((Long) value), Store.YES, Index.NOT_ANALYZED);
-        }
-        if (value.getClass().equals(Double.class)) {
-            return new Field(fieldName, NumberUtils.pad(Math.round((Double) value)), Store.YES, Index.NOT_ANALYZED);
-        }
-        return new Field(fieldName, value.toString(), Store.YES, Index.NOT_ANALYZED);
-    }
-
     public static Analyzer getAnalyzer()
     {
         try {
             Class<?> analyserClass = Class.forName(ConfigurationManager.getValue(Config.DEFAULT_INDEX_ANALYSER));
             Constructor<?> cAnalyser = analyserClass.getConstructor(Version.class);
-            return (Analyzer) cAnalyser.newInstance(Version.LUCENE_36);
+            return (Analyzer) cAnalyser.newInstance(LuceneVersion);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
             return null;
@@ -153,42 +102,5 @@ public class IndexHelper
         }
     }
 
-    public static Query getACLQuery(Session session) throws IndexException
-    {
-        BooleanQuery.setMaxClauseCount(10240);
-        BooleanQuery q1 = new BooleanQuery();
-        q1.add(new WildcardQuery(new Term("DocumentOwner", session.getUserName() + "@" + session.getUserSource())),
-                Occur.SHOULD);
-        q1.add(new WildcardQuery(new Term("DocumentACL", DMSecurityRule
-                .getInstance(session.getUserName(), session.getUserSource(), SecurityEntityType.USER,
-                        DMSecurityRule.READRULE).getRuleHash())), Occur.SHOULD);
-        q1.add(new WildcardQuery(new Term("DocumentACL", DMSecurityRule
-                .getInstance(session.getUserName(), session.getUserSource(), SecurityEntityType.USER,
-                        DMSecurityRule.WRITERULE).getRuleHash())), Occur.SHOULD);
-        q1.add(new WildcardQuery(new Term("DocumentACL", DMSecurityRule
-                .getInstance(session.getUserName(), session.getUserSource(), SecurityEntityType.USER,
-                        DMSecurityRule.FULLRULE).getRuleHash())), Occur.SHOULD);
-        for (Group g : session.getGroups()) {
-            q1.add(new WildcardQuery(new Term("DocumentACL", DMSecurityRule
-                    .getInstance(g.getGid(), session.getUserSource(), SecurityEntityType.GROUP, DMSecurityRule.READRULE)
-                    .getRuleHash())), Occur.SHOULD);
-            q1.add(new WildcardQuery(new Term("DocumentACL", DMSecurityRule
-                    .getInstance(g.getGid(), session.getUserSource(), SecurityEntityType.GROUP,
-                            DMSecurityRule.WRITERULE).getRuleHash())), Occur.SHOULD);
-            q1.add(new WildcardQuery(new Term("DocumentACL", DMSecurityRule
-                    .getInstance(g.getGid(), session.getUserSource(), SecurityEntityType.GROUP, DMSecurityRule.FULLRULE)
-                    .getRuleHash())), Occur.SHOULD);
-        }
-        BooleanQuery q2 = new BooleanQuery();
-        q2.add(new WildcardQuery(new Term("DocumentOwner", session.getUserName() + "@" + session.getUserSource())),
-                Occur.MUST_NOT);
-        q2.add(new WildcardQuery(new Term("DocumentACL", DMSecurityRule
-                .getInstance(session.getUserName(), session.getUserSource(), SecurityEntityType.USER,
-                        DMSecurityRule.NOACCESS).getRuleHash())), Occur.MUST);
-        BooleanQuery q3 = new BooleanQuery();
-        q3.add(q1, Occur.MUST);
-        q3.add(q2, Occur.MUST_NOT);
-        return q3;
-    }
 }
 
