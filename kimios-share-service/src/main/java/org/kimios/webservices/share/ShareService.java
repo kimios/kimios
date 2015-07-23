@@ -17,6 +17,7 @@
 package org.kimios.webservices.share;
 
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
+import org.kimios.kernel.share.model.MailContact;
 import org.kimios.webservices.exceptions.DMServiceException;
 
 import javax.jws.WebParam;
@@ -50,4 +51,12 @@ public interface ShareService {
             @DefaultValue("false") @QueryParam(value = "defaultSender") @WebParam(name = "defaultSender")  Boolean defaultSender)
             throws DMServiceException;
 
+
+    @GET
+    @Path("/search-contact")
+    List<MailContact> searchContact(
+            @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+            @QueryParam(value = "query") @WebParam(name = "query") String query
+            )
+        throws DMServiceException;
 }

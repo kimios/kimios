@@ -32,12 +32,20 @@ kimios.util.PreviewHelper = {
            }],
            docx: [{
                 target: 'html',
-                conv:'org.kimios.kernel.converter.impl.Docx4jDocxToHTML'
+                conv:'org.kimios.kernel.converter.impl.Dox4jDocxToHTML'
            }],
            eml: [{
                target: 'html',
                conv: 'org.kimios.kernel.converter.impl.MailToHtml'
-           }]
+           }],
+           xls: [{
+               target: 'html',
+               conv: 'org.kimios.kernel.converter.impl.XlsToHTML'
+           }],
+           xlsx: [{
+                target: 'html',
+                conv: 'org.kimios.kernel.converter.impl.XlsToHTML'
+            }]
            //pdf: [{conv: 'org.kimios.kernel.converter.impl.PDFMerger', target: 'pdf'}]
         }
         return extMapping;

@@ -35,12 +35,63 @@ public class EmailFactory {
 
     private boolean mailServerSsl = true;
 
+    private boolean mailDebug = false;
+
+    public boolean isMailDebug() {
+        return mailDebug;
+    }
+
+    public void setMailDebug(boolean mailDebug) {
+        this.mailDebug = mailDebug;
+    }
+
+    public String getMailServer() {
+        return mailServer;
+    }
+
+    public void setMailServer(String mailServer) {
+        this.mailServer = mailServer;
+    }
+
+    public String getMailAccount() {
+        return mailAccount;
+    }
+
+    public void setMailAccount(String mailAccount) {
+        this.mailAccount = mailAccount;
+    }
+
+    public String getMailAccountPassword() {
+        return mailAccountPassword;
+    }
+
+    public void setMailAccountPassword(String mailAccountPassword) {
+        this.mailAccountPassword = mailAccountPassword;
+    }
+
+    public int getMailServerPort() {
+        return mailServerPort;
+    }
+
+    public void setMailServerPort(int mailServerPort) {
+        this.mailServerPort = mailServerPort;
+    }
+
+    public boolean isMailServerSsl() {
+        return mailServerSsl;
+    }
+
+    public void setMailServerSsl(boolean mailServerSsl) {
+        this.mailServerSsl = mailServerSsl;
+    }
+
     public MultiPartEmail getMultipartEmailObject() throws EmailException {
         MultiPartEmail email = new MultiPartEmail();
         email.setHostName(mailServer);
         email.setSmtpPort(mailServerPort);
         email.setAuthenticator(new DefaultAuthenticator(mailAccount, mailAccountPassword));
         email.setSSLOnConnect(mailServerSsl);
+        email.setDebug(mailDebug);
         return email;
     }
 

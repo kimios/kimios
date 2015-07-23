@@ -165,10 +165,12 @@
 
                 <configuration>
                     <instructions>
+                        <Karaf-Commands>*</Karaf-Commands>
                         <Import-Package>
-                            org.apache.karaf.shell.console,
-                            org.apache.karaf.shell.commands,
-                            org.kimios.utils.extension,
+                            org.apache.karaf.shell.console;resolution:=optional,
+                            org.apache.karaf.shell.console.completer;resolution:=optional,
+                            org.apache.karaf.shell.commands;resolution:=optional,
+                            org.kimios.utils.extension;resolution:=optional,
                             *
                         </Import-Package>
                         <Bundle-SymbolicName>org.kimios.osgi.commands</Bundle-SymbolicName>

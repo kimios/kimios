@@ -183,7 +183,7 @@
                             org.kimios.kernel.*,
                             org.kimios.kernel.ws.pojo,
                             org.kimios.kernel.controller,
-                            org.kimios.kernel.share,
+                            org.kimios.kernel.share.*,
                             org.kimios.kernel.security,
                             org.kimios.utils.logging,
                             org.apache.cxf.aegis,

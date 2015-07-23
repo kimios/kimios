@@ -18,6 +18,7 @@ package org.kimios.webservices.share.impl;
 
 import org.kimios.kernel.controller.IMailShareController;
 import org.kimios.kernel.security.Session;
+import org.kimios.kernel.share.model.MailContact;
 import org.kimios.webservices.IServiceHelper;
 import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.share.ShareService;
@@ -55,6 +56,16 @@ public class ShareServiceImpl implements ShareService {
             mailShareController.sendDocumentByEmail(session, documentIds, recipients, subject,
                     content, senderAddress, senderName, defaultSender);
 
+        } catch (Exception e) {
+            throw helper.convertException(e);
+        }
+    }
+
+    @Override
+    public List<MailContact> searchContact(String sessionId, String query) throws DMServiceException {
+        try {
+            Session session = helper.getSession(sessionId);
+            return mailShareController.searchContact(session, query);
         } catch (Exception e) {
             throw helper.convertException(e);
         }

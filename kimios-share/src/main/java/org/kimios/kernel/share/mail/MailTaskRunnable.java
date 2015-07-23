@@ -32,15 +32,24 @@ public class MailTaskRunnable implements Runnable {
     private Email email;
 
     public MailTaskRunnable(Email email) {
+
+
+
+
         this.email = email;
     }
 
     @Override
     public void run() {
+        ClassLoader tcl = Thread.currentThread().getContextClassLoader();
         try {
+            Thread.currentThread().setContextClassLoader(javax.mail.Session.class.getClassLoader());
             email.send();
         } catch (Exception ex) {
             logger.error("error while sending email", ex);
+        } finally {
+            Thread.currentThread().setContextClassLoader(tcl);
         }
+
     }
 }

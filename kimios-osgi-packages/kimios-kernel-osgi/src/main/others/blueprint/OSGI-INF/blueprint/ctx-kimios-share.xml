@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!--
   ~ Kimios - Document Management System Software
   ~ Copyright (C) 2008-2015  DevLib'
@@ -15,12 +14,13 @@
   ~ You should have received a copy of the GNU Affero General Public License
   ~ aong with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:jpa="ttp://aries.apache.org/xmlns/jpa/v1.1.0"
+           xmlns:tx="http://aries.apache.org/xmlns/transactions/v1.0.0"
+           xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0
+        http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd" default-activation="eager">
 
-    
     <bean id="mailFactory" class="org.kimios.kernel.share.mail.EmailFactory">
         <property name="mailServer" value="${dms.mail.defaulthost}" />
         <property name="mailServerPort" value="${dms.mail.port}" />
@@ -28,17 +28,34 @@
         <property name="mailAccountPassword"  value="${dms.mail.hostpassword}" />
         <property name="mailServerSsl"  value="${dms.mail.tlsauth}" />
         <property name="mailDebug" value="${dms.mail.debug}" />
+
+
     </bean>
 
-    <bean id="mailContactFactory" class="org.kimios.kernel.share.factory.MailContactFactory"
-          parent="hfactory" />
-    
-    <bean id="mailShareController" class="org.kimios.kernel.controller.impl.MailShareController"
-          parent="kimiosCoreCtrl">
+    <bean id="mailContactFactory" class="org.kimios.kernel.share.factory.MailContactFactory">
+        <property name="provider" ref="dbFactoryProvider"></property>
+    </bean>
+    <bean id="mailShareController" class="org.kimios.kernel.controller.impl.MailShareController">
+        <property name="dmsFactoryInstantiator" ref="dmsfi"></property>
+        <property name="securityFactoryInstantiator" ref="securityfi"></property>
+        <property name="authFactoryInstantiator" ref="userfi"></property>
+        <property name="logFactoryInstantiator" ref="logfi"></property>
+        <property name="reportFactoryInstantiator" ref="reportfi"></property>
+        <property name="transferFactoryInstantiator" ref="transferfi"></property>
+        <property name="securityAgent" ref="securityAgent"/>
+        <property name="aclUpdater" ref="aclUpdater"/>
+
         <property name="emailFactory" ref="mailFactory" />
         <property name="mailerSenderMail" value="${dms.mail.senderemail}" />
         <property name="mailerSender"  value="${dms.mail.sendername}" />
         <property name="mailContactFactory" ref="mailContactFactory" />
+
+        <tx:transaction method="*" value="Required"/>
     </bean>
 
-</beans>
+    <service id="shareCtrlOsgi" ref="mailShareController" interface="org.kimios.kernel.controller.IMailShareController"/>
+
+
+
+
+</blueprint>

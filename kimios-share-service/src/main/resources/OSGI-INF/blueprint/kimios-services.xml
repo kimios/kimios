@@ -94,7 +94,7 @@
 
 
     <jaxrs:server id="kimiosShareRestServer"
-                  address="/rest/converter/">
+                  address="/rest/share/">
         <jaxrs:providers>
             <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
             <bean class="org.kimios.webservices.DateParamConverter"/>

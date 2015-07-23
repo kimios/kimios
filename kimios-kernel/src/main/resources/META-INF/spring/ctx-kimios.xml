@@ -82,6 +82,7 @@
                 <value>org.kimios.kernel.log</value>
                 <value>org.kimios.kernel.filetransfer</value>
                 <value>org.kimios.kernel.index</value>
+                <value>org.kimios.kernel.share</value>
             </list>
         </property>
         <property name="mappingLocations">

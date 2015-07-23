@@ -26,7 +26,8 @@ kimios = {
     setImplPackage: function (impl) {
         this.implPackage = impl;
     },
-    viewableExtensions: new Array('png', 'jpg', 'jpeg', 'tif', 'tiff', 'gif', 'pdf', 'PDF', 'odt', 'odp', 'docx', 'doc','txt', 'java', 'cs', 'cpp', 'c', 'py', 'sql', 'xml', 'eml'),
+    viewableExtensions: new Array('png', 'jpg', 'jpeg', 'tif', 'tiff', 'gif', 'pdf', 'PDF', 'odt', 'odp', 'xls', 'xlsx',
+        'docx', 'doc','txt', 'java', 'cs', 'cpp', 'c', 'py', 'sql', 'xml', 'eml'),
 
     isViewableExtension: function (ext) {
         var exts = kimios.viewableExtensions;

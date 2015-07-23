@@ -146,7 +146,7 @@ public class MassiveSecurityUpdate extends KimiosCommand {
                                             logger.debug("{} ==> {} {} ", z,
                                                     HDMEntitySecurityFactory.rules.get(z).getSecurityEntityUid() +  "@" +
                                             HDMEntitySecurityFactory.rules.get(z).getSecurityEntitySource(), HDMEntitySecurityFactory.rules.get(z)
-                                            .getRights());
+                                            .getRights() + "");
                                         }
                                     }   else {
 

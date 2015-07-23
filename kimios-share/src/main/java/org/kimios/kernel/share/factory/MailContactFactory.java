@@ -14,26 +14,36 @@
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.kimios.kernel.controller;
+package org.kimios.kernel.share.factory;
 
-import org.kimios.kernel.exception.DmsKernelException;
-import org.kimios.kernel.security.Session;
+import org.kimios.kernel.hibernate.HFactory;
 import org.kimios.kernel.share.model.MailContact;
 
 import java.util.List;
-import java.util.Map;
 
 /**
- * Created by farf on 19/07/15.
+ * Created by farf on 20/07/15.
  */
-public interface IMailShareController {
-    void sendDocumentByEmail(Session session,
-                             List<Long> documentIds,
-                             Map<String, String> recipients,
-                             String subject, String content,
-                             String senderAddress, String senderName,
-                             boolean defaultSender)
-        throws DmsKernelException;
+public class MailContactFactory extends HFactory {
 
-    List<MailContact> searchContact(Session session, String searchQuery);
+
+    public void addContact(String emailAddress, String fullName){
+
+        MailContact mc  = new MailContact();
+        mc.setEmailAddress(emailAddress);
+        mc.setFullName(fullName);
+        getSession().saveOrUpdate(mc);
+    }
+
+
+    public List<MailContact> searchContact(String search) {
+        String query = "from MailContact mc where lower(mc.emailAddress) like :search or lower(mc.fullName) like :search" +
+                " order by mc.emailAddress";
+
+        return getSession().createQuery(query)
+                .setString("search", "%" + search.toLowerCase() + "%")
+                .list();
+    }
+
+
 }

@@ -17,19 +17,25 @@
 package org.kimios.kernel.controller.impl;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.mail.HtmlEmail;
 import org.apache.commons.mail.MultiPartEmail;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.IMailShareController;
 import org.kimios.kernel.dms.Document;
 import org.kimios.kernel.dms.DocumentVersion;
+import org.kimios.kernel.exception.AccessDeniedException;
 import org.kimios.kernel.exception.DmsKernelException;
 import org.kimios.kernel.security.Session;
+import org.kimios.kernel.share.factory.MailContactFactory;
 import org.kimios.kernel.share.mail.EmailFactory;
 import org.kimios.kernel.share.mail.MailTaskRunnable;
+import org.kimios.kernel.share.model.MailContact;
 import org.kimios.kernel.user.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -37,6 +43,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 
+@Transactional
 public class MailShareController extends AKimiosController implements IMailShareController {
 
     private static Logger logger = LoggerFactory.getLogger(MailShareController.class);
@@ -45,7 +52,43 @@ public class MailShareController extends AKimiosController implements IMailShare
 
     private String mailerSenderMail = "kimios@kimios.org";
 
+    public String getMailerSenderMail() {
+        return mailerSenderMail;
+    }
+
+    public void setMailerSenderMail(String mailerSenderMail) {
+        this.mailerSenderMail = mailerSenderMail;
+    }
+
+    public String getMailerSender() {
+        return mailerSender;
+    }
+
+    public void setMailerSender(String mailerSender) {
+        this.mailerSender = mailerSender;
+    }
+
+    private EmailFactory emailFactory;
+
+    public EmailFactory getEmailFactory() {
+        return emailFactory;
+    }
+
+    public void setEmailFactory(EmailFactory emailFactory) {
+        this.emailFactory = emailFactory;
+    }
+
     private ScheduledExecutorService scheduledExecutorService;
+
+    private MailContactFactory mailContactFactory;
+
+    public MailContactFactory getMailContactFactory() {
+        return mailContactFactory;
+    }
+
+    public void setMailContactFactory(MailContactFactory mailContactFactory) {
+        this.mailContactFactory = mailContactFactory;
+    }
 
     public MailShareController(){
         scheduledExecutorService = Executors.newScheduledThreadPool(8);
@@ -61,17 +104,21 @@ public class MailShareController extends AKimiosController implements IMailShare
         throws DmsKernelException {
 
         try {
-            MultiPartEmail email = new EmailFactory().getMultipartEmailObject();
+            logger.info("Submitted recipients: {}", recipients);
+            logger.info("Submitted doc ids: {}", documentIds);
+            MultiPartEmail email = emailFactory.getMultipartEmailObject();
+
             for (String emailAddress : recipients.keySet()) {
-                email.addTo(emailAddress, recipients.get(emailAddress));
+                email.addBcc(emailAddress, recipients.get(emailAddress));
+                mailContactFactory.addContact(emailAddress.toLowerCase(), recipients.get(emailAddress));
             }
-            if (senderAddress != null) {
-                if (senderName != null) {
+            if (StringUtils.isNotBlank(senderAddress)) {
+                if (StringUtils.isNotBlank(senderName)) {
                     email.setFrom(senderAddress, senderName);
                 } else {
                     email.setFrom(senderAddress);
                 }
-            } else if( defaultSender ) {
+            } else if( defaultSender && StringUtils.isNotBlank(mailerSenderMail)) {
                 email.setFrom(mailerSenderMail, mailerSender);
             } else {
                 //send with user's mail address
@@ -82,19 +129,31 @@ public class MailShareController extends AKimiosController implements IMailShare
                     email.setBounceAddress(u.getMail());
                 }
             }
+            email.setSubject(subject);
+            email.setMsg(content);
             for(Long documentId: documentIds){
                 Document d = dmsFactoryInstantiator.getDocumentFactory()
                         .getDocument(documentId);
-                DocumentVersion dv = dmsFactoryInstantiator.getDocumentVersionFactory()
-                        .getLastDocumentVersion(d);
-                new EmailFactory().addDocumentVersionAttachment(email, d, dv);
+                if(getSecurityAgent().isReadable(d, session.getUserName(), session.getUserSource(), session.getGroups())){
+                    DocumentVersion dv = dmsFactoryInstantiator.getDocumentVersionFactory()
+                            .getLastDocumentVersion(d);
+                    emailFactory.addDocumentVersionAttachment(email, d, dv);
+                    logger.debug("added document to mail:  {}", d);
+                } else {
+                    throw new AccessDeniedException();
+                }
             }
-            email.setSubject(subject);
 
-            email.setMsg(content);
             scheduledExecutorService.schedule(new MailTaskRunnable(email), 1000, TimeUnit.MILLISECONDS);
+
+
         }catch (Exception ex){
             logger.error("error while sharing documen(s)", ex);
         }
+    }
+
+    @Override
+    public List<MailContact> searchContact(Session session, String searchQuery){
+        return mailContactFactory.searchContact(searchQuery);
     }
 }

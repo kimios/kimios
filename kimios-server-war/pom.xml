@@ -348,6 +348,19 @@
             <artifactId>solr-core</artifactId>
             <version>${solr4j.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.thymeleaf</groupId>
+            <artifactId>thymeleaf</artifactId>
+            <version>2.1.4.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.docx4j</groupId>
+            <artifactId>docx4j</artifactId>
+            <version>3.2.1</version>
+            <scope>compile</scope>
+        </dependency>
+
 
     </dependencies>
     <build>
@@ -385,6 +398,10 @@
                         <weaveDependency>
                             <groupId>org.kimios</groupId>
                             <artifactId>kimios-bonita</artifactId>
+                        </weaveDependency>
+                        <weaveDependency>
+                            <groupId>org.kimios</groupId>
+                            <artifactId>kimios-share</artifactId>
                         </weaveDependency>
                     </weaveDependencies>
                 </configuration>

@@ -37,11 +37,11 @@
     <logger name="org.apache.cxf" level="ERROR" />
 
     <!-- kimios -->
-    <logger name="kimios" level="DEBUG" />
-    <logger name="org.kimios" level="DEBUG" />
-    <logger name="org.kimios.extension" level="DEBUG" />
-    <logger name="org.kimios.kernel.events" level="DEBUG" />
-    <logger name="org.kimios.kernel.index" level="DEBUG" />
-    <logger name="org.kimios.kernel.events.interceptors" level="DEBUG" />
+    <logger name="kimios" level="INFO" />
+    <logger name="org.kimios" level="INFO" />
+    <logger name="org.kimios.extension" level="INFO" />
+    <logger name="org.kimios.kernel.events" level="INFO" />
+    <logger name="org.kimios.kernel.index" level="INFO" />
+    <logger name="org.kimios.kernel.events.interceptors" level="INFO" />
 
 </configuration>

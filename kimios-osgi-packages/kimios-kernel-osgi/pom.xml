@@ -47,6 +47,12 @@
         </dependency>
         <dependency>
             <groupId>org.kimios</groupId>
+            <artifactId>kimios-share</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
             <artifactId>kimios-utils</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
@@ -234,6 +240,7 @@
             <scope>compile</scope>
         </dependency>
 
+
         <!-- bonita stuff -->
         <dependency>
             <groupId>org.quartz-scheduler</groupId>
@@ -284,7 +291,13 @@
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
             <version>1.4.7</version>
-            <scope>provided</scope>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-email</artifactId>
+            <version>1.4</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>aopalliance</groupId>
@@ -383,8 +396,6 @@
                                     <overWrite>false</overWrite>
                                     <outputDirectory>${project.build.directory}/add-resource</outputDirectory>
                                     <includes>${dep.include}</includes>
-                                    <!--<includes>*.properties,*.xml</includes>
-                                    <includes>META-INF/spring/**/*.xml,*.properties,*.xml</includes>-->
                                     <excludes>**/*.class</excludes>
                                 </artifactItem>
                                 <artifactItem>
@@ -395,8 +406,6 @@
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${project.build.directory}/add-resource</outputDirectory>
                                     <includes>${dep.include}</includes>
-                                    <!--<includes>*.properties,*.xml</includes>
-                                    <includes>META-INF/spring/**/*.xml,*.properties,*.xml</includes>-->
                                     <excludes>**/*.class</excludes>
                                 </artifactItem>
                                 <artifactItem>
@@ -407,8 +416,6 @@
                                     <overWrite>false</overWrite>
                                     <outputDirectory>${project.build.directory}/add-resource</outputDirectory>
                                     <includes>${dep.include}</includes>
-                                    <!--<includes>*.properties,*.xml</includes>
-                                    <includes>META-INF/spring/**/*.xml,*.properties,*.xml</includes>-->
                                     <excludes>**/*.class</excludes>
                                 </artifactItem>
                                 <artifactItem>
@@ -419,20 +426,18 @@
                                     <overWrite>false</overWrite>
                                     <outputDirectory>${project.build.directory}/add-resource</outputDirectory>
                                     <includes>${dep.include}</includes>
-                                    <!--<includes>*.properties,*.xml</includes>
-                                    <includes>META-INF/spring/**/*.xml,*.properties,*.xml</includes>-->
                                     <excludes>**/*.class</excludes>
                                 </artifactItem>
-                                <!--<artifactItem>
-                                    <groupId>kimios-opentext-importer</groupId>
-                                    <artifactId>kimios-opentext-importer</artifactId>
-                                    <version>1.0-SNAPSHOT</version>
+                                <artifactItem>
+                                    <groupId>org.kimios</groupId>
+                                    <artifactId>kimios-share</artifactId>
+                                    <version>${project.version}</version>
                                     <type>jar</type>
                                     <overWrite>false</overWrite>
                                     <outputDirectory>${project.build.directory}/add-resource</outputDirectory>
                                     <includes>${dep.include}</includes>
                                     <excludes>**/*.class</excludes>
-                                </artifactItem>-->
+                                </artifactItem>
                             </artifactItems>
                             <includes>META-INF/spring/**/*.*,*.xml,*.properties,*.txt</includes>
                         </configuration>
@@ -607,6 +612,7 @@
                             visad.util;resolution:=optional,
                             org.kimios.webservices;resolution:=optional,
                             net.sourceforge.jtds.jdbc,
+                            com.sun.xml.bind.marshaller;version="[2.2.11,3)",
                             ${addonimport}
                             *;resolution:=optional
                         </Import-Package>

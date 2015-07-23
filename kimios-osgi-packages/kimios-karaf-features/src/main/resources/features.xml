@@ -11,6 +11,7 @@
         <bundle start-level="80">mvn:commons-codec/commons-codec</bundle>
         <bundle start-level="80">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-pool</bundle>
         <bundle start-level="80">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-dbcp</bundle>
+        <bundle>mvn:org.apache.commons/commons-email/1.4</bundle>
         <bundle>wrap:mvn:postgresql/postgresql/9.1-901.jdbc3</bundle>
         <bundle>wrap:mvn:net.sourceforge.jtds/jtds</bundle>
         <bundle>mvn:org.codehaus.jackson/jackson-core-asl/1.9.13</bundle>
@@ -70,6 +71,7 @@
         <bundle start="false">mvn:org.kimios/kimios-services/${project.version}//blueprint</bundle>
         <bundle start="false">mvn:org.kimios/kimios-bonita-service/${project.version}//blueprint</bundle>
         <bundle start="false">mvn:org.kimios/kimios-convert-service/${project.version}//blueprint</bundle>
+        <bundle start="false">mvn:org.kimios/kimios-share-service/${project.version}//blueprint</bundle>
     </feature>
     <feature version="${project.version}" name="kimios-web-standard">
         <configfile finalname="/etc/org.kimios.client.app.cfg">mvn:org.kimios/kimios-karaf-features/${project.version}/properties/kimios-client-cfg</configfile>
