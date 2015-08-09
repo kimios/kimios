@@ -29,22 +29,14 @@
         <filter-name>encodingfilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-    <!--<filter>
+    <filter>
         <filter-name>CasAuthFilter</filter-name>
-        <filter-class>org.jasig.cas.client.authentication.AuthenticationFilter</filter-class>
-        <init-param>
-            <param-name>casServerLoginUrl</param-name>
-            <param-value>https://localhost:9011/login</param-value>
-        </init-param>
-        <init-param>
-            <param-name>serverName</param-name>
-            <param-value>http://localhost:8080</param-value>
-        </init-param>
+        <filter-class>org.kimios.core.filters.CustomCasAuthenticationFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>CasAuthFilter</filter-name>
-        <url-pattern>/index.jsp</url-pattern>
-    </filter-mapping>-->
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
     <filter>
         <description>Core filter</description>
         <filter-name>CoreFilter</filter-name>

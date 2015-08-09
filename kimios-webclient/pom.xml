@@ -266,6 +266,7 @@
                         <Import-Package>
                             org.apache.aries.blueprint.web;resolution:=optional,
                             org.slf4j,
+                            org.slf4j.spi,
                             org.osgi.framework,
                             javax.servlet; version="[2.4.0, 4.0.0)",
                             javax.servlet.http; version="[2.4.0, 4.0.0)",

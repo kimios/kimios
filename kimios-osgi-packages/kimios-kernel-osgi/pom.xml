@@ -70,6 +70,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-sso</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>commons-dbcp</groupId>
             <artifactId>commons-dbcp</artifactId>
             <version>1.4</version>
@@ -216,6 +222,14 @@
             <groupId>com.itextpdf</groupId>
             <artifactId>itextpdf</artifactId>
             <version>5.0.6</version>
+        </dependency>
+
+
+        <!-- CAS Stuff -->
+        <dependency>
+            <groupId>org.jasig.cas.client</groupId>
+            <artifactId>cas-client-core</artifactId>
+            <version>${cas.version}</version>
         </dependency>
 
         <dependency>
@@ -431,6 +445,16 @@
                                 <artifactItem>
                                     <groupId>org.kimios</groupId>
                                     <artifactId>kimios-share</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>jar</type>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/add-resource</outputDirectory>
+                                    <includes>${dep.include}</includes>
+                                    <excludes>**/*.class</excludes>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.kimios</groupId>
+                                    <artifactId>kimios-sso</artifactId>
                                     <version>${project.version}</version>
                                     <type>jar</type>
                                     <overWrite>false</overWrite>

@@ -415,6 +415,12 @@
         <property name="authenticationSourceFactory" ref="authenticationSourceFactory"/>
         <property name="authenticatedServiceFactory" ref="authenticatedServiceFactory"/>
 
+        <property name="authenticators">
+            <list>
+                <ref component-id="jasigCasAuthenticator" />
+            </list>
+        </property>
+
         <tx:transaction method="*" value="Required"/>
     </bean>
 

@@ -63,6 +63,23 @@ public class SecurityController
 
     }
 
+    /**
+     * End session
+     */
+    public void endSession( String sessionId )
+            throws Exception, DMSException
+    {
+        try
+        {
+            client.endSession(sessionId);
+        } catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
+        }
+
+    }
+
+
 
     /**
      * Start a session with external token

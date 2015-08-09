@@ -111,9 +111,10 @@ public class SessionManager extends HFactory implements ISessionManager
                 s.setMetaDatas(ClientInformationUtil.getInfos());
                 return s;
             } else {
-            /*
-              Try to authenticate based on session Uid Content for securized Call (like from Bonita, or Portal)
-            */
+                /*
+                  Try to authenticate based on session Uid Content for securized Call
+                    (like from Bonita, or Portal)
+                */
                 log.debug("Trying to authenticate with " + uid + "@" + userSource + "  through " + password);
                 try {
                     String secData[] = password.split("\\|\\|\\|");
@@ -177,17 +178,17 @@ public class SessionManager extends HFactory implements ISessionManager
         /* Load Authenticator */
         Session session = null;
         for(Authenticator authenticator: authenticators){
-            log.info("Attempt to log on " + authenticator.getClass() + " authenticator");
+            log.debug("Attempt to log on " + authenticator.getClass() + " authenticator");
             try{
                 String userName = authenticator.authenticate(externalToken);
                 if(userName != null){
-                    /*
-                        Start Session
-                     */
+                        /*
+                            Start Session
+                         */
                         for(AuthenticationSource as: authenticationSourceFactory.getAuthenticationSources()){
                             if(as.getEnableSSOCheck() != null && as.getEnableSSOCheck()){
                                 User user = as.getUserFactory().getUser(userName);
-                                log.info("Found user on " + as.getName() + " authentication source.");
+                                log.debug("Found user on " + as.getName() + " authentication source.");
                                 session =  startSession(user.getUid(), user.getAuthenticationSourceName());
                                 break;
                             }
@@ -199,7 +200,7 @@ public class SessionManager extends HFactory implements ISessionManager
                 return null;
             }
         }
-        log.info("Session Manager External Token Session : " + session);
+        log.debug("Session Manager External Token Session : " + session);
         return session;
     }
 

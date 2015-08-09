@@ -54,8 +54,6 @@ public class CasAuthenticator implements Authenticator {
             Assertion a = sv.validate(ticket, legacyServerServiceUrl);
             principal = a.getPrincipal();
             log.info("Identified user from cas " + a.getPrincipal());
-
-
         } catch (TicketValidationException e) {
             log.error(ticket +" not validated", e);
         }

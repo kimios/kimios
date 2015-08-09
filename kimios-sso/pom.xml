@@ -27,9 +27,6 @@
 
     <artifactId>kimios-sso</artifactId>
 
-    <properties>
-        <cas.version>3.1.11</cas.version>
-    </properties>
 
     <dependencies>
         <dependency>

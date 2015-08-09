@@ -16,6 +16,9 @@
 
 package org.kimios.kernel.security.sso;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
 import java.net.MalformedURLException;
@@ -25,12 +28,11 @@ import java.net.URLEncoder;
 public class CasUtils {
 
 
+    private static Logger logger = LoggerFactory.getLogger(CasUtils.class);
+
     private String casServerUrl;
 
-
-    public CasUtils(){
-
-    }
+    public CasUtils(){ }
 
     public CasUtils(String casServerUrl){
         this.casServerUrl = casServerUrl;
@@ -58,15 +60,12 @@ public class CasUtils {
 
     static HttpsURLConnection openConn(String urlk)  throws  IOException
     {
-
         URL url = new URL(urlk);
         HttpsURLConnection hsu = (HttpsURLConnection) url.openConnection();
         hsu.setDoInput(true);
         hsu.setDoOutput(true);
         hsu.setRequestMethod("POST");
         return hsu;
-
-
     }
 
 
@@ -77,9 +76,6 @@ public class CasUtils {
 
 
     public void disconnect(String tgt) throws IOException {
-        /*
-            Should delete connection
-         */
     }
 
 
@@ -87,32 +83,29 @@ public class CasUtils {
 
         if(tgt != null)
         {
-            System.out.println(tgt);
-
-            HttpsURLConnection hsu = (HttpsURLConnection)openConn(casServerUrl);
+            logger.debug("Cas TGT: {}", tgt);
             OutputStreamWriter out;
             BufferedWriter bwr;
             String encodedServiceURL = URLEncoder.encode("service","utf-8") +"=" + URLEncoder.encode(serviceURL,"utf-8");
-            System.out.println("Service url is : " + encodedServiceURL);
+            logger.debug("Service url is : " + encodedServiceURL);
             String myURL = getCasServerUrl() + "/"+ tgt ;
-            System.out.println(myURL);
-            hsu = openConn(myURL);
-            out = new OutputStreamWriter(hsu.getOutputStream());
+            logger.debug(myURL);
+            HttpsURLConnection cnx = openConn(myURL);
+            out = new OutputStreamWriter(cnx.getOutputStream());
             bwr = new BufferedWriter(out);
             bwr.write(encodedServiceURL);
             bwr.flush();
             bwr.close();
             out.close();
 
-            System.out.println("Response code is:  " + hsu.getResponseCode());
-            BufferedReader isr = new BufferedReader(   new InputStreamReader(hsu.getInputStream()));
+            logger.debug("Response code is:  " + cnx.getResponseCode());
+            BufferedReader isr = new BufferedReader(new InputStreamReader(cnx.getInputStream()));
             String line;
-            System.out.println( hsu.getResponseCode());
             while ((line = isr.readLine()) != null) {
-                System.out.println( line);
+                logger.debug(line);
             }
             isr.close();
-            hsu.disconnect();
+            cnx.disconnect();
             return true;
 
         }
@@ -142,8 +135,7 @@ public class CasUtils {
             HttpsURLConnection hsu =  getCasConnection();
             String s =   URLEncoder.encode("username", "UTF-8") + "=" + URLEncoder.encode(userName,"UTF-8");
             s+="&" +URLEncoder.encode("password","UTF-8") + "=" + URLEncoder.encode(password,"UTF-8");
-
-            System.out.println(s);
+            logger.debug(s);
             OutputStreamWriter out = new OutputStreamWriter(hsu.getOutputStream());
             BufferedWriter bwr = new BufferedWriter(out);
             bwr.write(s);
@@ -152,16 +144,14 @@ public class CasUtils {
             out.close();
 
             String tgt = hsu.getHeaderField("location");
-            System.out.println( hsu.getResponseCode());
-
+            logger.debug(hsu.getResponseCode() + "");
             BufferedReader reader = new BufferedReader(new InputStreamReader(hsu.getInputStream()));
-
             String l;
             while(( l = reader.readLine()) != null)
-                System.out.println(l);
+                logger.debug(l);
 
             if(tgt != null && hsu.getResponseCode() == 201){
-                System.out.println("Tgt is : " + tgt.substring( tgt.lastIndexOf("/") +1));
+                logger.debug("Tgt is : " + tgt.substring( tgt.lastIndexOf("/") +1));
                 tgt = tgt.substring( tgt.lastIndexOf("/") +1);
                 bwr.close();
                 closeConn(hsu);
@@ -192,9 +182,8 @@ public class CasUtils {
         }
         catch(MalformedURLException mue)
         {
-            mue.printStackTrace();
+            logger.error("exception while validating CAS auth", mue);
             throw mue;
-
         }
     }
 

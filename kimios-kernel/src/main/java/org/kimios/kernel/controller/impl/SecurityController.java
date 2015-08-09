@@ -443,7 +443,11 @@ public class SecurityController extends AKimiosController implements ISecurityCo
     }
 
     public Session startSession(String externalToken) throws ConfigException, AccessDeniedException {
-        return SessionManager.getInstance().startSession(externalToken);
+        Session session =  SessionManager.getInstance().startSession(externalToken);
+        if(session == null)
+            throw new AccessDeniedException();
+        else
+            return session;
     }
 
 }

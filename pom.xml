@@ -70,6 +70,7 @@
         <javaassist.version>3.18.0-GA</javaassist.version>
         <cglib.version>2.2</cglib.version>
         <apache.tika.version>1.8</apache.tika.version>
+        <cas.version>3.1.11</cas.version>
         <!-- releases properties -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <KIMIOS_VERSION>1.0-SNAPSHOT</KIMIOS_VERSION>

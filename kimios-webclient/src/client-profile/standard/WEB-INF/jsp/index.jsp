@@ -21,8 +21,6 @@
   --%>
 
 <%
-
-
     Logger logger = LoggerFactory.getLogger("index-kimios");
     //check mobile browser
     String ua = request.getHeader("User-Agent").toLowerCase();
@@ -33,12 +31,10 @@
         response.sendRedirect(request.getContextPath() + "/mobile/index.jsp");
         return;
     }
-
+    /*  Check CAS TGT Exists  */
+    SecurityController securityController = Controller.getSecurityController();
 
     try{
-        SecurityController securityController = Controller.getSecurityController();
-        logger.info("sec controller inside index " + securityController);
-        // check and redirect to main page if session is alive
         String sessionUid = (String) request.getSession().getAttribute("sessionUid");
         if (sessionUid != null && securityController.isSessionAlive(sessionUid)) {
             response.sendRedirect(request.getContextPath() + "/logged.jsp");
@@ -56,26 +52,7 @@
     System.setProperty("java.protocol.handler.pkgs", "com.sun.net.ssl.internal.www.protocol");
     */
 
-    /*
-        Check CAS TGT Exists
-    if(request.getParameter("ticket") != null){
 
-        //    Authenticate with
-
-        String ticket = request.getParameter("ticket");
-        securityController = (SecurityController) wac.getBean("securityController");
-
-
-        sessionUid = securityController.startSessionWithToken(ticket);
-        System.out.println(sessionUid);
-
-        if(sessionUid != null && securityController.isSessionAlive(sessionUid)){
-            request.getSession().setAttribute("sessionUid", sessionUid);
-            response.addCookie(new Cookie("sessionUid", sessionUid));
-            response.sendRedirect(request.getContextPath() + "/logged.jsp");
-            return;
-        }
-    }*/
 
 
 

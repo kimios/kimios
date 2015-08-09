@@ -26,4 +26,5 @@ public interface Authenticator {
     public String authenticate(String externalToken) throws Exception;
 
     public boolean disconnect(String token) throws Exception;
+
 }

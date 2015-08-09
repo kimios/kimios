@@ -1,3 +1,6 @@
+<%@ page import="org.kimios.client.controller.SecurityController" %>
+<%@ page import="org.kimios.controller.Controller" %>
+<%@ page import="org.kimios.utils.configuration.ConfigurationManager" %>
 <%--
   ~ Kimios - Document Management System Software
   ~ Copyright (C) 2012-2013  DevLib'
@@ -13,11 +16,28 @@
   ~ GNU Affero General Public License for more details.
   ~ You should have received a copy of the GNU Affero General Public License
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
-  --%>
+  --%> qq
 
 <%
+    String sessionUid = (String)request.getSession().getAttribute("sessionUid");
+    if(sessionUid != null){
+        SecurityController controller = Controller.getSecurityController();
+        controller.endSession(sessionUid);
+    }
     request.getSession(false).removeAttribute("session_uid");
+    request.getSession(false).removeAttribute("sessionUid");
     request.getSession(false).setMaxInactiveInterval(-1);
     request.getSession(false).invalidate();
-    response.sendRedirect(request.getContextPath() + "/");
+
+    //check CAS !
+    if(ConfigurationManager.getValue("sso.cas.enabled") != null &&
+            ConfigurationManager.getValue("sso.cas.enabled").equals("true")){
+        // logout
+        String casLogoutUrl = ConfigurationManager.getValue("sso.cas.url") + "/logout";
+        response.sendRedirect(casLogoutUrl);
+    } else {
+        response.sendRedirect(request.getContextPath() + "/");
+    }
+
+
 %>
