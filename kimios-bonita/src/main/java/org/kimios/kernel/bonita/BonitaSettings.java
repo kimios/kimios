@@ -16,6 +16,9 @@
 
 package org.kimios.kernel.bonita;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -24,6 +27,8 @@ import java.util.Properties;
 import java.util.Set;
 
 public class BonitaSettings {
+
+    private static Logger logger = LoggerFactory.getLogger(BonitaSettings.class);
 
     private String bonitaUserName;
     private String bonitaUserPassword;
@@ -80,8 +85,10 @@ public class BonitaSettings {
         if(commasSeparatedListDomains != null && commasSeparatedListDomains.length() > 0){
             String[] domainsList = commasSeparatedListDomains.split(",");
             validDomainsToSynchronize = new HashSet<String>();
-            for(String d: domainsList)
+            for(String d: domainsList) {
                 validDomainsToSynchronize.add(d);
+                logger.info("{} domain added for sync", d);
+            }
         }
 
     }

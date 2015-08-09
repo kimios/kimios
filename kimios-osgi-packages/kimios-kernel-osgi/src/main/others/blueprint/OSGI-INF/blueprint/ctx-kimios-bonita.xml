@@ -36,6 +36,7 @@
         <property name="bonitaApplicationName" value="${bonita.appname}"/>
         <property name="bonitaKimiosRoleName" value="${bonita.kimiosrole}"/>
         <property name="bonitaProfileUsers" value="User"/>
+        <property name="bonitaEnabled" value="${bonita.enabled}" />
         <property name="commasSeparatedListDomains" value="${bonita.domain.list}"/>
 
     </bean>

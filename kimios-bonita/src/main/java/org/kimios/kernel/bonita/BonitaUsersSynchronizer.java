@@ -75,13 +75,13 @@ public class BonitaUsersSynchronizer implements IBonitaUsersSynchronizer {
             }
 
             for (String domainName : bonitaCfg.getValidDomainsToSynchronize()) {
+                log.info("starting bonita users synchronization for domain {}", domainName);
                 AuthenticationSource source = FactoryInstantiator.getInstance().getAuthenticationSourceFactory().getAuthenticationSource(domainName);
-
                 // groups synchronisation
-
-                log.info("Groups synchronisation...");
+                log.info("starging groups synchronization...");
                 GroupFactory groupFactory = source.getGroupFactory();
                 List<Group> groups = groupFactory.getGroups();
+                int index = 0;
                 for (Group g : groups) {
                     String groupName = g.getGid() + "@" + g.getAuthenticationSourceName();
                     org.bonitasoft.engine.identity.Group bGroup;
@@ -94,6 +94,7 @@ public class BonitaUsersSynchronizer implements IBonitaUsersSynchronizer {
                         groupUpdater.updateDisplayName(g.getName());
                         groupUpdater.updateDescription(g.getName());
                         bGroup = identityAPI.updateGroup(bGroup.getId(), groupUpdater);
+                        index++;
 
                     } catch (GroupNotFoundException e) {
                         // if not exists
@@ -103,15 +104,17 @@ public class BonitaUsersSynchronizer implements IBonitaUsersSynchronizer {
                         groupCreator.setDescription(g.getName());
                         groupCreator.setParentPath(null);
                         bGroup = identityAPI.createGroup(groupCreator);
-
+                        index++;
                     }
                 }
+                log.info("{} group(s) synchronized", index);
 
                 // users synchronisation
 
-                log.info("Users synchronisation...");
+                log.info("starting users synchronisation...");
                 UserFactory userFactory = source.getUserFactory();
                 List<User> users = userFactory.getUsers();
+                index = 0;
                 for (User u : users) {
                     String userName = u.getUid() + "@" + u.getAuthenticationSourceName();
                     org.bonitasoft.engine.identity.User bUser;
@@ -128,6 +131,7 @@ public class BonitaUsersSynchronizer implements IBonitaUsersSynchronizer {
                         userUpdater.setPersonalContactData(contact);
                         userUpdater.setProfessionalContactData(contact);
                         bUser = identityAPI.updateUser(bUser.getId(), userUpdater);
+                        index++;
 
                     } catch (UserNotFoundException unfe) {
                         // if not exists
@@ -141,9 +145,9 @@ public class BonitaUsersSynchronizer implements IBonitaUsersSynchronizer {
                         userCreator.setPersonalContactData(contact);
                         userCreator.setProfessionalContactData(contact);
                         bUser = identityAPI.createUser(userCreator);
-
+                        index++;
                     }
-
+                    log.info("{} users(s) synchronized", index);
                     // Set profile
 
                     SearchOptions opts = new SearchOptionsImpl(Integer.MIN_VALUE, Integer.MAX_VALUE);

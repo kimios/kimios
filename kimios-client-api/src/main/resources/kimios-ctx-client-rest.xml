@@ -195,7 +195,7 @@
 
 
     <jaxrs:client threadSafe="true" id="bonitaService" serviceClass="org.kimios.webservices.bonita.BonitaService"
-                  address="${server.url}${service.context}/rest/">
+                  address="${server.url}${service.context}/rest/bonita/">
         <jaxrs:providers>
             <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
             <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
