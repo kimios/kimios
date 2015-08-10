@@ -16,6 +16,7 @@
 
 package org.kimios.kernel.share.mail;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.mail.*;
 import org.kimios.kernel.dms.Document;
 import org.kimios.kernel.dms.DocumentVersion;
@@ -89,7 +90,10 @@ public class EmailFactory {
         MultiPartEmail email = new MultiPartEmail();
         email.setHostName(mailServer);
         email.setSmtpPort(mailServerPort);
-        email.setAuthenticator(new DefaultAuthenticator(mailAccount, mailAccountPassword));
+        if(StringUtils.isNotBlank(mailAccount)) {
+            email.setAuthenticator(new DefaultAuthenticator(mailAccount, mailAccountPassword));
+        }
+
         email.setSSLOnConnect(mailServerSsl);
         email.setDebug(mailDebug);
         return email;
