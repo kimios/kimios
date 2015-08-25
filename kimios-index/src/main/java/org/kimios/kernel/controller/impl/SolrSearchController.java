@@ -1034,12 +1034,15 @@ public class SolrSearchController
                                         });
                                         List<String> tmpQ = new ArrayList<String>();
                                         for (String u : list) {
-                                            String metaStringQuery = "MetaDataString_" + meta.getUid() + ":*" +
-                                                    ClientUtils.escapeQueryChars(u.toLowerCase()) + "*";
-                                            tmpQ.add(metaStringQuery + " OR ");
+                                            String queryVal = "*" +
+                                                ClientUtils.escapeQueryChars(u.toLowerCase()) + "*";
+                                            if(!queryVal.equals("**")){
+                                                String metaStringQuery = "MetaDataString_" + meta.getUid() + ":" + queryVal;
+                                                tmpQ.add(metaStringQuery + " OR ");
+                                            }
                                         }
                                         String eq = "";
-                                        if (list.size() > 0) {
+                                        if (tmpQ.size() > 0) {
                                             for (String z : tmpQ) {
                                                 eq += z;
                                             }
