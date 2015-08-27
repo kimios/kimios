@@ -2,6 +2,7 @@
 <%@ page import="org.slf4j.LoggerFactory" %>
 <%@ page import="org.slf4j.Logger" %>
 <%@ page import="org.kimios.controller.Controller" %>
+<%@ page import="org.kimios.utils.version.Version" %>
 <%@ page contentType="text/html" pageEncoding="UTF-8" %>
 <%--
   ~ Kimios - Document Management System Software
@@ -103,8 +104,10 @@
 <div align="center"><br/><br/><img src="images/logo.png" class="logo-login-page"/></div>
 <div id="login-area"></div>
 <div id="powered" style="text-align: center; margin-top: 64px;">
-    <span style="font-family: arial; font-size: 10px;">Powered by</span><br>
-    <img style="padding:3px; height: 30px" src="images/powered-by-devlib.png">
+    <span style="font-family: arial; font-size: 10px;">Powered by</span><br />
+    <img style="padding:3px; height: 30px" src="images/powered-by-devlib.png"><br />
+    <span style="font-family: arial; font-size: 8px;">v<%=Version.MAVEN_PROJECT_VERSION%></span><br />
+    <span style="font-family: arial; font-size: 10px; color: white">(build <%=Version.BUILD_NUMBER%>)</span>
 </div>
 </body>
 </html>
