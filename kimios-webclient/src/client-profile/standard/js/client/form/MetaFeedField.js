@@ -65,7 +65,6 @@ kimios.form.MetaFeedMultiField = Ext.extend(Ext.ux.form.LovCombo, {
             }
         }
 
-        console.log(this.passedValue);
         if(this.passedValue){
             this.setValue(this.passedValue);
             var me = this;

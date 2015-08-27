@@ -166,7 +166,7 @@ Admin.Tasks = {
         var editHandler = function(e){
 
             if(e.value != e.originalValue){
-                console.log('editing ' + e.record.get('loggerName') + ' ==> '  + e.value + '(old: ' + e.originalValue + ')');
+                if(console){ console.log('editing ' + e.record.get('loggerName') + ' ==> '  + e.value + '(old: ' + e.originalValue + ')') };
                 kimios.request.AdminRequest.setLoggerLevel(e.record.get('loggerName'), e.value, this);
             }
         }

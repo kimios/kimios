@@ -86,7 +86,6 @@ kimios.util.DocumentViewer = Ext.extend(Ext.Panel, {
     var textExtensions = ['txt', 'java', 'cs', 'js', 'cpp','c', 'html', 'log', 'sql', 'py', 'xml', 'java', 'eml'];
     try{
         url = kimios.util.PreviewHelper.generatePreviewUrl(config.pojo);
-        //console.log('Preview Url: ' + url);
     }catch (ex){
 
     }
@@ -106,7 +105,7 @@ kimios.util.DocumentViewer = Ext.extend(Ext.Panel, {
             },
             failure : function(){
                 alert('error happen while loading');
-                console.log(arguments);
+                if(console){ console.log(arguments) };
             }
         });
     } else if (config.pojo.extension == 'pdf' || config.pojo.extension == 'PDF'){

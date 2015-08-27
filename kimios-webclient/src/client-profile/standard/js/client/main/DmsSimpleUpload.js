@@ -259,8 +259,7 @@ Ext.extend(DmsSimpleUpload, Ext.util.Observable, {
 
 
     this.documentFileItem = documentFileItem;
-    if(console)
-        console.log(this.documentFileItem);
+
     this.fireEvent('start', form);
 
 

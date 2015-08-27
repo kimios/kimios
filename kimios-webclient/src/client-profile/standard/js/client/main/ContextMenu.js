@@ -1316,7 +1316,7 @@ kimios.ContextMenu = new function () {
                                     text: kimios.lang('Close'),
                                     scope: this,
                                     handler: function () {
-                                        if (console) console.log('cloooose');
+                                        if (console) { console.log('cloooose') };
                                         iframe.close();
                                         Ext.getCmp('kimios-tasks-panel').refresh();
                                         Ext.getCmp('kimios-assigned-tasks-panel').refresh();

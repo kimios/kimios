@@ -382,9 +382,8 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Window, {
                             var tabData = eval('(' + criteria.query + ')');
                             var strQ = '';
                             for (var u = 0; u < tabData.length; u++) {
-                                strQ += tabData[u] + ','
+                                strQ += tabData[u] + ',';
                             }
-                            ;
                             if (strQ.length > 0) {
                                 strQ = strQ.substr(0, strQ.length - 1);
                             }
@@ -396,8 +395,6 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Window, {
 
                     }
                 }
-                console.log(this.loadedMetadatas);
-
                 this.saveButton.setTooltip(
                     this.searchRequestId ? kimios.lang('Update') : kimios.lang('Create')
                 );

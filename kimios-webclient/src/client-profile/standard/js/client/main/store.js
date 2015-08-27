@@ -60,7 +60,7 @@ DmsJsonStore = Ext.extend(Ext.data.JsonStore, {
                     });
                 }
                 else {
-                    console.log(resp);
+                    if(console) { console.log(resp) };
                     kimios.MessageBox.exception({
                         exception: arg
                     });

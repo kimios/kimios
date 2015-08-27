@@ -38,15 +38,14 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
                 border: false,
                 items: [this.breadcrumbToolbar]
             })]
-        })
+        });
         this.contextToolbar = new Ext.Panel({
             border: false,
             layout: 'border',
             height: 26,
             defaults: {height: 26},
             items: [
-                this.breadCrumbPanel
-                ,
+                this.breadCrumbPanel,
                 new Ext.Panel({
                     border: false,
                     width: 205,
@@ -104,13 +103,13 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
                     windowSearch.on('reqlaunched', function(tmpReq){
                         windowSearch.close();
                         this.refreshSearchRequestData(tmpReq);
-                    },this)
+                    },this);
                     windowSearch.on('reqreload', function(searchRequest){
                         windowSearch.close();
                         this.refreshSearchRequestData(searchRequest);
-                    }, this)
+                    }, this);
                     windowSearch.show();
-                    windowSearch.loadForm(this.searchRequest)
+                    windowSearch.loadForm(this.searchRequest);
                 }
             },
             scope: this
@@ -124,12 +123,11 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
             emptyMsg: '',
             prependButtons: false,
             hidden: true,
-
             items: [
                 '-',
                 this.editSearchButton,
                 'Page Size ',
-                comboPageSize,
+                comboPageSize
             ]
         });
 
@@ -191,13 +189,9 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
                         Ext.EventManager.on(this.getEl().id, 'dragover', handleDragOver);
                         Ext.EventManager.addListener(this.getEl().id, 'drop', function (evt) {
                             var elem = me;
-                            handleFileSelect(evt, elem)
+                            handleFileSelect(evt, elem);
                         });
-
-
                         var dropZone = this.getEl();
-
-
                         /*var dropZone = document.getElementById(this.getEl().id);
                          dropZone.addEventListener('dragover', handleDragOver, false);
                          var me = this;
@@ -280,7 +274,7 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
         this.gridPanel.getState = function () {
             var ret = Ext.grid.GridPanel.prototype.getState.call(this, arguments);
             return ret;
-        }
+        };
 
         this.gridPanel.applyState = function (state) {
             var cs = state.columns;
@@ -294,7 +288,7 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
                     }
                 }
             }
-        }
+        };
 
         this.virtualTreePanel = new kimios.search.VirtualTreeGridPanel({
             //queryId: searchQueryId,
@@ -377,7 +371,7 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
         this.northCenterContainer.setVisible(false);
         this.northCenterContainer.removeAll(false);
         this.northCenterContainer.doLayout();
-        this.breadcrumbToolbar.virtualMode = false
+        this.breadcrumbToolbar.virtualMode = false;
         this.breadcrumbToolbar.standardMode = true;
 
         this.searchToolbar.enable();
@@ -391,8 +385,10 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
             this.searchRequest = savedReq;
             //this.advancedSearchPanel.searchRequest = savedReq;
         }
-        this.setTitle(this.searchRequest.name + ' - ' + kimios.lang('DocumentsFound') + ' ('
-        + this.gridPanel.getStore().getTotalCount() + ')');
+        this.setTitle(this.searchRequest.name +
+            ' - ' + kimios.lang('DocumentsFound') +
+            ' (' +
+            this.gridPanel.getStore().getTotalCount() + ')');
         this.setIconClass('view');
     },
     loadAndExecuteQuery: function (searchRequest) {
@@ -625,9 +621,6 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
             var obj = "({";
             for (var key in fields) {
                 var value = null;
-
-                /*console.log(key);
-                 console.log(form.metaFieldsMapping);*/
                 // is date
                 if (fields[key] && fields[key] instanceof Date)
                     value = fields[key] ? fields[key].format('Y-m-d') : '';
@@ -676,9 +669,8 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
                 var crit = {
                     fieldName: p,
                     query: params[p]
-                }
+                };
                 tempSearchRequest.criteriasList.push(crit);
-
             }
 
             tempSearchRequest.criteriasListJson = Ext.util.JSON.encode(tempSearchRequest.criteriasList);
@@ -691,26 +683,21 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
             };
 
             this.displayPagingToolBar(this.gridPanel.getStore());
-
             //load config:
-
             var cfg = {
                 scope: this,
                 params: pParams
-            }
+            };
             if(!existingRequest || !existingRequest.id){
 
                 cfg.callback =  function (records, options, success) {
                     this.lockSearch = true;
                     this.setTitle(kimios.lang('DocumentsFound') + ' (' + this.gridPanel.getStore().getTotalCount() + ')');
                     this.setIconClass('view');
-                }
+                };
             }
-
             this.gridPanel.getStore().load(cfg);
-
             this.searchRequest = tempSearchRequest;
-
             return tempSearchRequest;
 
         }
@@ -832,7 +819,7 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
             } else {
                 return dataToRender[field];
             }
-        }
+        };
         var cmArray = [
             {
                 align: 'center',
@@ -902,7 +889,7 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
                 align: 'left',
                 renderer: function (value, metaData, record) {
                     if (record.data.type == 7 && record.data.targetEntity) {
-                        return kimios.date(record.data.targetEntity.creationDate)
+                        return kimios.date(record.data.targetEntity.creationDate);
                     } else
                         return kimios.date(value);
                 }
@@ -1017,21 +1004,14 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
                         for (var key in  obj.entityAttributes) {
                             if (key.indexOf('BonitaProcessInstance_') != -1) {
                                 counter++;
-                                /*
-                                 var obj =entityAttribute.entityAttributes[key];
-                                 var process=Ext.decode(obj.value);
-                                 console.log(process);
-                                 return process.name;
-                                 */
                             }
                         }
                         if (counter > 0)
                             return '<span style="color:red;">' + counter + ' ' + kimios.lang('ProcessInstances') + '</span>';
                     }
                 }
-            )
+            );
         } else {
-
             cmArray.push({
                 header: kimios.lang('WorkflowStatus'),
                 dataIndex: 'workflowStatusName',
@@ -1079,7 +1059,7 @@ var metaValueRenderer = function (metaName, data) {
             if (el.value instanceof Array) {
                 var str = '';
                 for (var i = 0; i < el.value.length; i++) {
-                    str += el.value[i] + ','
+                    str += el.value[i] + ',';
                 }
                 return str.substr(0, str.lastIndexOf(','));
             } else if (el.meta.metaType == 3) {
@@ -1089,8 +1069,7 @@ var metaValueRenderer = function (metaName, data) {
         }
     }
     return '';
-}
-
+};
 
 var addonColumns = undefined;
 function loadAddonCols(handler) {
@@ -1134,7 +1113,6 @@ function loadAddonCols(handler) {
                                             if (record.data.metaDatas && record.data.metaDatas.length > 0) {
 
                                             } else {
-                                                //console.log(value);
                                                 var obj = Ext.decode(value);
                                                 if (obj && obj.entityMetaValues) {
                                                     var v = metaValueRenderer(tName, obj.entityMetaValues);
@@ -1146,8 +1124,8 @@ function loadAddonCols(handler) {
 
                                         }
                                     }
-                                }
-                            }
+                                };
+                            };
                             addonColumns.push(createHeaderFunc(met.data.name));
                         }
                         if (handler) {
@@ -1156,7 +1134,6 @@ function loadAddonCols(handler) {
                         doctypeSet = true;
                     });
                     break;
-
                 }
             }
             if (!doctypeSet) {
@@ -1164,7 +1141,6 @@ function loadAddonCols(handler) {
                     handler();
                 }
             }
-
         });
         dtStore.load();
     }

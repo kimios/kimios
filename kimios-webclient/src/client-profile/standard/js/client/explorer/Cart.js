@@ -43,7 +43,7 @@ kimios.explorer.Cart = Ext.extend(Ext.Panel, {
                 Ext.getCmp('kimios-cart-button').toggle(false);
                 return false;
             }
-        }
+        };
 
         var _this = this;
 

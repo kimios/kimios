@@ -274,7 +274,6 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                             //                  onMouseOver : function(e){
                             ////                    e.preventDefault();
                             //                    var t = this.findTargets(e);
-                            //                    console.log(t);
                             //                    if(t.item && t.item != this.activeTab){
                             //                      this.setActiveTab(t.item);
                             //                    }

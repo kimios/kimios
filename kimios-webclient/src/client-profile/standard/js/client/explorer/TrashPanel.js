@@ -357,12 +357,6 @@ kimios.explorer.TrashPanel = Ext.extend(Ext.grid.GridPanel, {
                         for (var key in  obj.entityAttributes) {
                             if (key.indexOf('BonitaProcessInstance_') != -1) {
                                 counter++;
-                                /*
-                                 var obj =entityAttribute.entityAttributes[key];
-                                 var process=Ext.decode(obj.value);
-                                 console.log(process);
-                                 return process.name;
-                                 */
                             }
                         }
                         if (counter > 0)

@@ -45,7 +45,7 @@ kimios.explorer.Toolbar = Ext.extend(Ext.Toolbar, {
                 //panEdit.loadForm(this.searchRequest)
                 windowSearch.on('reqlaunched', function(){
                     windowSearch.close();
-                })
+                });
                 windowSearch.on('reqreload', function(){
                     windowSearch.close();
                 });
