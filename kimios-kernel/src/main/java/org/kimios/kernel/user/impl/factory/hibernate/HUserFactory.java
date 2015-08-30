@@ -257,7 +257,7 @@ public class HUserFactory implements UserFactory
     }
 
     public User getUserByEmail(String emailAddress) throws DataSourceException, ConfigException {
-        String query = "from User where mail = :email";
+        String query = "select distinct u from User as u where u.mail = :email or '" + emailAddress + "' in elements(u.emails)";
         List<User> users = AbstractDBFactory.getInstance().getSession().createQuery(query)
                 .setString("email", emailAddress)
                 .list();
@@ -268,6 +268,23 @@ public class HUserFactory implements UserFactory
             return null;
         }
 
+    }
+
+
+    @Override
+    public void addUserEmails(String uid, List<String> emails) {
+        try {
+            User u = (User) AbstractDBFactory.getInstance()
+                    .getSession()
+                    .createCriteria(User.class).add(Restrictions.eq("uid", uid))
+                    .add(Restrictions.eq("authenticationSourceName", this.getAuth().getName())).uniqueResult();
+
+            u.getEmails().clear();
+            u.getEmails().addAll(emails);
+            AbstractDBFactory.getInstance().getSession().saveOrUpdate(u);
+        } catch (HibernateException he) {
+            throw new DataSourceException(he);
+        }
     }
 }
 

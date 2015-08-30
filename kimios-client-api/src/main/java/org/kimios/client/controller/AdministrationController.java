@@ -22,6 +22,7 @@ import org.kimios.client.exception.ExceptionHelper;
 import org.kimios.kernel.ws.pojo.*;
 import org.kimios.webservices.AdministrationService;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -67,7 +68,7 @@ public class AdministrationController
     {
         try
         {
-            return client.getUserRoles( sessionId, userName, userSource );
+            return client.getUserRoles(sessionId, userName, userSource);
         }
         catch ( Exception e )
         {
@@ -100,7 +101,7 @@ public class AdministrationController
     {
         try
         {
-            client.deleteRole( sessionId, role, userName, userSource );
+            client.deleteRole(sessionId, role, userName, userSource);
         }
         catch ( Exception e )
         {
@@ -132,7 +133,7 @@ public class AdministrationController
     {
         try
         {
-            return client.getAuthenticationSourceParams( sessionId, name, className );
+            return client.getAuthenticationSourceParams(sessionId, name, className);
         }
         catch ( Exception e )
         {
@@ -168,8 +169,8 @@ public class AdministrationController
     {
         try
         {
-            client.updateAuthenticationSource( sessionId, authenticationSourceName,
-                                               className, enableSsoCheck, enableMailCheck, xmlParameters );
+            client.updateAuthenticationSource(sessionId, authenticationSourceName,
+                    className, enableSsoCheck, enableMailCheck, xmlParameters);
         }
         catch ( Exception e )
         {
@@ -185,7 +186,7 @@ public class AdministrationController
     {
         try
         {
-            client.deleteAuthenticationSource( sessionId, name );
+            client.deleteAuthenticationSource(sessionId, name);
         }
         catch ( Exception e )
         {
@@ -217,7 +218,7 @@ public class AdministrationController
     {
         try
         {
-            return client.getAvailableAuthenticationSourceParams( sessionId, className );
+            return client.getAvailableAuthenticationSourceParams(sessionId, className);
         }
         catch ( Exception e )
         {
@@ -253,6 +254,7 @@ public class AdministrationController
         }
     }
 
+
     /**
      * Update user information in a DMS Authentication source
      */
@@ -275,6 +277,22 @@ public class AdministrationController
         {
             client.updateUser( sessionId, uid, firstName, lastName, phoneNumber,
                     mail, password, authenticationSourceName, enabled );
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
+        }
+    }
+
+    /**
+     * Update user
+     */
+    public void updateUser( String sessionId, String uid, String authenticationSource, List<String> emails)
+            throws Exception
+    {
+        try
+        {
+            client.updateUserEmails(sessionId, uid, authenticationSource, emails );
         }
         catch ( Exception e )
         {

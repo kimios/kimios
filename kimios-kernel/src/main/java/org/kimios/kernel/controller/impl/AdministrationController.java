@@ -27,10 +27,7 @@ import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.security.Role;
 import org.kimios.kernel.security.Session;
 import org.kimios.kernel.security.SessionManager;
-import org.kimios.kernel.user.AuthenticationSource;
-import org.kimios.kernel.user.Group;
-import org.kimios.kernel.user.GroupFactory;
-import org.kimios.kernel.user.UserFactory;
+import org.kimios.kernel.user.*;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
@@ -306,6 +303,28 @@ public class AdministrationController extends AKimiosController implements IAdmi
         u.setEnabled(enabled);
         f.updateUser(u, password);
     }
+
+    public void updateUserEmails(Session session, String uid, String authenticationSource, List<String> emails)
+            throws AccessDeniedException, ConfigException, DataSourceException
+    {
+
+        boolean isHimself =
+                uid.equals(session.getUserName()) && authenticationSource.equals(session.getUserSource());
+        boolean isAdmin = securityFactoryInstantiator.getRoleFactory()
+                .getRole(Role.ADMIN, session.getUserName(), session.getUserSource()) != null;
+        if (!isHimself && !isAdmin) {
+            throw new AccessDeniedException();
+        }
+        UserFactory f = authFactoryInstantiator.getAuthenticationSourceFactory()
+                .getAuthenticationSource(authenticationSource)
+                .getUserFactory();
+
+
+        User u = f.getUser(uid);
+        f.addUserEmails(uid, emails);
+
+    }
+
 
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IAdministrationController#deleteUser(org.kimios.kernel.security.Session, java.lang.String, java.lang.String)

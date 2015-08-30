@@ -18,6 +18,7 @@ package org.kimios.kernel.user;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.exception.DataSourceException;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
@@ -57,5 +58,7 @@ public interface UserFactory
 
     public User getUserByAttributeValue(String attributeName, String attributeValue)
             throws DataSourceException, ConfigException;
+
+    public void addUserEmails(String uid, List<String> emails);
 }
 

@@ -15,6 +15,7 @@
  */
 package org.kimios.kernel.user.impl.factory.genericldaplayer;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.security.SecurityEntityType;
@@ -323,6 +324,10 @@ public class GenericLDAPUserFactory extends GenericLDAPFactory implements UserFa
         } catch (NamingException e) {
             throw new DataSourceException(e, "LDAP Exception : " + e.getMessage());
         }
+    }
+
+    public void addUserEmails(String uid, List<String> emails) {
+        throw new NotImplementedException();
     }
 }
 

@@ -23,7 +23,9 @@ import org.kimios.webservices.CoreService;
 import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.utils.KimiosBusServiceManager;
 
+import javax.jws.WebParam;
 import javax.jws.WebService;
+import javax.ws.rs.QueryParam;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
@@ -218,8 +220,21 @@ public class AdministrationServiceImpl extends CoreService implements Administra
 
         try {
             org.kimios.kernel.security.Session session = getHelper().getSession(sessionUid);
-            administrationController.updateUser(session, uid, firstName, lastName, phoneNumber ,
+            administrationController.updateUser(session, uid, firstName, lastName, phoneNumber,
                     mail, password, authenticationSourceName, enabled);
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
+
+    public void updateUserEmails(String sessionId,
+                           String uid,
+                           String authenticationSourceName,
+                           List<String> emails)
+            throws DMServiceException{
+        try {
+            org.kimios.kernel.security.Session session = getHelper().getSession(sessionId);
+            administrationController.updateUserEmails(session, uid, authenticationSourceName, emails);
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }

@@ -25,6 +25,7 @@ import org.kimios.kernel.user.impl.AuthenticationSourceJoomla15;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
@@ -182,6 +183,10 @@ public class Joomla15UserFactory implements UserFactory
     public User getUserByAttributeValue(String attributeName,
             String attributeValue) throws DataSourceException, ConfigException
     {
+        throw new ConfigException("Not Implemented Yet");
+    }
+
+    public void addUserEmails(String uid, List<String> emails) {
         throw new ConfigException("Not Implemented Yet");
     }
 }

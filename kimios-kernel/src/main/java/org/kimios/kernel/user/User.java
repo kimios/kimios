@@ -87,6 +87,19 @@ public class User implements SecurityEntity, Serializable
     @Column(name = "user_enabled", nullable = false)
     private boolean enabled = true;
 
+
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name="user_emails", joinColumns=@JoinColumn(name="user_id"))
+    @Column(name="user_email")
+    private Set<String> emails = new HashSet<String>();
+
+    public Set<String> getEmails() { return this.emails; }
+
+    public void setEmails(Set<String> emails){
+        this.emails = emails;
+    }
+
     public Map<String, String> getAttributes()
     {
         return attributes;

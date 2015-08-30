@@ -21,11 +21,9 @@ import org.kimios.webservices.exceptions.DMServiceException;
 
 import javax.jws.WebParam;
 import javax.jws.WebService;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA. User: farf Date: 4/1/12 Time: 5:00 PM
@@ -154,6 +152,16 @@ public interface AdministrationService
             @QueryParam(value = "authenticationSourceName") @WebParam(name = "authenticationSourceName")
             String authenticationSourceName,
             @QueryParam(value = "enabled") @WebParam(name = "enabled") boolean enabled)
+            throws DMServiceException;
+
+    @POST
+    @Path("/updateUserEmails")
+    @Produces("application/json")
+    public void updateUserEmails(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+                           @QueryParam(value = "uid") @WebParam(name = "uid") String uid,
+                           @QueryParam(value = "authenticationSource") @WebParam(name = "authenticationSource")
+                           String authenticationSourceName,
+                           List<String> emails)
             throws DMServiceException;
 
     @GET

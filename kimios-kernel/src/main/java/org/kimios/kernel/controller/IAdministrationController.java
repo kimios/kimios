@@ -124,6 +124,10 @@ public interface IAdministrationController
             String phoneNumber, String mail, String password, String authenticationSourceName, boolean enabled)
             throws AccessDeniedException, ConfigException, DataSourceException;
 
+
+    public void updateUserEmails(Session session, String uid, String authenticationSource, List<String> emails)
+            throws AccessDeniedException, ConfigException, DataSourceException;
+
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IAdministrationController#deleteUser(org.kimios.kernel.security.Session, java.lang.String, java.lang.String)
     */

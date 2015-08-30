@@ -74,6 +74,14 @@
                 <formula>authentication_source</formula>
             </many-to-many>
         </set>
+        <set name="emails"
+              table="user_emails">
+            <key>
+                <column name="user_id"/>
+                <column name="authentication_source"/>
+            </key>
+            <element type="string" column="user_email"/>
+        </set>
     </class>
     <class name="Group" table="groups">
         <composite-id>
