@@ -156,12 +156,12 @@ public interface AdministrationService
 
     @POST
     @Path("/updateUserEmails")
+    @Consumes("application/json")
     @Produces("application/json")
     public void updateUserEmails(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
                            @QueryParam(value = "uid") @WebParam(name = "uid") String uid,
-                           @QueryParam(value = "authenticationSource") @WebParam(name = "authenticationSource")
-                           String authenticationSourceName,
-                           List<String> emails)
+                           @QueryParam(value = "authenticationSource") @WebParam(name = "authenticationSource") String authenticationSourceName,
+                                 @WebParam(name = "emails") List<String> emails)
             throws DMServiceException;
 
     @GET
