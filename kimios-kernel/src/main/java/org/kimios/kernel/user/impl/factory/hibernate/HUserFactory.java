@@ -263,7 +263,7 @@ public class HUserFactory implements UserFactory
                 .list();
 
         log.debug("loaded users by email {} count {}", emailAddress, users.size());
-        if(users.size() == 1){
+        if(users.size() > 0){
             return users.get(0);
         } else {
             return null;
