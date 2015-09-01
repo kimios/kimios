@@ -21,6 +21,8 @@ public class Bookmark
 
     private int dmEntityType;
 
+    private DMEntity entity;
+
     public long getDmEntityUid()
     {
         return dmEntityUid;
@@ -39,6 +41,14 @@ public class Bookmark
     public void setDmEntityType(int dmEntityType)
     {
         this.dmEntityType = dmEntityType;
+    }
+
+    public DMEntity getEntity() {
+        return entity;
+    }
+
+    public void setEntity(DMEntity entity) {
+        this.entity = entity;
     }
 
     public Bookmark()

@@ -38,6 +38,17 @@ public class Bookmark implements Serializable
     @Column(name = "dm_entity_type")
     private int type;
 
+    @Transient
+    private DMEntity entity;
+
+    public DMEntity getEntity() {
+        return entity;
+    }
+
+    public void setEntity(DMEntity entity) {
+        this.entity = entity;
+    }
+
     public void setOwner(String owner)
     {
         this.owner = owner;
@@ -104,6 +115,7 @@ public class Bookmark implements Serializable
         org.kimios.kernel.ws.pojo.Bookmark b = new org.kimios.kernel.ws.pojo.Bookmark();
         b.setDmEntityType(this.type);
         b.setDmEntityUid(this.uid);
+        b.setEntity(entity.toPojo());
         return b;
     }
 }

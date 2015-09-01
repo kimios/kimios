@@ -947,8 +947,10 @@ public class DocumentController extends AKimiosController implements IDocumentCo
         Vector<Bookmark> vBookmarks = new Vector<Bookmark>();
         for (DMEntity d : bl) {
             if (getSecurityAgent().isReadable(d, session.getUserName(), session.getUserSource(), session.getGroups())) {
-                vBookmarks.add(new Bookmark(session.getUserName(), session.getUserSource(), SecurityEntityType.USER,
-                        d.getUid(), d.getType()));
+                Bookmark bmk = new Bookmark(session.getUserName(), session.getUserSource(), SecurityEntityType.USER,
+                        d.getUid(), d.getType());
+                bmk.setEntity(d);
+                vBookmarks.add(bmk);
             }
         }
         return vBookmarks;

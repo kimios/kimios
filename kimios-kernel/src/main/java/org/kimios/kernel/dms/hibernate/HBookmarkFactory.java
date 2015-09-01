@@ -115,6 +115,7 @@ public class HBookmarkFactory extends HFactory implements BookmarkFactory
 
 
             DMEntity t = null;
+            List<Long> addedEntities = new ArrayList<Long>();
             for (Bookmark b : lBookmarks) {
                 switch (b.getType()) {
                     case DMEntityType.WORKSPACE:
@@ -127,8 +128,9 @@ public class HBookmarkFactory extends HFactory implements BookmarkFactory
                         t = fc.getDocumentFactory().getDocument(b.getUid());
                         break;
                 }
-                if (t != null) {
+                if (t != null && !addedEntities.contains(t.getUid())) {
                     bookmarks.add(t);
+                    addedEntities.add(t.getUid());
                 } else {
                     removeBookmark(userName, userSource, 1, b.getUid(), b.getType());
                     removeBookmark(userName, userSource, 2, b.getUid(), b.getType());
