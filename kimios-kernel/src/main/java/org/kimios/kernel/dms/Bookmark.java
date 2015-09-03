@@ -115,7 +115,9 @@ public class Bookmark implements Serializable
         org.kimios.kernel.ws.pojo.Bookmark b = new org.kimios.kernel.ws.pojo.Bookmark();
         b.setDmEntityType(this.type);
         b.setDmEntityUid(this.uid);
-        b.setEntity(entity.toPojo());
+        if(entity != null){
+            b.setEntity(entity.toPojo());
+        }
         return b;
     }
 }

@@ -1014,10 +1014,12 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     public List<Bookmark> getRecentItems(Session session) throws DataSourceException, ConfigException {
         Vector<DMEntity> ri = dmsFactoryInstantiator.getRecentItemFactory()
                 .getRecentItems(session.getUserName(), session.getUserSource());
-        Vector<Bookmark> vBookmarks = new Vector<Bookmark>();
+        ArrayList<Bookmark> vBookmarks = new ArrayList<Bookmark>();
         for (DMEntity d : ri) {
             if (getSecurityAgent().isReadable(d, session.getUserName(), session.getUserSource(), session.getGroups())) {
-                vBookmarks.add(new Bookmark(session.getUserName(), session.getUserSource(), 1, d.getUid(), d.getType()));
+                Bookmark b = new Bookmark(session.getUserName(), session.getUserSource(), 1, d.getUid(), d.getType());
+                b.setEntity(dmsFactoryInstantiator.getDmEntityFactory().getEntity(d.getUid()));
+                vBookmarks.add(b);
             }
         }
         return vBookmarks;
