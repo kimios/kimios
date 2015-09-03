@@ -66,12 +66,17 @@ public class ReindexParallelCommand extends KimiosCommand {
             required = false, multiValued = false)
     Integer threadPoolSize = null;
 
+    @Option(name = "-et",
+            aliases = "--entity-type",
+            description = "Thread Pool Size",
+            required = false, multiValued = false)
+    Integer entityType = 3;
+
 
     @Argument(index = 0, name = "path",
             description = "Kimios Path to reindex",
             required = false, multiValued = true)
     String[] paths = null;
-
 
 
     @Override
@@ -90,7 +95,8 @@ public class ReindexParallelCommand extends KimiosCommand {
                     threadPoolSize != null ? threadPoolSize : 5,
                     regenerateMetaWrapper,
                     disableThreading,
-                    asyncDocumentRead
+                    asyncDocumentRead,
+                    entityType
             );
         }
     }

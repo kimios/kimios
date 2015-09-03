@@ -647,14 +647,25 @@ public class SolrIndexManager
                         public SolrInputDocument call() throws Exception {
                             log.debug("started solr input document for doc #" + docId
                                     + " (" + docPath + ")");
-                            SolrInputDocument solrInputDocument = toSolrInputDocument((Document) doc,
-                                    null,
-                                    false,
-                                    updateDocsMetaWrapper,
-                                    asyncDocumentRead,
-                                    readVersionTimeOut,
-                                    readVersionTimeoutTimeUnit);
-                            return solrInputDocument;
+
+                            if(doc instanceof Document){
+                                SolrInputDocument solrInputDocument = toSolrInputDocument((Document) doc,
+                                        null,
+                                        false,
+                                        updateDocsMetaWrapper,
+                                        asyncDocumentRead,
+                                        readVersionTimeOut,
+                                        readVersionTimeoutTimeUnit);
+                                return solrInputDocument;
+                            }  else if(doc instanceof Folder){
+                                SolrInputDocument solrInputDocument = toSolrInputDocument((Folder) doc,
+                                        FactoryInstantiator.getInstance()
+                                                .getVirtualFolderFactory()
+                                                .virtualFolderMetaDataList((Folder)doc));
+                                return solrInputDocument;
+                            } else {
+                                return null;
+                            }
                         }
                     };
 
@@ -663,9 +674,19 @@ public class SolrIndexManager
 
                     dataFutures.put(doc.getUid(), solrInputDocumentFuture);
                 }  else {
-                    updatedDocument.add(toSolrInputDocument((Document)doc, null, false,
-                            updateDocsMetaWrapper, asyncDocumentRead, readVersionTimeOut, readVersionTimeoutTimeUnit ));
-                    updatedDocumentIds.add(String.valueOf(doc.getUid()));
+
+                    if(doc instanceof Folder){
+                        SolrInputDocument solrInputDocument = toSolrInputDocument((Folder) doc,
+                                FactoryInstantiator.getInstance()
+                                        .getVirtualFolderFactory()
+                                        .virtualFolderMetaDataList((Folder)doc));
+                        updatedDocument.add(solrInputDocument);
+                        updatedDocumentIds.add(String.valueOf(doc.getUid()));
+                    } else {
+                        updatedDocument.add(toSolrInputDocument((Document)doc, null, false,
+                                updateDocsMetaWrapper, asyncDocumentRead, readVersionTimeOut, readVersionTimeoutTimeUnit ));
+                        updatedDocumentIds.add(String.valueOf(doc.getUid()));
+                    }
                 }
             }
 
@@ -716,12 +737,23 @@ public class SolrIndexManager
             List<String> updatedDocumentIds = new ArrayList<String>();
             for (DMEntity doc : documentEntities) {
 
-
                 if (log.isDebugEnabled()) {
                     log.debug("Start Adding Document doc: #" + doc.getUid() + " " +
                             doc.getName() + " " + doc.getPath());
                 }
-                SolrInputDocument solrInputDocument = toSolrInputDocument((Document) doc, null, true, 2, TimeUnit.MINUTES);
+
+                SolrInputDocument solrInputDocument = null;
+                if(doc instanceof Folder){
+                    solrInputDocument = toSolrInputDocument((Folder) doc,
+                            FactoryInstantiator.getInstance()
+                                    .getVirtualFolderFactory()
+                                    .virtualFolderMetaDataList((Folder)doc));
+                    updatedDocument.add(solrInputDocument);
+                    updatedDocumentIds.add(String.valueOf(doc.getUid()));
+                } else {
+                    solrInputDocument = toSolrInputDocument((Document) doc, null, true, 2, TimeUnit.MINUTES);
+                }
+
                 if (solrInputDocument != null) {
                     updatedDocumentIds.add(String.valueOf(doc.getUid()));
                     updatedDocument.add(solrInputDocument);

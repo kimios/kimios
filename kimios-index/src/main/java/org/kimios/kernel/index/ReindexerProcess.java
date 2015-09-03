@@ -142,7 +142,8 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
                             Long threadReadTimeOut, TimeUnit threadReadTimeoutTimeUnit, int threadPoolSize,
                             boolean updateDocsMetaWrapper,
                             boolean disableThreading,
-                            boolean asyncDocumentRead) {
+                            boolean asyncDocumentRead,
+                            int entityType) {
         this.indexManager = indexManager;
         this.finalPath = path;
         this.blockSize = blockSize;
@@ -159,7 +160,11 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
         this.disableThreading = disableThreading;
         this.threadPoolSize = threadPoolSize;
         this.asyncDocumentRead = asyncDocumentRead;
+        this.entityType = entityType;
     }
+
+
+    private int entityType = DMEntityType.DOCUMENT;
 
 
     private ReindexResult reindexResult;
@@ -202,10 +207,10 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
 
             total = FactoryInstantiator.getInstance()
                     .getDmEntityFactory()
-                    .getEntitiesByPathAndTypeCount(finalPath, DMEntityType.DOCUMENT, excludedIds, extensionsExcluded)
+                    .getEntitiesByPathAndTypeCount(finalPath, entityType, excludedIds, extensionsExcluded)
                     .intValue();
             //total = entities.size();
-            log.debug("Entities to index: " + total);
+            log.debug("Entities of type " + entityType + " to index: " + total);
             this.reindexResult.setEntitiesCount(total);
             int documentBlockSize = blockSize;
             int indexingBlockCount = total / documentBlockSize;
@@ -223,7 +228,7 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
 
                 List<DMEntity> entityList = null;
                 entityList = FactoryInstantiator.getInstance()
-                        .getDmEntityFactory().getEntitiesByPathAndType(finalPath, DMEntityType.DOCUMENT, u * documentBlockSize,
+                        .getDmEntityFactory().getEntitiesByPathAndType(finalPath, entityType, u * documentBlockSize,
                                 ((docLeak > 0 && u == (indexingBlockCount - 1)) ? docLeak : documentBlockSize),
                                 excludedIds,
                                 extensionsExcluded);
