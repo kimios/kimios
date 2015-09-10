@@ -38,6 +38,8 @@ public class EmailFactory {
 
     private boolean mailDebug = false;
 
+    private AttachmentNameGenerator attachmentNameGenerator;
+
     public boolean isMailDebug() {
         return mailDebug;
     }
@@ -86,6 +88,14 @@ public class EmailFactory {
         this.mailServerSsl = mailServerSsl;
     }
 
+    public AttachmentNameGenerator getAttachmentNameGenerator() {
+        return attachmentNameGenerator;
+    }
+
+    public void setAttachmentNameGenerator(AttachmentNameGenerator attachmentNameGenerator) {
+        this.attachmentNameGenerator = attachmentNameGenerator;
+    }
+
     public MultiPartEmail getMultipartEmailObject() throws EmailException {
         MultiPartEmail email = new MultiPartEmail();
         email.setHostName(mailServer);
@@ -103,7 +113,19 @@ public class EmailFactory {
     public void addDocumentVersionAttachment(MultiPartEmail email, Document document, DocumentVersion documentVersion)
         throws  Exception {
         FileDataSource fileDataSource = new FileDataSource(RepositoryManager.directFileAccess(documentVersion));
-        email.attach(fileDataSource, document.getPath().substring(document.getPath().lastIndexOf("/") + 1),
+        String attachmentName = null;
+        if(attachmentNameGenerator != null){
+            attachmentName = attachmentNameGenerator.generate(documentVersion);
+            if(attachmentName == null){
+                attachmentName =  document.getPath().substring(document.getPath().lastIndexOf("/") + 1);
+            } else {
+                //append extension
+                if(StringUtils.isNotBlank(document.getExtension())){
+                    attachmentName += "." + document.getExtension();
+                }
+            }
+        }
+        email.attach(fileDataSource, attachmentName,
                 "", EmailAttachment.ATTACHMENT);
     }
 

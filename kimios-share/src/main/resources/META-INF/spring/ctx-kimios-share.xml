@@ -20,6 +20,10 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
+
+    <bean id="attachmentNameGenerator" class="org.kimios.kernel.share.mail.AttachmentNameGenerator">
+        <constructor-arg value="${dms.share.attachment.meta.name}"></constructor-arg>
+    </bean>
     
     <bean id="mailFactory" class="org.kimios.kernel.share.mail.EmailFactory">
         <property name="mailServer" value="${dms.mail.defaulthost}" />
@@ -28,6 +32,7 @@
         <property name="mailAccountPassword"  value="${dms.mail.hostpassword}" />
         <property name="mailServerSsl"  value="${dms.mail.tlsauth}" />
         <property name="mailDebug" value="${dms.mail.debug}" />
+        <property name="attachmentNameGenerator" ref="attachmentNameGenerator" />
     </bean>
 
     <bean id="mailContactFactory" class="org.kimios.kernel.share.factory.MailContactFactory"

@@ -21,6 +21,10 @@
            xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0
         http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd" default-activation="eager">
 
+    <bean id="attachmentNameGenerator" class="org.kimios.kernel.share.mail.AttachmentNameGenerator">
+        <argument value="${dms.share.attachment.meta.name}"></argument>
+    </bean>
+
     <bean id="mailFactory" class="org.kimios.kernel.share.mail.EmailFactory">
         <property name="mailServer" value="${dms.mail.defaulthost}" />
         <property name="mailServerPort" value="${dms.mail.port}" />
@@ -28,8 +32,7 @@
         <property name="mailAccountPassword"  value="${dms.mail.hostpassword}" />
         <property name="mailServerSsl"  value="${dms.mail.tlsauth}" />
         <property name="mailDebug" value="${dms.mail.debug}" />
-
-
+        <property name="attachmentNameGenerator" ref="attachmentNameGenerator" />
     </bean>
 
     <bean id="mailContactFactory" class="org.kimios.kernel.share.factory.MailContactFactory">
