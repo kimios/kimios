@@ -499,9 +499,8 @@ public class DocumentServiceImpl extends CoreService implements DocumentService 
             Session session = getHelper().getSession(sessionId);
 
             List<Bookmark> vBookmarks = documentController.getBookmarks(session);
-            List<org.kimios.kernel.ws.pojo.Bookmark> links = new ArrayList<org.kimios.kernel.ws.pojo.Bookmark>();
-            for (Bookmark link : vBookmarks)
-                links.add(link.toPojo());
+            List<org.kimios.kernel.ws.pojo.Bookmark> links =
+                    documentController.convertBookmarksToPojos(session, vBookmarks);
             return links.toArray(new org.kimios.kernel.ws.pojo.Bookmark[]{});
         } catch (Exception e) {
             throw getHelper().convertException(e);
@@ -592,9 +591,8 @@ public class DocumentServiceImpl extends CoreService implements DocumentService 
 
             Session session = getHelper().getSession(sessionId);
             List<Bookmark> vBookmarks = documentController.getRecentItems(session);
-            List<org.kimios.kernel.ws.pojo.Bookmark> links = new ArrayList<org.kimios.kernel.ws.pojo.Bookmark>();
-            for (Bookmark link : vBookmarks)
-                links.add(link.toPojo());
+            List<org.kimios.kernel.ws.pojo.Bookmark> links =
+                    documentController.convertBookmarksToPojos(session, vBookmarks);
             return links.toArray(new org.kimios.kernel.ws.pojo.Bookmark[]{});
         } catch (Exception e) {
             throw getHelper().convertException(e);

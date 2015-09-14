@@ -303,4 +303,7 @@ public interface IDocumentController {
 
     public List<org.kimios.kernel.ws.pojo.Document> convertToPojosFromIds(Session session, List<Long> docsIds)
             throws ConfigException, DataSourceException;
+
+    public List<org.kimios.kernel.ws.pojo.Bookmark> convertBookmarksToPojos(Session session, List<Bookmark> docs)
+            throws ConfigException, DataSourceException;
 }

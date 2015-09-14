@@ -21,6 +21,14 @@ import org.kimios.kernel.configuration.Config;
 import org.kimios.kernel.controller.*;
 import org.kimios.kernel.controller.utils.PathUtils;
 import org.kimios.kernel.dms.*;
+import org.kimios.kernel.dms.Bookmark;
+import org.kimios.kernel.dms.DMEntity;
+import org.kimios.kernel.dms.Document;
+import org.kimios.kernel.dms.DocumentVersion;
+import org.kimios.kernel.dms.Folder;
+import org.kimios.kernel.dms.MetaValue;
+import org.kimios.kernel.dms.SymbolicLink;
+import org.kimios.kernel.dms.WorkflowStatus;
 import org.kimios.kernel.dms.utils.MetaPathHandler;
 import org.kimios.kernel.dms.utils.MetaProcessor;
 import org.kimios.kernel.events.EventContext;
@@ -32,8 +40,11 @@ import org.kimios.kernel.filetransfer.zip.FileCompressionHelper;
 import org.kimios.kernel.log.DMEntityLog;
 import org.kimios.kernel.repositories.RepositoryManager;
 import org.kimios.kernel.security.*;
+import org.kimios.kernel.security.DMEntitySecurity;
+import org.kimios.kernel.security.Session;
 import org.kimios.kernel.user.User;
 import org.kimios.kernel.utils.HashCalculator;
+import org.kimios.kernel.ws.pojo.*;
 import org.kimios.utils.configuration.ConfigurationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1241,6 +1252,18 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     public List<org.kimios.kernel.ws.pojo.Document> convertToPojos(Session session, List<Document> docs)
             throws ConfigException, DataSourceException {
         return dmsFactoryInstantiator.getDocumentFactory().getDocumentsPojos(docs);
+    }
+
+    public List<org.kimios.kernel.ws.pojo.Bookmark> convertBookmarksToPojos(Session session, List<Bookmark> bookmarks)
+            throws ConfigException, DataSourceException {
+
+        List<org.kimios.kernel.ws.pojo.Bookmark> bookmarksPojoList =
+                new ArrayList<org.kimios.kernel.ws.pojo.Bookmark>();
+
+        for(Bookmark bookmark: bookmarks){
+            bookmarksPojoList.add(bookmark.toPojo());
+        }
+        return bookmarksPojoList;
     }
 
     public List<org.kimios.kernel.ws.pojo.Document> convertToPojosFromIds(Session session, List<Long> docsIds)
