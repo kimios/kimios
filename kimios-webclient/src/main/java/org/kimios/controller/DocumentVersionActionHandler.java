@@ -201,7 +201,8 @@ public class DocumentVersionActionHandler extends Controller
     private String encodeFileNameInHeader(HttpServletRequest request, String docName) throws Exception {
 
 
-        String userAgent = request.getHeader("user-agent");;
+
+        String userAgent = request.getHeader("user-agent");
         boolean isInternetExplorer = (userAgent.indexOf("MSIE") > -1);
 
         String item = null;

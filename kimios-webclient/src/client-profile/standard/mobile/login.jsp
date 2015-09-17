@@ -1,6 +1,5 @@
 <%@page import="org.kimios.client.controller.SecurityController" %>
-<%@ page import="org.springframework.web.context.WebApplicationContext" %>
-<%@ page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
+<%@ page import="org.kimios.controller.Controller" %>
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%--
   ~ Kimios - Document Management System Software
@@ -21,11 +20,7 @@
 
 <%
 
-    SecurityController securityController = null;
-    WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(this.getServletConfig().getServletContext());
-    if (securityController == null) {
-        securityController = (SecurityController) wac.getBean("securityController");
-    }
+    SecurityController securityController = Controller.getSecurityController();
     try {
         String login = request.getParameter("login");
         String password = request.getParameter("password");

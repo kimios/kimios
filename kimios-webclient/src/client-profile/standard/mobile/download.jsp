@@ -1,9 +1,8 @@
 <%@page import="org.kimios.client.controller.SecurityController" %>
 <%@page import="org.kimios.controller.DocumentVersionActionHandler" %>
-<%@page import="org.springframework.web.context.WebApplicationContext" %>
-<%@page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
 <%@page import="java.util.HashMap" %>
 <%@ page import="java.util.Map" %>
+<%@ page import="org.kimios.controller.Controller" %>
 <%@page contentType="text/html" pageEncoding="UTF-8" %>
 <%--
   ~ Kimios - Document Management System Software
@@ -24,9 +23,8 @@
 
 <%
     SecurityController securityController = null;
-    WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(this.getServletConfig().getServletContext());
     if (securityController == null) {
-        securityController = (SecurityController) wac.getBean("securityController");
+        securityController = Controller.getSecurityController();
     }
 
 
@@ -47,7 +45,7 @@
         params.put("action", "GetLastVersion");
         params.put("uid", uid + "");
         response.reset();
-        DocumentVersionActionHandler dvah = new DocumentVersionActionHandler(params, response);
+        DocumentVersionActionHandler dvah = new DocumentVersionActionHandler(params, request, response);
         dvah.setSessionUid(sessionUid);
         dvah.execute();
     }

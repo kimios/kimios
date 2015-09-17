@@ -5,8 +5,7 @@
 <%@page import="org.kimios.kernel.ws.pojo.Document" %>
 <%@page import="org.kimios.kernel.ws.pojo.Folder" %>
 <%@ page import="org.kimios.kernel.ws.pojo.Workspace" %>
-<%@ page import="org.springframework.web.context.WebApplicationContext" %>
-<%@ page import="org.springframework.web.context.support.WebApplicationContextUtils" %>
+<%@ page import="org.kimios.controller.Controller" %>
 <%--
   ~ Kimios - Document Management System Software
   ~ Copyright (C) 2012-2013  DevLib'
@@ -76,12 +75,11 @@
     WorkspaceController workspaceController = null;
     FolderController folderController = null;
     DocumentController documentController = null;
-    WebApplicationContext wac = WebApplicationContextUtils.getRequiredWebApplicationContext(this.getServletConfig().getServletContext());
     if (securityController == null) {
-        securityController = (SecurityController) wac.getBean("securityController");
-        workspaceController = (WorkspaceController) wac.getBean("workspaceController");
-        folderController = (FolderController) wac.getBean("folderController");
-        documentController = (DocumentController) wac.getBean("documentController");
+        securityController = Controller.getSecurityController();
+        workspaceController = Controller.getWorkspaceController();
+        folderController = Controller.getFolderController();
+        documentController = Controller.getDocumentController();
     }
     String sessionUid = (String) request.getSession().getAttribute("sessionUid");
     if (sessionUid == null || !securityController.isSessionAlive(sessionUid)) {
@@ -185,7 +183,7 @@
                         }
                         Document[] dd = documentController.getDocuments(sessionUid, ((Folder) dm).getUid());
                         for (Document d : dd) {
-                            out.write("<li><img src=\"" + request.getContextPath() + "/images/fileicons/" + getNormalizedExtension(d.getExtension()) + ".png\" alt=\"" + d.getName() + "." + d.getExtension() + "\" class=\"ui-li-icon\" /><a href=\"" + request.getContextPath() + "/mobile/download.jsp?uid=" + d.getUid() + "\" rel=\"external\" target=\"_blank\">" + d.getName() + "." + d.getExtension() + "</a></li>");
+                            out.write("<li><img src=\"" + request.getContextPath() + "/images/fileicons/" + getNormalizedExtension(d.getExtension()) + ".png\" class=\"ui-li-icon\" /><a href=\"" + request.getContextPath() + "/mobile/download.jsp?uid=" + d.getUid() + "\" rel=\"external\" target=\"_blank\">" + d.getName() + "." + d.getExtension() + "</a></li>");
                             count++;
                         }
                     }
