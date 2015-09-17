@@ -182,6 +182,13 @@ public class ActionLogger extends GenericEventHandler
             log.setUserSource(ctx.getSession().getUserSource());
             log.setAction(actionType);
             log.setDMEntity(ctx.getEntity());
+            //if delete action, store item data as json
+            if(actionType == ActionType.DELETE){
+                if(ctx.getEntity() != null){
+                    // store document path
+                    log.setActionData(ctx.getEntity().getPath() + " - (owner:" + ctx.getEntity().getOwner() + "@" + ctx.getEntity().getOwnerSource() + ")");
+                }
+            }
             FactoryInstantiator.getInstance().getEntityLogFactory().saveLog(log);
         } catch (Exception e) {
             logger.error(

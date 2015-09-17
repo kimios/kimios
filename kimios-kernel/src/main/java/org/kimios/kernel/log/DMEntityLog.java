@@ -55,6 +55,9 @@ public class DMEntityLog<T extends DMEntityImpl>
     @Column(name = "action_parameter", nullable = true)
     protected Long actionParameter;
 
+    @Column(name = "action_data", nullable = true, columnDefinition = "text")
+    protected String actionData;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "dm_entity_id", updatable = false, insertable = false)
     @ForeignKey( name = "none")
@@ -143,6 +146,14 @@ public class DMEntityLog<T extends DMEntityImpl>
     public DMEntityImpl getDmEntity()
     {
         return dmEntity;
+    }
+
+    public String getActionData() {
+        return actionData;
+    }
+
+    public void setActionData(String actionData) {
+        this.actionData = actionData;
     }
 
     public void setDMEntity(DMEntity e)

@@ -18,6 +18,7 @@ package org.kimios.kernel.reporting.impl;
 import org.hibernate.HibernateException;
 import org.hibernate.SQLQuery;
 import org.hibernate.type.IntegerType;
+import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.exception.DataSourceException;
@@ -57,7 +58,7 @@ public class DocumentTransactionsReport extends ReportImpl
             sql.addScalar("UserName", StringType.INSTANCE);
             sql.addScalar("LastActivityDate", StringType.INSTANCE);
             sql.addScalar("Position", StringType.INSTANCE);
-            sql.addScalar("TransactionUid", StringType.INSTANCE);
+            sql.addScalar("TransactionUid", LongType.INSTANCE);
 
             List<Object[]> lReports = sql.list();
             Report report = new Report("DocumentTransactions");
