@@ -20,10 +20,13 @@ kimios.MessageBox = {
             return;
 
         var ex = config.exception;
-        if (config.exception.indexOf("Error 15") != -1) { //Integrity exception
-            ex = kimios.lang('ObjectAlreadyUsed');
-        } else if (config.exception.indexOf("Error 04") != -1) { //Access Denied exception
-            ex = kimios.lang('AccessDenied');
+        if (config.exception && typeof config.exception.indexOf === "function"){
+
+            if(config.exception.indexOf("Error 15") != -1) { //Integrity exception
+                ex = kimios.lang('ObjectAlreadyUsed');
+            } else if (config.exception.indexOf("Error 04") != -1) { //Access Denied exception
+                ex = kimios.lang('AccessDenied');
+            }
         }
 
         var np = new Ext.Panel({

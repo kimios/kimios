@@ -298,13 +298,17 @@ public class DocumentActionHandler
         ArrayList<DMEntity> tmp = new ArrayList<DMEntity>();
         for ( Bookmark b : rels )
         {
-            DMEntity t = getEntity( b.getDmEntityType(), b.getDmEntityUid() );
-            if ( t != null )
-            {
-                tmp.add( t );
+            if(b.getEntity() != null){
+                tmp.add( new DMEntity(b.getEntity()) );
+            } else {
+                DMEntity t = getEntity( b.getDmEntityType(), b.getDmEntityUid() );
+                if ( t != null )
+                {
+                    tmp.add( t );
+                }
             }
         }
-        String jsonResp = new JSONSerializer().exclude( "class" ).serialize( tmp ).replaceAll( "null", "\"\"" );
+        String jsonResp = new JSONSerializer().exclude( "class" ).serialize( tmp );
 
         return jsonResp;
     }
@@ -316,14 +320,17 @@ public class DocumentActionHandler
         ArrayList<DMEntity> tmp = new ArrayList<DMEntity>();
         for ( Bookmark b : rels )
         {
-            DMEntity t = getEntity( b.getDmEntityType(), b.getDmEntityUid() );
-            if ( t != null )
-            {
-                tmp.add( t );
+            if(b.getEntity() != null){
+                tmp.add( new DMEntity(b.getEntity()));
+            } else {
+                DMEntity t = getEntity( b.getDmEntityType(), b.getDmEntityUid() );
+                if ( t != null )
+                {
+                    tmp.add( t );
+                }
             }
         }
         String jsonResp = new JSONSerializer().exclude( "class" ).serialize( tmp );
-
         return jsonResp;
     }
 
