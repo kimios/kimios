@@ -26,6 +26,179 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>kimios-karaf-distribution</artifactId>
-    <packaging>pom</packaging>
+    <packaging>karaf-assembly</packaging>
+
+
+    <properties>
+        <karaf.version>3.0.4</karaf.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <!-- scope is compile so all features (there is only one) are installed
+            into startup.properties and the feature repo itself is not added in etc/org.apache.karaf.features.cfg file -->
+            <groupId>org.apache.karaf.features</groupId>
+            <artifactId>framework</artifactId>
+            <version>${karaf.version}</version>
+            <type>kar</type>
+        </dependency>
+        <dependency>
+            <!-- scope is runtime so the feature repo is listed in etc/org.apache.karaf.features.cfg file, and features will installed into the system directory -->
+            <groupId>org.apache.karaf.features</groupId>
+            <artifactId>standard</artifactId>
+            <classifier>features</classifier>
+            <version>${karaf.version}</version>
+            <type>xml</type>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-karaf-features</artifactId>
+            <version>${project.version}</version>
+            <classifier>features</classifier>
+            <type>xml</type>
+            <scope>runtime</scope>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>docker</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <filters>
+                    <filter>src/build-conf/docker-values.properties</filter>
+                </filters>
+            </build>
+        </profile>
+        <profile>
+            <id>local</id>
+            <build>
+                <filters>
+                    <filter>src/build-conf/local-values.properties</filter>
+                </filters>
+            </build>
+        </profile>
+        <profile>
+            <id>release</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <filters>
+                    <filter>src/build-conf/release-values.properties</filter>
+                </filters>
+            </build>
+        </profile>
+    </profiles>
+
+    <build>
+
+        <!-- if you want to include resources in the distribution -->
+        <resources>
+            <resource>
+                <directory>src/main/karaf-resources/${karaf.version}</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/filtered-resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/*</include>
+                </includes>
+            </resource>
+
+            <!--hack to get file -->
+            <resource>
+                <directory>${basedir}/target/classes</directory>
+            </resource>
+        </resources>
+
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.6</version>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/target/classes</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/karaf-resources/${karaf.version}</directory>
+                                    <filtering>false</filtering>
+                                    <includes>
+                                        <include>**/*</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>src/main/resources</directory>
+                                    <filtering>false</filtering>
+                                    <includes>
+                                        <include>**/*</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>src/main/filtered-resources</directory>
+                                    <filtering>true</filtering>
+                                    <includes>
+                                        <include>**/*</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>src/features/${karaf.version}</directory>
+                                    <filtering>false</filtering>
+                                    <includes>
+                                        <include>**/*</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- karaf-maven-plugin will call both install-kar and instance-create-archive goals -->
+            <plugin>
+                <groupId>org.apache.karaf.tooling</groupId>
+                <artifactId>karaf-maven-plugin</artifactId>
+                <extensions>true</extensions>
+                <version>${karaf.version}</version>
+                <configuration>
+                    <!-- no startupFeatures -->
+                    <bootFeatures>
+                        <feature>standard</feature>
+                        <feature>management</feature>
+                        <feature>kimios-dependencies</feature>
+                        <feature>kimios-datasources</feature>
+                        <feature>kimios-solr</feature>
+                        <feature>kimios-core-settings</feature>
+                        <feature>kimios-core</feature>
+                        <feature>kimios-services</feature>
+                        <feature>kimios-web-standard</feature>
+                    </bootFeatures>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

@@ -19,21 +19,32 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>kimios</artifactId>
+        <artifactId>kimios-osgi-packages</artifactId>
         <groupId>org.kimios</groupId>
         <version>1.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
-    <artifactId>kimios-osgi-packages</artifactId>
-    <packaging>pom</packaging>
-    <modules>
-        <module>kimios-karaf-datasource</module>
-        <module>kimios-solr</module>
-        <module>kimios-kernel-osgi</module>
-        <module>kimios-karaf-commands</module>
-        <module>kimios-karaf-features</module>
-        <module>kimios-karaf-distribution</module>
-    </modules>
-
+    <artifactId>kimios-karaf-datasource</artifactId>
+    <packaging>bundle</packaging>
+    <build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>maven-bundle-plugin</artifactId>
+            <version>2.3.7</version>
+            <extensions>true</extensions>
+            <configuration>
+                <instructions>
+                    <Bundle-Name>Kimios :: Default Datasource</Bundle-Name>
+                    <Bundle-SymbolicName>org.kimios.datasources</Bundle-SymbolicName>
+                    <Bundle-Version>${project.version}</Bundle-Version>
+                    <DynamicImport-Package>*</DynamicImport-Package>
+                    <Import-Package>
+                        *;resolution:=optional
+                    </Import-Package>
+                </instructions>
+            </configuration>
+        </plugin>
+    </plugins>
+    </build>
 </project>

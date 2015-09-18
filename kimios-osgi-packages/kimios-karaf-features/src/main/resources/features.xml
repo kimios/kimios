@@ -3,17 +3,16 @@
     <repository>mvn:org.apache.cxf.karaf/apache-cxf/${cxf.version}/xml/features</repository>
     <feature name="kimios-dependencies" version="${project.version}">
         <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.dom4j/1.6.1_3</bundle>
-        <bundle>http://repository.springsource.com/ivy/bundles/external/org.aspectj/com.springsource.org.aspectj.runtime/1.7.1.RELEASE/com.springsource.org.aspectj.runtime-1.7.1.RELEASE.jar</bundle>
-        <bundle>http://repository.springsource.com/ivy/bundles/external/org.aspectj/com.springsource.org.aspectj.weaver/1.7.1.RELEASE/com.springsource.org.aspectj.weaver-1.7.1.RELEASE.jar</bundle>
+        <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.aspectj/1.7.1_1</bundle>
         <bundle start-level="80">mvn:commons-io/commons-io/2.2</bundle>
-        <bundle start-level="80">mvn:commons-lang/commons-lang</bundle>
+        <bundle start-level="80">mvn:commons-lang/commons-lang/LATEST</bundle>
         <bundle start-level="80">mvn:commons-collections/commons-collections/3.2.1</bundle>
-        <bundle start-level="80">mvn:commons-codec/commons-codec</bundle>
-        <bundle start-level="80">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-pool</bundle>
-        <bundle start-level="80">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-dbcp</bundle>
+        <bundle start-level="80">mvn:commons-codec/commons-codec/LATEST</bundle>
+        <bundle start-level="80">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-pool/LATEST</bundle>
+        <bundle start-level="80">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-dbcp/LATEST</bundle>
         <bundle>mvn:org.apache.commons/commons-email/1.4</bundle>
         <bundle>wrap:mvn:postgresql/postgresql/9.1-901.jdbc3</bundle>
-        <bundle>wrap:mvn:net.sourceforge.jtds/jtds</bundle>
+        <bundle>wrap:mvn:net.sourceforge.jtds/jtds/1.3.1</bundle>
         <bundle>mvn:org.codehaus.jackson/jackson-core-asl/1.9.13</bundle>
         <bundle>mvn:org.codehaus.jackson/jackson-mapper-asl/1.9.13</bundle>
         <bundle>mvn:org.codehaus.jackson/jackson-jaxrs/1.9.13</bundle>	
@@ -42,7 +41,7 @@
         <feature>cxf-xjc-runtime</feature>
 	    <feature>cxf-rs-security-cors</feature>
         <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.quartz/1.8.6_1</bundle>
-        <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.aopalliance</bundle>
+        <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.aopalliance/LATEST</bundle>
         <feature>war</feature>
         <feature>blueprint-web</feature>
         <feature version="${spring.version}">spring</feature>
@@ -58,23 +57,27 @@
 	<bundle>mvn:org.apache.httpcomponents/httpcore-osgi/4.3.3</bundle>
 	<bundle>mvn:org.kimios/kimios-solr/${solr4j.version}</bundle>
     </feature>
-    <feature version="${project.version}" name="kimios-core">
+    <feature version="${project.version}" name="kimios-core-settings">
         <configfile finalname="/etc/org.kimios.server.app.cfg">mvn:org.kimios/kimios-karaf-features/${project.version}/properties/kimios-server-cfg</configfile>
-        <configfile finalname="/deploy/kimios-ds.xml">mvn:org.kimios/kimios-karaf-features/${project.version}/xml/datasource</configfile>
-        <bundle start="false">mvn:org.kimios/kimios-kernel-osgi/${project.version}//blueprint</bundle>
-	    <bundle start="false">mvn:org.kimios/kimios-karaf-commands/${project.version}</bundle>
+        <bundle>mvn:org.kimios/kimios-karaf-datasource/${project.version}</bundle>
+    </feature>
+    <feature version="${project.version}" name="kimios-core">
+        <!--<configfile finalname="/deploy/kimios-ds.xml">mvn:org.kimios/kimios-karaf-features/${project.version}/xml/datasource</configfile>
+        <configfile finalname="/deploy/kimios-ds.xml">file:///home/farf/Development/kimios-infra/docker/finalkimios/kimios-srv/kimios-ds.xml</configfile>-->
+        <bundle>mvn:org.kimios/kimios-kernel-osgi/${project.version}/jar/blueprint</bundle>
+	    <bundle>mvn:org.kimios/kimios-karaf-commands/${project.version}</bundle>
     </feature>
     <feature version="${project.version}" name="kimios-services">
         <config name="org.apache.cxf.osgi">
             org.apache.cxf.servlet.context = /services
         </config>
-        <bundle start="false">mvn:org.kimios/kimios-services/${project.version}//blueprint</bundle>
-        <bundle start="false">mvn:org.kimios/kimios-bonita-service/${project.version}//blueprint</bundle>
-        <bundle start="false">mvn:org.kimios/kimios-convert-service/${project.version}//blueprint</bundle>
-        <bundle start="false">mvn:org.kimios/kimios-share-service/${project.version}//blueprint</bundle>
+        <bundle>mvn:org.kimios/kimios-services/${project.version}/jar/blueprint</bundle>
+        <bundle>mvn:org.kimios/kimios-bonita-service/${project.version}/jar/blueprint</bundle>
+        <bundle>mvn:org.kimios/kimios-convert-service/${project.version}/jar/blueprint</bundle>
+        <bundle>mvn:org.kimios/kimios-share-service/${project.version}/jar/blueprint</bundle>
     </feature>
     <feature version="${project.version}" name="kimios-web-standard">
         <configfile finalname="/etc/org.kimios.client.app.cfg">mvn:org.kimios/kimios-karaf-features/${project.version}/properties/kimios-client-cfg</configfile>
-        <bundle start="false">mvn:org.kimios/kimios-webclient/${project.version}/war/osgi</bundle>
+        <bundle>mvn:org.kimios/kimios-webclient/${project.version}/war/osgi</bundle>
     </feature>
 </features>
