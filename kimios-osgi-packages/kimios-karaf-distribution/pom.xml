@@ -62,39 +62,6 @@
         </dependency>
     </dependencies>
 
-    <profiles>
-        <profile>
-            <id>docker</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <build>
-                <filters>
-                    <filter>src/build-conf/docker-values.properties</filter>
-                </filters>
-            </build>
-        </profile>
-        <profile>
-            <id>local</id>
-            <build>
-                <filters>
-                    <filter>src/build-conf/local-values.properties</filter>
-                </filters>
-            </build>
-        </profile>
-        <profile>
-            <id>release</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <build>
-                <filters>
-                    <filter>src/build-conf/release-values.properties</filter>
-                </filters>
-            </build>
-        </profile>
-    </profiles>
-
     <build>
 
         <!-- if you want to include resources in the distribution -->

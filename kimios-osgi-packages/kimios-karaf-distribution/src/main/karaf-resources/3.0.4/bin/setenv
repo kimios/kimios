@@ -38,6 +38,12 @@
 # export JAVA_HOME # Location of Java installation
 # export JAVA_MIN_MEM # Minimum memory for the JVM
 export JAVA_MAX_MEM=2048m # Maximum memory for the JVM
+if [ "$KMS_MAX_MEMORY" = "" ]
+then
+   export JAVA_MAX_MEM=2048m
+else
+   export JAVA_MAX_MEM=$KMS_MAX_MEMORY
+fi
 # export JAVA_PERM_MEM # Minimum perm memory for the JVM
 export JAVA_MAX_PERM_MEM=512m # Maximum perm memory for the JVM
 # export EXTRA_JAVA_OPTS # Additional JVM options

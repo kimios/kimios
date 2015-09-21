@@ -31,7 +31,13 @@
     <dependencies>
         <dependency>
             <groupId>org.kimios</groupId>
-            <artifactId>kimios-home</artifactId>
+            <artifactId>kimios-kernel</artifactId>
+            <version>1.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-client-api</artifactId>
             <version>1.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
@@ -71,15 +77,85 @@
                 <version>2.4</version>
                 <executions>
                     <execution>
-                        <id>resource-dependencies</id>
+                        <id>resourcesrv-dependencies</id>
                         <phase>generate-resources</phase>
                         <goals>
                             <goal>unpack-dependencies</goal>
                         </goals>
                         <configuration>
-                            <includeArtifactIds>kimios-home</includeArtifactIds>
-                            <includes>client/conf/kimios.properties,server/conf/kimios.properties</includes>
-                            <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                            <includeArtifactIds>kimios-kernel</includeArtifactIds>
+                            <outputDirectory>${project.build.directory}/server-conf</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.4</version>
+                <executions>
+                    <execution>
+                        <id>resourcecli-dependencies</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeArtifactIds>kimios-client-api</includeArtifactIds>
+                            <outputDirectory>${project.build.directory}/client-conf</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>filtersrvconf</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <filters>
+                                <filter>${project.basedir}/src/build-conf/docker-values.properties</filter>
+                            </filters>
+                            <resources>
+                                <resource>
+                                    <directory>${project.build.directory}/server-conf/</directory>
+                                    <include>META-INF/settings/tpl/kimios.properties</include>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                            <outputDirectory>${project.build.directory}/server-conf-ok</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>filtercliconf</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <filters>
+                                <filter>${project.basedir}/src/build-conf/docker-values.properties</filter>
+                            </filters>
+                            <resources>
+                                <resource>
+                                    <directory>${project.build.directory}/client-conf</directory>
+                                    <include>META-INF/settings/tpl/kimios.properties</include>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                            <outputDirectory>${project.build.directory}/client-conf-ok</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
@@ -102,12 +178,12 @@
                                     <classifier>features</classifier>
                                 </artifact>
                                 <artifact>
-                                    <file>target/classes/server/conf/kimios.properties</file>
+                                    <file>${project.build.directory}/server-conf-ok/META-INF/settings/tpl/kimios.properties</file>
                                     <type>properties</type>
                                     <classifier>kimios-server-cfg</classifier>
                                 </artifact>
                                 <artifact>
-                                    <file>target/classes/client/conf/kimios.properties</file>
+                                    <file>${project.build.directory}/client-conf-ok/META-INF/settings/tpl/kimios.properties</file>
                                     <type>properties</type>
                                     <classifier>kimios-client-cfg</classifier>
                                 </artifact>
