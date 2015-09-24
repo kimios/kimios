@@ -163,6 +163,7 @@
                         <feature>kimios-services</feature>
                         <feature>kimios-web-standard</feature>
                     </bootFeatures>
+                    <installedFeatures></installedFeatures>
                 </configuration>
             </plugin>
         </plugins>
