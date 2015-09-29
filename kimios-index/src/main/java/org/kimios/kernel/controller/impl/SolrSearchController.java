@@ -391,6 +391,7 @@ public class SolrSearchController
         }
         searchRequestFactory.save(searchRequest);
         searchRequestFactory.getSession().flush();
+        log.debug("saved search query ");
         return searchRequest.getId();
     }
 
@@ -398,6 +399,8 @@ public class SolrSearchController
     public Long advancedSaveSearchQueryWithSecurity(Session session, SearchRequest searchRequest, List<SearchRequestSecurity> securities)
             throws DataSourceException, ConfigException, IndexException, IOException {
 
+
+        log.debug("1 saving search query with " + searchRequest.getName());
         if (searchRequest.getId() != null) {
             //update mode
             if (!canWrite(session, searchRequest)) {
@@ -415,15 +418,17 @@ public class SolrSearchController
             searchRequest.setSearchSessionId(session.getUid());
         }
 
+        log.debug("2 saving search query with " + searchRequest.getName());
+
         searchRequestFactory.save(searchRequest);
         searchRequestFactory.getSession().flush();
         //process security
+        searchRequest = searchRequestFactory.loadById(searchRequest.getId());
         searchRequestSecurityFactory.cleanACL(searchRequest);
         if (searchRequest.getSecurities() != null && searchRequest.getSecurities().size() > 0) {
             for (SearchRequestSecurity secItem : securities) {
                 secItem.setSearchRequest(searchRequest);
                 searchRequestSecurityFactory.saveSearchRequestSecurity(secItem);
-                log.debug("saving search request acl " + secItem);
             }
             // Views is supposed to be published, because of rights definition
             searchRequest.setPublished(true);
@@ -440,6 +445,8 @@ public class SolrSearchController
         }
         searchRequestFactory.save(searchRequest);
         searchRequestFactory.getSession().flush();
+
+        log.debug("3 saving search query with " + searchRequest.getName());
         return searchRequest.getId();
     }
 
