@@ -523,7 +523,7 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory {
             criteria.setFirstResult(0);
             criteria.setMaxResults(Integer.MAX_VALUE);
             criteria.add(Restrictions.in("uid", uniqueSubList));
-            criteria.addOrder(Order.asc("creationDate"));
+            criteria.addOrder(Order.desc("updateDate"));
             criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
             return criteria.list();
         } else {
