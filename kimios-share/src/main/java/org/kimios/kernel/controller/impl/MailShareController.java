@@ -19,6 +19,7 @@ package org.kimios.kernel.controller.impl;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.mail.HtmlEmail;
 import org.apache.commons.mail.MultiPartEmail;
+import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.IMailShareController;
 import org.kimios.kernel.dms.Document;
@@ -31,6 +32,7 @@ import org.kimios.kernel.share.mail.EmailFactory;
 import org.kimios.kernel.share.mail.MailTaskRunnable;
 import org.kimios.kernel.share.model.MailContact;
 import org.kimios.kernel.user.User;
+import org.kimios.utils.configuration.ConfigurationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -104,14 +106,21 @@ public class MailShareController extends AKimiosController implements IMailShare
         throws DmsKernelException {
 
         try {
-            logger.info("Submitted recipients: {}", recipients);
-            logger.info("Submitted doc ids: {}", documentIds);
+            logger.debug("Submitted recipients: {}", recipients);
+            logger.debug("Submitted doc ids: {}", documentIds);
             MultiPartEmail email = emailFactory.getMultipartEmailObject();
 
             for (String emailAddress : recipients.keySet()) {
-                email.addBcc(emailAddress, recipients.get(emailAddress));
+                email.addCc(emailAddress, recipients.get(emailAddress));
                 mailContactFactory.addContact(emailAddress.toLowerCase(), recipients.get(emailAddress));
             }
+
+            String copyToMailAddress = ConfigurationManager.getValue("dms.share.mail.copy.to");
+            if(StringUtils.isNotBlank(copyToMailAddress)){
+                email.addCc(copyToMailAddress);
+            }
+
+
             if (StringUtils.isNotBlank(senderAddress)) {
                 if (StringUtils.isNotBlank(senderName)) {
                     email.setFrom(senderAddress, senderName);
@@ -131,14 +140,29 @@ public class MailShareController extends AKimiosController implements IMailShare
             }
             email.setSubject(subject);
             email.setMsg(content);
+            long countSize = 0;
+            long maxAttachmentSize = 10000 * 1024;;
+            String val = ConfigurationManager.getValue("dms.share.max.attachment.size");
+            if(StringUtils.isNotBlank(val)){
+                try{
+                    maxAttachmentSize = Long.parseLong(val);
+                }   catch (Exception ex){
+                    logger.error("max attachment size not defined as integer. will use default {}", 10);
+                }
+            }
             for(Long documentId: documentIds){
                 Document d = dmsFactoryInstantiator.getDocumentFactory()
                         .getDocument(documentId);
+
                 if(getSecurityAgent().isReadable(d, session.getUserName(), session.getUserSource(), session.getGroups())){
                     DocumentVersion dv = dmsFactoryInstantiator.getDocumentVersionFactory()
                             .getLastDocumentVersion(d);
                     emailFactory.addDocumentVersionAttachment(email, d, dv);
                     logger.debug("added document to mail:  {}", d);
+                    countSize += dv.getLength();
+                    if(countSize > maxAttachmentSize){
+                        throw new ConfigException("MaxAttachmentSizeReached");
+                    }
                 } else {
                     throw new AccessDeniedException();
                 }
@@ -149,6 +173,11 @@ public class MailShareController extends AKimiosController implements IMailShare
 
         }catch (Exception ex){
             logger.error("error while sharing documen(s)", ex);
+            if(ex instanceof DmsKernelException){
+                throw (DmsKernelException)ex;
+            } else {
+                throw new DmsKernelException(ex);
+            }
         }
     }
 
