@@ -111,7 +111,7 @@ public class MailShareController extends AKimiosController implements IMailShare
             MultiPartEmail email = emailFactory.getMultipartEmailObject();
 
             for (String emailAddress : recipients.keySet()) {
-                email.addCc(emailAddress, recipients.get(emailAddress));
+                email.addTo(emailAddress, recipients.get(emailAddress));
                 mailContactFactory.addContact(emailAddress.toLowerCase(), recipients.get(emailAddress));
             }
 
