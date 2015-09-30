@@ -117,7 +117,7 @@ public class DmEntityControllerWeb extends Controller
                 break;
             case 3:
                 //mode to trash
-                if(ConfigurationManager.getValue("dms.enable.trash") != null && ConfigurationManager.getValue("dms.enable.trash").equals("true")){
+                if(ConfigurationManager.getValue("dms.enable.trash") != null && ConfigurationManager.getValue("dms.enable.trash").toLowerCase().equals("true")){
                     extensionController.addDocumentToTrash(sessionUid, dmEntityUid);
                 }else {
                     documentController.deleteDocument(sessionUid, dmEntityUid);
