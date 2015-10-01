@@ -187,7 +187,6 @@
             <scope>provided</scope>
         </dependency>
 
-
         <dependency>
             <groupId>org.ghost4j</groupId>
             <artifactId>ghost4j</artifactId>
@@ -308,6 +307,30 @@
             <scope>compile</scope>
         </dependency>
 
+        <!--aspose-->
+
+        <dependency>
+            <groupId>aspose</groupId>
+            <artifactId>aspose-word</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>aspose</groupId>
+            <artifactId>aspose-excel</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>aspose</groupId>
+            <artifactId>aspose-mail</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>aspose</groupId>
+            <artifactId>aspose-slides</artifactId>
+            <version>1.0</version>
+        </dependency>
 
         <dependency>
             <groupId>org.osgi</groupId>
@@ -335,6 +358,7 @@
     </dependencies>
     <build>
         <plugins>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>

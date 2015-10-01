@@ -37,5 +37,94 @@ kimios.util.PreviewHelper = {
     },
     extensionMapping : function(){
         return kimios.util.PreviewHelper.loadedMapping;
+    /*extensionMapping : function(){
+        var extMapping = {
+           doc: [{
+               target: 'html',
+               conv:'org.kimios.converter.impl.DocToHTML'
+           }],
+           docx: [{
+                target: 'html',
+                conv:'org.kimios.converter.impl.Docx4jDocxToHTML'
+           }],
+           eml: [{
+               target: 'html',
+               conv: 'org.kimios.converter.impl.MailToHtml'
+           }],
+           xls: [{
+               target: 'html',
+               conv: 'org.kimios.converter.impl.XlsToHTML'
+           }],
+           xlsx: [{
+                target: 'html',
+                conv: 'org.kimios.converter.impl.XlsToHTML'
+            }],
+            asciidoc: [{
+                target: 'html',
+                conv:'org.kimios.converter.impl.AsciiDocToHTML'
+            }],
+            adoc: [{
+                target: 'html',
+                conv:'org.kimios.converter.impl.AsciiDocToHTML'
+            }],
+            ps: [{
+                target: 'pdf',
+                conv: 'org.kimios.converter.impl.PostscriptToPDF'
+            }]
+           //pdf: [{conv: 'org.kimios.kernel.converter.impl.PDFMerger', target: 'pdf'}]
+        }
+        return extMapping;
+    }
+
+    extensionMapping : function(){
+        var extMapping = {
+            doc: [{
+                target: 'html',
+                conv:'org.kimios.kernel.converter.impl.vendors.impl.DocxToHTML'
+            }],
+            docx: [{
+                target: 'html',
+                conv:'org.kimios.kernel.converter.impl.vendors.impl.DocxToHTML'
+            }],
+            odt: [{
+                target: 'html',
+                conv:'org.kimios.kernel.converter.impl.vendors.impl.DocxToHTML'
+            }],
+            eml: [{
+                target: 'html',
+                conv:'org.kimios.kernel.converter.impl.vendors.impl.MailToHTML'
+            }],
+            msg: [{
+                target: 'html',
+                conv:'org.kimios.kernel.converter.impl.vendors.impl.MailToHTML'
+            }],
+            xls: [{
+                target: 'html',
+                conv:'org.kimios.kernel.converter.impl.vendors.impl.XlsToHTML'
+            }],
+            xlsx: [{
+                target: 'html',
+                conv:'org.kimios.kernel.converter.impl.vendors.impl.XlsToHTML'
+            }],
+            ods: [{
+                target: 'html',
+                conv:'org.kimios.kernel.converter.impl.vendors.impl.XlsToHTML'
+            }],
+            ppt: [{
+                target: 'html',
+                conv:'org.kimios.kernel.converter.impl.vendors.impl.PptToHTML'
+            }],
+            pptx: [{
+                target: 'html',
+                conv:'org.kimios.kernel.converter.impl.vendors.impl.PptToHTML'
+            }],
+            odp: [{
+                target: 'html',
+                conv:'org.kimios.kernel.converter.impl.vendors.impl.PptToHTML'
+            }]
+
+            //pdf: [{conv: 'org.kimios.kernel.converter.impl.PDFMerger', target: 'pdf'}]
+        }
+        return extMapping;*/
     }
 };

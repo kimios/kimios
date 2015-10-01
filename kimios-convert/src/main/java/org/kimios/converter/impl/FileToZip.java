@@ -110,7 +110,6 @@ public class FileToZip extends ConverterImpl {
 
         } catch (Exception e) {
             throw new ConverterException(e);
-
         } finally {
             try {
                 writer.close();
