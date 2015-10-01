@@ -101,7 +101,7 @@ public class SessionManager extends HFactory implements ISessionManager
         User authenticatingUser = null;
         if(authenticationSource.getEnableAuthByEmail() && authenticationSource.getEnableAuthByEmail()){
             log.debug("Trying to load user from email: {} ", uid);
-            authenticatingUser = uf.getUserByEmail(uid);
+            authenticatingUser = uf.getUserByEmail(uid.toLowerCase());
             log.debug("user found ? {}", authenticatingUser != null);
         }
         if(authenticatingUser == null){

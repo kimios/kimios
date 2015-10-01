@@ -15,9 +15,12 @@
  */
 package org.kimios.kernel.user.impl.factory.hibernate;
 
+import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.metamodel.binding.HibernateTypeDescriptor;
+import org.hibernate.type.StringType;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.hibernate.AbstractDBFactory;
@@ -70,12 +73,12 @@ public class HUserFactory implements UserFactory
     {
 
         String md5Password = new MD5Generator().generatePassword(password);
-        String rq = "from User where uid = :uid AND password= :cryptpwd AND authenticationSourceName=:authname";
+        String rq = "from User where lower(uid) = :uid AND password= :cryptpwd AND authenticationSourceName=:authname";
 
         try {
             Object u = AbstractDBFactory.getInstance()
                     .getSession().createQuery(rq)
-                    .setString("uid", uid)
+                    .setString("uid", uid.toLowerCase())
                     .setString("cryptpwd", md5Password)
                     .setString("authname", this.getAuth().getName())
                     .uniqueResult();
@@ -111,7 +114,7 @@ public class HUserFactory implements UserFactory
         try {
             User u  = (User)AbstractDBFactory.getInstance().getSession()
                     .createCriteria(User.class)
-                    .add(Restrictions.eq("uid", user.getUid()))
+                    .add(Restrictions.eq("uid", user.getUid()).ignoreCase())
                     .uniqueResult();
             AbstractDBFactory.getInstance().getSession().delete(u);
         } catch (HibernateException e) {
@@ -124,7 +127,8 @@ public class HUserFactory implements UserFactory
         try {
             User u = (User) AbstractDBFactory.getInstance()
                     .getSession()
-                    .createCriteria(User.class).add(Restrictions.eq("uid", uid))
+                    .createCriteria(User.class)
+                    .add(Restrictions.eq("uid", uid).ignoreCase())
                     .add(Restrictions.eq("authenticationSourceName", this.getAuth().getName())).uniqueResult();
 
             return u;
@@ -188,14 +192,14 @@ public class HUserFactory implements UserFactory
                     .getSession().flush();
 
             String query =
-                    "update User set password = :cryptwd WHERE uid= :uid AND authenticationSourceName like :authname";
+                    "update User set password = :cryptwd WHERE lower(uid)= :uid AND authenticationSourceName like :authname";
 
             AbstractDBFactory.getInstance()
                     .getSession()
                     .createQuery(query)
                     .setString("cryptwd",
                             FactoryInstantiator.getInstance().getCredentialsGenerator().generatePassword(password))
-                    .setString("uid", user.getID())
+                    .setString("uid", user.getID().toLowerCase())
                     .setString("authname", this.getAuth().getName())
                     .executeUpdate();
         } catch (HibernateException e) {
@@ -212,11 +216,11 @@ public class HUserFactory implements UserFactory
             AbstractDBFactory.getInstance().getSession().flush();
             if (password != null && !password.equals("")) {
                 String query =
-                        "update User SET password = :cryptwd WHERE uid= :uid AND authenticationSourceName like :authname";
+                        "update User SET password = :cryptwd WHERE lower(uid) = :uid AND authenticationSourceName like :authname";
                 AbstractDBFactory.getInstance().getSession().createQuery(query)
                         .setString("cryptwd",
                                 FactoryInstantiator.getInstance().getCredentialsGenerator().generatePassword(password))
-                        .setString("uid", user.getID())
+                        .setString("uid", user.getID().toLowerCase())
                         .setString("authname", this.getAuth().getName())
                         .executeUpdate();
             }
@@ -257,7 +261,7 @@ public class HUserFactory implements UserFactory
     }
 
     public User getUserByEmail(String emailAddress) throws DataSourceException, ConfigException {
-        String query = "select distinct u from User as u where u.mail = :email or '" + emailAddress + "' in elements(u.emails)";
+        String query = "select distinct u from User as u where lower(u.mail) = :email or '" + emailAddress + "' in elements(u.emails)";
         List<User> users = AbstractDBFactory.getInstance().getSession().createQuery(query)
                 .setString("email", emailAddress)
                 .list();
@@ -277,7 +281,7 @@ public class HUserFactory implements UserFactory
         try {
             User u = (User) AbstractDBFactory.getInstance()
                     .getSession()
-                    .createCriteria(User.class).add(Restrictions.eq("uid", uid))
+                    .createCriteria(User.class).add(Restrictions.eq("uid", uid).ignoreCase())
                     .add(Restrictions.eq("authenticationSourceName", this.getAuth().getName())).uniqueResult();
 
             u.getEmails().clear();
