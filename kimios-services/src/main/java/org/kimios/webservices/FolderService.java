@@ -26,6 +26,8 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA. User: farf Date: 4/1/12 Time: 4:58 PM To change this template use File | Settings | File
@@ -76,5 +78,15 @@ public interface FolderService
     @Path("/getFolderMetaValues")
     @Produces("application/json")
     public MetaValue[] getFolderMetaValues(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
-                               @QueryParam(value = "folderId") @WebParam(name = "folderId") long folderId) throws DMServiceException;
+                               @QueryParam(value = "folderId") @WebParam(name = "folderId") long folderId)
+            throws DMServiceException;
+
+
+    @GET
+    @Path("/getFoldersWithMetaValues")
+    @Produces("application/json")
+    public HashMap<Folder, List<MetaValue>>
+                getFoldersWithMetaValues(@QueryParam(value = "sessionId") @WebParam(name = "sessionId")  String sessionId,
+                                         @QueryParam(value = "foldersId") @WebParam(name = "foldersId") List<Long> foldersIds)
+            throws DMServiceException;
 }

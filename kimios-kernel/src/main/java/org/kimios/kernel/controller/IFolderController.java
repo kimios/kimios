@@ -28,6 +28,7 @@ import org.kimios.kernel.log.DMEntityLog;
 import org.kimios.kernel.security.Session;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 public interface IFolderController {
@@ -82,5 +83,9 @@ public interface IFolderController {
             throws NamingException, ConfigException, DataSourceException, AccessDeniedException;
 
     public List<MetaValue> listMetaValues(Session session, long folderId)
+            throws ConfigException, DataSourceException, AccessDeniedException;
+
+    public Map<org.kimios.kernel.ws.pojo.Folder, List<org.kimios.kernel.ws.pojo.MetaValue>>
+    getFolderWithMetaDatas(Session session, List<Long> folders)
             throws ConfigException, DataSourceException, AccessDeniedException;
 }

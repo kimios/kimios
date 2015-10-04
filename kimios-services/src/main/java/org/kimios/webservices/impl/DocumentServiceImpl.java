@@ -509,6 +509,25 @@ public class DocumentServiceImpl extends CoreService implements DocumentService 
 
     /**
      * @param sessionId
+     * @return
+     * @throws DMServiceException
+     */
+    public org.kimios.kernel.ws.pojo.Bookmark[] getBookmarksInPath(String sessionId, String path) throws DMServiceException {
+
+        try {
+
+            Session session = getHelper().getSession(sessionId);
+            List<Bookmark> vBookmarks = documentController.getBookmarksInPath(session, path);
+            List<org.kimios.kernel.ws.pojo.Bookmark> links =
+                    documentController.convertBookmarksToPojos(session, vBookmarks);
+            return links.toArray(new org.kimios.kernel.ws.pojo.Bookmark[]{});
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
+
+    /**
+     * @param sessionId
      * @param dmEntityId
      * @throws DMServiceException
      */

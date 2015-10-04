@@ -306,4 +306,6 @@ public interface IDocumentController {
 
     public List<org.kimios.kernel.ws.pojo.Bookmark> convertBookmarksToPojos(Session session, List<Bookmark> docs)
             throws ConfigException, DataSourceException;
+
+    public List<Bookmark> getBookmarksInPath(Session session, String path) throws DataSourceException, ConfigException;
 }

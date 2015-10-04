@@ -16,6 +16,8 @@
 package org.kimios.kernel.controller.impl;
 
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.configuration.Config;
 import org.kimios.kernel.controller.*;
@@ -26,6 +28,7 @@ import org.kimios.kernel.dms.DMEntity;
 import org.kimios.kernel.dms.Document;
 import org.kimios.kernel.dms.DocumentVersion;
 import org.kimios.kernel.dms.Folder;
+import org.kimios.kernel.dms.Meta;
 import org.kimios.kernel.dms.MetaValue;
 import org.kimios.kernel.dms.SymbolicLink;
 import org.kimios.kernel.dms.WorkflowStatus;
@@ -34,6 +37,7 @@ import org.kimios.kernel.dms.utils.MetaProcessor;
 import org.kimios.kernel.events.EventContext;
 import org.kimios.kernel.events.annotations.DmsEvent;
 import org.kimios.kernel.events.annotations.DmsEventName;
+import org.kimios.kernel.events.impl.AddonDataHandler;
 import org.kimios.kernel.exception.*;
 import org.kimios.kernel.filetransfer.DataTransfer;
 import org.kimios.kernel.filetransfer.zip.FileCompressionHelper;
@@ -1269,10 +1273,35 @@ public class DocumentController extends AKimiosController implements IDocumentCo
 
         List<org.kimios.kernel.ws.pojo.Bookmark> bookmarksPojoList =
                 new ArrayList<org.kimios.kernel.ws.pojo.Bookmark>();
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS, false);
+        mapper.getSerializationConfig().addMixInAnnotations(Meta.class, AddonDataHandler.MetaMixIn.class);
 
-        for(Bookmark bookmark: bookmarks){
-            bookmarksPojoList.add(bookmark.toPojo());
-        }
+            for (Bookmark bookmark : bookmarks) {
+                org.kimios.kernel.ws.pojo.Bookmark bookmarkPojo = bookmark.toPojo();
+                org.kimios.kernel.ws.pojo.DMEntity pojoEntity = bookmarkPojo.getEntity();
+                String[] it = new String[]{"", "String", "Number", "Date", "Boolean"};
+                if (pojoEntity instanceof org.kimios.kernel.ws.pojo.Folder && ((Folder) bookmark.getEntity()).getAddOnDatas() != null) {
+                    // generate folder meta datas
+                    try{
+                    AddonDataHandler.AddonDatasWrapper wrapper = mapper.readValue(((Folder) bookmark.getEntity()).getAddOnDatas(),
+                            AddonDataHandler.AddonDatasWrapper.class);
+
+                        for(MetaValue mv: wrapper.getEntityMetaValues()){
+                            org.kimios.kernel.ws.pojo.MetaValue pojoMetaValue = new org.kimios.kernel.ws.pojo.MetaValue();
+                            pojoMetaValue.setMeta(mv.getMeta().toPojo());
+                            pojoMetaValue.setMetaId(mv.getMetaUid());
+                            pojoMetaValue.setValue(mv.getValue());
+                            pojoEntity.getMetaDatas().put("MetaData" + it[mv.getMeta().getMetaType()]+ "_" + mv.getMetaUid(), pojoMetaValue);
+                        }
+                    }catch (IOException exception){
+                        log.error("error while parsing json meta datas for entity folder #" + bookmark.getEntity().getUid(), exception);
+                    }
+
+                }
+                bookmarksPojoList.add(bookmarkPojo);
+            }
+
         return bookmarksPojoList;
     }
 
@@ -1387,5 +1416,32 @@ public class DocumentController extends AKimiosController implements IDocumentCo
 
         } else
             throw new AccessDeniedException();
+    }
+
+
+
+
+
+    /**
+     * Get the bookmarked elements in a given path list of the given user, in a sp
+     */
+    public List<Bookmark> getBookmarksInPath(Session session, String path) throws DataSourceException, ConfigException {
+        List<DMEntity> bl = dmsFactoryInstantiator.getBookmarkFactory()
+                .getBookmarks(session.getUserName(), session.getUserSource(), session.getGroups(), path);
+        List<Bookmark> vBookmarks = new ArrayList<Bookmark>();
+        for (DMEntity d : bl) {
+            if (getSecurityAgent().isReadable(d, session.getUserName(), session.getUserSource(), session.getGroups())) {
+                if(d instanceof Document){
+                    if(((Document)d).getTrashed() != null && ((Document)d).getTrashed()){
+                        continue;
+                    }
+                }
+                Bookmark bmk = new Bookmark(session.getUserName(), session.getUserSource(), SecurityEntityType.USER,
+                        d.getUid(), d.getType());
+                bmk.setEntity(d);
+                vBookmarks.add(bmk);
+            }
+        }
+        return vBookmarks;
     }
 }

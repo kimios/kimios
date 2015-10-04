@@ -20,6 +20,11 @@ import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.IFolderController;
 import org.kimios.kernel.controller.utils.PathUtils;
 import org.kimios.kernel.dms.*;
+import org.kimios.kernel.dms.DMEntity;
+import org.kimios.kernel.dms.Folder;
+import org.kimios.kernel.dms.Meta;
+import org.kimios.kernel.dms.MetaValue;
+import org.kimios.kernel.dms.Workspace;
 import org.kimios.kernel.dms.hibernate.HVirtualFolderFactory;
 import org.kimios.kernel.events.EventContext;
 import org.kimios.kernel.events.annotations.DmsEvent;
@@ -32,14 +37,12 @@ import org.kimios.kernel.hibernate.HFactory;
 import org.kimios.kernel.log.DMEntityLog;
 import org.kimios.kernel.security.DMEntitySecurity;
 import org.kimios.kernel.security.Session;
+import org.kimios.kernel.ws.pojo.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
 
 @Transactional
 public class FolderController extends AKimiosController implements IFolderController {
@@ -353,7 +356,7 @@ public class FolderController extends AKimiosController implements IFolderContro
 
     /***
      *
-     * Load virtual volder meta datas
+     * Load virtual folder meta datas
      *
      * @param session
      * @param folderId
@@ -390,6 +393,45 @@ public class FolderController extends AKimiosController implements IFolderContro
         } else {
             throw new AccessDeniedException();
         }
+    }
+
+    /***
+     *
+     * Get Folders with Meta Datas
+     *
+     * @param session Session Id
+     * @param folders Folders Ids List
+     * @return
+     * @throws ConfigException
+     * @throws DataSourceException
+     * @throws AccessDeniedException
+     */
+    @Override
+    public Map<org.kimios.kernel.ws.pojo.Folder, List<org.kimios.kernel.ws.pojo.MetaValue>>
+            getFolderWithMetaDatas(Session session, List<Long> folders)
+            throws ConfigException, DataSourceException, AccessDeniedException
+    {
+        Map<org.kimios.kernel.ws.pojo.Folder, List<org.kimios.kernel.ws.pojo.MetaValue>> folderListMap =
+                new HashMap<org.kimios.kernel.ws.pojo.Folder, List<org.kimios.kernel.ws.pojo.MetaValue>>();
+        for(Long folderId: folders){
+            Folder f = dmsFactoryInstantiator.getFolderFactory().getFolder(folderId);
+            if (getSecurityAgent().isReadable(f, session.getUserName(), session.getUserSource(), session.getGroups())) {
+                List<VirtualFolderMetaData> virtualFolderMetaDatas =
+                        dmsFactoryInstantiator.getVirtualFolderFactory().virtualFolderMetaDataList(f);
+                List<org.kimios.kernel.ws.pojo.MetaValue> metaValues = new ArrayList<org.kimios.kernel.ws.pojo.MetaValue>();
+                for(VirtualFolderMetaData m: virtualFolderMetaDatas){
+                    org.kimios.kernel.ws.pojo.MetaValue mv =
+                            new org.kimios.kernel.ws.pojo.MetaValue();
+                    mv.setValue(m.getStringValue());
+                    mv.setMeta(m.getMeta().toPojo());
+                    metaValues.add(mv);
+                }
+                folderListMap.put(f.toPojo(), metaValues);
+            } else {
+                throw new AccessDeniedException();
+            }
+        }
+        return folderListMap;
     }
 }
 

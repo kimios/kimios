@@ -57,19 +57,8 @@ public class HBookmarkFactory extends HFactory implements BookmarkFactory
                     .add(Restrictions.eq("owner", userName))
                     .add(Restrictions.eq("ownerSource", userSource))
                     .list();
-            DMEntity t = null;
             for (Bookmark b : lBookmarks) {
-                switch (b.getType()) {
-                    case DMEntityType.WORKSPACE:
-                        t = fc.getWorkspaceFactory().getWorkspace(b.getUid());
-                        break;
-                    case DMEntityType.FOLDER:
-                        t = fc.getFolderFactory().getFolder(b.getUid());
-                        break;
-                    case DMEntityType.DOCUMENT:
-                        t = fc.getDocumentFactory().getDocument(b.getUid());
-                        break;
-                }
+                DMEntity t = fc.getDmEntityFactory().getEntity(b.getUid());
                 if (t != null) {
                     bookmarks.add(t);
                 } else {
@@ -111,24 +100,57 @@ public class HBookmarkFactory extends HFactory implements BookmarkFactory
                             Restrictions.or(groupsExpression.toArray(new Conjunction[]{}))
                     )
             ).list();
-
-
-
-            DMEntity t = null;
             List<Long> addedEntities = new ArrayList<Long>();
             for (Bookmark b : lBookmarks) {
-                switch (b.getType()) {
-                    case DMEntityType.WORKSPACE:
-                        t = fc.getWorkspaceFactory().getWorkspace(b.getUid());
-                        break;
-                    case DMEntityType.FOLDER:
-                        t = fc.getFolderFactory().getFolder(b.getUid());
-                        break;
-                    case DMEntityType.DOCUMENT:
-                        t = fc.getDocumentFactory().getDocument(b.getUid());
-                        break;
-                }
+                DMEntity t = fc.getDmEntityFactory().getEntity(b.getUid());
                 if (t != null && !addedEntities.contains(t.getUid())) {
+                    bookmarks.add(t);
+                    addedEntities.add(t.getUid());
+                } else {
+                    removeBookmark(userName, userSource, 1, b.getUid(), b.getType());
+                    removeBookmark(userName, userSource, 2, b.getUid(), b.getType());
+                }
+            }
+            return bookmarks;
+        } catch (HibernateException e) {
+            throw new DataSourceException(e);
+        }
+    }
+
+    public List<DMEntity> getBookmarks(String userName, String userSource, List<Group> groups, String path)
+            throws ConfigException, DataSourceException
+    {
+        try {
+            FactoryInstantiator fc = FactoryInstantiator.getInstance();
+            List<DMEntity> bookmarks = new ArrayList<DMEntity>();
+
+            Criteria mainCriteria = getSession().createCriteria(Bookmark.class);
+
+            LogicalExpression expression = Restrictions.and(
+                    Restrictions.eq("owner", userName),
+                    Restrictions.eq("ownerSource", userSource)
+            );
+
+            List<Conjunction> groupsExpression = new ArrayList<Conjunction>();
+            for(Group gr: groups){
+                groupsExpression.add(Restrictions.and(
+                        Restrictions.eq("owner", gr.getGid()),
+                        Restrictions.eq("ownerSource", gr.getAuthenticationSourceName()),
+                        Restrictions.eq("ownerType", SecurityEntityType.GROUP)
+                ));
+            }
+
+            List<Bookmark> lBookmarks = mainCriteria.add(
+                    Restrictions.or(
+                            expression,
+                            Restrictions.or(groupsExpression.toArray(new Conjunction[]{}))
+                    )
+            ).list();
+
+            List<Long> addedEntities = new ArrayList<Long>();
+            for (Bookmark b : lBookmarks) {
+                DMEntity t = fc.getDmEntityFactory().getEntity(b.getUid());
+                if (t != null && !addedEntities.contains(t.getUid()) && t.getPath().startsWith(path)) {
                     bookmarks.add(t);
                     addedEntities.add(t.getUid());
                 } else {

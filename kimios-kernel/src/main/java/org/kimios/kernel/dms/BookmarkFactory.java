@@ -36,5 +36,8 @@ public interface BookmarkFactory
 
     public List<DMEntity> getBookmarks(String userName, String userSource, List<Group> groups)
             throws ConfigException, DataSourceException;
+
+    public List<DMEntity> getBookmarks(String userName, String userSource, List<Group> groups, String path)
+            throws ConfigException, DataSourceException;
 }
 

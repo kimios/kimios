@@ -24,7 +24,9 @@ import org.kimios.webservices.FolderService;
 
 import javax.jws.WebService;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @WebService(targetNamespace = "http://kimios.org", serviceName = "FolderService", name = "FolderService")
 public class FolderServiceImpl extends CoreService implements FolderService
@@ -111,6 +113,18 @@ public class FolderServiceImpl extends CoreService implements FolderService
             }
 
             return mvArray.toArray(new MetaValue[]{});
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
+
+    @Override
+    public HashMap<Folder, List<MetaValue>>
+            getFoldersWithMetaValues(String sessionId, List<Long> foldersIds) throws DMServiceException {
+        try {
+            Session session = getHelper().getSession(sessionId);
+            return (HashMap)folderController.getFolderWithMetaDatas(session, foldersIds);
+
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }

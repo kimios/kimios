@@ -232,6 +232,13 @@ public interface DocumentService {
             throws DMServiceException;
 
     @GET
+    @Path("/getBookmarksInPath")
+    @Produces("application/json")
+    public Bookmark[] getBookmarksInPath(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+                                   @QueryParam(value = "path") @WebParam(name = "path") String path)
+            throws DMServiceException;
+
+    @GET
     @Path("/addBookmark")
     @Produces("application/json")
     public void addBookmark(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
