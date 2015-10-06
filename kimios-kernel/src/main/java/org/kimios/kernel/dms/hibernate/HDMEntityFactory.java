@@ -25,9 +25,7 @@ import org.kimios.kernel.hibernate.HFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class HDMEntityFactory extends HFactory implements DMEntityFactory {
     private static Logger log = LoggerFactory.getLogger(DMEntityFactory.class);
@@ -525,7 +523,14 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory {
             criteria.add(Restrictions.in("uid", uniqueSubList));
             criteria.addOrder(Order.desc("updateDate"));
             criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-            return criteria.list();
+            List<DMEntity> items =  criteria.list();
+            Collections.sort(items, new Comparator<DMEntity>() {
+                @Override
+                public int compare(DMEntity o1, DMEntity o2) {
+                    return ((DMEntityImpl)o2).getUpdateDate().compareTo(((DMEntityImpl)o1).getUpdateDate());
+                }
+            });
+            return items;
         } else {
             return new ArrayList<DMEntity>();
         }
