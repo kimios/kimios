@@ -769,6 +769,55 @@ public class SolrSearchController
         return this.parseQueryFromListCriteria(session, page, pageSize, criteriaList, sortField, sortDir, null, null);
     }
 
+
+    private String parseDateCriteria(String query, String dateFormat){
+        String finalDateQuery = "";
+        SimpleDateFormat sdfTmp = new SimpleDateFormat(dateFormat);
+        sdfTmp.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+        SimpleDateFormat solrFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        solrFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+        if (query.contains(" to ")) {
+            finalDateQuery += "[";
+            String[] tQueryParts = query.toLowerCase().split(" to ");
+            Date date1 = null;
+            Date date2 = null;
+            try {
+                date1 = sdfTmp.parse(tQueryParts[0]);
+                finalDateQuery += solrFormat.format(date1);
+            } catch (Exception ex) {
+                finalDateQuery += tQueryParts[0].toUpperCase();
+            }
+            try {
+                date2 = sdfTmp.parse(tQueryParts[1]);
+                finalDateQuery += " TO " + solrFormat.format(date2);
+            } catch (Exception ex) {
+                finalDateQuery += " TO " + tQueryParts[1].toUpperCase();
+            }
+
+            finalDateQuery += "]";
+        } else {
+            Date date1 = null;
+            try {
+                date1 = sdfTmp.parse(query);
+                finalDateQuery += solrFormat.format(date1);
+                //only one date, so add current day
+
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(date1.getTime());
+                calendar.add(Calendar.DATE, 1);
+                calendar.add(Calendar.MILLISECOND, -1);
+                String endDate = solrFormat.format(calendar.getTime());
+                finalDateQuery = "[" + finalDateQuery + " TO " + endDate + "]";
+
+            } catch (Exception ex) {
+                finalDateQuery += query;
+            }
+
+        }
+        return finalDateQuery;
+    }
     private SolrQuery parseQueryFromListCriteria(Session session, int page, int pageSize, List<Criteria> criteriaList,
                                                  String sortField, String sortDir, String virtualPath, Long savedId)
             throws ParseException {
@@ -904,71 +953,26 @@ public class SolrSearchController
                 }
             } else if (c.getFiltersValues() != null && c.getFiltersValues().size() > 0) {
                 for (String e : c.getFiltersValues()) {
-                    if (c.isRawQuery()) {
-                        filtersMap.put(c, c.getFieldName() + ":" + e);
-                        //filterQueries.add(c.getFieldName() + ":" + e);
-                    } else {
-                        //filterQueries.add(c.getFieldName() + ":" + ClientUtils.escapeQueryChars(e));
-                        filtersMap.put(c, c.getFieldName() + ":" + ClientUtils.escapeQueryChars(e));
+                    if (StringUtils.isNotBlank(e)) {
+                        if (c.isRawQuery()) {
+                            if (c.getFieldName().contains("Date")) {
+                                //parse date
+                                filtersMap.put(c, c.getFieldName() + ":" + parseDateCriteria(e, c.getDateFormat()));
+                            } else
+                                filtersMap.put(c, c.getFieldName() + ":" + e);
+                        } else {
+                            //filterQueries.add(c.getFieldName() + ":" + ClientUtils.escapeQueryChars(e));
+                            filtersMap.put(c, c.getFieldName() + ":" + ClientUtils.escapeQueryChars(e));
+                        }
                     }
-
                 }
             } else if (c.getQuery() != null && c.getQuery().trim().length() > 0 || c.getRangeMin() != null
                     || c.getRangeMax() != null) {
 
                 if (c.isRawQuery()) {
-                    // create direct query
-
-
                     //reparse date if necessary
-
-                    if (c.getFieldName().contains("Date")) {
-
-                        String finalDateQuery = "";
-                        SimpleDateFormat sdfTmp = new SimpleDateFormat(c.getDateFormat());
-                        sdfTmp.setTimeZone(TimeZone.getTimeZone("UTC"));
-
-                        SimpleDateFormat solrFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-                        solrFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-
-                        if (c.getQuery().toLowerCase().contains(" to ")) {
-                            finalDateQuery += "[";
-                            String[] tQueryParts = c.getQuery().toLowerCase().split(" to ");
-                            Date date1 = null;
-                            Date date2 = null;
-                            try {
-                                date1 = sdfTmp.parse(tQueryParts[0]);
-                                finalDateQuery += solrFormat.format(date1);
-                            } catch (Exception ex) {
-                                finalDateQuery += tQueryParts[0].toUpperCase();
-                            }
-                            try {
-                                date2 = sdfTmp.parse(tQueryParts[1]);
-                                finalDateQuery += " TO " + solrFormat.format(date2);
-                            } catch (Exception ex) {
-                                finalDateQuery += " TO " + tQueryParts[1].toUpperCase();
-                            }
-
-                            finalDateQuery += "]";
-                        } else {
-                            Date date1 = null;
-                            try {
-                                date1 = sdfTmp.parse(c.getQuery());
-                                finalDateQuery += solrFormat.format(date1);
-                                //only one date, so add current day
-
-                                Calendar calendar = Calendar.getInstance();
-                                calendar.setTimeInMillis(date1.getTime());
-                                calendar.add(Calendar.DATE, 1);
-                                calendar.add(Calendar.MILLISECOND, -1);
-                                String endDate = solrFormat.format(calendar.getTime());
-                                finalDateQuery = "[" + finalDateQuery + " TO " + endDate + "]";
-
-                            } catch (Exception ex) {
-                                finalDateQuery += c.getQuery();
-                            }
-
-                        }
+                    if (c.getFieldName().contains("Date")){
+                        String finalDateQuery = parseDateCriteria(c.getQuery(), c.getDateFormat());
                         log.info("Raw FINAL DATE QUERY {}", finalDateQuery);
                         queries.add((c.getOperator() != null && c.getOperator().length() > 0 ?
                                 c.getOperator() : "") + c.getFieldName() + ":" + finalDateQuery);
