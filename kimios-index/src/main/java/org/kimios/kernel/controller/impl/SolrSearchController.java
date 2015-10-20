@@ -778,7 +778,7 @@ public class SolrSearchController
         SimpleDateFormat solrFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         solrFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
-        if (query.contains(" to ")) {
+        if (query.toLowerCase().contains(" to ")) {
             finalDateQuery += "[";
             String[] tQueryParts = query.toLowerCase().split(" to ");
             Date date1 = null;
