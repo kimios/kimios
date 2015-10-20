@@ -267,6 +267,8 @@ kimios.properties.SecurityEntityPanel = Ext.extend(Ext.Panel, {
         this.grid.store.on('load', function (store, records, options) {
             this.loaded = true;
             this.setIconClass('group-icon');
+            // hide append mode field
+            appendModeField.hide();
         }, this);
 
         this.grid.on('cellclick', function (grid, rowIndex, columnIndex, e) {

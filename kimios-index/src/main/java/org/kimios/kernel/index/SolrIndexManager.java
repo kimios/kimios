@@ -902,6 +902,7 @@ public class SolrIndexManager
                 SolrDocument doc = rsp.getResults().get(0);
                 this.solr.deleteById(String.valueOf(docUid));
                 doc.removeFields("DocumentACL");
+                doc.removeFields("score");
                 SolrInputDocument docUpdate = ClientUtils.toSolrInputDocument(doc);
                 for (int j = 0; j < acls.size(); j++) {
                     docUpdate.addField("DocumentACL", acls.get(j).getRuleHash());

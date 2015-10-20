@@ -960,18 +960,17 @@ public class DocumentController extends AKimiosController implements IDocumentCo
         List<DMEntity> bl = dmsFactoryInstantiator.getBookmarkFactory()
                 .getBookmarks(session.getUserName(), session.getUserSource(), session.getGroups());
         Vector<Bookmark> vBookmarks = new Vector<Bookmark>();
-        for (DMEntity d : bl) {
-            if (getSecurityAgent().isReadable(d, session.getUserName(), session.getUserSource(), session.getGroups())) {
-                if(d instanceof Document){
-                    if(((Document)d).getTrashed() != null && ((Document)d).getTrashed()){
-                        continue;
-                    }
+        List<DMEntity> entities = getSecurityAgent().areReadable(bl, session.getUserName(), session.getUserSource(), session.getGroups());
+        for (DMEntity d : entities) {
+            if(d instanceof Document){
+                if(((Document)d).getTrashed() != null && ((Document)d).getTrashed()){
+                    continue;
                 }
-                Bookmark bmk = new Bookmark(session.getUserName(), session.getUserSource(), SecurityEntityType.USER,
-                        d.getUid(), d.getType());
-                bmk.setEntity(d);
-                vBookmarks.add(bmk);
             }
+            Bookmark bmk = new Bookmark(session.getUserName(), session.getUserSource(), SecurityEntityType.USER,
+                    d.getUid(), d.getType());
+            bmk.setEntity(d);
+            vBookmarks.add(bmk);
         }
         return vBookmarks;
     }

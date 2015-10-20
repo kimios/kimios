@@ -14,14 +14,14 @@ import java.util.Vector;
  * Created by farf on 01/04/15.
  */
 public interface ISecurityAgent {
-    <T extends DMEntityImpl> List<T> areReadable(List<T> entities, String userName, String userSource,
+    <T extends DMEntity> List<T> areReadable(List<T> entities, String userName, String userSource,
                                                  Vector<Group> groups) throws ConfigException,
             DataSourceException;
 
-    <T extends DMEntityImpl> List<T> areWritable(List<T> entities, String userName, String userSource,
+    <T extends DMEntity> List<T> areWritable(List<T> entities, String userName, String userSource,
                                                  Vector<Group> groups) throws ConfigException, DataSourceException;
 
-    <T extends DMEntityImpl> List<T> areFullAccess(List<T> entities, String userName, String userSource,
+    <T extends DMEntity> List<T> areFullAccess(List<T> entities, String userName, String userSource,
                                                    Vector<Group> groups) throws ConfigException, DataSourceException;
 
     boolean isReadable(DMEntity dm, String userName, String userSource, Vector<Group> groups)

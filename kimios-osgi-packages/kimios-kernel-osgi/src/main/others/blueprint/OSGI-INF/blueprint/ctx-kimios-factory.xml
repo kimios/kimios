@@ -404,7 +404,9 @@
         <tx:transaction method="*" value="Required"/>
     </bean>
 
-    <bean id="aclUpdater" class="org.kimios.kernel.jobs.security.ACLUpdater"/>
+    <bean id="aclUpdater" class="org.kimios.kernel.jobs.security.ACLUpdater">
+           <tx:transaction method="*" value="Required" />
+    </bean>
 
 
 

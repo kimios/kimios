@@ -55,7 +55,7 @@ public class SecurityAgent implements ISecurityAgent {
     }
 
     @Override
-    public <T extends DMEntityImpl> List<T> areReadable(List<T> entities, String userName, String userSource,
+    public <T extends DMEntity> List<T> areReadable(List<T> entities, String userName, String userSource,
                                                         Vector<Group> groups) throws ConfigException,
             DataSourceException
     {
@@ -103,7 +103,7 @@ public class SecurityAgent implements ISecurityAgent {
     }
 
     @Override
-    public <T extends DMEntityImpl> List<T> areWritable(List<T> entities, String userName, String userSource,
+    public <T extends DMEntity> List<T> areWritable(List<T> entities, String userName, String userSource,
                                                         Vector<Group> groups) throws ConfigException, DataSourceException
     {
 
@@ -145,7 +145,7 @@ public class SecurityAgent implements ISecurityAgent {
     }
 
     @Override
-    public <T extends DMEntityImpl> List<T> areFullAccess(List<T> entities, String userName, String userSource,
+    public <T extends DMEntity> List<T> areFullAccess(List<T> entities, String userName, String userSource,
                                                           Vector<Group> groups) throws ConfigException, DataSourceException
     {
 

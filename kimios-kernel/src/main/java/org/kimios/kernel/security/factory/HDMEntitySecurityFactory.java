@@ -36,7 +36,7 @@ import java.util.*;
 public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecurityFactory {
     final Logger log = LoggerFactory.getLogger(HDMEntitySecurityFactory.class);
 
-    public <T extends DMEntityImpl> List<T> authorizedEntities(List<T> e, String userName, String userSource,
+    public <T extends DMEntity> List<T> authorizedEntities(List<T> e, String userName, String userSource,
                                                                Vector<String> hashs, Vector<String> noAccessHash)
             throws ConfigException, DataSourceException {
         try {
@@ -227,9 +227,12 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
                 getSession().flush();
             } catch (NonUniqueObjectException e) {
 
+            } catch (ConstraintViolationException ex){
+
+                //if pkey constraint broken, it means rules already exists, so let it go
+                if(!ex.getConstraintName().equals("dm_security_rules_pkey"))
+                    throw ex;
             }
-
-
             //put in cache
             for (DMSecurityRule rule : rulesItems) {
                 String ruleMapKey = rule.getSecurityEntityUid() + "_" + rule.getSecurityEntitySource() + "_" + rule.getSecurityEntityType() + "_" + rule.getRights();

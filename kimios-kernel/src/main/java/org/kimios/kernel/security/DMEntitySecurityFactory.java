@@ -42,7 +42,7 @@ public interface DMEntitySecurityFactory {
 
     public void cleanACLRecursive(DMEntity d) throws ConfigException, DataSourceException;
 
-    public <T extends DMEntityImpl> List<T> authorizedEntities(List<T> e, String userName, String userSource,
+    public <T extends DMEntity> List<T> authorizedEntities(List<T> e, String userName, String userSource,
                                                                Vector<String> hashs, Vector<String> noAccessHash) throws ConfigException, DataSourceException;
 
     public boolean hasAnyChildNotWritable(DMEntity e, String userName, String userSource, Vector<String> writeHash,
