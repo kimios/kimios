@@ -778,22 +778,23 @@ public class SolrSearchController
         SimpleDateFormat solrFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         solrFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
-        if (query.toLowerCase().contains(" to ")) {
+        if (query.toLowerCase().contains("to")
+                && !(query.startsWith("[") && query.endsWith("]"))) {
             finalDateQuery += "[";
-            String[] tQueryParts = query.toLowerCase().split(" to ");
+            String[] tQueryParts = query.toLowerCase().split("to");
             Date date1 = null;
             Date date2 = null;
             try {
-                date1 = sdfTmp.parse(tQueryParts[0]);
+                date1 = sdfTmp.parse(tQueryParts[0].trim());
                 finalDateQuery += solrFormat.format(date1);
             } catch (Exception ex) {
-                finalDateQuery += tQueryParts[0].toUpperCase();
+                finalDateQuery += tQueryParts[0].trim().toUpperCase();
             }
             try {
-                date2 = sdfTmp.parse(tQueryParts[1]);
+                date2 = sdfTmp.parse(tQueryParts[1].trim());
                 finalDateQuery += " TO " + solrFormat.format(date2);
             } catch (Exception ex) {
-                finalDateQuery += " TO " + tQueryParts[1].toUpperCase();
+                finalDateQuery += " TO " + tQueryParts[1].trim().toUpperCase();
             }
 
             finalDateQuery += "]";
@@ -866,8 +867,6 @@ public class SolrSearchController
                 } else {
                     queryValue = ClientUtils.escapeQueryChars(c.getQuery());
                 }
-
-
                 if (c.getFieldName().startsWith("__multi")) {
                     //indexQuery
                     String fieldsName = c.getFieldName().substring("__multi".length());
