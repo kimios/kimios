@@ -23,8 +23,10 @@ import org.kimios.webservices.IServiceHelper;
 import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.share.ShareService;
 
+import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.ws.rs.DefaultValue;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -54,6 +56,26 @@ public class ShareServiceImpl implements ShareService {
         try {
             Session session = helper.getSession(sessionId);
             mailShareController.sendDocumentByEmail(session, documentIds, recipients, subject,
+                    content, senderAddress, senderName, defaultSender);
+
+        } catch (Exception e) {
+            throw helper.convertException(e);
+        }
+    }
+
+    @Override
+    @WebMethod(exclude = true)
+    public void shareByEmailFullContact(String sessionId, List<Long> documentIds, List<MailContact> recipients, String subject,
+                             String content, String senderAddress, String senderName, Boolean defaultSender)
+            throws DMServiceException {
+        try {
+            Session session = helper.getSession(sessionId);
+
+            Map<String, String> recipientsData = new HashMap<String, String>();
+            for(MailContact mc: recipients){
+                recipientsData.put(mc.getEmailAddress(), mc.getFullName());
+            }
+            mailShareController.sendDocumentByEmail(session, documentIds, recipientsData, subject,
                     content, senderAddress, senderName, defaultSender);
 
         } catch (Exception e) {

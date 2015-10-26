@@ -57,6 +57,8 @@
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/ext/adapter/ext/ext-base.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/ext/ext-all.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/FileUploadField.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/FieldReplicator.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/FieldLabeler.js"></script>
     <%@include file="/WEB-INF/jsp/core/init.jsp" %>
     <script type="text/javascript" language="javascript">
         var sessionUid = '<%=sessionUid%>';
@@ -139,6 +141,7 @@
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/search/SearchButton.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/search/SearchField.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/search/AdvancedSearchPanel.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/share/share.js"></script>
 
     <!-- Dashboard -->
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/explorer/DashBoard.js"></script>

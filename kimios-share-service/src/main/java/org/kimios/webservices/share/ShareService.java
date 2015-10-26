@@ -20,6 +20,7 @@ import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.kimios.kernel.share.model.MailContact;
 import org.kimios.webservices.exceptions.DMServiceException;
 
+import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.ws.rs.*;
@@ -36,10 +37,8 @@ import java.util.Map;
 public interface ShareService {
 
     /**
-     * Share provided documents by email
+     * Share provided documents by email    (SOAP Function)
      */
-    @POST
-    @Path("/share-by-mail")
     void shareByEmail(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "documentIds") @WebParam(name = "documentIds") List<Long> documentIds,
@@ -49,6 +48,26 @@ public interface ShareService {
             @QueryParam(value = "senderAddress") @WebParam(name = "senderAddress") String senderAddress,
             @QueryParam(value = "senderName") @WebParam(name = "senderName") String senderName,
             @DefaultValue("false") @QueryParam(value = "defaultSender") @WebParam(name = "defaultSender")  Boolean defaultSender)
+            throws DMServiceException;
+
+
+
+
+    /**
+     * Share provided documents by email    (REST Method)
+     */
+    @POST
+    @Path("/share-by-mail")
+    @Consumes("application/json")
+    void shareByEmailFullContact(
+            @QueryParam(value = "sessionId") String sessionId,
+            @QueryParam(value = "documentIds") List<Long> documentIds,
+            List<MailContact> recipients,
+            @QueryParam(value = "subject")  String subject,
+            @QueryParam(value = "content")  String content,
+            @QueryParam(value = "senderAddress")  String senderAddress,
+            @QueryParam(value = "senderName") String senderName,
+            @DefaultValue("false") @QueryParam(value = "defaultSender")  Boolean defaultSender)
             throws DMServiceException;
 
 

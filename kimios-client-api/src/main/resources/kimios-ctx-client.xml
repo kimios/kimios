@@ -171,6 +171,13 @@
         </jaxws:dataBinding>
     </jaxws:client>
 
+    <jaxws:client id="shareService" serviceClass="org.kimios.webservices.share.ShareService"
+                  address="${server.url}${service.context}/ShareService">
+        <jaxws:dataBinding>
+            <ref bean="aegisBean"/>
+        </jaxws:dataBinding>
+    </jaxws:client>
+
 
     <bean id="administrationController" class="org.kimios.client.controller.AdministrationController">
         <property name="client" ref="administrationService"/>
@@ -233,5 +240,9 @@
 
     <bean id="bonitaController" class="org.kimios.client.controller.BonitaController">
         <property name="client" ref="bonitaService"/>
+    </bean>
+
+    <bean id="shareController" class="org.kimios.client.controller.ShareController">
+        <property name="client" ref="shareService"/>
     </bean>
 </beans>

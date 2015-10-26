@@ -243,6 +243,18 @@
     </jaxrs:client>
 
 
+    <jaxrs:client threadSafe="true" id="shareServiceBean" serviceClass="org.kimios.webservices.share.ShareService"
+                  address="${server.url}${service.context}/rest/share">
+        <jaxrs:providers>
+            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
+        </jaxrs:providers>
+        <jaxrs:headers>
+            <entry key="Accept" value="application/json"/>
+        </jaxrs:headers>
+    </jaxrs:client>
+
+
 
 
 
@@ -311,6 +323,10 @@
         <property name="client" ref="bonitaServiceBean"/>
     </bean>
 
+    <bean id="shareController" class="org.kimios.client.controller.ShareController" activation="eager">
+        <property name="client" ref="shareServiceBean"/>
+    </bean>
+
 
     <bean id="baseController" class="org.kimios.controller.Controller">
         <property name="securityController" ref="securityController" />
@@ -329,6 +345,7 @@
         <property name="workflowController" ref="workflowController" />
         <property name="ruleController" ref="ruleController" />
         <property name="bonitaController" ref="bonitaController" />
+        <property name="shareController" ref="shareController" />
     </bean>
 
 

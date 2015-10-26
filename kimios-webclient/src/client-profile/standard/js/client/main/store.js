@@ -231,6 +231,17 @@ kimios.store = {
         });
     },
 
+    getContactsStore: function (searchParams) {
+        var baseParams = searchParams;
+        baseParams.action = 'contacts';
+        return new DmsJsonStore({
+            url: 'Share',
+            idProperty: 'emailAddress',
+            fields: kimios.record.mailContactRecord,
+            baseParams: baseParams
+        });
+    },
+
     getNodeSecurityStore: function (uid, type) {
         return new DmsJsonStore({
             url: 'DmsSecurity',

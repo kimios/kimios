@@ -331,6 +331,7 @@ kimios.ContextMenu = new function () {
     this.getDocMenuItemsList = function (menu, hiddenItems) {
         menu.add(this.getGetDocumentItem());
         menu.addSeparator();
+        menu.add(this.getShareDocumentItem());
         menu.add(this.getUpdateCurrentVersionItem());
         menu.add(this.getCheckInCheckOutItem());
         if (bonitaEnabled) {
@@ -362,6 +363,7 @@ kimios.ContextMenu = new function () {
         menu.add(this.getViewDocumentItem());
         menu.add(this.getGetDocumentItem());
         menu.add(this.getBarcodeDocumentItem());
+        menu.add(this.getShareDocumentItem());
         menu.addSeparator();
         menu.add(this.getUpdateCurrentVersionItem());
         menu.add(this.getCheckInCheckOutItem());
@@ -399,6 +401,7 @@ kimios.ContextMenu = new function () {
 
     this.initDefaultMultipleMenu = function (config) {
         this.defaultMultipleMenu = new Ext.menu.Menu(config);
+        this.defaultMultipleMenu.add(this.getShareDocumentItem());
         this.defaultMultipleMenu.add(this.getMoveItem());
         this.defaultMultipleMenu.add(this.getDeleteItem());
         this.defaultMultipleMenu.add(this.getAddToBookmarksItem());
@@ -978,6 +981,22 @@ kimios.ContextMenu = new function () {
                 } else {
                     kimios.request.deleteDMEntity(this.dmEntityPojo.uid, this.dmEntityPojo.type, this.dmEntityPojo.name);
                 }
+            }
+        });
+    };
+
+    this.getShareDocumentItem = function () {
+        return new Ext.menu.Item({
+            text: kimios.lang('Share'),
+            iconCls: 'mail',
+            scope: this,
+            handler: function () {
+                //show window
+
+                var docs = this.multiple ? this.dmEntityPojo : [this.dmEntityPojo];
+                new kimios.share.MailPanel({
+                    documents: docs
+                }).showInWindow();
             }
         });
     };

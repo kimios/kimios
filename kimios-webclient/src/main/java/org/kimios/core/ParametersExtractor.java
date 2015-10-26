@@ -20,6 +20,7 @@
 
 package org.kimios.core;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +42,7 @@ public class ParametersExtractor {
         Enumeration<String> params = req.getParameterNames();
         while(params.hasMoreElements()){
             String p = params.nextElement();
-            parameters.put(p, req.getParameter(p));
+            parameters.put(p, StringUtils.join(req.getParameterValues(p), ','));
             log.debug(p + " " + req.getParameter(p));
         }
         return parameters;

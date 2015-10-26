@@ -310,6 +310,17 @@ kimios.record = {
         }
     ]),
 
+    mailContactRecord: Ext.data.Record.create([
+        {
+            name: 'emailAddress',
+            type: 'string'
+        },
+        {
+            name: 'fullName',
+            type: 'string'
+        }
+    ]),
+
     workflowRecord: Ext.data.Record.create([
         {
             name: 'uid',

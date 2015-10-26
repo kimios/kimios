@@ -121,6 +121,9 @@ public class MainController extends HttpServlet {
             if (action.equalsIgnoreCase("Search")) {
                 c = new SearchControllerWeb(params);
             }
+            if (action.equalsIgnoreCase("Share")) {
+                c = new ShareControllerWeb(params);
+            }
             if (action.equalsIgnoreCase("Workspace")) {
                 c = new WorkspaceActionHandler(params);
             }

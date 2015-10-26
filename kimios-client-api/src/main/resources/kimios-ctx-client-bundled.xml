@@ -90,4 +90,8 @@
         <property name="client" ref="bonitaServiceBean"/>
     </bean>
 
+    <bean id="shareController" class="org.kimios.client.controller.ShareController">
+        <property name="client" ref="shareServiceBean"/>
+    </bean>
+
 </beans>

@@ -44,4 +44,5 @@ public class ExtensionControllerWeb extends Controller {
 		attrs.put("value", attr.getValue());
 		return "["+new JSONSerializer().serialize(attrs)+"]";
 	}
+
 }
