@@ -819,6 +819,164 @@ public class SolrSearchController
         }
         return finalDateQuery;
     }
+
+
+    private String parseMetaDataCriteria(Criteria c, SimpleDateFormat sdf) throws ParseException {
+        Meta meta = dmsFactoryInstantiator.getMetaFactory().getMeta(c.getMetaId());
+        if (meta != null) {
+            if (meta.getMetaType() == MetaType.STRING) {
+                if (meta.getMetaFeedBean() != null) {
+                    ObjectMapper mapper = new ObjectMapper();
+                    try {
+                        List<String> list = mapper.readValue(c.getQuery(), new TypeReference<List<String>>() {
+                        });
+                        List<String> tmpQ = new ArrayList<String>();
+                        for (String u : list) {
+                            String queryVal = (!c.isRawQuery() ? "*" : "") +
+                                    ClientUtils.escapeQueryChars(u.toLowerCase()) + (!c.isRawQuery() ? "*": "");
+                            if(!queryVal.equals("**")){
+                                String metaStringQuery = "MetaDataString_" + meta.getUid() + ":" + queryVal;
+                                tmpQ.add(metaStringQuery + " OR ");
+                            }
+                        }
+                        String eq = "";
+                        if (tmpQ.size() > 0) {
+                            for (String z : tmpQ) {
+                                eq += z;
+                            }
+                            log.debug("query multivalue {}", eq);
+                            eq = eq.substring(0, eq.lastIndexOf("OR"));
+
+                            eq = "(" + eq + ")";
+
+                            return eq;
+                        }
+
+                    } catch (Exception e) {
+                        log.error("error while parsing multivalued meta value", e);
+                        String metaStringQuery = "MetaDataString_" + meta.getUid() + ":" + (!c.isRawQuery() ? "*" : "") +
+                                ClientUtils.escapeQueryChars(c.getQuery().toLowerCase()) + (!c.isRawQuery() ? "*" : "");
+                        return metaStringQuery;
+                    }
+
+                } else {
+
+
+                    String metaStringQuery = null;
+                    if (c.getQuery().contains(" ")) {
+
+                        String[] tmpQuery = c.getQuery().split("\\s");
+                        StringBuilder bld = new StringBuilder();
+                        for (String u : tmpQuery) {
+                            bld.append("+" + (!c.isRawQuery() ? "*" : ""));
+                            bld.append(ClientUtils.escapeQueryChars(u.toLowerCase()));
+                            bld.append((!c.isRawQuery() ? "*" : "") + " ");
+                        }
+
+                        metaStringQuery = "MetaDataString_" + meta.getUid() + ":("
+                                + bld.toString().trim() + ")";
+                    } else {
+                        metaStringQuery = "MetaDataString_" + meta.getUid() + ":" + (!c.isRawQuery() ? "*" : "") +
+                                ClientUtils.escapeQueryChars(c.getQuery().toLowerCase()) + (!c.isRawQuery() ? "*" : "");
+                    }
+                    return metaStringQuery;
+
+                }
+
+
+            }
+            if (meta.getMetaType() == MetaType.LIST) {
+
+
+                ObjectMapper mapper = new ObjectMapper();
+                try {
+                    List<String> list = mapper.readValue(c.getQuery(), new TypeReference<List<String>>() {
+                    });
+
+
+                    List<String> tmpQ = new ArrayList<String>();
+                    for (String u : list) {
+                        String metaStringQuery = "MetaDataList_" + meta.getUid() + ":" + (!c.isRawQuery() ? "*" : "") +
+                                ClientUtils.escapeQueryChars(u.toLowerCase()) + (!c.isRawQuery() ? "*" : "");
+                        tmpQ.add(metaStringQuery + " OR ");
+                    }
+                    String eq = "";
+                    if (list.size() > 0) {
+                        for (String z : tmpQ) {
+                            eq += z;
+                        }
+                        log.debug("query multivalue {}", eq);
+                        eq = eq.substring(0, eq.lastIndexOf("OR"));
+
+                        eq = "(" + eq + ")";
+                        return eq;
+                    }
+
+                } catch (Exception e) {
+                    log.error("error while parsing multivalued meta value", e);
+                }
+
+
+            }
+            if (meta.getMetaType() == MetaType.NUMBER) {
+                Double min = null;
+                Double max = null;
+                boolean toAdd = false;
+                if (c.getRangeMin() != null && c.getRangeMin().trim().length() > 0) {
+                    min = Double.parseDouble(c.getRangeMin());
+                    toAdd = true;
+                }
+                if (c.getRangeMax() != null && c.getRangeMax().trim().length() > 0) {
+                    max = Double.parseDouble(c.getRangeMax());
+                    toAdd = true;
+                }
+                if (toAdd) {
+                    String metaNumberQuery =
+                            QueryBuilder.numberQuery("MetaDataNumber_" + meta.getUid(), c.getRangeMin(),
+                                    c.getRangeMax());
+
+                    return metaNumberQuery;
+                }
+            }
+            if (meta.getMetaType() == MetaType.DATE) {
+                Date min = null;
+                Date max = null;
+                boolean toAdd = false;
+                if (c.getRangeMin() != null && c.getRangeMin().trim().length() > 0) {
+
+                    try {
+                        min = sdf.parse(c.getRangeMin());
+                        toAdd = true;
+                    } catch (Exception e) {
+                        toAdd = false;
+                    }
+                }
+                if (c.getRangeMax() != null && c.getRangeMax().trim().length() > 0) {
+                    try {
+                        max = sdf.parse(c.getRangeMax());
+                        toAdd = true;
+                    } catch (Exception e) {
+                        toAdd = false;
+                    }
+                }
+                if (toAdd) {
+
+                    String metaDateQuery =
+                            QueryBuilder.dateQuery("MetaDataDate_" + meta.getUid(), c.getRangeMin(),
+                                    c.getRangeMax());
+
+                   return metaDateQuery;
+                }
+            }
+            if (meta.getMetaType() == MetaType.BOOLEAN) {
+                String metaBoolQuery =
+                        "MetaDataBoolean_" + meta.getUid() + ":" + Boolean.parseBoolean(c.getQuery());
+                return metaBoolQuery;
+            }
+        }
+        return null;
+    }
+
     private SolrQuery parseQueryFromListCriteria(Session session, int page, int pageSize, List<Criteria> criteriaList,
                                                  String sortField, String sortDir, String virtualPath, Long savedId)
             throws ParseException {
@@ -977,11 +1135,18 @@ public class SolrSearchController
                                 c.getOperator() : "") + c.getFieldName() + ":" + finalDateQuery);
 
                     } else {
-                        queries.add((c.getOperator() != null && c.getOperator().length() > 0 ?
-                                c.getOperator() : "") + c.getFieldName() + ":" + c.getQuery());
+
+                        //check if it's meta data parsing (especially for meta feed multivalued parsing !)
+
+                        if(c.getFieldName().startsWith("MetaData")){
+                            String it = parseMetaDataCriteria(c, sdf);
+                            if(it!=null)
+                                queries.add(it);
+                        } else {
+                            queries.add((c.getOperator() != null && c.getOperator().length() > 0 ?
+                                    c.getOperator() : "") + c.getFieldName() + ":" + c.getQuery());
+                        }
                     }
-
-
                 } else {
 
                     if (c.getFieldName().equals("DocumentName")) {
@@ -1034,157 +1199,9 @@ public class SolrSearchController
                         //filterQueries.add(builder.toString());
                         filtersMap.put(c, builder.toString());
                     } else if (c.getFieldName().startsWith("MetaData")) {
-                        Meta meta = dmsFactoryInstantiator.getMetaFactory().getMeta(c.getMetaId());
-                        if (meta != null) {
-                            if (meta.getMetaType() == MetaType.STRING) {
-                                if (meta.getMetaFeedBean() != null) {
-                                    ObjectMapper mapper = new ObjectMapper();
-                                    try {
-                                        List<String> list = mapper.readValue(c.getQuery(), new TypeReference<List<String>>() {
-                                        });
-                                        List<String> tmpQ = new ArrayList<String>();
-                                        for (String u : list) {
-                                            String queryVal = "*" +
-                                                ClientUtils.escapeQueryChars(u.toLowerCase()) + "*";
-                                            if(!queryVal.equals("**")){
-                                                String metaStringQuery = "MetaDataString_" + meta.getUid() + ":" + queryVal;
-                                                tmpQ.add(metaStringQuery + " OR ");
-                                            }
-                                        }
-                                        String eq = "";
-                                        if (tmpQ.size() > 0) {
-                                            for (String z : tmpQ) {
-                                                eq += z;
-                                            }
-                                            log.debug("query multivalue {}", eq);
-                                            eq = eq.substring(0, eq.lastIndexOf("OR"));
-
-                                            eq = "(" + eq + ")";
-                                            queries.add(eq);
-                                        }
-
-                                    } catch (Exception e) {
-                                        log.error("error while parsing multivalued meta value", e);
-                                        String metaStringQuery = "MetaDataString_" + meta.getUid() + ":*" +
-                                                ClientUtils.escapeQueryChars(c.getQuery().toLowerCase()) + "*";
-                                        queries.add(metaStringQuery);
-                                    }
-
-                                } else {
-
-
-                                    String metaStringQuery = null;
-                                    if (c.getQuery().contains(" ")) {
-
-                                        String[] tmpQuery = c.getQuery().split("\\s");
-                                        StringBuilder bld = new StringBuilder();
-                                        for (String u : tmpQuery) {
-                                            bld.append("+*");
-                                            bld.append(ClientUtils.escapeQueryChars(u.toLowerCase()));
-                                            bld.append("* ");
-                                        }
-
-                                        metaStringQuery = "MetaDataString_" + meta.getUid() + ":("
-                                                + bld.toString().trim() + ")";
-                                    } else {
-                                        metaStringQuery = "MetaDataString_" + meta.getUid() + ":*" +
-                                                ClientUtils.escapeQueryChars(c.getQuery().toLowerCase()) + "*";
-                                    }
-                                    queries.add(metaStringQuery);
-
-                                }
-
-
-                            }
-                            if (meta.getMetaType() == MetaType.LIST) {
-
-
-                                ObjectMapper mapper = new ObjectMapper();
-                                try {
-                                    List<String> list = mapper.readValue(c.getQuery(), new TypeReference<List<String>>() {
-                                    });
-
-
-                                    List<String> tmpQ = new ArrayList<String>();
-                                    for (String u : list) {
-                                        String metaStringQuery = "MetaDataList_" + meta.getUid() + ":*" +
-                                                ClientUtils.escapeQueryChars(u.toLowerCase()) + "*";
-                                        tmpQ.add(metaStringQuery + " OR ");
-                                    }
-                                    String eq = "";
-                                    if (list.size() > 0) {
-                                        for (String z : tmpQ) {
-                                            eq += z;
-                                        }
-                                        log.debug("query multivalue {}", eq);
-                                        eq = eq.substring(0, eq.lastIndexOf("OR"));
-
-                                        eq = "(" + eq + ")";
-                                        queries.add(eq);
-                                    }
-
-                                } catch (Exception e) {
-                                    log.error("error while parsing multivalued meta value", e);
-                                }
-
-
-                            }
-                            if (meta.getMetaType() == MetaType.NUMBER) {
-                                Double min = null;
-                                Double max = null;
-                                boolean toAdd = false;
-                                if (c.getRangeMin() != null && c.getRangeMin().trim().length() > 0) {
-                                    min = Double.parseDouble(c.getRangeMin());
-                                    toAdd = true;
-                                }
-                                if (c.getRangeMax() != null && c.getRangeMax().trim().length() > 0) {
-                                    max = Double.parseDouble(c.getRangeMax());
-                                    toAdd = true;
-                                }
-                                if (toAdd) {
-                                    String metaNumberQuery =
-                                            QueryBuilder.numberQuery("MetaDataNumber_" + meta.getUid(), c.getRangeMin(),
-                                                    c.getRangeMax());
-
-                                    queries.add(metaNumberQuery);
-                                }
-                            }
-                            if (meta.getMetaType() == MetaType.DATE) {
-                                Date min = null;
-                                Date max = null;
-                                boolean toAdd = false;
-                                if (c.getRangeMin() != null && c.getRangeMin().trim().length() > 0) {
-
-                                    try {
-                                        min = sdf.parse(c.getRangeMin());
-                                        toAdd = true;
-                                    } catch (Exception e) {
-                                        toAdd = false;
-                                    }
-                                }
-                                if (c.getRangeMax() != null && c.getRangeMax().trim().length() > 0) {
-                                    try {
-                                        max = sdf.parse(c.getRangeMax());
-                                        toAdd = true;
-                                    } catch (Exception e) {
-                                        toAdd = false;
-                                    }
-                                }
-                                if (toAdd) {
-
-                                    String metaDateQuery =
-                                            QueryBuilder.dateQuery("MetaDataDate_" + meta.getUid(), c.getRangeMin(),
-                                                    c.getRangeMax());
-
-                                    queries.add(metaDateQuery);
-                                }
-                            }
-                            if (meta.getMetaType() == MetaType.BOOLEAN) {
-                                String metaBoolQuery =
-                                        "MetaDataBoolean_" + meta.getUid() + ":" + Boolean.parseBoolean(c.getQuery());
-                                queries.add(metaBoolQuery);
-                            }
-                        }
+                        String it = parseMetaDataCriteria(c, sdf);
+                        if(it != null)
+                            queries.add(it);
                     }
                 }
             }

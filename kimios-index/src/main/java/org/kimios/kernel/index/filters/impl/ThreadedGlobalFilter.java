@@ -82,9 +82,9 @@ public class ThreadedGlobalFilter implements Filter {
                     try {
 
                         Parser parser = new AutoDetectParser(); // Should auto-detect!
-                    /*
-                        create content handler with unlimited content length
-                     */
+                        /*
+                            create content handler with unlimited content length
+                         */
                         ContentHandler contentHandler = new BodyContentHandler(-1);
                         Metadata metadata = new Metadata();
                         ParseContext context = new ParseContext();
