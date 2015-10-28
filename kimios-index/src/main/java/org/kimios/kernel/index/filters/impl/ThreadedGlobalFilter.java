@@ -120,26 +120,27 @@ public class ThreadedGlobalFilter implements Filter {
                 }
 
             };
+
+            Future<Map<String, Object>> futureParsingData = fileReadExecutor.submit(rn);
+
             try {
-                Future<Map<String, Object>> futureParsingData = fileReadExecutor.submit(rn);
                 Map<String, Object> item = futureParsingData.get(timeout, timeUnit);
                 //set values on filter
                 String parsedBody = (String) item.get("body");
                 Map<String, Object> parsedMetas = (Map<String, Object>) item.get("metas");
                 this.metaDatas = parsedMetas;
                 return parsedBody;
-
-            }
-            catch (ExecutionException ex){
+            } catch (ExecutionException ex) {
                 logger.error("error while parsing document content", ex);
+                futureParsingData.cancel(true);
                 throw ex.getCause();
-            }
-            catch (TimeoutException ex){
+            } catch (TimeoutException ex) {
                 logger.error("timeout parsing document content. Parsing excessed {} {}", timeout, timeUnit.name());
+                futureParsingData.cancel(true);
                 throw ex;
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 logger.error("error while parsing document content", ex);
+                futureParsingData.cancel(true);
                 throw ex;
             }
         }
