@@ -16,6 +16,7 @@
 
 package org.kimios.kernel.controller.impl;
 
+import org.apache.commons.io.FileUtils;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.IConverterController;
 import org.kimios.kernel.converter.Converter;
@@ -24,6 +25,7 @@ import org.kimios.kernel.converter.ConverterFactory;
 import org.kimios.kernel.converter.exception.ConverterException;
 import org.kimios.kernel.converter.source.InputSource;
 import org.kimios.kernel.converter.source.InputSourceFactory;
+import org.kimios.kernel.converter.source.impl.FileInputSource;
 import org.kimios.kernel.dms.Document;
 import org.kimios.kernel.dms.DocumentVersion;
 import org.kimios.kernel.exception.AccessDeniedException;
@@ -32,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +45,8 @@ public class ConverterController extends AKimiosController implements IConverter
     private static Logger log = LoggerFactory.getLogger(ConverterController.class);
 
     public InputSource convertDocumentVersion(Session session, Long documentVersionId, String converterImpl) throws ConverterException {
+
+        String retainedMimeType = null;
         try {
             // Check rights
             DocumentVersion version = dmsFactoryInstantiator.getDocumentVersionFactory().getDocumentVersion(documentVersionId);
@@ -59,16 +64,32 @@ public class ConverterController extends AKimiosController implements IConverter
             log.debug("Getting Converter implementation: " + converterImpl);
             Converter converter = ConverterFactory.getConverter(converterImpl);
 
+            retainedMimeType = converter.converterTargetMimeType();
             // Convert and return the result source
             InputSource inputSource = converter.convertInputSource(source);
             ConverterCacheHandler.cachePreviewData(documentVersionId, inputSource);
             return inputSource;
         } catch (Exception e) {
+            if(e instanceof ConverterException && retainedMimeType != null &&
+                    retainedMimeType.equals("text/html")){
+                //return custom html error
+                try{
+                    File tempFile  = File.createTempFile("kmsprev", "");
+                    FileUtils.writeStringToFile(tempFile,
+                            "<html><body>An error happen during preview process!<br /><br />" +
+                                    "Please Contact Your Administrator !</body></html>"
+                    );
+                    return new FileInputSource(tempFile, "text/html");
+                }   catch (Exception ex){
+                   log.error("error while generating error view", ex);
+                }
+            }
             throw new ConverterException(e);
         }
     }
 
     public InputSource convertDocumentVersions(Session session, List<Long> documentVersionIds, String converterImpl) throws ConverterException {
+        String retainedMimeType = null;
         try {
             List<InputSource> sources = new ArrayList<InputSource>();
             for (Long documentVersionId : documentVersionIds) {
@@ -100,6 +121,20 @@ public class ConverterController extends AKimiosController implements IConverter
             }
             return inputSource;
         } catch (Exception e) {
+            if(e instanceof ConverterException && retainedMimeType != null &&
+                    retainedMimeType.equals("text/html")){
+                //return custom html error
+                try{
+                    File tempFile  = File.createTempFile("kmsprev", "");
+                    FileUtils.writeStringToFile(tempFile,
+                            "<html><body>An error happen during preview process!<br /><br />" +
+                                    "Please Contact Your Administrator !</body></html>"
+                    );
+                    return new FileInputSource(tempFile, "text/html");
+                }   catch (Exception ex){
+                    log.error("error while generating error view", ex);
+                }
+            }
             throw new ConverterException(e);
         }
     }
