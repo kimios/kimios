@@ -44,7 +44,6 @@ public class GlobalFilter
         return new String[0];
     }
 
-
     private Map<String, Object> metaDatas;
 
     public String[] handledMimeTypes()
@@ -76,14 +75,14 @@ public class GlobalFilter
             }
 
             String val = contentHandler.toString();
-            if(logger.isDebugEnabled()){
+            if(logger.isTraceEnabled()){
                 for(String m: metaDatas.keySet()){
-                    logger.debug( "Metadata {} --> {}", m, metaDatas.get( m ) );
+                    logger.trace( "Metadata {} --> {}", m, metaDatas.get( m ) );
                 }
-                logger.debug( val );
+                logger.trace( val );
             }
-            return val;
 
+            return val;
         }
         catch ( Exception e )
         {

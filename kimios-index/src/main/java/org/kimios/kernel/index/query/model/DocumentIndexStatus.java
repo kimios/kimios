@@ -23,6 +23,7 @@ import org.kimios.kernel.dms.DMEntityImpl;
 import javax.persistence.*;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * Created by farf on 15/06/15.
@@ -54,6 +55,18 @@ public class DocumentIndexStatus {
     @JoinColumn(name = "dm_entity_id", updatable = false, insertable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private DMEntityImpl dmEntity;
+
+
+    @Transient
+    private Map<String, Object> readFileDatas = null;
+
+    public Map<String, Object> getReadFileDatas() {
+        return readFileDatas;
+    }
+
+    public void setReadFileDatas(Map<String, Object> readFileDatas) {
+        this.readFileDatas = readFileDatas;
+    }
 
     public DMEntityImpl getDmEntity() {
         return dmEntity;
