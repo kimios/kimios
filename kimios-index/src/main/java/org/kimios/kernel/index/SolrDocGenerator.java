@@ -59,14 +59,16 @@ public class SolrDocGenerator {
         loadDocumentData(document);
     }
 
-    protected void loadDocumentData(Document document){
+    private void loadDocumentData(Document document){
         version = FactoryInstantiator.getInstance().getDocumentVersionFactory().getLastDocumentVersion(document);
         req = FactoryInstantiator.getInstance().getDocumentWorkflowStatusRequestFactory().getLastPendingRequest(
                 document);
         st = FactoryInstantiator.getInstance().getDocumentWorkflowStatusFactory().getLastDocumentWorkflowStatus(
                 document.getUid());
-        stOrg = FactoryInstantiator.getInstance().getWorkflowStatusFactory().getWorkflowStatus(
-                st.getWorkflowStatusUid());
+        if(st != null){
+            stOrg = FactoryInstantiator.getInstance().getWorkflowStatusFactory().getWorkflowStatus(
+                    st.getWorkflowStatusUid());
+        }
         values = FactoryInstantiator.getInstance().getMetaValueFactory().getMetaValues(version);
         acls = org.kimios.kernel.security.FactoryInstantiator.getInstance().getDMEntitySecurityFactory().getDMEntityACL(
                 document);
@@ -82,7 +84,6 @@ public class SolrDocGenerator {
 
         documentIndexStatus.setEntityId(document.getUid());
         SimpleDateFormat dateParser = new SimpleDateFormat("dd-MM-yyyy");
-        SimpleDateFormat dateTimeParser = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         SimpleDateFormat utcDateParser = new SimpleDateFormat("dd-MM-yyyy");
         utcDateParser.setTimeZone(TimeZone.getTimeZone("UTC"));
         SimpleDateFormat utcDateTimeParser = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
@@ -135,8 +136,6 @@ public class SolrDocGenerator {
             outOfWorkflow = false;
         }
         if (st != null) {
-
-
             doc.addField("DocumentWorkflowStatusName", stOrg.getName());
             doc.addField("DocumentWorkflowStatusUid", st.getWorkflowStatusUid());
             if (stOrg.getSuccessorUid() == null) {
@@ -201,40 +200,23 @@ public class SolrDocGenerator {
             }
 
         }
-
-        if (updateMetasWrapper) {
-            if ((values != null && values.size() > 0) || (document.getAttributes() != null || document.getAttributes().size() > 0)) {
-                AddonDataHandler.AddonDatasWrapper wrapper = new AddonDataHandler.AddonDatasWrapper();
-                wrapper.setEntityAttributes(document.getAttributes());
-                wrapper.setEntityMetaValues(values);
-                try {
-                    document.setAddOnDatas(mp.writeValueAsString(wrapper));
-                    if (flush) {
-                        FactoryInstantiator.getInstance().getDocumentFactory().saveDocument(document);
-                    } else
-                        FactoryInstantiator.getInstance().getDocumentFactory().saveDocumentNoFlush(document);
-                    log.debug("updating addon data with " + document.getAddOnDatas());
-                } catch (Exception ex) {
-                    log.error("error while generation addon meta field", ex);
-                }
-            } else {
-                log.debug("not generating addon field because of no data");
+        if ((values != null && values.size() > 0) || (document.getAttributes() != null || document.getAttributes().size() > 0)) {
+            AddonDataHandler.AddonDatasWrapper wrapper = new AddonDataHandler.AddonDatasWrapper();
+            wrapper.setEntityAttributes(document.getAttributes());
+            wrapper.setEntityMetaValues(values);
+            try {
+                document.setAddOnDatas(mp.writeValueAsString(wrapper));
+            } catch (Exception ex) {
+                log.error("error while generation addon meta field", ex);
             }
         }
-
         if (document.getAddOnDatas() != null && document.getAddOnDatas().length() > 0) {
             doc.addField("DocumentRawAddonDatas", document.getAddOnDatas());
-            log.debug("adding current addon data {}", document.getAddOnDatas());
         }
-
         //acls
-
-
         for (int i = 0; i < acls.size(); i++) {
             doc.addField("DocumentACL", acls.get(i).getRuleHash());
         }
-
-
         if(addonFields != null && addonFields.size() > 0){
             for(String solrInputField: addonFields.keySet())
                 doc.addField(solrInputField, addonFields.get(solrInputField));

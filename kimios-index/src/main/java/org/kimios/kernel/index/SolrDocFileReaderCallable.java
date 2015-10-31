@@ -53,6 +53,8 @@ public class SolrDocFileReaderCallable implements Callable<Map<Long,Map<String,O
     @Override
     public Map<Long,Map<String,Object>> call() throws Exception {
 
+
+        long startTime = System.currentTimeMillis();
         Map<Long, Map<String,Object>> globalResults = new HashMap<Long, Map<String, Object>>();
         for(final DocumentIndexStatus d: docFiles.keySet()){
             final DocumentVersion v = docFiles.get(d);
@@ -63,27 +65,40 @@ public class SolrDocFileReaderCallable implements Callable<Map<Long,Map<String,O
                     return readVersionFileToData((Document)d.getDmEntity(), v, d);
                 }
             };
-            Future<Map<String,Object>> result = Executors.newSingleThreadExecutor().submit(rn);
+
+            ExecutorService executorService = Executors.newSingleThreadExecutor();
+            Future<Map<String,Object>> result = executorService.submit(rn);
+
             try {
                 Map<String, Object> item = result.get(readVersionTimeOut, readVersionTimeoutTimeUnit);
                 globalResults.put(d.getDmEntity().getUid(), item);
                 d.setReadFileDatas(item);
             }catch (InterruptedException ex){
                 result.cancel(true);
+                d.setError("Interrupted error " + ex.getMessage());
                 d.setBodyIndexed(false);
             }
             catch (TimeoutException ex){
                 //Important to kill running thread !!
-                 boolean cancelled = result.cancel(true);
-                log.debug("cancelled read thread for #" + d.getDmEntity().getUid() + "(" + cancelled + ")");
+                boolean cancelled = result.cancel(true);
+                d.setError("Timeout Error (def: " + readVersionTimeOut + " " + readVersionTimeoutTimeUnit.toString() + "). " + ex.getMessage());
+                log.error("timeout: cancelled read thread for #" + d.getDmEntity().getUid() + "(" + cancelled + ")");
                 d.setBodyIndexed(false);
             }
             catch (ExecutionException ex){
                 result.cancel(true);
+                d.setError("Exception Error: " + ex.getMessage());
                 d.setBodyIndexed(false);
+                log.error("exception: cancelled read thread for #" + d.getDmEntity().getUid(), ex);
             }
             //put in queue !
+            long end = System.currentTimeMillis();
+            long elapsedTime = ((end - startTime) / 1000);
+            log.info("offering document index status on queue: {}, body indexed: {}, after parse (duration {} seconds).", d, d.isBodyIndexed(), elapsedTime);
             this.blockingQueue.offer(d);
+
+
+            executorService.shutdownNow();
         }
         return globalResults;
     }
@@ -93,12 +108,18 @@ public class SolrDocFileReaderCallable implements Callable<Map<Long,Map<String,O
                                                         DocumentIndexStatus documentIndexStatus){
         Object body = IndexHelper.EMPTY_STRING;;
         Map<String, Object> metaDatas = null;
+        Map<String, Object> finalDatas = new HashMap<String, Object>();
         try {
+            if(log.isDebugEnabled())
+                log.debug("starting tika filtering for document #{} ({})", document.getUid(), document.getPath());
             GlobalFilter globalFilter = new GlobalFilter();
             body = globalFilter.getFileBody(document, version.getInputStream());
             metaDatas = globalFilter.getMetaDatas();
+            if(log.isDebugEnabled())
+                log.debug("ending tika filtering for document #{} ({})", document.getUid(), document.getPath());
         } catch (Throwable ex) {
-            log.debug("Error while getting body", ex);
+            log.debug("Error while getting body for document #" + document.getUid()  + "("
+                    + document.getPath() + ")", ex);
             documentIndexStatus.setBodyIndexed(false);
             StringWriter stringWriterStackTrace = new StringWriter();
             PrintWriter prw = new PrintWriter(stringWriterStackTrace);
@@ -106,17 +127,15 @@ public class SolrDocFileReaderCallable implements Callable<Map<Long,Map<String,O
             documentIndexStatus.setError(ex.getMessage() + " ==> "
                     + stringWriterStackTrace);
         }
-        if(metaDatas == null){
-            metaDatas = new HashMap<String, Object>();
-        } else {
+        if(metaDatas != null){
             for (String mKey : metaDatas.keySet()) {
-                metaDatas.put("FileMetaData_" + mKey, metaDatas.get(mKey));
+                finalDatas.put("FileMetaData_" + mKey, metaDatas.get(mKey));
             }
         }
-        if (body instanceof String) {
-            metaDatas.put("DocumentBody", body);
+        if (body instanceof String && !body.equals(IndexHelper.EMPTY_STRING)) {
+            finalDatas.put("DocumentBody", body);
             documentIndexStatus.setBodyIndexed(true);
         }
-        return metaDatas;
+        return finalDatas;
     }
 }

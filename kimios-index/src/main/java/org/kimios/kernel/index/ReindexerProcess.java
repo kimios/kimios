@@ -24,6 +24,9 @@ import org.kimios.kernel.index.query.model.SearchResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
@@ -45,6 +48,8 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
         private int reindexProgression = 0;
         private Exception exception;
         private String path;
+        private long startTime;
+
 
         public ReindexResult(String path, long reindexedCount, long duration, int entitiesCount, Exception ex) {
             this.path = path;
@@ -102,6 +107,14 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
             this.path = path;
         }
 
+        public long getStart(){
+            return this.startTime;
+        }
+
+        public void setStart(long startTime){
+            this.startTime = startTime;
+        }
+
         @Override
         public String toString() {
             return "ReindexResult{" +
@@ -136,13 +149,10 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
 
     private int threadPoolSize;
 
-    private boolean asyncDocumentRead;
-
     public ReindexerProcess(ISolrIndexManager indexManager, String path, int blockSize, List<Long> excludedIds, List<String> extensionsExcluded,
                             Long threadReadTimeOut, TimeUnit threadReadTimeoutTimeUnit, int threadPoolSize,
                             boolean updateDocsMetaWrapper,
                             boolean disableThreading,
-                            boolean asyncDocumentRead,
                             int entityType) {
         this.indexManager = indexManager;
         this.finalPath = path;
@@ -159,7 +169,6 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
         this.updateDocsMetaWrapper = updateDocsMetaWrapper;
         this.disableThreading = disableThreading;
         this.threadPoolSize = threadPoolSize;
-        this.asyncDocumentRead = asyncDocumentRead;
         this.entityType = entityType;
     }
 
@@ -186,6 +195,11 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
             /*
                     Delete items
              */
+            Calendar calendarStartDate = Calendar.getInstance();
+            calendarStartDate.setTimeInMillis(start);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            DecimalFormat df = new DecimalFormat("#0.##");
+
             String indexPath = this.finalPath != null ? this.finalPath.trim() : "/";
             try {
                 String fPath = ClientUtils.escapeQueryChars(indexPath);
@@ -215,6 +229,7 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
             int documentBlockSize = blockSize;
             int indexingBlockCount = total / documentBlockSize;
             int docLeak = total % documentBlockSize;
+            this.reindexResult.setStart(this.start);
 
             if (docLeak > 0)
                 indexingBlockCount++;
@@ -236,18 +251,11 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
                     if (threadReadTimeoutTimeUnit != null && threadReadTimeOut != null) {
                         indexManager.threadedIndexDocumentList(entityList, threadReadTimeOut,
                                 threadReadTimeoutTimeUnit,
-                                updateDocsMetaWrapper, threadPoolSize, disableThreading, asyncDocumentRead);
-                    } else
+                                updateDocsMetaWrapper, threadPoolSize);
+                    } else {
                         indexManager.indexDocumentList(entityList);
-                    indexed += entityList.size();
-                    if(log.isInfoEnabled()){
-                        log.info("Indexing "
-                                + this.reindexResult.getPath()
-                                + " : " + this.reindexResult.getReindexProgression() + " %. "
-                                + ". Indexed "
-                                + this.reindexResult.getReindexedCount() + " on "
-                                + this.reindexResult.getEntitiesCount());
                     }
+                    indexed += entityList.size();
                 } catch (Exception ex) {
                     log.error("an error happen during indexing for block " +  u + 1 + " / " + indexingBlockCount, ex);
                 }
@@ -264,7 +272,31 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
 
                 }
                 this.reindexResult.setReindexProgression(reindexProgression);
+                duration = System.currentTimeMillis() - start;
+                this.reindexResult.setDuration(duration);
 
+                //calculate bandswith
+
+                double indexingRate = (double)indexed / ((double)duration / 1000 / 60);
+                String formattedRate = df.format(indexingRate);
+
+                double remainingTime = ((total - indexed) / indexingRate);
+                String formattedRemaining = df.format(remainingTime);
+
+                if(log.isInfoEnabled()){
+
+                    log.info("Indexing "
+                            + this.reindexResult.getPath()
+                            + " : " + this.reindexResult.getReindexProgression() + " %. "
+                            + ". Indexed "
+                            + this.reindexResult.getReindexedCount() + " on "
+                            + this.reindexResult.getEntitiesCount()
+                            + ". Started on " + sdf.format(calendarStartDate.getTime())
+                            + ". Elapsed Time: " + (this.duration / 1000 / 60) + " minutes"
+                            + ". Indexing rate: " + formattedRate + " per minutes"
+                            + ". Average Remaining Duration "
+                            + formattedRemaining + " minutes.");
+                }
 
                 if (Thread.interrupted()) {
                     log.info("reindex thread for path {} has been canceled", finalPath);

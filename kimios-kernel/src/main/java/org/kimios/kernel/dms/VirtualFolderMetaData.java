@@ -133,4 +133,15 @@ public class VirtualFolderMetaData {
     public void setMetaId(Long metaId) {
         this.metaId = metaId;
     }
+
+    @Override
+    public String toString() {
+        return "VirtualFolderMetaData{" +
+                "virtualFolderId=" + virtualFolderId +
+                ", metaId=" + metaId +
+                ", meta=" + meta +
+                ", dateValue=" + dateValue +
+                ", stringValue='" + stringValue + '\'' +
+                '}';
+    }
 }

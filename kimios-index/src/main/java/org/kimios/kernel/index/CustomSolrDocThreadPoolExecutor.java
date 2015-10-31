@@ -53,16 +53,19 @@ public class CustomSolrDocThreadPoolExecutor extends ThreadPoolExecutor {
 
     @Override
     protected void afterExecute(Runnable r, Throwable t) {
-        logger.info("ending thread {}", r);
+        logger.trace("ending thread {}", r);
+        //if ended, commit solr index
+        super.afterExecute(r, t);
+        /*
+
         if(t != null){
             logger.error("error while ending solr doc runnable", t);
         }
-        //if ended, commit solr index
-        super.afterExecute(r, t);
         if (t == null && r instanceof Future<?>) {
             try {
                 Future<?> future = (Future<?>) r;
                 if (future.isDone()) {
+
                     SolrInputDocument solrDoc = (SolrInputDocument)future.get();
                     String docId = solrDoc.getField("DocumentUid").getValue().toString();
                     try {
@@ -79,9 +82,7 @@ public class CustomSolrDocThreadPoolExecutor extends ThreadPoolExecutor {
             } catch (InterruptedException ie) {
                 Thread.currentThread().interrupt(); // ignore/reset
             }
-        }
-        if (t != null)
-            System.out.println(t);
+        }      */
     }
 
     @Override

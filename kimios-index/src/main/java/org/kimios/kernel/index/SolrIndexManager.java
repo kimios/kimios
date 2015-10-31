@@ -71,17 +71,11 @@ public class SolrIndexManager
 
     private IPathController pathController;
 
-    private int fileReadThreadPoolSize = 10;
-
     private org.kimios.kernel.index.query.factory.DocumentFactory solrDocumentFactory;
 
     public DocumentFactory getSolrDocumentFactory() {
         return solrDocumentFactory;
     }
-
-
-
-    private ExecutorService fileReaderExecutor;
 
     public void setSolrDocumentFactory(DocumentFactory solrDocumentFactory) {
         this.solrDocumentFactory = solrDocumentFactory;
@@ -156,167 +150,6 @@ public class SolrIndexManager
         }
     }
 
-    protected Map<String, Object> readVersionFileToData(Document document, DocumentVersion version,
-                                                DocumentIndexStatus documentIndexStatus){
-        Object body = IndexHelper.EMPTY_STRING;;
-        Map<String, Object> metaDatas = null;
-        try {
-            GlobalFilter globalFilter = new GlobalFilter();
-            body = globalFilter.getFileBody(document, version.getInputStream());
-            metaDatas = globalFilter.getMetaDatas();
-        } catch (Throwable ex) {
-            log.debug("Error while getting body", ex);
-            documentIndexStatus.setBodyIndexed(false);
-            StringWriter stringWriterStackTrace = new StringWriter();
-            PrintWriter prw = new PrintWriter(stringWriterStackTrace);
-            ex.printStackTrace(prw);
-            documentIndexStatus.setError(ex.getMessage() + " ==> "
-                    + stringWriterStackTrace);
-        }
-        if(metaDatas == null){
-            metaDatas = new HashMap<String, Object>();
-        } else {
-            for (String mKey : metaDatas.keySet()) {
-                metaDatas.put("FileMetaData_" + mKey, metaDatas.get(mKey));
-            }
-        }
-        if (body instanceof String) {
-            metaDatas.put("DocumentBody", body);
-            documentIndexStatus.setBodyIndexed(true);
-        }
-        return metaDatas;
-    }
-
-    protected SolrInputDocument toSolrInputDocument(Folder folder, List<VirtualFolderMetaData> metaValues)
-            throws DataSourceException, ConfigException {
-
-        SimpleDateFormat dateParser = new SimpleDateFormat("dd-MM-yyyy");
-        SimpleDateFormat dateTimeParser = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-        SimpleDateFormat utcDateParser = new SimpleDateFormat("dd-MM-yyyy");
-        utcDateParser.setTimeZone(TimeZone.getTimeZone("UTC"));
-        SimpleDateFormat utcDateTimeParser = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-        utcDateTimeParser.setTimeZone(TimeZone.getTimeZone("UTC"));
-        log.debug("processing folder {} for path {}", folder.getUid(), folder.getPath());
-        SolrInputDocument doc = new SolrInputDocument();
-        doc.addField("DocumentUid", folder.getUid());
-        doc.addField("DocumentName", folder.getName().toLowerCase());
-        doc.addField("DocumentNameDisplayed", folder.getName());
-        doc.addField("DocumentNameAnalysed", folder.getName());
-
-        doc.addField("DocumentOwner", folder.getOwner() + "@" + folder.getOwnerSource());
-        doc.addField("DocumentOwnerId", folder.getOwner());
-        doc.addField("DocumentOwnerSource", folder.getOwnerSource());
-        doc.addField("DocumentPath", folder.getPath());
-        doc.addField("DocumentParent", folder.getParent().getPath() + "/");
-        doc.addField("DocumentParentId", folder.getParent().getUid());
-
-        //standard datas
-        doc.addField("DocumentCreationDate", folder.getCreationDate());
-        doc.addField("DocumentUpdateDate", folder.getUpdateDate());
-        doc.addField("DocumentVersionId", -1);
-        doc.addField("DocumentVersionCreationDate", folder.getCreationDate());
-        doc.addField("DocumentVersionUpdateDate", folder.getUpdateDate());
-        doc.addField("DocumentVersionOwner", folder.getOwner() + "@" + folder.getOwnerSource());
-        doc.addField("DocumentVersionOwnerId", folder.getOwner());
-        doc.addField("DocumentVersionOwnerSource", folder.getOwnerSource());
-        doc.addField("DocumentVersionLength", -10);
-        doc.addField("DocumentVersionHash", "folder");
-        doc.addField("DocumentOutWorkflow", true);
-        List<MetaValue> values = null;
-        if (metaValues.size() > 0) {
-            log.debug("Document Type Found for version");
-
-
-            String documentTypeName = null;
-            Long documentTypeUid = null;
-            for (VirtualFolderMetaData folderMetaData : metaValues) {
-
-
-                if (documentTypeName == null && documentTypeUid == null) {
-                    documentTypeName = folderMetaData.getMeta().getDocumentType().getName();
-                    documentTypeUid = folderMetaData.getMeta().getDocumentTypeUid();
-                    doc.addField("DocumentTypeUid", documentTypeUid);
-                    doc.addField("DocumentTypeName", documentTypeName);
-                }
-                switch (folderMetaData.getMeta().getMetaType()) {
-
-                    case MetaType.STRING:
-                        doc.addField("MetaDataString_" + folderMetaData.getMetaId(),
-                                folderMetaData.getStringValue());
-                        break;
-                    /*case MetaType.BOOLEAN:
-                        doc.addField( "MetaDataBoolean_" + value.getMetaUid(), value.getValue() );
-                        break;
-                    case MetaType.NUMBER:
-                        doc.addField( "MetaDataNumber_" + value.getMetaUid(), value.getValue() );
-                        break;*/
-                    case MetaType.DATE:
-
-                        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-                        if (folderMetaData.getDateValue() != null) {
-                            //reparse date for local
-                            String dateString = dateParser.format(folderMetaData.getDateValue());
-                            log.debug("meta parsed on re-index: " + dateString);
-                            try {
-                                cal.setTime(utcDateParser.parse(dateString));
-                                log.debug("meta parsed on re-index: " + dateString + " ==> Cal:" + cal.getTime());
-                                doc.addField("MetaDataDate_" + folderMetaData.getMetaId(), cal.getTime());
-                            } catch (Exception ex) {
-                                log.error("error while reparsing meta data date {} {} {}", folderMetaData.getMeta().getName(), folderMetaData.getDateValue(), dateString);
-                            }
-                        }
-                        break;
-                    /*case MetaType.LIST:
-                        if(value != null && value.getValue() != null){
-                            List<String> items = ((MetaListValue)value).getValue();
-                            for(String u: items)
-                                doc.addField( "MetaDataList_" + value.getMetaUid(),u);
-                        }
-                        break;*/
-                    default:
-                        doc.addField("MetaData_" + folderMetaData.getMetaId(), folderMetaData.getStringValue());
-                        break;
-                }
-            }
-        }
-        doc.addField("Attribute_VirtualFolder", "folder");
-
-        if (folder.getAddOnDatas() != null && folder.getAddOnDatas().length() > 0) {
-            doc.addField("DocumentRawAddonDatas", folder.getAddOnDatas());
-            log.debug("adding current addon data {}", folder.getAddOnDatas());
-        } else {
-            //try to regenerate field
-
-            if ((values != null && values.size() > 0) || (folder.getAttributes() != null || folder.getAttributes().size() > 0)) {
-                AddonDataHandler.AddonDatasWrapper wrapper = new AddonDataHandler.AddonDatasWrapper();
-                wrapper.setEntityAttributes(folder.getAttributes());
-                wrapper.setEntityMetaValues(values);
-                try {
-                    folder.setAddOnDatas(mp.writeValueAsString(wrapper));
-                    FactoryInstantiator.getInstance().getFolderFactory().saveFolder(folder);
-                } catch (Exception ex) {
-                    log.error("error while generation addon meta field", ex);
-                }
-                //update document
-                doc.addField("DocumentRawAddonDatas", folder.getAddOnDatas());
-            } else {
-                log.debug("not generating addon field because of no data");
-            }
-        }
-
-        Object body = null;
-        Map<String, Object> metaDatas = null;
-        doc.addField("DocumentBody", IndexHelper.EMPTY_STRING);
-        List<DMEntityACL> acls =
-                org.kimios.kernel.security.FactoryInstantiator.getInstance().getDMEntitySecurityFactory().getDMEntityACL(
-                        folder);
-        for (int i = 0; i < acls.size(); i++) {
-            doc.addField("DocumentACL", acls.get(i).getRuleHash());
-        }
-
-        return doc;
-    }
-
 
     public void indexDocument(DMEntity documentEntity)
             throws IndexException, DataSourceException, ConfigException {
@@ -331,9 +164,17 @@ public class SolrIndexManager
             DocumentVersion version =
                     FactoryInstantiator.getInstance().getDocumentVersionFactory().getLastDocumentVersion(document);
             DocumentIndexStatus documentIndexStatus = new DocumentIndexStatus();
-            Map<String, Object> fileData = readVersionFileToData(document, version, documentIndexStatus);
+            Map<String, Object> fileData =
+                    new SolrDocFileReaderCallable(null, -1, null, null)
+                            .readVersionFileToData((Document)documentEntity,
+                                    FactoryInstantiator.getInstance()
+                                            .getDocumentVersionFactory().getLastDocumentVersion((Document)documentEntity),
+                                    documentIndexStatus);
             SolrInputDocument solrInputDocument =
                     new SolrDocGenerator(document, mp).toSolrInputDocument(true, true, fileData, documentIndexStatus);
+
+
+
             this.solr.add(solrInputDocument);
             this.solr.commit();
         } catch (IOException io) {
@@ -356,7 +197,8 @@ public class SolrIndexManager
 
             Folder folder = (Folder) documentEntity;
             this.deleteDocument(folder);
-            SolrInputDocument solrInputDocument = toSolrInputDocument(folder, metaValues);
+            SolrFolderGenerator generator = new SolrFolderGenerator(folder, metaValues, this.mp);
+            SolrInputDocument solrInputDocument = generator.toSolrInputDocument(folder, metaValues);
             this.solr.add(solrInputDocument);
             this.solr.commit();
         } catch (IOException io) {
@@ -373,30 +215,19 @@ public class SolrIndexManager
     }
 
 
-    public void threadedIndexDocumentList(List<DMEntity> documentEntities,
+    public void threadedIndexDocumentList(final List<DMEntity> documentEntities,
                                           final long readVersionTimeOut,
                                           final TimeUnit readVersionTimeoutTimeUnit,
                                           final boolean updateDocsMetaWrapper,
-                                          int poolSize,
-                                          final boolean disableThreading,
-                                          final boolean asyncDocumentRead)
+                                          int poolSize)
             throws IndexException, DataSourceException, ConfigException {
         try {
 
-            ExecutorService executorService = null;
-            if(!disableThreading)
-                 executorService = new CustomSolrDocThreadPoolExecutor(poolSize, poolSize, 0L, TimeUnit.MILLISECONDS,
-                         new LinkedBlockingQueue<Runnable>(), this.solr);
-            List<SolrInputDocument> updatedDocument = new ArrayList<SolrInputDocument>();
-            List<String> updatedDocumentIds = new ArrayList<String>();
-            Map<Long, Future<SolrInputDocument>> dataFutures = new HashMap<Long, Future<SolrInputDocument>>();
-            Map<Long, Map<String, Object>> futuresFilesMetaDatas =
-                    new HashMap<Long, Map<String, Object>>();
+            final ExecutorService executorService = new CustomSolrDocThreadPoolExecutor(poolSize, poolSize, 0L, TimeUnit.MILLISECONDS,
+                    new LinkedBlockingQueue<Runnable>(), this.solr);
 
-            //1 thread to read files, and put data on queue
             Map<DocumentIndexStatus, DocumentVersion> documentVersionMap = new HashMap<DocumentIndexStatus, DocumentVersion>();
-            Map<DocumentIndexStatus, SolrDocCallable> docIndexTasks = new HashMap<DocumentIndexStatus, SolrDocCallable>();
-
+            final Map<DocumentIndexStatus, SolrDocCallable> docIndexTasks = new HashMap<DocumentIndexStatus, SolrDocCallable>();
             final BlockingQueue<DocumentIndexStatus> sharedQueue = new LinkedBlockingQueue<DocumentIndexStatus>();
             for (final DMEntity doc : documentEntities) {
                 if (log.isDebugEnabled()) {
@@ -408,6 +239,7 @@ public class SolrIndexManager
                 //load data
                 DocumentIndexStatus documentIndexStatus = new DocumentIndexStatus();
                 documentIndexStatus.setDmEntity(document);
+                documentIndexStatus.setEntityId(document.getUid());
                 DocumentVersion version =
                         FactoryInstantiator.getInstance().getDocumentVersionFactory().getLastDocumentVersion(document);
                 documentVersionMap.put(documentIndexStatus, version);
@@ -420,94 +252,127 @@ public class SolrIndexManager
                 docIndexTasks.put(documentIndexStatus, solrInputDocumentCallable);
 
             }
-            //launcg thread to read files in parallel
-            executorService.submit(new SolrDocFileReaderCallable(documentVersionMap,
-                    readVersionTimeOut, readVersionTimeoutTimeUnit, sharedQueue));
+            //launcg thread to read files in parallel and get future
+            //1 thread to read files, and put data on queue
+            Future<Map<Long, Map<String, Object>>> futuresFilesMetaDatas =
+                    Executors.newSingleThreadExecutor().submit(new SolrDocFileReaderCallable(documentVersionMap,
+                            readVersionTimeOut, readVersionTimeoutTimeUnit, sharedQueue));
 
 
-            executorService.submit(new Callable<Object>() {
+            log.info("started File Reader !!! (" + futuresFilesMetaDatas + ")");
+
+            Future<?> globalFuture = executorService.submit(new Callable<Integer>() {
+
                 @Override
-                public Object call() throws Exception {
+                public Integer call() {
                     //pool queeeeue
+                    int docCount = 0;
+                    List<DocumentIndexStatus> notFound = new ArrayList<DocumentIndexStatus>();
+                    while (!Thread.currentThread().isInterrupted()) {
 
-                    DocumentIndexStatus indexStatus = sharedQueue.poll(readVersionTimeOut, readVersionTimeoutTimeUnit);
-                    //when polled
+                        if (docCount >= documentEntities.size()) {
+                            log.info("document processed count: {}. Exiting !", docCount);
+                            break;
+                        }
+                        try {
+                            DocumentIndexStatus indexStatus = sharedQueue.take();
+                            //when polled
+                            log.debug("taken document : {}. will now wait for processed data",
+                                    indexStatus);
+
+                            //launch index status
+                            SolrDocCallable solrDocCallable = docIndexTasks.get(indexStatus);
+                            if(solrDocCallable != null){
+                                solrDocCallable.setFileData(indexStatus.getReadFileDatas());
+                                log.debug("parsed file data fields count {}. has body - {}",
+                                        indexStatus.getReadFileDatas().size(),
+                                        indexStatus.getReadFileDatas().get("DocumentBody") != null);
+                                Future<SolrInputDocument> doc =
+                                        executorService.submit(solrDocCallable);
+
+                                try {
+                                    solr.deleteById(Long.toString(indexStatus.getDmEntity().getUid()));
+                                    solr.add(doc.get());
+                                } catch (Exception ex) {
+                                    log.error("error while adding doc #" + indexStatus.getDmEntity().getUid(), ex);
+                                }
+
+                            } else {
+                                //
+                                log.error("SolrDocCallable Not Found for Index Status {}", indexStatus);
+                                notFound.add(indexStatus);
+                            }
+
+
+
+
+                        } catch (Exception ex) {
+                            log.error("error while taking and processing !", ex);
+                        }
+
+                        docCount++;
+
+
+                    }
+
+                    for(DocumentIndexStatus indexStatus: notFound) {
+                        log.debug("processing missed document : {}. will now wait for processed data",
+                                indexStatus);
+                        SolrDocCallable solrDocCallable = docIndexTasks.get(indexStatus);
+                        if (solrDocCallable != null) {
+                            solrDocCallable.setFileData(indexStatus.getReadFileDatas());
+                            log.debug("parsed file data fields count {}. has body - {}",
+                                    indexStatus.getReadFileDatas().size(),
+                                    indexStatus.getReadFileDatas().get("DocumentBody") != null);
+                            Future<SolrInputDocument> doc =
+                                    executorService.submit(solrDocCallable);
+
+                            try {
+                                solr.deleteById(Long.toString(indexStatus.getDmEntity().getUid()));
+                                solr.add(doc.get());
+                            } catch (Exception ex) {
+                                log.error("error while adding doc #" + indexStatus.getDmEntity().getUid(), ex);
+                            }
+                        } else {
+                            log.error("definitely not processing do {}", indexStatus);
+
+                        }
+                    }
+                    log.debug("returning doc count processed {}", docCount);
+                    try {
+                        solr.commit();
+                    }catch (Exception ex){
+                        log.error("error while committing block !!!", ex);
+                    }
+
+                    return  docCount;
+
                 }
             });
 
-            //reloop on doc to start
-            for (final DMEntity doc : documentEntities) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Start Adding Document doc: #" + doc.getUid() + " " +
-                            doc.getName() + " " + doc.getPath());
-                }
+
+            globalFuture.get();
+            executorService.shutdown();
 
 
-                if(!disableThreading && executorService != null){
-
-                    Future<SolrInputDocument> solrInputDocumentFuture =
-                            executorService.submit(solrInputDocumentCallable);
-
-                    dataFutures.put(doc.getUid(), solrInputDocumentFuture);
-                }  else {
-                    if(doc instanceof Folder){
-                        SolrInputDocument solrInputDocument = toSolrInputDocument((Folder) doc,
-                                FactoryInstantiator.getInstance()
-                                        .getVirtualFolderFactory()
-                                        .virtualFolderMetaDataList((Folder)doc));
-                        updatedDocument.add(solrInputDocument);
-                        updatedDocumentIds.add(String.valueOf(doc.getUid()));
-                    } else {
-                        Document document = (Document)doc;
-                        //load data
-                        DocumentVersion version =
-                                FactoryInstantiator.getInstance().getDocumentVersionFactory().getLastDocumentVersion(document);
-                        DocumentIndexStatus documentIndexStatus = new DocumentIndexStatus();
-                        Map<String, Object> fileData = readVersionFileToData(document, version, documentIndexStatus);
-                        SolrInputDocument solrInputDocument =
-                                new SolrDocGenerator(document, mp)
-                                        .toSolrInputDocument(false, updateDocsMetaWrapper,
-                                                fileData,
-                                                documentIndexStatus);
-
-                        updatedDocument.add(solrInputDocument);
-                        updatedDocumentIds.add(String.valueOf(doc.getUid()));
+            //update processed meta data addon fields
+            if(updateDocsMetaWrapper){
+                for(DMEntity entity: documentEntities){
+                    if(entity instanceof Document){
+                        FactoryInstantiator.getInstance().getDocumentFactory().saveDocument((Document)entity);
+                    } else if(entity instanceof Folder){
+                        FactoryInstantiator.getInstance().getFolderFactory().saveFolder((Folder)entity);
                     }
                 }
             }
-
-            if(!disableThreading){
-                for (Long item : dataFutures.keySet()) {
-                    /*Future<SolrInputDocument> future = dataFutures.get(item);
-                    try {
-                        updatedDocument.add(future.get(readVersionTimeOut, readVersionTimeoutTimeUnit));
-                        updatedDocumentIds.add(String.valueOf(item));
-                        log.debug("thread read success. added content for doc #{}", item);
-                    } catch (TimeoutException ex) {
-                        log.debug("timeout for thread while reading doc #{}", item);
-                        if (!future.isCancelled()) {
-                            future.cancel(true);
-                        }
-                    } catch (Exception ex) {
-                        log.debug("timeout for thread while reading doc #{}", item);
-                    }*/
-                }
-
-                executorService.shutdown();;
-            }
-            if (updatedDocumentIds.size() != documentEntities.size()) {
-                log.debug("{} documents won't be indexed", (documentEntities.size() - updatedDocument.size()));
+            //save document index status
+            for(DocumentIndexStatus dis: documentVersionMap.keySet()){
+                documentIndexStatusFactory.saveItem(dis);
             }
         }
         catch (Exception io) {
             throw new IndexException(io, "An exception occured while indexing document list " + io.getMessage());
         }
-
-        /*catch (IOException io) {
-            throw new IndexException(io, "An exception occured while indexing document list " + io.getMessage());
-        } catch (SolrServerException ex) {
-            throw new IndexException(ex, "An exception occured while indexing document " + ex.getMessage());
-        }*/
     }
 
 
@@ -525,14 +390,27 @@ public class SolrIndexManager
 
                 SolrInputDocument solrInputDocument = null;
                 if(doc instanceof Folder){
-                    solrInputDocument = toSolrInputDocument((Folder) doc,
-                            FactoryInstantiator.getInstance()
-                                    .getVirtualFolderFactory()
-                                    .virtualFolderMetaDataList((Folder)doc));
+
+                    List<VirtualFolderMetaData> metaDatas = FactoryInstantiator.getInstance()
+                            .getVirtualFolderFactory()
+                            .virtualFolderMetaDataList((Folder)doc);
+                    SolrFolderGenerator solrFolderGenerator = new SolrFolderGenerator((Folder)doc, metaDatas, this.mp);
+                    solrInputDocument = solrFolderGenerator.toSolrInputDocument((Folder) doc, metaDatas);
                     updatedDocument.add(solrInputDocument);
                     updatedDocumentIds.add(String.valueOf(doc.getUid()));
                 } else {
-                    solrInputDocument = toSolrInputDocument((Document) doc, null, true, 2, TimeUnit.MINUTES);
+
+                    DocumentIndexStatus st = new DocumentIndexStatus();
+                    st.setDmEntity((DMEntityImpl)doc);
+                    st.setEntityId(doc.getUid());
+                    Map<String, Object> fileDatas =
+                            new SolrDocFileReaderCallable(null, -1, null, null)
+                            .readVersionFileToData((Document)doc,
+                                    FactoryInstantiator.getInstance()
+                                            .getDocumentVersionFactory().getLastDocumentVersion((Document)doc),
+                                    st);
+                    SolrDocGenerator n = new SolrDocGenerator((Document)doc, this.mp);
+                    solrInputDocument = n.toSolrInputDocument(false, true, fileDatas, st);
                 }
 
                 if (solrInputDocument != null) {

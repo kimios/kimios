@@ -834,7 +834,7 @@ public class SolrSearchController
                         for (String u : list) {
                             String queryVal = (!c.isRawQuery() ? "*" : "") +
                                     ClientUtils.escapeQueryChars(u.toLowerCase()) + (!c.isRawQuery() ? "*": "");
-                            if(!queryVal.equals("**")){
+                            if(!queryVal.equals("**") && !queryVal.trim().isEmpty()){
                                 String metaStringQuery = "MetaDataString_" + meta.getUid() + ":" + queryVal;
                                 tmpQ.add(metaStringQuery + " OR ");
                             }

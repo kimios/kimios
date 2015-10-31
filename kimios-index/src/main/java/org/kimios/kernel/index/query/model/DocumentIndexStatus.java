@@ -21,6 +21,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.kimios.kernel.dms.DMEntityImpl;
 
 import javax.persistence.*;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
@@ -116,4 +117,15 @@ public class DocumentIndexStatus {
         this.error = error;
     }
 
+    @Override
+    public String toString() {
+        return "DocumentIndexStatus{" +
+                "indexedDate=" + (indexedDate != null ? new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(indexedDate.getTime())
+                    : "") +
+                ", bodyIndexed=" + bodyIndexed +
+                ", entityId=" + entityId +
+                ", error='" + error + '\'' +
+                ", dmEntity=" + (dmEntity != null ? dmEntity.getPath() : "")  +
+                '}';
+    }
 }

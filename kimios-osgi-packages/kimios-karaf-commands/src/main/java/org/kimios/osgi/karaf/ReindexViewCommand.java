@@ -19,10 +19,9 @@ package org.kimios.osgi.karaf;
 import org.apache.karaf.shell.commands.Command;
 import org.kimios.kernel.index.ReindexerProcess;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.concurrent.Future;
 
 
@@ -41,23 +40,36 @@ public class ReindexViewCommand extends KimiosCommand {
 
 
 
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            DecimalFormat df = new DecimalFormat("#0.##");
+
+
             List<ReindexerProcess.ReindexResult> reindexResults =
                     searchManagementController.viewIndexingProcess(this.getCurrentSession());
 
             for (ReindexerProcess.ReindexResult item :reindexResults) {
-                log.info("Indexing "
-                        + item.getPath()
-                        + " : " + item.getReindexProgression() + " %. "
-                        + ". Indexed "
-                        + item.getReindexedCount() + " on "
-                        + item.getEntitiesCount());
+                Calendar calendarStartDate = Calendar.getInstance();
+                calendarStartDate.setTimeInMillis(item.getStart());
 
-                System.out.println("Indexing "
+                double indexingRate = (double)item.getReindexedCount() / ((double)item.getDuration() / 1000 / 60);
+                String formattedRate = df.format(indexingRate);
+                double remainingTime = ((item.getEntitiesCount() - item.getReindexedCount()) / indexingRate);
+                String formattedRemaining = df.format(remainingTime);
+                String message = "Indexing "
                         + item.getPath()
                         + " : " + item.getReindexProgression() + " %. "
                         + ". Indexed "
                         + item.getReindexedCount() + " on "
-                        + item.getEntitiesCount());
+                        + item.getEntitiesCount()
+                        + ". Started on " + sdf.format(calendarStartDate.getTime())
+                        + ". Elapsed Time: " + (item.getDuration() / 1000 / 60) + " minutes"
+                        + ". Indexing rate: " + formattedRate + " per minutes"
+                        + ". Average Remaining Duration "
+                        +  formattedRemaining + " minutes.";
+
+                log.info(message);
+
+                System.out.println(message);
             }
         }
 

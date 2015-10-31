@@ -57,7 +57,6 @@ public interface ISearchManagementController {
                                 int threadPoolSize,
                                 boolean updateDocsMetaWrapper,
                                 boolean disableThreading,
-                                boolean asyncDocumentRead,
                                 int entityType)
             throws AccessDeniedException, IndexException, ConfigException, DataSourceException;
 
