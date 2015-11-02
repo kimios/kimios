@@ -99,6 +99,7 @@ public class AddonDataHandler extends GenericEventHandler {
                 log.debug("Adding meta datas on virtual folder");
                 f.setAddOnDatas(generateMetaDatasForFolder(f, metaValues));
                 FactoryInstantiator.getInstance().getFolderFactory().updateFolder(f);
+                log.debug("folder updated with {}", f.getAddOnDatas());
             }
 
         } catch (Exception e) {
@@ -149,8 +150,10 @@ public class AddonDataHandler extends GenericEventHandler {
             AddonDatasWrapper wrapper = new AddonDatasWrapper();
             wrapper.setEntityAttributes(entity.getAttributes());
             List<MetaValue> metaValuesFinal = new ArrayList<MetaValue>();
+            log.debug("processing virtual folder meta datas {}", metaValues);
             for(VirtualFolderMetaData m: metaValues){
-                log.debug("generating folder metavalue for meta " + m.getMeta() + " (" + (m.getMeta() != null ? m.getMeta().getMetaType() : " no meta )"));
+                log.debug("generating folder metavalue for meta "
+                        + m.getMeta() + " (" + (m.getMeta() != null ? m.getMeta().getMetaType() : " no meta )"));
                 if(m.getMeta() == null){
                     //load manually
                     m.setMeta(FactoryInstantiator.getInstance().getMetaFactory().getMeta(m.getMetaId()));
@@ -169,7 +172,9 @@ public class AddonDataHandler extends GenericEventHandler {
             }
             wrapper.setEntityMetaValues(metaValuesFinal);
 
-            return objectMapper.writeValueAsString(wrapper);
+            String wr = objectMapper.writeValueAsString(wrapper);
+            log.debug("final virtual folder meta datas {}. wrapper data: {}", metaValuesFinal, wr);
+            return  wr;
         } catch (Exception e) {
             log.error("Error while generating Document addon data", e);
         }

@@ -49,11 +49,6 @@ public class ReindexParallelCommand extends KimiosCommand {
             required = false, multiValued = false)
     boolean disableThreading = true;
 
-    @Option(name = "-ad",
-            description = "--async-doc-read",
-            required = false, multiValued = false)
-    boolean asyncDocumentRead = true;
-
     @Option(name = "-s",
             description = "--read-timeout-unit",
             required = false, multiValued = false)
@@ -68,7 +63,7 @@ public class ReindexParallelCommand extends KimiosCommand {
 
     @Option(name = "-et",
             aliases = "--entity-type",
-            description = "Thread Pool Size",
+            description = "Entity Type (Document=3/Folder=2)",
             required = false, multiValued = false)
     Integer entityType = 3;
 
@@ -95,7 +90,6 @@ public class ReindexParallelCommand extends KimiosCommand {
                     threadPoolSize != null ? threadPoolSize : 5,
                     regenerateMetaWrapper,
                     disableThreading,
-                    asyncDocumentRead,
                     entityType
             );
         }

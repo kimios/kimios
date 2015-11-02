@@ -81,7 +81,6 @@ public class SearchManagementController extends AKimiosController implements ISe
                                              int threadPoolSize,
                                              boolean updateDocsMetaWrapper,
                                              boolean disableThreading,
-                                             boolean asyncDocumentRead,
                                              int entityType)
             throws AccessDeniedException, IndexException, ConfigException, DataSourceException {
         if (securityFactoryInstantiator.getRoleFactory()
@@ -124,9 +123,7 @@ public class SearchManagementController extends AKimiosController implements ISe
                         threadPoolSize,
                         updateDocsMetaWrapper,
                         disableThreading,
-                        asyncDocumentRead,
                         entityType
-
                 );
                 executor.submit(osgiReindexer);
             }

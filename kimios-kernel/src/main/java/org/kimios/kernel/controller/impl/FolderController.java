@@ -225,6 +225,7 @@ public class FolderController extends AKimiosController implements IFolderContro
                 virtualFolderMetaData.setVirtualFolderId(f.getUid());
                 virtualFolderMetaData.setMetaId(metaValue.getMetaUid());
                 Meta m = FactoryInstantiator.getInstance().getMetaFactory().getMeta(metaValue.getMetaUid());
+                virtualFolderMetaData.setMeta(m);
                 switch (m.getMetaType()) {
                     case MetaType.STRING:
                         virtualFolderMetaData.setStringValue(metaValue.getValue().toString());
@@ -233,14 +234,21 @@ public class FolderController extends AKimiosController implements IFolderContro
                         virtualFolderMetaData.setDateValue((Date) metaValue.getValue());
                         break;
                 }
+                log.debug("added virtual folder meta data: {}", virtualFolderMetaData);
                 dmsFactoryInstantiator.getVirtualFolderFactory().saveOrUpdateMeta(virtualFolderMetaData);
+
+                log.debug("added virtual folder meta data: {}", virtualFolderMetaData);
             }
 
 
+            List<VirtualFolderMetaData> metaDataList =
+                    dmsFactoryInstantiator.getVirtualFolderFactory().virtualFolderMetaDataList(f);
             EventContext.get().addParameter("virtualFolder",
                     dmsFactoryInstantiator.getFolderFactory().getFolder(f.getUid()));
-            EventContext.get().addParameter("virtualFolderMetas",
-                    dmsFactoryInstantiator.getVirtualFolderFactory().virtualFolderMetaDataList(f));
+            EventContext.get().addParameter("virtualFolderMetas", metaDataList
+                    );
+
+            log.debug("virtual folder meta datas submitted to event context : {}", metaDataList);
 
             return f.getUid();
         }

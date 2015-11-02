@@ -42,9 +42,7 @@ public interface ISolrIndexManager
                                           long readVersionTimeOut,
                                           TimeUnit readVersionTimeoutTimeUnit,
                                           boolean updateDocsMetaWrapper,
-                                          int poolSize,
-                                          boolean disableThreading,
-                                          boolean asyncDocumentRead)
+                                          int poolSize)
             throws IndexException, DataSourceException, ConfigException;
 
 

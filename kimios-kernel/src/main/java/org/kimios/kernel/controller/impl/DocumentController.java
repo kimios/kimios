@@ -1286,13 +1286,16 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                     AddonDataHandler.AddonDatasWrapper wrapper = mapper.readValue(((Folder) bookmark.getEntity()).getAddOnDatas(),
                             AddonDataHandler.AddonDatasWrapper.class);
 
-                        for(MetaValue mv: wrapper.getEntityMetaValues()){
-                            org.kimios.kernel.ws.pojo.MetaValue pojoMetaValue = new org.kimios.kernel.ws.pojo.MetaValue();
-                            pojoMetaValue.setMeta(mv.getMeta().toPojo());
-                            pojoMetaValue.setMetaId(mv.getMetaUid());
-                            pojoMetaValue.setValue(mv.getValue());
-                            pojoEntity.getMetaDatas().put("MetaData" + it[mv.getMeta().getMetaType()]+ "_" + mv.getMetaUid(), pojoMetaValue);
+                        if(wrapper.getEntityMetaValues() != null){
+                            for(MetaValue mv: wrapper.getEntityMetaValues()){
+                                org.kimios.kernel.ws.pojo.MetaValue pojoMetaValue = new org.kimios.kernel.ws.pojo.MetaValue();
+                                pojoMetaValue.setMeta(mv.getMeta().toPojo());
+                                pojoMetaValue.setMetaId(mv.getMetaUid());
+                                pojoMetaValue.setValue(mv.getValue());
+                                pojoEntity.getMetaDatas().put("MetaData" + it[mv.getMeta().getMetaType()]+ "_" + mv.getMetaUid(), pojoMetaValue);
+                            }
                         }
+
                     }catch (IOException exception){
                         log.error("error while parsing json meta datas for entity folder #" + bookmark.getEntity().getUid(), exception);
                     }
