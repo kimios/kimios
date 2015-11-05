@@ -11,3 +11,6 @@ Thumbs.db
 kimios-home/server/txlogs
 rebel.xml
 kimios-server-war/profiles/dev/*
+*.gradle
+gradle*
+gradle/*
