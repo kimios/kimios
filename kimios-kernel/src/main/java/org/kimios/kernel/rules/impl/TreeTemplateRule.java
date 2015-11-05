@@ -17,9 +17,9 @@
 package org.kimios.kernel.rules.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.kimios.kernel.dms.*;
+import org.kimios.kernel.dms.model.*;
 import org.kimios.kernel.dms.FactoryInstantiator;
-import org.kimios.kernel.security.*;
+import org.kimios.kernel.security.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

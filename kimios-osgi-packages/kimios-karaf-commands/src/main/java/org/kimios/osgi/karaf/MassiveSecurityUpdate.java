@@ -16,16 +16,14 @@
 
 package org.kimios.osgi.karaf;
 
-import org.apache.karaf.shell.commands.Argument;
 import org.apache.karaf.shell.commands.Command;
 import org.apache.karaf.shell.commands.Option;
-import org.kimios.kernel.dms.DMEntity;
+import org.kimios.kernel.dms.model.DMEntity;
 import org.kimios.kernel.dms.FactoryInstantiator;
-import org.kimios.kernel.dms.utils.PathElement;
 import org.kimios.kernel.hibernate.HFactory;
-import org.kimios.kernel.security.DMEntityACL;
-import org.kimios.kernel.security.DMEntitySecurity;
-import org.kimios.kernel.security.DMSecurityRule;
+import org.kimios.kernel.security.model.DMEntityACL;
+import org.kimios.kernel.security.model.DMEntitySecurity;
+import org.kimios.kernel.security.model.DMSecurityRule;
 import org.kimios.kernel.security.factory.HDMEntitySecurityFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

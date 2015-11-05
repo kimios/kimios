@@ -32,7 +32,7 @@ import org.kimios.kernel.converter.exception.ConverterException;
 import org.kimios.kernel.converter.source.InputSource;
 import org.kimios.kernel.converter.source.InputSourceFactory;
 import org.kimios.kernel.converter.source.impl.DocumentVersionInputSource;
-import org.kimios.kernel.dms.DocumentVersion;
+import org.kimios.kernel.dms.model.DocumentVersion;
 
 import java.io.File;
 import java.io.FileOutputStream;

@@ -18,12 +18,12 @@ package org.kimios.kernel.log.factory;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.dms.DMEntityImpl;
+import org.kimios.kernel.dms.model.DMEntityImpl;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
-import org.kimios.kernel.log.DMEntityLog;
+import org.kimios.kernel.log.model.DMEntityLog;
 import org.kimios.kernel.log.DMEntityLogFactory;
-import org.kimios.kernel.user.User;
+import org.kimios.kernel.user.model.User;
 
 import java.util.Date;
 import java.util.List;

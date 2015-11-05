@@ -20,12 +20,12 @@ import org.hibernate.HibernateException;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.dms.Workflow;
-import org.kimios.kernel.dms.WorkflowStatusManager;
+import org.kimios.kernel.dms.model.Workflow;
+import org.kimios.kernel.dms.model.WorkflowStatusManager;
 import org.kimios.kernel.dms.WorkflowStatusManagerFactory;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
-import org.kimios.kernel.security.SecurityEntity;
+import org.kimios.kernel.security.model.SecurityEntity;
 
 import java.util.List;
 import java.util.Vector;

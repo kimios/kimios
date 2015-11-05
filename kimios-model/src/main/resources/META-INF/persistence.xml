@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Kimios - Document Management System Software
+  ~ Copyright (C) 2008-2014  DevLib'
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 2 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ aong with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<persistence version="2.1"
+             xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_1.xsd">
+
+    <persistence-unit name="kimiosPu" transaction-type="JTA">
+        <provider>org.hibernate.ejb.HibernatePersistence</provider>
+        <jta-data-source>osgi:service/javax.sql.DataSource/(osgi.jndi.service.name=jdbc/kimiosds)</jta-data-source>
+        <mapping-file>org/kimios/kernel/hibernate/mapping/authentication.hbm.xml</mapping-file>
+        <mapping-file>org/kimios/kernel/hibernate/mapping/postgresql/dmpojo.hbm.xml</mapping-file>
+        <class>org.kimios.kernel.user.model.AuthenticationSourceBean</class>
+        <class>org.kimios.kernel.dms.model.Bookmark</class>
+        <class>org.kimios.kernel.dms.model.DMEntityImpl</class>
+        <class>org.kimios.kernel.dms.model.Document</class>
+        <class>org.kimios.kernel.dms.model.DocumentComment</class>
+        <class>org.kimios.kernel.dms.model.DocumentType</class>
+        <class>org.kimios.kernel.dms.model.DocumentVersion</class>
+        <class>org.kimios.kernel.dms.model.DocumentWorkflowStatus</class>
+        <class>org.kimios.kernel.dms.model.DocumentWorkflowStatusRequest</class>
+        <class>org.kimios.kernel.dms.model.Folder</class>
+        <class>org.kimios.kernel.dms.model.Lock</class>
+        <class>org.kimios.kernel.dms.model.Meta</class>
+        <class>org.kimios.kernel.dms.model.MetaBooleanValue</class>
+        <class>org.kimios.kernel.dms.model.MetaDateValue</class>
+        <class>org.kimios.kernel.dms.model.MetaFeedImpl</class>
+        <class>org.kimios.kernel.dms.model.MetaListValue</class>
+        <class>org.kimios.kernel.dms.model.MetaNumberValue</class>
+        <class>org.kimios.kernel.dms.model.MetaStringValue</class>
+        <class>org.kimios.kernel.dms.model.MetaValueBean</class>
+        <class>org.kimios.kernel.dms.model.SymbolicLink</class>
+        <class>org.kimios.kernel.dms.model.Workflow</class>
+        <class>org.kimios.kernel.dms.model.WorkflowStatus</class>
+        <class>org.kimios.kernel.dms.model.WorkflowStatusManager</class>
+        <class>org.kimios.kernel.dms.model.Workspace</class>
+        <class>org.kimios.kernel.dms.model.DMEntityAttribute</class>
+        <class>org.kimios.kernel.dms.metafeeds.impl.Enumeration</class>
+        <class>org.kimios.kernel.dms.metafeeds.impl.UserMetaFeed</class>
+        <class>org.kimios.kernel.dms.model.PathTemplate</class>
+        <class>org.kimios.kernel.filetransfer.model.DataTransfer</class>
+        <class>org.kimios.kernel.index.query.model.SearchRequest</class>
+        <class>org.kimios.kernel.index.query.model.SearchRequestACL</class>
+        <class>org.kimios.kernel.dms.model.VirtualFolderMetaData</class>
+        <class>org.kimios.kernel.log.model.DMEntityLog</class>
+        <class>org.kimios.kernel.log.model.Log</class>
+        <class>org.kimios.kernel.repositories.model.RepositoryImpl</class>
+        <class>org.kimios.kernel.rules.model.EventBean</class>
+        <class>org.kimios.kernel.rules.model.RuleBean</class>
+        <class>org.kimios.kernel.security.model.AuthenticatedService</class>
+        <class>org.kimios.kernel.security.model.DMEntityACL</class>
+        <class>org.kimios.kernel.security.model.DMSecurityRule</class>
+        <class>org.kimios.kernel.security.model.DMDefaultSecurityRule</class>
+        <class>org.kimios.kernel.security.model.Role</class>
+        <class>org.kimios.kernel.security.model.Session</class>
+        <class>org.kimios.kernel.jobs.model.ImportData</class>
+        <class>org.kimios.kernel.index.query.model.DocumentIndexStatus</class>
+        <class>org.kimios.kernel.share.model.MailContact</class>
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
+
+        <properties>
+            <!-- <property name="hibernate.archive.autodetection" value="class"/> -->
+            <property name="hibernate.hbm2ddl.auto" value="update" />
+            <property name="hibernate.show_sql" value="false" />
+            <!-- The following line is what's used in Hibernate 4 instead of a TransactionManagerLookup class -->
+            <property name="hibernate.transaction.jta.platform" value="org.hibernate.osgi.OsgiJtaPlatform" />
+            <property name="hibernate.current_session_context_class" value="jta" />
+            <property name="hibernate.connection.release_mode" value="after_statement"/>
+            <property name="hibernate.transaction.flush_before_completion" value="true" />
+            <property name="hibernate.jdbc.use_streams_for_binary" value="true" />
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL82Dialect"/>
+
+        </properties>
+    </persistence-unit>
+</persistence>

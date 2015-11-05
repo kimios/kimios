@@ -15,14 +15,14 @@
  */
 package org.kimios.kernel.events.impl;
 
-import org.kimios.kernel.dms.*;
-import org.kimios.kernel.events.EventContext;
+import org.kimios.kernel.dms.model.*;
+import org.kimios.kernel.events.model.EventContext;
 import org.kimios.kernel.events.GenericEventHandler;
-import org.kimios.kernel.events.annotations.DmsEvent;
-import org.kimios.kernel.events.annotations.DmsEventName;
-import org.kimios.kernel.events.annotations.DmsEventOccur;
+import org.kimios.kernel.events.model.annotations.DmsEvent;
+import org.kimios.kernel.events.model.annotations.DmsEventName;
+import org.kimios.kernel.events.model.annotations.DmsEventOccur;
 import org.kimios.kernel.log.ActionType;
-import org.kimios.kernel.log.DMEntityLog;
+import org.kimios.kernel.log.model.DMEntityLog;
 import org.kimios.kernel.log.FactoryInstantiator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

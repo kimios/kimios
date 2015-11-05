@@ -39,6 +39,13 @@
 
         <dependency>
             <groupId>org.kimios</groupId>
+            <artifactId>kimios-model</artifactId>
+            <version>1.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.kimios</groupId>
             <artifactId>kimios-utils</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
@@ -158,7 +165,6 @@
                         <Include-Resource>{maven-resources}</Include-Resource>
                         <Private-Package>org.kimios.webservices.bonita.impl</Private-Package>
                         <Export-Package>org.kimios.webservices.bonita</Export-Package>
-                        <!--<Spring-Context>*;create-asynchronously:=false</Spring-Context>-->
                         <Import-Package>
                             org.slf4j,
                             org.apache.cxf,
@@ -190,7 +196,7 @@
                             org.kimios.webservices,
                             org.kimios.webservices.exceptions,
                             org.kimios.webservices.utils,
-                            org.kimios.webservices.pojo,
+                            org.kimios.kernel.bonita.webservices.pojo,
                             org.kimios.kernel.*,
                             org.kimios.kernel.ws.pojo,
                             org.kimios.kernel.controller,

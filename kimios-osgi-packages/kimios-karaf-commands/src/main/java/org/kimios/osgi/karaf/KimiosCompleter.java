@@ -5,7 +5,7 @@ import java.util.List;
 import org.apache.felix.service.command.CommandSession;
 import org.apache.karaf.shell.console.CommandSessionHolder;
 import org.apache.karaf.shell.console.Completer;
-import org.kimios.kernel.security.Session;
+import org.kimios.kernel.security.model.Session;
 
 /**
  */

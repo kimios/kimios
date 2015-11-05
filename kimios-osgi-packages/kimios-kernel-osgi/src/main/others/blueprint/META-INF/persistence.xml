@@ -25,51 +25,51 @@
         <jta-data-source>osgi:service/javax.sql.DataSource/(osgi.jndi.service.name=jdbc/kimiosds)</jta-data-source>
         <mapping-file>org/kimios/kernel/hibernate/mapping/authentication.hbm.xml</mapping-file>
         <mapping-file>org/kimios/kernel/hibernate/mapping/postgresql/dmpojo.hbm.xml</mapping-file>
-        <class>org.kimios.kernel.user.AuthenticationSourceBean</class>
-        <class>org.kimios.kernel.dms.Bookmark</class>
-        <class>org.kimios.kernel.dms.DMEntityImpl</class>
-        <class>org.kimios.kernel.dms.Document</class>
-        <class>org.kimios.kernel.dms.DocumentComment</class>
-        <class>org.kimios.kernel.dms.DocumentType</class>
-        <class>org.kimios.kernel.dms.DocumentVersion</class>
-        <class>org.kimios.kernel.dms.DocumentWorkflowStatus</class>
-        <class>org.kimios.kernel.dms.DocumentWorkflowStatusRequest</class>
-        <class>org.kimios.kernel.dms.Folder</class>
-        <class>org.kimios.kernel.dms.Lock</class>
-        <class>org.kimios.kernel.dms.Meta</class>
-        <class>org.kimios.kernel.dms.MetaBooleanValue</class>
-        <class>org.kimios.kernel.dms.MetaDateValue</class>
-        <class>org.kimios.kernel.dms.MetaFeedImpl</class>
-        <class>org.kimios.kernel.dms.MetaListValue</class>
-        <class>org.kimios.kernel.dms.MetaNumberValue</class>
-        <class>org.kimios.kernel.dms.MetaStringValue</class>
-        <class>org.kimios.kernel.dms.MetaValueBean</class>
-        <class>org.kimios.kernel.dms.SymbolicLink</class>
-        <class>org.kimios.kernel.dms.Workflow</class>
-        <class>org.kimios.kernel.dms.WorkflowStatus</class>
-        <class>org.kimios.kernel.dms.WorkflowStatusManager</class>
-        <class>org.kimios.kernel.dms.Workspace</class>
-        <class>org.kimios.kernel.dms.extension.impl.DMEntityAttribute</class>
+        <class>org.kimios.kernel.user.model.AuthenticationSourceBean</class>
+        <class>org.kimios.kernel.dms.model.Bookmark</class>
+        <class>org.kimios.kernel.dms.model.DMEntityImpl</class>
+        <class>org.kimios.kernel.dms.model.Document</class>
+        <class>org.kimios.kernel.dms.model.DocumentComment</class>
+        <class>org.kimios.kernel.dms.model.DocumentType</class>
+        <class>org.kimios.kernel.dms.model.DocumentVersion</class>
+        <class>org.kimios.kernel.dms.model.DocumentWorkflowStatus</class>
+        <class>org.kimios.kernel.dms.model.DocumentWorkflowStatusRequest</class>
+        <class>org.kimios.kernel.dms.model.Folder</class>
+        <class>org.kimios.kernel.dms.model.Lock</class>
+        <class>org.kimios.kernel.dms.model.Meta</class>
+        <class>org.kimios.kernel.dms.model.MetaBooleanValue</class>
+        <class>org.kimios.kernel.dms.model.MetaDateValue</class>
+        <class>org.kimios.kernel.dms.model.MetaFeedImpl</class>
+        <class>org.kimios.kernel.dms.model.MetaListValue</class>
+        <class>org.kimios.kernel.dms.model.MetaNumberValue</class>
+        <class>org.kimios.kernel.dms.model.MetaStringValue</class>
+        <class>org.kimios.kernel.dms.model.MetaValueBean</class>
+        <class>org.kimios.kernel.dms.model.SymbolicLink</class>
+        <class>org.kimios.kernel.dms.model.Workflow</class>
+        <class>org.kimios.kernel.dms.model.WorkflowStatus</class>
+        <class>org.kimios.kernel.dms.model.WorkflowStatusManager</class>
+        <class>org.kimios.kernel.dms.model.Workspace</class>
+        <class>org.kimios.kernel.dms.model.DMEntityAttribute</class>
         <class>org.kimios.kernel.dms.metafeeds.impl.Enumeration</class>
         <class>org.kimios.kernel.dms.metafeeds.impl.UserMetaFeed</class>
-        <class>org.kimios.kernel.dms.PathTemplate</class>
-        <class>org.kimios.kernel.filetransfer.DataTransfer</class>
-        <class>org.kimios.kernel.index.query.model.SearchRequest</class>
-        <class>org.kimios.kernel.index.query.model.SearchRequestACL</class>
-        <class>org.kimios.kernel.dms.VirtualFolderMetaData</class>
-        <class>org.kimios.kernel.log.DMEntityLog</class>
-        <class>org.kimios.kernel.log.Log</class>
-        <class>org.kimios.kernel.repositories.RepositoryImpl</class>
-        <class>org.kimios.kernel.rules.EventBean</class>
-        <class>org.kimios.kernel.rules.RuleBean</class>
-        <class>org.kimios.kernel.security.AuthenticatedService</class>
-        <class>org.kimios.kernel.security.DMEntityACL</class>
-        <class>org.kimios.kernel.security.DMSecurityRule</class>
-        <class>org.kimios.kernel.security.DMDefaultSecurityRule</class>
-        <class>org.kimios.kernel.security.Role</class>
-        <class>org.kimios.kernel.security.Session</class>
-        <class>org.kimios.kernel.jobs.ImportData</class>
-        <class>org.kimios.kernel.index.query.model.DocumentIndexStatus</class>
+        <class>org.kimios.kernel.dms.model.PathTemplate</class>
+        <class>org.kimios.kernel.filetransfer.model.DataTransfer</class>
+        <class>org.kimios.kernel.index.query.model.model.SearchRequest</class>
+        <class>org.kimios.kernel.index.query.model.model.SearchRequestACL</class>
+        <class>org.kimios.kernel.dms.model.VirtualFolderMetaData</class>
+        <class>org.kimios.kernel.log.model.DMEntityLog</class>
+        <class>org.kimios.kernel.log.model.Log</class>
+        <class>org.kimios.kernel.repositories.model.RepositoryImpl</class>
+        <class>org.kimios.kernel.rules.model.EventBean</class>
+        <class>org.kimios.kernel.rules.model.RuleBean</class>
+        <class>org.kimios.kernel.security.model.AuthenticatedService</class>
+        <class>org.kimios.kernel.security.model.DMEntityACL</class>
+        <class>org.kimios.kernel.security.model.DMSecurityRule</class>
+        <class>org.kimios.kernel.security.model.DMDefaultSecurityRule</class>
+        <class>org.kimios.kernel.security.model.Role</class>
+        <class>org.kimios.kernel.security.model.Session</class>
+        <class>org.kimios.kernel.jobs.model.ImportData</class>
+        <class>org.kimios.kernel.index.query.model.model.DocumentIndexStatus</class>
         <class>org.kimios.kernel.share.model.MailContact</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
 

@@ -16,10 +16,10 @@
 package org.kimios.kernel.index.query;
 
 import org.apache.solr.client.solrj.util.ClientUtils;
-import org.kimios.kernel.security.DMSecurityRule;
-import org.kimios.kernel.security.SecurityEntityType;
-import org.kimios.kernel.security.Session;
-import org.kimios.kernel.user.Group;
+import org.kimios.kernel.security.model.DMSecurityRule;
+import org.kimios.kernel.security.model.SecurityEntityType;
+import org.kimios.kernel.security.model.Session;
+import org.kimios.kernel.user.model.Group;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

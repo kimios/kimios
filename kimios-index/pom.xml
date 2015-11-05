@@ -39,6 +39,12 @@
     </dependency>
     <dependency>
       <groupId>org.kimios</groupId>
+      <artifactId>kimios-model</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.kimios</groupId>
       <artifactId>kimios-kernel</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
@@ -104,13 +110,13 @@
     <dependency>
       <groupId>org.codehaus.jackson</groupId>
       <artifactId>jackson-core-lgpl</artifactId>
-      <version>1.6.2</version>
+      <version>1.9.13</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.codehaus.jackson</groupId>
       <artifactId>jackson-mapper-lgpl</artifactId>
-      <version>1.6.2</version>
+      <version>1.9.13</version>
       <scope>provided</scope>
     </dependency>
 
@@ -164,24 +170,6 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>2.3.2</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-            <configuration>
-              <classifier>pojos</classifier>
-              <includes>
-                <include>org/kimios/kernel/index/query/model/**</include>
-              </includes>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
         <version>2.3.7</version>
@@ -206,10 +194,10 @@
             <Bundle-SymbolicName>kimios-index</Bundle-SymbolicName>
             <Bundle-Name>${project.name}</Bundle-Name>
             <Export-Package>
-              org.kimios.index,org.kimios.controller
+              org.kimios.kernel.index,org.kimios.kernel.index.controller
             </Export-Package>
             <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
-            <Embed-Transitive>false</Embed-Transitive>
+            <Embed-Transitive>true</Embed-Transitive>
             <Include-Resource>{maven-resources}</Include-Resource>
             <Import-Package>
               org.slf4j.impl;resolution:=optional,
@@ -291,6 +279,7 @@
           </instructions>
         </configuration>
       </plugin>
+
     </plugins>
   </build>
 </project>

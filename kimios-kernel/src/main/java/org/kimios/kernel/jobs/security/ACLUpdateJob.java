@@ -15,12 +15,12 @@
  */
 package org.kimios.kernel.jobs.security;
 
-import org.kimios.kernel.dms.DMEntity;
-import org.kimios.kernel.events.EventContext;
+import org.kimios.kernel.dms.model.DMEntity;
+import org.kimios.kernel.events.model.EventContext;
 import org.kimios.kernel.jobs.JobImpl;
-import org.kimios.kernel.security.DMEntityACL;
-import org.kimios.kernel.security.DMEntitySecurity;
-import org.kimios.kernel.security.Session;
+import org.kimios.kernel.security.model.DMEntityACL;
+import org.kimios.kernel.security.model.DMEntitySecurity;
+import org.kimios.kernel.security.model.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

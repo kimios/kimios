@@ -17,12 +17,14 @@ package org.kimios.kernel.events;
 
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.*;
-import org.kimios.kernel.events.annotations.DmsEventName;
+import org.kimios.kernel.dms.model.*;
+import org.kimios.kernel.events.model.EventContext;
+import org.kimios.kernel.events.model.annotations.DmsEventName;
 import org.kimios.kernel.exception.DataSourceException;
-import org.kimios.kernel.filetransfer.DataTransfer;
+import org.kimios.kernel.filetransfer.model.DataTransfer;
 import org.kimios.kernel.filetransfer.DataTransferFactory;
 import org.kimios.kernel.hibernate.HFactory;
-import org.kimios.kernel.security.Session;
+import org.kimios.kernel.security.model.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

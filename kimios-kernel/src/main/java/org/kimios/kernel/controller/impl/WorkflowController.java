@@ -20,15 +20,18 @@ import org.kimios.kernel.configuration.Config;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.IWorkflowController;
 import org.kimios.kernel.dms.*;
-import org.kimios.kernel.events.EventContext;
-import org.kimios.kernel.events.annotations.DmsEvent;
-import org.kimios.kernel.events.annotations.DmsEventName;
+import org.kimios.kernel.dms.model.*;
+import org.kimios.kernel.dms.model.Document;
+import org.kimios.kernel.dms.model.DocumentWorkflowStatusRequest;
+import org.kimios.kernel.events.model.EventContext;
+import org.kimios.kernel.events.model.annotations.DmsEvent;
+import org.kimios.kernel.events.model.annotations.DmsEventName;
 import org.kimios.kernel.exception.AccessDeniedException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.WorkflowException;
-import org.kimios.kernel.security.SecurityEntityType;
-import org.kimios.kernel.security.Session;
-import org.kimios.kernel.user.Group;
+import org.kimios.kernel.security.model.SecurityEntityType;
+import org.kimios.kernel.security.model.Session;
+import org.kimios.kernel.user.model.Group;
 import org.kimios.utils.configuration.ConfigurationManager;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -189,7 +192,7 @@ public class WorkflowController extends AKimiosController implements IWorkflowCo
         * If automated workflow activated, create the next status request in chain
         *
         */
-        WorkflowStatus wfs =
+        org.kimios.kernel.dms.model.WorkflowStatus wfs =
                 dmsFactoryInstantiator.getWorkflowStatusFactory().getWorkflowStatus(newRequest.getWorkflowStatusUid())
                         .getSuccessor();
         if (ConfigurationManager.getValue(Config.WORFKLOW_AUTOMATED).equalsIgnoreCase("true") &&
@@ -294,6 +297,15 @@ public class WorkflowController extends AKimiosController implements IWorkflowCo
             }
         }
         return vDWSR;
+    }
+
+    @Override
+    public org.kimios.kernel.ws.pojo.WorkflowStatus getWorkflowStatusPojo(Session session, long workflowStatusId) throws AccessDeniedException, ConfigException, DataSourceException {
+
+        org.kimios.kernel.dms.model.WorkflowStatus workflowStatus = FactoryInstantiator.getInstance().getWorkflowStatusFactory()
+                .getWorkflowStatus(workflowStatusId);
+
+        return workflowStatus.toPojo();
     }
 }
 

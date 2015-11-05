@@ -16,11 +16,11 @@
 package org.kimios.kernel.controller;
 
 import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.events.annotations.DmsEvent;
-import org.kimios.kernel.events.annotations.DmsEventName;
+import org.kimios.kernel.events.model.annotations.DmsEvent;
+import org.kimios.kernel.events.model.annotations.DmsEventName;
 import org.kimios.kernel.exception.*;
-import org.kimios.kernel.filetransfer.DataTransfer;
-import org.kimios.kernel.security.Session;
+import org.kimios.kernel.filetransfer.model.DataTransfer;
+import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.ws.pojo.DocumentWrapper;
 
 import java.io.FileNotFoundException;

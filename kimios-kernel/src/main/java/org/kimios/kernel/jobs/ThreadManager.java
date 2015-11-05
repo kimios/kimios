@@ -15,7 +15,7 @@
  */
 package org.kimios.kernel.jobs;
 
-import org.kimios.kernel.security.Session;
+import org.kimios.kernel.security.model.Session;
 
 import java.util.concurrent.*;
 

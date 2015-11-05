@@ -17,13 +17,13 @@
 package org.kimios.webservices.bonita.impl;
 
 
-import org.kimios.kernel.controller.BonitaController;
+import org.kimios.kernel.bonita.controller.BonitaController;
 import org.kimios.webservices.bonita.BonitaService;
 import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.IServiceHelper;
-import org.kimios.webservices.pojo.CommentWrapper;
-import org.kimios.webservices.pojo.ProcessWrapper;
-import org.kimios.webservices.pojo.TasksResponse;
+import org.kimios.kernel.bonita.webservices.pojo.CommentWrapper;
+import org.kimios.kernel.bonita.webservices.pojo.ProcessWrapper;
+import org.kimios.kernel.bonita.webservices.pojo.TasksResponse;
 
 import javax.jws.WebService;
 import java.util.List;

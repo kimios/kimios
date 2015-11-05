@@ -20,14 +20,13 @@ import org.hibernate.HibernateException;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.dms.DocumentType;
-import org.kimios.kernel.dms.Meta;
+import org.kimios.kernel.dms.model.DocumentType;
+import org.kimios.kernel.dms.model.Meta;
 import org.kimios.kernel.dms.MetaFactory;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
 
 import java.util.List;
-import java.util.Vector;
 
 public class HMetaFactory extends HFactory implements MetaFactory
 {

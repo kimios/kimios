@@ -29,7 +29,7 @@ import flexjson.JSONSerializer;
 import org.kimios.client.controller.helpers.WorkflowStatusDefinition;
 import org.kimios.client.controller.helpers.XMLGenerators;
 import org.kimios.kernel.ws.pojo.*;
-import org.kimios.webservices.pojo.ProcessWrapper;
+import org.kimios.kernel.bonita.webservices.pojo.ProcessWrapper;
 
 import java.io.Writer;
 import java.util.*;

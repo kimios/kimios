@@ -23,5 +23,5 @@
                http://www.springframework.org/schema/osgi
                http://www.springframework.org/schema/osgi/spring-osgi.xsd">
     <osgi:service id="bonitaCtrlOsgi" ref="bonitaController"
-                  interface="org.kimios.kernel.controller.BonitaController"/>
+                  interface="org.kimios.kernel.bonita.controller.BonitaController"/>
 </beans>

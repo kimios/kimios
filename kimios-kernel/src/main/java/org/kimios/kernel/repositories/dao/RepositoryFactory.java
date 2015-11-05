@@ -16,7 +16,7 @@
 package org.kimios.kernel.repositories.dao;
 
 import org.kimios.kernel.hibernate.HFactory;
-import org.kimios.kernel.repositories.Repository;
+import org.kimios.kernel.repositories.model.Repository;
 
 import java.util.List;
 

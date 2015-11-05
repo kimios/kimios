@@ -16,7 +16,7 @@
 package org.kimios.kernel.security.factory;
 
 import org.kimios.kernel.hibernate.HFactory;
-import org.kimios.kernel.security.AuthenticatedService;
+import org.kimios.kernel.security.model.AuthenticatedService;
 import org.kimios.kernel.security.AuthenticatedServiceFactory;
 
 /**

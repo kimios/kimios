@@ -15,9 +15,9 @@
  */
 package org.kimios.kernel.rules.impl;
 
-import org.kimios.kernel.events.EventContext;
-import org.kimios.kernel.rules.Condition;
-import org.kimios.kernel.rules.RuleApplication;
+import org.kimios.kernel.events.model.EventContext;
+import org.kimios.kernel.rules.model.Condition;
+import org.kimios.kernel.rules.model.RuleApplication;
 
 import java.util.Map;
 

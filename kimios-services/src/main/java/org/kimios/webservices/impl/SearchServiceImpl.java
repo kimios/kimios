@@ -19,7 +19,7 @@ package org.kimios.webservices.impl;
 import org.kimios.kernel.index.query.model.Criteria;
 import org.kimios.kernel.index.query.model.SearchRequest;
 import org.kimios.kernel.index.query.model.SearchResponse;
-import org.kimios.kernel.security.Session;
+import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.ws.pojo.Document;
 import org.kimios.webservices.CoreService;
 import org.kimios.webservices.exceptions.DMServiceException;

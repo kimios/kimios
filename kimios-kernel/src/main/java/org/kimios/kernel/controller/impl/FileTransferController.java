@@ -20,15 +20,16 @@ import org.kimios.kernel.configuration.Config;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.IFileTransferController;
 import org.kimios.kernel.dms.*;
-import org.kimios.kernel.events.annotations.DmsEvent;
-import org.kimios.kernel.events.annotations.DmsEventName;
+import org.kimios.kernel.dms.model.*;
+import org.kimios.kernel.events.model.annotations.DmsEvent;
+import org.kimios.kernel.events.model.annotations.DmsEventName;
 import org.kimios.kernel.exception.*;
-import org.kimios.kernel.filetransfer.DataTransfer;
+import org.kimios.kernel.filetransfer.model.DataTransfer;
 import org.kimios.kernel.filetransfer.zip.FileCompressionHelper;
-import org.kimios.kernel.repositories.RepositoryManager;
-import org.kimios.kernel.security.Session;
-import org.kimios.kernel.user.User;
-import org.kimios.kernel.utils.HashCalculator;
+import org.kimios.kernel.repositories.impl.RepositoryManager;
+import org.kimios.kernel.security.model.Session;
+import org.kimios.kernel.user.model.User;
+import org.kimios.utils.hash.HashCalculator;
 import org.kimios.kernel.ws.pojo.DocumentWrapper;
 import org.kimios.utils.configuration.ConfigurationManager;
 import org.springframework.transaction.annotation.Transactional;
@@ -161,7 +162,8 @@ public class FileTransferController
                     // storing data
                     dv.setHashMD5(hashMD5);
                     dv.setHashSHA1(hashSHA1);
-                    dv.writeData(in);
+                    RepositoryManager.writeVersion(dv, in);
+                    FactoryInstantiator.getInstance().getDocumentVersionFactory().updateDocumentVersion(dv);
                 } else {
                     //nothing: same file
                 }
@@ -172,7 +174,8 @@ public class FileTransferController
                 if (!hashMD5.equalsIgnoreCase(dv.getHashMD5()) && !hashSHA1.equalsIgnoreCase(dv.getHashSHA1())) {
                     dv.setHashMD5(hashMD5);
                     dv.setHashSHA1(hashSHA1);
-                    dv.writeData(in);
+                    RepositoryManager.writeVersion(dv, in);
+                    FactoryInstantiator.getInstance().getDocumentVersionFactory().updateDocumentVersion(dv);
                 } else {
                 }
             }
@@ -180,7 +183,8 @@ public class FileTransferController
                 && !hashMD5.equalsIgnoreCase(dv.getHashMD5()) && !hashSHA1.equalsIgnoreCase(dv.getHashSHA1())) {
             dv.setHashMD5(hashMD5);
             dv.setHashSHA1(hashSHA1);
-            dv.writeData(in);
+            RepositoryManager.writeVersion(dv, in);
+            FactoryInstantiator.getInstance().getDocumentVersionFactory().updateDocumentVersion(dv);
         }
 
         new File(ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH) + transac.getFilePath()).delete();
@@ -242,7 +246,7 @@ public class FileTransferController
                 in = new FileInputStream(new File(
                         ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH) + transac.getFilePath()));
             } else {
-                in = dv.getInputStream();
+                in = RepositoryManager.accessVersionStream(dv);
             }
             byte[] b = new byte[chunkSize];
             in.skip(offset);
@@ -294,7 +298,7 @@ public class FileTransferController
                     transac.getDocumentVersionUid());
             if (getSecurityAgent().isReadable(dv.getDocument(), session.getUserName(), session.getUserSource(),
                     session.getGroups())) {
-                return dv.getInputStream();
+                return RepositoryManager.accessVersionStream(dv);
             } else {
                 throw new AccessDeniedException();
             }

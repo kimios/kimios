@@ -16,10 +16,9 @@
 
 package org.kimios.kernel.index.filters;
 
-import org.kimios.kernel.dms.Document;
+import org.kimios.kernel.dms.model.Document;
 import org.kimios.kernel.index.FileFilterException;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 

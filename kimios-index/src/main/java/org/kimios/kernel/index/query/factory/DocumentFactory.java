@@ -17,10 +17,7 @@
 package org.kimios.kernel.index.query.factory;
 
 import org.apache.solr.common.SolrDocument;
-import org.kimios.kernel.dms.*;
-import org.kimios.kernel.dms.DocumentType;
-import org.kimios.kernel.dms.Meta;
-import org.kimios.kernel.ws.pojo.*;
+import org.kimios.kernel.dms.model.MetaType;
 import org.kimios.kernel.ws.pojo.DMEntity;
 import org.kimios.kernel.ws.pojo.Document;
 import org.kimios.kernel.ws.pojo.Folder;

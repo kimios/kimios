@@ -17,10 +17,11 @@ package org.kimios.kernel.rules;
 
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Restrictions;
-import org.kimios.kernel.events.annotations.DmsEventName;
-import org.kimios.kernel.events.annotations.DmsEventOccur;
+import org.kimios.kernel.events.model.annotations.DmsEventName;
+import org.kimios.kernel.events.model.annotations.DmsEventOccur;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
+import org.kimios.kernel.rules.model.RuleBean;
 
 import java.util.List;
 

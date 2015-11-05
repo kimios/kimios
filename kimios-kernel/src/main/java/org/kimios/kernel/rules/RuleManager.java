@@ -17,13 +17,13 @@ package org.kimios.kernel.rules;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.type.MapType;
-import org.codehaus.jackson.map.type.TypeFactory;
 import org.codehaus.jackson.type.TypeReference;
-import org.kimios.kernel.events.EventContext;
-import org.kimios.kernel.events.annotations.DmsEvent;
-import org.kimios.kernel.events.annotations.DmsEventOccur;
+import org.kimios.kernel.events.model.EventContext;
+import org.kimios.kernel.events.model.annotations.DmsEvent;
+import org.kimios.kernel.events.model.annotations.DmsEventOccur;
 import org.kimios.kernel.rules.impl.RuleImpl;
+import org.kimios.kernel.rules.model.EventBean;
+import org.kimios.kernel.rules.model.RuleBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

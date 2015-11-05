@@ -16,42 +16,33 @@
   -->
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-           xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
-           xmlns:jpa="http://aries.apache.org/xmlns/jpa/v1.0.0"
            xmlns:tx="http://aries.apache.org/xmlns/transactions/v1.0.0"
+           xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
            xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0
         http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd" default-activation="eager">
 
-    <!--<cm:property-placeholder id="kimiosServerCfg" persistent-id="org.kimios.server.app" update-strategy="reload" activation="eager"  >
+
+    <cm:property-placeholder id="kimiosServerCfg" persistent-id="org.kimios.server.app" update-strategy="none"
+                             activation="eager">
     </cm:property-placeholder>
 
-    <reference  id="aclUpdater"
-             interface="org.kimios.kernel.jobs.security.IACLUpdater"/>
-    <reference  id="securityAgent"
-             interface="org.kimios.kernel.security.ISecurityAgent"/>
-    <reference  id="dmsfi"
-             interface="org.kimios.kernel.dms.IDmsFactoryInstantiator"></reference>
-    <reference  id="securityfi"
-             interface="org.kimios.kernel.security.ISecurityFactoryInstantiator"></reference>
-    <reference id="userfi"
-             interface="org.kimios.kernel.user.IAuthenticationFactoryInstantiator"></reference>
-    <reference id="logfi"
-             interface="org.kimios.kernel.log.ILogFactoryInstantiator"></reference>
-    <reference id="reportfi"
-             interface="org.kimios.kernel.reporting.IReportFactoryInstantiator"></reference>
-    <reference id="transferfi"
-             interface="org.kimios.kernel.filetransfer.IFileTransferFactoryInstantiator"></reference>
-
     <reference id="dbFactoryProvider"
-             interface="org.kimios.kernel.hibernate.IDBFactory" />
+               interface="org.kimios.kernel.hibernate.IDBFactory"/>
+    <reference id="securityAgent" interface="org.kimios.kernel.security.ISecurityAgent" />
+    <reference id="pathController" interface="org.kimios.kernel.controller.IPathController" />
+    <reference id="eventHandlerManager" interface="org.kimios.kernel.events.IEventHandlerManager" />
 
-    <reference id="pathController"
-               interface="org.kimios.kernel.controller.IPathController" />-->
 
+    <reference id="dmsFactoryInstantiator" interface="org.kimios.kernel.dms.IDmsFactoryInstantiator" />
+    <reference id="securityFactoryInstantiator" interface="org.kimios.kernel.security.ISecurityFactoryInstantiator"/>
+    <reference id="authFactoryInstantiator" interface="org.kimios.kernel.user.IAuthenticationFactoryInstantiator"/>
+    <reference id="logFactoryInstantiator" interface="org.kimios.kernel.log.ILogFactoryInstantiator"/>
+    <reference id="reportFactoryInstantiator" interface="org.kimios.kernel.reporting.IReportFactoryInstantiator"/>
+    <reference id="transferFactoryInstantiator" interface="org.kimios.kernel.filetransfer.IFileTransferFactoryInstantiator"/>
+    <reference id="aclUpdater" interface="org.kimios.kernel.jobs.security.IACLUpdater"/>
 
     <!-- provide a SolrIndexManager class / No interface here -->
-    <bean id="indexManagerSolrBuilder" class="org.kimios.kernel.index.SolrIndexFactory" scope="singleton"
-          destroy-method="shutdownSolr">
+    <bean id="indexManagerSolrBuilder" class="org.kimios.kernel.index.SolrIndexFactory" scope="singleton" destroy-method="shutdownSolr">
         <property name="serverMode" value="${dms.index.solr.mode.server}"/>
         <property name="solrHome" value="${dms.index.solr.home}"/>
         <property name="solrUrl" value="${dms.index.solr.server.url}"/>
@@ -60,16 +51,17 @@
         <property name="solrDocumentFactory" ref="solrDocumentFactory" />
         <property name="documentIndexStatusFactory" ref="documentIndexStatusFactory" />
 
+
+        <property name="eventHandlerManager" ref="eventHandlerManager" />
         <property name="addonDataHandler" ref="addonDataHandler" />
         <property name="sessionEndHandler" ref="sessionEndHandler" />
 
     </bean>
     
-    <bean id="indexManagerSolr" class="org.kimios.kernel.index.SolrIndexManager" factory-ref="indexManagerSolrBuilder"
-          factory-method="createInstance" />
+    <bean id="indexManagerSolr" class="org.kimios.kernel.index.SolrIndexManager" factory-ref="indexManagerSolrBuilder" factory-method="createInstance" />
 
 
-    <bean id="cstMapperBuilder" class="org.kimios.utils.osgi.ObjectMapperBuilder"/>
+    <bean id="cstMapperBuilder" class="org.kimios.kernel.index.utils.osgi.ObjectMapperBuilder"/>
     
     <bean id="addonDataHandler" class="org.kimios.kernel.events.impl.AddonDataHandler">
         <argument>
@@ -94,13 +86,13 @@
 
     <bean id="solrDocumentFactory" class="org.kimios.kernel.index.query.factory.DocumentFactory" />
 
-    <bean id="searchController" class="org.kimios.kernel.controller.impl.SolrSearchController">
-        <property name="dmsFactoryInstantiator" ref="dmsfi"></property>
-        <property name="securityFactoryInstantiator" ref="securityfi"></property>
-        <property name="authFactoryInstantiator" ref="userfi"></property>
-        <property name="logFactoryInstantiator" ref="logfi"></property>
-        <property name="reportFactoryInstantiator" ref="reportfi"></property>
-        <property name="transferFactoryInstantiator" ref="transferfi"></property>
+    <bean id="searchController" class="org.kimios.kernel.index.controller.impl.SolrSearchController">
+        <property name="dmsFactoryInstantiator" ref="dmsFactoryInstantiator"></property>
+        <property name="securityFactoryInstantiator" ref="securityFactoryInstantiator"></property>
+        <property name="authFactoryInstantiator" ref="authFactoryInstantiator"></property>
+        <property name="logFactoryInstantiator" ref="logFactoryInstantiator"></property>
+        <property name="reportFactoryInstantiator" ref="reportFactoryInstantiator"></property>
+        <property name="transferFactoryInstantiator" ref="transferFactoryInstantiator"></property>
         <property name="securityAgent" ref="securityAgent"/>
         <property name="aclUpdater" ref="aclUpdater"/>
 
@@ -112,13 +104,13 @@
         <tx:transaction method="*" value="Required"/>
     </bean>
 
-    <bean id="searchManagementController" class="org.kimios.kernel.controller.impl.SearchManagementController">
-        <property name="dmsFactoryInstantiator" ref="dmsfi"></property>
-        <property name="securityFactoryInstantiator" ref="securityfi"></property>
-        <property name="authFactoryInstantiator" ref="userfi"></property>
-        <property name="logFactoryInstantiator" ref="logfi"></property>
-        <property name="reportFactoryInstantiator" ref="reportfi"></property>
-        <property name="transferFactoryInstantiator" ref="transferfi"></property>
+    <bean id="searchManagementController" class="org.kimios.kernel.index.controller.impl.SearchManagementController">
+        <property name="dmsFactoryInstantiator" ref="dmsFactoryInstantiator"></property>
+        <property name="securityFactoryInstantiator" ref="securityFactoryInstantiator"></property>
+        <property name="authFactoryInstantiator" ref="authFactoryInstantiator"></property>
+        <property name="logFactoryInstantiator" ref="logFactoryInstantiator"></property>
+        <property name="reportFactoryInstantiator" ref="reportFactoryInstantiator"></property>
+        <property name="transferFactoryInstantiator" ref="transferFactoryInstantiator"></property>
         <property name="securityAgent" ref="securityAgent"/>
         <property name="aclUpdater" ref="aclUpdater"/>
 
@@ -132,35 +124,17 @@
         <property name="provider" ref="dbFactoryProvider"></property>
     </bean>
 
+
     <bean id="documentIndexStatusFactory" class="org.kimios.kernel.index.query.factory.DocumentIndexStatusFactory">
         <property name="provider" ref="dbFactoryProvider"></property>
     </bean>
 
 
-    <!-- index filter mapping Old filter mapping loading method. Now replaced with Unified Tika Filter
-    <bean class="org.kimios.kernel.index.FiltersMapper" factory-method="getInstance"
-          init-method="loadFiltersMapping"/>
-
-
-    <aop:config>
-      <aop:pointcut id="searchService"
-                    expression="execution(* org.kimios.kernel.controller.ISearchController.*(..))"/>
-
-        <aop:pointcut id="searchMngService"
-                      expression="execution(* org.kimios.kernel.controller.ISearchManagementController.*(..))"/>
-
-          <aop:advisor advice-ref="txAdvice" pointcut-ref="searchService"/>
-
-
-        <aop:advisor advice-ref="txAdvice" pointcut-ref="searchMngService"/>
-    </aop:config> -->
 
     <service id="searchCtrlosgi" ref="searchController"
-             interface="org.kimios.kernel.controller.ISearchController"/>
-
+             interface="org.kimios.kernel.index.controller.ISearchController"/>
     <service id="searchMngCtrlosgi" ref="searchManagementController"
-             interface="org.kimios.kernel.controller.ISearchManagementController"/>
-
+             interface="org.kimios.kernel.index.controller.ISearchManagementController"/>
     <service id="idxMngrOsgi" ref="indexManagerSolr"
              interface="org.kimios.kernel.index.ISolrIndexManager"/>
 

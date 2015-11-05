@@ -16,6 +16,10 @@
 package org.kimios.kernel.rules.impl;
 
 import org.kimios.kernel.dms.*;
+import org.kimios.kernel.dms.model.DMEntity;
+import org.kimios.kernel.dms.model.Document;
+import org.kimios.kernel.dms.model.DocumentType;
+import org.kimios.kernel.dms.model.DocumentVersion;
 
 public class MustHaveDocumentType extends RuleImpl
 {

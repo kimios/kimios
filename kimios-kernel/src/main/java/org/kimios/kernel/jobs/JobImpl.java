@@ -15,7 +15,7 @@
  */
 package org.kimios.kernel.jobs;
 
-import org.kimios.kernel.security.Session;
+import org.kimios.kernel.security.model.Session;
 import org.slf4j.LoggerFactory;
 
 public abstract class JobImpl<T> implements Job

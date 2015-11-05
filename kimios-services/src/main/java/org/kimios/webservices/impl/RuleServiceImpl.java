@@ -16,7 +16,7 @@
 package org.kimios.webservices.impl;
 
 import org.kimios.kernel.rules.impl.RuleImpl;
-import org.kimios.kernel.security.Session;
+import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.ws.pojo.Rule;
 import org.kimios.kernel.ws.pojo.RuleBean;
 import org.kimios.kernel.ws.pojo.RuleImplP;

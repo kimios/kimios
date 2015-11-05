@@ -16,13 +16,15 @@
 
 package org.kimios.kernel.index;
 
-import org.apache.solr.common.SolrInputDocument;
-import org.kimios.kernel.dms.*;
+import org.kimios.kernel.dms.model.Document;
+import org.kimios.kernel.dms.model.DocumentVersion;
 import org.kimios.kernel.index.filters.impl.GlobalFilter;
 import org.kimios.kernel.index.query.model.DocumentIndexStatus;
+import org.kimios.kernel.repositories.impl.RepositoryManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
@@ -116,7 +118,8 @@ public class SolrDocFileReaderCallable implements Callable<Map<Long,Map<String,O
             if(log.isDebugEnabled())
                 log.debug("starting tika filtering for document #{} ({})", document.getUid(), document.getPath());
             GlobalFilter globalFilter = new GlobalFilter();
-            body = globalFilter.getFileBody(document, version.getInputStream());
+            InputStream versionStream = RepositoryManager.accessVersionStream(version);
+            body = globalFilter.getFileBody(document, versionStream);
             metaDatas = globalFilter.getMetaDatas();
             if(log.isDebugEnabled())
                 log.debug("ending tika filtering for document #{} ({})", document.getUid(), document.getPath());

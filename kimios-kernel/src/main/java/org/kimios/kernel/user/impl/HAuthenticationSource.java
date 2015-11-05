@@ -17,9 +17,9 @@ package org.kimios.kernel.user.impl;
 
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.exception.DataSourceException;
-import org.kimios.kernel.user.AuthenticationSourceImpl;
-import org.kimios.kernel.user.GroupFactory;
-import org.kimios.kernel.user.UserFactory;
+import org.kimios.kernel.user.model.AuthenticationSourceImpl;
+import org.kimios.kernel.user.model.GroupFactory;
+import org.kimios.kernel.user.model.UserFactory;
 import org.kimios.kernel.user.impl.factory.hibernate.HGroupFactory;
 import org.kimios.kernel.user.impl.factory.hibernate.HUserFactory;
 

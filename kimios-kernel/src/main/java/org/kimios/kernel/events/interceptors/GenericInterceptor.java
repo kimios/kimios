@@ -18,12 +18,12 @@ package org.kimios.kernel.events.interceptors;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.kimios.kernel.events.ContextBuilder;
-import org.kimios.kernel.events.EventContext;
-import org.kimios.kernel.events.EventHandlerManager;
+import org.kimios.kernel.events.IEventHandlerManager;
+import org.kimios.kernel.events.model.EventContext;
 import org.kimios.kernel.events.GenericEventHandler;
-import org.kimios.kernel.events.annotations.DmsEvent;
-import org.kimios.kernel.events.annotations.DmsEventOccur;
-import org.kimios.kernel.rules.RuleBean;
+import org.kimios.kernel.events.model.annotations.DmsEvent;
+import org.kimios.kernel.events.model.annotations.DmsEventOccur;
+import org.kimios.kernel.rules.model.RuleBean;
 import org.kimios.kernel.rules.RuleManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,12 +35,12 @@ public class GenericInterceptor implements MethodInterceptor
     private static Logger log = LoggerFactory.getLogger(GenericInterceptor.class);
 
 
-    public GenericInterceptor(EventHandlerManager eventHandlerManager, RuleManager ruleManager){
+    public GenericInterceptor(IEventHandlerManager eventHandlerManager, RuleManager ruleManager){
         this.ruleManager = ruleManager;
         this.eventHandlerManager = eventHandlerManager;
     }
 
-    private EventHandlerManager eventHandlerManager;
+    private IEventHandlerManager eventHandlerManager;
 
     private RuleManager ruleManager;
 

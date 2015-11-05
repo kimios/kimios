@@ -23,8 +23,8 @@ import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.ReportingException;
 import org.kimios.kernel.reporting.XMLReportHelper;
 import org.kimios.kernel.reporting.impl.factory.DocumentTransactionsReportFactory;
-import org.kimios.kernel.security.Role;
-import org.kimios.kernel.security.Session;
+import org.kimios.kernel.security.model.Role;
+import org.kimios.kernel.security.model.Session;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional

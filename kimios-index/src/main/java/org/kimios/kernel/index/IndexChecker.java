@@ -15,7 +15,7 @@
  */
 package org.kimios.kernel.index;
 
-import org.kimios.kernel.dms.Document;
+import org.kimios.kernel.dms.model.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

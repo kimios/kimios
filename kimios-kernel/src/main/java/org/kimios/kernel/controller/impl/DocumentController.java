@@ -21,41 +21,32 @@ import org.codehaus.jackson.map.SerializationConfig;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.configuration.Config;
 import org.kimios.kernel.controller.*;
-import org.kimios.kernel.controller.utils.PathUtils;
+import org.kimios.kernel.dms.model.*;
+import org.kimios.kernel.dms.utils.PathUtils;
 import org.kimios.kernel.dms.*;
-import org.kimios.kernel.dms.Bookmark;
-import org.kimios.kernel.dms.DMEntity;
-import org.kimios.kernel.dms.Document;
-import org.kimios.kernel.dms.DocumentVersion;
-import org.kimios.kernel.dms.Folder;
-import org.kimios.kernel.dms.Meta;
-import org.kimios.kernel.dms.MetaValue;
-import org.kimios.kernel.dms.SymbolicLink;
-import org.kimios.kernel.dms.WorkflowStatus;
+import org.kimios.kernel.dms.FactoryInstantiator;
 import org.kimios.kernel.dms.utils.MetaPathHandler;
-import org.kimios.kernel.dms.utils.MetaProcessor;
-import org.kimios.kernel.events.EventContext;
-import org.kimios.kernel.events.annotations.DmsEvent;
-import org.kimios.kernel.events.annotations.DmsEventName;
+import org.kimios.kernel.dms.MetaProcessor;
+import org.kimios.kernel.events.model.EventContext;
+import org.kimios.kernel.events.model.annotations.DmsEvent;
+import org.kimios.kernel.events.model.annotations.DmsEventName;
 import org.kimios.kernel.events.impl.AddonDataHandler;
 import org.kimios.kernel.exception.*;
-import org.kimios.kernel.filetransfer.DataTransfer;
+import org.kimios.kernel.filetransfer.model.DataTransfer;
 import org.kimios.kernel.filetransfer.zip.FileCompressionHelper;
-import org.kimios.kernel.log.DMEntityLog;
-import org.kimios.kernel.repositories.RepositoryManager;
+import org.kimios.kernel.log.model.DMEntityLog;
+import org.kimios.kernel.repositories.impl.RepositoryManager;
 import org.kimios.kernel.security.*;
-import org.kimios.kernel.security.DMEntitySecurity;
-import org.kimios.kernel.security.Session;
-import org.kimios.kernel.user.User;
-import org.kimios.kernel.utils.HashCalculator;
-import org.kimios.kernel.ws.pojo.*;
+import org.kimios.kernel.security.model.DMEntitySecurity;
+import org.kimios.kernel.security.model.SecurityEntityType;
+import org.kimios.kernel.security.model.Session;
+import org.kimios.kernel.user.model.User;
+import org.kimios.utils.hash.HashCalculator;
 import org.kimios.utils.configuration.ConfigurationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.Access;
 import java.io.*;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
@@ -384,7 +375,8 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                             // storing data
                             dv.setHashMD5(hashMd5);
                             dv.setHashSHA1(hashSha1);
-                            dv.writeData(in);
+                            RepositoryManager.writeVersion(dv, in);
+                            FactoryInstantiator.getInstance().getDocumentVersionFactory().updateDocumentVersion(dv);
                         } else {
                             //nothing: same file
                         }
@@ -395,7 +387,8 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                         if (!hashMd5.equalsIgnoreCase(dv.getHashMD5()) && !hashSha1.equalsIgnoreCase(dv.getHashSHA1())) {
                             dv.setHashMD5(hashMd5);
                             dv.setHashSHA1(hashSha1);
-                            dv.writeData(in);
+                            RepositoryManager.writeVersion(dv, in);
+                            FactoryInstantiator.getInstance().getDocumentVersionFactory().updateDocumentVersion(dv);
                         } else {
                         }
                     }
@@ -403,7 +396,8 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                     if (twoLast.size() == 1 && twoLast.contains(dv)) {
                         dv.setHashMD5(hashMd5);
                         dv.setHashSHA1(hashSha1);
-                        dv.writeData(in);
+                        RepositoryManager.writeVersion(dv, in);
+                        FactoryInstantiator.getInstance().getDocumentVersionFactory().updateDocumentVersion(dv);
                     }
                 }
                 new File(ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH) + transac.getFilePath()).delete();
@@ -585,7 +579,8 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                             // storing data
                             dv.setHashMD5(hashMd5);
                             dv.setHashSHA1(hashSha1);
-                            dv.writeData(in);
+                            RepositoryManager.writeVersion(dv, in);
+                            FactoryInstantiator.getInstance().getDocumentVersionFactory().updateDocumentVersion(dv);
                         } else {
                             //nothing: same file
                         }
@@ -596,7 +591,8 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                         if (!hashMd5.equalsIgnoreCase(dv.getHashMD5()) && !hashSha1.equalsIgnoreCase(dv.getHashSHA1())) {
                             dv.setHashMD5(hashMd5);
                             dv.setHashSHA1(hashSha1);
-                            dv.writeData(in);
+                            RepositoryManager.writeVersion(dv, in);
+                            FactoryInstantiator.getInstance().getDocumentVersionFactory().updateDocumentVersion(dv);
                         } else {
                         }
                     }
@@ -604,7 +600,8 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                     if (twoLast.size() == 1 && twoLast.contains(dv)) {
                         dv.setHashMD5(hashMd5);
                         dv.setHashSHA1(hashSha1);
-                        dv.writeData(in);
+                        RepositoryManager.writeVersion(dv, in);
+                        FactoryInstantiator.getInstance().getDocumentVersionFactory().updateDocumentVersion(dv);
                     }
                 }
                 new File(ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH) + transac.getFilePath()).delete();
@@ -742,7 +739,8 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                             // storing data
                             dv.setHashMD5(hashMd5);
                             dv.setHashSHA1(hashSha1);
-                            dv.writeData(in);
+                            RepositoryManager.writeVersion(dv, in);
+                            FactoryInstantiator.getInstance().getDocumentVersionFactory().updateDocumentVersion(dv);
                         } else {
                             //nothing: same file
                         }
@@ -753,7 +751,8 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                         if (!hashMd5.equalsIgnoreCase(dv.getHashMD5()) && !hashSha1.equalsIgnoreCase(dv.getHashSHA1())) {
                             dv.setHashMD5(hashMd5);
                             dv.setHashSHA1(hashSha1);
-                            dv.writeData(in);
+                            RepositoryManager.writeVersion(dv, in);
+                            FactoryInstantiator.getInstance().getDocumentVersionFactory().updateDocumentVersion(dv);
                         } else {
                         }
                     }
@@ -761,7 +760,8 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                     if (twoLast.size() == 1 && twoLast.contains(dv)) {
                         dv.setHashMD5(hashMd5);
                         dv.setHashSHA1(hashSha1);
-                        dv.writeData(in);
+                        RepositoryManager.writeVersion(dv, in);
+                        FactoryInstantiator.getInstance().getDocumentVersionFactory().updateDocumentVersion(dv);
                     }
                 }
 
@@ -778,9 +778,9 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                 in = FileCompressionHelper.getTransactionFile(transac);
                 dv.setHashMD5(recHashMD5);
                 dv.setHashSHA1(recHashSHA1);
-                dv.writeData(in);
-            }
-
+                RepositoryManager.writeVersion(dv, in);
+                FactoryInstantiator.getInstance().getDocumentVersionFactory().updateDocumentVersion(dv);
+	    }
             new File(ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH) + transac.getFilePath()).delete();
             if (transac.isHasBeenCheckedOutOnStart()) {
                 dmsFactoryInstantiator.getLockFactory().checkin(document, u);
@@ -1332,7 +1332,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
 
     public org.kimios.kernel.ws.pojo.Document getDocumentPojo(Document document)
             throws AccessDeniedException, ConfigException, DataSourceException {
-        return document.toPojo();
+        return this.buidDocumentPojoFromDocument(document);
     }
 
     @DmsEvent(eventName = {DmsEventName.DOCUMENT_COPY})
@@ -1457,5 +1457,14 @@ public class DocumentController extends AKimiosController implements IDocumentCo
             }
         }
         return vBookmarks;
+    }
+
+
+
+    private org.kimios.kernel.ws.pojo.Document buidDocumentPojoFromDocument(Document document)
+            throws ConfigException, DataSourceException {
+        return FactoryInstantiator.getInstance()
+                .getDocumentFactory()
+                .getDocumentPojoFromId(document.getUid());
     }
 }

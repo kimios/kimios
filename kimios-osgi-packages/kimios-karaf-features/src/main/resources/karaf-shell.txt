@@ -1,5 +1,6 @@
 kimios-start = {
- list = [ "kimios-kernel" "hibernate-osgi" "org.kimios.osgi.commands" "kimios-services" "kimios-convert-service" "kimios-bonita-service" ]
+ list = [ "kimios-model" "kimios-kernel" "kimios-index" "kimios-convert" "kimios-share" "kimios-bonita" "hibernate-osgi" "org.kimios.osgi.commands" "kimios-services" "kimios-convert-service" "kimios-bonita-service" "kimios-share-service"]
+
  echo "Stopping Kimios Kernel & Services"
  each ($list) { bundle:stop $it }
  echo "Updating Kimios Kernel & Services"

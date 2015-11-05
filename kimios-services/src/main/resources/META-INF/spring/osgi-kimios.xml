@@ -62,9 +62,9 @@
     <osgi:reference id="pathController"
             interface="org.kimios.kernel.controller.IPathController"/>
     <osgi:reference id="searchController"
-            interface="org.kimios.kernel.controller.ISearchController"/>
+            interface="org.kimios.kernel.index.controller.ISearchController"/>
     <osgi:reference id="searchManagementController"
-                    interface="org.kimios.kernel.controller.ISearchManagementController"/>
+                    interface="org.kimios.kernel.index.controller.ISearchManagementController"/>
     <osgi:reference id="converterController"
-                    interface="org.kimios.kernel.controller.IConverterController"/>
+                    interface="org.kimios.kernel.converter.controller.IConverterController"/>
 </beans>

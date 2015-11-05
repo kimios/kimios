@@ -1,8 +1,6 @@
 package org.kimios.osgi.karaf;
 
 import org.apache.karaf.shell.commands.Command;
-import org.kimios.kernel.dms.Document;
-import org.kimios.kernel.security.Session;
 
 import java.util.List;
 

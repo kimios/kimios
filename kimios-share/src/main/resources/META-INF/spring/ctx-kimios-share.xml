@@ -38,7 +38,7 @@
     <bean id="mailContactFactory" class="org.kimios.kernel.share.factory.MailContactFactory"
           parent="hfactory" />
     
-    <bean id="mailShareController" class="org.kimios.kernel.controller.impl.MailShareController"
+    <bean id="mailShareController" class="org.kimios.kernel.share.controller.impl.MailShareController"
           parent="kimiosCoreCtrl">
         <property name="emailFactory" ref="mailFactory" />
         <property name="mailerSenderMail" value="${dms.mail.senderemail}" />

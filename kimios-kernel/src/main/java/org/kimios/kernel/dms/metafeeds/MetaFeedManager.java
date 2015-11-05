@@ -15,8 +15,7 @@
  */
 package org.kimios.kernel.dms.metafeeds;
 
-import org.kimios.kernel.dms.MetaFeed;
-import org.kimios.kernel.dms.MetaFeedImpl;
+import org.kimios.kernel.dms.model.MetaFeedImpl;
 import org.kimios.kernel.utils.ClassFinder;
 import org.kimios.utils.extension.ExtensionRegistry;
 import org.kimios.utils.extension.ExtensionRegistryManager;

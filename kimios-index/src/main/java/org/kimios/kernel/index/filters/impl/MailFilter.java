@@ -16,7 +16,7 @@
 
 package org.kimios.kernel.index.filters.impl;
 
-import org.kimios.kernel.dms.Document;
+import org.kimios.kernel.dms.model.Document;
 import org.kimios.kernel.index.FileFilterException;
 import org.kimios.kernel.index.filters.Filter;
 

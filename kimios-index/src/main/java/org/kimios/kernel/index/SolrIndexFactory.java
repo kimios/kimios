@@ -21,28 +21,18 @@ package org.kimios.kernel.index;
  */
 
 
-import org.apache.commons.io.IOUtils;
 //import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
-import org.apache.solr.client.solrj.impl.HttpSolrServer;
-import org.apache.solr.core.CoreContainer;
-import org.kimios.kernel.controller.IPathController;
-import org.kimios.kernel.events.EventHandlerManager;
+        import org.kimios.kernel.controller.IPathController;
+        import org.kimios.kernel.events.IEventHandlerManager;
 import org.kimios.kernel.events.impl.AddonDataHandler;
-import org.kimios.kernel.exception.IndexException;
-import org.kimios.kernel.index.query.factory.DocumentFactory;
+        import org.kimios.kernel.index.query.factory.DocumentFactory;
 import org.kimios.kernel.index.query.factory.DocumentIndexStatusFactory;
 import org.kimios.kernel.index.solr.SolrIndexer;
 import org.kimios.kernel.index.solr.utils.SolrServerBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.*;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
 
 /**
  * Factory to instantiate the @see SolrIndexManager.
@@ -75,15 +65,15 @@ public class SolrIndexFactory {
 
     private SolrIndexer solrIndexer;
 
-    private EventHandlerManager eventHandlerManager;
+    private IEventHandlerManager eventHandlerManager;
 
     private SessionEndHandler sessionEndHandler;
 
-    public EventHandlerManager getEventHandlerManager() {
+    public IEventHandlerManager getEventHandlerManager() {
         return eventHandlerManager;
     }
 
-    public void setEventHandlerManager(EventHandlerManager eventHandlerManager) {
+    public void setEventHandlerManager(IEventHandlerManager eventHandlerManager) {
         this.eventHandlerManager = eventHandlerManager;
     }
 

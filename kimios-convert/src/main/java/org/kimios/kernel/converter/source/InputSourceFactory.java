@@ -18,7 +18,7 @@ package org.kimios.kernel.converter.source;
 
 import org.kimios.kernel.converter.source.impl.DocumentVersionInputSource;
 import org.kimios.kernel.converter.source.impl.FileInputSource;
-import org.kimios.kernel.dms.DocumentVersion;
+import org.kimios.kernel.dms.model.DocumentVersion;
 
 import java.io.File;
 

@@ -17,9 +17,9 @@ package org.kimios.kernel.user.impl.factory.genericldaplayer;
 
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.exception.DataSourceException;
-import org.kimios.kernel.security.SecurityEntityType;
-import org.kimios.kernel.user.Group;
-import org.kimios.kernel.user.GroupFactory;
+import org.kimios.kernel.security.model.SecurityEntityType;
+import org.kimios.kernel.user.model.Group;
+import org.kimios.kernel.user.model.GroupFactory;
 import org.kimios.kernel.user.impl.GenericLDAPImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

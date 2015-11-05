@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Kimios - Document Management System Software
+  ~ Copyright (C) 2008-2014  DevLib'
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 2 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ aong with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:tx="http://aries.apache.org/xmlns/transactions/v1.0.0"
+           xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
+           xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0
+        http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd" default-activation="eager">
+
+    <cm:property-placeholder id="kimiosServerCfg" persistent-id="org.kimios.server.app" update-strategy="none"
+                             activation="eager">
+    </cm:property-placeholder>
+
+    <reference id="dbFactoryProvider"
+               interface="org.kimios.kernel.hibernate.IDBFactory"/>
+    <reference id="securityAgent" interface="org.kimios.kernel.security.ISecurityAgent" />
+    <reference id="pathController" interface="org.kimios.kernel.controller.IPathController" />
+    <reference id="eventHandlerManager" interface="org.kimios.kernel.events.IEventHandlerManager" />
+
+
+    <reference id="dmsFactoryInstantiator" interface="org.kimios.kernel.dms.IDmsFactoryInstantiator" />
+    <reference id="securityFactoryInstantiator" interface="org.kimios.kernel.security.ISecurityFactoryInstantiator"/>
+    <reference id="authFactoryInstantiator" interface="org.kimios.kernel.user.IAuthenticationFactoryInstantiator"/>
+    <reference id="logFactoryInstantiator" interface="org.kimios.kernel.log.ILogFactoryInstantiator"/>
+    <reference id="reportFactoryInstantiator" interface="org.kimios.kernel.reporting.IReportFactoryInstantiator"/>
+    <reference id="transferFactoryInstantiator" interface="org.kimios.kernel.filetransfer.IFileTransferFactoryInstantiator"/>
+    <reference id="aclUpdater" interface="org.kimios.kernel.jobs.security.IACLUpdater"/>
+
+    <bean id="converterController" class="org.kimios.kernel.converter.controller.impl.ConverterController">
+        <property name="dmsFactoryInstantiator" ref="dmsFactoryInstantiator"></property>
+        <property name="securityFactoryInstantiator" ref="securityFactoryInstantiator"></property>
+        <property name="authFactoryInstantiator" ref="authFactoryInstantiator"></property>
+        <property name="logFactoryInstantiator" ref="logFactoryInstantiator"></property>
+        <property name="reportFactoryInstantiator" ref="reportFactoryInstantiator"></property>
+        <property name="transferFactoryInstantiator" ref="transferFactoryInstantiator"></property>
+        <property name="securityAgent" ref="securityAgent"/>
+        <property name="aclUpdater" ref="aclUpdater"/>
+
+        <tx:transaction method="*" value="Required"/>
+    </bean>
+
+    <!-- preview cache reset -->
+    <bean class="org.kimios.kernel.converter.cache.PreviewCacheHandler" />
+
+    <service interface="org.kimios.kernel.converter.controller.IConverterController" ref="converterController" />
+
+</blueprint>

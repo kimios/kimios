@@ -15,19 +15,21 @@
  */
 package org.kimios.kernel.jobs.security;
 
-import org.kimios.kernel.dms.DMEntity;
+import org.kimios.kernel.dms.model.DMEntity;
 import org.kimios.kernel.dms.FactoryInstantiator;
-import org.kimios.kernel.events.annotations.DmsEvent;
-import org.kimios.kernel.events.annotations.DmsEventName;
+import org.kimios.kernel.events.model.annotations.DmsEvent;
+import org.kimios.kernel.events.model.annotations.DmsEventName;
 import org.kimios.kernel.hibernate.HFactory;
 import org.kimios.kernel.security.*;
+import org.kimios.kernel.security.model.DMEntityACL;
+import org.kimios.kernel.security.model.DMEntitySecurity;
+import org.kimios.kernel.security.model.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 @Transactional
 public class ACLUpdater implements IACLUpdater {

@@ -18,16 +18,16 @@ package org.kimios.kernel.controller.impl;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.IAdministrationController;
-import org.kimios.kernel.dms.*;
-import org.kimios.kernel.events.annotations.DmsEvent;
-import org.kimios.kernel.events.annotations.DmsEventName;
-import org.kimios.kernel.events.annotations.DmsEventOccur;
+import org.kimios.kernel.dms.model.*;
+import org.kimios.kernel.events.model.annotations.DmsEvent;
+import org.kimios.kernel.events.model.annotations.DmsEventName;
+import org.kimios.kernel.events.model.annotations.DmsEventOccur;
 import org.kimios.kernel.exception.AccessDeniedException;
 import org.kimios.kernel.exception.DataSourceException;
-import org.kimios.kernel.security.Role;
-import org.kimios.kernel.security.Session;
+import org.kimios.kernel.security.model.Role;
+import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.security.SessionManager;
-import org.kimios.kernel.user.*;
+import org.kimios.kernel.user.model.*;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
@@ -272,7 +272,7 @@ public class AdministrationController extends AKimiosController implements IAdmi
         UserFactory f = authFactoryInstantiator.getAuthenticationSourceFactory()
                 .getAuthenticationSource(authenticationSourceName)
                 .getUserFactory();
-        f.saveUser(new org.kimios.kernel.user.User(uid, firstName, lastName, phoneNumber, new Date(), mail, authenticationSourceName, enabled),
+        f.saveUser(new User(uid, firstName, lastName, phoneNumber, new Date(), mail, authenticationSourceName, enabled),
                 password);
     }
 
@@ -293,7 +293,7 @@ public class AdministrationController extends AKimiosController implements IAdmi
         UserFactory f = authFactoryInstantiator.getAuthenticationSourceFactory()
                 .getAuthenticationSource(authenticationSourceName)
                 .getUserFactory();
-        org.kimios.kernel.user.User u = f.getUser(uid);
+        User u = f.getUser(uid);
         u.setMail(mail);
         u.setUid(uid);
         u.setFirstName(firstName);
@@ -342,7 +342,7 @@ public class AdministrationController extends AKimiosController implements IAdmi
         UserFactory f = authFactoryInstantiator.getAuthenticationSourceFactory()
                 .getAuthenticationSource(authenticationSourceName)
                 .getUserFactory();
-        f.deleteUser(new org.kimios.kernel.user.User(uid, authenticationSourceName));
+        f.deleteUser(new User(uid, authenticationSourceName));
     }
 
     /* (non-Javadoc)
@@ -414,7 +414,7 @@ public class AdministrationController extends AKimiosController implements IAdmi
         UserFactory f = authFactoryInstantiator.getAuthenticationSourceFactory()
                 .getAuthenticationSource(authenticationSourceName)
                 .getUserFactory();
-        f.addUserToGroup(new org.kimios.kernel.user.User(uid, authenticationSourceName),
+        f.addUserToGroup(new User(uid, authenticationSourceName),
                 new Group(gid, "", authenticationSourceName));
     }
 
@@ -433,7 +433,7 @@ public class AdministrationController extends AKimiosController implements IAdmi
         UserFactory f = authFactoryInstantiator.getAuthenticationSourceFactory()
                 .getAuthenticationSource(authenticationSourceName)
                 .getUserFactory();
-        f.removeUserFromGroup(new org.kimios.kernel.user.User(uid, authenticationSourceName),
+        f.removeUserFromGroup(new User(uid, authenticationSourceName),
                 new Group(gid, "", authenticationSourceName));
     }
 
@@ -443,7 +443,7 @@ public class AdministrationController extends AKimiosController implements IAdmi
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IAdministrationController#getUser(org.kimios.kernel.security.Session, java.lang.String, java.lang.String)
     */
-    public org.kimios.kernel.user.User getUser(Session session, String uid, String authenticationSourceName)
+    public User getUser(Session session, String uid, String authenticationSourceName)
             throws AccessDeniedException, ConfigException, DataSourceException
     {
         if (securityFactoryInstantiator.getRoleFactory()
@@ -459,7 +459,7 @@ public class AdministrationController extends AKimiosController implements IAdmi
     /**
      * Get users from a gid and authentication source
      */
-    public Vector<org.kimios.kernel.user.User> getUsers(Session session, String gid,
+    public Vector<User> getUsers(Session session, String gid,
             String authenticationSourceName) throws ConfigException,
             DataSourceException, AccessDeniedException
     {
@@ -564,9 +564,9 @@ public class AdministrationController extends AKimiosController implements IAdmi
             Lock lock = dmsFactoryInstantiator.getLockFactory().getDocumentLock(
                     dmsFactoryInstantiator.getDocumentFactory().getDocument(documentUid));
             if (lock != null) {
-                org.kimios.kernel.user.User
+                User
                         user =
-                        new org.kimios.kernel.user.User(lock.getUser(), lock.getUserSource());
+                        new User(lock.getUser(), lock.getUserSource());
                 dmsFactoryInstantiator.getLockFactory().checkin(doc, user);
             }
         }
@@ -630,9 +630,9 @@ public class AdministrationController extends AKimiosController implements IAdmi
         {
             throw new AccessDeniedException();
         }
-        Collection<org.kimios.kernel.user.User> users = SessionManager.getInstance().getConnectedUsers();
+        Collection<User> users = SessionManager.getInstance().getConnectedUsers();
         org.kimios.kernel.ws.pojo.User[] connectedUsers = new org.kimios.kernel.ws.pojo.User[users.size()];
-        Iterator<org.kimios.kernel.user.User> it = users.iterator();
+        Iterator<User> it = users.iterator();
         for (int i = 0; it.hasNext(); i++) {
             connectedUsers[i] = it.next().toPojo();
         }
@@ -729,7 +729,7 @@ public class AdministrationController extends AKimiosController implements IAdmi
     {
 //    if (securityFactoryInstantiator.getRoleFactory().getRole(Role.ADMIN, session.getUserName(), session.getUserSource()) == null)
 //      throw new AccessDeniedException();
-        org.kimios.kernel.user.User user =
+        User user =
                 authFactoryInstantiator.getAuthenticationSourceFactory().getAuthenticationSource(userSource)
                         .getUserFactory()
                         .getUser(userId);
@@ -752,7 +752,7 @@ public class AdministrationController extends AKimiosController implements IAdmi
     {
 //    if (securityFactoryInstantiator.getRoleFactory().getRole(Role.ADMIN, session.getUserName(), session.getUserSource()) == null)
 //      throw new AccessDeniedException();
-        org.kimios.kernel.user.User user =
+        User user =
                 authFactoryInstantiator.getAuthenticationSourceFactory().getAuthenticationSource(userSource)
                         .getUserFactory()
                         .getUser(userId);
@@ -770,13 +770,13 @@ public class AdministrationController extends AKimiosController implements IAdmi
         }
     }
 
-    public org.kimios.kernel.user.User getUserByAttributeValue(Session session, String userSource, String attributeName,
+    public User getUserByAttributeValue(Session session, String userSource, String attributeName,
             String attributeValue)
             throws ConfigException, DataSourceException, AccessDeniedException
     {
 //    if (securityFactoryInstantiator.getRoleFactory().getRole(Role.ADMIN, session.getUserName(), session.getUserSource()) == null)
 //      throw new AccessDeniedException();
-        org.kimios.kernel.user.User u =
+        User u =
                 authFactoryInstantiator.getAuthenticationSourceFactory().getAuthenticationSource(userSource)
                         .getUserFactory()
                         .getUserByAttributeValue(attributeName, attributeValue);

@@ -15,11 +15,11 @@
  */
 package org.kimios.webservices.impl;
 
-import org.kimios.kernel.dms.Document;
-import org.kimios.kernel.dms.Folder;
-import org.kimios.kernel.dms.Workspace;
-import org.kimios.kernel.log.DMEntityLog;
-import org.kimios.kernel.security.Session;
+import org.kimios.kernel.dms.model.Document;
+import org.kimios.kernel.dms.model.Folder;
+import org.kimios.kernel.dms.model.Workspace;
+import org.kimios.kernel.log.model.DMEntityLog;
+import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.ws.pojo.Log;
 import org.kimios.webservices.CoreService;
 import org.kimios.webservices.exceptions.DMServiceException;

@@ -15,26 +15,26 @@
  */
 package org.kimios.kernel.controller.impl;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.IDocumentVersionController;
 import org.kimios.kernel.dms.*;
-import org.kimios.kernel.dms.utils.MetaProcessor;
-import org.kimios.kernel.events.EventContext;
-import org.kimios.kernel.events.annotations.DmsEvent;
-import org.kimios.kernel.events.annotations.DmsEventName;
+import org.kimios.kernel.dms.MetaProcessor;
+import org.kimios.kernel.dms.model.*;
+import org.kimios.kernel.events.model.EventContext;
+import org.kimios.kernel.events.model.annotations.DmsEvent;
+import org.kimios.kernel.events.model.annotations.DmsEventName;
 import org.kimios.kernel.exception.*;
-import org.kimios.kernel.repositories.RepositoryManager;
-import org.kimios.kernel.security.Session;
+import org.kimios.kernel.repositories.impl.RepositoryManager;
+import org.kimios.kernel.security.model.Session;
 import org.kimios.utils.configuration.ConfigurationManager;
+import org.kimios.utils.hash.HashCalculator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
-import org.w3c.dom.NodeList;
 
-import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -619,7 +619,24 @@ public class DocumentVersionController extends AKimiosController implements IDoc
         DocumentVersion dv = dmsFactoryInstantiator.getDocumentVersionFactory().getDocumentVersion(documentVersionUid);
         if (getSecurityAgent()
                 .isReadable(dv.getDocument(), session.getUserName(), session.getUserSource(), session.getGroups())) {
-            dv.updateVersionInformation();
+
+            try {
+                InputStream fis =
+                        RepositoryManager.accessVersionStream(dv);
+                dv.setLength(fis.available());
+                try {
+                    HashCalculator hc = new HashCalculator("MD5");
+                    dv.setHashMD5(hc.hashToString(fis).replaceAll(" ", ""));
+                    hc.setAlgorithm("SHA-1");
+                    fis = RepositoryManager.accessVersionStream(dv);
+                    dv.setHashSHA1(hc.hashToString(fis).replaceAll(" ", ""));
+                } catch (Exception ex) {
+                }
+                fis.close();
+                FactoryInstantiator.getInstance().getDocumentVersionFactory().updateDocumentVersion(dv);
+            } catch (IOException io) {
+                throw new RepositoryException(io.getMessage());
+            }
         } else {
             throw new AccessDeniedException();
         }

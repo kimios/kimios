@@ -16,10 +16,9 @@
 
 package org.kimios.webservices.converter.impl;
 
-import org.kimios.kernel.controller.IConverterController;
-import org.kimios.kernel.controller.impl.ConverterController;
+import org.kimios.kernel.converter.controller.IConverterController;
 import org.kimios.kernel.converter.source.InputSource;
-import org.kimios.kernel.security.Session;
+import org.kimios.kernel.security.model.Session;
 import org.kimios.webservices.converter.ConverterService;
 import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.IServiceHelper;

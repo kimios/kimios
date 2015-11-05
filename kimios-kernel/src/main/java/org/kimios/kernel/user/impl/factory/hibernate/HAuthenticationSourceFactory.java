@@ -21,10 +21,10 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
-import org.kimios.kernel.user.AuthenticationSource;
-import org.kimios.kernel.user.AuthenticationSourceBean;
+import org.kimios.kernel.user.model.AuthenticationSource;
+import org.kimios.kernel.user.model.AuthenticationSourceBean;
 import org.kimios.kernel.user.AuthenticationSourceFactory;
-import org.kimios.kernel.user.AuthenticationSourceImpl;
+import org.kimios.kernel.user.model.AuthenticationSourceImpl;
 import org.kimios.kernel.utils.ClassFinder;
 
 import java.lang.reflect.Field;

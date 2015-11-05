@@ -20,7 +20,7 @@
         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
     <bean id="bonitaController" name="bonitaController"
-          class="org.kimios.kernel.controller.impl.BonitaControllerImpl">
+          class="org.kimios.kernel.bonita.controller.impl.BonitaControllerImpl">
         <property name="bonitaCfg" ref="bonitaSettings"/>
     </bean>
 

@@ -15,6 +15,8 @@
  */
 package org.kimios.kernel.security;
 
+import org.kimios.kernel.security.model.AuthenticatedService;
+
 /**
  * @author Fabien Alin (Farf) <fabien.alin@gmail.com>
  */

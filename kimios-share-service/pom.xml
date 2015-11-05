@@ -34,6 +34,12 @@
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-model</artifactId>
+            <version>1.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.kimios</groupId>
@@ -178,7 +184,6 @@
                             org.kimios.exceptions,
                             org.kimios.webservices,
                             org.kimios.webservices.exceptions,
-                            org.kimios.webservices.pojo,
                             org.codehaus.jackson.map, org.codehaus.jackson.type,
                             org.kimios.kernel.*,
                             org.kimios.kernel.ws.pojo,

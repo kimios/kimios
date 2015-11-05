@@ -7,9 +7,9 @@
 
     <reference id="docCtrl" interface="org.kimios.kernel.controller.IDocumentController"/>
 
-    <reference id="searchCtrl" interface="org.kimios.kernel.controller.ISearchController"/>
+    <reference id="searchCtrl" interface="org.kimios.kernel.index.controller.ISearchController"/>
 
-    <reference id="searchMngCtrl" interface="org.kimios.kernel.controller.ISearchManagementController"/>
+    <reference id="searchMngCtrl" interface="org.kimios.kernel.index.controller.ISearchManagementController"/>
 
 
     <reference id="bonitaCtrl" interface="org.kimios.kernel.bonita.interfaces.IBonitaUsersSynchronizer"/>

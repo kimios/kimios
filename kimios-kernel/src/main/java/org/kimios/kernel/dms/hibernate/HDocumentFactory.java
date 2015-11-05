@@ -23,12 +23,15 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
 import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.dms.*;
+import org.kimios.kernel.dms.model.DMEntity;
+import org.kimios.kernel.dms.model.Document;
+import org.kimios.kernel.dms.DocumentFactory;
+import org.kimios.kernel.dms.FactoryInstantiator;
+import org.kimios.kernel.dms.model.Folder;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
 import org.kimios.utils.configuration.ConfigurationManager;
 
-import javax.print.Doc;
 import java.util.*;
 
 public class HDocumentFactory extends HFactory implements DocumentFactory

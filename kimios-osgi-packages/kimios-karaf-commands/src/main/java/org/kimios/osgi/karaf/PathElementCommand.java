@@ -18,9 +18,7 @@ package org.kimios.osgi.karaf;
 
 import org.apache.karaf.shell.commands.Command;
 import org.apache.karaf.shell.commands.Option;
-import org.kimios.kernel.dms.FactoryInstantiator;
 import org.kimios.kernel.dms.utils.PathElement;
-import org.kimios.kernel.security.Session;
 
 import java.util.ArrayList;
 import java.util.List;

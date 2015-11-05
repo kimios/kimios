@@ -60,13 +60,13 @@
     <reference id="fileTransferController"
             interface="org.kimios.kernel.controller.IFileTransferController"/>
     <reference id="searchController"
-        interface="org.kimios.kernel.controller.ISearchController"/>
+        interface="org.kimios.kernel.index.controller.ISearchController"/>
 
     <reference id="converterController"
-               interface="org.kimios.kernel.controller.IConverterController" />
+               interface="org.kimios.kernel.converter.controller.IConverterController" />
     
     <reference id="searchManagementController"
-               interface="org.kimios.kernel.controller.ISearchManagementController" />
+               interface="org.kimios.kernel.index.controller.ISearchManagementController" />
     <reference id="reportingController"
             interface="org.kimios.kernel.controller.IReportingController"/>
     <reference id="rulesController"

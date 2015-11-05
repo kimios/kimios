@@ -16,9 +16,10 @@
 package org.kimios.kernel.log;
 
 import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.dms.DMEntity;
+import org.kimios.kernel.dms.model.DMEntity;
 import org.kimios.kernel.exception.DataSourceException;
-import org.kimios.kernel.user.User;
+import org.kimios.kernel.log.model.Log;
+import org.kimios.kernel.user.model.User;
 
 import java.util.Date;
 import java.util.Vector;

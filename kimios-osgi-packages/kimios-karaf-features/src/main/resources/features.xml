@@ -64,7 +64,12 @@
     <feature version="${project.version}" name="kimios-core">
         <!--<configfile finalname="/deploy/kimios-ds.xml">mvn:org.kimios/kimios-karaf-features/${project.version}/xml/datasource</configfile>
         <configfile finalname="/deploy/kimios-ds.xml">file:///home/farf/Development/kimios-infra/docker/finalkimios/kimios-srv/kimios-ds.xml</configfile>-->
+        <bundle>mvn:org.kimios/kimios-model/${project.version}/jar/blueprint</bundle>
         <bundle>mvn:org.kimios/kimios-kernel-osgi/${project.version}/jar/blueprint</bundle>
+        <bundle>mvn:org.kimios/kimios-index/${project.version}/jar/osgi</bundle>
+        <bundle>mvn:org.kimios/kimios-share/${project.version}/jar/osgi</bundle>
+        <bundle>mvn:org.kimios/kimios-convert/${project.version}/jar/osgi</bundle>
+        <bundle>mvn:org.kimios/kimios-bonita/${project.version}/jar/osgi</bundle>
 	    <bundle>mvn:org.kimios/kimios-karaf-commands/${project.version}</bundle>
     </feature>
     <feature version="${project.version}" name="kimios-services">

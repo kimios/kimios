@@ -19,11 +19,11 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-    <bean id="converterController" class="org.kimios.kernel.controller.impl.ConverterController"
+    <bean id="converterController" class="org.kimios.kernel.converter.controller.impl.ConverterController"
           parent="kimiosCoreCtrl">
     </bean>
 
     <!-- preview cache reset -->
-    <bean class="org.kimios.kernel.events.impl.PreviewCacheHandler" />
+    <bean class="org.kimios.kernel.converter.cache.PreviewCacheHandler" />
 
 </beans>

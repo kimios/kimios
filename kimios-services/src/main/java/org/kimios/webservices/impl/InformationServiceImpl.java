@@ -15,7 +15,7 @@
  */
 package org.kimios.webservices.impl;
 
-import org.kimios.kernel.security.Session;
+import org.kimios.kernel.security.model.Session;
 import org.kimios.webservices.CoreService;
 import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.InformationService;

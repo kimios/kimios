@@ -33,7 +33,7 @@
                     interface="org.kimios.webservices.ServiceHelper"/>
 
     <osgi:reference id="mailShareController"
-            interface="org.kimios.kernel.controller.IMailShareController"/>
+            interface="org.kimios.kernel.share.controller.IMailShareController"/>
 
 
     <bean id="jaxws-and-aegis-service-factory" class="org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean"

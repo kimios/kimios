@@ -16,15 +16,16 @@
 package org.kimios.kernel.controller;
 
 import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.dms.Document;
-import org.kimios.kernel.events.annotations.DmsEvent;
-import org.kimios.kernel.events.annotations.DmsEventName;
+import org.kimios.kernel.dms.model.Document;
+import org.kimios.kernel.events.model.annotations.DmsEvent;
+import org.kimios.kernel.events.model.annotations.DmsEventName;
 import org.kimios.kernel.exception.AccessDeniedException;
 import org.kimios.kernel.exception.DataSourceException;
-import org.kimios.kernel.security.Role;
-import org.kimios.kernel.security.Session;
-import org.kimios.kernel.user.AuthenticationSource;
-import org.kimios.kernel.user.Group;
+import org.kimios.kernel.security.model.Role;
+import org.kimios.kernel.security.model.Session;
+import org.kimios.kernel.user.model.AuthenticationSource;
+import org.kimios.kernel.user.model.Group;
+import org.kimios.kernel.user.model.User;
 
 import java.util.List;
 import java.util.Vector;
@@ -177,14 +178,14 @@ public interface IAdministrationController
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IAdministrationController#getUser(org.kimios.kernel.security.Session, java.lang.String, java.lang.String)
     */
-    public org.kimios.kernel.user.User getUser(Session session, String uid,
+    public User getUser(Session session, String uid,
             String authenticationSourceName) throws AccessDeniedException,
             ConfigException, DataSourceException;
 
     /**
      * Get users from a gid and authentication source
      */
-    public Vector<org.kimios.kernel.user.User> getUsers(Session session, String gid,
+    public Vector<User> getUsers(Session session, String gid,
             String authenticationSourceName) throws ConfigException,
             DataSourceException, AccessDeniedException;
 
@@ -264,7 +265,7 @@ public interface IAdministrationController
             throws ConfigException, DataSourceException,
             AccessDeniedException;
 
-    public org.kimios.kernel.user.User getUserByAttributeValue(Session session, String userSource, String attributeName,
+    public User getUserByAttributeValue(Session session, String userSource, String attributeName,
             String attributeValue)
             throws ConfigException, DataSourceException,
             AccessDeniedException;

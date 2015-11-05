@@ -16,11 +16,9 @@
 
 package org.kimios.kernel.share.mail;
 
-import org.apache.commons.lang.StringUtils;
-import org.kimios.kernel.dms.Document;
-import org.kimios.kernel.dms.DocumentVersion;
+import org.kimios.kernel.dms.model.DocumentVersion;
 import org.kimios.kernel.dms.FactoryInstantiator;
-import org.kimios.kernel.dms.MetaValue;
+import org.kimios.kernel.dms.model.MetaValue;
 
 import java.util.List;
 

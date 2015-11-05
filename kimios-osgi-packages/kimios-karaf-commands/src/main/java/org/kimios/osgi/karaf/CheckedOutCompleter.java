@@ -4,8 +4,7 @@ import java.util.List;
 
 import org.apache.karaf.shell.console.completer.StringsCompleter;
 import org.kimios.kernel.controller.IAdministrationController;
-import org.kimios.kernel.controller.ISecurityController;
-import org.kimios.kernel.dms.Document;
+import org.kimios.kernel.dms.model.Document;
 
 /**
  * Created with IntelliJ IDEA. User: farf Date: 1/10/13 Time: 1:15 PM To change this template use File | Settings | File

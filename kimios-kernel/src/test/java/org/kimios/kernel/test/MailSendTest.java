@@ -31,7 +31,7 @@ package org.kimios.kernel.test;/*
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import org.kimios.kernel.dms.Document;
+import org.kimios.kernel.dms.model.Document;
 import org.kimios.kernel.mail.MailTemplate;
 import org.kimios.kernel.mail.Mailer;
 import org.kimios.kernel.utils.TemplateUtil;

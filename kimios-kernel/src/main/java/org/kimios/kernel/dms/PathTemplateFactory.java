@@ -16,6 +16,8 @@
 
 package org.kimios.kernel.dms;
 
+import org.kimios.kernel.dms.model.PathTemplate;
+
 /**
  * Created by farf on 10/04/15.
  */

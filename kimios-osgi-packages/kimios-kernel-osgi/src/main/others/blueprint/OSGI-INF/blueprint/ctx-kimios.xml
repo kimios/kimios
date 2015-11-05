@@ -59,6 +59,9 @@
          <property name="eventHandlerManager" ref="eventHandlerManager" />
      </bean>
 
+
+    <service id="eventHandlerRegistry" ref="eventHandlerManager"
+             interface="org.kimios.kernel.events.IEventHandlerManager"/>
      <service id="adminCtrlOsgi" ref="administrationController"
               interface="org.kimios.kernel.controller.IAdministrationController"/>
      <service id="studioCtrlOsgi" ref="studioController"
@@ -93,14 +96,6 @@
               interface="org.kimios.kernel.controller.IPathController"/>
 
 
-     <service id="convertControllerOsgi" ref="converterController"
-              interface="org.kimios.kernel.controller.IConverterController"/>
-
-
-     <service id="bonitaControllerOsgi" ref="bonitaController"
-              interface="org.kimios.kernel.controller.BonitaController"/>
-
-
      <service id="aclUpdaterOsgi" ref="aclUpdater"
               interface="org.kimios.kernel.jobs.security.IACLUpdater"/>
 
@@ -120,23 +115,6 @@
               interface="org.kimios.kernel.reporting.IReportFactoryInstantiator"></service>
      <service id="transferFactoryInstantiatorOsgi" ref="transferfi"
               interface="org.kimios.kernel.filetransfer.IFileTransferFactoryInstantiator"></service>
-
-
-     <service id="dbFactoryProviderOsgi" ref="dbFactoryProvider"
-              interface="org.kimios.kernel.hibernate.IDBFactory"/>
-
-
-     <service id="searchCtrlosgi" ref="searchController"
-              interface="org.kimios.kernel.controller.ISearchController"/>
-
-     <service id="searchMngCtrlosgi" ref="searchManagementController"
-              interface="org.kimios.kernel.controller.ISearchManagementController"/>
-     <service id="idxMngrOsgi" ref="indexManagerSolr"
-              interface="org.kimios.kernel.index.ISolrIndexManager"/>
-
-
-
-
 
 </blueprint>
               

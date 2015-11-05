@@ -19,6 +19,9 @@ package org.kimios.kernel.index;
 import org.apache.solr.common.SolrInputDocument;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.kimios.kernel.dms.*;
+import org.kimios.kernel.dms.model.Document;
+import org.kimios.kernel.dms.model.Folder;
+import org.kimios.kernel.dms.model.VirtualFolderMetaData;
 import org.kimios.kernel.index.query.model.DocumentIndexStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +29,6 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 /**

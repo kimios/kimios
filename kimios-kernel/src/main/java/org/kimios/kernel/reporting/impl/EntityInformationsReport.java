@@ -20,7 +20,7 @@ import org.hibernate.type.IntegerType;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.dms.DMEntityImpl;
+import org.kimios.kernel.dms.model.DMEntityImpl;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.reporting.FactoryInstantiator;
 import org.kimios.kernel.reporting.ReportImpl;

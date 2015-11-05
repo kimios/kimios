@@ -16,9 +16,13 @@
 package org.kimios.webservices.impl;
 
 
-import org.kimios.kernel.dms.MetaFeedImpl;
-import org.kimios.kernel.security.Session;
-import org.kimios.kernel.ws.pojo.*;
+import org.kimios.kernel.dms.model.MetaFeedImpl;
+import org.kimios.kernel.security.model.Session;
+import org.kimios.kernel.ws.pojo.DocumentType;
+import org.kimios.kernel.ws.pojo.MetaFeed;
+import org.kimios.kernel.ws.pojo.Workflow;
+import org.kimios.kernel.ws.pojo.WorkflowStatus;
+import org.kimios.kernel.ws.pojo.WorkflowStatusManager;
 import org.kimios.webservices.CoreService;
 import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.StudioService;
@@ -37,7 +41,7 @@ public class StudioServiceImpl extends CoreService implements StudioService {
 
             getHelper().getSession(sessionId);
 
-            org.kimios.kernel.dms.DocumentType type = studioController.getDocumentType(uid);
+            org.kimios.kernel.dms.model.DocumentType type = studioController.getDocumentType(uid);
 
             if (type == null)
                 return null;
@@ -55,7 +59,7 @@ public class StudioServiceImpl extends CoreService implements StudioService {
 
             getHelper().getSession(sessionId);
 
-            Vector<org.kimios.kernel.dms.DocumentType> v = studioController.getDocumentTypes();
+            Vector<org.kimios.kernel.dms.model.DocumentType> v = studioController.getDocumentTypes();
             DocumentType[] r = new DocumentType[v.size()];
             for (int i = 0; i < v.size(); i++)
                 r[i] = v.elementAt(i).toPojo();
@@ -260,7 +264,7 @@ public class StudioServiceImpl extends CoreService implements StudioService {
 
             getHelper().getSession(sessionId);
 
-            Vector<org.kimios.kernel.dms.Workflow> v = studioController.getWorkflows();
+            Vector<org.kimios.kernel.dms.model.Workflow> v = studioController.getWorkflows();
             Workflow[] r = new Workflow[v.size()];
             for (int i = 0; i < v.size(); i++)
                 r[i] = v.elementAt(i).toPojo();
@@ -293,7 +297,7 @@ public class StudioServiceImpl extends CoreService implements StudioService {
 
             getHelper().getSession(sessionId);
 
-            Vector<org.kimios.kernel.dms.WorkflowStatus> v = studioController.getWorkflowStatuses(workflowId);
+            Vector<org.kimios.kernel.dms.model.WorkflowStatus> v = studioController.getWorkflowStatuses(workflowId);
             WorkflowStatus[] r = new WorkflowStatus[v.size()];
             for (int i = 0; i < v.size(); i++)
                 r[i] = v.elementAt(i).toPojo();
@@ -356,7 +360,7 @@ public class StudioServiceImpl extends CoreService implements StudioService {
 
             Session session = getHelper().getSession(sessionId);
 
-            Vector<org.kimios.kernel.dms.WorkflowStatusManager> v = studioController.getWorkflowStatusManagers(session, workflowStatusId);
+            Vector<org.kimios.kernel.dms.model.WorkflowStatusManager> v = studioController.getWorkflowStatusManagers(session, workflowStatusId);
             WorkflowStatusManager[] r = new WorkflowStatusManager[v.size()];
             for (int i = 0; i < v.size(); i++)
                 r[i] = v.elementAt(i).toPojo();

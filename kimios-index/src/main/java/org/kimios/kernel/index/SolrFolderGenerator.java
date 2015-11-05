@@ -19,18 +19,17 @@ package org.kimios.kernel.index;
 import org.apache.solr.common.SolrInputDocument;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.dms.*;
-import org.kimios.kernel.events.impl.AddonDataHandler;
+import org.kimios.kernel.dms.model.Folder;
+import org.kimios.kernel.dms.model.MetaType;
+import org.kimios.kernel.dms.model.VirtualFolderMetaData;
 import org.kimios.kernel.exception.DataSourceException;
-import org.kimios.kernel.index.query.model.DocumentIndexStatus;
-import org.kimios.kernel.security.DMEntityACL;
+import org.kimios.kernel.security.model.DMEntityACL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Map;
 import java.util.TimeZone;
 
 /**

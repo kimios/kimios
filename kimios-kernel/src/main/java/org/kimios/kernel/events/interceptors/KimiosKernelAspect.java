@@ -22,12 +22,12 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.kimios.kernel.events.ContextBuilder;
-import org.kimios.kernel.events.EventContext;
-import org.kimios.kernel.events.EventHandlerManager;
+import org.kimios.kernel.events.IEventHandlerManager;
+import org.kimios.kernel.events.model.EventContext;
 import org.kimios.kernel.events.GenericEventHandler;
-import org.kimios.kernel.events.annotations.DmsEvent;
-import org.kimios.kernel.events.annotations.DmsEventOccur;
-import org.kimios.kernel.rules.RuleBean;
+import org.kimios.kernel.events.model.annotations.DmsEvent;
+import org.kimios.kernel.events.model.annotations.DmsEventOccur;
+import org.kimios.kernel.rules.model.RuleBean;
 import org.kimios.kernel.rules.RuleManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +43,7 @@ public class KimiosKernelAspect {
 
     private RuleManager ruleManager;
 
-    private EventHandlerManager eventHandlerManager;
+    private IEventHandlerManager eventHandlerManager;
 
     private boolean rulesManagementEnabled;
 
@@ -60,11 +60,11 @@ public class KimiosKernelAspect {
 
     }
 
-    public EventHandlerManager getEventHandlerManager() {
+    public IEventHandlerManager getEventHandlerManager() {
         return eventHandlerManager;
     }
 
-    public void setEventHandlerManager(EventHandlerManager eventHandlerManager) {
+    public void setEventHandlerManager(IEventHandlerManager eventHandlerManager) {
         this.eventHandlerManager = eventHandlerManager;
         log.debug("====> EVENT HANDLER MANAGER DEFINED TO " + eventHandlerManager);
     }
@@ -142,7 +142,7 @@ public class KimiosKernelAspect {
 
     }
 
-    @Pointcut("execution(@org.kimios.kernel.events.annotations.DmsEvent * *(..))")
+    @Pointcut("execution(@org.kimios.kernel.events.model.annotations.DmsEvent * *(..))")
     public void eventMethod(){}
 
     @Pointcut("execution(* org.kimios.kernel.events.GenericEventHandler+.*(..))")

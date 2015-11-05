@@ -16,11 +16,8 @@
 
 package org.kimios.kernel.dms.hibernate;
 
-import org.hibernate.HibernateException;
-import org.hibernate.ObjectNotFoundException;
-import org.kimios.kernel.dms.Folder;
-import org.kimios.kernel.dms.VirtualFolderMetaData;
-import org.kimios.kernel.exception.DataSourceException;
+import org.kimios.kernel.dms.model.Folder;
+import org.kimios.kernel.dms.model.VirtualFolderMetaData;
 import org.kimios.kernel.hibernate.HFactory;
 
 import java.util.List;

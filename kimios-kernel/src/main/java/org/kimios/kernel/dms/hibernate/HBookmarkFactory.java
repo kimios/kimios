@@ -23,10 +23,12 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.*;
+import org.kimios.kernel.dms.model.Bookmark;
+import org.kimios.kernel.dms.model.DMEntity;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
-import org.kimios.kernel.security.SecurityEntityType;
-import org.kimios.kernel.user.Group;
+import org.kimios.kernel.security.model.SecurityEntityType;
+import org.kimios.kernel.user.model.Group;
 
 import java.util.ArrayList;
 import java.util.List;

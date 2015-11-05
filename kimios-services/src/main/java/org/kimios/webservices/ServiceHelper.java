@@ -18,7 +18,7 @@ package org.kimios.webservices;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.exception.*;
 import org.kimios.kernel.security.ISessionManager;
-import org.kimios.kernel.security.Session;
+import org.kimios.kernel.security.model.Session;
 import org.kimios.webservices.exceptions.DMServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

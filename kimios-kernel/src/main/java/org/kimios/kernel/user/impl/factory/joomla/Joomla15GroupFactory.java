@@ -17,8 +17,8 @@ package org.kimios.kernel.user.impl.factory.joomla;
 
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.exception.DataSourceException;
-import org.kimios.kernel.user.Group;
-import org.kimios.kernel.user.GroupFactory;
+import org.kimios.kernel.user.model.Group;
+import org.kimios.kernel.user.model.GroupFactory;
 import org.kimios.kernel.user.impl.AuthenticationSourceJoomla15;
 
 import java.sql.PreparedStatement;

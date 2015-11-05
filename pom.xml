@@ -97,25 +97,25 @@
     <modules>
         <module>kimios-utils</module>
         <module>kimios-exceptions</module>
+        <module>kimios-model</module>
         <module>kimios-test</module>
         <module>kimios-kernel</module>
         <module>kimios-index</module>
         <module>kimios-services</module>
-        <module>kimios-server-war</module>
-        <module>kimios-client-api</module>
-        <module>kimios-webclient</module>
         <module>kimios-convert</module>
-        <module>kimios-bonita</module>
-        <module>kimios-bonita-service</module>
-        <module>kimios-home</module>
-        <module>kimios-sso</module>
-        <module>kimios-dolibarr</module>
         <module>kimios-convert-service</module>
-        <module>kimios-rest-services</module>
-        <module>kimios-osgi-packages</module>
-        <module>kimios-csv-metafeed</module>
         <module>kimios-share</module>
         <module>kimios-share-service</module>
+        <module>kimios-bonita</module>
+        <module>kimios-bonita-service</module>
+        <module>kimios-client-api</module>
+        <module>kimios-webclient</module>
+        <module>kimios-home</module>
+        <module>kimios-sso</module>
+        <module>kimios-osgi-packages</module>
+        <module>kimios-csv-metafeed</module>
+        <module>kimios-dolibarr</module>
+        <module>kimios-server-war</module>
     </modules>
     <packaging>pom</packaging>
     <dependencies>

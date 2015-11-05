@@ -31,7 +31,7 @@
     <cxf:bus name="kimios-bus" id="kimios-bus" />
 
     <reference id="bonitaController"
-               interface="org.kimios.kernel.controller.BonitaController"/>
+               interface="org.kimios.kernel.bonita.controller.BonitaController"/>
 
     <reference id="serviceHelper"
                interface="org.kimios.webservices.IServiceHelper" />

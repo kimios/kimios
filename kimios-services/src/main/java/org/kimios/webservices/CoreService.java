@@ -16,6 +16,9 @@
 package org.kimios.webservices;
 
 import org.kimios.kernel.controller.*;
+import org.kimios.kernel.converter.controller.IConverterController;
+import org.kimios.kernel.index.controller.ISearchController;
+import org.kimios.kernel.index.controller.ISearchManagementController;
 
 public abstract class CoreService
 {

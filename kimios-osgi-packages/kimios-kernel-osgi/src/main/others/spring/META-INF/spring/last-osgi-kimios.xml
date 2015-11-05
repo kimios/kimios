@@ -69,7 +69,7 @@
         </property>
         <property name="annotatedClasses">
         <list>
-            <value>org.kimios.kernel.user.AuthenticationSourceBean</value>
+            <value>org.kimios.kernel.user.model.AuthenticationSourceBean</value>
         </list>
     </property>
     <property name="packagesToScan">

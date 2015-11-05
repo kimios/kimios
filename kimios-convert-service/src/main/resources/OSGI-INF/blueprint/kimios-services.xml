@@ -32,7 +32,7 @@
     <cxf:bus id="kimios-bus" name="kimios-bus" />
 
     <reference id="converterController"
-               interface="org.kimios.kernel.controller.IConverterController"/>
+               interface="org.kimios.kernel.converter.controller.IConverterController"/>
 
     <reference id="serviceHelper"
                interface="org.kimios.webservices.IServiceHelper"/>

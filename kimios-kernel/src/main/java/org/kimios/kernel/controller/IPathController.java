@@ -16,11 +16,11 @@
 package org.kimios.kernel.controller;
 
 import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.dms.DMEntity;
+import org.kimios.kernel.dms.model.DMEntity;
 import org.kimios.kernel.exception.AccessDeniedException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.PathException;
-import org.kimios.kernel.security.Session;
+import org.kimios.kernel.security.model.Session;
 
 import java.util.List;
 

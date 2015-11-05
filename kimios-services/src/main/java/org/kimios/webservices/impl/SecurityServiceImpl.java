@@ -15,9 +15,9 @@
  */
 package org.kimios.webservices.impl;
 
-import org.kimios.kernel.security.Session;
-import org.kimios.kernel.user.AuthenticationSource;
-import org.kimios.kernel.user.Group;
+import org.kimios.kernel.security.model.Session;
+import org.kimios.kernel.user.model.AuthenticationSource;
+import org.kimios.kernel.user.model.Group;
 import org.kimios.kernel.ws.pojo.DMEntitySecurity;
 import org.kimios.kernel.ws.pojo.User;
 import org.kimios.webservices.CoreService;
@@ -35,7 +35,7 @@ public class SecurityServiceImpl extends CoreService implements SecurityService
     {
         try {
             Session session = getHelper().getSession(sessionId);
-            List<org.kimios.kernel.security.DMEntitySecurity> v =
+            List<org.kimios.kernel.security.model.DMEntitySecurity> v =
                     securityController.getDMEntitySecurityies(session, dmEntityId);
             DMEntitySecurity[] r = new DMEntitySecurity[v.size()];
             for (int i = 0; i < v.size(); i++) {
@@ -63,7 +63,7 @@ public class SecurityServiceImpl extends CoreService implements SecurityService
     {
         try {
             Session session = getHelper().getSession(sessionId);
-            List<org.kimios.kernel.security.DMEntitySecurity> v =
+            List<org.kimios.kernel.security.model.DMEntitySecurity> v =
                     securityController.getDefaultDMSecurityEntities(session, objectType);
             DMEntitySecurity[] r = new DMEntitySecurity[v.size()];
             for (int i = 0; i < v.size(); i++) {
@@ -207,7 +207,7 @@ public class SecurityServiceImpl extends CoreService implements SecurityService
 
             getHelper().getSession(sessionId);
 
-            List<org.kimios.kernel.user.User> v = securityController.getUsers(userSource);
+            List<org.kimios.kernel.user.model.User> v = securityController.getUsers(userSource);
             User[] r = new User[v.size()];
             for (int i = 0; i < v.size(); i++) {
                 r[i] = v.get(i).toPojo();

@@ -17,12 +17,9 @@
 package org.kimios.osgi.karaf;
 
 import org.apache.karaf.shell.commands.Command;
-import org.kimios.kernel.dms.MetaFeedImpl;
+import org.kimios.kernel.dms.model.MetaFeedImpl;
 import org.kimios.kernel.dms.metafeeds.MetaFeedManager;
-import org.kimios.kernel.index.ReindexerProcess;
 import org.kimios.utils.extension.ExtensionRegistryManager;
-
-import java.util.List;
 
 
 /**

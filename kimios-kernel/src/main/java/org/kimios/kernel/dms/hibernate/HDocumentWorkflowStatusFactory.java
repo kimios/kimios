@@ -20,7 +20,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.dms.DocumentWorkflowStatus;
+import org.kimios.kernel.dms.model.DocumentWorkflowStatus;
 import org.kimios.kernel.dms.DocumentWorkflowStatusFactory;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;

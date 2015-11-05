@@ -18,12 +18,13 @@ package org.kimios.kernel.controller.impl;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.IPathController;
-import org.kimios.kernel.dms.DMEntity;
+import org.kimios.kernel.dms.model.DMEntity;
+import org.kimios.kernel.dms.FactoryInstantiator;
 import org.kimios.kernel.exception.AccessDeniedException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.PathException;
 import org.kimios.kernel.security.SecurityAgent;
-import org.kimios.kernel.security.Session;
+import org.kimios.kernel.security.model.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,7 +39,13 @@ public class PathController extends AKimiosController implements IPathController
 
     public org.kimios.kernel.ws.pojo.DMEntity getDMEntityPojoFromPath(Session session, String path) throws PathException, ConfigException, DataSourceException, AccessDeniedException {
         DMEntity entity = this.getDMEntityFromPath(session, path);
-        return entity.toPojo();
+
+        if(entity.getType() == 3){
+            return FactoryInstantiator.getInstance().getDocumentFactory().getDocumentPojoFromId(entity.getUid());
+        } else {
+            return entity.toPojo();
+        }
+
     }
 
     /* (non-Javadoc)

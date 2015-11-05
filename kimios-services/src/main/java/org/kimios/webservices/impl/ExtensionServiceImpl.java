@@ -17,19 +17,17 @@ package org.kimios.webservices.impl;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
-import org.kimios.kernel.dms.Document;
-import org.kimios.kernel.dms.extension.impl.DMEntityAttribute;
-import org.kimios.kernel.dms.utils.MetaProcessor;
-import org.kimios.kernel.security.DMEntitySecurity;
-import org.kimios.kernel.security.Session;
+import org.kimios.kernel.dms.model.DMEntityAttribute;
+import org.kimios.kernel.dms.MetaProcessor;
+import org.kimios.kernel.dms.model.Document;
+import org.kimios.kernel.dms.model.MetaValue;
+import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.ws.pojo.DMEntity;
 import org.kimios.webservices.CoreService;
 import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.ExtensionService;
 
 import javax.jws.WebService;
-import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 @WebService(targetNamespace = "http://kimios.org", serviceName = "ExtensionService", name = "ExtensionService")
@@ -105,7 +103,7 @@ public class ExtensionServiceImpl extends CoreService implements ExtensionServic
     public List<DMEntity> viewTrash(String sessionId, Integer start, Integer count) throws DMServiceException {
         try {
             Session session = getHelper().getSession(sessionId);
-            List<org.kimios.kernel.dms.DMEntity> items = extensionController.viewTrash(session, start, count);
+            List<org.kimios.kernel.dms.model.DMEntity> items = extensionController.viewTrash(session, start, count);
             List<? extends DMEntity> toReturn = documentController.convertToPojos(session, (List)items);
             return (List)toReturn;
         } catch (Exception e) {
@@ -131,10 +129,10 @@ public class ExtensionServiceImpl extends CoreService implements ExtensionServic
 
         try {
             Session session = getHelper().getSession(sessionId);
-            List<org.kimios.kernel.dms.MetaValue> metaValues = null;
+            List<MetaValue> metaValues = null;
             try {
                 metaValues =
-                        new ObjectMapper().readValue(metaItemsJsonString, new TypeReference<List<org.kimios.kernel.dms.MetaValue>>() {
+                        new ObjectMapper().readValue(metaItemsJsonString, new TypeReference<List<MetaValue>>() {
                         });
             } catch (Exception ex) {
 

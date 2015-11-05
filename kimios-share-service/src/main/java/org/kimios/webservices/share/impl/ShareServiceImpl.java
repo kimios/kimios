@@ -16,8 +16,8 @@
 
 package org.kimios.webservices.share.impl;
 
-import org.kimios.kernel.controller.IMailShareController;
-import org.kimios.kernel.security.Session;
+import org.kimios.kernel.share.controller.IMailShareController;
+import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.share.model.MailContact;
 import org.kimios.webservices.IServiceHelper;
 import org.kimios.webservices.exceptions.DMServiceException;
@@ -25,7 +25,6 @@ import org.kimios.webservices.share.ShareService;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
-import javax.ws.rs.DefaultValue;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

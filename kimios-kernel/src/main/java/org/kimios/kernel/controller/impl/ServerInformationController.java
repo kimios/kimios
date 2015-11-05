@@ -21,7 +21,7 @@ import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.IServerInformationController;
 import org.kimios.kernel.exception.AccessDeniedException;
 import org.kimios.kernel.exception.DataSourceException;
-import org.kimios.kernel.security.Session;
+import org.kimios.kernel.security.model.Session;
 import org.kimios.utils.configuration.ConfigurationManager;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -54,6 +54,13 @@
 
         <dependency>
             <groupId>org.kimios</groupId>
+            <artifactId>kimios-model</artifactId>
+            <version>${kimios.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.kimios</groupId>
             <artifactId>kimios-kernel-osgi</artifactId>
             <version>${kimios.version}</version>
             <scope>provided</scope>
@@ -141,6 +148,13 @@
             <groupId>org.apache.aries.jpa</groupId>
             <artifactId>org.apache.aries.jpa.container</artifactId>
             <version>1.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slfj.version}</version>
             <scope>provided</scope>
         </dependency>
 

@@ -19,14 +19,14 @@ import org.hibernate.HibernateException;
 import org.hibernate.ObjectNotFoundException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.dms.Document;
-import org.kimios.kernel.dms.Lock;
+import org.kimios.kernel.dms.model.Document;
+import org.kimios.kernel.dms.model.Lock;
 import org.kimios.kernel.dms.LockFactory;
 import org.kimios.kernel.exception.AccessDeniedException;
 import org.kimios.kernel.exception.CheckoutViolationException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
-import org.kimios.kernel.user.User;
+import org.kimios.kernel.user.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

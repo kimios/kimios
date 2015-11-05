@@ -20,8 +20,8 @@ import org.hibernate.HibernateException;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.dms.Workflow;
-import org.kimios.kernel.dms.WorkflowStatus;
+import org.kimios.kernel.dms.model.Workflow;
+import org.kimios.kernel.dms.model.WorkflowStatus;
 import org.kimios.kernel.dms.WorkflowStatusFactory;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
@@ -35,11 +35,26 @@ public class HWorkflowStatusFactory extends HFactory implements WorkflowStatusFa
     {
     }
 
+    public WorkflowStatus getPredecessor(WorkflowStatus status) throws ConfigException, DataSourceException
+    {
+        Workflow w = status.getWorkflow();
+        if (w != null) {
+            Vector<WorkflowStatus> v =
+                    this.getWorkflowStatuses(w);
+            for (int i = 0; i < v.size(); i++) {
+                if (this.equals(v.elementAt(i).getSuccessor())) {
+                    return v.elementAt(i);
+                }
+            }
+        }
+        return null;
+    }
+
     public void deleteWorkflowStatus(WorkflowStatus wfs)
             throws ConfigException, DataSourceException
     {
         try {
-            WorkflowStatus prev = wfs.getPredecessor();
+            WorkflowStatus prev = this.getPredecessor(wfs);
             if (prev != null) {
                 prev.setSuccessor(wfs.getSuccessor());
                 this.changeWorkflowStatus(prev);

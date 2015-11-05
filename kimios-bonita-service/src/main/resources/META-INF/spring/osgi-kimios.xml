@@ -37,7 +37,7 @@
                     interface="org.kimios.webservices.ServiceHelper"/>
 
     <osgi:reference id="bonitaController"
-            interface="org.kimios.kernel.controller.BonitaController"/>
+            interface="org.kimios.kernel.bonita.controller.BonitaController"/>
 
 
     <bean id="jaxws-and-aegis-service-factory" class="org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean"

@@ -16,6 +16,9 @@
 
 package org.kimios.kernel.dms;
 
+import org.kimios.kernel.dms.model.Folder;
+import org.kimios.kernel.dms.model.VirtualFolderMetaData;
+
 import java.util.List;
 
 /**

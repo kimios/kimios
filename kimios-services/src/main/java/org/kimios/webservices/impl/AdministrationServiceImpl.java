@@ -15,17 +15,18 @@
  */
 package org.kimios.webservices.impl;
 
-import org.kimios.kernel.user.Group;
-import org.kimios.kernel.ws.pojo.*;
+import org.kimios.kernel.ws.pojo.AuthenticationSource;
+import org.kimios.kernel.ws.pojo.Document;
+import org.kimios.kernel.ws.pojo.Role;
+import org.kimios.kernel.ws.pojo.Session;
+import org.kimios.kernel.ws.pojo.User;
 import org.kimios.utils.logging.LoggerManager;
 import org.kimios.webservices.AdministrationService;
 import org.kimios.webservices.CoreService;
 import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.utils.KimiosBusServiceManager;
 
-import javax.jws.WebParam;
 import javax.jws.WebService;
-import javax.ws.rs.QueryParam;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
@@ -55,8 +56,8 @@ public class AdministrationServiceImpl extends CoreService implements Administra
     public Role[] getRoles(String sessionUid, int role) throws DMServiceException
     {
         try {
-            org.kimios.kernel.security.Session session = getHelper().getSession(sessionUid);
-            Vector<org.kimios.kernel.security.Role> v = administrationController.getRoles(session, role);
+            org.kimios.kernel.security.model.Session session = getHelper().getSession(sessionUid);
+            Vector<org.kimios.kernel.security.model.Role> v = administrationController.getRoles(session, role);
             Role[] r = new Role[v.size()];
             for (int i = 0; i < v.size(); i++) {
                 r[i] = v.elementAt(i).toPojo();
@@ -70,8 +71,8 @@ public class AdministrationServiceImpl extends CoreService implements Administra
     public Role[] getUserRoles(String sessionUid, String userName, String userSource) throws DMServiceException
     {
         try {
-            org.kimios.kernel.security.Session session = getHelper().getSession(sessionUid);
-            Vector<org.kimios.kernel.security.Role> v =
+            org.kimios.kernel.security.model.Session session = getHelper().getSession(sessionUid);
+            Vector<org.kimios.kernel.security.model.Role> v =
                     administrationController.getRoles(session, userName, userSource);
             Role[] r = new Role[v.size()];
             for (int i = 0; i < v.size(); i++) {
@@ -86,7 +87,7 @@ public class AdministrationServiceImpl extends CoreService implements Administra
     public void createRole(String sessionUid, int role, String userName, String userSource) throws DMServiceException
     {
         try {
-            org.kimios.kernel.security.Session session = getHelper().getSession(sessionUid);
+            org.kimios.kernel.security.model.Session session = getHelper().getSession(sessionUid);
             administrationController.createRole(session, role, userName, userSource);
         } catch (Exception e) {
             throw getHelper().convertException(e);
@@ -96,7 +97,7 @@ public class AdministrationServiceImpl extends CoreService implements Administra
     public void deleteRole(String sessionUid, int role, String userName, String userSource) throws DMServiceException
     {
         try {
-            org.kimios.kernel.security.Session session = getHelper().getSession(sessionUid);
+            org.kimios.kernel.security.model.Session session = getHelper().getSession(sessionUid);
             administrationController.deleteRole(session, role, userName, userSource);
         } catch (Exception e) {
             throw getHelper().convertException(e);
@@ -109,7 +110,7 @@ public class AdministrationServiceImpl extends CoreService implements Administra
     public AuthenticationSource getAuthenticationSource(String sessionUid, String name) throws DMServiceException
     {
         try {
-            org.kimios.kernel.security.Session session = getHelper().getSession(sessionUid);
+            org.kimios.kernel.security.model.Session session = getHelper().getSession(sessionUid);
             AuthenticationSource a = administrationController.getAuthenticationSource(session, name).toPojo();
             return a;
         } catch (Exception e) {
@@ -124,7 +125,7 @@ public class AdministrationServiceImpl extends CoreService implements Administra
             throws DMServiceException
     {
         try {
-            org.kimios.kernel.security.Session session = getHelper().getSession(sessionUid);
+            org.kimios.kernel.security.model.Session session = getHelper().getSession(sessionUid);
             String xmlParameters = administrationController.getAuthenticationSourceParams(session, name, className);
             return xmlParameters;
         } catch (Exception e) {
@@ -139,7 +140,7 @@ public class AdministrationServiceImpl extends CoreService implements Administra
             throws DMServiceException
     {
         try {
-            org.kimios.kernel.security.Session session = getHelper().getSession(sessionUid);
+            org.kimios.kernel.security.model.Session session = getHelper().getSession(sessionUid);
             administrationController.createAuthenticationSource(session, name, className, enableSsoCheck, enableMailCheck, xmlParameters);
         } catch (Exception e) {
             throw getHelper().convertException(e);
@@ -153,7 +154,7 @@ public class AdministrationServiceImpl extends CoreService implements Administra
             String className, boolean enableSsoCheck, boolean enableMailCheck,String xmlParameters) throws DMServiceException
     {
         try {
-            org.kimios.kernel.security.Session session = getHelper().getSession(sessionUid);
+            org.kimios.kernel.security.model.Session session = getHelper().getSession(sessionUid);
             administrationController
                     .updateAuthenticationSource(session, authenticationSourceName, className, enableSsoCheck, enableMailCheck, xmlParameters);
         } catch (Exception e) {
@@ -167,7 +168,7 @@ public class AdministrationServiceImpl extends CoreService implements Administra
     public void deleteAuthenticationSource(String sessionUid, String name) throws DMServiceException
     {
         try {
-            org.kimios.kernel.security.Session session = getHelper().getSession(sessionUid);
+            org.kimios.kernel.security.model.Session session = getHelper().getSession(sessionUid);
             administrationController.deleteAuthenticationSource(session, name);
         } catch (Exception e) {
             throw getHelper().convertException(e);
@@ -180,7 +181,7 @@ public class AdministrationServiceImpl extends CoreService implements Administra
     public String getAvailableAuthenticationSource(String sessionUid) throws DMServiceException
     {
         try {
-            org.kimios.kernel.security.Session session = getHelper().getSession(sessionUid);
+            org.kimios.kernel.security.model.Session session = getHelper().getSession(sessionUid);
             String xmlClassName = administrationController.getAvailableAuthenticationSource(session);
             return xmlClassName;
         } catch (Exception e) {
@@ -191,7 +192,7 @@ public class AdministrationServiceImpl extends CoreService implements Administra
     public String getAvailableAuthenticationSourceParams(String sessionUid, String className) throws DMServiceException
     {
         try {
-            org.kimios.kernel.security.Session session = getHelper().getSession(sessionUid);
+            org.kimios.kernel.security.model.Session session = getHelper().getSession(sessionUid);
             String xmlClassName = administrationController.getAvailableAuthenticationSourceParams(session, className);
             return xmlClassName;
         } catch (Exception e) {
@@ -205,7 +206,7 @@ public class AdministrationServiceImpl extends CoreService implements Administra
     {
 
         try {
-            org.kimios.kernel.security.Session session = getHelper().getSession(sessionUid);
+            org.kimios.kernel.security.model.Session session = getHelper().getSession(sessionUid);
             administrationController.createUser(session, uid, firstName, lastName, phoneNumber, mail, password, authenticationSourceName,
                     enabled);
         } catch (Exception e) {
@@ -219,7 +220,7 @@ public class AdministrationServiceImpl extends CoreService implements Administra
     {
 
         try {
-            org.kimios.kernel.security.Session session = getHelper().getSession(sessionUid);
+            org.kimios.kernel.security.model.Session session = getHelper().getSession(sessionUid);
             administrationController.updateUser(session, uid, firstName, lastName, phoneNumber,
                     mail, password, authenticationSourceName, enabled);
         } catch (Exception e) {
@@ -233,7 +234,7 @@ public class AdministrationServiceImpl extends CoreService implements Administra
                            List<String> emails)
             throws DMServiceException{
         try {
-            org.kimios.kernel.security.Session session = getHelper().getSession(sessionId);
+            org.kimios.kernel.security.model.Session session = getHelper().getSession(sessionId);
             administrationController.updateUserEmails(session, uid, authenticationSourceName, emails);
         } catch (Exception e) {
             throw getHelper().convertException(e);
@@ -244,7 +245,7 @@ public class AdministrationServiceImpl extends CoreService implements Administra
     {
 
         try {
-            org.kimios.kernel.security.Session session = getHelper().getSession(sessionUid);
+            org.kimios.kernel.security.model.Session session = getHelper().getSession(sessionUid);
             administrationController.deleteUser(session, uid, authenticationSourceName);
         } catch (Exception e) {
             throw getHelper().convertException(e);
@@ -256,7 +257,7 @@ public class AdministrationServiceImpl extends CoreService implements Administra
     {
 
         try {
-            org.kimios.kernel.security.Session session = getHelper().getSession(sessionUid);
+            org.kimios.kernel.security.model.Session session = getHelper().getSession(sessionUid);
             administrationController.createGroup(session, gid, name, authenticationSourceName);
         } catch (Exception e) {
             throw getHelper().convertException(e);
@@ -268,7 +269,7 @@ public class AdministrationServiceImpl extends CoreService implements Administra
     {
 
         try {
-            org.kimios.kernel.security.Session session = getHelper().getSession(sessionUid);
+            org.kimios.kernel.security.model.Session session = getHelper().getSession(sessionUid);
             administrationController.updateGroup(session, gid, name, authenticationSourceName);
         } catch (Exception e) {
             throw getHelper().convertException(e);
@@ -278,7 +279,7 @@ public class AdministrationServiceImpl extends CoreService implements Administra
     public void deleteGroup(String sessionUid, String gid, String authenticationSourceName) throws DMServiceException
     {
         try {
-            org.kimios.kernel.security.Session session = getHelper().getSession(sessionUid);
+            org.kimios.kernel.security.model.Session session = getHelper().getSession(sessionUid);
             administrationController.deleteGroup(session, gid, authenticationSourceName);
         } catch (Exception e) {
             throw getHelper().convertException(e);
@@ -289,7 +290,7 @@ public class AdministrationServiceImpl extends CoreService implements Administra
             throws DMServiceException
     {
         try {
-            org.kimios.kernel.security.Session session = getHelper().getSession(sessionUid);
+            org.kimios.kernel.security.model.Session session = getHelper().getSession(sessionUid);
             administrationController.addUserToGroup(session, uid, gid, authenticationSourceName);
         } catch (Exception e) {
             throw getHelper().convertException(e);
@@ -302,7 +303,7 @@ public class AdministrationServiceImpl extends CoreService implements Administra
 
         try {
 
-            org.kimios.kernel.security.Session session = getHelper().getSession(sessionUid);
+            org.kimios.kernel.security.model.Session session = getHelper().getSession(sessionUid);
 
             administrationController.removeUserFromGroup(session, uid, gid, authenticationSourceName);
         } catch (Exception e) {
@@ -317,7 +318,7 @@ public class AdministrationServiceImpl extends CoreService implements Administra
 
         try {
 
-            org.kimios.kernel.security.Session session = getHelper().getSession(sessionUid);
+            org.kimios.kernel.security.model.Session session = getHelper().getSession(sessionUid);
 
             User user = administrationController.getUser(session, uid, authenticationSourceName).toPojo();
 
@@ -332,8 +333,8 @@ public class AdministrationServiceImpl extends CoreService implements Administra
             throws DMServiceException
     {
         try {
-            org.kimios.kernel.security.Session session = getHelper().getSession(sessionUid);
-            Vector<org.kimios.kernel.user.User> v =
+            org.kimios.kernel.security.model.Session session = getHelper().getSession(sessionUid);
+            Vector<org.kimios.kernel.user.model.User> v =
                     administrationController.getUsers(session, gid, authenticationSourceName);
             User[] r = new User[v.size()];
             for (int i = 0; i < v.size(); i++) {
@@ -349,7 +350,7 @@ public class AdministrationServiceImpl extends CoreService implements Administra
             String authenticationSourceName) throws DMServiceException
     {
         try {
-            org.kimios.kernel.security.Session session = getHelper().getSession(sessionUid);
+            org.kimios.kernel.security.model.Session session = getHelper().getSession(sessionUid);
             org.kimios.kernel.ws.pojo.Group group =
                     administrationController.getGroup(session, gid, authenticationSourceName).toPojo();
             return group;
@@ -380,8 +381,8 @@ public class AdministrationServiceImpl extends CoreService implements Administra
             String authenticationSourceName) throws DMServiceException
     {
         try {
-            org.kimios.kernel.security.Session session = getHelper().getSession(sessionUid);
-            Vector<Group> v = administrationController.getGroups(session, userUid, authenticationSourceName);
+            org.kimios.kernel.security.model.Session session = getHelper().getSession(sessionUid);
+            Vector<org.kimios.kernel.user.model.Group> v = administrationController.getGroups(session, userUid, authenticationSourceName);
             org.kimios.kernel.ws.pojo.Group[] r = new org.kimios.kernel.ws.pojo.Group[v.size()];
             for (int i = 0; i < v.size(); i++) {
                 r[i] = v.elementAt(i).toPojo();
@@ -396,7 +397,7 @@ public class AdministrationServiceImpl extends CoreService implements Administra
     public void reindex(String sessionUid, String path) throws DMServiceException
     {
 
-        org.kimios.kernel.security.Session session = null;
+        org.kimios.kernel.security.model.Session session = null;
         try {
 
             session = getHelper().getSession(sessionUid);
@@ -410,7 +411,7 @@ public class AdministrationServiceImpl extends CoreService implements Administra
     public int getReindexProgress(String sessionUid) throws DMServiceException
     {
 
-        org.kimios.kernel.security.Session session = null;
+        org.kimios.kernel.security.model.Session session = null;
         try {
 
             session = getHelper().getSession(sessionUid);
@@ -432,8 +433,8 @@ public class AdministrationServiceImpl extends CoreService implements Administra
     public Document[] getCheckedOutDocuments(String sessionUid) throws DMServiceException
     {
         try {
-            org.kimios.kernel.security.Session session = getHelper().getSession(sessionUid);
-            List<org.kimios.kernel.dms.Document> documents = administrationController.getCheckedOutDocuments(session);
+            org.kimios.kernel.security.model.Session session = getHelper().getSession(sessionUid);
+            List<org.kimios.kernel.dms.model.Document> documents = administrationController.getCheckedOutDocuments(session);
             List<Document> docs = documentController.convertToPojos(session, documents);
             return docs.toArray(new Document[]{ });
         } catch (Exception e) {
@@ -453,7 +454,7 @@ public class AdministrationServiceImpl extends CoreService implements Administra
 
         try {
 
-            org.kimios.kernel.security.Session session = getHelper().getSession(sessionUid);
+            org.kimios.kernel.security.model.Session session = getHelper().getSession(sessionUid);
 
             administrationController.clearLock(session, documentUid);
         } catch (Exception e) {
@@ -476,7 +477,7 @@ public class AdministrationServiceImpl extends CoreService implements Administra
 
         try {
 
-            org.kimios.kernel.security.Session session = getHelper().getSession(sessionUid);
+            org.kimios.kernel.security.model.Session session = getHelper().getSession(sessionUid);
 
             administrationController.changeOwnership(session, dmEntityUid, userName, userSource);
         } catch (Exception e) {
@@ -496,7 +497,7 @@ public class AdministrationServiceImpl extends CoreService implements Administra
 
         try {
 
-            org.kimios.kernel.security.Session session = getHelper().getSession(sessionUid);
+            org.kimios.kernel.security.model.Session session = getHelper().getSession(sessionUid);
 
             User[] users = administrationController.getConnectedUsers(session);
 
@@ -518,7 +519,7 @@ public class AdministrationServiceImpl extends CoreService implements Administra
 
         try {
 
-            org.kimios.kernel.security.Session session = getHelper().getSession(sessionUid);
+            org.kimios.kernel.security.model.Session session = getHelper().getSession(sessionUid);
 
             Session[] sessions = administrationController.getEnabledSessions(session);
 
@@ -542,7 +543,7 @@ public class AdministrationServiceImpl extends CoreService implements Administra
 
         try {
 
-            org.kimios.kernel.security.Session session = getHelper().getSession(sessionUid);
+            org.kimios.kernel.security.model.Session session = getHelper().getSession(sessionUid);
 
             Session[] sessions = administrationController.getEnabledSessions(session, userName, userSource);
 
@@ -564,7 +565,7 @@ public class AdministrationServiceImpl extends CoreService implements Administra
 
         try {
 
-            org.kimios.kernel.security.Session session = getHelper().getSession(sessionUid);
+            org.kimios.kernel.security.model.Session session = getHelper().getSession(sessionUid);
 
             administrationController.removeEnabledSession(session, sessionUidToRemove);
         } catch (Exception e) {
@@ -584,7 +585,7 @@ public class AdministrationServiceImpl extends CoreService implements Administra
     {
 
         try {
-            org.kimios.kernel.security.Session session = getHelper().getSession(sessionUid);
+            org.kimios.kernel.security.model.Session session = getHelper().getSession(sessionUid);
             administrationController.removeEnabledSessions(session, userName, userSource);
         } catch (Exception e) {
             throw getHelper().convertException(e);
@@ -596,7 +597,7 @@ public class AdministrationServiceImpl extends CoreService implements Administra
             throws DMServiceException
     {
         try {
-            org.kimios.kernel.security.Session session = getHelper().getSession(sessionId);
+            org.kimios.kernel.security.model.Session session = getHelper().getSession(sessionId);
             administrationController.setUserAttribute(session, userId, userSource, attributeName, attributeValue);
         } catch (Exception e) {
             throw getHelper().convertException(e);
@@ -607,7 +608,7 @@ public class AdministrationServiceImpl extends CoreService implements Administra
             throws DMServiceException
     {
         try {
-            org.kimios.kernel.security.Session session = getHelper().getSession(sessionId);
+            org.kimios.kernel.security.model.Session session = getHelper().getSession(sessionId);
             return administrationController.getUserAttribute(session, userId, userSource, attributeName);
         } catch (Exception e) {
             throw getHelper().convertException(e);
@@ -618,7 +619,7 @@ public class AdministrationServiceImpl extends CoreService implements Administra
             throws DMServiceException
     {
         try {
-            org.kimios.kernel.security.Session session = getHelper().getSession(sessionId);
+            org.kimios.kernel.security.model.Session session = getHelper().getSession(sessionId);
             return administrationController.getUserByAttributeValue(session, userSource, attributeName, attributeValue)
                     .toPojo();
         } catch (Exception e) {

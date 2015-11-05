@@ -16,8 +16,8 @@
 package org.kimios.kernel.macro;
 
 import org.kimios.kernel.controller.IFolderController;
-import org.kimios.kernel.dms.DMEntity;
-import org.kimios.kernel.dms.DMEntityType;
+import org.kimios.kernel.dms.model.DMEntity;
+import org.kimios.kernel.dms.model.DMEntityType;
 import org.kimios.kernel.dms.FactoryInstantiator;
 import org.kimios.kernel.exception.MacroException;
 import org.slf4j.Logger;

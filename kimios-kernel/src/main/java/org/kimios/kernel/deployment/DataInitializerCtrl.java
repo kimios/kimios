@@ -15,10 +15,10 @@
  */
 package org.kimios.kernel.deployment;
 
-import org.kimios.kernel.security.Role;
-import org.kimios.kernel.user.AuthenticationSource;
+import org.kimios.kernel.security.model.Role;
+import org.kimios.kernel.user.model.AuthenticationSource;
 import org.kimios.kernel.user.FactoryInstantiator;
-import org.kimios.kernel.user.User;
+import org.kimios.kernel.user.model.User;
 import org.kimios.kernel.user.impl.HAuthenticationSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

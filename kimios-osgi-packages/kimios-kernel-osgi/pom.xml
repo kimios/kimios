@@ -26,28 +26,21 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>kimios-kernel-osgi</artifactId>
     <name>Kimios :: Kernel</name>
+    <properties>
+        <dep.include>*.properties,*.xml,*.txt</dep.include>
+        <persistence>META-INF/persistence.xml</persistence>
+        <osgi.resources>blueprint</osgi.resources>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>org.kimios</groupId>
+            <artifactId>kimios-model</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
             <artifactId>kimios-kernel</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.kimios</groupId>
-            <artifactId>kimios-index</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.kimios</groupId>
-            <artifactId>kimios-convert</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.kimios</groupId>
-            <artifactId>kimios-share</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -60,12 +53,6 @@
         <dependency>
             <groupId>org.kimios</groupId>
             <artifactId>kimios-exceptions</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.kimios</groupId>
-            <artifactId>kimios-bonita</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -112,37 +99,33 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.tika</groupId>
-            <artifactId>tika-core</artifactId>
-            <version>${apache.tika.version}</version>
+            <groupId>postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>9.1-901.jdbc3</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.tika</groupId>
-            <artifactId>tika-parsers</artifactId>
-            <version>${apache.tika.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.aspectj</groupId>
-                    <artifactId>aspectjrt</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate.version}</version>
+            <scope>provided</scope>
         </dependency>
 
-        <!--<dependency>
-            <groupId>kimios-opentext-importer</groupId>
-            <artifactId>kimios-opentext-importer</artifactId>
-            <version>1.0-SNAPSHOT</version>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slfj.version}</version>
             <scope>provided</scope>
-        </dependency>-->
+        </dependency>
 
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-jaxrs</artifactId>
+            <version>1.9.13</version>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- embedded dependencies -->
-        <dependency>
-            <groupId>com.thoughtworks.xstream</groupId>
-            <artifactId>xstream</artifactId>
-            <version>${xstream.version}</version>
-            <scope>compile</scope>
-        </dependency>
 
         <dependency>
             <groupId>org.reflections</groupId>
@@ -150,80 +133,18 @@
             <version>0.9.8</version>
             <scope>compile</scope>
         </dependency>
-
+        <dependency>
+            <groupId>com.thoughtworks.xstream</groupId>
+            <artifactId>xstream</artifactId>
+            <version>1.3.1</version>
+            <scope>compile</scope>
+        </dependency>
         <dependency>
             <groupId>org.apache.velocity</groupId>
             <artifactId>velocity</artifactId>
             <version>${velocity.version}</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi</artifactId>
-            <version>${apache.poi.version}</version>
-            <type>jar</type>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi-scratchpad</artifactId>
-            <version>${apache.poi.version}</version>
-            <type>jar</type>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi-ooxml</artifactId>
-            <version>${apache.poi.version}</version>
-            <type>jar</type>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi-ooxml-schemas</artifactId>
-            <version>${apache.poi.version}</version>
-            <type>jar</type>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.pdfbox</groupId>
-            <artifactId>pdfbox</artifactId>
-            <version>${apache.pdfbox.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>9.1-901.jdbc3</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- zxing -->
-        <dependency>
-            <groupId>com.google.zxing</groupId>
-            <artifactId>core</artifactId>
-            <version>2.0</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.zxing</groupId>
-            <artifactId>javase</artifactId>
-            <version>2.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.pdfbox</groupId>
-            <artifactId>pdfbox</artifactId>
-            <version>${apache.pdfbox.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.itextpdf</groupId>
-            <artifactId>itextpdf</artifactId>
-            <version>5.0.6</version>
-        </dependency>
-
 
         <!-- CAS Stuff -->
         <dependency>
@@ -237,69 +158,6 @@
             <artifactId>hibernate-core</artifactId>
             <version>${hibernate.version}</version>
             <scope>provided</scope>
-        </dependency>
-
-        <!-- for Docx handling only -->
-        <dependency>
-            <groupId>fr.opensagres.xdocreport</groupId>
-            <artifactId>org.apache.poi.xwpf.converter.xhtml</artifactId>
-            <version>1.0.0</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.docx4j</groupId>
-            <artifactId>docx4j</artifactId>
-            <version>3.2.1</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <!--asciddoc converters -->
-        <dependency>
-            <groupId>org.asciidoctor</groupId>
-            <artifactId>asciidoctorj</artifactId>
-            <version>1.5.4</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jruby</groupId>
-            <artifactId>jruby-complete</artifactId>
-            <version>1.7.21</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.asciidoctor</groupId>
-            <artifactId>asciidoctorj-pdf</artifactId>
-            <version>1.5.0-alpha.11</version>
-            <scope>compile</scope>
-        </dependency>
-        <!-- bonita stuff -->
-        <dependency>
-            <groupId>org.quartz-scheduler</groupId>
-            <artifactId>quartz</artifactId>
-            <version>1.8.6</version>
-            <scope>provided</scope>
-        </dependency>
-
-
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <version>2.5</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.bonitasoft.engine</groupId>
-            <artifactId>bonita-client</artifactId>
-            <version>${bonita.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.httpcomponents</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
@@ -331,59 +189,8 @@
             <version>1.4</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>aopalliance</groupId>
-            <artifactId>aopalliance</artifactId>
-            <version>1.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.solr</groupId>
-            <artifactId>solr-core</artifactId>
-            <version>${solr4j.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.lucene</groupId>
-            <artifactId>lucene-core</artifactId>
-            <version>${solr4j.version}</version>
-            <scope>provided</scope>
-        </dependency>
+
     </dependencies>
-
-    <profiles>
-        <!--<profile>
-            <id>spring-mode</id>
-            <properties>
-                <dep.include>META-INF/spring/**/*.xml,*.properties,*.xml,*.txt</dep.include>
-                <spring.context>META-INF/spring/osgi-kimios.xml,META-INF/spring/ctx-kimios*.xml,META-INF/spring/last-osgi-kimios.xml,META-INF/spring/osgi/osgi-kimios-*.xml,;create-asynchronously:=false</spring.context>
-                <addonimport>fr.devlib.osgi.hibernate.spring,
-                    org.hibernate.cfg;version="[4.1,5)",
-                    net.sf.cglib.core,
-                    net.sf.cglib.reflect,
-                    net.sf.cglib.util,
-                    net.sf.cglib.beans,
-                    net.sf.cglib.proxy,
-                    net.sf.cglib.transform,
-                    org.hibernate.internal,</addonimport>
-                <osgi.resources>spring</osgi.resources>
-            </properties>
-        </profile>-->
-        <profile>
-            <id>blueprint-mode</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <dep.include>*.properties,*.xml,*.txt</dep.include>
-                <spring.context></spring.context>
-                <persistence>META-INF/persistence.xml</persistence>
-                <osgi.resources>blueprint</osgi.resources>
-                <addonimport></addonimport>
-            </properties>
-        </profile>
-    </profiles>
-
     <build>
         <resources>
             <resource>
@@ -412,57 +219,7 @@
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>org.kimios</groupId>
-                                    <artifactId>kimios-utils</artifactId>
-                                    <version>${project.version}</version>
-                                    <type>jar</type>
-                                    <overWrite>false</overWrite>
-                                    <outputDirectory>${project.build.directory}/add-resource</outputDirectory>
-                                    <includes>${dep.include}</includes>
-                                    <excludes>**/*.class</excludes>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.kimios</groupId>
                                     <artifactId>kimios-kernel</artifactId>
-                                    <version>${project.version}</version>
-                                    <type>jar</type>
-                                    <overWrite>false</overWrite>
-                                    <outputDirectory>${project.build.directory}/add-resource</outputDirectory>
-                                    <includes>${dep.include}</includes>
-                                    <excludes>**/*.class</excludes>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.kimios</groupId>
-                                    <artifactId>kimios-index</artifactId>
-                                    <version>${project.version}</version>
-                                    <type>jar</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${project.build.directory}/add-resource</outputDirectory>
-                                    <includes>${dep.include}</includes>
-                                    <excludes>**/*.class</excludes>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.kimios</groupId>
-                                    <artifactId>kimios-convert</artifactId>
-                                    <version>${project.version}</version>
-                                    <type>jar</type>
-                                    <overWrite>false</overWrite>
-                                    <outputDirectory>${project.build.directory}/add-resource</outputDirectory>
-                                    <includes>${dep.include}</includes>
-                                    <excludes>**/*.class</excludes>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.kimios</groupId>
-                                    <artifactId>kimios-bonita</artifactId>
-                                    <version>${project.version}</version>
-                                    <type>jar</type>
-                                    <overWrite>false</overWrite>
-                                    <outputDirectory>${project.build.directory}/add-resource</outputDirectory>
-                                    <includes>${dep.include}</includes>
-                                    <excludes>**/*.class</excludes>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.kimios</groupId>
-                                    <artifactId>kimios-share</artifactId>
                                     <version>${project.version}</version>
                                     <type>jar</type>
                                     <overWrite>false</overWrite>
@@ -532,7 +289,7 @@
                         <supportedProjectType>jar</supportedProjectType>
                     </supportedProjectTypes>
                     <excludeDependencies>
-                        sqlite-jdbc,quartz,xerces,xercesImpl,dom4j,commons-codec,commons-collections,commons-lang,javassist,xml-apis,stax-api,commons-logging,slf4j-api,slf4j-log4j12,log4j,servlet-api
+                        sqlite-jdbc,quartz,xerces,xercesImpl,dom4j,commons-codec,commons-collections,commons-lang,javassist,xml-apis,stax-api,commons-logging,slf4j-api,slf4j-log4j12,log4j,servlet-api,kimios-index,kimios-model,kimios-utils,kimios-exceptions,kimios-convert,kimios-share
                     </excludeDependencies>
                     <instructions>
                         <Implementation-Build>${buildNumber}</Implementation-Build>
@@ -540,11 +297,8 @@
                         <Bundle-Activator>org.kimios.utils.osgi.KimiosActivator</Bundle-Activator>
                         <Bundle-Name>${project.name}</Bundle-Name>
                         <Export-Package>
-                            org.bonitasoft.*,org.kimios.*
+                            org.kimios.*
                         </Export-Package>
-                        <Private-Package>org.kimios.utils</Private-Package>
-                        <Meta-Persistence>${persistence}</Meta-Persistence>
-                        <Spring-Context>${spring.context}</Spring-Context>
                         <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <Include-Resource>{maven-resources}</Include-Resource>
@@ -577,58 +331,6 @@
                             org.aopalliance.aop,
                             org.aopalliance.intercept,
                             javassist.util.proxy,
-                            org.apache.solr,
-                            org.apache.solr.client.solrj,
-                            org.apache.solr.client.solrj.embedded,
-                            org.apache.solr.client.solrj.beans,
-                            org.apache.solr.client.solrj.impl,
-                            org.apache.solr.client.solrj.util,
-                            org.apache.solr.client.solrj.response,
-                            org.apache.solr.client.solrj.request,
-                            org.apache.solr.parser,
-                            org.apache.solr.core,
-                            org.apache.solr.common,
-                            org.apache.solr.common.params,
-                            org.apache.solr.common.util,
-                            org.apache.solr.handler,
-                            org.apache.solr.handler.component,
-                            org.apache.solr.handler.loader,
-                            org.apache.solr.handler.admin,
-                            org.apache.solr.analysis,
-                            org.apache.solr.util,
-                            org.apache.solr.update,
-                            org.apache.solr.update.processor,
-                            org.apache.solr.search,
-                            org.apache.solr.search.similarities;resolution:=optional,
-                            org.apache.solr.search.join,
-                            org.apache.solr.search.grouping,
-                            org.apache.solr.search.function,
-                            org.apache.solr.search.mlt;resolution:=optional,
-                            org.apache.solr.search.facet;resolution:=optional,
-                            org.apache.solr.search.stats;resolution:=optional,
-                            org.apache.solr.schema,
-                            org.apache.solr.logging,
-                            org.apache.solr.store.blockcache,
-                            org.apache.solr.response,
-                            org.apache.solr.request,
-                            org.apache.lucene.search,
-                            org.apache.lucene.index,
-                            org.apache.lucene.analysis,
-                            org.apache.lucene.analysis.util,
-                            org.apache.lucene.analysis.synonym,
-                            org.apache.lucene.util,
-                            org.apache.lucene.collation,
-                            org.apache.lucene.document,
-                            org.apache.lucene.queries,
-                            org.apache.lucene.queries.function,
-                            org.apache.lucene.queries.mlt,
-                            org.apache.solr.spelling,
-                            org.apache.lucene.analysis.charfilter,
-                            org.apache.lucene.analysis.core,
-                            org.apache.lucene.analysis.miscellaneous,
-                            org.apache.lucene.analysis.en,
-                            org.apache.lucene.analysis.fr,
-                            org.apache.lucene.analysis.query,
                             javax.transaction,
                             javax.sql,
                             org.apache.commons.dbcp,
@@ -652,10 +354,10 @@
                             visad.data.vis5d;resolution:=optional,
                             visad.jmet;resolution:=optional,
                             visad.util;resolution:=optional,
+                            org.kimios.kernel.configuration;resolution:=optional,
                             org.kimios.webservices;resolution:=optional,
                             net.sourceforge.jtds.jdbc,
                             com.sun.xml.bind.marshaller;version="[2.2.11,3)",
-                            ${addonimport}
                             *;resolution:=optional
                         </Import-Package>
                     </instructions>

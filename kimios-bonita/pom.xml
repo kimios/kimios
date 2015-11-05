@@ -44,6 +44,12 @@
 
         <dependency>
             <groupId>org.bonitasoft.engine</groupId>
+            <artifactId>bonita-common</artifactId>
+            <version>${bonita.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.bonitasoft.engine</groupId>
             <artifactId>bonita-client</artifactId>
             <version>${bonita.version}</version>
             <exclusions>
@@ -56,10 +62,18 @@
 
         <dependency>
             <groupId>org.kimios</groupId>
+            <artifactId>kimios-model</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.kimios</groupId>
             <artifactId>kimios-kernel</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
+
 
         <dependency>
             <groupId>org.kimios</groupId>
@@ -119,7 +133,7 @@
                         <configuration>
                             <classifier>pojos</classifier>
                             <includes>
-                                <include>org/kimios/webservices/pojo/*</include>
+                                <include>org/kimios/kernel/bonita/webservices/pojo/*</include>
                             </includes>
                             <excludes>
                                 <exclude>org/kimios/webservices/impl/*</exclude>
@@ -129,6 +143,65 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>2.3.7</version>
+                <executions>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>bundle</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <classifier>osgi</classifier>
+                    <supportedProjectTypes>
+                        <supportedProjectType>jar</supportedProjectType>
+                    </supportedProjectTypes>
+                    <excludeDependencies>
+                        quartz,xerces,xercesImpl,dom4j,commons-codec,commons-collections,commons-lang,javassist,xml-apis,stax-api,commons-logging,slf4j-api,log4j
+                    </excludeDependencies>
+                    <instructions>
+                        <Bundle-SymbolicName>kimios-bonita</Bundle-SymbolicName>
+                        <Bundle-Name>${project.name}</Bundle-Name>
+                        <Export-Package>
+                            org.bonitasoft.*,org.kimios.kernel.bonita,org.kimios.kernel.bonita.controller,org.kimios.kernel.bonita.webservices.pojo,org.kimios.kernel.bonita.interfaces
+                        </Export-Package>
+                        <Embed-Transitive>false</Embed-Transitive>
+                        <Include-Resource>{maven-resources}</Include-Resource>
+                        <Import-Package>
+                            org.slf4j.impl;resolution:=optional,
+                            org.kimios.utils.osgi,
+                            org.w3c.dom,
+                            org.w3c.dom.xpath,
+                            org.w3c.dom.views,
+                            org.w3c.dom.traversal,
+                            org.w3c.dom.stylesheets,
+                            org.w3c.dom.ranges,
+                            javax.xml.parsers,
+                            org.apache.http*,
+                            org.apache.commons.logging,
+                            org.apache.commons.io,
+                            org.apache.commons.io.comparator,
+                            org.apache.commons.io.filefilter,
+                            org.apache.commons.io.output,
+                            org.apache.commons.io.monitor,
+                            org.apache.commons.io.input,
+                            javassist.util.proxy,
+                            javax.transaction,
+                            javax.sql,
+                            org.apache.commons.dbcp,
+                            org.apache.commons.dbcp.managed,
+                            org.apache.commons.dbcp.datasources,
+                            org.kimios.webservices;resolution:=optional,
+                            *;resolution:=optional
+                        </Import-Package>
+                    </instructions>
+                </configuration>
             </plugin>
         </plugins>
     </build>

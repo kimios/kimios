@@ -16,9 +16,10 @@
 package org.kimios.kernel.security;
 
 import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.dms.DMEntity;
-import org.kimios.kernel.dms.DMEntityImpl;
+import org.kimios.kernel.dms.model.DMEntity;
 import org.kimios.kernel.exception.DataSourceException;
+import org.kimios.kernel.security.model.DMEntityACL;
+import org.kimios.kernel.security.model.DMEntitySecurity;
 
 import java.util.List;
 import java.util.Vector;

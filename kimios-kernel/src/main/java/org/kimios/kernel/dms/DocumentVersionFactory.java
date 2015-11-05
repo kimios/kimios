@@ -16,6 +16,9 @@
 package org.kimios.kernel.dms;
 
 import org.kimios.exceptions.ConfigException;
+import org.kimios.kernel.dms.model.Document;
+import org.kimios.kernel.dms.model.DocumentType;
+import org.kimios.kernel.dms.model.DocumentVersion;
 import org.kimios.kernel.exception.DataSourceException;
 
 import java.util.Vector;

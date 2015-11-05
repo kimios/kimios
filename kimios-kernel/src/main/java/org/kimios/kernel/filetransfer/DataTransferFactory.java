@@ -16,6 +16,7 @@
 package org.kimios.kernel.filetransfer;
 
 import org.kimios.kernel.exception.DataSourceException;
+import org.kimios.kernel.filetransfer.model.DataTransfer;
 
 public interface DataTransferFactory
 {

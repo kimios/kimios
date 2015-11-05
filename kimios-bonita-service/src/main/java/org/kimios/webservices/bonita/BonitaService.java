@@ -18,9 +18,9 @@ package org.kimios.webservices.bonita;
 
 import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.KimiosExtension;
-import org.kimios.webservices.pojo.CommentWrapper;
-import org.kimios.webservices.pojo.ProcessWrapper;
-import org.kimios.webservices.pojo.TasksResponse;
+import org.kimios.kernel.bonita.webservices.pojo.CommentWrapper;
+import org.kimios.kernel.bonita.webservices.pojo.ProcessWrapper;
+import org.kimios.kernel.bonita.webservices.pojo.TasksResponse;
 
 import javax.jws.WebParam;
 import javax.jws.WebService;

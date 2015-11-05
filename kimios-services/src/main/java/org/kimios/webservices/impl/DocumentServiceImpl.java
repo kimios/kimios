@@ -17,8 +17,11 @@ package org.kimios.webservices.impl;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
-import org.kimios.kernel.dms.*;
-import org.kimios.kernel.security.Session;
+import org.kimios.kernel.dms.model.Bookmark;
+import org.kimios.kernel.dms.model.MetaValue;
+import org.kimios.kernel.dms.model.SymbolicLink;
+import org.kimios.kernel.security.model.Session;
+import org.kimios.kernel.security.model.DMEntitySecurity;
 import org.kimios.kernel.ws.pojo.Document;
 import org.kimios.kernel.ws.pojo.WorkflowStatus;
 import org.kimios.webservices.CoreService;
@@ -42,7 +45,7 @@ public class DocumentServiceImpl extends CoreService implements DocumentService 
 
         try {
             Session session = getHelper().getSession(sessionId);
-            org.kimios.kernel.dms.Document doc = documentController.getDocument(session, documentId);
+            org.kimios.kernel.dms.model.Document doc = documentController.getDocument(session, documentId);
             return documentController.getDocumentPojo(doc);
         } catch (Exception e) {
             throw getHelper().convertException(e);
@@ -225,13 +228,13 @@ public class DocumentServiceImpl extends CoreService implements DocumentService 
                 Convert pojo list
              */
 
-            List<org.kimios.kernel.security.DMEntitySecurity> securityItems = new ObjectMapper().readValue(securityItemsJsonString, new TypeReference<List<org.kimios.kernel.security.DMEntitySecurity>>() {
+            List<DMEntitySecurity> securityItems = new ObjectMapper().readValue(securityItemsJsonString, new TypeReference<List<DMEntitySecurity>>() {
             });
             /*for (DMEntitySecurity des : securityItems)
                 targetList.add(new org.kimios.kernel.security.DMEntitySecurity(des.getDmEntityUid(), des.getDmEntityType(), des.getName(), des.getSource(), des.getType(), des.isRead(), des.isWrite(), des.isFullAccess())); */
 
 
-            List<org.kimios.kernel.dms.MetaValue> metaValues = new ObjectMapper().readValue(metaItemsJsonString, new TypeReference<List<org.kimios.kernel.dms.MetaValue>>() {
+            List<MetaValue> metaValues = new ObjectMapper().readValue(metaItemsJsonString, new TypeReference<List<MetaValue>>() {
             });
             /*for(MetaValue mv: metaItems){
                 MetaValueBean mvb = null;
@@ -644,7 +647,7 @@ public class DocumentServiceImpl extends CoreService implements DocumentService 
     public Document[] getMyCheckedOutDocuments(String sessionId) throws DMServiceException {
         try {
             Session session = getHelper().getSession(sessionId);
-            List<org.kimios.kernel.dms.Document> documents = documentController.getMyCheckedOutDocuments(session);
+            List<org.kimios.kernel.dms.model.Document> documents = documentController.getMyCheckedOutDocuments(session);
             List<Document> docs = documentController.convertToPojos(session, documents);
             return docs.toArray(new Document[]{});
         } catch (Exception e) {
@@ -656,8 +659,8 @@ public class DocumentServiceImpl extends CoreService implements DocumentService 
     public Document copyDocument(String sessionId, long sourceDocumentId, String documentCopyName) throws DMServiceException {
         try {
             Session session = getHelper().getSession(sessionId);
-            org.kimios.kernel.dms.Document document = documentController.copyDocument(session, sourceDocumentId, documentCopyName);
-            return document.toPojo();
+            org.kimios.kernel.dms.model.Document document = documentController.copyDocument(session, sourceDocumentId, documentCopyName);
+            return documentController.getDocumentPojo(document);
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }

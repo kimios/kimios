@@ -15,9 +15,9 @@
  */
 package org.kimios.webservices.impl;
 
-import org.kimios.kernel.dms.DocumentWorkflowStatus;
-import org.kimios.kernel.dms.DocumentWorkflowStatusRequest;
-import org.kimios.kernel.security.Session;
+import org.kimios.kernel.dms.model.DocumentWorkflowStatus;
+import org.kimios.kernel.dms.model.DocumentWorkflowStatusRequest;
+import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.ws.pojo.WorkflowStatus;
 import org.kimios.webservices.CoreService;
 import org.kimios.webservices.exceptions.DMServiceException;
@@ -57,7 +57,8 @@ public class NotificationServiceImpl extends CoreService implements Notification
         try {
             Session session = getHelper().getSession(sessionId);
             DocumentWorkflowStatus item = workflowController.getLastWorkflowStatus(session, documentId);
-            WorkflowStatus wst = (item != null ? item.toPojo() : null);
+            WorkflowStatus wst = (item != null ?
+                    workflowController.getWorkflowStatusPojo(session, item.getWorkflowStatusUid()) : null);
             return wst;
         } catch (Exception e) {
             throw getHelper().convertException(e);

@@ -15,10 +15,10 @@
  */
 package org.kimios.kernel.rules.impl;
 
-import org.kimios.kernel.dms.DMEntityImpl;
+import org.kimios.kernel.dms.model.DMEntityImpl;
 import org.kimios.kernel.dms.FactoryInstantiator;
 import org.kimios.kernel.dms.extension.ValueGenerator;
-import org.kimios.kernel.dms.extension.impl.DMEntityAttribute;
+import org.kimios.kernel.dms.model.DMEntityAttribute;
 
 public class EntityAttributeSet extends RuleImpl
 {

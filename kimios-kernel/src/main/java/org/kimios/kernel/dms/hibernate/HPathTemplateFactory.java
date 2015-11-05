@@ -16,16 +16,12 @@
 
 package org.kimios.kernel.dms.hibernate;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.kimios.kernel.dms.PathTemplate;
+import org.kimios.kernel.dms.model.PathTemplate;
 import org.kimios.kernel.dms.utils.PathElement;
 import org.kimios.kernel.exception.AccessDeniedException;
 import org.kimios.kernel.hibernate.HFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by farf on 10/04/15.

@@ -4,9 +4,8 @@ import java.util.List;
 
 import org.apache.karaf.shell.commands.Argument;
 import org.apache.karaf.shell.commands.Command;
-import org.apache.karaf.shell.commands.Option;
 
-import org.kimios.kernel.dms.Document;
+import org.kimios.kernel.dms.model.Document;
 
 /**
  * Created with IntelliJ IDEA. User: farf Date: 1/10/13 Time: 1:38 PM To change this template use File | Settings | File

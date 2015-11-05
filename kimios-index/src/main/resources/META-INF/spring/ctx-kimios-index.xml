@@ -49,13 +49,13 @@
 
   <bean id="solrDocumentFactory" class="org.kimios.kernel.index.query.factory.DocumentFactory" />
 
-  <bean id="searchController" class="org.kimios.kernel.controller.impl.SolrSearchController" parent="kimiosCoreCtrl">
+  <bean id="searchController" class="org.kimios.kernel.index.controller.impl.SolrSearchController" parent="kimiosCoreCtrl">
     <property name="solrIndexManager" ref="indexManagerSolr"/>
     <property name="searchRequestFactory" ref="searchRequestFactory" />
     <property name="searchRequestSecurityFactory" ref="searchRequestSecurityFactory" />
   </bean>
 
-  <bean id="searchManagementController" class="org.kimios.kernel.controller.impl.SearchManagementController" parent="kimiosCoreCtrl">
+  <bean id="searchManagementController" class="org.kimios.kernel.index.controller.impl.SearchManagementController" parent="kimiosCoreCtrl">
     <property name="indexManager" ref="indexManagerSolr"/>
   </bean>
 

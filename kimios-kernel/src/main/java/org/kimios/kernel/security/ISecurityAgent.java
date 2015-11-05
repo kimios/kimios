@@ -1,11 +1,10 @@
 package org.kimios.kernel.security;
 
 import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.dms.DMEntity;
-import org.kimios.kernel.dms.DMEntityImpl;
-import org.kimios.kernel.dms.Document;
+import org.kimios.kernel.dms.model.DMEntity;
+import org.kimios.kernel.dms.model.Document;
 import org.kimios.kernel.exception.DataSourceException;
-import org.kimios.kernel.user.Group;
+import org.kimios.kernel.user.model.Group;
 
 import java.util.List;
 import java.util.Vector;

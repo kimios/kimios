@@ -15,18 +15,15 @@
  */
 package org.kimios.kernel.user.impl.factory.hibernate;
 
-import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.metamodel.binding.HibernateTypeDescriptor;
-import org.hibernate.type.StringType;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.hibernate.AbstractDBFactory;
 import org.kimios.kernel.security.FactoryInstantiator;
 import org.kimios.kernel.security.pwdgen.md5.MD5Generator;
-import org.kimios.kernel.user.*;
+import org.kimios.kernel.user.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

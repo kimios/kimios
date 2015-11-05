@@ -15,9 +15,10 @@
  */
 package org.kimios.kernel.events;
 
-import org.kimios.kernel.events.annotations.DmsEvent;
-import org.kimios.kernel.events.annotations.DmsEventName;
-import org.kimios.kernel.events.annotations.DmsEventOccur;
+import org.kimios.kernel.events.model.EventContext;
+import org.kimios.kernel.events.model.annotations.DmsEvent;
+import org.kimios.kernel.events.model.annotations.DmsEventName;
+import org.kimios.kernel.events.model.annotations.DmsEventOccur;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,8 +53,11 @@ public abstract class GenericEventHandler
                     DmsEventName[] names = st.eventName();
                     List<DmsEventName> nameList = Arrays.asList(names);
                     for (DmsEventName nCurrent : evt.eventName()) {
-                        logger.trace(" will call " + it.getName() + " on " + this.getClass().getName() + " with " + ctx + " ( " + ctx.getEntity() + ") on event " + nCurrent.name() + ". accepted ? " + nameList.contains(nCurrent) + " / " + _when.name());
+
                         if (nameList.contains(nCurrent) && st.when().equals(_when)) {
+
+                            logger.trace(" will call " + it.getName() + " on " + this.getClass().getName() + " with "
+                                    + ctx + " ( " + ctx.getEntity() + ") on event " + nCurrent.name() + ". accepted ? " + nameList.contains(nCurrent) + " / " + _when.name());
                             /*
                             *  Generate the before context
                             */

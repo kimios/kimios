@@ -17,15 +17,16 @@
 package org.kimios.kernel.index.solr;
 
 import org.kimios.kernel.dms.*;
-import org.kimios.kernel.events.EventContext;
+import org.kimios.kernel.dms.model.*;
+import org.kimios.kernel.events.model.EventContext;
 import org.kimios.kernel.events.GenericEventHandler;
-import org.kimios.kernel.events.annotations.DmsEvent;
-import org.kimios.kernel.events.annotations.DmsEventName;
-import org.kimios.kernel.events.annotations.DmsEventOccur;
-import org.kimios.kernel.filetransfer.DataTransfer;
+import org.kimios.kernel.events.model.annotations.DmsEvent;
+import org.kimios.kernel.events.model.annotations.DmsEventName;
+import org.kimios.kernel.events.model.annotations.DmsEventOccur;
+import org.kimios.kernel.filetransfer.model.DataTransfer;
 import org.kimios.kernel.index.AbstractIndexManager;
 import org.kimios.kernel.index.SolrIndexManager;
-import org.kimios.kernel.security.DMEntityACL;
+import org.kimios.kernel.security.model.DMEntityACL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

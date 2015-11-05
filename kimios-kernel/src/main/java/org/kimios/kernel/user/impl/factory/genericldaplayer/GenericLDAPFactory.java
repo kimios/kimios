@@ -16,7 +16,7 @@
 package org.kimios.kernel.user.impl.factory.genericldaplayer;
 
 import com.sun.jndi.ldap.ctl.VirtualListViewControl;
-import org.kimios.kernel.security.SecurityEntityType;
+import org.kimios.kernel.security.model.SecurityEntityType;
 import org.kimios.kernel.user.impl.GenericLDAPImpl;
 import org.kimios.utils.configuration.ConfigurationManager;
 import org.slf4j.Logger;

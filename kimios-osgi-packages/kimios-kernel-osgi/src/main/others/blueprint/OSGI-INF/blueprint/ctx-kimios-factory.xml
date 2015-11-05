@@ -28,9 +28,11 @@
     <!-- <bean id="dbFactoryProvider" class="org.kimios.kernel.hibernate.JpaHibernateFactory"
             factory-method="getInstance"/> -->
 
-    <bean id="dbFactoryProvider" class="org.kimios.kernel.hibernate.JpaHibernateFactory" factory-method="getInstance">
+<!--    <bean id="dbFactoryProvider" class="org.kimios.kernel.hibernate.JpaHibernateFactory" factory-method="getInstance">
            <jpa:context unitname="kimiosPu" property="entityManager"/>
-    </bean>
+    </bean> -->
+    <reference id="dbFactoryProvider"
+               interface="org.kimios.kernel.hibernate.IDBFactory"/>
 
 
     <!-- Security -->

@@ -16,11 +16,11 @@
 package org.kimios.kernel.dms;
 
 import org.kimios.exceptions.ConfigException;
+import org.kimios.kernel.dms.model.DMEntity;
 import org.kimios.kernel.exception.DataSourceException;
-import org.kimios.kernel.user.Group;
+import org.kimios.kernel.user.model.Group;
 
 import java.util.List;
-import java.util.Vector;
 
 public interface BookmarkFactory
 {

@@ -18,9 +18,9 @@ package org.kimios.kernel.share.mail;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.mail.*;
-import org.kimios.kernel.dms.Document;
-import org.kimios.kernel.dms.DocumentVersion;
-import org.kimios.kernel.repositories.RepositoryManager;
+import org.kimios.kernel.dms.model.Document;
+import org.kimios.kernel.dms.model.DocumentVersion;
+import org.kimios.kernel.repositories.impl.RepositoryManager;
 
 import javax.activation.FileDataSource;
 

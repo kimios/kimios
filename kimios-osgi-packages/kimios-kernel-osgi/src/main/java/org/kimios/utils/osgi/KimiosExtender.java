@@ -16,8 +16,6 @@
 
 package org.kimios.utils.osgi;
 
-import org.kimios.kernel.converter.Converter;
-import org.kimios.kernel.dms.MetaFeed;
 import org.kimios.utils.extension.ExtensionRegistryManager;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -67,13 +65,13 @@ public class KimiosExtender extends BundleTracker {
                             else {
                                 //check if
                                 Class<?> interfaceClass = toCheckClass.getInterfaces()[0];
-                                if(interfaceClass.equals(MetaFeed.class)
+                                /*if(interfaceClass.equals(MetaFeed.class)
                                         || interfaceClass.equals(Converter.class)) {
                                     serviceClass = interfaceClass;
                                     break;
                                 } else {
                                     toCheckClass = toCheckClass.getSuperclass();
-                                }
+                                }*/
                             }
                         }
 

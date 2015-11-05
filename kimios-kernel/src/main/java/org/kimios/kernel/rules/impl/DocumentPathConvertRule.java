@@ -16,7 +16,7 @@
 
 package org.kimios.kernel.rules.impl;
 
-import org.kimios.kernel.events.annotations.DmsEventName;
+import org.kimios.kernel.events.model.annotations.DmsEventName;
 
 /**
  * Created by farf on 11/11/14.

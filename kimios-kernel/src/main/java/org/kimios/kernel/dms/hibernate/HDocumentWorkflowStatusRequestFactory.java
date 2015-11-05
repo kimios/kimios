@@ -20,13 +20,13 @@ import org.hibernate.HibernateException;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.dms.Document;
-import org.kimios.kernel.dms.DocumentWorkflowStatusRequest;
+import org.kimios.kernel.dms.model.Document;
+import org.kimios.kernel.dms.model.DocumentWorkflowStatusRequest;
 import org.kimios.kernel.dms.DocumentWorkflowStatusRequestFactory;
-import org.kimios.kernel.dms.RequestStatus;
+import org.kimios.kernel.dms.model.RequestStatus;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
-import org.kimios.kernel.security.SecurityEntity;
+import org.kimios.kernel.security.model.SecurityEntity;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

@@ -24,9 +24,9 @@
     <persistence-unit name="kimiosIndexPu" transaction-type="JTA">
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
         <jta-data-source>osgi:service/javax.sql.DataSource/(osgi.jndi.service.name=jdbc/kimiosds)</jta-data-source>
-        <class>org.kimios.kernel.index.query.model.SearchRequest</class>
-        <class>org.kimios.kernel.index.query.model.SearchRequestACL</class>
-        <class>org.kimios.kernel.security.DMSecurityRule</class>
+        <class>org.kimios.kernel.index.query.model.model.SearchRequest</class>
+        <class>org.kimios.kernel.index.query.model.model.SearchRequestACL</class>
+        <class>org.kimios.kernel.security.model.DMSecurityRule</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
 
         <properties>

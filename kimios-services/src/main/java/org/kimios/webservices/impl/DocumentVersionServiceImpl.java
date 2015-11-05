@@ -15,8 +15,8 @@
  */
 package org.kimios.webservices.impl;
 
-import org.kimios.kernel.dms.MetaValue;
-import org.kimios.kernel.security.Session;
+import org.kimios.kernel.dms.model.MetaValue;
+import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.ws.pojo.DocumentComment;
 import org.kimios.kernel.ws.pojo.DocumentVersion;
 import org.kimios.kernel.ws.pojo.Meta;
@@ -94,11 +94,11 @@ public class DocumentVersionServiceImpl extends CoreService implements DocumentV
 
             Session session = getHelper().getSession(sessionId);
 
-            Vector<org.kimios.kernel.dms.DocumentVersion> docVersions = documentVersionController
+            Vector<org.kimios.kernel.dms.model.DocumentVersion> docVersions = documentVersionController
                     .getDocumentVersions(session, documentId);
             int i = 0;
             DocumentVersion[] pojos = new DocumentVersion[docVersions.size()];
-            for (org.kimios.kernel.dms.DocumentVersion dv : docVersions) {
+            for (org.kimios.kernel.dms.model.DocumentVersion dv : docVersions) {
                 pojos[i] = dv.toPojo();
                 i++;
             }
@@ -297,11 +297,11 @@ public class DocumentVersionServiceImpl extends CoreService implements DocumentV
 
             Session session = getHelper().getSession(sessionUid);
 
-            List<org.kimios.kernel.dms.Meta> vMetas = documentVersionController
+            List<org.kimios.kernel.dms.model.Meta> vMetas = documentVersionController
                     .getMetas(session, documentTypeUid);
             Meta[] pojos = new Meta[vMetas.size()];
             int i = 0;
-            for (org.kimios.kernel.dms.Meta m : vMetas) {
+            for (org.kimios.kernel.dms.model.Meta m : vMetas) {
                 pojos[i] = m.toPojo();
                 i++;
             }
@@ -326,11 +326,11 @@ public class DocumentVersionServiceImpl extends CoreService implements DocumentV
 
             Session session = getHelper().getSession(sessionUid);
 
-            List<org.kimios.kernel.dms.Meta> vMetas = documentVersionController
+            List<org.kimios.kernel.dms.model.Meta> vMetas = documentVersionController
                     .getUnheritedMetas(session, documentTypeUid);
             Meta[] pojos = new Meta[vMetas.size()];
             int i = 0;
-            for (org.kimios.kernel.dms.Meta m : vMetas) {
+            for (org.kimios.kernel.dms.model.Meta m : vMetas) {
                 pojos[i] = m.toPojo();
                 i++;
             }
@@ -485,11 +485,11 @@ public class DocumentVersionServiceImpl extends CoreService implements DocumentV
 
             Session session = getHelper().getSession(sessionUid);
 
-            Vector<org.kimios.kernel.dms.DocumentComment> comments = documentVersionController
+            Vector<org.kimios.kernel.dms.model.DocumentComment> comments = documentVersionController
                     .getDocumentComments(session, documentVersionUid);
             int i = 0;
             DocumentComment[] pojos = new DocumentComment[comments.size()];
-            for (org.kimios.kernel.dms.DocumentComment dc : comments) {
+            for (org.kimios.kernel.dms.model.DocumentComment dc : comments) {
                 pojos[i] = dc.toPojo();
                 i++;
             }

@@ -25,12 +25,12 @@
         <property name="provider" ref="dbFactoryProvider"></property>
     </bean>
 
-    <bean id="repositoryController" class="org.kimios.kernel.repositories.RepositoryServiceImpl">
+    <bean id="repositoryController" class="org.kimios.kernel.repositories.impl.RepositoryServiceImpl">
         <property name="repositoryFactory" ref="repositoryFactory"/>
     </bean>
 
 
-    <bean id="repositoryManager" class="org.kimios.kernel.repositories.RepositoryManager" factory-method="init"
+    <bean id="repositoryManager" class="org.kimios.kernel.repositories.impl.RepositoryManager" factory-method="init"
             init-method="postInit" depends-on="configurationManager">
         <property name="repositoryService" ref="repositoryController"/>
     </bean>

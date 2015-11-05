@@ -20,7 +20,9 @@ import org.apache.karaf.shell.console.OsgiCommandSupport;
 import org.kimios.kernel.bonita.interfaces.IBonitaUsersSynchronizer;
 import org.kimios.kernel.controller.*;
 import org.kimios.kernel.index.ISolrIndexManager;
-import org.kimios.kernel.security.Session;
+import org.kimios.kernel.index.controller.ISearchController;
+import org.kimios.kernel.index.controller.ISearchManagementController;
+import org.kimios.kernel.security.model.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -3,8 +3,7 @@ package org.kimios.osgi.karaf;
 import java.util.List;
 
 import org.apache.karaf.shell.commands.Command;
-import org.apache.karaf.shell.commands.Option;
-import org.kimios.kernel.dms.Document;
+import org.kimios.kernel.dms.model.Document;
 
 /**
  */

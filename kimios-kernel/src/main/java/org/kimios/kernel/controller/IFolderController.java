@@ -16,16 +16,16 @@
 package org.kimios.kernel.controller;
 
 import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.dms.Folder;
-import org.kimios.kernel.dms.MetaValue;
-import org.kimios.kernel.events.annotations.DmsEvent;
-import org.kimios.kernel.events.annotations.DmsEventName;
+import org.kimios.kernel.dms.model.Folder;
+import org.kimios.kernel.dms.model.MetaValue;
+import org.kimios.kernel.events.model.annotations.DmsEvent;
+import org.kimios.kernel.events.model.annotations.DmsEventName;
 import org.kimios.kernel.exception.AccessDeniedException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.NamingException;
 import org.kimios.kernel.exception.TreeException;
-import org.kimios.kernel.log.DMEntityLog;
-import org.kimios.kernel.security.Session;
+import org.kimios.kernel.log.model.DMEntityLog;
+import org.kimios.kernel.security.model.Session;
 
 import java.util.List;
 import java.util.Map;

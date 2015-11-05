@@ -26,16 +26,16 @@ import org.kimios.kernel.hibernate.HFactory;
 import org.kimios.kernel.index.query.model.SearchRequest;
 import org.kimios.kernel.index.query.model.SearchRequestACL;
 import org.kimios.kernel.index.query.model.SearchRequestSecurity;
-import org.kimios.kernel.security.*;
-import org.kimios.kernel.user.AuthenticationSource;
+import org.kimios.kernel.security.model.DMSecurityRule;
+import org.kimios.kernel.security.model.SecurityEntity;
+import org.kimios.kernel.security.model.SecurityEntityType;
+import org.kimios.kernel.user.model.AuthenticationSource;
 import org.kimios.kernel.user.FactoryInstantiator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 public class SearchRequestSecurityFactory extends HFactory {
     final Logger log = LoggerFactory.getLogger(SearchRequestSecurityFactory.class);

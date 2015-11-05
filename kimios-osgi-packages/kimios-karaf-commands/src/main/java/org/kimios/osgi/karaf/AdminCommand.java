@@ -2,7 +2,7 @@ package org.kimios.osgi.karaf;
 
 import org.apache.karaf.shell.commands.Command;
 import org.apache.karaf.shell.commands.Option;
-import org.kimios.kernel.security.Session;
+import org.kimios.kernel.security.model.Session;
 
 /**
  */

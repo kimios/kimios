@@ -16,10 +16,10 @@
 package org.kimios.kernel.reporting;
 
 import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.dms.DMEntityImpl;
+import org.kimios.kernel.dms.model.DMEntityImpl;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.ReportingException;
-import org.kimios.kernel.user.User;
+import org.kimios.kernel.user.model.User;
 import org.kimios.kernel.utils.ClassFinder;
 import org.kimios.kernel.xml.XSDException;
 import org.kimios.kernel.xml.XSDUtil;

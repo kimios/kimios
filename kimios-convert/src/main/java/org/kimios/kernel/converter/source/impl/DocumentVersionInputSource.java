@@ -18,8 +18,8 @@ package org.kimios.kernel.converter.source.impl;
 
 import org.kimios.kernel.converter.exception.MethodNotImplemented;
 import org.kimios.kernel.converter.source.InputSourceImpl;
-import org.kimios.kernel.dms.DocumentVersion;
-import org.kimios.kernel.repositories.RepositoryManager;
+import org.kimios.kernel.dms.model.DocumentVersion;
+import org.kimios.kernel.repositories.impl.RepositoryManager;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,7 +27,7 @@ import java.io.InputStream;
 public class DocumentVersionInputSource extends InputSourceImpl {
     private DocumentVersion version;
 
-    public DocumentVersionInputSource(org.kimios.kernel.dms.DocumentVersion version) {
+    public DocumentVersionInputSource(DocumentVersion version) {
         this.version = version;
     }
 

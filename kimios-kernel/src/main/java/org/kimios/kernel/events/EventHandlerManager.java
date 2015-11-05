@@ -17,6 +17,7 @@ package org.kimios.kernel.events;
 
 import org.kimios.kernel.events.impl.ActionLogger;
 import org.kimios.kernel.events.impl.WorkflowMailer;
+import org.kimios.kernel.events.model.EventContext;
 import org.kimios.utils.configuration.ConfigurationManager;
 import org.kimios.utils.extension.ExtensionRegistry;
 import org.kimios.utils.spring.ApplicationContextProvider;
@@ -27,8 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class EventHandlerManager extends ExtensionRegistry<GenericEventHandler>
-{
+public class EventHandlerManager extends ExtensionRegistry<GenericEventHandler> implements IEventHandlerManager {
     private static Logger log = LoggerFactory.getLogger(EventHandlerManager.class);
 
     private static EventHandlerManager instance;
@@ -47,7 +47,7 @@ public class EventHandlerManager extends ExtensionRegistry<GenericEventHandler>
     {
     }
 
-    synchronized public static EventHandlerManager getInstance()
+    synchronized public static IEventHandlerManager getInstance()
     {
         if (instance == null) {
             instance = new EventHandlerManager();
@@ -55,18 +55,21 @@ public class EventHandlerManager extends ExtensionRegistry<GenericEventHandler>
         return instance;
     }
 
-    synchronized public static void addHandler(GenericEventHandler handler)
+    @Override
+    synchronized public void addHandler(GenericEventHandler handler)
     {
         instance.handlers.add(handler);
     }
 
     private List<GenericEventHandler> handlers;
 
+    @Override
     public List<GenericEventHandler> handlers(){
         List<GenericEventHandler> handlerList = new ArrayList<GenericEventHandler>(handlers);
         return handlerList;
     }
 
+    @Override
     public List<GenericEventHandler> updatableHandlers(){
         return handlers;
     }

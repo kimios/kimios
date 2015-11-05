@@ -21,14 +21,13 @@ import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.Parser;
 import org.apache.tika.sax.BodyContentHandler;
-import org.kimios.kernel.dms.Document;
+import org.kimios.kernel.dms.model.Document;
 import org.kimios.kernel.index.FileFilterException;
 import org.kimios.kernel.index.filters.Filter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;

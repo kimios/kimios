@@ -16,9 +16,12 @@
 package org.kimios.kernel.security;
 
 import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.dms.*;
+import org.kimios.kernel.dms.model.*;
 import org.kimios.kernel.exception.DataSourceException;
-import org.kimios.kernel.user.Group;
+import org.kimios.kernel.security.model.DMSecurityRule;
+import org.kimios.kernel.security.model.Role;
+import org.kimios.kernel.security.model.SecurityEntityType;
+import org.kimios.kernel.user.model.Group;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
@@ -229,8 +232,8 @@ public class SecurityAgent implements ISecurityAgent {
 
         if (dm.getType() == DMEntityType.DOCUMENT) {
             Document doc = (Document) dm;
-            if (doc.isCheckedOut() && (!doc.getCheckoutLock().getUser().equals(userName) ||
-                    !doc.getCheckoutLock().getUserSource().equals(userSource)))
+            if (isDocumentLocked(doc) && (!getDocumentLock(doc).getUser().equals(userName) ||
+                    !getDocumentLock(doc).getUserSource().equals(userSource)))
             {
                 return false;
             }
@@ -338,6 +341,16 @@ public class SecurityAgent implements ISecurityAgent {
         return securityFactoryInstantiator.getDMEntitySecurityFactory().hasAnyChildCheckedOut(dm, userName, userSource);
     }
 
+
+    private boolean isDocumentLocked(Document doc){
+        Lock lock = org.kimios.kernel.dms.FactoryInstantiator.getInstance().getLockFactory().getDocumentLock(doc);
+        return lock != null;
+    }
+
+    private Lock getDocumentLock(Document doc){
+        return org.kimios.kernel.dms.FactoryInstantiator.getInstance().getLockFactory().getDocumentLock(doc);
+    }
+
     @Override
     public boolean isFullAccess(DMEntity dm, String userName, String userSource, Vector<Group> groups)
             throws ConfigException, DataSourceException
@@ -348,8 +361,8 @@ public class SecurityAgent implements ISecurityAgent {
 
         if (dm.getType() == DMEntityType.DOCUMENT) {
             Document doc = (Document) dm;
-            if (doc.isCheckedOut() && (!doc.getCheckoutLock().getUser().equals(userName) ||
-                    !doc.getCheckoutLock().getUserSource().equals(userSource)))
+            if (isDocumentLocked(doc) && (!getDocumentLock(doc).getUser().equals(userName) ||
+                    !getDocumentLock(doc).getUserSource().equals(userSource)))
             {
                 return false;
             }

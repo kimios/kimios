@@ -18,8 +18,9 @@ package org.kimios.kernel.security;
 
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.exception.DataSourceException;
+import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.user.AuthenticationSourceFactory;
-import org.kimios.kernel.user.User;
+import org.kimios.kernel.user.model.User;
 
 import java.util.Collection;
 import java.util.List;

@@ -15,7 +15,7 @@
  */
 package org.kimios.kernel.controller.utils;
 
-import org.kimios.kernel.filetransfer.DataTransfer;
+import org.kimios.kernel.filetransfer.model.DataTransfer;
 
 import java.io.FileOutputStream;
 import java.util.Map;

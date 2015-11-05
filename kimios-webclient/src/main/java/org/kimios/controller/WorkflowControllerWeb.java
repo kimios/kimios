@@ -21,7 +21,7 @@ import flexjson.transformer.IterableTransformer;
 import org.kimios.kernel.ws.pojo.Document;
 import org.kimios.kernel.ws.pojo.DocumentWorkflowStatusRequest;
 import org.kimios.kernel.ws.pojo.WorkflowStatus;
-import org.kimios.webservices.pojo.TasksResponse;
+import org.kimios.kernel.bonita.webservices.pojo.TasksResponse;
 
 import java.util.*;
 

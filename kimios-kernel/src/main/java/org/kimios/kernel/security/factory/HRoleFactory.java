@@ -21,9 +21,9 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
-import org.kimios.kernel.security.Role;
+import org.kimios.kernel.security.model.Role;
 import org.kimios.kernel.security.RoleFactory;
-import org.kimios.kernel.security.RolePK;
+import org.kimios.kernel.security.model.RolePK;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

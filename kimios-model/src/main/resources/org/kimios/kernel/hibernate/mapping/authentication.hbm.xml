@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Kimios - Document Management System Software
+  ~ Copyright (C) 2008-2015  DevLib'
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 2 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ aong with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+<hibernate-mapping
+        xmlns="http://www.hibernate.org/xsd/hibernate-mapping"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.hibernate.org/xsd/hibernate-mapping
+        classpath://org/hibernate/hibernate-mapping-4.0.xsd"
+        package="org.kimios.kernel.user">
+    <class name="org.kimios.kernel.user.model.User" table="users">
+        <composite-id>
+            <key-property name="uid">
+                <column name="user_id"></column>
+            </key-property>
+            <key-property name="authenticationSourceName">
+                <column name="authentication_source"></column>
+            </key-property>
+        </composite-id>
+        <property name="name">
+            <column name="user_fullname"></column>
+        </property>
+        <property name="firstName">
+            <column name="user_firstname"></column>
+        </property>
+        <property name="lastName">
+            <column name="user_lastname"></column>
+        </property>
+        <property name="phoneNumber">
+            <column name="user_phonenumber"></column>
+        </property>
+        <property name="avatar">
+            <column name="user_avatar"></column>
+        </property>
+        <property name="lastLogin">
+            <column name="last_login"></column>
+        </property>
+        <property name="mail">
+            <column name="mail"></column>
+        </property>
+        <property name="password">
+            <column name="user_password"></column>
+        </property>
+        <property name="enabled">
+            <column name="user_enabled" not-null="true" default="true"></column>
+        </property>
+        <map name="attributes" table="user_attributes">
+            <key>
+                <column name="user_id"></column>
+                <column name="authentication_source"></column>
+            </key>
+            <map-key column="attribute_name" type="string"/>
+            <element column="attribute_value" type="string"/>
+        </map>
+        <set name="groups" table="user_group" lazy="false">
+            <key>
+                <column name="user_id"/>
+                <column name="authentication_source"/>
+            </key>
+            <many-to-many class="org.kimios.kernel.user.model.Group">
+                <column name="gid"/>
+                <formula>authentication_source</formula>
+            </many-to-many>
+        </set>
+        <set name="emails"
+              table="user_emails">
+            <key>
+                <column name="user_id"/>
+                <column name="authentication_source"/>
+            </key>
+            <element type="string" column="user_email"/>
+        </set>
+    </class>
+    <class name="org.kimios.kernel.user.model.Group" table="groups">
+        <composite-id>
+            <key-property name="gid">
+                <column name="gid"></column>
+            </key-property>
+            <key-property name="authenticationSourceName">
+                <column name="authentication_source"></column>
+            </key-property>
+        </composite-id>
+        <property name="name">
+            <column name="group_name"/>
+        </property>
+
+        <set name="users" table="user_group" inverse="true">
+            <key>
+                <column name="gid"/>
+                <column name="authentication_source"/>
+            </key>
+            <many-to-many class="org.kimios.kernel.user.model.User">
+                <column name="user_id"/>
+                <formula>authentication_source</formula>
+            </many-to-many>
+        </set>
+    </class>
+</hibernate-mapping>

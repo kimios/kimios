@@ -31,7 +31,7 @@
     <cxf:bus id="kimios-bus" name="kimios-bus" />
 
     <reference id="mailShareController"
-               interface="org.kimios.kernel.controller.IMailShareController"/>
+               interface="org.kimios.kernel.share.controller.IMailShareController"/>
 
     <reference id="serviceHelper"
                interface="org.kimios.webservices.IServiceHelper"/>

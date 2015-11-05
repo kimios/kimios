@@ -19,7 +19,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.exception.ConstraintViolationException;
 import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.dms.Workspace;
+import org.kimios.kernel.dms.model.Workspace;
 import org.kimios.kernel.dms.WorkspaceFactory;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;

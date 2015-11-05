@@ -16,8 +16,10 @@
 package org.kimios.kernel.dms;
 
 import org.kimios.exceptions.ConfigException;
+import org.kimios.kernel.dms.model.Document;
+import org.kimios.kernel.dms.model.DocumentWorkflowStatusRequest;
 import org.kimios.kernel.exception.DataSourceException;
-import org.kimios.kernel.security.SecurityEntity;
+import org.kimios.kernel.security.model.SecurityEntity;
 
 import java.util.Date;
 import java.util.Vector;
