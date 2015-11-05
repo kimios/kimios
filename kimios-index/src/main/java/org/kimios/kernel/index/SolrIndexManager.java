@@ -225,14 +225,20 @@ public class SolrIndexManager
                             doc.getName() + " " + doc.getPath());
 
                 }
-                Document document = (Document)doc;
                 //load data
                 DocumentIndexStatus documentIndexStatus = new DocumentIndexStatus();
-                documentIndexStatus.setDmEntity(document);
-                documentIndexStatus.setEntityId(document.getUid());
-                DocumentVersion version =
-                        FactoryInstantiator.getInstance().getDocumentVersionFactory().getLastDocumentVersion(document);
-                documentVersionMap.put(documentIndexStatus, version);
+                documentIndexStatus.setDmEntity((DMEntityImpl) doc);
+                documentIndexStatus.setEntityId(doc.getUid());
+
+
+                if(doc instanceof Document){
+                    DocumentVersion version =
+                            FactoryInstantiator.getInstance().getDocumentVersionFactory().getLastDocumentVersion((Document)doc);
+                    documentVersionMap.put(documentIndexStatus, version);
+                } else {
+                    documentVersionMap.put(documentIndexStatus, new DocumentVersion());
+                }
+
 
                 SolrDocCallable solrInputDocumentCallable =
                         new SolrDocCallable(documentIndexStatus, this,

@@ -59,46 +59,49 @@ public class SolrDocFileReaderCallable implements Callable<Map<Long,Map<String,O
         for(final DocumentIndexStatus d: docFiles.keySet()){
             final DocumentVersion v = docFiles.get(d);
             //start thread with timeout
-            Callable<Map<String, Object>> rn = new Callable<Map<String, Object>>() {
-                @Override
-                public Map<String, Object> call() {
-                    return readVersionFileToData((Document)d.getDmEntity(), v, d);
+            if(d.getDmEntity() instanceof Document){
+                Callable<Map<String, Object>> rn = new Callable<Map<String, Object>>() {
+                    @Override
+                    public Map<String, Object> call() {
+                        return readVersionFileToData((Document)d.getDmEntity(), v, d);
+                    }
+                };
+
+                ExecutorService executorService = Executors.newSingleThreadExecutor();
+                Future<Map<String,Object>> result = executorService.submit(rn);
+
+                try {
+                    Map<String, Object> item = result.get(readVersionTimeOut, readVersionTimeoutTimeUnit);
+                    globalResults.put(d.getDmEntity().getUid(), item);
+                    d.setReadFileDatas(item);
+                }catch (InterruptedException ex){
+                    result.cancel(true);
+                    d.setError("Interrupted error " + ex.getMessage());
+                    d.setBodyIndexed(false);
                 }
-            };
+                catch (TimeoutException ex){
+                    //Important to kill running thread !!
+                    boolean cancelled = result.cancel(true);
+                    d.setError("Timeout Error (def: " + readVersionTimeOut + " " + readVersionTimeoutTimeUnit.toString() + "). " + ex.getMessage());
+                    log.error("timeout: cancelled read thread for #" + d.getDmEntity().getUid() + "(" + cancelled + ")");
+                    d.setBodyIndexed(false);
+                }
+                catch (ExecutionException ex){
+                    result.cancel(true);
+                    d.setError("Exception Error: " + ex.getMessage());
+                    d.setBodyIndexed(false);
+                    log.error("exception: cancelled read thread for #" + d.getDmEntity().getUid(), ex);
+                }
 
-            ExecutorService executorService = Executors.newSingleThreadExecutor();
-            Future<Map<String,Object>> result = executorService.submit(rn);
+                executorService.shutdownNow();
+            }
 
-            try {
-                Map<String, Object> item = result.get(readVersionTimeOut, readVersionTimeoutTimeUnit);
-                globalResults.put(d.getDmEntity().getUid(), item);
-                d.setReadFileDatas(item);
-            }catch (InterruptedException ex){
-                result.cancel(true);
-                d.setError("Interrupted error " + ex.getMessage());
-                d.setBodyIndexed(false);
-            }
-            catch (TimeoutException ex){
-                //Important to kill running thread !!
-                boolean cancelled = result.cancel(true);
-                d.setError("Timeout Error (def: " + readVersionTimeOut + " " + readVersionTimeoutTimeUnit.toString() + "). " + ex.getMessage());
-                log.error("timeout: cancelled read thread for #" + d.getDmEntity().getUid() + "(" + cancelled + ")");
-                d.setBodyIndexed(false);
-            }
-            catch (ExecutionException ex){
-                result.cancel(true);
-                d.setError("Exception Error: " + ex.getMessage());
-                d.setBodyIndexed(false);
-                log.error("exception: cancelled read thread for #" + d.getDmEntity().getUid(), ex);
-            }
             //put in queue !
             long end = System.currentTimeMillis();
             long elapsedTime = ((end - startTime) / 1000);
             log.info("offering document index status on queue: {}, body indexed: {}, after parse (duration {} seconds).", d, d.isBodyIndexed(), elapsedTime);
             this.blockingQueue.offer(d);
 
-
-            executorService.shutdownNow();
         }
         return globalResults;
     }
