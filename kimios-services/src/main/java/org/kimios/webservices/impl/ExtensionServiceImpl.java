@@ -114,10 +114,11 @@ public class ExtensionServiceImpl extends CoreService implements ExtensionServic
     }
 
     @Override
-    public String restoreFromTrash(String sessionId, Long dmEntityId) throws DMServiceException {
+    public DMEntity restoreFromTrash(String sessionId, Long dmEntityId) throws DMServiceException {
         try {
             Session session = getHelper().getSession(sessionId);
-            return extensionController.restoreEntity(session, dmEntityId);
+            Document d = extensionController.restoreEntity(session, dmEntityId);
+            return documentController.getDocumentPojo(d);
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }

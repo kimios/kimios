@@ -17,6 +17,7 @@ package org.kimios.kernel.controller;
 
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.DMEntity;
+import org.kimios.kernel.dms.Document;
 import org.kimios.kernel.dms.extension.impl.DMEntityAttribute;
 import org.kimios.kernel.events.annotations.DmsEvent;
 import org.kimios.kernel.events.annotations.DmsEventName;
@@ -56,7 +57,7 @@ public interface IExtensionController
 
 
     @DmsEvent(eventName = {DmsEventName.DOCUMENT_UNTRASH})
-    public String restoreEntity(Session session, long dmEntityId)
+    public Document restoreEntity(Session session, long dmEntityId)
             throws ConfigException, DataSourceException, AccessDeniedException;
 
     public boolean canHandleAutomaticDocumentDeposit(Session session)

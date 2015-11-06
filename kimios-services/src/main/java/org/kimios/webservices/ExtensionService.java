@@ -102,7 +102,7 @@ public interface ExtensionService
     @GET
     @Path("/restoreFromTrash")
     @Produces("application/json")
-    public String restoreFromTrash(
+    public DMEntity restoreFromTrash(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "dmEntityId") @WebParam(name = "dmEntityId") Long dmEntityId)
             throws DMServiceException;

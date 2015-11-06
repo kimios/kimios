@@ -176,13 +176,13 @@ public class ExtensionController extends AKimiosController implements IExtension
 
     @Override
     @DmsEvent(eventName = {DmsEventName.DOCUMENT_UNTRASH})
-    public String restoreEntity(Session session, long dmEntityId)
+    public Document restoreEntity(Session session, long dmEntityId)
             throws ConfigException, DataSourceException, AccessDeniedException {
         Document d = dmsFactoryInstantiator.getDocumentFactory().getDocument(dmEntityId);
         if (getSecurityAgent().isAdmin(session.getUserName(), session.getUserSource())) {
             dmsFactoryInstantiator.getDmEntityFactory().untrash(d);
             EventContext.addParameter("document", d);
-            return d.getPath();
+            return d;
         } else {
             throw new AccessDeniedException();
         }
