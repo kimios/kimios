@@ -1141,7 +1141,8 @@ public class SolrSearchController
                         if(c.getFieldName().startsWith("MetaData")){
                             String it = parseMetaDataCriteria(c, sdf);
                             if(it!=null)
-                                queries.add(it);
+                                queries.add((c.getOperator() != null && c.getOperator().length() > 0 ?
+                                        c.getOperator() : "") + it);
                         } else {
                             queries.add((c.getOperator() != null && c.getOperator().length() > 0 ?
                                     c.getOperator() : "") + c.getFieldName() + ":" + c.getQuery());
@@ -1201,7 +1202,8 @@ public class SolrSearchController
                     } else if (c.getFieldName().startsWith("MetaData")) {
                         String it = parseMetaDataCriteria(c, sdf);
                         if(it != null)
-                            queries.add(it);
+                            queries.add((c.getOperator() != null && c.getOperator().length() > 0 ?
+                                    c.getOperator() : "") + it);
                     }
                 }
             }

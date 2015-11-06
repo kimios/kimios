@@ -280,9 +280,12 @@ public class SolrIndexManager
                             SolrDocCallable solrDocCallable = docIndexTasks.get(indexStatus);
                             if(solrDocCallable != null){
                                 solrDocCallable.setFileData(indexStatus.getReadFileDatas());
-                                log.debug("parsed file data fields count {}. has body - {}",
-                                        indexStatus.getReadFileDatas().size(),
-                                        indexStatus.getReadFileDatas().get("DocumentBody") != null);
+                                if(log.isDebugEnabled() && indexStatus.getDmEntity() instanceof Document){
+                                    log.debug("parsed file data fields count {}. has body - {}",
+                                            indexStatus.getReadFileDatas().size(),
+                                            indexStatus.getReadFileDatas().get("DocumentBody") != null);
+                                }
+
                                 Future<SolrInputDocument> doc =
                                         executorService.submit(solrDocCallable);
 

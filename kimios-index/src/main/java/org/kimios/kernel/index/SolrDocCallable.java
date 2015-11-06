@@ -87,6 +87,8 @@ public class SolrDocCallable implements Callable<SolrInputDocument> {
             List<VirtualFolderMetaData> metaDataList = FactoryInstantiator.getInstance()
                     .getVirtualFolderFactory()
                     .virtualFolderMetaDataList(folder);
+            for(VirtualFolderMetaData metaData: metaDataList)
+                metaData.getMeta().getDocumentType().getName();
             SolrFolderGenerator solrFolderGenerator = new SolrFolderGenerator(folder,
                     metaDataList,
                     this.mp);
