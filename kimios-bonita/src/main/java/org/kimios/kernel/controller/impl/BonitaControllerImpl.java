@@ -234,9 +234,7 @@ public class BonitaControllerImpl implements BonitaController {
         try {
             APISession apiSession = login(session);
             ProcessAPI processAPI = TenantAPIAccessor.getProcessAPI(apiSession);
-
-            processAPI.hideTasks(apiSession.getUserId(), taskId);
-
+            processAPI.releaseUserTask(taskId);
             logout(apiSession);
 
         } catch (Exception e) {

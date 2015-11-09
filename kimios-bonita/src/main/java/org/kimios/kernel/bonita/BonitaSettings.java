@@ -16,15 +16,15 @@
 
 package org.kimios.kernel.bonita;
 
+import org.bonitasoft.engine.api.ApiAccessType;
+import org.bonitasoft.engine.util.APITypeManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 public class BonitaSettings {
 
@@ -54,33 +54,10 @@ public class BonitaSettings {
 
     public void init() throws IOException {
         File homeFolder = null;
-        if (System.getProperty("bonita.home") == null) {
-            // create a bonita home that is for application 'myClientExample' and on localhost:8080
-            homeFolder = new File(bonitaHome);
-            homeFolder.mkdirs();
-            File file = new File(homeFolder, "client");
-            file.mkdir();
-            file = new File(file, "conf");
-            file.mkdir();
-            file = new File(file, "bonita-client.properties");
-            file.createNewFile();
-            final Properties properties = new Properties();
-            properties.put("application.name", bonitaApplicationName);
-            properties.put("org.bonitasoft.engine.api-type", "HTTP");
-            properties.put("server.url", bonitaServerUrl);
-            properties.put("org.bonitasoft.engine.api-type.parameters", "server.url,application.name");
-
-
-            final FileWriter writer = new FileWriter(file);
-            try {
-                properties.store(writer, "Server configuration");
-            } finally {
-                writer.close();
-            }
-            System.out.println("Using server configuration " + properties);
-            System.setProperty("bonita.home", homeFolder.getAbsolutePath());
-        }
-
+        Map<String, String> settings = new HashMap<String, String>();
+        settings.put("server.url", bonitaServerUrl);
+        settings.put("application.name", bonitaApplicationName);
+        APITypeManager.setAPITypeAndParams(ApiAccessType.HTTP, settings);
         //set domain list
         if(commasSeparatedListDomains != null && commasSeparatedListDomains.length() > 0){
             String[] domainsList = commasSeparatedListDomains.split(",");

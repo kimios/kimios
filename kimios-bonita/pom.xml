@@ -30,7 +30,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <bonita.version>6.2.6</bonita.version>
+        <bonita.version>7.0.3</bonita.version>
     </properties>
 
     <dependencies>
