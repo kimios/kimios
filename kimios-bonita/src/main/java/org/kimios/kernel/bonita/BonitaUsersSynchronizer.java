@@ -105,6 +105,17 @@ public class BonitaUsersSynchronizer implements IBonitaUsersSynchronizer {
                         groupCreator.setParentPath(null);
                         bGroup = identityAPI.createGroup(groupCreator);
                         index++;
+                    } catch (RuntimeException ex){
+                        log.error("error while sync group", ex);
+                        if(ex.getCause() instanceof GroupNotFoundException){
+                            log.info("Group " + groupName + " not found, creating...");
+                            GroupCreator groupCreator = new GroupCreator(groupName);
+                            groupCreator.setDisplayName(g.getName());
+                            groupCreator.setDescription(g.getName());
+                            groupCreator.setParentPath(null);
+                            bGroup = identityAPI.createGroup(groupCreator);
+                            index++;
+                        }
                     }
                 }
                 log.info("{} group(s) synchronized", index);
@@ -117,7 +128,7 @@ public class BonitaUsersSynchronizer implements IBonitaUsersSynchronizer {
                 index = 0;
                 for (User u : users) {
                     String userName = u.getUid() + "@" + u.getAuthenticationSourceName();
-                    org.bonitasoft.engine.identity.User bUser;
+                    org.bonitasoft.engine.identity.User bUser = null;
                     try {
                         // check existing user
                         bUser = identityAPI.getUserByUserName(userName);
@@ -146,6 +157,22 @@ public class BonitaUsersSynchronizer implements IBonitaUsersSynchronizer {
                         userCreator.setProfessionalContactData(contact);
                         bUser = identityAPI.createUser(userCreator);
                         index++;
+                    } catch (RuntimeException ex) {
+                        log.error("error while sync user", ex);
+                        if (ex.getCause() instanceof UserNotFoundException) {
+                            log.info("User " + userName + " not found, creating...");
+                            UserCreator userCreator = new UserCreator(userName, UUID.randomUUID().toString());
+                            userCreator.setFirstName(u.getFirstName());
+                            userCreator.setLastName(u.getLastName());
+                            ContactDataCreator contact = new ContactDataCreator();
+                            contact.setEmail(u.getMail());
+                            contact.setPhoneNumber(u.getPhoneNumber());
+                            userCreator.setPersonalContactData(contact);
+                            userCreator.setProfessionalContactData(contact);
+                            bUser = identityAPI.createUser(userCreator);
+                            index++;
+
+                        }
                     }
                     log.info("{} users(s) synchronized", index);
                     // Set profile
@@ -166,7 +193,17 @@ public class BonitaUsersSynchronizer implements IBonitaUsersSynchronizer {
 
                                 } catch (CreationException ce) {
                                     log.info("Profile already exists: " + ce.getMessage());
+                                } catch (RuntimeException ex){
+                                    if(ex.getCause() instanceof  AlreadyExistsException){
+                                        log.info("Profile already exists: " + ex.getCause().getMessage());
+                                    }
+                                    if(ex.getCause() instanceof  CreationException){
+                                        log.info("Profile already exists: " + ex.getCause().getMessage());
+                                    }
+
+
                                 }
+
                                 break;
                             }
                         }
@@ -180,7 +217,7 @@ public class BonitaUsersSynchronizer implements IBonitaUsersSynchronizer {
                     Collection<Group> linkedGroups = source.getGroupFactory().getGroups(u.getUid());
                     for (Group g : linkedGroups) {
                         String groupName = g.getGid() + "@" + g.getAuthenticationSourceName();
-                        org.bonitasoft.engine.identity.Group bGroup;
+                        org.bonitasoft.engine.identity.Group bGroup = null;
                         try {
                             // check existing group
                             bGroup = identityAPI.getGroupByPath("/" + groupName);
@@ -199,6 +236,16 @@ public class BonitaUsersSynchronizer implements IBonitaUsersSynchronizer {
                             groupCreator.setDescription(g.getName());
                             groupCreator.setParentPath(null);
                             bGroup = identityAPI.createGroup(groupCreator);
+                        } catch (RuntimeException ex){
+                            if(ex.getCause() instanceof GroupNotFoundException){
+                                // if not exists
+                                log.info("Group " + groupName + " not found, creating...");
+                                GroupCreator groupCreator = new GroupCreator(groupName);
+                                groupCreator.setDisplayName(g.getName());
+                                groupCreator.setDescription(g.getName());
+                                groupCreator.setParentPath(null);
+                                bGroup = identityAPI.createGroup(groupCreator);
+                            }
                         }
 
 

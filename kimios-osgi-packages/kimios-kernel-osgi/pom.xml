@@ -140,7 +140,7 @@
         <dependency>
             <groupId>com.thoughtworks.xstream</groupId>
             <artifactId>xstream</artifactId>
-            <version>1.3.1</version>
+            <version>${xstream.version}</version>
             <scope>compile</scope>
         </dependency>
 
@@ -272,9 +272,9 @@
         </dependency>
 
         <dependency>
-            <groupId>org.ow2.bonita.engine</groupId>
+            <groupId>org.bonitasoft.engine</groupId>
             <artifactId>bonita-client</artifactId>
-            <version>6.0.2</version>
+            <version>${bonita.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.httpcomponents</groupId>

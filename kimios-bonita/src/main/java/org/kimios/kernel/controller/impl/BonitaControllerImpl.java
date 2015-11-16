@@ -30,6 +30,9 @@ import org.bonitasoft.engine.bpm.process.ProcessDefinitionNotFoundException;
 import org.bonitasoft.engine.bpm.process.ProcessDeploymentInfo;
 import org.bonitasoft.engine.bpm.process.ProcessDeploymentInfoCriterion;
 import org.bonitasoft.engine.platform.LoginException;
+import org.bonitasoft.engine.search.SearchOptions;
+import org.bonitasoft.engine.search.SearchOptionsBuilder;
+import org.bonitasoft.engine.search.SearchResult;
 import org.bonitasoft.engine.session.APISession;
 import org.kimios.kernel.bonita.BonitaSettings;
 import org.kimios.kernel.controller.BonitaController;
@@ -261,7 +264,7 @@ public class BonitaControllerImpl implements BonitaController {
             HumanTaskInstance task = processAPI.getHumanTaskInstance(taskId);
 
             log.info("Adding comment: " + comment);
-            Comment submitted = processAPI.addComment(task.getParentProcessInstanceId(), comment);
+            Comment submitted = processAPI.addProcessComment(task.getParentProcessInstanceId(), comment);
 
             CommentWrapper c = CommentWrapperFactory.createCommentWrapper(submitted, identityAPI);
 
@@ -289,12 +292,17 @@ public class BonitaControllerImpl implements BonitaController {
             log.info("taskId: " + taskId);
             HumanTaskInstance task = processAPI.getHumanTaskInstance(taskId);
 
-            List<Comment> comments = processAPI.getComments(task.getParentProcessInstanceId());
 
-            log.info(comments.size() + " comments found");
+            SearchOptions searchOptions = new SearchOptionsBuilder(0, Integer.MAX_VALUE)
+                    .filter("processInstanceId", task.getParentProcessInstanceId())
+                    .done();
+
+            SearchResult<Comment> comments = processAPI.searchComments(searchOptions);
+
+            log.info(comments.getCount() + " comments found");
 
             List<CommentWrapper> wrappers = new ArrayList<CommentWrapper>();
-            for (Comment c : comments) {
+            for (Comment c : comments.getResult()) {
                 wrappers.add(CommentWrapperFactory.createCommentWrapper(c, identityAPI));
             }
 
