@@ -64,11 +64,22 @@ public class ServiceHelper implements IServiceHelper {
     {
         if (log.isDebugEnabled()) {
             log.debug("", e);
+            log.debug("==================== CAUSED BY =================");
+            Throwable cause = e.getCause();
+            while (cause != null){
+                log.debug(cause.getMessage(), cause);
+                cause = cause.getCause();
+            }
         } else {
             if (!(e.getMessage() != null && e.getMessage().equalsIgnoreCase("Error 01 : Invalid session")) &&
                     !(e instanceof AccessDeniedException))
             {
-                log.error("", e);
+                log.error("==================== CAUSED BY =================");
+                Throwable cause = e.getCause();
+                while (cause != null){
+                    log.error(cause.getMessage(), cause);
+                    cause = cause.getCause();
+                }
             }
         }
 

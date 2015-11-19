@@ -1280,26 +1280,31 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                 org.kimios.kernel.ws.pojo.Bookmark bookmarkPojo = bookmark.toPojo();
                 org.kimios.kernel.ws.pojo.DMEntity pojoEntity = bookmarkPojo.getEntity();
                 String[] it = new String[]{"", "String", "Number", "Date", "Boolean"};
-                if (pojoEntity instanceof org.kimios.kernel.ws.pojo.Folder && ((Folder) bookmark.getEntity()).getAddOnDatas() != null) {
+                if (pojoEntity instanceof org.kimios.kernel.ws.pojo.Folder) {
                     // generate folder meta datas
-                    try{
-                    AddonDataHandler.AddonDatasWrapper wrapper = mapper.readValue(((Folder) bookmark.getEntity()).getAddOnDatas(),
-                            AddonDataHandler.AddonDatasWrapper.class);
+                    //check if folder has meta
 
-                        if(wrapper.getEntityMetaValues() != null){
-                            for(MetaValue mv: wrapper.getEntityMetaValues()){
-                                org.kimios.kernel.ws.pojo.MetaValue pojoMetaValue = new org.kimios.kernel.ws.pojo.MetaValue();
-                                pojoMetaValue.setMeta(mv.getMeta().toPojo());
-                                pojoMetaValue.setMetaId(mv.getMetaUid());
-                                pojoMetaValue.setValue(mv.getValue());
-                                pojoEntity.getMetaDatas().put("MetaData" + it[mv.getMeta().getMetaType()]+ "_" + mv.getMetaUid(), pojoMetaValue);
+                    Folder f = dmsFactoryInstantiator.getFolderFactory().getFolder(pojoEntity.getUid());
+                    if(f.getAddOnDatas() != null){
+                        try{
+
+                            AddonDataHandler.AddonDatasWrapper wrapper = mapper.readValue(((Folder) bookmark.getEntity()).getAddOnDatas(),
+                                    AddonDataHandler.AddonDatasWrapper.class);
+
+                            if(wrapper.getEntityMetaValues() != null){
+                                for(MetaValue mv: wrapper.getEntityMetaValues()){
+                                    org.kimios.kernel.ws.pojo.MetaValue pojoMetaValue = new org.kimios.kernel.ws.pojo.MetaValue();
+                                    pojoMetaValue.setMeta(mv.getMeta().toPojo());
+                                    pojoMetaValue.setMetaId(mv.getMetaUid());
+                                    pojoMetaValue.setValue(mv.getValue());
+                                    pojoEntity.getMetaDatas().put("MetaData" + it[mv.getMeta().getMetaType()]+ "_" + mv.getMetaUid(), pojoMetaValue);
+                                }
                             }
+
+                        }catch (IOException exception){
+                            log.error("error while parsing json meta datas for entity folder #" + bookmark.getEntity().getUid(), exception);
                         }
-
-                    }catch (IOException exception){
-                        log.error("error while parsing json meta datas for entity folder #" + bookmark.getEntity().getUid(), exception);
                     }
-
                 }
                 bookmarksPojoList.add(bookmarkPojo);
             }
