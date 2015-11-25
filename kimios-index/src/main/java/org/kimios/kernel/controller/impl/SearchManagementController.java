@@ -134,6 +134,49 @@ public class SearchManagementController extends AKimiosController implements ISe
     }
 
 
+
+    synchronized public void parallelReindex(Session session, List<Long> ids,
+                                             Integer blockSize,
+                                             Long readFileTimeOut,
+                                             TimeUnit readFileTimeoutUnit,
+                                             int threadPoolSize,
+                                             boolean updateDocsMetaWrapper,
+                                             boolean disableThreading,
+                                             int entityType)
+            throws AccessDeniedException, IndexException, ConfigException, DataSourceException {
+        if (securityFactoryInstantiator.getRoleFactory()
+                .getRole(Role.ADMIN, session.getUserName(), session.getUserSource()) != null) {
+
+            int block = blockSize != null && blockSize > 0
+                    ? blockSize : 20;
+
+
+            if (executor == null || executor.isTerminated()) {
+                executor = new CustomThreadPoolExecutor(8, 8,
+                        0L, TimeUnit.MILLISECONDS,
+                        new LinkedBlockingQueue<Runnable>());
+
+            }
+
+            ReindexerProcess osgiReindexer = new ReindexerProcess(
+                    indexManager,
+                    ids,
+                    block,
+                    readFileTimeOut,
+                    readFileTimeoutUnit,
+                    threadPoolSize,
+                    updateDocsMetaWrapper,
+                    disableThreading,
+                    entityType
+            );
+            executor.submit(osgiReindexer);
+
+        } else {
+            throw new AccessDeniedException();
+        }
+    }
+
+
     public List<ReindexerProcess.ReindexResult> viewIndexingProcess(Session session)
             throws AccessDeniedException, IndexException, ConfigException, DataSourceException {
         if (securityFactoryInstantiator.getRoleFactory()

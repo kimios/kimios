@@ -36,6 +36,10 @@ public class Criteria
 
     private Integer level = 0;
 
+    private boolean filterQuery;
+
+    private List<String> addonsFields;
+
     private List<String> filtersValues;
 
     private String facetField;
@@ -62,6 +66,21 @@ public class Criteria
 
     private String dateFormat;
 
+    public List<String> getAddonsFields() {
+        return addonsFields;
+    }
+
+    public void setAddonsFields(List<String> addonsFields) {
+        this.addonsFields = addonsFields;
+    }
+
+    public boolean isFilterQuery() {
+        return filterQuery;
+    }
+
+    public void setFilterQuery(boolean filterQuery) {
+        this.filterQuery = filterQuery;
+    }
 
     public boolean isExclusiveFacet() {
         return exclusiveFacet;

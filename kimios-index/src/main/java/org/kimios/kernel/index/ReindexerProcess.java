@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -133,6 +134,8 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
 
     private String finalPath;
 
+    private List<Long> ids;
+
     private ISolrIndexManager indexManager;
 
     private int blockSize;
@@ -172,6 +175,27 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
         this.entityType = entityType;
     }
 
+    public ReindexerProcess(ISolrIndexManager indexManager, List<Long> ids, int blockSize,
+                            Long threadReadTimeOut, TimeUnit threadReadTimeoutTimeUnit, int threadPoolSize,
+                            boolean updateDocsMetaWrapper,
+                            boolean disableThreading,
+                            int entityType) {
+        this.indexManager = indexManager;
+        this.blockSize = blockSize;
+        this.ids = ids;
+        indexed = 0;
+        total = 0;
+        start = System.currentTimeMillis();
+        duration = 0;
+        this.reindexResult = new ReindexResult(finalPath, indexed, duration, total, null);
+        this.threadReadTimeOut = threadReadTimeOut;
+        this.threadReadTimeoutTimeUnit = threadReadTimeoutTimeUnit;
+        this.updateDocsMetaWrapper = updateDocsMetaWrapper;
+        this.disableThreading = disableThreading;
+        this.threadPoolSize = threadPoolSize;
+        this.entityType = entityType;
+    }
+
 
     private int entityType = DMEntityType.DOCUMENT;
 
@@ -200,29 +224,49 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             DecimalFormat df = new DecimalFormat("#0.##");
 
-            String indexPath = this.finalPath != null ? this.finalPath.trim() : "/";
-            try {
-                String fPath = ClientUtils.escapeQueryChars(indexPath);
-                if (fPath.endsWith(ClientUtils.escapeQueryChars("/")))
-                    indexPath = fPath + "*";
-                else
-                    indexPath = fPath;
-                SearchResponse re = indexManager.executeSolrQuery(new SolrQuery("DocumentPath:" + indexPath));
-                log.info("Process will update " + re.getResults() + " documents for path " + indexPath);
-                indexManager.deleteByQuery("DocumentPath:" + indexPath);
-            } catch (Exception e) {
-                log.error(e.getMessage(), e);
-                log.info("Incorrect Path, or index process error for " + indexPath + ". Reindex process canceled.");
-                throw new Exception("Incorrect Path, or index process error for " + indexPath + ". Reindex process canceled.");
+            if(finalPath != null){
+                String indexPath = this.finalPath != null ? this.finalPath.trim() : "/";
+                try {
+                    String fPath = ClientUtils.escapeQueryChars(indexPath);
+                    if (fPath.endsWith(ClientUtils.escapeQueryChars("/")))
+                        indexPath = fPath + "*";
+                    else
+                        indexPath = fPath;
+                    SearchResponse re = indexManager.executeSolrQuery(new SolrQuery("DocumentPath:" + indexPath));
+                    log.info("Process will update " + re.getResults() + " documents for path " + indexPath);
+                    indexManager.deleteByQuery("DocumentPath:" + indexPath);
+                } catch (Exception e) {
+                    log.error(e.getMessage(), e);
+                    log.info("Incorrect Path, or index process error for " + indexPath + ". Reindex process canceled.");
+                    throw new Exception("Incorrect Path, or index process error for " + indexPath + ". Reindex process canceled.");
+                }
             }
-            OsgiTransactionHelper th = new OsgiTransactionHelper();
-            th.startNew(null);
-            //List<DMEntity> entities =
 
-            total = FactoryInstantiator.getInstance()
-                    .getDmEntityFactory()
-                    .getEntitiesByPathAndTypeCount(finalPath, entityType, excludedIds, extensionsExcluded)
-                    .intValue();
+
+
+            OsgiTransactionHelper th = new OsgiTransactionHelper();
+
+
+
+            List<DMEntity> itemsFromIds = null;
+            List<Long> finalIdsList = null;
+            if(finalPath != null){
+                th.startNew(null);
+                //List<DMEntity> entities =
+
+                total = FactoryInstantiator.getInstance()
+                        .getDmEntityFactory()
+                        .getEntitiesByPathAndTypeCount(finalPath, entityType, excludedIds, extensionsExcluded)
+                        .intValue();
+            } else {
+                th.startNew(null);
+                total = ids.size();
+                finalIdsList = new ArrayList<Long>();
+                for(Long z: ids) {
+                    finalIdsList.add(z);
+                }
+            }
+
             //total = entities.size();
             log.debug("Entities of type " + entityType + " to index: " + total);
             this.reindexResult.setEntitiesCount(total);
@@ -234,7 +278,7 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
             if (docLeak > 0)
                 indexingBlockCount++;
 
-            log.debug("Reindexing " + total + " documents: block size " + documentBlockSize + "  / blcok count " + indexingBlockCount);
+            log.debug("Reindexing " + total + " documents: block size " + documentBlockSize + "  / block count " + indexingBlockCount);
 
             th.loadTxManager().getTransaction().rollback();
 
@@ -242,11 +286,25 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
                 th.loadTxManager().begin();
 
                 List<DMEntity> entityList = null;
-                entityList = FactoryInstantiator.getInstance()
-                        .getDmEntityFactory().getEntitiesByPathAndType(finalPath, entityType, u * documentBlockSize,
-                                ((docLeak > 0 && u == (indexingBlockCount - 1)) ? docLeak : documentBlockSize),
-                                excludedIds,
-                                extensionsExcluded);
+                if(finalPath != null){
+                    entityList = FactoryInstantiator.getInstance()
+                            .getDmEntityFactory().getEntitiesByPathAndType(finalPath, entityType, u * documentBlockSize,
+                                    ((docLeak > 0 && u == (indexingBlockCount - 1)) ? docLeak : documentBlockSize),
+                                    excludedIds,
+                                    extensionsExcluded);
+                } else {
+                    //use list
+                    int startIdx =  u * documentBlockSize;
+                    int endIdx = startIdx +  ((docLeak > 0 && u == (indexingBlockCount - 1)) ? docLeak : documentBlockSize);
+
+
+                    List<Long> subList = finalIdsList.subList(startIdx, (endIdx > finalIdsList.size() - 1 ? finalIdsList.size() : endIdx));
+                    entityList = FactoryInstantiator.getInstance()
+                            .getDmEntityFactory()
+                            .getEntitiesFromIds(subList, entityType);
+
+                }
+
                 try {
                     if (threadReadTimeoutTimeUnit != null && threadReadTimeOut != null) {
                         indexManager.threadedIndexDocumentList(entityList, threadReadTimeOut,

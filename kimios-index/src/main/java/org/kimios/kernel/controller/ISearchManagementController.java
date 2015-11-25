@@ -60,6 +60,17 @@ public interface ISearchManagementController {
                                 int entityType)
             throws AccessDeniedException, IndexException, ConfigException, DataSourceException;
 
+
+    public void parallelReindex(Session session, List<Long> ids,
+                                             Integer blockSize,
+                                             Long readFileTimeOut,
+                                             TimeUnit readFileTimeoutUnit,
+                                             int threadPoolSize,
+                                             boolean updateDocsMetaWrapper,
+                                             boolean disableThreading,
+                                             int entityType)
+            throws AccessDeniedException, IndexException, ConfigException, DataSourceException;
+
     public void killAndCleanReindexProcess(Session session)
             throws AccessDeniedException, IndexException, ConfigException, DataSourceException;
 

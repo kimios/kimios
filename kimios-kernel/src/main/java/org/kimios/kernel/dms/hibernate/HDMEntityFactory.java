@@ -216,7 +216,9 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory {
             Criteria criteria = getSession().createCriteria(DMEntityImpl.class);
             criteria.setProjection(Projections.distinct(Projections.id()))
                     .add(Restrictions.like("path", finalPath, MatchMode.START))
-                    .add(Restrictions.eq("type", dmEntityType));
+                    .add(Restrictions.eq("type", dmEntityType))
+                    .addOrder(Order.asc("uid"));
+
 
             if (excludedIds != null && excludedIds.size() > 0) {
                 criteria.add(Restrictions.not(Restrictions.in("uid", excludedIds)));
@@ -236,10 +238,17 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory {
                 criteria.setFirstResult(0);
                 criteria.setMaxResults(Integer.MAX_VALUE);
                 criteria.add(Restrictions.in("uid", uniqueSubList));
-                criteria.addOrder(Order.asc("creationDate"));
+                criteria.addOrder(Order.asc("uid"));
                 criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 
-                return criteria.list();
+                List finalItems =  criteria.list();
+
+
+                if(finalItems.size() != uniqueSubList.size()){
+                    log.info("WARNING !!! Difference betweeeeen ids Count and entities : {} against {}",uniqueSubList.size(), finalItems.size());
+                }
+
+                return finalItems;
 
 
             } else {
@@ -276,6 +285,7 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory {
             criteria.setProjection(Projections.distinct(Projections.id()))
                     .add(Restrictions.like("path", finalPath, MatchMode.START))
                     .add(Restrictions.eq("type", dmEntityType))
+                    .addOrder(Order.asc("uid"))
                     .setFirstResult(start)
                     .setMaxResults(count);
             List uniqueSubList = criteria.list();
@@ -286,10 +296,18 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory {
                 criteria.setFirstResult(0);
                 criteria.setMaxResults(Integer.MAX_VALUE);
                 criteria.add(Restrictions.in("uid", uniqueSubList));
-                criteria.addOrder(Order.asc("creationDate"));
+                criteria.addOrder(Order.asc("uid"));
                 criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 
-                return criteria.list();
+                List finalItems =  criteria.list();
+
+
+                if(finalItems.size() != uniqueSubList.size()){
+                    log.info("WARNING !!! Difference betweeeeen ids Count and entities : {} against {}",uniqueSubList.size(), finalItems.size());
+                }
+
+
+                return finalItems;
 
 
             } else {
@@ -555,6 +573,51 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory {
             entity.setTrashed(false);
             getSession().saveOrUpdate(entity);
             getSession().flush();
+        }
+    }
+
+
+    public List<DMEntity> getEntitiesFromIds(List<Long> listIds, int dmEntityType) throws ConfigException, DataSourceException
+    {
+        List<DMEntity> lists = null;
+        if (listIds.size() > 0) {
+            try {
+
+                Criteria criteria = getSession().createCriteria(DMEntityImpl.class);
+                criteria.setProjection(Projections.distinct(Projections.id()))
+                        .add(Restrictions.in("uid", listIds))
+                        .add(Restrictions.eq("type", dmEntityType))
+                        .addOrder(Order.asc("uid"));
+                List uniqueSubList = criteria.list();
+
+
+                if (uniqueSubList.size() > 0) {
+                    criteria.setProjection(null);
+                    criteria.setFirstResult(0);
+                    criteria.setMaxResults(Integer.MAX_VALUE);
+                    criteria.add(Restrictions.in("uid", uniqueSubList));
+                    criteria.addOrder(Order.asc("uid"));
+                    criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+
+                    List finalItems =  criteria.list();
+
+
+                    if(finalItems.size() != uniqueSubList.size()){
+                        log.info("WARNING !!! Difference betweeeeen ids Count and entities : {} against {}",uniqueSubList.size(), finalItems.size());
+                    }
+
+
+                    return finalItems;
+
+
+                } else {
+                    return new ArrayList<DMEntity>();
+                }
+            } catch (HibernateException he) {
+                throw new DataSourceException(he, he.getMessage());
+            }
+        } else {
+            return new ArrayList<DMEntity>();
         }
     }
 }

@@ -1014,9 +1014,13 @@ public class SolrSearchController
 
 
         Map<Criteria, String> filtersMap = new HashMap<Criteria, String>();
+        List<String> fieldsDef = new ArrayList<String>();
 
         for (Criteria c : criteriaList) {
 
+            if(c.getAddonsFields() != null && c.getAddonsFields().size() > 0){
+                fieldsDef.addAll(c.getAddonsFields());
+            }
 
             if (StringUtils.isNotBlank(c.getQuery()) && (StringUtils.isBlank(c.getFieldName()) || c.getFieldName().startsWith("__multi"))) {
                 String queryValue = null;
@@ -1032,7 +1036,12 @@ public class SolrSearchController
                     indexQuery.set("qf", fieldsName);
                     queries.add(c.getQuery());
                 } else {
-                    queries.add(queryValue);
+                    if(c.isFilterQuery()){
+
+                    } else {
+                        queries.add(queryValue);
+                    }
+
                 }
 
             } else if (c.isFaceted()) {
@@ -1273,15 +1282,25 @@ public class SolrSearchController
 
         }
 
-        if (indexQuery.getFilterQueries() != null)
-            log.debug("Solr Final Filter Query " + Joiner.on(" ").join(indexQuery.getFilterQueries()));
-        log.debug("Solr Final Query: " + sQuery);
-        if (indexQuery.getFacetFields() != null)
-            log.debug("Solr Final Facet  " + Joiner.on(" ").join(indexQuery.getFacetFields()));
-        if (indexQuery.getFacetQuery() != null)
-            log.debug("Solr Final Facet  Query " + Joiner.on(" ").join(indexQuery.getFacetQuery()));
+
+        if(log.isDebugEnabled()){
+            if (indexQuery.getFilterQueries() != null)
+                log.debug("Solr Final Filter Query " + Joiner.on(" ").join(indexQuery.getFilterQueries()));
+
+            if (indexQuery.getFacetFields() != null)
+                log.debug("Solr Final Facet  " + Joiner.on(" ").join(indexQuery.getFacetFields()));
+            if (indexQuery.getFacetQuery() != null)
+                log.debug("Solr Final Facet  Query " + Joiner.on(" ").join(indexQuery.getFacetQuery()));
+
+            log.debug("Solr Final Query: " + sQuery);
+        }
 
         indexQuery.setQuery(sQuery.toString());
+        if(fieldsDef.size() > 0){
+            for(String f: fieldsDef)
+                indexQuery.addField(f);
+        }
+
         if (pageSize > -1 && page > -1) {
             indexQuery.setRows(pageSize);
             indexQuery.setStart(page);

@@ -18,6 +18,12 @@ import java.util.concurrent.*;
 public class ReindexParallelCommand extends KimiosCommand {
 
 
+    @Option(name = "-i",
+            aliases = "--ids",
+            description = "Index n document by n document",
+            required = false, multiValued = true)
+    Long[] ids = null;
+
     @Option(name = "-b",
             aliases = "--blocksize",
             description = "Index n document by n document",
@@ -79,19 +85,35 @@ public class ReindexParallelCommand extends KimiosCommand {
         if (this.isConnected()) {
             int block = blockSize != null && blockSize > 0
                     ? blockSize : 20;
-            searchManagementController.parallelReindex(
-                    this.getCurrentSession(),
-                    Arrays.asList(paths),
-                    idsExcluded != null ? Arrays.asList(idsExcluded) : new ArrayList<Long>(),
-                    extensionExcluded != null ? Arrays.asList(extensionExcluded) : new ArrayList<String>(),
-                    block,
-                    readTimeOut,
-                    readTimeOutUnit != null ? TimeUnit.valueOf(readTimeOutUnit) : null,
-                    threadPoolSize != null ? threadPoolSize : 5,
-                    regenerateMetaWrapper,
-                    disableThreading,
-                    entityType
-            );
+
+            if(paths != null && paths.length > 0){
+                searchManagementController.parallelReindex(
+                        this.getCurrentSession(),
+                        Arrays.asList(paths),
+                        idsExcluded != null ? Arrays.asList(idsExcluded) : new ArrayList<Long>(),
+                        extensionExcluded != null ? Arrays.asList(extensionExcluded) : new ArrayList<String>(),
+                        block,
+                        readTimeOut,
+                        readTimeOutUnit != null ? TimeUnit.valueOf(readTimeOutUnit) : null,
+                        threadPoolSize != null ? threadPoolSize : 5,
+                        regenerateMetaWrapper,
+                        disableThreading,
+                        entityType
+                );
+            } else if(ids != null && ids.length > 0){
+                searchManagementController.parallelReindex(
+                        this.getCurrentSession(),
+                        Arrays.asList(ids),
+                        block,
+                        readTimeOut,
+                        readTimeOutUnit != null ? TimeUnit.valueOf(readTimeOutUnit) : null,
+                        threadPoolSize != null ? threadPoolSize : 5,
+                        regenerateMetaWrapper,
+                        disableThreading,
+                        entityType
+                );
+            }
+
         }
     }
 }

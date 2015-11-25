@@ -255,7 +255,7 @@ public class SolrIndexManager
                             readVersionTimeOut, readVersionTimeoutTimeUnit, sharedQueue));
 
 
-            log.info("started File Reader !!! (" + futuresFilesMetaDatas + ")");
+            log.info("started File Reader. Status Queue Size: {} ", sharedQueue.size());
 
             Future<?> globalFuture = executorService.submit(new Callable<Integer>() {
 
@@ -297,14 +297,9 @@ public class SolrIndexManager
                                 }
 
                             } else {
-                                //
                                 log.error("SolrDocCallable Not Found for Index Status {}", indexStatus);
                                 notFound.add(indexStatus);
                             }
-
-
-
-
                         } catch (Exception ex) {
                             log.error("error while taking and processing !", ex);
                         }
@@ -326,9 +321,11 @@ public class SolrIndexManager
                             Future<SolrInputDocument> doc =
                                     executorService.submit(solrDocCallable);
 
+
                             try {
+                                SolrInputDocument slDoc = doc.get();
                                 solr.deleteById(Long.toString(indexStatus.getDmEntity().getUid()));
-                                solr.add(doc.get());
+                                solr.add(slDoc);
                             } catch (Exception ex) {
                                 log.error("error while adding doc #" + indexStatus.getDmEntity().getUid(), ex);
                             }
@@ -350,9 +347,9 @@ public class SolrIndexManager
             });
 
 
-            globalFuture.get();
+            Object ret = globalFuture.get();
+            log.debug("Global result {}", ret);
             executorService.shutdown();
-
 
             //update processed meta data addon fields
             if(updateDocsMetaWrapper){
@@ -365,9 +362,16 @@ public class SolrIndexManager
                 }
             }
             //save document index status
+
+            log.info("{} available doc status against / {} doc.", documentVersionMap.size(), documentEntities.size());
+
+
+            int statusSaved = 0;
             for(DocumentIndexStatus dis: documentVersionMap.keySet()){
                 documentIndexStatusFactory.saveItem(dis);
+                statusSaved++;
             }
+            log.info("documentidxstatus saved {}", statusSaved);
         }
         catch (Exception io) {
             throw new IndexException(io, "An exception occured while indexing document list " + io.getMessage());

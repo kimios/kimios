@@ -63,5 +63,7 @@ public interface DMEntityFactory {
             throws ConfigException, DataSourceException;
 
     public void untrash(DMEntityImpl entity) throws ConfigException, DataSourceException;
+
+    public List<DMEntity> getEntitiesFromIds(List<Long> listIds, int dmEntityType) throws ConfigException, DataSourceException;
 }
 
