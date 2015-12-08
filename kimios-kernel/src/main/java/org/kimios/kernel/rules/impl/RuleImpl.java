@@ -19,9 +19,13 @@ import org.kimios.kernel.events.EventContext;
 import org.kimios.kernel.rules.Condition;
 import org.kimios.kernel.rules.RuleApplication;
 
+import java.util.Map;
+
 public abstract class RuleImpl implements Condition, RuleApplication
 {
     protected EventContext ctx;
+
+    protected Map<String, String> parameters;
 
     public abstract boolean isTrue();
 
@@ -36,5 +40,13 @@ public abstract class RuleImpl implements Condition, RuleApplication
     }
 
     public abstract void execute() throws Exception;
+
+    public Map<String, String> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(Map<String, String> parameters) {
+        this.parameters = parameters;
+    }
 }
 

@@ -15,6 +15,11 @@
  */
 package org.kimios.kernel.rules;
 
+import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.type.MapType;
+import org.codehaus.jackson.map.type.TypeFactory;
+import org.codehaus.jackson.type.TypeReference;
 import org.kimios.kernel.events.EventContext;
 import org.kimios.kernel.events.annotations.DmsEvent;
 import org.kimios.kernel.events.annotations.DmsEventOccur;
@@ -25,7 +30,9 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class RuleManager
 {
@@ -43,6 +50,16 @@ public class RuleManager
     public void setRuleBeanFactory(RuleBeanFactory ruleBeanFactory)
     {
         this.ruleBeanFactory = ruleBeanFactory;
+    }
+
+    private ObjectMapper objectMapper;
+
+    public RuleManager(){
+
+
+        objectMapper = new ObjectMapper();
+        log.info("Creating Rules Manager");
+
     }
 
     public List<RuleBean> processRulesBefore(Method method, Object[] arguments) throws Throwable
@@ -118,6 +135,22 @@ public class RuleManager
                             f.set(liveInstance, each.getParameters().get(fName));
                         }
                     }
+
+                    //load others parameters from json
+                    if(!StringUtils.isEmpty(each.getParametersJson())){
+                        try{
+
+                            Map<String, String> result =
+                                    objectMapper.readValue(each.getParametersJson(),
+                                            new TypeReference<Map<String, String>>() {
+                                            });
+                            each.setParametersData(result);
+                            liveInstance.setParameters(result);
+                        } catch (Exception ex){
+                            log.error("error while parsing rule parameters", ex);
+                        }
+                    }
+
                     liveInstance.setConditionContext(ctx);
                     if (liveInstance.isTrue()) {
                         liveInstance.execute();

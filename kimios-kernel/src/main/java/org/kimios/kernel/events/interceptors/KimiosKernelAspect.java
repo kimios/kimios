@@ -97,34 +97,43 @@ public class KimiosKernelAspect {
                     (evt != null ? evt.eventName()[0] : " no event defined. for " + method.getName()));
             if (evt != null) {
                 ctx = ContextBuilder.buildContext(evt.eventName()[0], method, pjp.getArgs());
-                log.trace("Set event: " + ctx.getEvent().name() + " | " + ctx.getEntity());
+                log.trace("defined event: " + ctx.getEvent().name() + " | " + ctx.getEntity());
             }
 
             ctx.setCurrentOccur(DmsEventOccur.BEFORE);
             //process events (before state)
-            for (GenericEventHandler it : eventHandlerManager.handlers()) {
-                log.trace("Event Before Context: " + ctx.getEntity());
-                it.process(method, pjp.getArgs(), DmsEventOccur.BEFORE, null, ctx);
-            }
-            //process rules before (before state)
+
             List<RuleBean> rulesBeans = null;
-            if (rulesManagementEnabled) {
-                //keep rules bean selected
-                rulesBeans = ruleManager.processRulesBefore(method, pjp.getArgs());
+            if(evt != null){
+                log.trace("event entity context {} ", ctx.getEntity());
+                for (GenericEventHandler it : eventHandlerManager.handlers()) {
+                    log.trace("BEFORE processing event handler {}", it.getClass().getName());
+                    it.process(method, pjp.getArgs(), DmsEventOccur.BEFORE, null, ctx);
+                }
+                //process rules before (before state)
+                if (rulesManagementEnabled) {
+                    //keep rules bean selected
+                    rulesBeans = ruleManager.processRulesBefore(method, pjp.getArgs());
+                    log.trace("BEFORE following processing rules, rules beans count is {}", rulesBeans != null ? rulesBeans.size() : 0);
+                }
             }
+
             Object ret = pjp.proceed();
             ctx.setCurrentOccur(DmsEventOccur.AFTER);
             EventContext.addParameter("callReturn", ret);
-            //process rules (after state)
-            if (rulesManagementEnabled) {
-                //pass selected beans for the current event/path
-                ruleManager.processRulesAfter(rulesBeans, ctx);
+            if(evt != null){
+                //process rules (after state)
+                if (rulesManagementEnabled && rulesBeans != null && rulesBeans.size() > 0) {
+                    //pass selected beans for the current event/path
+                    ruleManager.processRulesAfter(rulesBeans, ctx);
+                }
+                //process handler after
+                for (GenericEventHandler it : eventHandlerManager.handlers()) {
+                    log.trace("AFTER processing event handler {}", it.getClass().getName());
+                    it.process(method, pjp.getArgs(), DmsEventOccur.AFTER, ret, ctx);
+                }
             }
-            //process handler after
-            for (GenericEventHandler it : eventHandlerManager.handlers()) {
-                log.trace("Event After Context: " + ctx.getEntity());
-                it.process(method, pjp.getArgs(), DmsEventOccur.AFTER, ret, ctx);
-            }
+
             EventContext.clear();
             return ret;
         }  else {

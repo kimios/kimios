@@ -134,12 +134,12 @@ public class FolderController extends AKimiosController implements IFolderContro
             }
         }
 
+        EventContext.get().setParentEntity(parent);
+
         Date creationDate = new Date();
         Folder f = new Folder(-1, name, session.getUserName(), session.getUserSource(), creationDate, parentUid,
                 parent.getType());
         f.setUpdateDate(creationDate);
-
-        log.info("Dm Entity " + parent.toString());
         if (getSecurityAgent()
                 .isWritable(parent, session.getUserName(), session.getUserSource(), session.getGroups())) {
 
@@ -149,6 +149,7 @@ public class FolderController extends AKimiosController implements IFolderContro
             if (isSecurityInherited) {
                 Vector<DMEntitySecurity> v =
                         securityFactoryInstantiator.getDMEntitySecurityFactory().getDMEntitySecurities(parent);
+
                 for (int i = 0; i < v.size(); i++) {
                     DMEntitySecurity des = new DMEntitySecurity(
                             f.getUid(),
@@ -163,6 +164,8 @@ public class FolderController extends AKimiosController implements IFolderContro
                     securityFactoryInstantiator.getDMEntitySecurityFactory().saveDMEntitySecurity(des);
                 }
             }
+            EventContext.get().setEntity(f);
+
             return f.getUid();
         } else {
             throw new AccessDeniedException();

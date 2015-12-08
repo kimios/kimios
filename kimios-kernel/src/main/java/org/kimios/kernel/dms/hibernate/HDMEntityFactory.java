@@ -396,7 +396,12 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory {
                 path.append(DMEntityImpl.DM_PATH_SEPARATOR);
                 path.append(p.getName());
                 p = initializeAndUnproxy(p);
-                p = ((Folder) p).getParent();
+
+                if(((Folder)p).getParent() == null){
+                    p = this.getEntity(((Folder)entity).getParentUid());
+                } else {
+                    p = ((Folder) p).getParent();
+                }
                 while (p != null) {
                     path.insert(0, DMEntityImpl.DM_PATH_SEPARATOR);
                     path.insert(1, p.getName());

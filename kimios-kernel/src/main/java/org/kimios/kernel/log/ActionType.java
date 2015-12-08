@@ -64,5 +64,8 @@ public class ActionType
     public final static int UNTRASH_DOCUMENT = 22;
 
     public final static int COPY_DOCUMENT = 23;
+
+    public final static int DOCUMENT_SHARED = 24;
+
 }
 

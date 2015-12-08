@@ -72,6 +72,13 @@ public class RuleBean
     @Column(name = "param_value")
     private Map<String, Serializable> parameters;
 
+
+    @Column(name = "parameters_json", columnDefinition = "text")
+    private String parametersJson;
+
+    @Transient
+    private Map<String, String> parametersData;
+
     @ElementCollection
     @CollectionTable(
             name = "rule_exclude_paths",
@@ -197,6 +204,22 @@ public class RuleBean
     public void setExcludePaths(Set<String> excludePaths)
     {
         this.excludePaths = excludePaths;
+    }
+
+    public Map<String, String> getParametersData() {
+        return parametersData;
+    }
+
+    public void setParametersData(Map<String, String> parametersData) {
+        this.parametersData = parametersData;
+    }
+
+    public String getParametersJson() {
+        return parametersJson;
+    }
+
+    public void setParametersJson(String parametersJson) {
+        this.parametersJson = parametersJson;
     }
 
     public org.kimios.kernel.ws.pojo.RuleBean toPojo(RuleBean rubleBean)

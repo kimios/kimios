@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Date;
+import java.util.List;
 
 public class ActionLogger extends GenericEventHandler
 {
@@ -170,6 +171,17 @@ public class ActionLogger extends GenericEventHandler
     {
         ctx.setEntity((DMEntity)EventContext.getParameters().get("document"));
         saveLog(new DMEntityLog<Document>(), ActionType.COPY_DOCUMENT, ctx);
+    }
+
+    @DmsEvent(eventName = { DmsEventName.DOCUMENT_SHARED }, when = DmsEventOccur.AFTER)
+    public void shareDocuments(Object[] paramsObj, Object returnObj, EventContext ctx)
+    {
+        List<Long> docIds = (List)paramsObj[1];
+        for(Long id: docIds){
+            ctx.setEntity(org.kimios.kernel.dms.FactoryInstantiator.getInstance().getDocumentFactory().getDocument(id));
+            saveLog(new DMEntityLog<Document>(), ActionType.DOCUMENT_SHARED, ctx);
+        }
+
     }
 
     private <T extends DMEntityImpl> void saveLog(DMEntityLog<T> log, int actionType, EventContext ctx)
