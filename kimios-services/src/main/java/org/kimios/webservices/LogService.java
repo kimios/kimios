@@ -15,6 +15,8 @@
  */
 package org.kimios.webservices;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.kimios.kernel.ws.pojo.Log;
 import org.kimios.webservices.exceptions.DMServiceException;
@@ -31,21 +33,22 @@ import javax.ws.rs.QueryParam;
 @Path("/log")
 @WebService(targetNamespace = "http://kimios.org", serviceName = "LogService")
 @CrossOriginResourceSharing(allowAllOrigins = true)
+@Api(value="/log", description = "Log Operations")
 public interface LogService
 {
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getDocumentLogs")
     @Produces("application/json")
     public Log[] getDocumentLogs(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "documentId") @WebParam(name = "documentId") long documentId) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getFolderLogs")
     @Produces("application/json")
     public Log[] getFolderLogs(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "folderId") @WebParam(name = "folderId") long folderId) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getWorkspaceLogs")
     @Produces("application/json")
     public Log[] getWorkspaceLogs(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,

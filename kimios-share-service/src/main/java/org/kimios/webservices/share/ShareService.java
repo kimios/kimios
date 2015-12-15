@@ -16,6 +16,7 @@
 
 package org.kimios.webservices.share;
 
+import io.swagger.annotations.*;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.kimios.kernel.share.model.MailContact;
 import org.kimios.webservices.exceptions.DMServiceException;
@@ -34,20 +35,21 @@ import java.util.Map;
  */
 @WebService(targetNamespace = "http://kimios.org", serviceName = "ShareService")
 @CrossOriginResourceSharing(allowAllOrigins = true)
+@Api(value="/share", description = "Share Operations")
 public interface ShareService {
 
     /**
      * Share provided documents by email    (SOAP Function)
      */
     void shareByEmail(
-            @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
-            @QueryParam(value = "documentIds") @WebParam(name = "documentIds") List<Long> documentIds,
-            @QueryParam(value = "recipients") @WebParam(name = "recipients") Map<String, String> recipients,
-            @QueryParam(value = "subject") @WebParam(name = "subject") String subject,
-            @QueryParam(value = "content") @WebParam(name = "content") String content,
-            @QueryParam(value = "senderAddress") @WebParam(name = "senderAddress") String senderAddress,
-            @QueryParam(value = "senderName") @WebParam(name = "senderName") String senderName,
-            @DefaultValue("false") @QueryParam(value = "defaultSender") @WebParam(name = "defaultSender")  Boolean defaultSender)
+            @WebParam(name = "sessionId") String sessionId,
+            @WebParam(name = "documentIds") List<Long> documentIds,
+            @WebParam(name = "recipients") Map<String, String> recipients,
+            @WebParam(name = "subject") String subject,
+            @WebParam(name = "content") String content,
+            @WebParam(name = "senderAddress") String senderAddress,
+            @WebParam(name = "senderName") String senderName,
+            @WebParam(name = "defaultSender")  Boolean defaultSender)
             throws DMServiceException;
 
 
@@ -59,22 +61,48 @@ public interface ShareService {
     @POST
     @Path("/share-by-mail")
     @Consumes("application/json")
+    @ApiOperation(value = "Share provided documents by email",
+            notes = "Share documents by email. An exception will be thrown if the total size exceed the parameters",
+            response = void.class)
     void shareByEmailFullContact(
+            @ApiParam(value = "sessionId")
             @QueryParam(value = "sessionId") String sessionId,
+
+            @ApiParam(value = "documentIds")
             @QueryParam(value = "documentIds") List<Long> documentIds,
+
+
+            @ApiParam(value = "recipients")
             List<MailContact> recipients,
+
+            @ApiParam(value = "subject")
             @QueryParam(value = "subject")  String subject,
+
+            @ApiParam(value = "content")
             @QueryParam(value = "content")  String content,
+
+            @ApiParam(value = "senderAddress")
             @QueryParam(value = "senderAddress")  String senderAddress,
+
+            @ApiParam(value = "senderName")
             @QueryParam(value = "senderName") String senderName,
-            @DefaultValue("false") @QueryParam(value = "defaultSender")  Boolean defaultSender)
+
+
+            @DefaultValue("false") @ApiParam(value = "Default Sender")  @QueryParam(value = "defaultSender")  Boolean defaultSender)
             throws DMServiceException;
 
 
     @GET
     @Path("/search-contact")
+    @ApiOperation(value = "List Contact",
+            notes = "Provide list of previously used contacts",
+            response = MailContact.class, responseContainer = "List")
     List<MailContact> searchContact(
+
+            @ApiParam(value = "sessionId", name = "sessionId", required = true)
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+
+            @ApiParam(value = "query", name = "query", required = true)
             @QueryParam(value = "query") @WebParam(name = "query") String query
             )
         throws DMServiceException;

@@ -133,6 +133,12 @@
             <version>${hibernate.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-jaxrs</artifactId>
+            <version>1.5.4</version>
+            <scope>provided</scope>
+        </dependency>
 
     </dependencies>
     <build>
@@ -148,13 +154,7 @@
                         <goals>
                             <goal>bundle</goal>
                         </goals>
-                        <!--<id>bundle-manifest</id>
-                       <phase>process-classes</phase>
-                       <goals>
-                           <goal>manifest</goal>
-                       </goals> -->
                     </execution>
-
                 </executions>
                 <dependencies>
                     <dependency>
@@ -204,7 +204,6 @@
                         <Include-Resource>{maven-resources}</Include-Resource>
                         <Private-Package>org.kimios.webservices.impl,org.kimios.kernel.ws.pojo</Private-Package>
                         <Export-Package>org.kimios.custom,org.kimios.webservices,org.kimios.webservices.utils,org.kimios.webservices.exceptions</Export-Package>
-                        <!--<Spring-Context>*;create-asynchronously:=false</Spring-Context>-->
                         <Import-Package>
                             org.codehaus.jackson.jaxrs,
                             org.codehaus.jackson.map,
@@ -249,6 +248,7 @@
                             org.apache.cxf.jaxrs.ext,
                             org.kimios.utils.spring,
                             org.apache.commons.io,
+                            io.swagger.annotations,
                             *;resolution:=optional
                         </Import-Package>
                     </instructions>
@@ -321,6 +321,48 @@
                                 <exclude>org/kimios/webservices/impl</exclude>
                             </excludes>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>com.github.kongchen</groupId>
+                <artifactId>swagger-maven-plugin</artifactId>
+                <version>3.1.2</version>
+                <configuration>
+                    <apiSources>
+                        <apiSource>
+                            <info>
+                                <title>Kimios API</title>
+                                <version>${project.version} - ${buildNumber}</version>
+                                <description>Kimios Sample API</description>
+                                <termsOfService>
+                                    http://www.kimios.com/terms-of-service
+                                </termsOfService>
+                                <contact>
+                                    <email>documentation@kimios.com</email>
+                                    <name>Kimios</name>
+                                    <url>http://www.kimios.com</url>
+                                </contact>
+                                <license>
+                                    <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+                                    <name>Affero GPL v2</name>
+                                </license>
+                            </info>
+                            <springmvc>false</springmvc>
+                            <schemes>http,https</schemes>
+                            <locations>org.kimios.webservices</locations>
+                            <swaggerDirectory>generated/apidocs</swaggerDirectory>
+                            <basePath>/rest/</basePath>
+                        </apiSource>
+                    </apiSources>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>

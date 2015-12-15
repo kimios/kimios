@@ -15,6 +15,7 @@
  */
 package org.kimios.webservices;
 
+import io.swagger.annotations.*;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.kimios.kernel.ws.pojo.AuthenticationSource;
 import org.kimios.kernel.ws.pojo.DMEntitySecurity;
@@ -25,6 +26,7 @@ import org.kimios.webservices.exceptions.DMServiceException;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 
 /**
  *
@@ -33,9 +35,10 @@ import javax.ws.rs.*;
 @Path("/security")
 @WebService(targetNamespace = "http://kimios.org", serviceName = "SecurityService")
 @CrossOriginResourceSharing(allowAllOrigins = true)
+@Api(value="/security", description = "Security Operations")
 public interface SecurityService
 {
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getDMEntitySecurities")
     @Produces("application/json")
     public DMEntitySecurity[] getDMEntitySecurities(
@@ -43,18 +46,19 @@ public interface SecurityService
             @QueryParam(value = "dmEntityId") @WebParam(name = "dmEntityId") long dmEntityId)
             throws DMServiceException;
 
-    @POST
+    @POST @ApiOperation(value ="")
     @Path("/updateDMEntitySecurities")
     @Produces("application/json")
     public void updateDMEntitySecurities(
             @FormParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @FormParam(value = "dmEntityId") @WebParam(name = "dmEntityId") long dmEntityId,
             @FormParam(value = "xmlStream") @WebParam(name = "xmlStream") String xmlStream,
+            @ApiParam(name = "isRecursive", required = true)
             @FormParam(value = "isRecursive") @WebParam(name = "isRecursive") boolean isRecursive,
             @DefaultValue(value = "false") @FormParam(value = "appendMode") @WebParam(name = "appendMode") boolean appendMode)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getDefaultDMEntitySecurities")
     @Produces("application/json")
     public DMEntitySecurity[] getDefaultDMEntitySecurities(
@@ -62,7 +66,7 @@ public interface SecurityService
             @QueryParam(value = "objectType") @WebParam(name = "objectType") String objectType)
             throws DMServiceException;
 
-    @POST
+    @POST @ApiOperation(value ="")
     @Path("/updateDefaultDMEntitySecurities")
     @Produces("application/json")
     public void updateDefaultDMEntitySecurities(
@@ -71,28 +75,28 @@ public interface SecurityService
             @FormParam(value = "objectType") @WebParam(name = "objectType") String objectType)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/canRead")
     @Produces("application/json")
     public boolean canRead(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "dmEntityId") @WebParam(name = "dmEntityId") long dmEntityId)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/canWrite")
     @Produces("application/json")
     public boolean canWrite(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "dmEntityId") @WebParam(name = "dmEntityId") long dmEntityId)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/hasFullAccess")
     @Produces("application/json")
     public boolean hasFullAccess(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "dmEntityId") @WebParam(name = "dmEntityId") long dmEntityId)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getAuthenticationSources")
     @Produces("application/json")
     public AuthenticationSource[] getAuthenticationSources() throws DMServiceException;
@@ -100,42 +104,68 @@ public interface SecurityService
     @POST
     @Path("/startSession")
     @Produces("application/json")
-    public String startSession(@FormParam(value = "userName") @WebParam(name = "userName") String userName,
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @ApiOperation(value = "Start Kimios Session",
+            httpMethod = "POST",
+            notes = "Start Kimios Session",
+            response = String.class,
+            consumes = "application/x-www-form-urlencoded")
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "", response = String.class), @ApiResponse(code = 500, response = Exception.class, message = "Invalid Session") })
+    public String startSession(
+            @ApiParam(required = true, name = "userName")
+            @FormParam(value = "userName") @WebParam(name = "userName") String userName,
+            @ApiParam(required = true, name = "userSource")
             @FormParam(value = "userSource") @WebParam(name = "userSource") String userSource,
+            @ApiParam(required = true, name = "password")
             @FormParam(value = "password") @WebParam(name = "password") String password) throws DMServiceException;
 
     @POST
     @Path("/endSession")
     @Produces("application/json")
-    public void endSession(@FormParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId)
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @ApiOperation(value = "End Kimios Session",
+            httpMethod = "POST",
+            notes = "Start Kimios Session",
+            response = String.class,
+            consumes = "application/x-www-form-urlencoded")
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "") })
+    public void endSession(@ApiParam(required = true, name = "sessionId") @FormParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId)
             throws DMServiceException;
 
     @POST
     @Path("/startSessionWithToken")
     @Produces("application/json")
-    public String startSessionWithToken(@FormParam(value = "externalToken") @WebParam(name = "externalToken") String externalToken)
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @ApiOperation(value = "Start Kimios Session from an external Token",
+            httpMethod = "POST",
+            notes = "Start Kimios Session from an external Token",
+            response = String.class,
+            consumes = "application/x-www-form-urlencoded")
+    @ApiResponses(value = { @ApiResponse(code = 200, message = "") })
+    public String startSessionWithToken(@ApiParam(required = true, name = "externalToken")
+                                         @FormParam(value = "externalToken") @WebParam(name = "externalToken") String externalToken)
                                throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/isSessionAlive")
     @Produces("application/json")
     public boolean isSessionAlive(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getUser")
     @Produces("application/json")
     public User getUser(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getUsers")
     @Produces("application/json")
     public User[] getUsers(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "userSource") @WebParam(name = "userSource") String userSource)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getGroup")
     @Produces("application/json")
     public Group getGroup(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -143,32 +173,32 @@ public interface SecurityService
             @QueryParam(value = "userSource") @WebParam(name = "userSource") String userSource)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getGroups")
     @Produces("application/json")
     public Group[] getGroups(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "userSource") @WebParam(name = "userSource") String userSource)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/canCreateWorkspace")
     @Produces("application/json")
     public boolean canCreateWorkspace(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/hasStudioAccess")
     @Produces("application/json")
     public boolean hasStudioAccess(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/hasReportingAccess")
     @Produces("application/json")
     public boolean hasReportingAccess(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/isAdmin")
     @Produces("application/json")
     public boolean isAdmin(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId)

@@ -707,11 +707,6 @@
 
 
 
-    <!--<reference id="bonitaServiceBean"
-               interface="org.kimios.webservices.bonita.BonitaService" />
-    <reference id="converterServiceBean"
-               interface="org.kimios.webservices.converter.ConverterService" />-->
-
     <jaxrs:server id="kimiosRestServer"
                   address="/rest/">
         <jaxrs:providers>
@@ -741,6 +736,8 @@
             <entry key="json" value="application/json"/>
         </jaxrs:extensionMappings>
     </jaxrs:server>
+
+
 
 </blueprint>
 

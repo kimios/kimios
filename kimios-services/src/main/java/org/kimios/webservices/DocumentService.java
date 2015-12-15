@@ -15,6 +15,9 @@
  */
 package org.kimios.webservices;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.kimios.kernel.ws.pojo.*;
@@ -33,20 +36,21 @@ import java.io.InputStream;
 @Path("/document")
 @WebService(targetNamespace = "http://kimios.org", serviceName = "DocumentService")
 @CrossOriginResourceSharing(allowAllOrigins = true)
+@Api(value="/document", description = "Documents Operations")
 public interface DocumentService {
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getDocument")
     @Produces("application/json")
     public Document getDocument(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
                                 @QueryParam(value = "documentId") @WebParam(name = "documentId") long documentId) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getDocuments")
     @Produces("application/json")
     public Document[] getDocuments(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
                                    @QueryParam(value = "folderId") @WebParam(name = "folderId") long folderUid) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/createDocument")
     @Produces("application/json")
     public long createDocument(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -57,7 +61,7 @@ public interface DocumentService {
                                @QueryParam(value = "isSecurityInherited") @WebParam(name = "isSecurityInherited")
                                boolean isSecurityInherited) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/createDocumentFromFullPath")
     @Produces("application/json")
     public long createDocumentFromFullPath(
@@ -66,7 +70,7 @@ public interface DocumentService {
             @QueryParam(value = "isSecurityInherited") @WebParam(name = "isSecurityInherited")
             boolean isSecurityInherited) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/createDocumentFromFullPathAndVersion")
     @Produces("application/json")
     public long createDocumentFromFullPathAndVersion(
@@ -79,7 +83,7 @@ public interface DocumentService {
             @QueryParam(value = "metasXmlStream") @WebParam(name = "metasXmlStream") String metasXmlStream
             ) throws DMServiceException;
 
-    @POST
+    @POST @ApiOperation(value ="")
     @Path("/createDocumentWithProperties")
     @Produces("application/json")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -94,13 +98,13 @@ public interface DocumentService {
             @QueryParam(value = "isRecursive") @WebParam(name = "isRecursive") boolean isRecursive,
             @QueryParam(value = "documentTypeId") @WebParam(name = "documentTypeId") long documentTypeId,
             @QueryParam(value = "metasXmlStream") @WebParam(name = "metasXmlStream") String metasXmlStream,
-            @Multipart(value = "document") InputStream documentStream,
-            @Multipart(value = "md5") String hashMd5,
-            @Multipart(value = "sha1") String hashSha1) throws DMServiceException;
+            @FormParam(value = "document") InputStream documentStream,
+            @FormParam(value = "md5") String hashMd5,
+            @FormParam(value = "sha1") String hashSha1) throws DMServiceException;
 
 
 
-    @POST
+    @POST @ApiOperation(value ="")
     @Path("/createDocumentFromFullPathWithProperties")
     @Produces("application/json")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -112,29 +116,39 @@ public interface DocumentService {
             @QueryParam(value = "isRecursive") @WebParam(name = "isRecursive") boolean isRecursive,
             @QueryParam(value = "documentTypeId") @WebParam(name = "documentTypeId") long documentTypeId,
             @QueryParam(value = "metasXmlStream") @WebParam(name = "metasXmlStream") String metasXmlStream,
-            @Multipart(value = "document") InputStream documentStream,
-            @Multipart(value = "md5") String hashMd5,
-            @Multipart(value = "sha1") String hashSha1) throws DMServiceException;
+            @FormParam(value = "document") InputStream documentStream,
+            @FormParam(value = "md5") String hashMd5,
+            @FormParam(value = "sha1") String hashSha1) throws DMServiceException;
 
-    @POST
+    @POST @ApiOperation(value ="")
     @Path("/createDocumentFromFullPathWithPropertiesNoHash")
     @Produces("application/json")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public long createDocumentFromFullPathWithPropertiesNoHash(
-            @Multipart(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
-            @Multipart(value = "path") @WebParam(name = "path") String name,
-            @Multipart(value = "isSecurityInherited") @WebParam(name = "isSecurityInherited") boolean isSecurityInherited,
-            @Multipart(value = "securityItems", required = false) @WebParam(name = "securityItems") String securityItemsJson,
-            @Multipart(value = "isRecursive") @WebParam(name = "isRecursive") boolean isRecursive,
-            @Multipart(value = "documentTypeId", required = false) @WebParam(name = "documentTypeId") Long documentTypeId,
-            @Multipart(value = "metaItems", required = false) @WebParam(name = "metaItems") String metaValuesJson,
-            @Multipart(value = "document") InputStream documentStream,
+            @ApiParam(name = "sessionId")
+            @FormParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+            @ApiParam(name = "path")
+            @FormParam(value = "path") @WebParam(name = "path") String name,
+            @ApiParam(name = "isSecurityInherited")
+            @FormParam(value = "isSecurityInherited") @WebParam(name = "isSecurityInherited") boolean isSecurityInherited,
+            @ApiParam(name = "securityItems")
+            @FormParam(value = "securityItems") @WebParam(name = "securityItems") String securityItemsJson,
+            @ApiParam(name = "isRecursive")
+            @FormParam(value = "isRecursive") @WebParam(name = "isRecursive") boolean isRecursive,
+            @ApiParam(name = "documentTypeId")
+            @FormParam(value = "documentTypeId") @WebParam(name = "documentTypeId") Long documentTypeId,
+            @ApiParam(name = "metaItems")
+            @FormParam(value = "metaItems") @WebParam(name = "metaItems") String metaValuesJson,
+            @ApiParam(name = "document", required = true)
+            @FormParam(value = "document") InputStream documentStream,
+            @ApiParam(name = "md5")
             @DefaultValue(value = "") @Multipart(value = "md5", required = false) String hashMd5,
+            @ApiParam(name = "sha1")
             @DefaultValue(value = "") @Multipart(value = "sha1", required = false) String hashSha1) throws DMServiceException;
 
 
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/updateDocument")
     @Produces("application/json")
     public void updateDocument(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -144,20 +158,20 @@ public interface DocumentService {
                                @QueryParam(value = "mimeType") @WebParam(name = "mimeType") String mimeType,
                                @QueryParam(value = "folderId") @WebParam(name = "folderId") long folderUid) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/deleteDocument")
     @Produces("application/json")
     public void deleteDocument(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
                                @QueryParam(value = "documentId") @WebParam(name = "documentId") long documentId) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getRelatedDocuments")
     @Produces("application/json")
     public Document[] getRelatedDocuments(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "documentId") @WebParam(name = "documentId") long documentId) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/addRelatedDocument")
     @Produces("application/json")
     public void addRelatedDocument(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -165,7 +179,7 @@ public interface DocumentService {
                                    @QueryParam(value = "relatedDocumentUid") @WebParam(name = "relatedDocumentUid") long relatedDocumentUid)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/removeRelatedDocument")
     @Produces("application/json")
     public void removeRelatedDocument(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -173,33 +187,33 @@ public interface DocumentService {
                                       @QueryParam(value = "relatedDocumentUid") @WebParam(name = "relatedDocumentUid") long relatedDocumentUid)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/checkoutDocument")
     @Produces("application/json")
     public void checkoutDocument(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
                                  @QueryParam(value = "documentId") @WebParam(name = "documentId") long documentId) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/checkinDocument")
     @Produces("application/json")
     public void checkinDocument(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
                                 @QueryParam(value = "documentId") @WebParam(name = "documentId") long documentId) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getChildSymbolicLinks")
     @Produces("application/json")
     public SymbolicLink[] getChildSymbolicLinks(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "parentId") @WebParam(name = "parentId") long parentUid) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getSymbolicLinksCreated")
     @Produces("application/json")
     public SymbolicLink[] getSymbolicLinksCreated(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "targetId") @WebParam(name = "targetId") long targetUid) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/addSymbolicLink")
     @Produces("application/json")
     public void addSymbolicLink(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -208,7 +222,7 @@ public interface DocumentService {
                                 @QueryParam(value = "parentId") @WebParam(name = "parentId") long parentUid)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/removeSymbolicLink")
     @Produces("application/json")
     public void removeSymbolicLink(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -216,7 +230,7 @@ public interface DocumentService {
                                    @QueryParam(value = "parentId") @WebParam(name = "parentId") long parentUid)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/updateSymbolicLink")
     @Produces("application/json")
     public void updateSymbolicLink(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -225,27 +239,27 @@ public interface DocumentService {
                                    @QueryParam(value = "newParentId") @WebParam(name = "newParentId") long newParentUid)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getBookmarks")
     @Produces("application/json")
     public Bookmark[] getBookmarks(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getBookmarksInPath")
     @Produces("application/json")
     public Bookmark[] getBookmarksInPath(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
                                    @QueryParam(value = "path") @WebParam(name = "path") String path)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/addBookmark")
     @Produces("application/json")
     public void addBookmark(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
                             @QueryParam(value = "dmEntityId") @WebParam(name = "dmEntityId") long dmEntityUid)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/removeBookmark")
     @Produces("application/json")
     public void removeBookmark(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -253,7 +267,7 @@ public interface DocumentService {
             throws DMServiceException;
 
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/addGroupBookmark")
     @Produces("application/json")
     public void addGroupBookmark(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -262,7 +276,7 @@ public interface DocumentService {
                             @QueryParam(value = "groupSource") @WebParam(name = "groupSource") String groupSource)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/removeGroupBookmark")
     @Produces("application/json")
     public void removeGroupBookmark(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -272,27 +286,27 @@ public interface DocumentService {
             throws DMServiceException;
 
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getRecentItems")
     @Produces("application/json")
     public Bookmark[] getRecentItems(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getLastWorkflowStatus")
     @Produces("application/json")
     public WorkflowStatus getLastWorkflowStatus(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "documentId") @WebParam(name = "documentId") long documentId) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getMyCheckedOutDocuments")
     @Produces("application/json")
     public Document[] getMyCheckedOutDocuments(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/copyDocument")
     @Produces("application/json")
     public Document copyDocument(

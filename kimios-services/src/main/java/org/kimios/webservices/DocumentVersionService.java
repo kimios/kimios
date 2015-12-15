@@ -15,6 +15,8 @@
  */
 package org.kimios.webservices;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.kimios.kernel.ws.pojo.DocumentComment;
 import org.kimios.kernel.ws.pojo.DocumentVersion;
@@ -36,9 +38,10 @@ import java.util.List;
 @Path("/document-version")
 @WebService(targetNamespace = "http://kimios.org", serviceName = "DocumentVersionService")
 @CrossOriginResourceSharing(allowAllOrigins = true)
+@Api(value="/document-version", description = "Document Versions Operations")
 public interface DocumentVersionService
 {
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getDocumentVersion")
     @Produces("application/json")
     public DocumentVersion getDocumentVersion(
@@ -46,35 +49,35 @@ public interface DocumentVersionService
             @QueryParam(value = "documentVersionId") @WebParam(name = "documentVersionId") long documentVersionId)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getLastDocumentVersion")
     @Produces("application/json")
     public DocumentVersion getLastDocumentVersion(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "documentId") @WebParam(name = "documentId") long documentId) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getDocumentVersions")
     @Produces("application/json")
     public DocumentVersion[] getDocumentVersions(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "documentId") @WebParam(name = "documentId") long documentId) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/createDocumentVersion")
     @Produces("application/json")
     public long createDocumentVersion(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionUid,
             @QueryParam(value = "documentId") @WebParam(name = "documentId") long documentId)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/createDocumentVersionFromLatest")
     @Produces("application/json")
     public long createDocumentVersionFromLatest(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionUid,
             @QueryParam(value = "documentId") @WebParam(name = "documentId") long documentId) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/updateDocumentVersion")
     @Produces("application/json")
     public void updateDocumentVersion(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -82,76 +85,76 @@ public interface DocumentVersionService
             @QueryParam(value = "documentTypeId") @WebParam(name = "documentTypeId") long documentTypeId,
             @QueryParam(value = "xmlStream") @WebParam(name = "xmlStream") String xmlStream) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getMetaString")
     @Produces("application/json")
     public String getMetaString(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "documentVersionId") @WebParam(name = "documentVersionId") long documentVersionId,
             @QueryParam(value = "metaId") @WebParam(name = "metaId") long metaId) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getMetaNumber")
     @Produces("application/json")
     public double getMetaNumber(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "documentVersionId") @WebParam(name = "documentVersionId") long documentVersionId,
             @QueryParam(value = "metaId") @WebParam(name = "metaId") long metaId) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getMetaDate")
     @Produces("application/json")
     public Date getMetaDate(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "documentVersionId") @WebParam(name = "documentVersionId") long documentVersionId,
             @QueryParam(value = "metaId") @WebParam(name = "metaId") long metaId) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getMetaBoolean")
     @Produces("application/json")
     public boolean getMetaBoolean(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "documentVersionId") @WebParam(name = "documentVersionId") long documentVersionId,
             @QueryParam(value = "metaId") @WebParam(name = "metaId") long metaId) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getMetas")
     @Produces("application/json")
     public Meta[] getMetas(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "documentTypeId") @WebParam(name = "documentTypeId") long documentTypeId)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getUnheritedMetas")
     @Produces("application/json")
     public Meta[] getUnheritedMetas(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "documentTypeId") @WebParam(name = "documentTypeId") long documentTypeId)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getMeta")
     @Produces("application/json")
     public Meta getMeta(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "metaId") @WebParam(name = "metaId") long metaId) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/updateMetas")
     @Produces("application/json")
     public void updateMetas(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "documentVersionId") @WebParam(name = "documentVersionId") long documentVersionId,
             @QueryParam(value = "xmlStream") @WebParam(name = "xmlStream") String xmlStream) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/addDocumentComment")
     @Produces("application/json")
     public void addDocumentComment(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "documentVersionId") @WebParam(name = "documentVersionId") long documentVersionId,
             @QueryParam(value = "comment") @WebParam(name = "comment") String comment) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/removeDocumentComment")
     @Produces("application/json")
     public void removeDocumentComment(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "commentId") @WebParam(name = "commentId") long commentId)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/updateDocumentComment")
     @Produces("application/json")
     public void updateDocumentComment(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -160,7 +163,7 @@ public interface DocumentVersionService
             @QueryParam(value = "newComment") @WebParam(name = "newComment") String newComment)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getDocumentComment")
     @Produces("application/json")
     public DocumentComment getDocumentComment(
@@ -168,7 +171,7 @@ public interface DocumentVersionService
             @QueryParam(value = "commentId") @WebParam(name = "commentId") long commentId)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getDocumentComments")
     @Produces("application/json")
     public DocumentComment[] getDocumentComments(
@@ -176,7 +179,7 @@ public interface DocumentVersionService
             @QueryParam(value = "documentVersionId") @WebParam(name = "documentVersionId") long documentVersionId)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getMetaValues")
     @Produces("application/json") List<org.kimios.kernel.ws.pojo.MetaValue> getMetaValues(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,

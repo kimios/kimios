@@ -90,9 +90,6 @@
         </property>
     </bean>
 
-
-
-
     <jaxrs:server id="kimiosShareRestServer"
                   address="/rest/share/">
         <jaxrs:providers>

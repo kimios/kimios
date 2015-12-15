@@ -15,6 +15,8 @@
  */
 package org.kimios.webservices;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.kimios.kernel.ws.pojo.MetaValue;
 import org.kimios.kernel.ws.pojo.Folder;
@@ -36,21 +38,22 @@ import java.util.List;
 @Path("/folder")
 @WebService(targetNamespace = "http://kimios.org", serviceName = "FolderService")
 @CrossOriginResourceSharing(allowAllOrigins = true)
+@Api(value="/folder", description = "Folder Operations")
 public interface FolderService
 {
-    @GET
+     @GET @ApiOperation(value ="")
     @Path("/getFolder")
     @Produces("application/json")
     public Folder getFolder(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "folderId") @WebParam(name = "folderId") long folderId) throws DMServiceException;
 
-    @GET
+     @GET @ApiOperation(value ="")
     @Path("/getFolders")
     @Produces("application/json")
     public Folder[] getFolders(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "parentId") @WebParam(name = "parentId") long parentId) throws DMServiceException;
 
-    @GET
+     @GET @ApiOperation(value ="")
     @Path("/createFolder")
     @Produces("application/json")
     public long createFolder(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -59,7 +62,7 @@ public interface FolderService
             @QueryParam(value = "isSecurityInherited") @WebParam(name = "isSecurityInherited")
             boolean isSecurityInherited) throws DMServiceException;
 
-    @GET
+     @GET @ApiOperation(value ="")
     @Path("/updateFolder")
     @Produces("application/json")
     public void updateFolder(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -67,14 +70,14 @@ public interface FolderService
             @QueryParam(value = "name") @WebParam(name = "name") String name,
             @QueryParam(value = "parentId") @WebParam(name = "parentId") long parentId) throws DMServiceException;
 
-    @GET
+     @GET @ApiOperation(value ="")
     @Path("/deleteFolder")
     @Produces("application/json")
     public void deleteFolder(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "folderId") @WebParam(name = "folderId") long folderId) throws DMServiceException;
 
 
-    @GET
+     @GET @ApiOperation(value ="")
     @Path("/getFolderMetaValues")
     @Produces("application/json")
     public MetaValue[] getFolderMetaValues(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -82,7 +85,7 @@ public interface FolderService
             throws DMServiceException;
 
 
-    @GET
+     @GET @ApiOperation(value ="")
     @Path("/getFoldersWithMetaValues")
     @Produces("application/json")
     public HashMap<Folder, List<MetaValue>>

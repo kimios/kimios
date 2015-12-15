@@ -15,6 +15,8 @@
  */
 package org.kimios.webservices;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.kimios.kernel.ws.pojo.DataTransaction;
@@ -34,9 +36,10 @@ import java.util.List;
 @Path("/filetransfer")
 @WebService(targetNamespace = "http://kimios.org", serviceName = "FileTransferService")
 @CrossOriginResourceSharing(allowAllOrigins = true)
+@Api(value="/filetransfer", description = "Upload / Download Operations")
 public interface FileTransferService
 {
-    @GET
+     @GET @ApiOperation(value ="")
     @Path("/startUploadTransaction")
     @Produces(MediaType.APPLICATION_JSON)
     public DataTransaction startUploadTransaction(
@@ -45,7 +48,7 @@ public interface FileTransferService
         @QueryParam(value = "isCompressed") @WebParam(name = "isCompressed") boolean isCompressed )
         throws DMServiceException;
 
-    @GET
+     @GET @ApiOperation(value ="")
     @Path("/sendChunk")
     @Produces(MediaType.APPLICATION_JSON)
     public void sendChunk( @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -54,7 +57,7 @@ public interface FileTransferService
                            @QueryParam(value = "data") @WebParam(name = "data") byte[] data )
         throws DMServiceException;
 
-    @GET
+     @GET @ApiOperation(value ="")
     @Path("/endUploadTransaction")
     @Produces(MediaType.APPLICATION_JSON)
     public void endUploadTransaction( @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -64,7 +67,7 @@ public interface FileTransferService
                                       @QueryParam(value = "sha1") @WebParam(name = "sha1") String sha1 )
         throws DMServiceException;
 
-    @GET
+     @GET @ApiOperation(value ="")
     @Path("/startDownloadTransaction")
     @Produces(MediaType.APPLICATION_JSON)
     public DataTransaction startDownloadTransaction(
@@ -82,7 +85,7 @@ public interface FileTransferService
         throws DMServiceException;
 
 
-    @POST
+    @POST @ApiOperation(value ="")
     @Path("/uploadDocument")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
@@ -94,7 +97,7 @@ public interface FileTransferService
         throws DMServiceException;
 
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path( "/downloadDocumentVersion" )
     @Produces( value = {MediaType.APPLICATION_OCTET_STREAM, MediaType.APPLICATION_JSON} )
     public Response downloadDocumentVersion( @QueryParam("sessionId") String sessionId,
@@ -103,7 +106,7 @@ public interface FileTransferService
             throws DMServiceException;
 
 
-    @GET
+     @GET @ApiOperation(value ="")
     @Path( "/downloadDocument" )
     @Produces( MediaType.APPLICATION_OCTET_STREAM )
     public Response downloadDocument( @QueryParam("sessionId") String sessionId,
@@ -111,7 +114,7 @@ public interface FileTransferService
                                       @DefaultValue("true") @QueryParam("inline") Boolean inline)
             throws DMServiceException;
 
-    @GET
+     @GET @ApiOperation(value ="")
     @Path( "/downloadDocumentWithCustomFileName" )
     @Produces( MediaType.APPLICATION_OCTET_STREAM )
     public Response downloadDocument( @QueryParam("sessionId") String sessionId,
@@ -122,7 +125,7 @@ public interface FileTransferService
 
 
 
-    @GET
+     @GET @ApiOperation(value ="")
     @Path("/createTokenDownload")
     @Produces(MediaType.APPLICATION_JSON)
     public DataTransaction createTokenDownloadTransaction(
@@ -131,7 +134,7 @@ public interface FileTransferService
             throws DMServiceException;
 
 
-    @GET
+     @GET @ApiOperation(value ="")
     @Path( "/downloadDocumentByToken" )
     @Produces( MediaType.APPLICATION_OCTET_STREAM )
     public Response downloadDocumentByToken( @QueryParam("token") String token)

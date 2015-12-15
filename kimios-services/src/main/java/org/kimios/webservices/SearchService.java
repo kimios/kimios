@@ -15,6 +15,8 @@
  */
 package org.kimios.webservices;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.kimios.kernel.index.query.model.Criteria;
 import org.kimios.kernel.index.query.model.SearchRequest;
@@ -34,8 +36,9 @@ import java.util.List;
 @Path("/search")
 @WebService(targetNamespace = "http://kimios.org", serviceName = "SearchService")
 @CrossOriginResourceSharing(allowAllOrigins = true)
+@Api(value = "/search", description = "Search Operations")
 public interface SearchService {
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/quickSearch")
     @Produces("application/json")
     public SearchResponse quickSearch(
@@ -48,7 +51,7 @@ public interface SearchService {
             @QueryParam(value = "sortDir") @WebParam(name = "sortDir") String sortDir)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/advancedSearch")
     @Produces("application/json")
     public List<Document> advancedSearch(
@@ -57,7 +60,7 @@ public interface SearchService {
             @QueryParam(value = "dmEntityId") @WebParam(name = "dmEntityId") long dmEntityId)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getDMentityFromPath")
     @Produces("application/json")
     public DMEntity getDMentityFromPath(
@@ -65,7 +68,7 @@ public interface SearchService {
             @QueryParam(value = "path") @WebParam(name = "path") String path)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getPathFromDMEntity")
     @Produces("application/json")
     public String getPathFromDMEntity(
@@ -74,7 +77,7 @@ public interface SearchService {
             throws DMServiceException;
 
 
-    @POST
+    @POST @ApiOperation(value="")
     @Path("/advancedSearchDocument")
     @Consumes("application/json")
     @Produces("application/json")
@@ -92,7 +95,7 @@ public interface SearchService {
             throws DMServiceException;
 
 
-    @POST
+    @POST @ApiOperation(value="")
     @Path("/saveSearchQuery")
     @Produces("application/json")
     @Consumes("application/json")
@@ -105,14 +108,14 @@ public interface SearchService {
 
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/deleteSearchQuery")
     @Produces("application/json")
     public void deleteSearchQuery(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
                                   @QueryParam(value = "searchQueryId") @WebParam(name = "searchQueryId") Long id)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/listSearchQueries")
     @Produces("application/json")
     public List<SearchRequest> listSearchQueries(
@@ -120,7 +123,7 @@ public interface SearchService {
             throws DMServiceException;
 
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/listMySearchQueries")
     @Produces("application/json")
     public List<SearchRequest> listMySearchQueries(
@@ -128,14 +131,14 @@ public interface SearchService {
             throws DMServiceException;
 
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/listPublicSearchQueries")
     @Produces("application/json")
     public List<SearchRequest> listPublicSearchQueries(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId )
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/loadSearchQuery")
     @Produces("application/json")
     public SearchRequest loadSearchQuery(
@@ -143,7 +146,7 @@ public interface SearchService {
             @QueryParam(value = "searchQueryId") @WebParam(name = "searchQueryId") Long id)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/executeSearchQuery")
     @Produces("application/json")
     public SearchResponse executeSearchQuery(
@@ -156,7 +159,7 @@ public interface SearchService {
             @QueryParam(value = "virtualPath") @WebParam(name = "virtualPath") String virtualPath)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/listFields")
     @Produces("application/json")
     public List<String> listAvailableSearchFields(
@@ -164,7 +167,7 @@ public interface SearchService {
             throws DMServiceException;
 
 
-    @POST
+    @POST @ApiOperation(value="")
     @Path("/advancedSaveSearchQuery")
     @Produces("application/json")
     @Consumes("application/json")

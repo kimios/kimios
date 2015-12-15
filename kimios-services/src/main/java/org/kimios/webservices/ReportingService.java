@@ -15,6 +15,8 @@
  */
 package org.kimios.webservices;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.kimios.webservices.exceptions.DMServiceException;
 
@@ -32,9 +34,10 @@ import javax.ws.rs.QueryParam;
 @Path("/reporting")
 @WebService(targetNamespace = "http://kimios.org", serviceName = "ReportingService")
 @CrossOriginResourceSharing(allowAllOrigins = true)
+@Api(value = "/reporting", description = "Reporting Service")
 public interface ReportingService
 {
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getReport")
     @Produces("application/json")
     public String getReport(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -42,19 +45,19 @@ public interface ReportingService
             @QueryParam(value = "xmlParameters") @WebParam(name = "xmlParameters") String xmlParameters)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getReportsList")
     @Produces("application/json")
     public String getReportsList(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getReportAttributes")
     @Produces("application/json")
     public String getReportAttributes(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
                                       @QueryParam(value = "className") @WebParam(name = "className") String className) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/removeGhostTransaction")
     @Produces("application/json")
     public void removeGhostTransaction(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,

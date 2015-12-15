@@ -15,6 +15,8 @@
  */
 package org.kimios.webservices;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.kimios.kernel.ws.pojo.Rule;
 import org.kimios.kernel.ws.pojo.RuleBean;
@@ -33,22 +35,23 @@ import javax.ws.rs.QueryParam;
 @Path("/rule")
 @WebService(targetNamespace = "http://kimios.org", serviceName = "RuleService", name = "RuleService")
 @CrossOriginResourceSharing(allowAllOrigins = true)
+@Api(value = "/rule", description = "Rules Management Operations")
 public interface RuleService
 {
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getAvailablesRules")
     @Produces("application/json")
     public String[] getAvailablesRules(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getRuleParam")
     @Produces("application/json")
     public String getRuleParam(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "javaClassName") @WebParam(name = "javaClassName") String javaClassName)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/createRule")
     @Produces("application/json")
     public void createRule(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -57,17 +60,17 @@ public interface RuleService
             @QueryParam(value = "ruleName") @WebParam(name = "ruleName") String ruleName,
             @QueryParam(value = "xmlStream") @WebParam(name = "xmlStream") String xmlStream) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getBeans")
     @Produces("application/json")
     public RuleBean[] getBeans() throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/sendList")
     @Produces("application/json")
     public void sendList(RuleBean[] beans) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getRuleItems")
     @Produces("application/json")
     public Rule[] getRuleItems(Rule[] rules) throws DMServiceException;

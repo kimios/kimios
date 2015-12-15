@@ -15,6 +15,8 @@
  */
 package org.kimios.webservices;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.kimios.kernel.ws.pojo.*;
 import org.kimios.webservices.exceptions.DMServiceException;
@@ -33,61 +35,62 @@ import javax.ws.rs.QueryParam;
 @Path("/studio")
 @WebService(targetNamespace = "http://kimios.org", serviceName = "StudioService")
 @CrossOriginResourceSharing(allowAllOrigins = true)
+@Api(value = "/studio", description = "Studio Operations")
 public interface StudioService
 {
-    @GET
+    @GET @ApiOperation(value="")
     @Path("/getDocumentType")
     @Produces("application/json")
     public DocumentType getDocumentType(@WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "documentTypeId") @WebParam(name = "documentTypeId") long documentTypeId)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value="")
     @Path("/getDocumentTypes")
     @Produces("application/json")
     public DocumentType[] getDocumentTypes(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value="")
     @Path("/createDocumentType")
     @Produces("application/json")
     public void createDocumentType(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "xmlStream") @WebParam(name = "xmlStream") String xmlStream) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value="")
     @Path("/updateDocumentType")
     @Produces("application/json")
     public void updateDocumentType(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "xmlStream") @WebParam(name = "xmlStream") String xmlStream) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value="")
     @Path("/deleteDocumentType")
     @Produces("application/json")
     public void deleteDocumentType(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "documentTypeId") @WebParam(name = "documentTypeId") long documentTypeId)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value="")
     @Path("/getAvailableMetaFeeds")
     @Produces("application/json")
     public String[] getAvailableMetaFeeds(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value="")
     @Path("/getMetaFeed")
     @Produces("application/json")
     public MetaFeed getMetaFeed(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "metaFeedId") @WebParam(name = "metaFeedId") long metaFeedId) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value="")
     @Path("/getMetaFeeds")
     @Produces("application/json")
     public MetaFeed[] getMetaFeeds(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value="")
     @Path("/searchMetaFeedValues")
     @Produces("application/json")
     public String[] searchMetaFeedValues(
@@ -95,58 +98,58 @@ public interface StudioService
             @QueryParam(value = "metaFeedId") @WebParam(name = "metaFeedId") long metaFeedId,
             @QueryParam(value = "criteria") @WebParam(name = "criteria") String criteria) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value="")
     @Path("/createMetaFeed")
     @Produces("application/json")
     public long createMetaFeed(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "name") @WebParam(name = "name") String name,
             @QueryParam(value = "className") @WebParam(name = "className") String className) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value="")
     @Path("/updateMetaFeed")
     @Produces("application/json")
     public void updateMetaFeed(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "metaFeedId") @WebParam(name = "metaFeedId") long metaFeedId,
             @QueryParam(value = "name") @WebParam(name = "name") String name) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value="")
     @Path("/deleteMetaFeed")
     @Produces("application/json")
     public void deleteMetaFeed(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "metaFeedId") @WebParam(name = "metaFeedId") long metaFeedId) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value="")
     @Path("/getMetaFeedValues")
     @Produces("application/json")
     public String[] getMetaFeedValues(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "metaFeedId") @WebParam(name = "metaFeedId") long metaFeedId) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value="")
     @Path("/updateEnumerationValues")
     @Produces("application/json")
     public void updateEnumerationValues(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "xmlStream") @WebParam(name = "xmlStream") String xmlStream) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value="")
     @Path("/getWorkflows")
     @Produces("application/json")
     public Workflow[] getWorkflows(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value="")
     @Path("/getWorkflow")
     @Produces("application/json")
     public Workflow getWorkflow(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "workflowId") @WebParam(name = "workflowId") long workflowId) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value="")
     @Path("/getWorkflowStatuses")
     @Produces("application/json")
     public WorkflowStatus[] getWorkflowStatuses(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "workflowId") @WebParam(name = "workflowId") long workflowId) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value="")
     @Path("/getWorkflowStatus")
     @Produces("application/json")
     public WorkflowStatus getWorkflowStatus(
@@ -154,7 +157,7 @@ public interface StudioService
             @QueryParam(value = "workflowStatusId") @WebParam(name = "workflowStatusId") long workflowStatusId)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value="")
     @Path("/createWorkflowStatusManager")
     @Produces("application/json")
     public void createWorkflowStatusManager(
@@ -166,7 +169,7 @@ public interface StudioService
             @QueryParam(value = "securityEntityType") @WebParam(name = "securityEntityType") int securityEntityType)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value="")
     @Path("/deleteWorkflowStatusManager")
     @Produces("application/json")
     public void deleteWorkflowStatusManager(
@@ -178,7 +181,7 @@ public interface StudioService
             @QueryParam(value = "securityEntityType") @WebParam(name = "securityEntityType") int securityEntityType)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value="")
     @Path("/getWorkflowStatusManagers")
     @Produces("application/json")
     public WorkflowStatusManager[] getWorkflowStatusManagers(
@@ -186,7 +189,7 @@ public interface StudioService
             @QueryParam(value = "workflowStatusId") @WebParam(name = "workflowStatusId") long workflowStatusId)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value="")
     @Path("/createWorkflow")
     @Produces("application/json")
     public long createWorkflow(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -194,7 +197,7 @@ public interface StudioService
             @QueryParam(value = "description") @WebParam(name = "description") String description,
             @QueryParam(value = "xmlStream") @WebParam(name = "xmlStream") String xmlStream) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value="")
     @Path("/updateWorkflow")
     @Produces("application/json")
     public void updateWorkflow(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -203,13 +206,13 @@ public interface StudioService
             @QueryParam(value = "description") @WebParam(name = "description") String description,
             @QueryParam(value = "xmlStream") @WebParam(name = "xmlStream") String xmlStream) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value="")
     @Path("/deleteWorkflow")
     @Produces("application/json")
     public void deleteWorkflow(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "workflowId") @WebParam(name = "workflowId") long workflowId) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value="")
     @Path("/createWorkflowStatus")
     @Produces("application/json")
     public long createWorkflowStatus(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -218,7 +221,7 @@ public interface StudioService
             @QueryParam(value = "successorId") @WebParam(name = "successorId") long successorId)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value="")
     @Path("/updateWorkflowStatus")
     @Produces("application/json")
     public void updateWorkflowStatus(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -228,7 +231,7 @@ public interface StudioService
             @QueryParam(value = "successorId") @WebParam(name = "successorId") long successorId)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value="")
     @Path("/deleteWorkflowStatus")
     @Produces("application/json")
     public void deleteWorkflowStatus(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,

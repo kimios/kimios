@@ -15,6 +15,8 @@
  */
 package org.kimios.webservices;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.kimios.kernel.ws.pojo.DocumentWorkflowStatusRequest;
 import org.kimios.kernel.ws.pojo.WorkflowStatus;
@@ -35,9 +37,10 @@ import java.util.Date;
 @Path("/notification")
 @WebService(targetNamespace = "http://kimios.org", serviceName = "NotificationService")
 @CrossOriginResourceSharing(allowAllOrigins = true)
+@Api(value="/notification", description = "Notification Operations")
 public interface NotificationService
 {
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/createRequest")
     @Produces("application/json")
     public void createRequest(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -45,28 +48,28 @@ public interface NotificationService
             @QueryParam(value = "workflowStatusId") @WebParam(name = "workflowStatusId") long workflowStatusId)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getLastWorkflowStatus")
     @Produces("application/json")
     public WorkflowStatus getLastWorkflowStatus(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "documentId") @WebParam(name = "documentId") long documentId) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getPendingRequests")
     @Produces("application/json")
     public DocumentWorkflowStatusRequest[] getPendingRequests(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getRequests")
     @Produces("application/json")
     public DocumentWorkflowStatusRequest[] getRequests(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "documentId") @WebParam(name = "documentId") long documentId) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/acceptRequest")
     @Produces("application/json")
     public void acceptRequest(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -77,7 +80,7 @@ public interface NotificationService
             @QueryParam(value = "statusDate") @WebParam(name = "statusDate") Date statusDate,
             @QueryParam(value = "comment") @WebParam(name = "comment") String comment) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/rejectRequest")
     @Produces("application/json")
     public void rejectRequest(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -88,13 +91,13 @@ public interface NotificationService
             @QueryParam(value = "statusDate") @WebParam(name = "statusDate") Date statusDate,
             @QueryParam(value = "comment") @WebParam(name = "comment") String comment) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/cancelWorkflow")
     @Produces("application/json")
     public void cancelWorkflow(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "documentId") @WebParam(name = "documentId") long documentId) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/updateDocumentWorkflowStatusRequestComment")
     @Produces("application/json")
     public void updateDocumentWorkflowStatusRequestComment(
@@ -107,7 +110,7 @@ public interface NotificationService
             @QueryParam(value = "newComment") @WebParam(name = "newComment") String newComment)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getDocumentWorkflowStatusRequest")
     @Produces("application/json")
     public DocumentWorkflowStatusRequest getDocumentWorkflowStatusRequest(

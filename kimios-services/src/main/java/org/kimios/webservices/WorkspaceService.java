@@ -15,6 +15,8 @@
  */
 package org.kimios.webservices;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.kimios.kernel.ws.pojo.Workspace;
 import org.kimios.webservices.exceptions.DMServiceException;
@@ -32,35 +34,36 @@ import javax.ws.rs.QueryParam;
 @Path("/workspace")
 @WebService(targetNamespace = "http://kimios.org", serviceName = "WorkspaceService")
 @CrossOriginResourceSharing(allowAllOrigins = true)
+@Api(value = "/workspace", description = "Workspace Operations")
 public interface WorkspaceService
 {
-    @GET
+    @GET @ApiOperation(value="")
     @Path("/getWorkspace")
     @Produces("application/json")
     public Workspace getWorkspace(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "workspaceId") @WebParam(name = "workspaceId") long workspaceId)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value="")
     @Path("/getWorkspaces")
     @Produces("application/json")
     public Workspace[] getWorkspaces(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value="")
     @Path("/createWorkspace")
     @Produces("application/json")
     public long createWorkspace(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "name") @WebParam(name = "name") String name) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value="")
     @Path("/updateWorkspace")
     @Produces("application/json")
     public void updateWorkspace(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "workspaceId") @WebParam(name = "workspaceId") long workspaceId,
             @QueryParam(value = "name") @WebParam(name = "name") String name) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value="")
     @Path("/deleteWorkspace")
     @Produces("application/json")
     public void deleteWorkspace(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,

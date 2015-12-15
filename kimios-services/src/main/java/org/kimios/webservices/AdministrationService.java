@@ -15,6 +15,8 @@
  */
 package org.kimios.webservices;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.kimios.kernel.ws.pojo.*;
 import org.kimios.webservices.exceptions.DMServiceException;
@@ -31,15 +33,16 @@ import java.util.List;
 @Path("/administration")
 @WebService(targetNamespace = "http://kimios.org", serviceName = "AdministrationService")
 @CrossOriginResourceSharing(allowAllOrigins = true)
+@Api(value="/administration", description = "Administration Operations")
 public interface AdministrationService
 {
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getRoles")
     @Produces("application/json")
     public Role[] getRoles(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "role") @WebParam(name = "role") int role) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getUserRoles")
     @Produces("application/json")
     public Role[] getUserRoles(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -47,7 +50,7 @@ public interface AdministrationService
             @QueryParam(value = "userSource") @WebParam(name = "userSource") String userSource)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/createRole")
     @Produces("application/json")
     public void createRole(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -56,7 +59,7 @@ public interface AdministrationService
             @QueryParam(value = "userSource") @WebParam(name = "userSource") String userSource)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/deleteRole")
     @Produces("application/json")
     public void deleteRole(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -65,14 +68,14 @@ public interface AdministrationService
             @QueryParam(value = "userSource") @WebParam(name = "userSource") String userSource)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getAuthenticationSource")
     @Produces("application/json")
     public AuthenticationSource getAuthenticationSource(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "name") @WebParam(name = "name") String name) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getAuthenticationSourceParams")
     @Produces("application/json")
     public String getAuthenticationSourceParams(
@@ -80,7 +83,7 @@ public interface AdministrationService
             @QueryParam(value = "name") @WebParam(name = "name") String name,
             @QueryParam(value = "className") @WebParam(name = "className") String className) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/createAuthenticationSource")
     @Produces("application/json")
     public void createAuthenticationSource(
@@ -92,7 +95,7 @@ public interface AdministrationService
             @QueryParam(value = "xmlParameters") @WebParam(name = "xmlParameters") String xmlParameters)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/updateAuthenticationSource")
     @Produces("application/json")
     public void updateAuthenticationSource(
@@ -104,27 +107,27 @@ public interface AdministrationService
             @QueryParam(value = "xmlParameters") @WebParam(name = "xmlParameters") String xmlParameters)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/deleteAuthenticationSource")
     @Produces("application/json")
     public void deleteAuthenticationSource(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "className") @WebParam(name = "className") String name) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getAvailableAuthenticationSource")
     @Produces("application/json")
     public String getAvailableAuthenticationSource(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getAvailableAuthenticationSourceParams")
     @Produces("application/json")
     public String getAvailableAuthenticationSourceParams(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "className") @WebParam(name = "className") String className) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/createUser")
     @Produces("application/json")
     public void createUser(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -139,7 +142,7 @@ public interface AdministrationService
             @QueryParam(value = "enabled") @WebParam(name = "enabled") boolean enabled)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/updateUser")
     @Produces("application/json")
     public void updateUser(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -164,7 +167,7 @@ public interface AdministrationService
                                  @WebParam(name = "emails") List<String> emails)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/deleteUser")
     @Produces("application/json")
     public void deleteUser(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -172,7 +175,7 @@ public interface AdministrationService
             @QueryParam(value = "authenticationSourceName") @WebParam(name = "authenticationSourceName")
             String authenticationSourceName) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/createGroup")
     @Produces("application/json")
     public void createGroup(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -181,7 +184,7 @@ public interface AdministrationService
             @QueryParam(value = "authenticationSourceName") @WebParam(name = "authenticationSourceName")
             String authenticationSourceName) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/updateGroup")
     @Produces("application/json")
     public void updateGroup(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -190,7 +193,7 @@ public interface AdministrationService
             @QueryParam(value = "authenticationSourceName") @WebParam(name = "authenticationSourceName")
             String authenticationSourceName) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/deleteGroup")
     @Produces("application/json")
     public void deleteGroup(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -198,7 +201,7 @@ public interface AdministrationService
             @QueryParam(value = "authenticationSourceName") @WebParam(name = "authenticationSourceName")
             String authenticationSourceName) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/addUserToGroup")
     @Produces("application/json")
     public void addUserToGroup(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -207,7 +210,7 @@ public interface AdministrationService
             @QueryParam(value = "authenticationSourceName") @WebParam(name = "authenticationSourceName")
             String authenticationSourceName) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/removeUserFromGroup")
     @Produces("application/json")
     public void removeUserFromGroup(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -216,14 +219,14 @@ public interface AdministrationService
             @QueryParam(value = "authenticationSourceName") @WebParam(name = "authenticationSourceName")
             String authenticationSourceName) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getManageableUser")
     @Produces("application/json")
     public User getManageableUser(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             String uid,
             String authenticationSourceName) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getManageableUsers")
     @Produces("application/json")
     public User[] getManageableUsers(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -231,7 +234,7 @@ public interface AdministrationService
             @QueryParam(value = "authenticationSourceName") @WebParam(name = "authenticationSourceName")
             String authenticationSourceName) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getManageableGroup")
     @Produces("application/json")
     public Group getManageableGroup(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -239,7 +242,7 @@ public interface AdministrationService
             @QueryParam(value = "authenticationSourceName") @WebParam(name = "authenticationSourceName")
             String authenticationSourceName) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getManageableGroups")
     @Produces("application/json")
     public Group[] getManageableGroups(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -247,32 +250,32 @@ public interface AdministrationService
             @QueryParam(value = "authenticationSourceName") @WebParam(name = "authenticationSourceName")
             String authenticationSourceName) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/reindex")
     @Produces("application/json")
     public void reindex(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "path") @WebParam(name = "path") String path) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getReindexProgress")
     @Produces("application/json")
     public int getReindexProgress(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getCheckedOutDocuments")
     @Produces("application/json")
     public Document[] getCheckedOutDocuments(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/clearLock")
     @Produces("application/json")
     public void clearLock(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "documentId") @WebParam(name = "documentId") long documentId) throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/changeOwnership")
     @Produces("application/json")
     public void changeOwnership(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -281,20 +284,20 @@ public interface AdministrationService
             @QueryParam(value = "userSource") @WebParam(name = "userSource") String userSource)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getConnectedUsers")
     @Produces("application/json")
     public User[] getConnectedUsers(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getAllEnabledSessions")
     @Produces("application/json")
     public Session[] getAllEnabledSessions(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getEnabledSessions")
     @Produces("application/json")
     public Session[] getEnabledSessions(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -302,14 +305,14 @@ public interface AdministrationService
             @QueryParam(value = "userSource") @WebParam(name = "userSource") String userSource)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/removeEnabledSession")
     @Produces("application/json")
     public void removeEnabledSession(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "sessionIdToRemove") @WebParam(name = "sessionIdToRemove") String sessionIdToRemove)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/removeEnabledSessions")
     @Produces("application/json")
     public void removeEnabledSessions(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -317,7 +320,7 @@ public interface AdministrationService
             @QueryParam(value = "userSource") @WebParam(name = "userSource") String userSource)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/setUserAttribute")
     @Produces("application/json")
     public void setUserAttribute(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -327,7 +330,7 @@ public interface AdministrationService
             @QueryParam(value = "attributeValue") @WebParam(name = "attributeValue") String attributeValue)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getUserAttribute")
     @Produces("application/json")
     public String getUserAttribute(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -336,7 +339,7 @@ public interface AdministrationService
             @QueryParam(value = "attributeName") @WebParam(name = "attributeName") String attributeName)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/getUserByAttribute")
     @Produces("application/json")
     public User getUserByAttribute(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -346,22 +349,22 @@ public interface AdministrationService
             throws DMServiceException;
 
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/disableServiceLogging")
     public void disableServiceLogging()
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/enableServiceLogging")
     public void enableServiceLogging()
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/listLoggers")
     @Produces("application/json")
     public HashMap<String,String> listLoggers() throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value ="")
     @Path("/setLoggerLevel")
     @Produces("application/json")
     public void setLoggerLevel(@QueryParam(value = "loggerName") @WebParam(name = "loggerName") String loggerName,

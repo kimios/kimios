@@ -15,6 +15,8 @@
  */
 package org.kimios.webservices;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.kimios.webservices.exceptions.DMServiceException;
 
@@ -32,20 +34,21 @@ import java.util.Date;
 @Path("/information")
 @WebService(targetNamespace = "http://kimios.org", serviceName = "InformationService")
 @CrossOriginResourceSharing(allowAllOrigins = true)
+@Api(value="/information", description = "Information Operations")
 public interface InformationService
 {
-    @GET
+    @GET @ApiOperation(value="")
     @Path("/getServerVersionNumber")
     @Produces("application/json")
     public String getServerVersionNumber() throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value="")
     @Path("/getServerOnlineTime")
     @Produces("application/json")
     public Date getServerOnlineTime(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId)
             throws DMServiceException;
 
-    @GET
+    @GET @ApiOperation(value="")
     @Path("/getServerName")
     @Produces("application/json")
     public String getServerName() throws DMServiceException;
