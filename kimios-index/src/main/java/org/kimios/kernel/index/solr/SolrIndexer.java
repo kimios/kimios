@@ -92,9 +92,9 @@ public class SolrIndexer extends GenericEventHandler
     {
 
         log.info("Inside Solr Indexer");
-        Document doc = (Document)ctx.getEntity();
+        DMEntity doc = ctx.getEntity();
         log.info("doc " + doc);
-        if(doc == null){
+        if(doc == null || !(doc instanceof Document)){
             /*
                 Check inside parameters
              */

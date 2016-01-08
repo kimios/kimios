@@ -151,17 +151,60 @@ public class SolrIndexManager
             solrQuery.setQuery(docQuery);
             this.deleteDocument(document);
             //load data
-            DocumentVersion version =
+            final DocumentVersion version =
                     FactoryInstantiator.getInstance().getDocumentVersionFactory().getLastDocumentVersion(document);
-            DocumentIndexStatus documentIndexStatus = new DocumentIndexStatus();
-            Map<String, Object> fileData =
-                    new SolrDocFileReaderCallable(null, -1, null, null)
-                            .readVersionFileToData((Document)documentEntity,
-                                    FactoryInstantiator.getInstance()
-                                            .getDocumentVersionFactory().getLastDocumentVersion((Document)documentEntity),
+            final DocumentIndexStatus documentIndexStatus = new DocumentIndexStatus();
+            documentIndexStatus.setDmEntity((DMEntityImpl)documentEntity);
+
+            long readVersionTimeOut = 60;
+            TimeUnit readVersionTimeoutTimeUnit = TimeUnit.SECONDS;
+
+
+            final Document doc = (Document)documentEntity;
+            Callable<Map<String, Object>> rn = new Callable<Map<String, Object>>() {
+                @Override
+                public Map<String, Object> call() {
+
+                    return new SolrDocFileReaderCallable(null, -1, null, null)
+                            .readVersionFileToData((Document)doc,
+                                    version,
                                     documentIndexStatus);
+
+                }
+            };
+
+            ExecutorService executorService = Executors.newSingleThreadExecutor();
+            Future<Map<String,Object>> result = executorService.submit(rn);
+
+            try {
+                Map<String, Object> item = result.get(readVersionTimeOut, readVersionTimeoutTimeUnit);
+                documentIndexStatus.setReadFileDatas(item);
+            }catch (InterruptedException ex){
+                result.cancel(true);
+                documentIndexStatus.setError("Interrupted error " + ex.getMessage());
+                documentIndexStatus.setBodyIndexed(false);
+            }
+            catch (TimeoutException ex){
+                //Important to kill running thread !!
+                boolean cancelled = result.cancel(true);
+                documentIndexStatus.setError("Timeout Error (def: " + readVersionTimeOut + " " + readVersionTimeoutTimeUnit.toString() + "). " + ex.getMessage());
+                log.error("timeout: cancelled read thread for #" + documentIndexStatus.getDmEntity().getUid() + "(" + cancelled + ")");
+                documentIndexStatus.setBodyIndexed(false);
+            }
+            catch (ExecutionException ex){
+                result.cancel(true);
+                documentIndexStatus.setError("Exception Error: " + ex.getMessage());
+                documentIndexStatus.setBodyIndexed(false);
+                log.error("exception: cancelled read thread for #" + documentIndexStatus.getDmEntity().getUid(), ex);
+            }
+
+            executorService.shutdownNow();
+
+
             SolrInputDocument solrInputDocument =
-                    new SolrDocGenerator(document, mp).toSolrInputDocument(true, true, fileData, documentIndexStatus);
+                    new SolrDocGenerator(document, mp).toSolrInputDocument(true, true,
+                            documentIndexStatus.getReadFileDatas(),
+                            documentIndexStatus);
 
 
 
