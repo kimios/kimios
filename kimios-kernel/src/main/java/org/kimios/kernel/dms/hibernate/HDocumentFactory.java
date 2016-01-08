@@ -23,10 +23,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
 import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.dms.Document;
-import org.kimios.kernel.dms.DocumentFactory;
-import org.kimios.kernel.dms.FactoryInstantiator;
-import org.kimios.kernel.dms.Folder;
+import org.kimios.kernel.dms.*;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
 import org.kimios.utils.configuration.ConfigurationManager;
@@ -239,7 +236,7 @@ public class HDocumentFactory extends HFactory implements DocumentFactory
             try {
 
                 List<Long> items = new ArrayList<Long>();
-                for(Document d: docs){
+                for(DMEntity d: docs){
                     items.add(d.getUid());
                 }
                 return this.getDocumentsPojosFromIds(items);

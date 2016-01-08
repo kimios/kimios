@@ -270,9 +270,6 @@ public class DocumentController extends AKimiosController implements IDocumentCo
             throws NamingException, ConfigException, DataSourceException, AccessDeniedException {
 
         try {
-
-
-//            long documentId = createDocument(s, name, extension, mimeType, folderUid, isSecurityInherited);
             long documentId = -1;
             name = name.trim();
             PathUtils.validDmEntityName(name);
@@ -335,7 +332,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
             }
             out.flush();
             out.close();
-            if (hashMd5 != null && hashSha1 != null) {
+            if (StringUtils.isNotBlank(hashMd5) && StringUtils.isNotBlank(hashSha1)) {
                 User u = authFactoryInstantiator.getAuthenticationSourceFactory().getAuthenticationSource(
                         s.getUserSource()).getUserFactory().getUser(s.getUserName());
                 if (!getSecurityAgent().isWritable(d, s.getUserName(), s.getUserSource(), s.getGroups())) {
@@ -482,6 +479,10 @@ public class DocumentController extends AKimiosController implements IDocumentCo
             throws NamingException, ConfigException, DataSourceException, AccessDeniedException {
 
         try {
+
+            EventContext initialContext = EventContext.get();
+            EventContext.clear();
+            Long documentId = null;
              /*
                 Check for custom path generation
              */
@@ -504,7 +505,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                 log.info("generated path: {}", path);
 
             }
-            Long documentId = generateEntitiesFromPath(s, path, isSecurityInherited);
+            documentId = generateEntitiesFromPath(s, path, isSecurityInherited);
             Document document = dmsFactoryInstantiator.getDocumentFactory().getDocument(documentId);
             log.info("Adding document " + document + " to event context");
             EventContext.addParameter("document", document);
@@ -532,7 +533,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
             }
             out.flush();
             out.close();
-            if (hashMd5 != null && hashSha1 != null) {
+            if (StringUtils.isNotBlank(hashMd5) && StringUtils.isNotBlank(hashSha1)) {
                 User u = authFactoryInstantiator.getAuthenticationSourceFactory().getAuthenticationSource(
                         s.getUserSource()).getUserFactory().getUser(s.getUserName());
                 if (!getSecurityAgent().isWritable(document, s.getUserName(), s.getUserSource(), s.getGroups())) {
@@ -611,6 +612,8 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                     dmsFactoryInstantiator.getLockFactory().checkin(document, u);
                 }
                 transferFactoryInstantiator.getDataTransferFactory().removeDataTransfer(transac);
+            } else {
+                throw new TransferIntegrityException();
             }
 
 
@@ -621,7 +624,10 @@ public class DocumentController extends AKimiosController implements IDocumentCo
 
         } catch (IOException e) {
             throw new AccessDeniedException();
+        } catch (Exception e){
+            throw new DmsKernelException(e);
         }
+
     }
 
 
@@ -690,7 +696,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                 throw new AccessDeniedException();
             }
 
-            if (hashMd5 != null && hashSha1 != null) {
+            if (StringUtils.isNotBlank(hashMd5) && StringUtils.isNotBlank(hashSha1)) {
                 //Return inpustream on file transmitted
                 InputStream in = FileCompressionHelper.getTransactionFile(transac);
 
@@ -773,14 +779,13 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                 dv.setHashMD5(recHashMD5);
                 dv.setHashSHA1(recHashSHA1);
                 dv.writeData(in);
-
-                new File(ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH) + transac.getFilePath()).delete();
-                if (transac.isHasBeenCheckedOutOnStart()) {
-                    dmsFactoryInstantiator.getLockFactory().checkin(document, u);
-                }
-                transferFactoryInstantiator.getDataTransferFactory().removeDataTransfer(transac);
-
             }
+
+            new File(ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH) + transac.getFilePath()).delete();
+            if (transac.isHasBeenCheckedOutOnStart()) {
+                dmsFactoryInstantiator.getLockFactory().checkin(document, u);
+            }
+            transferFactoryInstantiator.getDataTransferFactory().removeDataTransfer(transac);
 
             initialContext.setEntity(document);
             log.debug("documentTypeId {} metaSet {}", documentTypeId, metaValues.size());
@@ -794,6 +799,8 @@ public class DocumentController extends AKimiosController implements IDocumentCo
             throw new AccessDeniedException();
         } catch (NoSuchAlgorithmException e) {
             throw new ConfigException(e);
+        } catch (Exception e){
+            throw new DmsKernelException(e);
         }
     }
 
