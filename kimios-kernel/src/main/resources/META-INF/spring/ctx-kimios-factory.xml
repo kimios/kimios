@@ -242,7 +242,9 @@
     </bean>
 
     <!-- meta feeds manager -->
-    <bean id="metaFeedManager" class="org.kimios.kernel.dms.metafeeds.MetaFeedManager" init-method="init"/>
+    <bean id="metaFeedManager" class="org.kimios.kernel.dms.metafeeds.MetaFeedManager"
+          factory-method="getMetaFeedManager"
+          init-method="init"/>
 
 
 </beans>

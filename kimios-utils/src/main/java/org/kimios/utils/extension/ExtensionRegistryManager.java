@@ -31,7 +31,7 @@ public class ExtensionRegistryManager {
 
     private static ExtensionRegistryManager _registryManager;
 
-    private Map<String, ExtensionRegistry> _registry;
+    private Map<String, ExtensionRegistry> _registries;
 
 
     private List<Class> _tempItems = new ArrayList<Class>();
@@ -40,7 +40,7 @@ public class ExtensionRegistryManager {
     public synchronized static ExtensionRegistryManager init(){
         if(_registryManager == null){
             _registryManager = new ExtensionRegistryManager();
-            _registryManager._registry = new HashMap<String, ExtensionRegistry>();
+            _registryManager._registries = new HashMap<String, ExtensionRegistry>();
         }
         return _registryManager;
     }
@@ -51,10 +51,11 @@ public class ExtensionRegistryManager {
     public static void addClass(Class clazz){
         ExtensionRegistry toAddRegistry = null;
         Class spClass = clazz;
-        while(!spClass.equals(Object.class)){
-            logger.info("processing registry for class {} (registry manager instance {} - registry instance {})", spClass, _registryManager, _registryManager._registry);
-            if (_registryManager._registry.get(spClass) != null){
-                toAddRegistry = _registryManager._registry.get(spClass);
+        while(spClass != null && !spClass.equals(Object.class)){
+            if(logger.isDebugEnabled())
+                logger.debug("looking for registry for ext class {} ---> {}", spClass, _registryManager._registries.get(spClass.getName()));
+            if (_registryManager._registries.get(spClass.getName()) != null){
+                toAddRegistry = _registryManager._registries.get(spClass.getName());
                 logger.info("found registry for {}: {}", spClass, toAddRegistry);
                 break;
             }
@@ -75,7 +76,7 @@ public class ExtensionRegistryManager {
     protected static void registerRegistry(ExtensionRegistry registry) {
         init();
         logger.info("registering extension registry {}", registry.getClass().getName());
-        if (_registryManager._registry.get(registry.registryClass.getName()) != null) {
+        if (_registryManager._registries.get(registry.registryClass.getName()) != null) {
             logger.warn("registry for type {} was already in. previous setup wil be crushed",
                     registry.registryClass.getName());
         }
@@ -93,13 +94,13 @@ public class ExtensionRegistryManager {
         _registryManager._tempItems.removeAll(_toRemove);
 
         logger.info("Setting registry for class: {} in registryManager (manager: {}", registry.registryClass, registry.getClass());
-        _registryManager._registry.put(registry.registryClass.getName(), registry);
+        _registryManager._registries.put(registry.registryClass.getName(), registry);
 
     }
 
     public static Collection<String> itemsAsString(Class classz) {
-        if (_registryManager._registry.containsKey(classz.getName())) {
-            return _registryManager._registry.get(classz.getName()).listAsString();
+        if (_registryManager._registries.containsKey(classz.getName())) {
+            return _registryManager._registries.get(classz.getName()).listAsString();
         } else {
             return new ArrayList<String>();
         }
@@ -107,8 +108,8 @@ public class ExtensionRegistryManager {
     }
 
     public static Collection<Class> itemsAsClass(Class classz) {
-        if (_registryManager._registry.containsKey(classz.getName())) {
-            return _registryManager._registry.get(classz.getName()).list();
+        if (_registryManager._registries.containsKey(classz.getName())) {
+            return _registryManager._registries.get(classz.getName()).list();
         } else {
             return new ArrayList<Class>();
         }

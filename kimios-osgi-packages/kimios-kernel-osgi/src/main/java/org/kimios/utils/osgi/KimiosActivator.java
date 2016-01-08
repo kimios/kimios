@@ -52,7 +52,7 @@ public class KimiosActivator implements BundleActivator {
 
 
 
-        int trackStates = Bundle.STARTING | Bundle.STOPPING | Bundle.RESOLVED | Bundle.INSTALLED | Bundle.UNINSTALLED;
+        int trackStates = Bundle.ACTIVE;
         kimiosExtender = new KimiosExtender(context, trackStates, null);
         kimiosExtender.open();
         logger.info("Kimios Extender Loaded");

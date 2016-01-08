@@ -16,6 +16,8 @@
 
 package org.kimios.utils.osgi;
 
+import org.kimios.kernel.converter.Converter;
+import org.kimios.kernel.dms.MetaFeed;
 import org.kimios.utils.extension.ExtensionRegistryManager;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -55,11 +57,42 @@ public class KimiosExtender extends BundleTracker {
                     Class<?> clazz;
                     try {
                         clazz = bundle.loadClass(className);
-                            ExtensionRegistryManager.addClass(clazz);
-                            logger.info("Kimios Extender Found item : "
+
+                        Class<?> serviceClass = null;
+
+                        Class<?> toCheckClass = clazz;
+                        while(toCheckClass != null){
+                            if(toCheckClass.getInterfaces().length == 0)
+                                toCheckClass = toCheckClass.getSuperclass();
+                            else {
+                                //check if
+                                Class<?> interfaceClass = toCheckClass.getInterfaces()[0];
+                                if(interfaceClass.equals(MetaFeed.class)
+                                        || interfaceClass.equals(Converter.class)) {
+                                    serviceClass = interfaceClass;
+                                    break;
+                                } else {
+                                    toCheckClass = toCheckClass.getSuperclass();
+                                }
+                            }
+                        }
+
+                        if(serviceClass != null) {
+                            logger.info("registering {} as service for type {}", clazz, serviceClass, bundle);
+                            bundle.getBundleContext().registerService(serviceClass.getName(), clazz.newInstance(), null);
+                        }
+
+                        logger.info("Kimios Extender Found item : "
                                     + clazz.getName() + ". will be put in registry");
+
+                        ExtensionRegistryManager.addClass(clazz);
+
+
                     } catch (ClassNotFoundException e) {
                         logger.error("Could not find class " + className, e);
+                    }
+                    catch (Exception e) {
+                        logger.error("extender exception fro " + className, e);
                     }
                 }
             }

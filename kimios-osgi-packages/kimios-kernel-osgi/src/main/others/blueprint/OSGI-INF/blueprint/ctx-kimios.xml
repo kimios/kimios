@@ -135,6 +135,9 @@
               interface="org.kimios.kernel.index.ISolrIndexManager"/>
 
 
+
+
+
 </blueprint>
               
 
