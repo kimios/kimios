@@ -230,5 +230,12 @@
             <version>1.0</version>
             <scope>provided</scope>
         </dependency>
+        <!--etherpad-->
+        <dependency>
+            <groupId>net.gjerull.etherpad</groupId>
+            <artifactId>etherpad_lite_client</artifactId>
+            <version>1.2.12</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 </project>

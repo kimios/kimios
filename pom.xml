@@ -116,6 +116,7 @@
         <module>kimios-csv-metafeed</module>
         <module>kimios-dolibarr</module>
         <module>kimios-server-war</module>
+        <module>kimios-editors-service</module>
     </modules>
     <packaging>pom</packaging>
     <dependencies>

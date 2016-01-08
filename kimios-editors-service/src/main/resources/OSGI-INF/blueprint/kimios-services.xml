@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Kimios - Document Management System Software
+  ~ Copyright (C) 2008-2016  DevLib'
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 2 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ aong with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:jaxws="http://cxf.apache.org/blueprint/jaxws"
+        xmlns:cxf="http://cxf.apache.org/blueprint/core"
+        xmlns:jaxrs="http://cxf.apache.org/blueprint/jaxrs"
+        xmlns:soap="http://cxf.apache.org/blueprint/bindings/soap"
+        xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0
+        http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
+        http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
+  http://cxf.apache.org/blueprint/jaxrs http://cxf.apache.org/schemas/blueprint/jaxrs.xsd
+    http://cxf.apache.org/blueprint/jaxws http://cxf.apache.org/schemas/blueprint/jaxws.xsd
+  http://cxf.apache.org/blueprint/core http://cxf.apache.org/schemas/blueprint/core.xsd"
+        >
+
+
+    <cxf:bus id="kimios-bus" name="kimios-bus" />
+
+    <reference id="etherpadEditorController"
+               interface="org.kimios.kernel.editors.ExternalEditor"/>
+
+    <reference id="serviceHelper"
+               interface="org.kimios.webservices.IServiceHelper"/>
+
+
+    <bean id="editorServiceBean" class="org.kimios.webservices.editors.impl.EditorServiceImpl">
+        <argument ref="etherpadEditorController"/>
+        <argument ref="serviceHelper"/>
+    </bean>
+
+    <service interface="org.kimios.webservices.editors.EditorService" ref="editorServiceBean"/>
+
+
+    <!-- Service endpoint -->
+    <jaxws:endpoint id="converterServiceWs"
+                    implementorClass="org.kimios.webservices.editors.impl.EditorServiceImpl"
+                    implementor="#converterServiceBean"
+                    address="/EditorService"
+                    endpointName="EditorService"
+            >
+        <jaxws:binding>
+            <soap:soapBinding id="EditorService"/>
+        </jaxws:binding>
+        <jaxws:serviceFactory>
+            <ref component-id="jaxws-and-aegis-service-factory"/>
+        </jaxws:serviceFactory>
+    </jaxws:endpoint>
+
+
+    <bean id="jaxws-and-aegis-service-factory" class="org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean"
+          scope="prototype">
+        <property name="dataBinding">
+            <bean class="org.apache.cxf.aegis.databinding.AegisDatabinding">
+                <property name="aegisContext">
+                    <bean class="org.apache.cxf.aegis.AegisContext">
+                        <property name="writeXsiTypes" value="true" />
+                        <property name="rootClassNames">
+                            <list>
+                                <value>org.kimios.webservices.exceptions.DMServiceException</value>
+                                <value>org.kimios.kernel.ws.pojo.Document</value>
+                                <value>org.kimios.kernel.ws.pojo.Folder</value>
+                                <value>org.kimios.kernel.ws.pojo.SymbolicLink</value>
+                                <value>org.kimios.kernel.ws.pojo.Workspace</value>
+                            </list>
+                        </property>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+        <property name="serviceConfigurations">
+            <list>
+                <bean class="org.apache.cxf.jaxws.support.JaxWsServiceConfiguration"/>
+                <bean class="org.apache.cxf.wsdl.service.factory.DefaultServiceConfiguration"/>
+            </list>
+        </property>
+    </bean>
+
+
+
+
+    <jaxrs:server id="kimiosEditorsRestServer"
+                  address="/rest/editors/">
+        <jaxrs:providers>
+            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="org.kimios.webservices.DateParamConverter"/>
+            <bean id="exceptionMapper" class="org.kimios.webservices.JaxRSExceptionMapper"/>
+            <bean id="corsFilter" class="org.apache.cxf.rs.security.cors.CrossOriginResourceSharingFilter" />
+        </jaxrs:providers>
+        <jaxrs:serviceBeans>
+            <ref component-id="editorServiceBean" />
+        </jaxrs:serviceBeans>
+        <jaxrs:extensionMappings>
+            <entry key="json" value="application/json"/>
+        </jaxrs:extensionMappings>
+    </jaxrs:server>
+
+</blueprint>
+

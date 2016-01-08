@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Kimios - Document Management System Software
+  ~ Copyright (C) 2008-2016  DevLib'
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 2 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ aong with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>kimios</artifactId>
+        <groupId>org.kimios</groupId>
+        <version>1.1-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>kimios-editors-service</artifactId>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-kernel</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-utils</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate.javax.persistence</groupId>
+            <artifactId>hibernate-jpa-2.0-api</artifactId>
+            <version>1.0.1.Final</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-convert</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-services</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-exceptions</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-jaxrs</artifactId>
+            <version>1.9.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+            <version>${cxf.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>2.3.7</version>
+                <executions>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>bundle</goal>
+                        </goals>
+
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.cxf</groupId>
+                        <artifactId>cxf-rt-frontend-jaxws</artifactId>
+                        <version>${cxf.version}</version>
+                        <scope>compile</scope>
+                        <exclusions>
+                            <exclusion>
+                                <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                                <groupId>org.apache.geronimo.specs</groupId>
+                            </exclusion>
+                        </exclusions>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.cxf</groupId>
+                        <artifactId>cxf-rt-transports-http</artifactId>
+                        <version>${cxf.version}</version>
+                        <scope>compile</scope>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.cxf</groupId>
+                        <artifactId>cxf-rt-databinding-aegis</artifactId>
+                        <version>${cxf.version}</version>
+                        <type>jar</type>
+                        <scope>compile</scope>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.cxf</groupId>
+                        <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+                        <version>${cxf.version}</version>
+                        <scope>compile</scope>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.cxf</groupId>
+                        <artifactId>cxf-rt-rs-security-cors</artifactId>
+                        <version>${cxf.version}</version>
+                        <scope>compile</scope>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <supportedProjectTypes>
+                        <supportedProjectType>jar</supportedProjectType>
+                    </supportedProjectTypes>
+                    <instructions>
+                        <Bundle-SymbolicName>${project.name}</Bundle-SymbolicName>
+                        <Include-Resource>{maven-resources}</Include-Resource>
+                        <Private-Package>org.kimios.webservices.editors.impl</Private-Package>
+                        <Export-Package>org.kimios.webservices.editors</Export-Package>
+                        <Import-Package>
+                            org.slf4j,
+                            org.apache.cxf,
+                            org.apache.cxf.annotations,
+                            javax.activation,
+                            org.apache.cxf.rs.security.cors,
+                            org.apache.cxf.bus.spring,
+                            org.apache.cxf.bus,
+                            org.apache.cxf.bus.blueprint,
+                            org.apache.cxf.bus.extension,
+                            org.apache.cxf.bus.resource,
+                            org.apache.cxf.bus.osgi,
+                            org.apache.cxf.bus.managers,
+                            org.apache.cxf.endpoint, org.apache.cxf.feature, org.apache.cxf.interceptor,
+                            javax.ws.rs,
+                            javax.jws,
+                            java.lang,
+                            java.util,
+                            javax.xml,
+                            javax.xml.ws,
+                            javax.persistence,
+                            javax.ws.rs.core,
+                            javax.ws.rs.ext,
+                            org.kimios.exceptions,
+                            org.kimios.webservices,
+                            org.kimios.webservices.exceptions,
+                            org.kimios.webservices.pojo,
+                            org.codehaus.jackson.map, org.codehaus.jackson.type,
+                            org.kimios.kernel.*,
+                            org.kimios.kernel.ws.pojo,
+                            org.kimios.kernel.controller,
+                            org.kimios.kernel.converter,
+                            org.kimios.kernel.security,
+                            org.kimios.utils.logging,
+                            org.apache.cxf.aegis,
+                            org.apache.cxf.aegis.databinding,
+                            org.apache.cxf.jaxws.support,
+                            org.apache.cxf.wsdl.service.factory,
+                            org.apache.cxf.jaxrs.ext.multipart,
+                            org.codehaus.jackson.jaxrs,
+                            org.osgi.service.blueprint,
+                            org.codehaus.jackson.annotate,
+                            org.apache.cxf.jaxrs.ext,
+                            org.kimios.utils.spring,
+                            org.apache.commons.io
+                        </Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.2</version>
+                <executions>
+                    <execution>
+                        <id>osgi</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>blueprint</classifier>
+                            <excludes>
+                                <exclude>META-INF/spring/**</exclude>
+                            </excludes>
+                            <archive>
+                                <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                            </archive>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.2</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>interfaces</classifier>
+                            <includes>
+                                <include>org/kimios/webservices/editors/*</include>
+                            </includes>
+                            <excludes>
+                                <exclude>org/kimios/webservices/editors/impl/*</exclude>
+                                <exclude>org/kimios/controller/*</exclude>
+                                <exclude>org/kimios/kernel/*</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+
+</project>

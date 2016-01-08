@@ -389,6 +389,7 @@
                     <source>1.6</source>
                     <target>1.6</target>
                     <outxml>true</outxml>
+                    <Xlintfile>${project.basedir}/ajc.properties</Xlintfile>
                     <aspectLibraries>
                         <aspectLibrary>
                             <groupId>org.springframework</groupId>

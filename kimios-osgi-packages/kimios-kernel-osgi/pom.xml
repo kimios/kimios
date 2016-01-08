@@ -159,6 +159,15 @@
             <version>${hibernate.version}</version>
             <scope>provided</scope>
         </dependency>
+
+        <!--etherpad -->
+        <dependency>
+            <groupId>net.gjerull.etherpad</groupId>
+            <artifactId>etherpad_lite_client</artifactId>
+            <version>1.2.12</version>
+            <scope>compile</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
@@ -189,7 +198,6 @@
             <version>1.4</version>
             <scope>compile</scope>
         </dependency>
-
     </dependencies>
     <build>
         <resources>
@@ -253,6 +261,7 @@
                     <target>1.6</target>
                     <outxml>true</outxml>
                     <showWeaveInfo>true</showWeaveInfo>
+                    <Xlintfile>${project.basedir}/ajc.properties</Xlintfile>
                 </configuration>
                 <executions>
                     <execution>
