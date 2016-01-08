@@ -21,10 +21,9 @@ import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.ContentDisposition;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
-import org.kimios.client.controller.helpers.ByteArrayDataSource;
-import org.kimios.client.controller.helpers.FileCompressionHelper;
-import org.kimios.client.controller.helpers.HashCalculator;
-import org.kimios.client.controller.helpers.HashInputStream;
+import org.apache.cxf.transport.http.HTTPConduit;
+import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
+import org.kimios.client.controller.helpers.*;
 import org.kimios.client.exception.*;
 import org.kimios.kernel.ws.pojo.DataTransaction;
 import org.kimios.webservices.DocumentVersionService;
@@ -122,6 +121,9 @@ public class FileTransferController
                 Client upClient = WebClient.client( client );
                 WebClient wcl = WebClient.fromClient( upClient );
 
+
+                HttpClientUtils.setupHttpClientSettings(upClient);
+
                 MessageDigest md5 = MessageDigest.getInstance( "MD5" );
                 MessageDigest sha1 = MessageDigest.getInstance( "SHA-1" );
                 List<MessageDigest> digests = new ArrayList<MessageDigest>();
@@ -159,6 +161,8 @@ public class FileTransferController
             throw new ExceptionHelper().convertException( e );
         }
     }
+
+
 
     /**
      * Write data to update temporary file of a given upload transaction
@@ -231,8 +235,11 @@ public class FileTransferController
                 }
                 DataTransaction transaction = client.startUploadTransaction( sessionId, documentId, isCompressed );
 
-                Client upClient = WebClient.client( client );
-                WebClient wcl = WebClient.fromClient( upClient );
+                Client upClient = WebClient.client(client);
+                WebClient wcl = WebClient.fromClient(upClient);
+
+
+                HttpClientUtils.setupHttpClientSettings(upClient);
 
                 MessageDigest md5 = MessageDigest.getInstance( "MD5" );
                 MessageDigest sha1 = MessageDigest.getInstance( "SHA-1" );
@@ -310,6 +317,8 @@ public class FileTransferController
 
                 Client upClient = WebClient.client( client );
                 WebClient wcl = WebClient.fromClient( upClient );
+
+                HttpClientUtils.setupHttpClientSettings(upClient);
 
                 MessageDigest md5 = MessageDigest.getInstance( "MD5" );
                 MessageDigest sha1 = MessageDigest.getInstance( "SHA-1" );

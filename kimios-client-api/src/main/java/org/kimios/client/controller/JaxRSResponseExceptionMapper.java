@@ -39,6 +39,7 @@ public class JaxRSResponseExceptionMapper
             DMServiceException exception = new DMServiceException(ex.getMessage());
             exception.setCode(ex.getCode());
             exception.setStackTrace(ex.getStackTrace());
+
             return exception;
         }catch (Exception e){
             logger.error("error while deserializing", e);

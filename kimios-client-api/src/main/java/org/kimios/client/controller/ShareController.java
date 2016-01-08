@@ -18,10 +18,6 @@ package org.kimios.client.controller;
 
 import org.kimios.client.exception.ExceptionHelper;
 import org.kimios.kernel.share.model.MailContact;
-import org.kimios.kernel.ws.pojo.DMEntity;
-import org.kimios.kernel.ws.pojo.DMEntityAttribute;
-import org.kimios.webservices.ExtensionService;
-import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.share.ShareService;
 
 import java.util.ArrayList;

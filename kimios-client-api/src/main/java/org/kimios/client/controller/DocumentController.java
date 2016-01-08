@@ -21,6 +21,7 @@ import org.apache.cxf.jaxrs.ext.multipart.InputStreamDataSource;
 import org.apache.cxf.jaxrs.ext.multipart.MultipartBody;
 import org.kimios.client.controller.helpers.FutureInputstream;
 import org.kimios.client.controller.helpers.HashInputStream;
+import org.kimios.client.controller.helpers.HttpClientUtils;
 import org.kimios.client.exception.AccessDeniedException;
 import org.kimios.client.exception.ConfigException;
 import org.kimios.client.exception.DMSException;
@@ -116,6 +117,9 @@ public class DocumentController {
 
             org.apache.cxf.jaxrs.client.Client upClient = WebClient.client(client);
             WebClient wcl = WebClient.fromClient(upClient);
+
+
+            HttpClientUtils.setupHttpClientSettings(wcl);
 
 
             MessageDigest md5 = null;
