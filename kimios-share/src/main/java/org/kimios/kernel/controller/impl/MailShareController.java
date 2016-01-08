@@ -24,6 +24,8 @@ import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.IMailShareController;
 import org.kimios.kernel.dms.Document;
 import org.kimios.kernel.dms.DocumentVersion;
+import org.kimios.kernel.events.annotations.DmsEvent;
+import org.kimios.kernel.events.annotations.DmsEventName;
 import org.kimios.kernel.exception.AccessDeniedException;
 import org.kimios.kernel.exception.DmsKernelException;
 import org.kimios.kernel.security.Session;
@@ -97,6 +99,7 @@ public class MailShareController extends AKimiosController implements IMailShare
     }
 
     @Override
+    @DmsEvent(eventName = DmsEventName.DOCUMENT_SHARED)
     public void sendDocumentByEmail(Session session,
                                     List<Long> documentIds,
                                     Map<String, String> recipients,
