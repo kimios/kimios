@@ -14,3 +14,4 @@ kimios-server-war/profiles/dev/*
 *.gradle
 gradle*
 gradle/*
+generated/
