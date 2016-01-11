@@ -117,11 +117,7 @@ public class DocumentController {
 
             org.apache.cxf.jaxrs.client.Client upClient = WebClient.client(client);
             WebClient wcl = WebClient.fromClient(upClient);
-
-
             HttpClientUtils.setupHttpClientSettings(wcl);
-
-
             MessageDigest md5 = null;
             MessageDigest sha1 = null;
             try {
