@@ -63,7 +63,7 @@
         interface="org.kimios.kernel.index.controller.ISearchController"/>
 
     <reference id="converterController"
-               interface="org.kimios.kernel.converter.controller.IConverterController" />
+               interface="org.kimios.converter.controller.IConverterController" />
     
     <reference id="searchManagementController"
                interface="org.kimios.kernel.index.controller.ISearchManagementController" />

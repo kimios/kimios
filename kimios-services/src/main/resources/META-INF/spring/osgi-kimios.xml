@@ -66,5 +66,5 @@
     <osgi:reference id="searchManagementController"
                     interface="org.kimios.kernel.index.controller.ISearchManagementController"/>
     <osgi:reference id="converterController"
-                    interface="org.kimios.kernel.converter.controller.IConverterController"/>
+                    interface="org.kimios.converter.controller.IConverterController"/>
 </beans>

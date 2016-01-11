@@ -127,4 +127,12 @@ public interface ExtensionService
     public boolean canHandleAutomaticPathDeposit(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId)
             throws DMServiceException;
+
+
+    @GET
+    @Path(("/list-extensions"))
+    @Produces("application/json")
+    public List<String> listExtensions(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+                                       @QueryParam(value = "extensionType") @WebParam(name = "extensionType") String extensionType)
+        throws DMServiceException;
 }

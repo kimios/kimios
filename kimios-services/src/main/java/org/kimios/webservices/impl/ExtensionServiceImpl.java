@@ -160,5 +160,14 @@ public class ExtensionServiceImpl extends CoreService implements ExtensionServic
     }
 
 
+    @Override
+    public List<String> listExtensions(String sessionId, String extensionType) throws DMServiceException {
+        try {
+            Session session = getHelper().getSession(sessionId);
+            return extensionController.listExtensions(session, extensionType);
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
 }
 

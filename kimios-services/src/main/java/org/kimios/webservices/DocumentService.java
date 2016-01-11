@@ -98,9 +98,9 @@ public interface DocumentService {
             @QueryParam(value = "isRecursive") @WebParam(name = "isRecursive") boolean isRecursive,
             @QueryParam(value = "documentTypeId") @WebParam(name = "documentTypeId") long documentTypeId,
             @QueryParam(value = "metasXmlStream") @WebParam(name = "metasXmlStream") String metasXmlStream,
-            @FormParam(value = "document") InputStream documentStream,
-            @FormParam(value = "md5") String hashMd5,
-            @FormParam(value = "sha1") String hashSha1) throws DMServiceException;
+            @Multipart(value = "document") InputStream documentStream,
+            @Multipart(value = "md5") String hashMd5,
+            @Multipart(value = "sha1") String hashSha1) throws DMServiceException;
 
 
 
@@ -116,9 +116,9 @@ public interface DocumentService {
             @QueryParam(value = "isRecursive") @WebParam(name = "isRecursive") boolean isRecursive,
             @QueryParam(value = "documentTypeId") @WebParam(name = "documentTypeId") long documentTypeId,
             @QueryParam(value = "metasXmlStream") @WebParam(name = "metasXmlStream") String metasXmlStream,
-            @FormParam(value = "document") InputStream documentStream,
-            @FormParam(value = "md5") String hashMd5,
-            @FormParam(value = "sha1") String hashSha1) throws DMServiceException;
+            @Multipart(value = "document") InputStream documentStream,
+            @Multipart(value = "md5") String hashMd5,
+            @Multipart(value = "sha1") String hashSha1) throws DMServiceException;
 
     @POST @ApiOperation(value ="")
     @Path("/createDocumentFromFullPathWithPropertiesNoHash")
@@ -140,7 +140,7 @@ public interface DocumentService {
             @ApiParam(name = "metaItems")
             @FormParam(value = "metaItems") @WebParam(name = "metaItems") String metaValuesJson,
             @ApiParam(name = "document", required = true)
-            @FormParam(value = "document") InputStream documentStream,
+            @Multipart(value = "document") InputStream documentStream,
             @ApiParam(name = "md5")
             @DefaultValue(value = "") @Multipart(value = "md5", required = false) String hashMd5,
             @ApiParam(name = "sha1")

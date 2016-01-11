@@ -28,23 +28,23 @@ kimios.util.PreviewHelper = {
         var extMapping = {
            doc: [{
                target: 'html',
-               conv:'org.kimios.kernel.converter.impl.DocToHTML'
+               conv:'org.kimios.converter.impl.DocToHTML'
            }],
            docx: [{
                 target: 'html',
-                conv:'org.kimios.kernel.converter.impl.Docx4jDocxToHTML'
+                conv:'org.kimios.converter.impl.Docx4jDocxToHTML'
            }],
            eml: [{
                target: 'html',
-               conv: 'org.kimios.kernel.converter.impl.MailToHtml'
+               conv: 'org.kimios.converter.impl.MailToHtml'
            }],
            xls: [{
                target: 'html',
-               conv: 'org.kimios.kernel.converter.impl.XlsToHTML'
+               conv: 'org.kimios.converter.impl.XlsToHTML'
            }],
            xlsx: [{
                 target: 'html',
-                conv: 'org.kimios.kernel.converter.impl.XlsToHTML'
+                conv: 'org.kimios.converter.impl.XlsToHTML'
             }]
            //pdf: [{conv: 'org.kimios.kernel.converter.impl.PDFMerger', target: 'pdf'}]
         }
