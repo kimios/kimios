@@ -64,4 +64,8 @@ public interface IExtensionController
             throws ConfigException, DataSourceException, AccessDeniedException;
 
 
+    public List<String> listExtensions(Session session, String extensionType)
+            throws ConfigException, AccessDeniedException;
+
+
 }

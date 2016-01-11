@@ -15,6 +15,7 @@
  */
 package org.kimios.kernel.utils;
 
+import org.osgi.framework.Bundle;
 import org.reflections.Reflections;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
@@ -25,9 +26,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.Vector;
+import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -45,6 +44,27 @@ public class ClassFinder
         }
 
         Reflections reflections = new Reflections(new ConfigurationBuilder()
+                .addUrls(ClasspathHelper.forPackage(pkg))
+        );
+        return reflections.getSubTypesOf(impl);
+    }
+
+    public static Set findImplement(BundleUrlType bundleUrlType,
+                                              String pkg,
+                                              Class<?> impl,
+                                              ClassLoader cl)
+    {
+        try {
+            ArrayList<Vfs.UrlType> it = new ArrayList<Vfs.UrlType>();
+            it.add(bundleUrlType);
+            Vfs.setDefaultURLTypes(it);
+        } catch (RuntimeException e) {
+        } catch (Exception e) {
+        } catch (LinkageError e){
+        }
+
+        Reflections reflections = new Reflections(new ConfigurationBuilder()
+                .addClassLoader(cl)
                 .addUrls(ClasspathHelper.forPackage(pkg))
         );
         return reflections.getSubTypesOf(impl);

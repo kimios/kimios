@@ -16,15 +16,19 @@
 
 package org.kimios.utils.osgi;
 
+import org.kimios.kernel.utils.BundleUrlType;
+import org.kimios.kernel.utils.ClassFinder;
 import org.kimios.utils.extension.ExtensionRegistryManager;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
+import org.osgi.framework.wiring.BundleWiring;
 import org.osgi.util.tracker.BundleTracker;
 import org.osgi.util.tracker.BundleTrackerCustomizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
 import java.util.Enumeration;
 
 /**
@@ -50,47 +54,32 @@ public class KimiosExtender extends BundleTracker {
             if (k.startsWith("Kimios-")) {
                 // put in registry
                 logger.info("found header {} ==> {}", k, bundle.getHeaders().get(k));
-                String className = (String) bundle.getHeaders().get(k);
-                if (className != null) {
+                String interfaceClassName =  (String)bundle.getHeaders().get(k);
+                logger.info("bundle {} with name {} will provide extension of type {}",
+                        bundle.getBundleId(), bundle.getSymbolicName(), interfaceClassName);
+                if (interfaceClassName != null) {
                     Class<?> clazz;
                     try {
-                        clazz = bundle.loadClass(className);
+                        clazz = bundle.loadClass(interfaceClassName);
 
-                        Class<?> serviceClass = null;
-
-                        Class<?> toCheckClass = clazz;
-                        while(toCheckClass != null){
-                            if(toCheckClass.getInterfaces().length == 0)
-                                toCheckClass = toCheckClass.getSuperclass();
-                            else {
-                                //check if
-                                Class<?> interfaceClass = toCheckClass.getInterfaces()[0];
-                                /*if(interfaceClass.equals(MetaFeed.class)
-                                        || interfaceClass.equals(Converter.class)) {
-                                    serviceClass = interfaceClass;
-                                    break;
-                                } else {
-                                    toCheckClass = toCheckClass.getSuperclass();
-                                }*/
-                            }
-                        }
-
-                        if(serviceClass != null) {
+                        Class<BundleWiring> wiringClass = BundleWiring.class;
+                        BundleWiring bw = (BundleWiring)bundle.adapt(wiringClass);
+                        ClassLoader bundleCl = bw.getClassLoader();
+                        Collection<Class<?>> classes =
+                                ClassFinder.findImplement(new BundleUrlType(bundle), "org.kimios", clazz, bundleCl);
+                        /*if(serviceClass != null) {
                             logger.info("registering {} as service for type {}", clazz, serviceClass, bundle);
                             bundle.getBundleContext().registerService(serviceClass.getName(), clazz.newInstance(), null);
+                        } */
+                        for(Class clItem: classes) {
+                            logger.info("Kimios Extender Found item For Type {} ==> {}. will be put in registry", clazz, clItem);
+                            ExtensionRegistryManager.addClass(clItem);
                         }
-
-                        logger.info("Kimios Extender Found item : "
-                                    + clazz.getName() + ". will be put in registry");
-
-                        ExtensionRegistryManager.addClass(clazz);
-
-
                     } catch (ClassNotFoundException e) {
-                        logger.error("Could not find class " + className, e);
+                        logger.error("Could not find class " + interfaceClassName, e);
                     }
                     catch (Exception e) {
-                        logger.error("extender exception fro " + className, e);
+                        logger.error("extender exception fro " + interfaceClassName, e);
                     }
                 }
             }

@@ -172,21 +172,6 @@
             <scope>compile</scope>
         </dependency>
 
-
-        <dependency>
-            <groupId>org.docx4j</groupId>
-            <artifactId>docx4j</artifactId>
-            <version>3.2.1</version>
-            <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.poi</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
@@ -284,9 +269,16 @@
         <dependency>
             <groupId>org.docx4j</groupId>
             <artifactId>docx4j</artifactId>
-            <version>3.2.1</version>
-            <scope>compile</scope>
+            <version>3.2.2</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.poi</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
+
 
         <!--asciddoc converters -->
         <dependency>
@@ -306,6 +298,14 @@
             <artifactId>asciidoctorj-pdf</artifactId>
             <version>1.5.0-alpha.11</version>
             <scope>compile</scope>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <version>4.3.0</version>
+            <scope>provided</scope>
         </dependency>
 
 
@@ -354,14 +354,15 @@
                         <supportedProjectType>jar</supportedProjectType>
                     </supportedProjectTypes>
                     <excludeDependencies>
-                        quartz,xerces,xercesImpl,dom4j,commons-codec,commons-collections,commons-lang,javassist,xml-apis,stax-api,commons-logging,slf4j-api,log4j
+                        quartz,xerces,xercesImpl,dom4j,commons-codec,commons-collections,commons-lang,javassist,xml-apis,stax-api,commons-logging,slf4j-api,log4j,xalan
                     </excludeDependencies>
                     <instructions>
                         <Bundle-SymbolicName>kimios-convert</Bundle-SymbolicName>
                         <Bundle-Name>${project.name}</Bundle-Name>
                         <Export-Package>
-                            org.kimios.kernel.converter,org.kimios.kernel.converter.controller,org.kimios.kernel.converter.exception,org.kimios.kernel.converter.source
+                            org.kimios.converter.*
                         </Export-Package>
+                        <Kimios-Extension>org.kimios.converter.Converter</Kimios-Extension>
                         <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <Include-Resource>{maven-resources}</Include-Resource>

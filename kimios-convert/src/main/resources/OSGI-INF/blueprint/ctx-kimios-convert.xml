@@ -40,7 +40,7 @@
     <reference id="transferFactoryInstantiator" interface="org.kimios.kernel.filetransfer.IFileTransferFactoryInstantiator"/>
     <reference id="aclUpdater" interface="org.kimios.kernel.jobs.security.IACLUpdater"/>
 
-    <bean id="converterController" class="org.kimios.kernel.converter.controller.impl.ConverterController">
+    <bean id="converterController" class="org.kimios.converter.controller.impl.ConverterController">
         <property name="dmsFactoryInstantiator" ref="dmsFactoryInstantiator"></property>
         <property name="securityFactoryInstantiator" ref="securityFactoryInstantiator"></property>
         <property name="authFactoryInstantiator" ref="authFactoryInstantiator"></property>
@@ -54,8 +54,8 @@
     </bean>
 
     <!-- preview cache reset -->
-    <bean class="org.kimios.kernel.converter.cache.PreviewCacheHandler" />
+    <bean class="org.kimios.converter.cache.PreviewCacheHandler" />
 
-    <service interface="org.kimios.kernel.converter.controller.IConverterController" ref="converterController" />
+    <service interface="org.kimios.converter.controller.IConverterController" ref="converterController" />
 
 </blueprint>

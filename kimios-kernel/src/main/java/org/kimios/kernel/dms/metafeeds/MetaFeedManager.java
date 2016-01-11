@@ -16,9 +16,13 @@
 package org.kimios.kernel.dms.metafeeds;
 
 import org.kimios.kernel.dms.model.MetaFeedImpl;
+import org.kimios.kernel.utils.BundleUrlType;
 import org.kimios.kernel.utils.ClassFinder;
 import org.kimios.utils.extension.ExtensionRegistry;
 import org.kimios.utils.extension.ExtensionRegistryManager;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.wiring.BundleWiring;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,12 +43,36 @@ public class MetaFeedManager extends ExtensionRegistry<MetaFeedImpl>
     {
         log.info("[kimios MetaFeed Manager] - Starting ...");
         metaFeedClass.clear();
-        Collection<Class<? extends MetaFeedImpl>> classes = ClassFinder.findImplement("org.kimios", MetaFeedImpl.class);
+        Collection<Class<? extends MetaFeedImpl>> classes = null;
+        /*try {
+            Bundle kimiosModelBundle = FrameworkUtil.getBundle(MetaFeedImpl.class);
+            log.info("will load class from bundle {}", kimiosModelBundle.getBundleId() + " ==> " + kimiosModelBundle.getSymbolicName());
+            Collection colClass = ClassFinder.findImplement(new BundleUrlType(kimiosModelBundle),
+                    "org.kimios", MetaFeedImpl.class, kimiosModelBundle.adapt(BundleWiring.class).getClassLoader());
+            log.info("found class for {} : {} item(s)", MetaFeedImpl.class, colClass.size());
+            if(classes == null){
+                classes = new ArrayList<Class<? extends MetaFeedImpl>>();
+            }
+            classes.addAll(colClass);
+        }
+        catch (NoClassDefFoundError ex){
+            log.warn("not in osgi environment. will load manually");
+
+        }
+        catch (Throwable ex){
+            log.error("error while loading class from osgi bundle", ex);
+        }*/
+        Collection colClass = ClassFinder.findImplement("org.kimios", MetaFeedImpl.class);
+        classes = colClass;
         if (classes != null) {
             for (Class<? extends MetaFeedImpl> c : classes) {
-                log.info("mManager adding {}", c);
-                metaFeedClass.add(c.getName());
-                this.addClass(c);
+                try {
+                    log.info("mManager adding {}", c);
+                    metaFeedClass.add(c.getName());
+                    this.addClass(c);
+                } catch (Exception ex){
+                    log.error("error while adding {} into {}. Msg: {}", c, metaFeedClass, ex.getMessage());
+                }
             }
             log.info("[kimios MetaFeed Manager] - Started : " + classes.size() + " loaded and available.");
         } else {
@@ -72,7 +100,9 @@ public class MetaFeedManager extends ExtensionRegistry<MetaFeedImpl>
 
     @Override
     protected void handleAdd(Class<? extends MetaFeedImpl> classz) {
-        log.info("adding metafeed {} in {}", classz);
+        log.info("adding metafeed {}", classz);
+        if(metaFeedClass == null)
+            metaFeedClass = new ArrayList<String>();
         metaFeedClass.add(classz.getName());
     }
 

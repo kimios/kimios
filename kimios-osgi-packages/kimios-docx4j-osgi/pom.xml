@@ -1,0 +1,464 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Kimios - Document Management System Software
+  ~ Copyright (C) 2008-2016  DevLib'
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 2 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ aong with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>kimios-osgi-packages</artifactId>
+        <groupId>org.kimios</groupId>
+        <version>1.1-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>kimios-docx4j-osgi</artifactId>
+    <version>3.2.2</version>
+    <packaging>bundle</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.docx4j</groupId>
+            <artifactId>docx4j</artifactId>
+            <version>3.2.2</version>
+            <scope>compile</scope>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.plutext</groupId>
+            <artifactId>jaxb-svg11</artifactId><!-- previously part of docx4j source -->
+            <version>1.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.plutext</groupId>
+            <artifactId>jaxb-xslfo</artifactId><!-- previously part of docx4j source -->
+            <version>1.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.plutext</groupId>
+            <artifactId>jaxb-xmldsig-core</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <!--  events -->
+        <dependency>
+            <groupId>net.engio</groupId>
+            <artifactId>mbassador</artifactId>
+            <version>1.1.10</version>
+        </dependency>
+
+        <!--  From 3.0, docx4j uses slf4j -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.5</version>
+        </dependency>
+
+        <!--  instead of FOP's commons-logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>1.7.5</version>
+        </dependency>
+
+        <!--  .. default to log4j implementation, just like docx4j 2.8.1 and earlier.  -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.7.5</version>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.mail</groupId>
+                    <artifactId>mail</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>javax.jms</groupId>
+                    <artifactId>jms</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.sun.jdmk</groupId>
+                    <artifactId>jmxtools</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.sun.jmx</groupId>
+                    <artifactId>jmxri</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+
+        <dependency>
+            <!--  required for our diffx -->
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.4</version>
+        </dependency>
+        <dependency>
+            <!--  required for ole introspection -->
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.10</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>1.3.1</version> <!--  2.2 works -->
+        </dependency>
+
+        <!-- To use a version of FOP more recent than 1.1
+             (eg built from source), comment out
+             xmlgraphics-commons:1.5 and fop below,
+             and add the following classes to your
+             class path:
+                   http://svn.apache.org/viewvc/xmlgraphics/fop/trunk/lib/batik-all-1.7.jar
+                   (there is probably something in maven
+                    http://svn.apache.org/viewvc/xmlgraphics/fop/trunk/lib/xmlgraphics-commons-svn-trunk.jar
+                 -->
+
+
+        <dependency>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>xmlgraphics-commons</artifactId>
+            <version>1.5</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>fop</artifactId>
+            <version>1.1</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>avalon-framework-api</artifactId>
+                    <groupId>org.apache.avalon.framework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>avalon-framework-impl</artifactId>
+                    <groupId>org.apache.avalon.framework</groupId>
+                </exclusion>
+                <exclusion>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis-ext</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+
+
+
+        <!-- these two are to correct issues in fop dependency -->
+        <dependency>
+            <groupId>org.apache.avalon.framework</groupId>
+            <artifactId>avalon-framework-api</artifactId>
+            <version>4.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.avalon.framework</groupId>
+            <artifactId>avalon-framework-impl</artifactId>
+            <version>4.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>xalan</groupId>
+            <artifactId>xalan</artifactId>
+            <version>2.7.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- These work for basic marshalling/unmarshalling,
+             but not with our XSLT extension functions.
+        <dependency>
+            <groupId>net.sf.saxon</groupId>
+            <artifactId>saxon</artifactId>
+            <version>8.7</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.saxon</groupId>
+            <artifactId>saxon-dom</artifactId>
+            <version>8.7</version>
+        </dependency>
+        -->
+
+        <dependency>
+            <groupId>net.arnx</groupId>
+            <artifactId>wmf2svg</artifactId>
+            <version>0.9.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-scratchpad</artifactId>
+            <version>3.8</version>
+        </dependency>
+
+        <!-- Ensure both the Java 6 and RI interfaces are present,
+             even if the user has just one.
+             NB: this (or an added source location containing them) is
+             necessary (at least for Maven 2.2.1) since without this,
+             Maven doesn't find the Java 6 copy in rt.jar -->
+        <dependency>
+            <groupId>com.googlecode.jaxb-namespaceprefixmapper-interfaces</groupId>
+            <artifactId>JAXBNamespacePrefixMapper</artifactId>
+            <version>2.2.4</version>
+            <!-- http://dev.plutext.org/forums/docx-java-f6/dependency-management-improvements-t739.html -->
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr-runtime</artifactId>
+            <version>3.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>stringtemplate</artifactId>
+            <version>3.2.1</version>
+        </dependency>
+
+        <!--  since 3.1.1 -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>17.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Uncomment for load/save via JCR, which
+                may be found in docx4j-extras.
+                <dependency>
+                    <groupId>javax.jcr</groupId>
+                    <artifactId>jcr</artifactId>
+                    <version>1.0</version>
+                </dependency>
+                -->
+
+
+        <!--	Uncomment for the PDF conversion via HTML or iText, which
+                may be found in docx4j-extras.
+                If you are planning to use that, you'll also want to uncomment
+                the BaseFont stuff in PhysicalFonts.
+                 <dependency>
+                    <groupId>com.lowagie</groupId>
+                    <artifactId>itext-unsigned</artifactId>
+                    <version>2.0.8</version>
+                    <exclusions>
+                        <exclusion>
+                            <artifactId>bouncycastle</artifactId>
+                            <groupId>bcmail-jdk14</groupId>
+                        </exclusion>
+                        <exclusion>
+                            <artifactId>bouncycastle</artifactId>
+                            <groupId>bcprov-jdk14</groupId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+            -->
+
+
+        <!-- Uncomment for the PDF conversion via HTML, which
+                may be found in docx4j-extras.
+                <dependency>
+                    <groupId>pdf-renderer</groupId>
+                    <artifactId>pdf-renderer</artifactId>
+                    <version>0.2009.0324</version>
+                </dependency>
+                <dependency>
+                    <groupId>xhtmlrenderer</groupId>
+                    <artifactId>minium</artifactId>
+                    <version>0.1</version>
+                </dependency>
+                <dependency>
+                    <groupId>xhtmlrenderer</groupId>
+                    <artifactId>core-renderer</artifactId>
+                    <version>R8pre2</version>
+                </dependency>
+         -->
+
+
+
+        <!-- if you want to use the vfs stuff in docx4j-extras, you'll need commons-vfs
+             (one of the two versions below), and jdom.
+              required by commons-vfs;
+             TODO that POM should declare this.
+            <dependency>
+                <groupId>jdom</groupId>
+                <artifactId>jdom</artifactId>
+                <version>1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-vfs</groupId>
+                <artifactId>commons-vfs</artifactId>
+                <version>1.0</version>
+            </dependency>
+            This patched version of VFS is required for WebDAV
+             In the meantime, this may be found in
+             https://webdavclient4j.svn.sourceforge.net/svnroot/webdavclient4j/trunk/m2/org/apache/commons/commons-vfs-patched/
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-vfs-patched</artifactId>
+                <version>1.9.1</version>
+            </dependency>
+        -->
+
+
+        <!-- svn:http://dev.plutext.org/svn/docx4j/trunk/docx4j/m2
+          (stuff not available in public repositories)
+          mvn deploy:deploy-file -f wagon-svn-pom.xml -Dfile=dist/docx4j.jar -DpomFile=pom.xml  -Dpackaging=jar -DrepositoryId=docx4j -Durl=svn:http://dev.plutext.org/svn/docx4j/trunk/docx4j/m2
+      -->
+
+        <dependency>
+            <groupId>org.apache.servicemix.bundles</groupId>
+            <artifactId>org.apache.servicemix.bundles.xalan</artifactId>
+            <version>2.7.2_2</version>
+        </dependency>
+
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>2.5.3</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${pom.groupId}.${pom.artifactId}</Bundle-SymbolicName>
+                        <Bundle-Name>${pom.artifactId}</Bundle-Name>
+                        <Bundle-Version>${pom.version}</Bundle-Version>
+                        <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
+                        <Embed-Transitive>true</Embed-Transitive>
+                        <Import-Package>
+                            com.google.common.cache;version="[17.0,18)";resolution:=optional,
+                            com.sun.org.apache.xerces.internal.util;resolution:=optional,
+                            com.sun.xml.bind.marshaller;resolution:=optional,
+                            com.sun.xml.internal.bind.marshaller;resolution:=optional,
+                            com.topologi.diffx.event;resolution:=optional,
+                            com.topologi.diffx.xml;resolution:=optional,
+                            com.topologi.diffx.xml.esc;resolution:=optional,
+                            javax.xml.bind,
+                            javax.xml.bind.annotation,
+                            javax.xml.bind.annotation.adapters,
+                            javax.xml.bind.util,
+                            javax.xml.datatype,
+                            javax.xml.namespace,
+                            javax.xml.parsers,
+                            javax.xml.stream,
+                            javax.xml.transform,
+                            javax.xml.transform.dom,
+                            javax.xml.transform.sax,
+                            javax.xml.transform.stream,
+                            javax.xml.validation,
+                            javax.xml.xpath,
+                            net.arnx.wmf2svg.gdi;resolution:=optional,
+                            net.arnx.wmf2svg.gdi.svg;resolution:=optional,
+                            net.arnx.wmf2svg.gdi.wmf;resolution:=optional,
+                            net.engio.mbassy.bus;version="[1.1,2)";resolution:=optional,
+                            org.antlr.runtime;resolution:=optional,
+                            org.antlr.stringtemplate;resolution:=optional,
+                            org.antlr.stringtemplate.language;resolution:=optional,
+                            org.apache.avalon.framework.configuration;resolution:=optional,
+                            org.apache.commons.codec.binary,
+                            org.apache.commons.io,
+                            org.apache.commons.io.filefilter,
+                            org.apache.commons.io.output,
+                            org.apache.commons.lang;version="[2.4,3)",
+                            org.apache.commons.lang.text;version="[2.4,3)",
+                            org.apache.fop.apps;resolution:=optional,
+                            org.apache.poi.hwpf;resolution:=optional,
+                            org.apache.poi.hwpf.model;resolution:=optional,
+                            org.apache.poi.hwpf.usermodel;resolution:=optional,
+                            org.apache.poi.poifs.crypt;resolution:=optional,
+                            org.apache.poi.poifs.dev;resolution:=optional,
+                            org.apache.poi.poifs.filesystem;resolution:=optional,
+                            org.apache.xalan.extensions;resolution:=optional,
+                            org.apache.xmlgraphics.fonts;resolution:=optional,
+                            org.apache.xmlgraphics.image.loader;resolution:=optional,
+                            org.apache.xmlgraphics.image.loader.cache;resolution:=optional,
+                            org.apache.xmlgraphics.image.loader.impl;resolution:=optional,
+                            org.apache.xmlgraphics.java2d;resolution:=optional,
+                            org.plutext.jaxb.svg11;resolution:=optional,
+                            org.plutext.jaxb.xmldsig;resolution:=optional,
+                            org.plutext.jaxb.xslfo;resolution:=optional,
+                            org.slf4j;version="[1.6,2)";resolution:=optional,
+                            org.w3c.dom,
+                            org.w3c.dom.css,
+                            org.w3c.dom.traversal,
+                            org.xml.sax,
+                            org.xml.sax.ext,
+                            org.xml.sax.helpers
+                        </Import-Package>
+                        <Export-Package>
+                            com.topologi.diffx.xml,
+                            com.topologi.diffx.xml.esc,
+                            com.topologi.diffx.event,
+
+                            com.google.common.cache,
+
+                            net.arnx.wmf2svg.gdi,
+                            net.arnx.wmf2svg.gdi.svg,
+                            net.arnx.wmf2svg.gdi.wmf,
+                            net.engio.mbassy.bus,
+                            org.antlr.runtime,
+                            org.antlr.stringtemplate,
+                            org.antlr.stringtemplate.language,
+                            org.apache.avalon.framework.configuration,
+                            org.apache.xmlgraphics.fonts,
+                            org.apache.xmlgraphics.image.loader,
+                            org.apache.xmlgraphics.image.loader.cache,
+                            org.apache.xmlgraphics.image.loader.impl,
+                            org.apache.xmlgraphics.java2d,
+
+                            org.plutext.jaxb.*,
+                            org.docx4j.*
+                        </Export-Package>
+                        <!--<Embed-Dependency>jaxb-svg11;scope=compile|runtime</Embed-Dependency>-->
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

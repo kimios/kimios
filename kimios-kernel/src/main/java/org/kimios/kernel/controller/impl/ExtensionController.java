@@ -28,6 +28,7 @@ import org.kimios.kernel.events.model.annotations.DmsEventName;
 import org.kimios.kernel.exception.AccessDeniedException;
 import org.kimios.kernel.exception.CheckoutViolationException;
 import org.kimios.kernel.exception.DataSourceException;
+import org.kimios.kernel.exception.DmsKernelException;
 import org.kimios.kernel.mail.MailTemplate;
 import org.kimios.kernel.mail.Mailer;
 import org.kimios.kernel.security.model.Role;
@@ -39,6 +40,7 @@ import org.kimios.kernel.user.impl.HAuthenticationSource;
 import org.kimios.kernel.utils.PasswordGenerator;
 import org.kimios.kernel.utils.TemplateUtil;
 import org.kimios.utils.configuration.ConfigurationManager;
+import org.kimios.utils.extension.ExtensionRegistryManager;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -198,6 +200,16 @@ public class ExtensionController extends AKimiosController implements IExtension
             return  template != null;
         }catch (Exception ex){
             return false;
+        }
+    }
+
+
+    public List<String> listExtensions(Session session, String extensionType)
+        throws ConfigException, AccessDeniedException {
+        try {
+            return new ArrayList<String>(ExtensionRegistryManager.itemsAsString(Class.forName(extensionType)));
+        }catch (ClassNotFoundException ex){
+            throw new DmsKernelException(ex);
         }
     }
 

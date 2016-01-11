@@ -41,6 +41,11 @@ public class BundleUrlType implements Vfs.UrlType
         this.bundle = FrameworkUtil.getBundle(BundleUrlType.class);
     }
 
+    public BundleUrlType(Bundle bundle)
+    {
+        this.bundle = bundle;
+    }
+
     public Vfs.Dir createDir(URL url)
     {
         return new BundleDir(bundle, url);

@@ -46,6 +46,12 @@
         </dependency>
         <dependency>
             <groupId>org.kimios</groupId>
+            <artifactId>kimios-convert</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
             <artifactId>kimios-utils</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
@@ -367,6 +373,7 @@
                             org.kimios.webservices;resolution:=optional,
                             net.sourceforge.jtds.jdbc,
                             com.sun.xml.bind.marshaller;version="[2.2.11,3)",
+                            org.kimios.converter,
                             *;resolution:=optional
                         </Import-Package>
                     </instructions>

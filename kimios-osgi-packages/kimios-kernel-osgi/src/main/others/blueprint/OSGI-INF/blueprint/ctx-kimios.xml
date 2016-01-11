@@ -116,6 +116,9 @@
      <service id="transferFactoryInstantiatorOsgi" ref="transferfi"
               interface="org.kimios.kernel.filetransfer.IFileTransferFactoryInstantiator"></service>
 
+
+     <bean id="converterRegistry" class="org.kimios.kernel.registries.ConverterRegistry" />
+
 </blueprint>
               
 

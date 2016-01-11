@@ -34,7 +34,7 @@ public class ExtensionRegistryManager {
     private Map<String, ExtensionRegistry> _registries;
 
 
-    private List<Class> _tempItems = new ArrayList<Class>();
+    private Map<String, ClassLoader> _tempItems = new HashMap<String, ClassLoader>();
 
 
     public synchronized static ExtensionRegistryManager init(){
@@ -62,8 +62,8 @@ public class ExtensionRegistryManager {
             spClass = spClass.getSuperclass();
         }
         if(toAddRegistry == null){
-            if(!_registryManager._tempItems.contains(clazz)){
-                _registryManager._tempItems.add(clazz);
+            if(!_registryManager._tempItems.keySet().contains(clazz)){
+                _registryManager._tempItems.put(clazz.getName(), clazz.getClassLoader());
                 logger.info("temporarily added extension for type {}: {}", spClass, clazz);
             }
         } else {
@@ -81,19 +81,31 @@ public class ExtensionRegistryManager {
                     registry.registryClass.getName());
         }
 
-
-
         //check if class already available
-        List<Class> _toRemove = new ArrayList<Class>();
-        for(Class _c: _registryManager._tempItems) {
-            if(registry.registryClass.isAssignableFrom(_c) && _c != null){
-                logger.info("class {} added async in registry {} for gen class {}", _c, registry, registry.registryClass);
-                registry.addClass(_c);
+        List<String> _toRemove = new ArrayList<String>();
+        for(String sC: _registryManager._tempItems.keySet()) {
+            try {
+                ClassLoader classLoader =  _registryManager._tempItems.get(sC);
+                Class _c = classLoader.loadClass(sC);
+                if(registry.registryClass.isAssignableFrom(_c) && _c != null){
+                    logger.info("class {} added async in registry {} for gen class {}", _c, registry, registry.registryClass);
+                    registry.addClass(_c);
+                    _toRemove.add(sC);
+                }
+            }catch (Exception ex){
+                logger.error(sC + "  not found", ex);
             }
+
+
         }
-        _registryManager._tempItems.removeAll(_toRemove);
+        _registryManager._tempItems.keySet().removeAll(_toRemove);
 
         logger.info("Setting registry for class: {} in registryManager (manager: {}", registry.registryClass, registry.getClass());
+
+
+        //check if in osgi mode !!!
+
+
         _registryManager._registries.put(registry.registryClass.getName(), registry);
 
     }

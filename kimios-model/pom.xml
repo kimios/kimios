@@ -181,6 +181,7 @@
                             org.kimios.*
                         </Export-Package>
                         <Meta-Persistence>META-INF/persistence.xml</Meta-Persistence>
+                        <Kimios-Extension>org.kimios.kernel.dms.model.MetaFeed</Kimios-Extension>
                         <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <Include-Resource>{maven-resources}</Include-Resource>
