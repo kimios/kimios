@@ -15,10 +15,11 @@
  */
 package org.kimios.kernel.events;
 
+import org.kimios.api.events.IEventContext;
 import org.kimios.kernel.events.model.EventContext;
-import org.kimios.kernel.events.model.annotations.DmsEvent;
-import org.kimios.kernel.events.model.annotations.DmsEventName;
-import org.kimios.kernel.events.model.annotations.DmsEventOccur;
+import org.kimios.api.events.annotations.DmsEvent;
+import org.kimios.api.events.annotations.DmsEventName;
+import org.kimios.api.events.annotations.DmsEventOccur;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,8 +29,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-public abstract class GenericEventHandler
-{
+public abstract class GenericEventHandler implements org.kimios.api.EventHandler {
 
     private static Logger logger = LoggerFactory.getLogger(GenericEventHandler.class);
 
@@ -40,9 +40,12 @@ public abstract class GenericEventHandler
         return this.methods;
     }
 
-    final public EventContext process(Method method, Object[] arguments, DmsEventOccur _when, Object methodReturn,
-                                      EventContext ctx) throws Throwable
+    @Override
+    final public IEventContext process(Method method, Object[] arguments, DmsEventOccur _when, Object methodReturn,
+                                       IEventContext iContext) throws Throwable
     {
+
+        EventContext ctx = (EventContext)iContext;
         DmsEvent evt = method.getAnnotation(DmsEvent.class);
         if (evt != null) {
             for (Method it : this.getClass().getDeclaredMethods()) {

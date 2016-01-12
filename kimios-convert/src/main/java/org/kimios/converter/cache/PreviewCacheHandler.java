@@ -21,9 +21,9 @@ import org.kimios.kernel.dms.model.Document;
 import org.kimios.kernel.dms.model.DocumentVersion;
 import org.kimios.kernel.events.model.EventContext;
 import org.kimios.kernel.events.GenericEventHandler;
-import org.kimios.kernel.events.model.annotations.DmsEvent;
-import org.kimios.kernel.events.model.annotations.DmsEventName;
-import org.kimios.kernel.events.model.annotations.DmsEventOccur;
+import org.kimios.api.events.annotations.DmsEvent;
+import org.kimios.api.events.annotations.DmsEventName;
+import org.kimios.api.events.annotations.DmsEventOccur;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

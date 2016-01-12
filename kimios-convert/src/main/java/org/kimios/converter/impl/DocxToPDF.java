@@ -21,9 +21,9 @@ import org.apache.poi.xwpf.converter.core.FileImageExtractor;
 import org.apache.poi.xwpf.converter.pdf.PdfConverter;
 import org.apache.poi.xwpf.converter.pdf.PdfOptions;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.kimios.converter.exception.BadInputSource;
-import org.kimios.converter.exception.ConverterException;
-import org.kimios.converter.source.InputSource;
+import org.kimios.converter.exceptions.BadInputSource;
+import org.kimios.exceptions.ConverterException;
+import org.kimios.api.InputSource;
 import org.kimios.converter.source.InputSourceFactory;
 import org.kimios.converter.ConverterImpl;
 

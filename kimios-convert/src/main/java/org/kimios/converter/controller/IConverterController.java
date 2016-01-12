@@ -16,8 +16,8 @@
 
 package org.kimios.converter.controller;
 
-import org.kimios.converter.exception.ConverterException;
-import org.kimios.converter.source.InputSource;
+import org.kimios.api.InputSource;
+import org.kimios.exceptions.ConverterException;
 import org.kimios.kernel.security.model.Session;
 
 import java.util.List;

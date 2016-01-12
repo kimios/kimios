@@ -31,6 +31,18 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-interfaces</artifactId>
+            <version>1.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-exceptions</artifactId>
+            <version>1.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
             <version>${hibernate.version}</version>
@@ -170,7 +182,7 @@
                         <supportedProjectType>jar</supportedProjectType>
                     </supportedProjectTypes>
                     <excludeDependencies>
-                        sqlite-jdbc,quartz,xerces,xercesImpl,dom4j,commons-codec,commons-collections,commons-lang,javassist,xml-apis,stax-api,commons-logging,slf4j-api,slf4j-log4j12,log4j,servlet-api,kimios-index
+                        sqlite-jdbc,quartz,xerces,xercesImpl,dom4j,commons-codec,commons-collections,commons-lang,javassist,xml-apis,stax-api,commons-logging,slf4j-api,slf4j-log4j12,log4j,servlet-api,kimios-index,kimios-interfaces,kimios-exceptions
                     </excludeDependencies>
                     <instructions>
                         <Implementation-Build>${buildNumber}</Implementation-Build>
@@ -181,7 +193,7 @@
                             org.kimios.*
                         </Export-Package>
                         <Meta-Persistence>META-INF/persistence.xml</Meta-Persistence>
-                        <Kimios-Extension>org.kimios.kernel.dms.model.MetaFeed</Kimios-Extension>
+                        <Kimios-Extension>org.kimios.api.MetaFeed</Kimios-Extension>
                         <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <Include-Resource>{maven-resources}</Include-Resource>

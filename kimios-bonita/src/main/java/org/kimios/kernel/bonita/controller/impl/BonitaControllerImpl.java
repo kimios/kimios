@@ -36,7 +36,7 @@ import org.bonitasoft.engine.search.SearchResult;
 import org.bonitasoft.engine.session.APISession;
 import org.kimios.kernel.bonita.BonitaSettings;
 import org.kimios.kernel.bonita.controller.BonitaController;
-import org.kimios.kernel.exception.DmsKernelException;
+import org.kimios.exceptions.DmsKernelException;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.bonita.webservices.factory.CommentWrapperFactory;
 import org.kimios.kernel.bonita.webservices.factory.ProcessWrapperFactory;

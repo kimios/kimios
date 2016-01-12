@@ -20,9 +20,9 @@ import org.apache.commons.io.IOUtils;
 import org.ghost4j.converter.PDFConverter;
 import org.ghost4j.document.PSDocument;
 import org.kimios.converter.ConverterImpl;
-import org.kimios.converter.exception.BadInputSource;
-import org.kimios.converter.exception.ConverterException;
-import org.kimios.converter.source.InputSource;
+import org.kimios.converter.exceptions.BadInputSource;
+import org.kimios.exceptions.ConverterException;
+import org.kimios.api.InputSource;
 import org.kimios.converter.source.InputSourceFactory;
 
 import java.io.*;

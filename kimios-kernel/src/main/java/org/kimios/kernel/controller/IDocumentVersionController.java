@@ -17,8 +17,8 @@ package org.kimios.kernel.controller;
 
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.model.*;
-import org.kimios.kernel.events.model.annotations.DmsEvent;
-import org.kimios.kernel.events.model.annotations.DmsEventName;
+import org.kimios.api.events.annotations.DmsEvent;
+import org.kimios.api.events.annotations.DmsEventName;
 import org.kimios.kernel.exception.*;
 import org.kimios.kernel.security.model.Session;
 

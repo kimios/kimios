@@ -13,11 +13,19 @@
  * You should have received a copy of the GNU Affero General Public License
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kimios.kernel.events.model.annotations;
+package org.kimios.api.events.annotations;
 
-public enum DmsEventOccur
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Retention(RetentionPolicy.RUNTIME)
+@Target(value = ElementType.METHOD)
+public @interface DmsEvent
 {
-    BEFORE,
-    AFTER;
+    DmsEventName[] eventName();
+
+    DmsEventOccur when() default DmsEventOccur.AFTER;
 }
 

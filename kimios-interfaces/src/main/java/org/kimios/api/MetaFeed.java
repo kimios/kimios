@@ -1,6 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2008-2015  DevLib'
+ * Copyright (C) 2008-2016  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -13,19 +13,20 @@
  * You should have received a copy of the GNU Affero General Public License
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kimios.kernel.events.model.annotations;
+package org.kimios.api;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.kimios.exceptions.MetaFeedSearchException;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(value = ElementType.METHOD)
-public @interface DmsEvent
+import java.util.List;
+
+public interface MetaFeed
 {
-    DmsEventName[] eventName();
+    public String getJavaClass();
 
-    DmsEventOccur when() default DmsEventOccur.AFTER;
+    public void setJavaClass(String javaClass);
+
+    public List<String> getValues();
+
+    public String[] search(String criteria) throws MetaFeedSearchException;
 }
 

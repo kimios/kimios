@@ -27,7 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by farf on 6/22/14.
  */
-public abstract class ExtensionRegistry<T> implements IExtensionRegistry<T> {
+public abstract class ExtensionRegistry<T> {
 
 
     private static Logger logger = LoggerFactory.getLogger(ExtensionRegistry.class);
@@ -43,31 +43,26 @@ public abstract class ExtensionRegistry<T> implements IExtensionRegistry<T> {
 
     private Map<String, Class<? extends T>> _registry = new ConcurrentHashMap<String, Class<? extends T>>();
 
-    @Override
     public void addClass(Class<? extends T> extension){
             _registry.put(extension.getName(), extension);
             handleAdd(extension);
             logger.info("added class {}", extension.getName());
     }
 
-    @Override
     public Class<? extends T> readClass(String clazz){
         return _registry.get(clazz);
     }
 
-    @Override
     public void removeClass(String clazz){
         Class<? extends T> t = _registry.remove(clazz);
         handleRemove(t);
         logger.info("removed class {}",clazz);
     }
 
-    @Override
     public Collection<String> listAsString(){
         return _registry.keySet();
     }
 
-    @Override
     public Collection<Class<? extends T>> list(){
         return _registry.values();
     }

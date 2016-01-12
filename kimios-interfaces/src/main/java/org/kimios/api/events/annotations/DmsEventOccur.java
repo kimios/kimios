@@ -13,34 +13,11 @@
  * You should have received a copy of the GNU Affero General Public License
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kimios.kernel.exception;
+package org.kimios.api.events.annotations;
 
-@SuppressWarnings("serial")
-public class MetaFeedSearchException extends DmsKernelException
+public enum DmsEventOccur
 {
-    public MetaFeedSearchException()
-    {
-        super();
-    }
-
-    public MetaFeedSearchException(Exception e, String message)
-    {
-        super(e, message);
-    }
-
-    public MetaFeedSearchException(Exception e)
-    {
-        super(e);
-    }
-
-    public MetaFeedSearchException(String message)
-    {
-        super(message);
-    }
-
-    public String toString()
-    {
-        return "An meta feed search error has occured";
-    }
+    BEFORE,
+    AFTER;
 }
 

@@ -16,6 +16,7 @@
 package org.kimios.kernel.exception;
 
 import org.hibernate.exception.ConstraintViolationException;
+import org.kimios.exceptions.DmsKernelException;
 
 @SuppressWarnings("serial")
 public class DataSourceException extends DmsKernelException

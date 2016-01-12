@@ -16,9 +16,10 @@
 
 package org.kimios.converter;
 
-import org.kimios.converter.exception.ConverterException;
-import org.kimios.converter.exception.MethodNotImplemented;
-import org.kimios.converter.source.InputSource;
+import org.kimios.api.Converter;
+import org.kimios.api.InputSource;
+import org.kimios.exceptions.ConverterException;
+import org.kimios.exceptions.MethodNotImplemented;
 import org.kimios.kernel.configuration.Config;
 import org.kimios.utils.configuration.ConfigurationManager;
 import org.slf4j.Logger;

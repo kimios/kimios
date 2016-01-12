@@ -18,15 +18,15 @@ package org.kimios.kernel.share.controller.impl;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.mail.MultiPartEmail;
+import org.kimios.api.events.annotations.DmsEvent;
+import org.kimios.api.events.annotations.DmsEventName;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.controller.AKimiosController;
-import org.kimios.kernel.events.model.annotations.DmsEvent;
-import org.kimios.kernel.events.model.annotations.DmsEventName;
 import org.kimios.kernel.share.controller.IMailShareController;
 import org.kimios.kernel.dms.model.Document;
 import org.kimios.kernel.dms.model.DocumentVersion;
 import org.kimios.kernel.exception.AccessDeniedException;
-import org.kimios.kernel.exception.DmsKernelException;
+import org.kimios.exceptions.DmsKernelException;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.share.factory.MailContactFactory;
 import org.kimios.kernel.share.mail.EmailFactory;

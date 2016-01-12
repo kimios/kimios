@@ -117,6 +117,15 @@
             <version>${spring.version}</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.thoughtworks.xstream</groupId>
+            <artifactId>xstream</artifactId>
+            <version>${xstream.version}</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -171,7 +180,8 @@
                         <Export-Package>
                             org.bonitasoft.*,org.kimios.kernel.bonita,org.kimios.kernel.bonita.controller,org.kimios.kernel.bonita.webservices.pojo,org.kimios.kernel.bonita.interfaces
                         </Export-Package>
-                        <Embed-Transitive>false</Embed-Transitive>
+                        <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
+                        <Embed-Transitive>true</Embed-Transitive>
                         <Include-Resource>{maven-resources}</Include-Resource>
                         <Import-Package>
                             org.slf4j.impl;resolution:=optional,

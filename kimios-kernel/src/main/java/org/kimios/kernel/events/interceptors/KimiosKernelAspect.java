@@ -25,8 +25,8 @@ import org.kimios.kernel.events.ContextBuilder;
 import org.kimios.kernel.events.IEventHandlerManager;
 import org.kimios.kernel.events.model.EventContext;
 import org.kimios.kernel.events.GenericEventHandler;
-import org.kimios.kernel.events.model.annotations.DmsEvent;
-import org.kimios.kernel.events.model.annotations.DmsEventOccur;
+import org.kimios.api.events.annotations.DmsEvent;
+import org.kimios.api.events.annotations.DmsEventOccur;
 import org.kimios.kernel.rules.model.RuleBean;
 import org.kimios.kernel.rules.RuleManager;
 import org.slf4j.Logger;
@@ -142,7 +142,7 @@ public class KimiosKernelAspect {
 
     }
 
-    @Pointcut("execution(@org.kimios.kernel.events.model.annotations.DmsEvent * *(..))")
+    @Pointcut("execution(@org.kimios.api.events.annotations.DmsEvent * *(..))")
     public void eventMethod(){}
 
     @Pointcut("execution(* org.kimios.kernel.events.GenericEventHandler+.*(..))")

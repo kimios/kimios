@@ -15,9 +15,10 @@
  */
 package org.kimios.kernel.events.model;
 
+import org.kimios.api.events.IEventContext;
 import org.kimios.kernel.dms.model.DMEntity;
-import org.kimios.kernel.events.model.annotations.DmsEventName;
-import org.kimios.kernel.events.model.annotations.DmsEventOccur;
+import org.kimios.api.events.annotations.DmsEventName;
+import org.kimios.api.events.annotations.DmsEventOccur;
 import org.kimios.kernel.security.model.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +26,7 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EventContext
+public class EventContext implements IEventContext
 {
     private static Logger logger = LoggerFactory.getLogger(EventContext.class);
 

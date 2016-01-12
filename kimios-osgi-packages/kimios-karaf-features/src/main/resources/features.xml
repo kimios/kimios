@@ -64,10 +64,14 @@
     <feature version="${project.version}" name="kimios-core">
         <!--<configfile finalname="/deploy/kimios-ds.xml">mvn:org.kimios/kimios-karaf-features/${project.version}/xml/datasource</configfile>
         <configfile finalname="/deploy/kimios-ds.xml">file:///home/farf/Development/kimios-infra/docker/finalkimios/kimios-srv/kimios-ds.xml</configfile>-->
+
+        <bundle>mvn:org.kimios/kimios-exceptions/${project.version}/jar</bundle>
+        <bundle>mvn:org.kimios/kimios-interfaces/${project.version}/jar</bundle>
         <bundle>mvn:org.kimios/kimios-model/${project.version}/jar/blueprint</bundle>
         <bundle>mvn:org.kimios/kimios-kernel-osgi/${project.version}/jar/blueprint</bundle>
         <bundle>mvn:org.kimios/kimios-index/${project.version}/jar/osgi</bundle>
         <bundle>mvn:org.kimios/kimios-share/${project.version}/jar/osgi</bundle>
+        <bundle>mvn:org.kimios/kimios-docx4j-osgi/3.2.2/jar</bundle>
         <bundle>mvn:org.kimios/kimios-convert/${project.version}/jar/osgi</bundle>
         <bundle>mvn:org.kimios/kimios-bonita/${project.version}/jar/osgi</bundle>
 	    <bundle>mvn:org.kimios/kimios-karaf-commands/${project.version}</bundle>
@@ -76,6 +80,7 @@
         <config name="org.apache.cxf.osgi">
             org.apache.cxf.servlet.context = /services
         </config>
+        <bundle>mvn:io.swagger/swagger-annotations/1.5.4</bundle>
         <bundle>mvn:org.kimios/kimios-services/${project.version}/jar/blueprint</bundle>
         <bundle>mvn:org.kimios/kimios-bonita-service/${project.version}/jar/blueprint</bundle>
         <bundle>mvn:org.kimios/kimios-convert-service/${project.version}/jar/blueprint</bundle>

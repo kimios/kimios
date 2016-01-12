@@ -16,6 +16,7 @@
 package org.kimios.kernel.controller;
 
 import org.kimios.exceptions.ConfigException;
+import org.kimios.exceptions.MetaFeedSearchException;
 import org.kimios.kernel.dms.model.*;
 import org.kimios.kernel.exception.*;
 import org.kimios.kernel.security.model.Session;

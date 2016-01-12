@@ -19,7 +19,7 @@ import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.*;
 import org.kimios.kernel.dms.model.*;
 import org.kimios.kernel.events.model.EventContext;
-import org.kimios.kernel.events.model.annotations.DmsEventName;
+import org.kimios.api.events.annotations.DmsEventName;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.filetransfer.model.DataTransfer;
 import org.kimios.kernel.filetransfer.DataTransferFactory;

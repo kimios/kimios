@@ -14,30 +14,9 @@
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.kimios.converter.source;
+package org.kimios.api.events;
 
-import org.kimios.converter.exception.MethodNotImplemented;
-
-import java.io.IOException;
-import java.io.InputStream;
-
-public interface InputSource {
-
-    InputStream getInputStream() throws MethodNotImplemented, IOException;
-
-    String getType() throws MethodNotImplemented;
-
-    String getMimeType();
-
-    void setMimeType(String  mimeType) throws MethodNotImplemented;
-
-    String getName() throws MethodNotImplemented;
-
-    void setHumanName(String altName);
-
-    String getHumanName();
-
-    void setPublicUrl(String publicUrl);
-
-    public String getPublicUrl();
-}
+/**
+ * Created by farf on 11/01/16.
+ */
+public interface IEventContext {}

@@ -16,7 +16,7 @@
 
 package org.kimios.kernel.share.controller;
 
-import org.kimios.kernel.exception.DmsKernelException;
+import org.kimios.exceptions.DmsKernelException;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.share.model.MailContact;
 

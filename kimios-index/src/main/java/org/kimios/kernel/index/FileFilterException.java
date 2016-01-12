@@ -16,7 +16,7 @@
 
 package org.kimios.kernel.index;
 
-import org.kimios.kernel.exception.DmsKernelException;
+import org.kimios.exceptions.DmsKernelException;
 
 public class FileFilterException extends DmsKernelException
 {

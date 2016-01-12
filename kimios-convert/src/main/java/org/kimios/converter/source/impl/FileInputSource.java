@@ -16,7 +16,7 @@
 
 package org.kimios.converter.source.impl;
 
-import org.kimios.converter.exception.MethodNotImplemented;
+import org.kimios.exceptions.MethodNotImplemented;
 import org.kimios.converter.source.InputSourceImpl;
 
 import java.io.File;

@@ -15,6 +15,8 @@
  */
 package org.kimios.kernel.exception;
 
+import org.kimios.exceptions.DmsKernelException;
+
 @SuppressWarnings("serial")
 public class TreeException extends DmsKernelException
 {

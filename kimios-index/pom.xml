@@ -33,6 +33,12 @@
     </dependency>
     <dependency>
       <groupId>org.kimios</groupId>
+      <artifactId>kimios-interfaces</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.kimios</groupId>
       <artifactId>kimios-utils</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>

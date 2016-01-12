@@ -17,8 +17,8 @@
 package org.kimios.converter.impl;
 
 import org.apache.commons.io.IOUtils;
-import org.kimios.converter.exception.ConverterException;
-import org.kimios.converter.source.InputSource;
+import org.kimios.exceptions.ConverterException;
+import org.kimios.api.InputSource;
 import org.kimios.converter.source.InputSourceFactory;
 import org.kimios.converter.ConverterImpl;
 

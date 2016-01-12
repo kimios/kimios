@@ -16,7 +16,8 @@
 
 package org.kimios.converter;
 
-import org.kimios.converter.source.InputSource;
+
+import org.kimios.api.InputSource;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

@@ -95,8 +95,9 @@
         </repository>
     </distributionManagement>
     <modules>
-        <module>kimios-utils</module>
         <module>kimios-exceptions</module>
+        <module>kimios-interfaces</module>
+        <module>kimios-utils</module>
         <module>kimios-model</module>
         <module>kimios-test</module>
         <module>kimios-kernel</module>

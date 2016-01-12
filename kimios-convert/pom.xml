@@ -47,10 +47,18 @@
 
         <dependency>
             <groupId>org.kimios</groupId>
+            <artifactId>kimios-interfaces</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.kimios</groupId>
             <artifactId>kimios-kernel</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>org.kimios</groupId>
             <artifactId>kimios-model</artifactId>
@@ -362,7 +370,7 @@
                         <Export-Package>
                             org.kimios.converter.*
                         </Export-Package>
-                        <Kimios-Extension>org.kimios.converter.Converter</Kimios-Extension>
+                        <Kimios-Extension>org.kimios.api.Converter</Kimios-Extension>
                         <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <Include-Resource>{maven-resources}</Include-Resource>

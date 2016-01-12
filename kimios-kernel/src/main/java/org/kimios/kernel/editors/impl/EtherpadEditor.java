@@ -22,11 +22,11 @@ import org.apache.commons.io.IOUtils;
 import org.kimios.kernel.controller.IDocumentController;
 import org.kimios.kernel.controller.IDocumentVersionController;
 import org.kimios.kernel.controller.IFileTransferController;
-import org.kimios.kernel.dms.DocumentVersion;
+import org.kimios.kernel.dms.model.DocumentVersion;
 import org.kimios.kernel.editors.ExternalEditor;
-import org.kimios.kernel.filetransfer.DataTransfer;
-import org.kimios.kernel.repositories.RepositoryManager;
-import org.kimios.kernel.security.Session;
+import org.kimios.kernel.filetransfer.model.DataTransfer;
+import org.kimios.kernel.repositories.impl.RepositoryManager;
+import org.kimios.kernel.security.model.Session;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;

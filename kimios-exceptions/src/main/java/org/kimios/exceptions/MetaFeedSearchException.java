@@ -1,6 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2008-2015  DevLib'
+ * Copyright (C) 2008-2016  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -13,20 +13,34 @@
  * You should have received a copy of the GNU Affero General Public License
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kimios.kernel.dms.model;
+package org.kimios.exceptions;
 
-import org.kimios.kernel.exception.MetaFeedSearchException;
-
-import java.util.List;
-
-public interface MetaFeed
+@SuppressWarnings("serial")
+public class MetaFeedSearchException extends DmsKernelException
 {
-    public String getJavaClass();
+    public MetaFeedSearchException()
+    {
+        super();
+    }
 
-    public void setJavaClass(String javaClass);
+    public MetaFeedSearchException(Exception e, String message)
+    {
+        super(e, message);
+    }
 
-    public List<String> getValues();
+    public MetaFeedSearchException(Exception e)
+    {
+        super(e);
+    }
 
-    public String[] search(String criteria) throws MetaFeedSearchException;
+    public MetaFeedSearchException(String message)
+    {
+        super(message);
+    }
+
+    public String toString()
+    {
+        return "An meta feed search error has occured";
+    }
 }
 

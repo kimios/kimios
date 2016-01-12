@@ -16,6 +16,7 @@
 package org.kimios.webservices;
 
 import org.kimios.exceptions.ConfigException;
+import org.kimios.exceptions.MetaFeedSearchException;
 import org.kimios.kernel.exception.*;
 import org.kimios.kernel.security.ISessionManager;
 import org.kimios.kernel.security.model.Session;

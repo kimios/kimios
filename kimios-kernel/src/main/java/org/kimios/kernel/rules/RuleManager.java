@@ -19,8 +19,8 @@ import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.kimios.kernel.events.model.EventContext;
-import org.kimios.kernel.events.model.annotations.DmsEvent;
-import org.kimios.kernel.events.model.annotations.DmsEventOccur;
+import org.kimios.api.events.annotations.DmsEvent;
+import org.kimios.api.events.annotations.DmsEventOccur;
 import org.kimios.kernel.rules.impl.RuleImpl;
 import org.kimios.kernel.rules.model.EventBean;
 import org.kimios.kernel.rules.model.RuleBean;
@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

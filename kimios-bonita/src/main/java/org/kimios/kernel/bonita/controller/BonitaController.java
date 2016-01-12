@@ -16,7 +16,7 @@
 
 package org.kimios.kernel.bonita.controller;
 
-import org.kimios.kernel.exception.DmsKernelException;
+import org.kimios.exceptions.DmsKernelException;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.bonita.webservices.pojo.CommentWrapper;
 import org.kimios.kernel.bonita.webservices.pojo.ProcessWrapper;

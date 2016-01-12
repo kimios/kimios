@@ -23,7 +23,7 @@
         </encoder>
     </appender>
 
-    <root level="INFO">
+    <root level="ERROR">
         <appender-ref ref="STDOUT" />
     </root>
 
@@ -35,8 +35,8 @@
     <logger name="org.apache.cxf" level="ERROR" />
 
     <!-- kimios -->
-    <logger name="kimios" level="INFO" />
-    <logger name="org.kimios" level="INFO" />
+    <logger name="kimios" level="ERROR" />
+    <logger name="org.kimios" level="ERROR" />
 
 
 

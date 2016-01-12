@@ -22,9 +22,9 @@ import org.apache.poi.xwpf.converter.core.FileURIResolver;
 import org.apache.poi.xwpf.converter.xhtml.XHTMLConverter;
 import org.apache.poi.xwpf.converter.xhtml.XHTMLOptions;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.kimios.converter.exception.BadInputSource;
-import org.kimios.converter.exception.ConverterException;
-import org.kimios.converter.source.InputSource;
+import org.kimios.converter.exceptions.BadInputSource;
+import org.kimios.exceptions.ConverterException;
+import org.kimios.api.InputSource;
 import org.kimios.converter.source.InputSourceFactory;
 import org.kimios.converter.ConverterImpl;
 

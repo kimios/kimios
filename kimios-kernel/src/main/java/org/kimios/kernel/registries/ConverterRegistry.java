@@ -16,7 +16,7 @@
 
 package org.kimios.kernel.registries;
 
-import org.kimios.converter.Converter;
+import org.kimios.api.Converter;
 import org.kimios.utils.extension.ExtensionRegistry;
 
 /**

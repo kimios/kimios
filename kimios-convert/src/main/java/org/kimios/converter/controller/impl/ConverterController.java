@@ -17,13 +17,13 @@
 package org.kimios.converter.controller.impl;
 
 import org.apache.commons.io.FileUtils;
+import org.kimios.api.Converter;
+import org.kimios.api.InputSource;
 import org.kimios.converter.ConverterCacheHandler;
-import org.kimios.converter.source.InputSource;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.converter.controller.IConverterController;
-import org.kimios.converter.Converter;
 import org.kimios.converter.ConverterFactory;
-import org.kimios.converter.exception.ConverterException;
+import org.kimios.exceptions.ConverterException;
 import org.kimios.converter.source.InputSourceFactory;
 import org.kimios.converter.source.impl.FileInputSource;
 import org.kimios.kernel.dms.model.Document;

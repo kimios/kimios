@@ -21,11 +21,11 @@ import org.apache.commons.io.IOUtils;
 import org.apache.poi.hwpf.HWPFDocumentCore;
 import org.apache.poi.hwpf.converter.WordToHtmlConverter;
 import org.apache.poi.hwpf.converter.WordToHtmlUtils;
-import org.kimios.converter.source.InputSource;
+import org.kimios.api.InputSource;
 import org.kimios.converter.source.InputSourceFactory;
 import org.kimios.converter.ConverterImpl;
-import org.kimios.converter.exception.BadInputSource;
-import org.kimios.converter.exception.ConverterException;
+import org.kimios.converter.exceptions.BadInputSource;
+import org.kimios.exceptions.ConverterException;
 import org.w3c.dom.Document;
 
 import javax.xml.parsers.DocumentBuilderFactory;

@@ -16,7 +16,8 @@
 
 package org.kimios.converter.source;
 
-import org.kimios.converter.exception.MethodNotImplemented;
+import org.kimios.api.InputSource;
+import org.kimios.exceptions.MethodNotImplemented;
 
 public abstract class InputSourceImpl implements InputSource {
     /**

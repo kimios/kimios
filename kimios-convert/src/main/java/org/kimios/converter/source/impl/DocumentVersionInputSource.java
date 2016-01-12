@@ -16,7 +16,7 @@
 
 package org.kimios.converter.source.impl;
 
-import org.kimios.converter.exception.MethodNotImplemented;
+import org.kimios.exceptions.MethodNotImplemented;
 import org.kimios.converter.source.InputSourceImpl;
 import org.kimios.kernel.dms.model.DocumentVersion;
 import org.kimios.kernel.repositories.impl.RepositoryManager;

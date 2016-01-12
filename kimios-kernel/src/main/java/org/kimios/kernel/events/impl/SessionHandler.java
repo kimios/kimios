@@ -16,9 +16,9 @@
 package org.kimios.kernel.events.impl;
 
 import org.kimios.kernel.events.GenericEventHandler;
-import org.kimios.kernel.events.model.annotations.DmsEvent;
-import org.kimios.kernel.events.model.annotations.DmsEventName;
-import org.kimios.kernel.events.model.annotations.DmsEventOccur;
+import org.kimios.api.events.annotations.DmsEvent;
+import org.kimios.api.events.annotations.DmsEventName;
+import org.kimios.api.events.annotations.DmsEventOccur;
 
 public class SessionHandler extends GenericEventHandler
 {

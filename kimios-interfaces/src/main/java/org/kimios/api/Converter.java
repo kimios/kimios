@@ -14,10 +14,30 @@
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.kimios.converter.exception;
+package org.kimios.api;
 
-public class MethodNotImplemented extends ConverterException {
-    public MethodNotImplemented(String s) {
-        super("Method " + s + " is not implemented for this Converter implementation");
-    }
+
+import org.kimios.exceptions.ConverterException;
+
+import java.util.List;
+
+public interface Converter {
+
+    /**
+     * Get a InputSource from a given InputSource
+     */
+    InputSource convertInputSource(InputSource source)
+            throws ConverterException;
+
+    /**
+     * Get a InputSource from a collection of InputSource
+     */
+    InputSource convertInputSources(List<InputSource> sources)
+            throws ConverterException;
+
+    /*
+        Get Content Type OutPut
+     */
+    String converterTargetMimeType();
+
 }

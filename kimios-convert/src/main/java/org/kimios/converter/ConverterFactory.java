@@ -16,9 +16,10 @@
 
 package org.kimios.converter;
 
+import org.kimios.api.Converter;
 import org.kimios.converter.impl.BarcodeTransformer;
 import org.kimios.converter.impl.DocToHTML;
-import org.kimios.converter.exception.ConverterNotFound;
+import org.kimios.exceptions.ConverterNotFound;
 import org.kimios.converter.impl.FileToZip;
 import org.kimios.converter.impl.PDFMerger;
 import org.slf4j.Logger;

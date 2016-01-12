@@ -16,8 +16,8 @@
 package org.kimios.kernel.jobs.security;
 
 import org.kimios.kernel.dms.model.DMEntity;
-import org.kimios.kernel.events.model.annotations.DmsEvent;
-import org.kimios.kernel.events.model.annotations.DmsEventName;
+import org.kimios.api.events.annotations.DmsEvent;
+import org.kimios.api.events.annotations.DmsEventName;
 import org.kimios.kernel.security.model.DMEntityACL;
 import org.kimios.kernel.security.model.DMEntitySecurity;
 import org.kimios.kernel.security.model.Session;

@@ -16,6 +16,7 @@
 
 package org.kimios.converter.source;
 
+import org.kimios.api.InputSource;
 import org.kimios.converter.source.impl.DocumentVersionInputSource;
 import org.kimios.converter.source.impl.FileInputSource;
 import org.kimios.kernel.dms.model.DocumentVersion;

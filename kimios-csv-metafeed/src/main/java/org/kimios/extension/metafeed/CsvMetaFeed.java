@@ -16,8 +16,8 @@
 
 package org.kimios.extension.metafeed;
 
+import org.kimios.exceptions.MetaFeedSearchException;
 import org.kimios.kernel.dms.model.MetaFeedImpl;
-import org.kimios.kernel.exception.MetaFeedSearchException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

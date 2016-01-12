@@ -22,16 +22,12 @@ import org.docx4j.convert.out.HTMLSettings;
 import org.docx4j.convert.out.common.AbstractWriterRegistry;
 import org.docx4j.convert.out.common.Exporter;
 import org.docx4j.convert.out.common.WmlXsltExporterDelegate;
-import org.docx4j.convert.out.common.XsltCommonFunctions;
 import org.docx4j.convert.out.html.AbstractHTMLExporter3;
 import org.docx4j.convert.out.html.HTMLConversionContext;
 import org.docx4j.convert.out.html.HTMLExporterXslt;
-import org.docx4j.events.EventFinished;
-import org.docx4j.events.StartEvent;
-import org.docx4j.events.WellKnownProcessSteps;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
-import org.kimios.converter.Converter;
+import org.kimios.api.Converter;
 import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,8 +39,6 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
-import java.util.Iterator;
-import java.util.Map;
 
 /**
  * Created by farf on 09/01/16.

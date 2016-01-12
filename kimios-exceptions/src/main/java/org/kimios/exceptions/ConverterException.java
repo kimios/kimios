@@ -14,14 +14,16 @@
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.kimios.converter.exception;
+package org.kimios.exceptions;
 
-public class ConverterNotFound extends ConverterException {
-    public ConverterNotFound(String converterName) {
-        super("Converter not found: " + converterName);
+import org.kimios.exceptions.DmsKernelException;
+
+public class ConverterException extends DmsKernelException {
+    public ConverterException(String s) {
+        super(s);
     }
 
-    public ConverterNotFound(Exception e) {
-        this(e.getMessage());
+    public ConverterException(Exception e) {
+        super(e);
     }
 }

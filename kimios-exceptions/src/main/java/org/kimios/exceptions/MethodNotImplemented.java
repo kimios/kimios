@@ -14,12 +14,12 @@
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.kimios.converter.exception;
+package org.kimios.exceptions;
 
-import org.kimios.converter.Converter;
+import org.kimios.exceptions.ConverterException;
 
-public class BadInputSource extends ConverterException {
-    public BadInputSource(Converter converter) {
-        super("Bad InputSource for given Converter: " + converter.getClass().getName());
+public class MethodNotImplemented extends ConverterException {
+    public MethodNotImplemented(String s) {
+        super("Method " + s + " is not implemented for this Converter implementation");
     }
 }

@@ -24,9 +24,9 @@ import org.asciidoctor.OptionsBuilder;
 import org.asciidoctor.internal.JRubyAsciidoctor;
 import org.jruby.RubyInstanceConfig;
 import org.jruby.javasupport.JavaEmbedUtils;
-import org.kimios.converter.exception.BadInputSource;
-import org.kimios.converter.exception.ConverterException;
-import org.kimios.converter.source.InputSource;
+import org.kimios.converter.exceptions.BadInputSource;
+import org.kimios.exceptions.ConverterException;
+import org.kimios.api.InputSource;
 import org.kimios.converter.source.InputSourceFactory;
 import org.kimios.converter.ConverterImpl;
 

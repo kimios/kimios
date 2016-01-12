@@ -14,16 +14,31 @@
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.kimios.converter.exception;
+package org.kimios.api;
 
-import org.kimios.kernel.exception.DmsKernelException;
 
-public class ConverterException extends DmsKernelException {
-    public ConverterException(String s) {
-        super(s);
-    }
+import org.kimios.exceptions.MethodNotImplemented;
 
-    public ConverterException(Exception e) {
-        super(e);
-    }
+import java.io.IOException;
+import java.io.InputStream;
+
+public interface InputSource {
+
+    InputStream getInputStream() throws MethodNotImplemented, IOException;
+
+    String getType() throws MethodNotImplemented;
+
+    String getMimeType();
+
+    void setMimeType(String  mimeType) throws MethodNotImplemented;
+
+    String getName() throws MethodNotImplemented;
+
+    void setHumanName(String altName);
+
+    String getHumanName();
+
+    void setPublicUrl(String publicUrl);
+
+    public String getPublicUrl();
 }

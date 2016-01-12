@@ -16,8 +16,7 @@
 
 package org.kimios.kernel.editors;
 
-import org.kimios.kernel.dms.Lock;
-import org.kimios.kernel.security.Session;
+import org.kimios.kernel.security.model.Session;
 
 /**
  * Created by farf on 07/01/16.

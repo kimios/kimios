@@ -16,6 +16,7 @@
 package org.kimios.kernel.controller.impl;
 
 import org.kimios.exceptions.ConfigException;
+import org.kimios.exceptions.MetaFeedSearchException;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.IStudioController;
 import org.kimios.kernel.dms.*;

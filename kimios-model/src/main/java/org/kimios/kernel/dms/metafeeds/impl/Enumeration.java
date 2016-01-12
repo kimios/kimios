@@ -18,7 +18,7 @@ package org.kimios.kernel.dms.metafeeds.impl;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.kimios.kernel.dms.model.MetaFeedImpl;
-import org.kimios.kernel.exception.MetaFeedSearchException;
+import org.kimios.exceptions.MetaFeedSearchException;
 
 import javax.persistence.*;
 import java.util.ArrayList;

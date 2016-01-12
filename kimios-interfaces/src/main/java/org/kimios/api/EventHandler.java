@@ -14,30 +14,17 @@
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.kimios.converter;
+package org.kimios.api;
 
-import org.kimios.converter.source.InputSource;
-import org.kimios.converter.exception.ConverterException;
+import org.kimios.api.events.IEventContext;
+import org.kimios.api.events.annotations.DmsEventOccur;
 
-import java.util.List;
+import java.lang.reflect.Method;
 
-public interface Converter {
-
-    /**
-     * Get a InputSource from a given InputSource
-     */
-    InputSource convertInputSource(InputSource source)
-            throws ConverterException;
-
-    /**
-     * Get a InputSource from a collection of InputSource
-     */
-    InputSource convertInputSources(List<InputSource> sources)
-            throws ConverterException;
-
-    /*
-        Get Content Type OutPut
-     */
-    String converterTargetMimeType();
-
+/**
+ * Created by farf on 11/01/16.
+ */
+public interface EventHandler {
+    IEventContext process(Method method, Object[] arguments, DmsEventOccur _when, Object methodReturn,
+                          IEventContext ctx) throws Throwable;
 }

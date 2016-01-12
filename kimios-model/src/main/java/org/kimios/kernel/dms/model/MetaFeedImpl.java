@@ -15,7 +15,8 @@
  */
 package org.kimios.kernel.dms.model;
 
-import org.kimios.kernel.exception.MetaFeedSearchException;
+import org.kimios.api.MetaFeed;
+import org.kimios.exceptions.MetaFeedSearchException;
 
 import javax.persistence.*;
 import java.util.List;
