@@ -26,8 +26,6 @@ import org.kimios.webservices.editors.EditorService;
  */
 public class EditorServiceImpl implements EditorService {
 
-
-
     private ExternalEditor externalEditor;
     private IServiceHelper helper;
 

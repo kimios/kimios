@@ -47,7 +47,7 @@
 
 
     <!-- Service endpoint -->
-    <jaxws:endpoint id="converterServiceWs"
+    <jaxws:endpoint id="editorServiceWs"
                     implementorClass="org.kimios.webservices.editors.impl.EditorServiceImpl"
                     implementor="#converterServiceBean"
                     address="/EditorService"
