@@ -38,4 +38,6 @@ public class Config
     public static String DEFAULT_DOCUMENT_TYPE = "default.documenttype";
 
     public static String BONITA_ENABLED = "bonita.enabled";
+
+    public static String TRASH_FEATURE_ENABLED = "dms.enable.trash";
 }

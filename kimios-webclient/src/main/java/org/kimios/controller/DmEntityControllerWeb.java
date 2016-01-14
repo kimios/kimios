@@ -26,6 +26,7 @@ import org.kimios.client.controller.FolderController;
 import org.kimios.client.controller.SearchController;
 import org.kimios.client.controller.WorkspaceController;
 import org.kimios.client.controller.helpers.XMLGenerators;
+import org.kimios.core.configuration.Config;
 import org.kimios.core.wrappers.DMEntity;
 import org.kimios.kernel.ws.pojo.*;
 import org.kimios.utils.configuration.ConfigurationManager;
@@ -117,7 +118,8 @@ public class DmEntityControllerWeb extends Controller
                 break;
             case 3:
                 //mode to trash
-                if(ConfigurationManager.getValue("dms.enable.trash") != null && ConfigurationManager.getValue("dms.enable.trash").toLowerCase().equals("true")){
+                if(ConfigurationManager.getValue(Config.TRASH_FEATURE_ENABLED) != null
+                        && ConfigurationManager.getValue(Config.TRASH_FEATURE_ENABLED).toLowerCase().equals("true")){
                     extensionController.addDocumentToTrash(sessionUid, dmEntityUid);
                 }else {
                     documentController.deleteDocument(sessionUid, dmEntityUid);
@@ -285,7 +287,8 @@ public class DmEntityControllerWeb extends Controller
                     folderController.deleteFolder(sessionUid, dmEntityUid);
                     break;
                 case 3:
-                    if(ConfigurationManager.getValue("dms.enable.trash") != null && ConfigurationManager.getValue("dms.enable.trash").equals("true")){
+                    if(ConfigurationManager.getValue(Config.TRASH_FEATURE_ENABLED) != null
+                            && ConfigurationManager.getValue(Config.TRASH_FEATURE_ENABLED).equals("true")){
                         extensionController.addDocumentToTrash(sessionUid, dmEntityUid);
                     }else {
                         documentController.deleteDocument(sessionUid, dmEntityUid);

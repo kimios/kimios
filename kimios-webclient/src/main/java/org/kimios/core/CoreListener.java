@@ -97,6 +97,8 @@ public class CoreListener implements ServletContextListener {
 
                     webProperties.setProperty(Config.DEFAULT_DOMAIN, "kimios");
 
+                    webProperties.setProperty(Config.TRASH_FEATURE_ENABLED, "true");
+
                     String temporaryPathName = "kimios-tmp";
                     File temporaryDirectory = new File(temporaryPathName);
                     temporaryDirectory.mkdirs();
