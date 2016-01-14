@@ -18,13 +18,26 @@ package org.kimios.webservices.editors.impl;
 
 import org.kimios.editors.model.EditorData;
 import org.kimios.editors.ExternalEditor;
+import org.kimios.editors.model.EtherpadEditorData;
 import org.kimios.webservices.IServiceHelper;
 import org.kimios.webservices.editors.EditorService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Cookie;
+import javax.ws.rs.core.NewCookie;
+import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by farf on 08/01/16.
  */
 public class EditorServiceImpl implements EditorService {
+
+    private static Logger logger = LoggerFactory.getLogger(EditorServiceImpl.class);
 
     private ExternalEditor externalEditor;
     private IServiceHelper helper;
@@ -34,30 +47,51 @@ public class EditorServiceImpl implements EditorService {
         this.helper = helper;
     }
 
+
+    @Context
+    private javax.servlet.http.HttpServletResponse response;
+
+    @Context
+    private HttpServletRequest request;
+
     @Override
     public EditorData startDocumentEdit(String sessionId, long documentId) throws Exception {
-        try{
-           return externalEditor.startDocumentEdit(helper.getSession(sessionId), documentId);
-        } catch (Exception ex){
+        try {
+            EditorData data = externalEditor.startDocumentEdit(helper.getSession(sessionId), documentId);
+            //if necessary, set security information (cookies, headers ...), required by the editor!
+            if (data.getCookiesData() != null && data.getCookiesData().size() > 0) {
+                for (String cName : data.getCookiesData().keySet()) {
+                    javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("!Proxy!" + data.getProxyName() + cName,
+                            data.getCookiesData().get(cName));
+                    cookie.setPath("/etherpad");
+                    cookie.setDomain(request.getServerName());
+                    cookie.setMaxAge(3600);
+                    response.addCookie(cookie);
+                    logger.info("added cookie " + cookie.getName() + " " + cookie.getValue());
+
+                }
+            }
+            return data;
+        } catch (Exception ex) {
             throw helper.convertException(ex);
         }
     }
 
     @Override
     public EditorData versionDocument(String sessionId, EditorData editData) throws Exception {
-        try{
+        try {
 
             return externalEditor.versionDocument(helper.getSession(sessionId), editData);
-        } catch (Exception ex){
+        } catch (Exception ex) {
             throw helper.convertException(ex);
         }
     }
 
     @Override
     public EditorData endDocumentEdit(String sessionId, EditorData editData) throws Exception {
-        try{
+        try {
             return externalEditor.endDocumentEdit(helper.getSession(sessionId), editData);
-        } catch (Exception ex){
+        } catch (Exception ex) {
             throw helper.convertException(ex);
         }
     }

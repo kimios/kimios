@@ -36,6 +36,18 @@
         </dependency>
         <dependency>
             <groupId>org.kimios</groupId>
+            <artifactId>kimios-interfaces</artifactId>
+            <version>1.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-utils</artifactId>
+            <version>1.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
             <artifactId>kimios-model</artifactId>
             <version>1.1-SNAPSHOT</version>
             <scope>provided</scope>
@@ -65,6 +77,39 @@
             <artifactId>etherpad_lite_client</artifactId>
             <version>1.2.12</version>
             <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mitre.dsmiley.httpproxy</groupId>
+            <artifactId>smiley-http-proxy-servlet</artifactId>
+            <version>1.7</version>
+            <scope>compile</scope>
+        </dependency>
+
+
+
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-proxy</artifactId>
+            <version>9.2.14.v20151106</version>
+            <scope>provided</scope>
+        </dependency>
+
+
+        <!-- end etherpad -->
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slfj.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.3</version>
+            <scope>provided</scope>
         </dependency>
 
     </dependencies>
@@ -111,11 +156,12 @@
                         quartz,xerces,xercesImpl,dom4j,commons-codec,commons-collections,commons-lang,javassist,xml-apis,stax-api,commons-logging,slf4j-api,log4j
                     </excludeDependencies>
                     <instructions>
-                        <Bundle-SymbolicName>kimios-bonita</Bundle-SymbolicName>
+                        <Bundle-SymbolicName>kimios-editors</Bundle-SymbolicName>
                         <Bundle-Name>${project.name}</Bundle-Name>
                         <Export-Package>
-                            org.kimios.editors
+                            org.kimios.editors,org.kimios.editors.model,org.mitre.dsmiley.httpproxy
                         </Export-Package>
+                        <Kimios-Extension>org.kimios.kernel.events.GenericEventHandler</Kimios-Extension>
                         <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <Include-Resource>{maven-resources}</Include-Resource>
@@ -144,6 +190,7 @@
                             org.apache.commons.dbcp.managed,
                             org.apache.commons.dbcp.datasources,
                             org.kimios.webservices;resolution:=optional,
+                            org.eclipse.jetty.;resolution:=optional,
                             *;resolution:=optional
                         </Import-Package>
                     </instructions>

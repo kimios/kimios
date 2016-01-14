@@ -142,6 +142,7 @@
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/search/SearchField.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/search/AdvancedSearchPanel.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/share/share.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/editors/editors.js"></script>
 
     <!-- Dashboard -->
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/explorer/DashBoard.js"></script>

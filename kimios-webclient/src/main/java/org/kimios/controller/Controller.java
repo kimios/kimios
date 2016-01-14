@@ -53,6 +53,7 @@ public class Controller {
     protected static RuleController ruleController;
     protected static BonitaController bonitaController;
     protected static ShareController shareController;
+    protected static EditorController editorController;
 
 
     public Controller(){}
@@ -111,6 +112,9 @@ public class Controller {
         }
         if (shareController == null) {
             shareController = applicationContextProvider.getBean(ShareController.class);
+        }
+        if (editorController == null) {
+            editorController = applicationContextProvider.getBean(EditorController.class);
         }
     }
 
@@ -273,6 +277,16 @@ public class Controller {
     public void setBonitaController(BonitaController bonitaController) {
         Controller.bonitaController = bonitaController;
     }
+
+    public static EditorController getEditorController() {
+        return editorController;
+    }
+
+    public void setEditorController(EditorController editorController) {
+        Controller.editorController = editorController;
+    }
+
+
 
 
 

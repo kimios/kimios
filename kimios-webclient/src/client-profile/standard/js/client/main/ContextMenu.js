@@ -339,8 +339,8 @@ kimios.ContextMenu = new function () {
         } else {
             menu.add(this.getStartWorkflowItem());
         }
-        ;
 
+        menu.add(this.getEditDocumentItem());
 
         if (!hiddenItems || hiddenItems.indexOf('move') == -1) {
             menu.add(this.getMoveItem());
@@ -363,6 +363,7 @@ kimios.ContextMenu = new function () {
         menu.add(this.getViewDocumentItem());
         menu.add(this.getGetDocumentItem());
         menu.add(this.getBarcodeDocumentItem());
+        menu.add(this.getEditDocumentItem());
         menu.add(this.getShareDocumentItem());
         menu.addSeparator();
         menu.add(this.getUpdateCurrentVersionItem());
@@ -882,6 +883,19 @@ kimios.ContextMenu = new function () {
             }
         });
     };
+
+    this.getEditDocumentItem = function(){
+        return new Ext.menu.Item({
+            text: kimios.lang('StartEdit'),
+            iconCls: 'edit-cls',
+            scope: this,
+            handler: function(){
+                //check if data available
+                var entity = this.dmEntityPojo.type == 7 ? this.dmEntityPojo.targetEntity: this.dmEntityPojo;
+                kimios.editors.startDocumentEdit(entity);
+            }
+        })
+    }
 
     this.getStartWorkflowItem = function () {
         return new Ext.menu.Item({

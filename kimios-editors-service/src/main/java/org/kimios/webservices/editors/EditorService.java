@@ -22,6 +22,7 @@ import org.kimios.editors.model.EditorData;
 import javax.jws.WebService;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 @WebService(targetNamespace = "http://kimios.org", serviceName = "EditorService")
 @CrossOriginResourceSharing(allowAllOrigins = true)

@@ -284,7 +284,12 @@ public class DmEntityControllerWeb extends Controller
                     workspaceController.deleteWorkspace(sessionUid, dmEntityUid);
                     break;
                 case 2:
-                    folderController.deleteFolder(sessionUid, dmEntityUid);
+                    if(ConfigurationManager.getValue(Config.TRASH_FEATURE_ENABLED) != null
+                            && ConfigurationManager.getValue(Config.TRASH_FEATURE_ENABLED).equals("true")) {
+                        //
+                    } else {
+                        folderController.deleteFolder(sessionUid, dmEntityUid);
+                    }
                     break;
                 case 3:
                     if(ConfigurationManager.getValue(Config.TRASH_FEATURE_ENABLED) != null

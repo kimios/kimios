@@ -979,6 +979,15 @@ kimios.record = {
                 name:'virtualFolderCount',
                 type:'int'
             }
+        ]) ,
+        editorData: Ext.data.Record.create([
+            {
+                name:'etherpadUrl',
+                type:'string'
+            },{
+                name:'padId',
+                type:'string'
+            }
         ])
     }
 

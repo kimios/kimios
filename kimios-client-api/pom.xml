@@ -104,6 +104,32 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-editors</artifactId>
+            <version>${project.version}</version>
+            <classifier>pojos</classifier>
+            <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-editors-service</artifactId>
+            <version>${project.version}</version>
+            <classifier>interfaces</classifier>
+            <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
             <version>${spring.version}</version>

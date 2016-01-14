@@ -254,6 +254,17 @@
         </jaxrs:headers>
     </jaxrs:client>
 
+    <jaxrs:client threadSafe="true" id="editorServiceBean" serviceClass="org.kimios.webservices.editors.EditorService"
+                  address="${server.url}${service.context}/rest/editors">
+        <jaxrs:providers>
+            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
+        </jaxrs:providers>
+        <jaxrs:headers>
+            <entry key="Accept" value="application/json"/>
+        </jaxrs:headers>
+    </jaxrs:client>
+
 
 
 
@@ -327,6 +338,10 @@
         <property name="client" ref="shareServiceBean"/>
     </bean>
 
+    <bean id="editorController" class="org.kimios.client.controller.EditorController" activation="eager">
+        <property name="client" ref="editorServiceBean"/>
+    </bean>
+
 
     <bean id="baseController" class="org.kimios.controller.Controller">
         <property name="securityController" ref="securityController" />
@@ -346,6 +361,7 @@
         <property name="ruleController" ref="ruleController" />
         <property name="bonitaController" ref="bonitaController" />
         <property name="shareController" ref="shareController" />
+        <property name="editorController" ref="editorController" />
     </bean>
 
 

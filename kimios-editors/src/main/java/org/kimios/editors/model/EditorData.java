@@ -18,7 +18,9 @@ package org.kimios.editors.model;
 
 import org.codehaus.jackson.annotate.JsonSubTypes;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
-import org.kimios.editors.impl.etherpad.EtherpadEditorData;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by farf on 08/01/16.
@@ -36,9 +38,31 @@ public class EditorData {
 
     protected long documentId;
 
+    protected long createdVersionId;
+
     protected String userId;
 
     protected String userSource;
+
+    private String proxyName;
+
+    public String getProxyName() {
+        return proxyName;
+    }
+
+    public void setProxyName(String proxyName) {
+        this.proxyName = proxyName;
+    }
+
+    private Map<String, String> cookiesData = new HashMap<String, String>();
+
+    public Map<String, String> getCookiesData() {
+        return cookiesData;
+    }
+
+    public void setCookiesData(Map<String, String> cookiesData) {
+        this.cookiesData = cookiesData;
+    }
 
     public long getDocumentId() {
         return documentId;
@@ -62,5 +86,13 @@ public class EditorData {
 
     public void setUserSource(String userSource) {
         this.userSource = userSource;
+    }
+
+    public long getCreatedVersionId() {
+        return createdVersionId;
+    }
+
+    public void setCreatedVersionId(long createdVersionId) {
+        this.createdVersionId = createdVersionId;
     }
 }

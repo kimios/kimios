@@ -43,13 +43,10 @@
         <argument ref="serviceHelper"/>
     </bean>
 
-    <service interface="org.kimios.webservices.editors.EditorService" ref="editorServiceBean"/>
-
-
-    <!-- Service endpoint -->
+    <!-- Service endpoint
     <jaxws:endpoint id="editorServiceWs"
                     implementorClass="org.kimios.webservices.editors.impl.EditorServiceImpl"
-                    implementor="#converterServiceBean"
+                    implementor="#editorServiceBean"
                     address="/EditorService"
                     endpointName="EditorService"
             >
@@ -59,10 +56,10 @@
         <jaxws:serviceFactory>
             <ref component-id="jaxws-and-aegis-service-factory"/>
         </jaxws:serviceFactory>
-    </jaxws:endpoint>
+    </jaxws:endpoint>   -->
 
 
-    <bean id="jaxws-and-aegis-service-factory" class="org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean"
+    <!--<bean id="jaxws-and-aegis-service-factory" class="org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean"
           scope="prototype">
         <property name="dataBinding">
             <bean class="org.apache.cxf.aegis.databinding.AegisDatabinding">
@@ -72,10 +69,6 @@
                         <property name="rootClassNames">
                             <list>
                                 <value>org.kimios.webservices.exceptions.DMServiceException</value>
-                                <value>org.kimios.kernel.ws.pojo.Document</value>
-                                <value>org.kimios.kernel.ws.pojo.Folder</value>
-                                <value>org.kimios.kernel.ws.pojo.SymbolicLink</value>
-                                <value>org.kimios.kernel.ws.pojo.Workspace</value>
                             </list>
                         </property>
                     </bean>
@@ -88,7 +81,7 @@
                 <bean class="org.apache.cxf.wsdl.service.factory.DefaultServiceConfiguration"/>
             </list>
         </property>
-    </bean>
+    </bean>  -->
 
 
 

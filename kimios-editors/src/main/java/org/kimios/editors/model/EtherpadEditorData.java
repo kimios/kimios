@@ -14,9 +14,12 @@
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.kimios.editors.impl.etherpad;
+package org.kimios.editors.model;
 
 import org.kimios.editors.model.EditorData;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by farf on 07/01/16.
@@ -28,6 +31,8 @@ public class EtherpadEditorData extends EditorData {
     private String padId;
 
     private String userMapping;
+
+    private List<String> usersLinkedTopad;
 
     public long getDocumentId() {
         return documentId;
@@ -55,5 +60,13 @@ public class EtherpadEditorData extends EditorData {
 
     public void setUserMapping(String userMapping) {
         this.userMapping = userMapping;
+    }
+
+    public List<String> getUsersLinkedTopad() {
+        return usersLinkedTopad;
+    }
+
+    public void setUsersLinkedTopad(List<String> usersLinkedTopad) {
+        this.usersLinkedTopad = usersLinkedTopad;
     }
 }
