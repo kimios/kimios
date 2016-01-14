@@ -28,7 +28,7 @@ import java.util.List;
 
 public class MetaFeedManager extends ExtensionRegistry<MetaFeedImpl>
 {
-    private MetaFeedManager(){ super(); }
+    public MetaFeedManager(){ super(); }
 
 }
 

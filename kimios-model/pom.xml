@@ -99,6 +99,14 @@
             <version>2.2</version>
             <scope>provided</scope>
         </dependency>
+        <!-- embedded dependencies -->
+
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>0.9.8</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>
