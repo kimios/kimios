@@ -16,8 +16,8 @@
 
 package org.kimios.webservices.editors.impl;
 
-import org.kimios.kernel.editors.EditorData;
-import org.kimios.kernel.editors.ExternalEditor;
+import org.kimios.editors.model.EditorData;
+import org.kimios.editors.ExternalEditor;
 import org.kimios.webservices.IServiceHelper;
 import org.kimios.webservices.editors.EditorService;
 

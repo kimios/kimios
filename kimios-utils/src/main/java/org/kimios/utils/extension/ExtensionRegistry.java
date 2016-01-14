@@ -39,6 +39,24 @@ public abstract class ExtensionRegistry<T> {
         this.registryClass = (Class<T>) ((ParameterizedType) getClass()
                 .getGenericSuperclass()).getActualTypeArguments()[0];
         ExtensionRegistryManager.registerRegistry(this);
+
+        //Load
+        Collection<Class<T>> classes = null;
+        Collection colClass = ClassFinder.findImplement("org.kimios", registryClass);
+        classes = colClass;
+        if (classes != null) {
+            for (Class<T> c : classes) {
+                try {
+                    logger.info("extension registry adding {}", c);
+                    this.addClass(c);
+                } catch (Exception ex){
+                    logger.error("error while adding {}. Msg: {}", c, ex.getMessage());
+                }
+            }
+            logger.info("[kimios extension registry {}] - Started : " + classes.size() + " loaded and available.", registryClass);
+        } else {
+            logger.error("[kimios extension registry {}] - Start error : package not found, or no classes found", registryClass);
+        }
     }
 
     private Map<String, Class<? extends T>> _registry = new ConcurrentHashMap<String, Class<? extends T>>();

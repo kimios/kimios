@@ -1,6 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2008-2015  DevLib'
+ * Copyright (C) 2008-2016  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -14,29 +14,18 @@
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.kimios.osgi.karaf;
+package org.kimios.kernel.registries;
 
-import org.apache.karaf.shell.commands.Command;
-import org.kimios.kernel.dms.model.MetaFeedImpl;
-import org.kimios.kernel.dms.metafeeds.MetaFeedManager;
+import org.kimios.kernel.reporting.ReportImpl;
 import org.kimios.utils.extension.ExtensionRegistry;
-import org.kimios.utils.extension.ExtensionRegistryManager;
-
 
 /**
+ * Created by farf on 13/01/16.
  */
-@Command(
-        scope = "kimios",
-        name = "metafeed-registry",
-        description = "View available metafeeds class")
-public class MetaFeedRegistryViewCommand extends KimiosCommand {
+public class ReportRegistry extends ExtensionRegistry<ReportImpl> {
 
-    @Override
-    protected void doExecuteKimiosCommand() throws Exception {
-        if (this.isConnected()) {
-            for(String c: ExtensionRegistryManager.itemsAsString(MetaFeedImpl.class)){
-                System.out.println("(from registry mng) found Meta feed class: " + c);
-            }
-        }
+    public ReportRegistry() {
+        super();
     }
+
 }

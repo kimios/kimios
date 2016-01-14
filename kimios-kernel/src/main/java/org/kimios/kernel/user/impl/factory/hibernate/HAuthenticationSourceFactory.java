@@ -25,7 +25,7 @@ import org.kimios.kernel.user.model.AuthenticationSource;
 import org.kimios.kernel.user.model.AuthenticationSourceBean;
 import org.kimios.kernel.user.AuthenticationSourceFactory;
 import org.kimios.kernel.user.model.AuthenticationSourceImpl;
-import org.kimios.kernel.utils.ClassFinder;
+import org.kimios.utils.extension.ClassFinder;
 
 import java.lang.reflect.Field;
 import java.util.Collection;

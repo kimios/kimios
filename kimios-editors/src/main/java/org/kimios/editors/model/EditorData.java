@@ -14,15 +14,11 @@
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.kimios.kernel.editors;
+package org.kimios.editors.model;
 
 import org.codehaus.jackson.annotate.JsonSubTypes;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
-import org.kimios.kernel.editors.impl.EtherpadEditorData;
-import org.kimios.kernel.ws.pojo.Document;
-import org.kimios.kernel.ws.pojo.Folder;
-import org.kimios.kernel.ws.pojo.SymbolicLink;
-import org.kimios.kernel.ws.pojo.Workspace;
+import org.kimios.editors.impl.etherpad.EtherpadEditorData;
 
 /**
  * Created by farf on 08/01/16.

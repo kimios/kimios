@@ -23,6 +23,15 @@ import org.kimios.exceptions.DmsKernelException;
 import org.kimios.kernel.configuration.Config;
 import org.kimios.kernel.controller.*;
 import org.kimios.kernel.dms.model.*;
+import org.kimios.kernel.dms.model.Bookmark;
+import org.kimios.kernel.dms.model.DMEntity;
+import org.kimios.kernel.dms.model.Document;
+import org.kimios.kernel.dms.model.DocumentVersion;
+import org.kimios.kernel.dms.model.Folder;
+import org.kimios.kernel.dms.model.Meta;
+import org.kimios.kernel.dms.model.MetaValue;
+import org.kimios.kernel.dms.model.SymbolicLink;
+import org.kimios.kernel.dms.model.WorkflowStatus;
 import org.kimios.kernel.dms.utils.PathUtils;
 import org.kimios.kernel.dms.*;
 import org.kimios.kernel.dms.FactoryInstantiator;
@@ -42,6 +51,7 @@ import org.kimios.kernel.security.model.DMEntitySecurity;
 import org.kimios.kernel.security.model.SecurityEntityType;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.user.model.User;
+import org.kimios.kernel.ws.pojo.*;
 import org.kimios.utils.hash.HashCalculator;
 import org.kimios.utils.configuration.ConfigurationManager;
 import org.slf4j.Logger;
@@ -1085,9 +1095,14 @@ public class DocumentController extends AKimiosController implements IDocumentCo
         }
         List<SymbolicLink> symbolicLinkList = dmsFactoryInstantiator.getSymbolicLinkFactory().getChildSymbolicLinks(parent);
         List<org.kimios.kernel.ws.pojo.SymbolicLink> items = new ArrayList<org.kimios.kernel.ws.pojo.SymbolicLink>();
-        for (SymbolicLink symbolicLink : symbolicLinkList)
-            items.add(symbolicLink.toPojo());
-
+        for (SymbolicLink symbolicLink : symbolicLinkList){
+            org.kimios.kernel.ws.pojo.SymbolicLink symbolicLink1 = symbolicLink.toPojo();
+            //reset Pojo Document
+            symbolicLink1.setTarget(dmsFactoryInstantiator
+                    .getDocumentFactory()
+                    .getDocumentPojoFromId(symbolicLink1.getDmEntityUid()));
+            items.add(symbolicLink1);
+        }
         return items;
     }
 
@@ -1286,6 +1301,12 @@ public class DocumentController extends AKimiosController implements IDocumentCo
 
             for (Bookmark bookmark : bookmarks) {
                 org.kimios.kernel.ws.pojo.Bookmark bookmarkPojo = bookmark.toPojo();
+                if(bookmarkPojo.getEntity().getType() == 3){
+                    //reset pojo
+                    bookmarkPojo.setEntity(dmsFactoryInstantiator.getDocumentFactory().getDocumentPojoFromId(
+                            bookmarkPojo.getDmEntityUid()
+                    ));
+                }
                 org.kimios.kernel.ws.pojo.DMEntity pojoEntity = bookmarkPojo.getEntity();
                 String[] it = new String[]{"", "String", "Number", "Date", "Boolean"};
                 if (pojoEntity instanceof org.kimios.kernel.ws.pojo.Folder) {

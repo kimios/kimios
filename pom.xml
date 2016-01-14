@@ -118,6 +118,7 @@
         <module>kimios-dolibarr</module>
         <module>kimios-server-war</module>
         <module>kimios-editors-service</module>
+        <module>kimios-editors</module>
     </modules>
     <packaging>pom</packaging>
     <dependencies>

@@ -29,9 +29,14 @@
     <properties>
         <dep.include>*.properties,*.xml,*.txt</dep.include>
         <persistence>META-INF/persistence.xml</persistence>
-        <osgi.resources>blueprint</osgi.resources>
     </properties>
     <dependencies>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-exceptions</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.kimios</groupId>
             <artifactId>kimios-interfaces</artifactId>
@@ -172,14 +177,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <!--etherpad -->
-        <dependency>
-            <groupId>net.gjerull.etherpad</groupId>
-            <artifactId>etherpad_lite_client</artifactId>
-            <version>1.2.12</version>
-            <scope>compile</scope>
-        </dependency>
-
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
@@ -218,9 +215,6 @@
             </resource>
             <resource>
                 <directory>${project.build.directory}/add-resource</directory>
-            </resource>
-            <resource>
-                <directory>${basedir}/src/main/others/${osgi.resources}</directory>
             </resource>
         </resources>
         <plugins>
@@ -305,7 +299,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <classifier>${osgi.resources}</classifier>
+                    <classifier>blueprint</classifier>
                     <supportedProjectTypes>
                         <supportedProjectType>jar</supportedProjectType>
                     </supportedProjectTypes>

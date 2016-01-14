@@ -14,7 +14,7 @@
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.kimios.kernel.editors.impl;
+package org.kimios.editors.impl.etherpad;
 
 import net.gjerull.etherpad.client.EPLiteClient;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -23,7 +23,7 @@ import org.kimios.kernel.controller.IDocumentController;
 import org.kimios.kernel.controller.IDocumentVersionController;
 import org.kimios.kernel.controller.IFileTransferController;
 import org.kimios.kernel.dms.model.DocumentVersion;
-import org.kimios.kernel.editors.ExternalEditor;
+import org.kimios.editors.ExternalEditor;
 import org.kimios.kernel.filetransfer.model.DataTransfer;
 import org.kimios.kernel.repositories.impl.RepositoryManager;
 import org.kimios.kernel.security.model.Session;

@@ -20,9 +20,10 @@ import org.kimios.kernel.dms.model.DMEntityImpl;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.ReportingException;
 import org.kimios.kernel.user.model.User;
-import org.kimios.kernel.utils.ClassFinder;
+import org.kimios.utils.extension.ClassFinder;
 import org.kimios.kernel.xml.XSDException;
 import org.kimios.kernel.xml.XSDUtil;
+import org.kimios.utils.extension.ExtensionRegistryManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -173,7 +174,7 @@ public class XMLReportHelper
      */
     public String getReportsList()
     {
-        Collection<Class<? extends ReportImpl>> classes = ClassFinder.findImplement("org.kimios", ReportImpl.class);
+        Collection<Class<? extends ReportImpl>> classes = ExtensionRegistryManager.itemsAsClass(ReportImpl.class);
         String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         xml += "<reportsList>\n";
         for (Class c : classes) {

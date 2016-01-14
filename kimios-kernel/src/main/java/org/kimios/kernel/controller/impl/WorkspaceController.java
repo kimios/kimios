@@ -29,6 +29,7 @@ import org.kimios.kernel.exception.NamingException;
 import org.kimios.kernel.log.model.DMEntityLog;
 import org.kimios.kernel.security.model.Role;
 import org.kimios.kernel.security.model.Session;
+import org.springframework.context.annotation.Bean;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;

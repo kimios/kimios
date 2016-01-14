@@ -17,7 +17,7 @@
 package org.kimios.webservices.editors;
 
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
-import org.kimios.kernel.editors.EditorData;
+import org.kimios.editors.model.EditorData;
 
 import javax.jws.WebService;
 import javax.ws.rs.*;

@@ -14,8 +14,10 @@
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.kimios.kernel.editors;
+package org.kimios.editors;
 
+
+import org.kimios.editors.model.EditorData;
 import org.kimios.kernel.security.model.Session;
 
 /**
@@ -28,6 +30,5 @@ public interface ExternalEditor<T extends EditorData> {
     public T versionDocument(Session sesion, T editData) throws Exception;
 
     public T endDocumentEdit(Session session, T editData) throws Exception;
-
 
 }

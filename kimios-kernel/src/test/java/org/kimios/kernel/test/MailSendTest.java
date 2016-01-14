@@ -37,6 +37,7 @@ import org.kimios.kernel.mail.Mailer;
 import org.kimios.kernel.utils.TemplateUtil;
 import org.kimios.utils.configuration.ConfigurationManager;
 import org.kimios.utils.configuration.PropertiesConfigurationHolder;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.util.HashMap;
 
@@ -47,31 +48,22 @@ public class MailSendTest
     public static void main(String[] args) throws Exception
     {
 
-        PropertiesConfigurationHolder holder = new PropertiesConfigurationHolder();
-        holder.init(MailSendTest.class.getResourceAsStream("kimios.properties"));
 
-        /*ConfigurationManager mng = new ConfigurationManager();
-        mng.setHolder(holder);*/
+        ClassPathXmlApplicationContext cl = new ClassPathXmlApplicationContext("/org/kimios/kernel/test/config-spring.xml");
+        cl.start();
 
 
-        String templatePath = "/org/kimios/kernel/test/incoming-document-notifier.html";
-        HashMap<String, Object> datas = new HashMap<String, Object>();
-        Document doc = new Document();
-        doc.setName("PDF DOC");
-        datas.put("document", doc);
-        datas.put("link", "http://kimios.fr");
+
+        Toto hop = cl.getBean(Toto.class);
 
 
-        MailTemplate mt = new MailTemplate(
-                "f@devlib.fr",
-                "Sender",
-                "fabien.alin@gmail.com", // mailTo: first email
-                ConfigurationManager.getValue("TestSubject"),
-                TemplateUtil.generateContent(datas, templatePath, "UTF-8"),
-                "text/html; charset=utf-8");
+        System.out.println(hop);
 
 
-        new Mailer(mt).start();
+
+
+
+
 
     }
 }

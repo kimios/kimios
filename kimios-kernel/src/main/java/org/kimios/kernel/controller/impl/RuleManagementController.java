@@ -27,7 +27,7 @@ import org.kimios.kernel.rules.RuleBeanFactory;
 import org.kimios.kernel.rules.impl.RuleImpl;
 import org.kimios.kernel.security.SecurityAgent;
 import org.kimios.kernel.security.model.Session;
-import org.kimios.kernel.utils.ClassFinder;
+import org.kimios.utils.extension.ClassFinder;
 import org.kimios.kernel.utils.XmlClassSerializer;
 import org.springframework.transaction.annotation.Transactional;
 import org.w3c.dom.Element;

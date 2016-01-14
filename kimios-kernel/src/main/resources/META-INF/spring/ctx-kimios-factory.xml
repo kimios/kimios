@@ -242,9 +242,13 @@
     </bean>
 
     <!-- meta feeds manager -->
-    <bean id="metaFeedManager" class="org.kimios.kernel.dms.metafeeds.MetaFeedManager"
-          factory-method="getMetaFeedManager"
-          init-method="init"/>
+    <bean id="metaFeedManager" class="org.kimios.kernel.dms.metafeeds.MetaFeedManager"/>
+
+    <!-- converter registries -->
+    <bean id="convertRegistry" class="org.kimios.kernel.registries.ConverterRegistry" />
+
+    <!-- report registry -->
+    <bean id="reportRegitry" class="org.kimios.kernel.registries.ReportRegistry" />
 
 
 </beans>

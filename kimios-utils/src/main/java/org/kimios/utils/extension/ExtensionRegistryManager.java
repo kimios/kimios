@@ -119,11 +119,11 @@ public class ExtensionRegistryManager {
 
     }
 
-    public static Collection<Class> itemsAsClass(Class classz) {
+    public static <T> Collection<Class<? extends T>> itemsAsClass(Class<T> classz) {
         if (_registryManager._registries.containsKey(classz.getName())) {
             return _registryManager._registries.get(classz.getName()).list();
         } else {
-            return new ArrayList<Class>();
+            return new ArrayList<Class<? extends T>>();
         }
     }
 

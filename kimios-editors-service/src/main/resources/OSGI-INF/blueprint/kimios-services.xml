@@ -32,7 +32,7 @@
     <cxf:bus id="kimios-bus" name="kimios-bus" />
 
     <reference id="etherpadEditorController"
-               interface="org.kimios.kernel.editors.ExternalEditor"/>
+               interface="org.kimios.editors.ExternalEditor"/>
 
     <reference id="serviceHelper"
                interface="org.kimios.webservices.IServiceHelper"/>

@@ -22,7 +22,7 @@
 
 
 
-    <bean id="etherpadEditorCtrl" class="org.kimios.kernel.editors.impl.EtherpadEditor">
+    <bean id="etherpadEditorCtrl" class="org.kimios.editors.impl.etherpad.EtherpadEditor">
         <argument ref="documentController" />
         <argument ref="documentVersionController" />
         <argument ref="fileTransferController" />
@@ -32,7 +32,7 @@
     </bean>
 
     <service id="etherpadEditor" ref="etherpadEditorCtrl"
-             interface="org.kimios.kernel.editors.ExternalEditor"/>
+             interface="org.kimios.editors.ExternalEditor"/>
 
 
 </blueprint>

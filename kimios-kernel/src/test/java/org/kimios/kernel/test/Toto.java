@@ -14,46 +14,39 @@
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.kimios.kernel.editors.impl;
-
-import org.kimios.kernel.editors.EditorData;
+package org.kimios.kernel.test;
 
 /**
- * Created by farf on 07/01/16.
+ * Created by farf on 13/01/16.
  */
-public class EtherpadEditorData extends EditorData {
+public class Toto {
 
-    private String etherPadUrl;
+    private String hop;
 
-    private String padId;
+    private String hup;
 
-    private String userMapping;
 
-    public long getDocumentId() {
-        return documentId;
+    @Override
+    public String toString() {
+        return "Toto{" +
+                "hop='" + hop + '\'' +
+                ", hup='" + hup + '\'' +
+                '}';
     }
 
-    public String getEtherPadUrl() {
-        return etherPadUrl;
+    public String getHop() {
+        return hop;
     }
 
-    public void setEtherPadUrl(String etherPadUrl) {
-        this.etherPadUrl = etherPadUrl;
+    public void setHop(String hop) {
+        this.hop = hop;
     }
 
-    public String getPadId() {
-        return padId;
+    public String getHup() {
+        return hup;
     }
 
-    public void setPadId(String padId) {
-        this.padId = padId;
-    }
-
-    public String getUserMapping() {
-        return userMapping;
-    }
-
-    public void setUserMapping(String userMapping) {
-        this.userMapping = userMapping;
+    public void setHup(String hup) {
+        this.hup = hup;
     }
 }

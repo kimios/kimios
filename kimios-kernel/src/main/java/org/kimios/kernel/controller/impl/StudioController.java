@@ -252,7 +252,7 @@ public class StudioController extends AKimiosController implements IStudioContro
         {
             throw new AccessDeniedException();
         }
-        List<String> availables = metaFeedManager.getMetasFeedClasses();
+        List<String> availables = new ArrayList<String>(metaFeedManager.listAsString());
         return availables;
     }
 

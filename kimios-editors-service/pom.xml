@@ -30,6 +30,14 @@
 
     <dependencies>
 
+
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-interfaces</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.kimios</groupId>
             <artifactId>kimios-model</artifactId>
@@ -40,6 +48,28 @@
         <dependency>
             <groupId>org.kimios</groupId>
             <artifactId>kimios-kernel</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-utils</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-exceptions</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-editors</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -68,13 +98,6 @@
         <dependency>
             <groupId>org.kimios</groupId>
             <artifactId>kimios-services</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.kimios</groupId>
-            <artifactId>kimios-exceptions</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -189,7 +212,7 @@
                             org.kimios.kernel.*,
                             org.kimios.kernel.ws.pojo,
                             org.kimios.kernel.controller,
-                            org.kimios.kernel.converter,
+                            org.kimios.editors,
                             org.kimios.kernel.security,
                             org.kimios.utils.logging,
                             org.apache.cxf.aegis,
@@ -202,7 +225,8 @@
                             org.codehaus.jackson.annotate,
                             org.apache.cxf.jaxrs.ext,
                             org.kimios.utils.spring,
-                            org.apache.commons.io
+                            org.apache.commons.io,
+                            *;resolution:=optional
                         </Import-Package>
                     </instructions>
                 </configuration>

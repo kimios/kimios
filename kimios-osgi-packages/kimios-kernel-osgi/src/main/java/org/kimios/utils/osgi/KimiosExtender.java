@@ -16,8 +16,8 @@
 
 package org.kimios.utils.osgi;
 
-import org.kimios.kernel.utils.BundleUrlType;
-import org.kimios.kernel.utils.ClassFinder;
+import org.kimios.utils.extension.BundleUrlType;
+import org.kimios.utils.extension.ClassFinder;
 import org.kimios.utils.extension.ExtensionRegistryManager;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
