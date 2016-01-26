@@ -18,10 +18,11 @@
 <persistence version="2.1"
              xmlns="http://xmlns.jcp.org/xml/ns/persistence"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_1.xsd">
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence
+             http://java.sun.com/xml/ns/persistence/persistence_2_1.xsd">
 
     <persistence-unit name="kimiosPu" transaction-type="JTA">
-        <provider>org.hibernate.ejb.HibernatePersistence</provider>
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <jta-data-source>osgi:service/javax.sql.DataSource/(osgi.jndi.service.name=jdbc/kimiosds)</jta-data-source>
         <mapping-file>org/kimios/kernel/hibernate/mapping/authentication.hbm.xml</mapping-file>
         <mapping-file>org/kimios/kernel/hibernate/mapping/postgresql/dmpojo.hbm.xml</mapping-file>
@@ -84,7 +85,6 @@
             <property name="hibernate.transaction.flush_before_completion" value="true" />
             <property name="hibernate.jdbc.use_streams_for_binary" value="true" />
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL82Dialect"/>
-
         </properties>
     </persistence-unit>
 </persistence>

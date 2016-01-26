@@ -15,6 +15,8 @@
  */
 package org.kimios.kernel.user.model;
 
+import org.hibernate.annotations.Formula;
+import org.hibernate.annotations.ManyToAny;
 import org.kimios.kernel.security.model.SecurityEntity;
 import org.kimios.kernel.security.model.SecurityEntityType;
 

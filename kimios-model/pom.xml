@@ -146,7 +146,6 @@
             </execution>
             </executions>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -178,7 +177,6 @@
                 <executions>
                     <execution>
                         <id>bundle-manifest</id>
-                        <phase>package</phase>
                         <goals>
                             <goal>bundle</goal>
                         </goals>
@@ -198,7 +196,7 @@
                         <!--<Bundle-Activator>org.kimios.utils.osgi.KimiosActivator</Bundle-Activator>-->
                         <Bundle-Name>${project.name}</Bundle-Name>
                         <Export-Package>
-                            org.kimios.*
+                            org.kimios.*,org.kimios.kernel.configuration.*
                         </Export-Package>
                         <Meta-Persistence>META-INF/persistence.xml</Meta-Persistence>
                         <Kimios-Extension>org.kimios.api.MetaFeed</Kimios-Extension>

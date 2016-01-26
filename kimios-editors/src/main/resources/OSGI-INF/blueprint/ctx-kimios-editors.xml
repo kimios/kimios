@@ -63,14 +63,14 @@
         </service-properties>
     </service>       -->
 
-    <bean id="editorProxyServlet" class="org.kimios.editors.impl.etherpad.T2Servlet"/>
+    <bean id="editorProxyServlet" class="org.kimios.editors.impl.etherpad.T3Servlet"/>
     <service interface="javax.servlet.http.HttpServlet" ref="editorProxyServlet" depends-on="kimiosServerCfg">
         <service-properties>
             <entry key="alias" value="/etherpad"/>
             <entry key="servlet-name" value="etherpadProxy" />
             <entry key="init-prefix" value=""/>
             <entry key="prefix" value="/etherpad" />
-            <entry key="proxyTo" value="http://localhost:9001/" />
+            <entry key="proxyTo" value="http://etherpad.kimios.app" />
         </service-properties>
     </service>
 

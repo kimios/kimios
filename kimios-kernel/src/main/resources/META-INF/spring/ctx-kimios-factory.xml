@@ -20,7 +20,7 @@
         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
     <!--  <bean id="dbFactoryProvider" class="org.kimiostero.hibernate.SaasHFactory" />-->
-    <bean id="dbFactoryProvider" class="org.kimios.kernel.hibernate.HFactoryImpl" factory-method="getInstance">
+    <bean id="dbFactoryProvider" class="org.kimios.kernel.hibernate.HFactoryImpl">
         <property name="sessionFactory" ref="sessionFactory"></property>
         <property name="acSessionFactory" ref="sessionFactory"></property>
     </bean>
@@ -131,7 +131,18 @@
 
     <!-- User -->
     <bean id="authenticationSourceFactory"
-            class="org.kimios.kernel.user.impl.factory.hibernate.HAuthenticationSourceFactory" parent="hfactory"/>
+            class="org.kimios.kernel.user.impl.factory.hibernate.HAuthenticationSourceFactory" parent="hfactory">
+        <constructor-arg>
+            <bean class="org.kimios.kernel.user.impl.factory.hibernate.HInternalUserFactory">
+                <property name="provider" ref="dbFactoryProvider"></property>
+            </bean>
+        </constructor-arg>
+        <constructor-arg>
+            <bean class="org.kimios.kernel.user.impl.factory.hibernate.HInternalGroupFactory">
+                <property name="provider" ref="dbFactoryProvider"></property>
+            </bean>
+        </constructor-arg>
+    </bean>
     <bean id="authenticationSourceParamsFactory"
             class="org.kimios.kernel.user.impl.factory.hibernate.HAuthenticationSourceParamsFactory" parent="hfactory"/>
     <bean id="userfi" class="org.kimios.kernel.user.FactoryInstantiator" factory-method="getInstance">
@@ -248,7 +259,15 @@
     <bean id="convertRegistry" class="org.kimios.kernel.registries.ConverterRegistry" />
 
     <!-- report registry -->
-    <bean id="reportRegitry" class="org.kimios.kernel.registries.ReportRegistry" />
+    <bean id="reportRegistry" class="org.kimios.kernel.registries.ReportRegistry" />
+
+    <!-- auth source registry -->
+    <bean id="authenticationSourceRegistry"
+          class="org.kimios.kernel.registries.AuthenticationSourceRegistry" />
+
+
+    <!-- rules registry -->
+    <bean id="ruleRegistry" class="org.kimios.kernel.registries.RuleRegistry" />
 
 
 </beans>

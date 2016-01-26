@@ -98,6 +98,15 @@
 
         <!-- end etherpad -->
 
+
+        <!-- charset detector -->
+        <dependency>
+            <groupId>com.googlecode.juniversalchardet</groupId>
+            <artifactId>juniversalchardet</artifactId>
+            <version>1.0.3</version>
+        </dependency>
+
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -161,7 +170,7 @@
                         <Export-Package>
                             org.kimios.editors,org.kimios.editors.model,org.mitre.dsmiley.httpproxy
                         </Export-Package>
-                        <Kimios-Extension>org.kimios.kernel.events.GenericEventHandler</Kimios-Extension>
+                        <!--<Kimios-Extension>org.kimios.kernel.events.GenericEventHandler</Kimios-Extension>-->
                         <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <Include-Resource>{maven-resources}</Include-Resource>

@@ -16,6 +16,7 @@
 package org.kimios.kernel.user.impl.factory.genericldaplayer;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang.StringUtils;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.security.model.SecurityEntityType;
@@ -23,6 +24,8 @@ import org.kimios.kernel.user.model.Group;
 import org.kimios.kernel.user.model.User;
 import org.kimios.kernel.user.model.UserFactory;
 import org.kimios.kernel.user.impl.GenericLDAPImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -30,14 +33,12 @@ import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.SearchResult;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 
 public class GenericLDAPUserFactory extends GenericLDAPFactory implements UserFactory
 {
 
+    private static Logger logger = LoggerFactory.getLogger(GenericLDAPUserFactory.class);
 
     public GenericLDAPUserFactory(GenericLDAPImpl source)
     {
@@ -221,6 +222,27 @@ public class GenericLDAPUserFactory extends GenericLDAPFactory implements UserFa
         if(attrs.get(source.getUserPhoneKey()) != null){
             user.setPhoneNumber(attrs.get(source.getUserPhoneKey()).get().toString());
             user.setPhoneNumber(user.getPhoneNumber() == null || user.getPhoneNumber().equals("null") ? "" : user.getPhoneNumber());
+        }
+        if(StringUtils.isNotBlank(source.getUsersMailKey()) && attrs.get(source.getUsersMailKey()) != null){
+
+            Set<String> addonsEmail = new HashSet<String>();
+            try{
+                Attribute ae = attrs.get(source.getUsersMailKey());
+                for(NamingEnumeration namingEnumeration = ae.getAll(); namingEnumeration.hasMore();){
+                    //load each email
+                    String value = (String) namingEnumeration.next();
+                    if(StringUtils.isNotBlank(value)){
+                        addonsEmail.add(value);
+                    }
+                }
+            }   catch (Exception ex){
+               logger.error("error while loading addon email from ldap", ex);
+            }
+
+            user.setEmails(addonsEmail);
+            if(StringUtils.isNotBlank(user.getMail()))
+                user.getEmails().add(user.getMail());
+
         }
         user.setAuthenticationSourceName(this.source.getName());
         return user;

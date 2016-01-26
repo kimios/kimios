@@ -15,120 +15,66 @@
  */
 package org.kimios.kernel.user.impl.factory.hibernate;
 
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.exception.DataSourceException;
-import org.kimios.kernel.hibernate.AbstractDBFactory;
+import org.kimios.kernel.user.impl.HAuthenticationSource;
 import org.kimios.kernel.user.model.AuthenticationSource;
 import org.kimios.kernel.user.model.Group;
 import org.kimios.kernel.user.model.GroupFactory;
-import org.kimios.kernel.user.model.User;
 
-import java.util.List;
-import java.util.Set;
 import java.util.Vector;
 
 public class HGroupFactory implements GroupFactory
 {
     public AuthenticationSource auth;
 
-    public AuthenticationSource getAuth()
-    {
-        return auth;
-    }
+    private HInternalGroupFactory internalGroupFactory;
 
-    public void setAuth(AuthenticationSource auth)
-    {
-        this.auth = auth;
+    private HInternalUserFactory internalUserFactory;
+
+    public HGroupFactory(HInternalGroupFactory internalGroupFactory,
+                         HInternalUserFactory internalUserFactory,
+                         HAuthenticationSource hAuthenticationSource){
+        //get internal user and group database factory
+        this.internalGroupFactory = internalGroupFactory;
+        this.internalUserFactory = internalUserFactory;
+        this.auth = hAuthenticationSource;
     }
 
     public void deleteGroup(Group group) throws DataSourceException,
             ConfigException
     {
-        try {
-
-            group = (Group) AbstractDBFactory.getInstance().getSession().merge(group);
-            for (User u : group.getUsers()) {
-                auth.getUserFactory().removeUserFromGroup(u, group);
-            }
-            AbstractDBFactory.getInstance().getSession().delete(group);
-        } catch (HibernateException e) {
-            throw new DataSourceException(e, e.getMessage());
-        }
+        internalGroupFactory.deleteGroup(group, internalUserFactory);
     }
 
     public Group getGroup(String gid) throws DataSourceException,
             ConfigException
     {
-        try {
-            Criteria c = AbstractDBFactory.getInstance().getSession().createCriteria(Group.class)
-                    .add(Restrictions.eq("gid", gid))
-                    .add(Restrictions.eq("authenticationSourceName", this.getAuth().getName()));
-            Group g = (Group) (c.uniqueResult());
-            return g;
-        } catch (HibernateException he) {
-            throw new DataSourceException(he);
-        }
+        return internalGroupFactory.getGroup(gid, this.auth.getName());
     }
 
     public Vector<Group> getGroups() throws DataSourceException,
             ConfigException
     {
-        try {
-            Criteria c = AbstractDBFactory.getInstance().getSession().createCriteria(Group.class)
-                    .add(Restrictions.eq("authenticationSourceName", this.getAuth().getName()))
-                    .addOrder(Order.asc("name"));
-            List<Group> lGroups = (List<Group>) (c.list());
-            Vector<Group> vGroup = new Vector<Group>();
-            for (Group g : lGroups) {
-                vGroup.add(g);
-            }
-            return vGroup;
-        } catch (HibernateException he) {
-            throw new DataSourceException(he);
-        }
+        return internalGroupFactory.getGroups(this.auth.getName());
     }
 
     public Vector<Group> getGroups(String userUid) throws DataSourceException,
             ConfigException
     {
-        try {
-            User u = (User) AbstractDBFactory.getInstance().getSession().createCriteria(User.class)
-                    .add(Restrictions.eq("uid", userUid))
-                    .add(Restrictions.eq("authenticationSourceName", this.auth.getName()))
-                    .uniqueResult();
-            Set<Group> sGroups = u.getGroups();
-            Vector<Group> groups = new Vector<Group>();
-            for (Group g : sGroups) {
-                groups.add(g);
-            }
-            return groups;
-        } catch (HibernateException he) {
-            throw new DataSourceException(he);
-        }
+        return internalGroupFactory.getGroupsForUser(userUid, this.auth.getName());
     }
 
     public void saveGroup(Group group) throws DataSourceException,
             ConfigException
     {
-        try {
-            AbstractDBFactory.getInstance().getSession().save(group);
-        } catch (HibernateException e) {
-            throw new DataSourceException(e, e.getMessage());
-        }
+        internalGroupFactory.saveGroup(group);
     }
 
     public void updateGroup(Group group) throws DataSourceException,
             ConfigException
     {
-        try {
-            AbstractDBFactory.getInstance().getSession().update(group);
-        } catch (HibernateException e) {
-            throw new DataSourceException(e, e.getMessage());
-        }
+        internalGroupFactory.updateGroup(group);
     }
 }
 

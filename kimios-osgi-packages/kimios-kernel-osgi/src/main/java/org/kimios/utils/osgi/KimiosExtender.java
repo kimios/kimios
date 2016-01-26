@@ -41,12 +41,27 @@ public class KimiosExtender extends BundleTracker {
 
     public KimiosExtender(BundleContext context, int stateMask, BundleTrackerCustomizer customizer) {
         super(context, stateMask, customizer);
-        //load registry
         ExtensionRegistryManager.init();
     }
 
     @Override
     public Object addingBundle(Bundle bundle, BundleEvent event) {
+        analyseBundle(bundle);
+        return bundle;
+    }
+
+    @Override
+    public void modifiedBundle(Bundle bundle, BundleEvent event, Object object) {
+        super.modifiedBundle(bundle, event, object);
+    }
+
+    @Override
+    public void removedBundle(Bundle bundle, BundleEvent event, Object object) {
+        super.removedBundle(bundle, event, object);
+    }
+
+
+    private void analyseBundle(Bundle bundle){
         //eturn super.addingBundle(bundle, event);
         Enumeration<String> items = bundle.getHeaders().keys();
         while (items.hasMoreElements()) {
@@ -84,16 +99,5 @@ public class KimiosExtender extends BundleTracker {
                 }
             }
         }
-        return bundle;
-    }
-
-    @Override
-    public void modifiedBundle(Bundle bundle, BundleEvent event, Object object) {
-        super.modifiedBundle(bundle, event, object);
-    }
-
-    @Override
-    public void removedBundle(Bundle bundle, BundleEvent event, Object object) {
-        super.removedBundle(bundle, event, object);
     }
 }

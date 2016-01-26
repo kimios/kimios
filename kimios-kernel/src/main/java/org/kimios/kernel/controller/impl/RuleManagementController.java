@@ -29,6 +29,7 @@ import org.kimios.kernel.security.SecurityAgent;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.utils.extension.ClassFinder;
 import org.kimios.kernel.utils.XmlClassSerializer;
+import org.kimios.utils.extension.ExtensionRegistryManager;
 import org.springframework.transaction.annotation.Transactional;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -99,7 +100,8 @@ public class RuleManagementController extends AKimiosController implements IRule
         *  To do : right management
         *
         */
-        Collection<Class<? extends  RuleImpl>> ruleClasses = ClassFinder.findImplement("org.kimios", RuleImpl.class);
+        Collection<Class<? extends  RuleImpl>> ruleClasses =
+                ExtensionRegistryManager.itemsAsClass(RuleImpl.class);
         return ruleClasses;
     }
 

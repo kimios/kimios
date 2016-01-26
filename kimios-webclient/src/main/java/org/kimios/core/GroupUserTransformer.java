@@ -55,7 +55,12 @@ public class GroupUserTransformer extends AbstractTransformer {
             getContext().transform(
                     sec.getLastLogin() != null ? sec.getLastLogin().getTime()
                             : null);
+            getContext().writeComma();
+            getContext().writeName("emails");
+            getContext().transform(
+                   sec.getEmails());
             getContext().writeCloseObject();
+
         } else if (arg0 instanceof Group) {
             getContext().writeOpenObject();
             Group sec = (Group) arg0;

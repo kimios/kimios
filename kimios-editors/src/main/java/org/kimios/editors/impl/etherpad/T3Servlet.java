@@ -29,19 +29,22 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.HttpCookie;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 
 /**
  * Created by farf on 18/01/16.
  */
-public class T2Servlet extends ProxyServlet.Transparent {
+public class T3Servlet extends ProxyServlet  {
 
-    private static Logger logger = LoggerFactory.getLogger(T2Servlet.class);
+    private static Logger logger = LoggerFactory.getLogger(T3Servlet.class);
 
 
 
-    @Override
+    /*@Override
     protected void copyRequestHeaders(HttpServletRequest clientRequest, Request proxyRequest)
     {
         // First clear possibly existing headers, as we are going to copy those from the client request.
@@ -72,7 +75,7 @@ public class T2Servlet extends ProxyServlet.Transparent {
             }
         }
 
-    }
+    }*/
 
 
     private StringBuilder convertCookies(List<HttpCookie> cookies, StringBuilder builder)
@@ -90,8 +93,52 @@ public class T2Servlet extends ProxyServlet.Transparent {
     }
 
 
+    protected String rewriteTarget(HttpServletRequest clientRequest)
+    {
+
+        StringBuffer target = new StringBuffer("http://etherpad.kimios.app");
+
+        logger.info("targetting to " + clientRequest.getPathInfo());
+
+
+        target.append(clientRequest.getPathInfo());
+
+        String query = clientRequest.getQueryString();
+        if (query != null)
+            target.append("?").append(query);
+        return target.toString();
+    }
+
 
     @Override
+    protected void sendProxyRequest(HttpServletRequest clientRequest, HttpServletResponse proxyResponse, Request proxyRequest)
+    {
+        proxyRequest.getHeaders().remove("Host");
+
+
+
+        proxyRequest.getHeaders().remove("Cookie");
+        for(Cookie c: clientRequest.getCookies()){
+            if(c.getName().endsWith("sessionID") || c.getName().endsWith("authorID")){
+                HttpCookie coo = new HttpCookie(c.getName(), c.getValue());
+                coo.setValue(c.getValue());
+                coo.setDomain("etherpad.kimios.app");
+                coo.setPath("/");
+                proxyRequest = proxyRequest.cookie(coo);
+            } else {
+                if(c.getName().equals("io") || c.getName().equals("express_sid") || c.getName().equals("sid")){
+                    HttpCookie coo = new HttpCookie(c.getName(), c.getValue());
+                    proxyRequest  = proxyRequest.cookie(coo);
+                }
+
+            }
+        }
+        proxyRequest.send(newProxyResponseListener(clientRequest, proxyResponse));
+    }
+
+
+
+    /*@Override
     protected void sendProxyRequest(HttpServletRequest clientRequest, HttpServletResponse proxyResponse, Request proxyRequest)
     {
 
@@ -141,7 +188,7 @@ public class T2Servlet extends ProxyServlet.Transparent {
         proxyRequest.header("Cookie", cookies);*/
 
 
-        proxyRequest.getHeaders().remove(HttpHeader.HOST);
+        /*proxyRequest.getHeaders().remove(HttpHeader.HOST);
 
         proxyRequest.header(HttpHeader.HOST.asString(), "etherpad.kimios.app");
 
@@ -161,13 +208,13 @@ public class T2Servlet extends ProxyServlet.Transparent {
 
 
         proxyRequest.send(newProxyResponseListener(clientRequest, proxyResponse));
-    }
+    }*/
 
 
 
 
 
-    @Override
+    /*@Override
     protected void onResponseHeaders(HttpServletRequest request, HttpServletResponse response, Response proxyResponse)
     {
         super.onResponseHeaders(request, response, proxyResponse);
@@ -191,7 +238,7 @@ public class T2Servlet extends ProxyServlet.Transparent {
                 }
             }
         }
-    }
+    } */
 
 
 

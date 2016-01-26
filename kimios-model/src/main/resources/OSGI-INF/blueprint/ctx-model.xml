@@ -16,12 +16,12 @@
   -->
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-           xmlns:jpa="http://aries.apache.org/xmlns/jpa/v1.0.0"
+           xmlns:jpa="http://aries.apache.org/xmlns/jpa/v2.0.0"
            xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
            xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0
         http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
 
-
+    <jpa:enable />
 
     <cm:property-placeholder id="kimiosServerCfg" persistent-id="org.kimios.server.app" update-strategy="none"
                              activation="eager">
@@ -30,8 +30,8 @@
     <service id="dbFactoryProviderOsgi" ref="dbFactoryProvider"
              interface="org.kimios.kernel.hibernate.IDBFactory"/>
 
-    <bean id="dbFactoryProvider" class="org.kimios.kernel.hibernate.JpaHibernateFactory" factory-method="getInstance">
-        <jpa:context unitname="kimiosPu" property="entityManager"/>
+    <bean id="dbFactoryProvider" class="org.kimios.kernel.hibernate.JpaHibernateFactory">
+        <!--<jpa:context unitname="kimiosPu" property="entityManager"/>-->
     </bean>
 
 

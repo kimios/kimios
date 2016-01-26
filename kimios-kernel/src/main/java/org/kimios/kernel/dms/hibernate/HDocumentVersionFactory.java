@@ -169,6 +169,7 @@ public class HDocumentVersionFactory extends HFactory implements DocumentVersion
                                 ".bin");
             }
             uid = (Long) getSession().save(v);
+            getSession().flush();
         } catch (HibernateException e) {
             boolean integrity = e instanceof ConstraintViolationException;
             throw new DataSourceException(e, e.getMessage());

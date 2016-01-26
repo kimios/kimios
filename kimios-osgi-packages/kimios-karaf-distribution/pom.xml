@@ -30,7 +30,7 @@
 
 
     <properties>
-        <karaf.version>3.0.4</karaf.version>
+        <karaf.version>4.0.4</karaf.version>
     </properties>
 
     <dependencies>
@@ -151,19 +151,24 @@
                 <extensions>true</extensions>
                 <version>${karaf.version}</version>
                 <configuration>
+                    <bootRepositories>
+                        <bootRepository>mvn:org.apache.karaf.features/spring/4.0.4/xml/features</bootRepository>
+                        <bootRepository> mvn:org.apache.karaf.features/standard/4.0.4/xml/features</bootRepository>
+                        <bootRepository>mvn:org.apache.karaf.features/framework/4.0.4/xml/features</bootRepository>
+                        <bootRepository>mvn:org.apache.karaf.features/enterprise/4.0.4/xml/features</bootRepository>
+                    </bootRepositories>
                     <!-- no startupFeatures -->
                     <bootFeatures>
                         <feature>standard</feature>
                         <feature>management</feature>
                         <feature>kimios-dependencies</feature>
-                        <feature>kimios-datasources</feature>
                         <feature>kimios-solr</feature>
-                        <feature>kimios-core-settings</feature>
-                        <feature>kimios-core</feature>
+                        <feature>kimios-model</feature>
+                        <feature>kimios-features</feature>
                         <feature>kimios-services</feature>
+                        <feature>kimios-etherpad-editor</feature>
                         <feature>kimios-web-standard</feature>
                     </bootFeatures>
-                    <installedFeatures></installedFeatures>
                 </configuration>
             </plugin>
         </plugins>

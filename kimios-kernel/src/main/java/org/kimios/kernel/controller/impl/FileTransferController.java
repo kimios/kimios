@@ -23,6 +23,7 @@ import org.kimios.kernel.dms.*;
 import org.kimios.kernel.dms.model.*;
 import org.kimios.api.events.annotations.DmsEvent;
 import org.kimios.api.events.annotations.DmsEventName;
+import org.kimios.kernel.events.model.EventContext;
 import org.kimios.kernel.exception.*;
 import org.kimios.kernel.filetransfer.model.DataTransfer;
 import org.kimios.kernel.filetransfer.zip.FileCompressionHelper;
@@ -32,6 +33,8 @@ import org.kimios.kernel.user.model.User;
 import org.kimios.utils.hash.HashCalculator;
 import org.kimios.kernel.ws.pojo.DocumentWrapper;
 import org.kimios.utils.configuration.ConfigurationManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
@@ -46,6 +49,10 @@ import java.util.Vector;
 public class FileTransferController
         extends AKimiosController
         implements IFileTransferController {
+
+
+    private static Logger logger = LoggerFactory.getLogger(FileTransferController.class);
+
     /**
      * Start an upload transaction for a given document (update the last version)
      */
@@ -192,6 +199,9 @@ public class FileTransferController
             dmsFactoryInstantiator.getLockFactory().checkin(d, u);
         }
         transferFactoryInstantiator.getDataTransferFactory().removeDataTransfer(transac);
+
+
+
         return transac;
     }
 
@@ -268,9 +278,19 @@ public class FileTransferController
                                String hashSha1)
             throws ConfigException, AccessDeniedException, DataSourceException, IOException {
         DataTransfer transac = transferFactoryInstantiator.getDataTransferFactory().getDataTransfer(transactionId);
+        logger.info("uploadDocument: loaded transaction #{}. Version:  #{}", transac.getUid(),
+                transac.getDocumentVersionUid());
         DocumentVersion dv =
                 dmsFactoryInstantiator.getDocumentVersionFactory().getDocumentVersion(transac.getDocumentVersionUid());
-        if (!getSecurityAgent().isWritable(dv.getDocument(), session.getUserName(), session.getUserSource(),
+        logger.info("uploadDocument: version loaded: {}. Document Id: #{}. Document Obj: {}", dv, dv.getDocumentUid(), dv.getDocument());
+
+
+        Document document = FactoryInstantiator.getInstance().getDocumentFactory().getDocument(dv.getDocumentUid());
+
+        logger.info("uploadDocument: manually loaded document: {}", document);
+
+        if (!getSecurityAgent().isWritable(document
+                , session.getUserName(), session.getUserSource(),
                 session.getGroups())) {
             throw new AccessDeniedException();
         }

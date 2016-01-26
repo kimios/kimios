@@ -117,7 +117,20 @@
               interface="org.kimios.kernel.filetransfer.IFileTransferFactoryInstantiator"></service>
 
 
-     <bean id="converterRegistry" class="org.kimios.kernel.registries.ConverterRegistry" />
+
+
+    <!-- converter registry -->
+    <bean id="converterRegistry" class="org.kimios.kernel.registries.ConverterRegistry" />
+
+    <!-- report registry -->
+    <bean id="reportRegistry" class="org.kimios.kernel.registries.ReportRegistry" />
+
+    <!-- auth source registry -->
+    <bean id="authenticationSourceRegistry"
+          class="org.kimios.kernel.registries.AuthenticationSourceRegistry" />
+
+    <!-- rules registry -->
+    <bean id="ruleRegistry" class="org.kimios.kernel.registries.RuleRegistry" />
 
 </blueprint>
               

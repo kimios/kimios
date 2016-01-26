@@ -28,6 +28,10 @@
     <artifactId>kimios-karaf-features</artifactId>
     <packaging>pom</packaging>
 
+    <properties>
+        <karaf.version>4.0.4</karaf.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.kimios</groupId>
@@ -43,20 +47,27 @@
         </dependency>
     </dependencies>
 
-    <properties>
-        <hibernate.version>4.2.15.Final</hibernate.version>
-        <spring.version>4.0.7.RELEASE_1</spring.version>
-    </properties>
     <build>
+        <filters>
+            <filter>${pom.basedir}/src/karaf-conf/karaf-4.0.4.properties</filter>
+        </filters>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
-                <excludes>
-                    <exclude>src/main/resources/kimios-ds.xml</exclude>
-                </excludes>
+                <includes>
+                    <include>features.xml</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>kimios-ds.xml</include>
+                </includes>
             </resource>
         </resources>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -107,11 +118,11 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
                 <executions>
+                    <!--generate Default Kimios Server Configuration File from a specific properties file -->
                     <execution>
                         <id>filtersrvconf</id>
                         <phase>package</phase>
@@ -132,12 +143,7 @@
                             <outputDirectory>${project.build.directory}/server-conf-ok</outputDirectory>
                         </configuration>
                     </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <executions>
+                    <!--generate Default Kimios Client Configuration File from a specific properties file -->
                     <execution>
                         <id>filtercliconf</id>
                         <phase>package</phase>

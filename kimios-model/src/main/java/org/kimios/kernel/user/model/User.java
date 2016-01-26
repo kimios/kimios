@@ -15,6 +15,8 @@
  */
 package org.kimios.kernel.user.model;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Formula;
 import org.kimios.kernel.security.model.SecurityEntity;
 import org.kimios.kernel.security.model.SecurityEntityType;
@@ -88,9 +90,9 @@ public class User implements SecurityEntity, Serializable
     private boolean enabled = true;
 
 
-
     @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name="user_emails", joinColumns=@JoinColumn(name="user_id"))
+    @CollectionTable(name="user_emails", joinColumns = { @JoinColumn(name = "user_id", referencedColumnName = "user_id"),
+            @JoinColumn(name = "authentication_source", referencedColumnName = "authentication_source") })
     @Column(name="user_email")
     private Set<String> emails = new HashSet<String>();
 
@@ -228,8 +230,10 @@ public class User implements SecurityEntity, Serializable
 
     public org.kimios.kernel.ws.pojo.User toPojo()
     {
-        return new org.kimios.kernel.ws.pojo.User(this.uid, this.firstName, lastName, phoneNumber, this.authenticationSourceName, this.lastLogin,
+        org.kimios.kernel.ws.pojo.User u =  new org.kimios.kernel.ws.pojo.User(this.uid, this.firstName, lastName, phoneNumber, this.authenticationSourceName, this.lastLogin,
                 this.mail, this.enabled);
+        u.setEmails(new ArrayList<String>(this.getEmails()));
+        return u;
     }
 
     public boolean isEnabled()

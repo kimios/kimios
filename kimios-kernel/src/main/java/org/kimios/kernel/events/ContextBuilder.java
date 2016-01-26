@@ -411,6 +411,14 @@ public class ContextBuilder
                 DocumentVersion version = fc.getDocumentVersion(dt.getDocumentVersionUid());
                 t.getSession().evict(version);
                 Document document = version.getDocument();
+                if(document == null){
+                    //load manually
+                    document = FactoryInstantiator.getInstance().getDocumentFactory()
+                            .getDocument(version.getDocumentUid());
+
+                    if(log.isDebugEnabled())
+                        log.debug("in context builder, fileupload entity manual load {}", document);
+                }
                 ctx.setEntity(document);
                 EventContext.addParameter("version", version);
             } catch (Exception e) {

@@ -21,11 +21,16 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
+import org.kimios.kernel.registries.AuthenticationSourceRegistry;
+import org.kimios.kernel.user.impl.HAuthenticationSource;
 import org.kimios.kernel.user.model.AuthenticationSource;
 import org.kimios.kernel.user.model.AuthenticationSourceBean;
 import org.kimios.kernel.user.AuthenticationSourceFactory;
 import org.kimios.kernel.user.model.AuthenticationSourceImpl;
 import org.kimios.utils.extension.ClassFinder;
+import org.kimios.utils.extension.ExtensionRegistryManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
@@ -37,6 +42,18 @@ public class HAuthenticationSourceFactory extends HFactory implements Authentica
 {
 
 
+    private static Logger logger = LoggerFactory.getLogger(HAuthenticationSource.class);
+
+    private HInternalUserFactory internalUserFactory;
+    private HInternalGroupFactory internalGroupFactory;
+
+    public HAuthenticationSourceFactory(HInternalUserFactory internalUserFactory,
+                                        HInternalGroupFactory internalGroupFactory) {
+        this.internalUserFactory = internalUserFactory;
+        this.internalGroupFactory = internalGroupFactory;
+    }
+
+
     private AuthenticationSource buildAuthenticationSource(AuthenticationSourceBean authenticationSourceBean)
             throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         AuthenticationSource source = (AuthenticationSource) Class.forName(authenticationSourceBean.getJavaClass()).newInstance();
@@ -44,6 +61,14 @@ public class HAuthenticationSourceFactory extends HFactory implements Authentica
         source.setEnableAuthByEmail(authenticationSourceBean.getEnableMailCheck());
         source.setEnableSSOCheck(authenticationSourceBean.getEnableSso());
         setClassFields(source, authenticationSourceBean);
+
+        //if internal user/group factory, give database access with hibernate factories
+
+        if(source instanceof HAuthenticationSource){
+            ((HAuthenticationSource) source).setInternalGroupFactory(internalGroupFactory);
+            ((HAuthenticationSource) source).setInternalUserFactory(internalUserFactory);
+        }
+
         return source;
     }
 
@@ -80,10 +105,19 @@ public class HAuthenticationSourceFactory extends HFactory implements Authentica
            try {
                 return buildAuthenticationSource(a);
             }catch (ClassNotFoundException cnfe) {
+                if(logger.isDebugEnabled()){
+                    logger.error("error while building auth source impl", cnfe);
+                }
                 throw new ConfigException(cnfe, "Cannot instantiate authentication source");
             } catch (IllegalAccessException iae) {
+               if(logger.isDebugEnabled()){
+                   logger.error("error while building auth source impl", iae);
+               }
                 throw new ConfigException(iae, "Cannot instantiate authentication source");
             } catch (InstantiationException ie) {
+               if(logger.isDebugEnabled()){
+                   logger.error("error while building auth source impl", ie);
+               }
                 throw new ConfigException(ie, "Cannot instantiate authentication source");
             }
         } catch (Exception he) {
@@ -157,8 +191,8 @@ public class HAuthenticationSourceFactory extends HFactory implements Authentica
      */
     public String getAvailableAuthenticationSource()
     {
-        Collection<Class<? extends AuthenticationSourceImpl>> classes = ClassFinder.findImplement("org.kimios",
-                AuthenticationSourceImpl.class);
+        Collection<Class<? extends AuthenticationSourceImpl>> classes =
+                ExtensionRegistryManager.itemsAsClass(AuthenticationSourceImpl.class);
         String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         xml += "<authentication-source-list>\n";
         for (Class<?> c : classes) {
@@ -177,7 +211,12 @@ public class HAuthenticationSourceFactory extends HFactory implements Authentica
             String value = parameters.get(field.getName());
             if (value != null) {
                 field.setAccessible(true);
-                field.set(source, value);
+                try {
+                    field.set(source, value);
+                }catch (Exception ex){
+                    logger.warn("incorrect field {} defined for auth source {} of type {}. Error: {}", field.getName(), bean.getName(),
+                            bean.getJavaClass(), ex.getMessage());
+                }
             }
         }
     }
@@ -188,7 +227,15 @@ public class HAuthenticationSourceFactory extends HFactory implements Authentica
         String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         xml += "<authentication-source>\n";
         for (Field f : c.getDeclaredFields()) {
-            xml += "<field name=\"" + f.getName() + "\"/>\n";
+            /*
+                exclude factories field for internal factory
+             */
+            if(className.equals("org.kimios.kernel.user.impl.HAuthenticationSource") && (f.getName().equals("internalUserFactory")
+                    || f.getName().equals("internalGroupFactory"))){
+                //do noting
+            } else {
+                xml += "<field name=\"" + f.getName() + "\"/>\n";
+            }
         }
         xml += "</authentication-source>\n";
         return xml;

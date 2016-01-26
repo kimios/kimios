@@ -226,7 +226,12 @@ public class SecurityAgent implements ISecurityAgent {
     public boolean isWritable(DMEntity dm, String userName, String userSource, Vector<Group> groups)
             throws ConfigException, DataSourceException
     {
+
+
         if (dm == null || userName == null || userSource == null) {
+
+            log.info("security agent returning directly: " +
+                    "entity {} against {}@{} with groups {}", dm, userName, userSource, groups);
             return false;
         }
 
@@ -235,9 +240,12 @@ public class SecurityAgent implements ISecurityAgent {
             if (isDocumentLocked(doc) && (!getDocumentLock(doc).getUser().equals(userName) ||
                     !getDocumentLock(doc).getUserSource().equals(userSource)))
             {
+                log.info("returning because doc is locked, and user isn't owner of the lock (lock info: {}@{}", getDocumentLock(doc).getUser(),
+                        getDocumentLock(doc).getUserSource());
                 return false;
             }
             if (!canWriteDuringWorkflow(doc, userName, userSource, groups)) {
+                log.info("returning because can't write during workflow");
                 return false;
             }
         }

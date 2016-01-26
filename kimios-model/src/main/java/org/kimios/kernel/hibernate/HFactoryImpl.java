@@ -18,7 +18,7 @@ package org.kimios.kernel.hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
-public class HFactoryImpl extends AbstractDBFactory
+public class HFactoryImpl implements IDBFactory
 {
     private SessionFactory sessionFactory;
 
@@ -53,23 +53,11 @@ public class HFactoryImpl extends AbstractDBFactory
         this.acSessionFactory = sessionFactory;
     }
 
-    private HFactoryImpl()
-    {
-
-    }
-
-    synchronized static public IDBFactory getInstance()
-    {
-        if (instance == null) {
-            instance = new HFactoryImpl();
-        }
-
-        return instance;
-    }
-
     public Session getSession()
     {
         return sessionFactory.getCurrentSession();
     }
+
+
 }
 

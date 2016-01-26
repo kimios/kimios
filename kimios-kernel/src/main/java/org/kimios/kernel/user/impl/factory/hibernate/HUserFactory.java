@@ -15,14 +15,9 @@
  */
 package org.kimios.kernel.user.impl.factory.hibernate;
 
-import org.hibernate.HibernateException;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.exception.DataSourceException;
-import org.kimios.kernel.hibernate.AbstractDBFactory;
-import org.kimios.kernel.security.FactoryInstantiator;
-import org.kimios.kernel.security.pwdgen.md5.MD5Generator;
+import org.kimios.kernel.user.impl.HAuthenticationSource;
 import org.kimios.kernel.user.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,262 +26,103 @@ import java.util.*;
 
 public class HUserFactory implements UserFactory
 {
-    private static Logger log = LoggerFactory.getLogger(HUserFactory.class);
-
     private AuthenticationSource auth;
 
-    public AuthenticationSource getAuth()
-    {
-        return auth;
-    }
+    private HInternalUserFactory internalUserFactory;
 
-    public void setAuth(AuthenticationSource auth)
-    {
-        this.auth = auth;
+    public HUserFactory(HInternalUserFactory internalUserFactory, HAuthenticationSource source){
+        //get internal user database factory
+        this.internalUserFactory = internalUserFactory;
+        this.auth = source;
     }
 
     public void addUserToGroup(User user, Group group)
             throws DataSourceException, ConfigException
     {
-        try {
-
-            User u = (User) AbstractDBFactory.getInstance()
-                    .getSession().get(User.class, user);
-            Group g = (Group) AbstractDBFactory.getInstance()
-                    .getSession().get(Group.class, group);
-            AuthenticationSourceBean l = new AuthenticationSourceBean();
-            l.setJavaClass(this.auth.getClass().getName());
-            l.setName(this.auth.getName());
-            u.getGroups().add(g);
-            AbstractDBFactory.getInstance()
-                    .getSession().save(u);
-        } catch (HibernateException e) {
-            throw new DataSourceException(e, e.getMessage());
-        }
+        internalUserFactory.addUserToGroup(user, group, this.auth.getName());
     }
 
     public boolean authenticate(String uid, String password)
             throws DataSourceException, ConfigException
     {
 
-        String md5Password = new MD5Generator().generatePassword(password);
-        String rq = "from User where lower(uid) = :uid AND password= :cryptpwd AND authenticationSourceName=:authname";
-
-        try {
-            Object u = AbstractDBFactory.getInstance()
-                    .getSession().createQuery(rq)
-                    .setString("uid", uid.toLowerCase())
-                    .setString("cryptpwd", md5Password)
-                    .setString("authname", this.getAuth().getName())
-                    .uniqueResult();
-
-            if (u == null) {
-                log.debug("Unable to authenticate user: \"" + uid + "\" is unknown");
-                return false;
-            }
-
-            if (!((User) u).isEnabled()) {
-                log.debug("Unable to authenticate user: \"" + uid + "\" is disabled");
-                return false;
-            }
-
-            Date lDate = new Date();
-            String query = "update User set lastLogin=:ldate where uid=:uid AND authenticationSourceName=:authname";
-            AbstractDBFactory.getInstance()
-                    .getSession().createQuery(query)
-                    .setString("uid", uid)
-                    .setString("authname", this.getAuth().getName())
-                    .setDate("ldate", lDate)
-                    .executeUpdate();
-            return true;
-
-        } catch (HibernateException e) {
-            throw new DataSourceException(e, e.getMessage());
-        }
+        return internalUserFactory.authenticate(uid, password, this.auth.getName());
     }
 
     public void deleteUser(User user) throws DataSourceException,
             ConfigException
     {
-        try {
-            User u  = (User)AbstractDBFactory.getInstance().getSession()
-                    .createCriteria(User.class)
-                    .add(Restrictions.eq("uid", user.getUid()).ignoreCase())
-                    .uniqueResult();
-            AbstractDBFactory.getInstance().getSession().delete(u);
-        } catch (HibernateException e) {
-            throw new DataSourceException(e, e.getMessage());
-        }
+        internalUserFactory.deleteUser(user);
     }
 
     public User getUser(String uid) throws DataSourceException, ConfigException
     {
-        try {
-            User u = (User) AbstractDBFactory.getInstance()
-                    .getSession()
-                    .createCriteria(User.class)
-                    .add(Restrictions.eq("uid", uid).ignoreCase())
-                    .add(Restrictions.eq("authenticationSourceName", this.getAuth().getName())).uniqueResult();
-
-            return u;
-        } catch (HibernateException he) {
-            throw new DataSourceException(he);
-        }
+        return internalUserFactory.getUser(uid, this.auth.getName());
     }
 
     public Vector<User> getUsers(Group group) throws DataSourceException,
             ConfigException
     {
-        try {
-            Set<User> sUsers = group.getUsers();
-            Vector<User> users = new Vector<User>();
-            for (User u : sUsers) {
-                users.add(u);
-            }
-            return users;
-        } catch (HibernateException he) {
-            throw new DataSourceException(he);
-        }
+        return internalUserFactory.getUsers(group);
     }
 
     public Vector<User> getUsers() throws DataSourceException, ConfigException
     {
-        try {
-            Vector<User> vUsers = new Vector<User>();
-            List<User> lUsers = (List<User>) AbstractDBFactory.getInstance().getSession().createCriteria(User.class)
-                    .add(Restrictions.eq("authenticationSourceName", this.getAuth().getName()))
-                    .addOrder(Order.asc("uid"))
-                    .list();
-            for (User u : lUsers) {
-                vUsers.add(u);
-            }
-            return vUsers;
-        } catch (HibernateException he) {
-            throw new DataSourceException(he);
-        }
+        return internalUserFactory.getUsers(this.auth.getName());
     }
 
     public void removeUserFromGroup(User user, Group group)
             throws DataSourceException, ConfigException
     {
-        try {
-            User u = (User) AbstractDBFactory.getInstance().getSession().load(User.class, user);
-            Group g = (Group) AbstractDBFactory.getInstance().getSession().load(Group.class, group);
-            u.getGroups().remove(g);
-            AbstractDBFactory.getInstance().getSession().update(u);
-        } catch (HibernateException he) {
-            throw new DataSourceException(he, he.getMessage());
-        }
+        internalUserFactory.removeUserFromGroup(user, group);
     }
 
     public void saveUser(User user, String password)
             throws DataSourceException, ConfigException
     {
-        try {
-            AbstractDBFactory.getInstance()
-                    .getSession().save(user);
-            AbstractDBFactory.getInstance()
-                    .getSession().flush();
-
-            String query =
-                    "update User set password = :cryptwd WHERE lower(uid)= :uid AND authenticationSourceName like :authname";
-
-            AbstractDBFactory.getInstance()
-                    .getSession()
-                    .createQuery(query)
-                    .setString("cryptwd",
-                            FactoryInstantiator.getInstance().getCredentialsGenerator().generatePassword(password))
-                    .setString("uid", user.getID().toLowerCase())
-                    .setString("authname", this.getAuth().getName())
-                    .executeUpdate();
-        } catch (HibernateException e) {
-            throw new DataSourceException(e, e.getMessage());
-        }
+        internalUserFactory.saveUser(user, password);
     }
 
     public void updateUser(User user, String password)
             throws DataSourceException, ConfigException
     {
 
-        try {
-            AbstractDBFactory.getInstance().getSession().update(user);
-            AbstractDBFactory.getInstance().getSession().flush();
-            if (password != null && !password.equals("")) {
-                String query =
-                        "update User SET password = :cryptwd WHERE lower(uid) = :uid AND authenticationSourceName like :authname";
-                AbstractDBFactory.getInstance().getSession().createQuery(query)
-                        .setString("cryptwd",
-                                FactoryInstantiator.getInstance().getCredentialsGenerator().generatePassword(password))
-                        .setString("uid", user.getID().toLowerCase())
-                        .setString("authname", this.getAuth().getName())
-                        .executeUpdate();
-            }
-        } catch (HibernateException e) {
-            throw new DataSourceException(e, e.getMessage());
-        }
+        internalUserFactory.updateUser(user, password);
     }
 
     public Object getAttribute(User user, String attributeName)
             throws DataSourceException, ConfigException
     {
-        return user.getAttributes().get(attributeName);
+        return internalUserFactory.getAttribute(user, attributeName);
     }
 
     public void setAttribute(User user, String attributeName,
             Object attributeValue) throws DataSourceException, ConfigException
     {
-        user.getAttributes().put(attributeName, attributeValue.toString());
-        log.debug(
-                "attribute set for " + user.getID() + " " + user.getAuthenticationSourceName() + ": " + attributeName +
-                        " --> " + attributeValue);
-        AbstractDBFactory.getInstance().getSession().saveOrUpdate(user);
+        internalUserFactory.setAttribute(user, attributeName, attributeValue);
     }
 
     public Map<String, String> getAttributes(User user)
             throws DataSourceException, ConfigException
     {
-        return user.getAttributes();
+        return internalUserFactory.getAttributes(user);
     }
 
     public User getUserByAttributeValue(String attributeName, String attributeValue)
             throws DataSourceException, ConfigException
     {
-        String query = "from User where attributes['" + attributeName + "'] = :attributeValue";
-        return (User) AbstractDBFactory.getInstance().getSession().createQuery(query)
-                .setString("attributeValue", attributeValue)
-                .uniqueResult();
+        return internalUserFactory.getUserByAttributeValue(attributeName, attributeValue);
     }
 
     public User getUserByEmail(String emailAddress) throws DataSourceException, ConfigException {
-        String query = "select distinct u from User as u where lower(u.mail) = :email or '" + emailAddress + "' in elements(u.emails)";
-        List<User> users = AbstractDBFactory.getInstance().getSession().createQuery(query)
-                .setString("email", emailAddress)
-                .list();
 
-        log.debug("loaded users by email {} count {}", emailAddress, users.size());
-        if(users.size() > 0){
-            return users.get(0);
-        } else {
-            return null;
-        }
-
+        return internalUserFactory.getUserByEmail(emailAddress);
     }
 
 
     @Override
     public void addUserEmails(String uid, List<String> emails) {
-        try {
-            User u = (User) AbstractDBFactory.getInstance()
-                    .getSession()
-                    .createCriteria(User.class).add(Restrictions.eq("uid", uid).ignoreCase())
-                    .add(Restrictions.eq("authenticationSourceName", this.getAuth().getName())).uniqueResult();
-
-            u.getEmails().clear();
-            u.getEmails().addAll(emails);
-            AbstractDBFactory.getInstance().getSession().saveOrUpdate(u);
-        } catch (HibernateException he) {
-            throw new DataSourceException(he);
-        }
+        internalUserFactory.addUserEmails(uid, this.auth.getName(), emails);
     }
 }
 

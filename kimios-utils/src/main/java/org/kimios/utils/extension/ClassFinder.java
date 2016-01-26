@@ -15,6 +15,8 @@
  */
 package org.kimios.utils.extension;
 
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 import org.reflections.Reflections;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
@@ -35,8 +37,16 @@ public class ClassFinder
 
     public static <T> Collection<Class<? extends T>> findImplement(String pkg, Class<T> impl)
     {
+
+        ArrayList<Vfs.UrlType> urlTypes = new ArrayList<Vfs.UrlType>();
+        urlTypes.add(Vfs.DefaultUrlTypes.jarFile);
+        urlTypes.add(Vfs.DefaultUrlTypes.jarUrl);
+        urlTypes.add(Vfs.DefaultUrlTypes.directory);
         try {
-            Vfs.addDefaultURLTypes(new BundleUrlType());
+            //look in the bundle class loader
+            Bundle b = FrameworkUtil.getBundle(impl);
+            BundleUrlType currentBundleUrlType = new BundleUrlType(b);
+            Vfs.addDefaultURLTypes(currentBundleUrlType);
         } catch (RuntimeException e) {
         } catch (Exception e) {
         } catch (LinkageError e){

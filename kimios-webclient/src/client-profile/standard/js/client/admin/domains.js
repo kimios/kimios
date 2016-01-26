@@ -351,6 +351,54 @@ Admin.Domains = {
                 value: (usersDetailsRecord ? usersDetailsRecord.data.phoneNumber : '')
             });
 
+
+            var detailsItems = [
+                uidTextField,
+                firstNameTextField,
+                lastNameTextField,
+                phoneNumberTextField,
+                {
+                    id: 'kimios-admin-domains-password',
+                    name: 'password',
+                    inputType: 'password',
+                    fieldLabel: kimios.lang('DMSAuthPasswordLabel')
+                }, {
+                    id: 'kimios-admin-domains-password2',
+                    name: 'confirm-password',
+                    inputType: 'password',
+                    fieldLabel: kimios.lang('ConfirmNewPassword')
+                }, {
+                    fieldLabel: kimios.lang('UserMail'),
+                    name: 'mail',
+                    vtype: 'email',
+                    value: (usersDetailsRecord ? usersDetailsRecord.data.mail : '')
+                }];
+
+            if(usersDetailsRecord.data.emails && usersDetailsRecord.data.emails.length > 0) {
+                for (var idx = 0; idx < usersDetailsRecord.data.emails.length; idx++) {
+                    if(usersDetailsRecord.data.mail != usersDetailsRecord.data.emails[idx]){
+                        detailsItems.push({
+                            fieldLabel: kimios.lang('UserMail') + ' ' + (idx+1),
+                            name: 'mail' + idx,
+                            vtype: 'email',
+                            value: usersDetailsRecord.data.emails[idx]
+                        })
+                    }
+                }
+            }
+
+
+            detailsItems.push({
+                xtype: 'hidden',
+                name: 'authenticationSourceName',
+                value: domainRecord.data.name
+            }, {
+                fieldLabel: kimios.lang('UserEnabled'),
+                xtype: 'checkbox',
+                name: 'enabled',
+                disabled: (record.data.className == 'org.kimios.kernel.user.impl.HAuthenticationSource' ? false : true),
+                checked: (usersDetailsRecord ? usersDetailsRecord.data.enabled : 'false')
+            })
             var form = new kimios.FormPanel({
                 title: kimios.lang('User'),
                 iconCls: 'admin-user-tree-node',
@@ -366,37 +414,7 @@ Admin.Domains = {
                     height: 18
                 },
                 defaultType: 'textfield',
-                items: [
-                    uidTextField,
-                    firstNameTextField,
-                    lastNameTextField,
-                    phoneNumberTextField,
-                    {
-                        id: 'kimios-admin-domains-password',
-                        name: 'password',
-                        inputType: 'password',
-                        fieldLabel: kimios.lang('DMSAuthPasswordLabel')
-                    }, {
-                        id: 'kimios-admin-domains-password2',
-                        name: 'confirm-password',
-                        inputType: 'password',
-                        fieldLabel: kimios.lang('ConfirmNewPassword')
-                    }, {
-                        fieldLabel: kimios.lang('UserMail'),
-                        name: 'mail',
-                        vtype: 'email',
-                        value: (usersDetailsRecord ? usersDetailsRecord.data.mail : '')
-                    }, {
-                        xtype: 'hidden',
-                        name: 'authenticationSourceName',
-                        value: domainRecord.data.name
-                    }, {
-                        fieldLabel: kimios.lang('UserEnabled'),
-                        xtype: 'checkbox',
-                        name: 'enabled',
-                        disabled: (record.data.className == 'org.kimios.kernel.user.impl.HAuthenticationSource' ? false : true),
-                        checked: (usersDetailsRecord ? usersDetailsRecord.data.enabled : 'false')
-                    }],
+                items: detailsItems,
                 bbar: ['->', {
                     text: kimios.lang('Save'),
                     iconCls: 'save',

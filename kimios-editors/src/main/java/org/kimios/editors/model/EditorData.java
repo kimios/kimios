@@ -16,6 +16,7 @@
 
 package org.kimios.editors.model;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonSubTypes;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
 
@@ -31,7 +32,7 @@ import java.util.Map;
         include = JsonTypeInfo.As.PROPERTY,
         property = "classType")
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = EtherpadEditorData.class, name = "etherpad"),
+        @JsonSubTypes.Type(value = EtherpadEditorData.class, name = "etherpad")
 })
 public class EditorData {
 
@@ -54,14 +55,19 @@ public class EditorData {
         this.proxyName = proxyName;
     }
 
-    private Map<String, String> cookiesData = new HashMap<String, String>();
+    private HashMap<String, String> cookiesDatas;
 
-    public Map<String, String> getCookiesData() {
-        return cookiesData;
+    public HashMap<String, String> getCookiesDatas() {
+        return cookiesDatas;
     }
 
-    public void setCookiesData(Map<String, String> cookiesData) {
-        this.cookiesData = cookiesData;
+    public void setCookieDatas(HashMap<String, String> cookieDatas) {
+        this.cookiesDatas = cookieDatas;
+    }
+
+    //Should be overrided by impl to handle specific security logic
+    public Map<String, String> getCookiesData(String userId, String userSource) {
+        return new HashMap<String, String>();
     }
 
     public long getDocumentId() {

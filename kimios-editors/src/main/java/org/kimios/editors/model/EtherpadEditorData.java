@@ -18,6 +18,7 @@ package org.kimios.editors.model;
 
 import org.kimios.editors.model.EditorData;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,9 +31,16 @@ public class EtherpadEditorData extends EditorData {
 
     private String padId;
 
-    private String userMapping;
+    private String groupId;
 
-    private List<String> usersLinkedTopad;
+    @Override
+    public Map<String, String> getCookiesData(String userId, String userSource) {
+        EtherpadUserData userData = this.getUsersDatas().get(userId + "@" + userSource);
+        HashMap<String, String> udata = new HashMap<String, String>();
+        udata.put("authorID", userData.getAuthorID());
+        udata.put("sessionID", userData.getSessionID());
+        return udata;
+    }
 
     public long getDocumentId() {
         return documentId;
@@ -54,19 +62,23 @@ public class EtherpadEditorData extends EditorData {
         this.padId = padId;
     }
 
-    public String getUserMapping() {
-        return userMapping;
+    public Map<String, EtherpadUserData> usersDatas = new HashMap<String, EtherpadUserData>();
+
+    public Map<String, EtherpadUserData> getUsersDatas() {
+        return usersDatas;
     }
 
-    public void setUserMapping(String userMapping) {
-        this.userMapping = userMapping;
+    public void setUsersDatas(Map<String, EtherpadUserData> usersDatas) {
+        this.usersDatas = usersDatas;
     }
 
-    public List<String> getUsersLinkedTopad() {
-        return usersLinkedTopad;
+    public String getGroupId() {
+        return groupId;
     }
 
-    public void setUsersLinkedTopad(List<String> usersLinkedTopad) {
-        this.usersLinkedTopad = usersLinkedTopad;
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
     }
+
+
 }

@@ -19,6 +19,7 @@ package org.kimios.webservices.editors.impl;
 import org.kimios.editors.model.EditorData;
 import org.kimios.editors.ExternalEditor;
 import org.kimios.editors.model.EtherpadEditorData;
+import org.kimios.kernel.security.model.Session;
 import org.kimios.webservices.IServiceHelper;
 import org.kimios.webservices.editors.EditorService;
 import org.slf4j.Logger;
@@ -30,6 +31,7 @@ import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -57,18 +59,25 @@ public class EditorServiceImpl implements EditorService {
     @Override
     public EditorData startDocumentEdit(String sessionId, long documentId) throws Exception {
         try {
-            EditorData data = externalEditor.startDocumentEdit(helper.getSession(sessionId), documentId);
+
+            Session session = helper.getSession(sessionId);
+            EditorData data = externalEditor.startDocumentEdit(session, documentId);
             //if necessary, set security information (cookies, headers ...), required by the editor!
-            if (data.getCookiesData() != null && data.getCookiesData().size() > 0) {
-                for (String cName : data.getCookiesData().keySet()) {
-                    javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("!Proxy!" + data.getProxyName() + cName,
-                            data.getCookiesData().get(cName));
+
+            if (data.getCookiesData(session.getUserName(), session.getUserSource())
+                    != null && data.getCookiesData(session.getUserName(), session.getUserSource()).size() > 0) {
+
+                data.setCookieDatas(new HashMap<String, String>());
+                for (String cName : data.getCookiesData(session.getUserName(), session.getUserSource()).keySet()) {
+                    javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie(cName,
+                            data.getCookiesData(session.getUserName(), session.getUserSource()).get(cName));
                     cookie.setPath("/etherpad");
                     cookie.setDomain(request.getServerName());
                     cookie.setMaxAge(3600);
                     response.addCookie(cookie);
-                    logger.info("added cookie " + cookie.getName() + " " + cookie.getValue());
-
+                    if(logger.isDebugEnabled())
+                    logger.debug("added cookie " + cookie.getName() + " " + cookie.getValue());
+                    data.getCookiesDatas().put(cookie.getName(), cookie.getValue());
                 }
             }
             return data;
@@ -81,7 +90,22 @@ public class EditorServiceImpl implements EditorService {
     public EditorData versionDocument(String sessionId, EditorData editData) throws Exception {
         try {
 
-            return externalEditor.versionDocument(helper.getSession(sessionId), editData);
+            Session session = helper.getSession(sessionId);
+            EditorData data = externalEditor.versionDocument(session, editData);
+            if (data.getCookiesData(session.getUserName(), session.getUserSource())
+                    != null && data.getCookiesData(session.getUserName(), session.getUserSource()).size() > 0) {
+                for (String cName : data.getCookiesData(session.getUserName(), session.getUserSource()).keySet()) {
+                    javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("!Proxy!" + data.getProxyName() + cName,
+                            data.getCookiesData(session.getUserName(), session.getUserSource()).get(cName));
+                    cookie.setPath("/etherpad");
+                    cookie.setDomain(request.getServerName());
+                    cookie.setMaxAge(3600);
+                    response.addCookie(cookie);
+                    if(logger.isDebugEnabled())
+                        logger.debug("added cookie " + cookie.getName() + " " + cookie.getValue());
+                }
+            }
+            return data;
         } catch (Exception ex) {
             throw helper.convertException(ex);
         }

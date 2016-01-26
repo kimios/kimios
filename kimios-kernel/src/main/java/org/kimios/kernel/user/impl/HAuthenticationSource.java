@@ -17,6 +17,8 @@ package org.kimios.kernel.user.impl;
 
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.exception.DataSourceException;
+import org.kimios.kernel.user.impl.factory.hibernate.HInternalGroupFactory;
+import org.kimios.kernel.user.impl.factory.hibernate.HInternalUserFactory;
 import org.kimios.kernel.user.model.AuthenticationSourceImpl;
 import org.kimios.kernel.user.model.GroupFactory;
 import org.kimios.kernel.user.model.UserFactory;
@@ -25,18 +27,28 @@ import org.kimios.kernel.user.impl.factory.hibernate.HUserFactory;
 
 public class HAuthenticationSource extends AuthenticationSourceImpl
 {
+
+    private HInternalUserFactory internalUserFactory;
+
+    private HInternalGroupFactory internalGroupFactory;
+
+    public void setInternalUserFactory(HInternalUserFactory internalUserFactory) {
+        this.internalUserFactory = internalUserFactory;
+    }
+
+    public void setInternalGroupFactory(HInternalGroupFactory internalGroupFactory) {
+        this.internalGroupFactory = internalGroupFactory;
+    }
+
     public UserFactory getUserFactory() throws DataSourceException, ConfigException
     {
-
-        HUserFactory userFactory = new HUserFactory();
-        userFactory.setAuth(this);
+        HUserFactory userFactory = new HUserFactory(internalUserFactory, this);
         return userFactory;
     }
 
     public GroupFactory getGroupFactory() throws DataSourceException, ConfigException
     {
-        HGroupFactory groupFactory = new HGroupFactory();
-        groupFactory.setAuth(this);
+        HGroupFactory groupFactory = new HGroupFactory(internalGroupFactory, internalUserFactory, this);
         return groupFactory;
     }
 }

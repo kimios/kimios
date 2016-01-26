@@ -18,6 +18,7 @@ package org.kimios.kernel.user.impl.factory.hibernate;
 import org.hibernate.criterion.Restrictions;
 import org.kimios.kernel.exception.AuthenticationSourceException;
 import org.kimios.kernel.hibernate.HFactory;
+import org.kimios.kernel.user.impl.HAuthenticationSource;
 import org.kimios.kernel.user.model.AuthenticationSourceBean;
 import org.kimios.kernel.user.AuthenticationSourceParamsFactory;
 import org.kimios.kernel.xml.XSDException;
@@ -68,9 +69,11 @@ public class HAuthenticationSourceParamsFactory extends HFactory implements Auth
 
         }
 
-
-
-
+        if(beanAuth.getJavaClass().equals(HAuthenticationSource.class.getName())){
+            //exclude factories field
+            missingParams.remove("internalUserFactory");
+            missingParams.remove("internalGroupFactory");
+        }
 
         StringBuffer xml = new StringBuffer("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
         xml.append("<authentication-source name=\"" + name + "\">\n");

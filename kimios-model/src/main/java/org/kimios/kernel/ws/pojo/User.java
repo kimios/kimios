@@ -17,6 +17,7 @@ package org.kimios.kernel.ws.pojo;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class User
 {
@@ -35,6 +36,8 @@ public class User
     private Calendar lastLogin;
 
     private String mail;
+
+    private List<String> emails;
 
     private boolean enabled;
 
@@ -146,6 +149,14 @@ public class User
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public List<String> getEmails() {
+        return emails;
+    }
+
+    public void setEmails(List<String> emails) {
+        this.emails = emails;
     }
 }
 

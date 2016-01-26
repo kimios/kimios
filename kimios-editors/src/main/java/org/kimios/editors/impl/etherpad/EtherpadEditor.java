@@ -21,6 +21,7 @@ import net.gjerull.etherpad.client.EPLiteException;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.kimios.editors.model.EtherpadEditorData;
+import org.kimios.editors.model.EtherpadUserData;
 import org.kimios.kernel.controller.IDocumentController;
 import org.kimios.kernel.controller.IDocumentVersionController;
 import org.kimios.kernel.controller.IFileTransferController;
@@ -32,11 +33,13 @@ import org.kimios.kernel.events.EventHandlerManager;
 import org.kimios.kernel.events.GenericEventHandler;
 import org.kimios.kernel.exception.AccessDeniedException;
 import org.kimios.kernel.filetransfer.model.DataTransfer;
+import org.kimios.kernel.hibernate.HFactory;
 import org.kimios.kernel.repositories.impl.RepositoryManager;
 import org.kimios.kernel.security.ISecurityAgent;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.user.FactoryInstantiator;
 import org.kimios.kernel.user.model.User;
+import org.mozilla.universalchardet.UniversalDetector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -123,44 +126,52 @@ public class EtherpadEditor implements ExternalEditor<EtherpadEditorData> {
 
         init();
 
-        for (GenericEventHandler eventHandler : EventHandlerManager.getInstance().handlers()) {
+        /*for (GenericEventHandler eventHandler : EventHandlerManager.getInstance().handlers()) {
             if (eventHandler instanceof EtherpadEventHandler) {
                 EtherpadEventHandler handler = (EtherpadEventHandler) eventHandler;
                 handler.setEtherpadEditor(this);
             }
-        }
+        }*/
 
         //check if already stored as currently edited. if yes, give back existing editor data!
 
         EtherpadEditorData data = this.editorDatas.get(documentId);
-        /*if(data != null){
+        if(data != null){
             //check if can write
             Document document = documentController.getDocument(session, documentId);
+            String kimiosUserId = session.getUserName() + "@" +
+                    session.getUserSource();
             List<DMEntity> entities = new ArrayList<DMEntity>();
             entities.add(document);
             List<DMEntity> finalList =
                     securityAgent.areWritable(entities, session.getUserName(), session.getUserSource(), session.getGroups());
             if(finalList.size() == 0){
-                logger.error("user {} has no write access on document for collaborative edit", session.getUserName() + "@" + session.getUserSource());
+                logger.error("user {} has no write access on document for collaborative edit", kimiosUserId);
                 throw new AccessDeniedException();
             } else {
-                logger.info("user will be added to editor data, and enter in pad!");
-                String authorId = createAuthorFromSession(session);
-                data.getCookiesData().put("authorID", authorId);
-                if(data.getUsersLinkedTopad() == null){
-                    data.setUsersLinkedTopad(new ArrayList<String>());
-                }
-                data.getUsersLinkedTopad().add(session.getUserName() + "@" +
-                    session.getUserSource());
-                Map map  = client.createGroupIfNotExistsFor("Kimios");
-                map = client.createSession(map.get("groupID").toString(), authorId, 1);
-                String sessionId = map.get("sessionID").toString();
-                data.getCookiesData().put("sessionID", sessionId);
-            }
-            return data;
-        }*/
-        documentController.checkoutDocument(session, documentId);
+                logger.info("user {} will be added to editor data, and enter in pad! {} (groupId: {})", kimiosUserId, data.getPadId(), data.getGroupId());
 
+                //TODO: notify first pad user(s) about new user !!!!!
+                String authorId = createAuthorFromSession(session);
+
+                //get group id from padId
+
+                String groupId = data.getGroupId();
+
+
+                Map map = client.createSession(groupId, authorId, 1);
+                String sessionId = map.get("sessionID").toString();
+                EtherpadUserData userData = new EtherpadUserData();
+                userData.setAuthorID(authorId);
+                userData.setSessionID(sessionId);
+                userData.setGroupID(groupId);
+                data.getUsersDatas().put(kimiosUserId, userData);
+                return data;
+            }
+        }
+
+        // FIRST EDIT
+        documentController.checkoutDocument(session, documentId);
         documentVersionController.createDocumentVersionFromLatest(session, documentId);
         //create pad, if it doesn't exist
         DocumentVersion documentVersion =
@@ -168,19 +179,25 @@ public class EtherpadEditor implements ExternalEditor<EtherpadEditorData> {
         String padId = "Kimios_" + documentId;
         //try to get existing pad !
         EtherpadEditorData etherpadEditorData = new EtherpadEditorData();
-
         String authorId = createAuthorFromSession(session);
-        etherpadEditorData.getCookiesData().put("authorID", authorId);
+        String kimiosUserId = session.getUserName() + "@" +
+                session.getUserSource();
         //groupMapper == userMapper
-        Map map = client.createGroupIfNotExistsFor(session.getUserName() + "@" + session.getUserSource());
+        Map map = client.createGroupIfNotExistsFor(kimiosUserId);
         String groupId = map.get("groupID").toString();
         logger.info("Group Pad Created !!!!. Should Store groupId linked to document ????");
-
-
-        //
-
         try {
-            map = client.createGroupPad(groupId, padId, IOUtils.toString(RepositoryManager.accessVersionStream(documentVersion), "UTF-8"));
+
+
+            String encoding = encodingDetector(documentVersion);
+
+            logger.info("found encoding for version #{}: {}", documentVersion.getUid(), encoding);
+
+            if(encoding == null){
+                encoding = "UTF-8";
+            }
+
+            map = client.createGroupPad(groupId, padId, IOUtils.toString(RepositoryManager.accessVersionStream(documentVersion), encoding));
             padId = map.get("padID").toString();
             logger.info("created padID {}", padId);
         } catch (EPLiteException ex) {
@@ -207,10 +224,16 @@ public class EtherpadEditor implements ExternalEditor<EtherpadEditorData> {
             }
         }
         //padId = map.get("padID").toString();
-        map = client.createSession(groupId, authorId, 1000);
+        map = client.createSession(groupId, authorId, 1000000000);
         String sessionId = map.get("sessionID").toString();
-        etherpadEditorData.getCookiesData().put("sessionID", sessionId);
+
+        EtherpadUserData userData = new EtherpadUserData();
+        userData.setAuthorID(authorId);
+        userData.setSessionID(sessionId);
+        userData.setGroupID(groupId);
         etherpadEditorData.setDocumentId(documentId);
+        etherpadEditorData.setGroupId(groupId);
+        etherpadEditorData.getUsersDatas().put(kimiosUserId, userData);
         //TODO: parameterized proxy Name (match the proxy servlet name, defined in context file)
         etherpadEditorData.setProxyName("etherpadProxy");
         etherpadEditorData.setPadId(padId);
@@ -218,6 +241,34 @@ public class EtherpadEditor implements ExternalEditor<EtherpadEditorData> {
         this.editorDatas.put(documentId, etherpadEditorData);
         return etherpadEditorData;
     }
+
+
+
+    private String encodingDetector(DocumentVersion version) throws Exception {
+        UniversalDetector detector = new UniversalDetector(null);
+
+// (2)
+        InputStream fis = RepositoryManager.accessVersionStream(version);
+        int nread;
+        byte[] buf = new byte[4096];
+        while ((nread = fis.read(buf)) > 0 && !detector.isDone()) {
+            detector.handleData(buf, 0, nread);
+        }
+        detector.dataEnd();
+        String encoding = detector.getDetectedCharset();
+        detector.reset();
+        if (encoding != null) {
+            logger.info("Detected encoding = " + encoding);
+            return encoding;
+        } else {
+            logger.info("No encoding detected.");
+            return null;
+        }
+
+    }
+
+
+
 
     @Override
     public EtherpadEditorData versionDocument(Session session, EtherpadEditorData editData) throws Exception {
@@ -246,11 +297,19 @@ public class EtherpadEditor implements ExternalEditor<EtherpadEditorData> {
     private void loadPadContentToLastVersion(Session session, EtherpadEditorData editData) throws Exception {
         Map data = client.getText(editData.getPadId());
         String content = (String) data.get("text");
+
+        logger.info("running pad to version for document {}", editData.getDocumentId());
+
         DataTransfer dt = fileTransferController.startUploadTransaction(session, editData.getDocumentId(), false);
+
+        logger.info("will update version with transaction {} for doc {}", dt.getUid(), dt.getDocumentVersionUid());
+
         //hash content
         String md5hash = DigestUtils.md5Hex(content).toLowerCase();
         String sha1hash = DigestUtils.shaHex(content).toLowerCase();
         InputStream is = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8));
-        fileTransferController.uploadDocument(session, dt.getUid(), is, md5hash, sha1hash);
+        fileTransferController.uploadDocument(session, dt.getUid(), is, null, null);
+
+        fileTransferController.endUploadTransaction(session, dt.getUid(), md5hash, sha1hash);
     }
 }

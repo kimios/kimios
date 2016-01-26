@@ -75,12 +75,12 @@ public class EditorsControllerWeb extends Controller {
 
         long documentId = Long.parseLong(parameters.get("documentId"));
         EditorData data = editorController.startEdit(sessionUid, documentId);
-        if (data.getCookiesData() != null && data.getCookiesData().size() > 0) {
-            for (String cName : data.getCookiesData().keySet()) {
-                javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("!Proxy!" + data.getProxyName() + cName,
-                        data.getCookiesData().get(cName));
+        if (data.getCookiesDatas() != null && data.getCookiesDatas().size() > 0) {
+            for (String cName : data.getCookiesDatas().keySet()) {
+                javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie(cName,
+                        data.getCookiesDatas().get(cName));
                 cookie.setMaxAge(3600);
-                cookie.setValue(data.getCookiesData().get(cName));
+                cookie.setValue(data.getCookiesDatas().get(cName));
                 response.addCookie(cookie);
             }
         }

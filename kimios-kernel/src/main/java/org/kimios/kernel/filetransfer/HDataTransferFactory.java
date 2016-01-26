@@ -31,6 +31,7 @@ public class HDataTransferFactory extends HFactory implements DataTransferFactor
     {
         try {
             getSession().save(transfer);
+            getSession().flush();
             return transfer.getUid();
         } catch (HibernateException he) {
             boolean integrity = he instanceof ConstraintViolationException;

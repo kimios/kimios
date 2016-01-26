@@ -54,8 +54,8 @@
         <class>org.kimios.kernel.dms.metafeeds.impl.UserMetaFeed</class>
         <class>org.kimios.kernel.dms.model.PathTemplate</class>
         <class>org.kimios.kernel.filetransfer.model.DataTransfer</class>
-        <class>org.kimios.kernel.index.query.model.model.SearchRequest</class>
-        <class>org.kimios.kernel.index.query.model.model.SearchRequestACL</class>
+        <class>org.kimios.kernel.index.query.model.SearchRequest</class>
+        <class>org.kimios.kernel.index.query.model.SearchRequestACL</class>
         <class>org.kimios.kernel.dms.model.VirtualFolderMetaData</class>
         <class>org.kimios.kernel.log.model.DMEntityLog</class>
         <class>org.kimios.kernel.log.model.Log</class>
@@ -69,7 +69,7 @@
         <class>org.kimios.kernel.security.model.Role</class>
         <class>org.kimios.kernel.security.model.Session</class>
         <class>org.kimios.kernel.jobs.model.ImportData</class>
-        <class>org.kimios.kernel.index.query.model.model.DocumentIndexStatus</class>
+        <class>org.kimios.kernel.index.query.model.DocumentIndexStatus</class>
         <class>org.kimios.kernel.share.model.MailContact</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
 

@@ -423,6 +423,9 @@ kimios.record = {
             {
                 name: 'enabled',
                 type: 'boolean'
+            },
+            {
+                name: 'emails'
             }
         ]),
 

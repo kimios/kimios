@@ -25,6 +25,7 @@ import org.kimios.api.events.annotations.DmsEventName;
 import org.kimios.kernel.exception.AccessDeniedException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.XMLException;
+import org.kimios.kernel.hibernate.HFactory;
 import org.kimios.kernel.jobs.ThreadManager;
 import org.kimios.kernel.jobs.security.ACLUpdateJob;
 import org.kimios.kernel.security.*;
@@ -349,7 +350,9 @@ public class SecurityController extends AKimiosController implements ISecurityCo
         if(source == null){
             throw new AccessDeniedException();
         }else {
-            return source.getUserFactory().getUser(session.getUserName());
+            User user = source.getUserFactory().getUser(session.getUserName());
+            HFactory.initializeAndUnproxy(user.getEmails());
+            return user;
         }
     }
 

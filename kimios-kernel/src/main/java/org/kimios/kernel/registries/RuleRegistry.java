@@ -1,6 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2008-2015  DevLib'
+ * Copyright (C) 2008-2016  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -14,29 +14,18 @@
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.kimios.kernel.hibernate;
+package org.kimios.kernel.registries;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import org.kimios.kernel.rules.impl.RuleImpl;
+import org.kimios.utils.extension.ExtensionRegistry;
 
 /**
- * Created by farf on 6/18/14.
+ * Created by farf on 22/01/16.
  */
-public abstract class AbstractDBFactory implements IDBFactory {
+public class RuleRegistry extends ExtensionRegistry<RuleImpl> {
 
-    @Override
-    abstract public SessionFactory getSessionFactory();
-
-    @Override
-    abstract public Session getSession(boolean autoCommitSession);
-
-    @Override
-    abstract public Session getSession();
-
-    protected static IDBFactory instance;
-
-    synchronized static public IDBFactory getInstance()
-    {
-        return instance;
+    public RuleRegistry(){
+        super();
     }
+
 }

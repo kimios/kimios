@@ -27,7 +27,7 @@ import javax.persistence.PersistenceContext;
 
 /**
  * Created by farf on 6/14/14.
- *                            P
+ *
  * Used to provide direct hibernate session, from
  * a Hibernate JPA EntityManager
  *
@@ -36,16 +36,10 @@ import javax.persistence.PersistenceContext;
  *
  *
  */
-public class JpaHibernateFactory extends AbstractDBFactory  {
+public class JpaHibernateFactory implements IDBFactory  {
 
-
-
-    private static Logger logger = LoggerFactory.getLogger(JpaHibernateFactory.class);
-
-    //@PersistenceContext(unitName = "kimiosPu")
+    @PersistenceContext(unitName = "kimiosPu")
     private EntityManager entityManager;
-
-    private SessionFactory sessionFactory;
 
     public void setEntityManager(EntityManager entityManager){
         this.entityManager = entityManager;
@@ -76,12 +70,4 @@ public class JpaHibernateFactory extends AbstractDBFactory  {
         return entityManager.unwrap(org.hibernate.Session.class);
     }
 
-
-    synchronized static public IDBFactory getInstance()
-    {
-        if (instance == null) {
-            instance = new JpaHibernateFactory();
-        }
-        return instance;
-    }
 }
