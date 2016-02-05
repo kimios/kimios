@@ -118,6 +118,10 @@
 
 
 
+    <service id="jobServiceOsgi" ref="jobController"
+             interface="org.kimios.kernel.jobs.IJobController"></service>
+
+
 
     <!-- converter registry -->
     <bean id="converterRegistry" class="org.kimios.kernel.registries.ConverterRegistry" />

@@ -69,34 +69,41 @@ public class KimiosExtender extends BundleTracker {
             if (k.startsWith("Kimios-")) {
                 // put in registry
                 logger.info("found header {} ==> {}", k, bundle.getHeaders().get(k));
-                String interfaceClassName =  (String)bundle.getHeaders().get(k);
-                logger.info("bundle {} with name {} will provide extension of type {}",
-                        bundle.getBundleId(), bundle.getSymbolicName(), interfaceClassName);
-                if (interfaceClassName != null) {
-                    Class<?> clazz;
-                    try {
-                        clazz = bundle.loadClass(interfaceClassName);
+                String interfacesClassName =  (String)bundle.getHeaders().get(k);
 
-                        Class<BundleWiring> wiringClass = BundleWiring.class;
-                        BundleWiring bw = (BundleWiring)bundle.adapt(wiringClass);
-                        ClassLoader bundleCl = bw.getClassLoader();
-                        Collection<Class<?>> classes =
-                                ClassFinder.findImplement(new BundleUrlType(bundle), "org.kimios", clazz, bundleCl);
+
+                String[] iArray = interfacesClassName.split(",");
+
+                for(String interfaceClassName: iArray){
+                    logger.info("bundle {} with name {} will provide extension of type {}",
+                            bundle.getBundleId(), bundle.getSymbolicName(), interfaceClassName);
+                    if (interfaceClassName != null) {
+                        Class<?> clazz;
+                        try {
+                            clazz = bundle.loadClass(interfaceClassName);
+
+                            Class<BundleWiring> wiringClass = BundleWiring.class;
+                            BundleWiring bw = (BundleWiring)bundle.adapt(wiringClass);
+                            ClassLoader bundleCl = bw.getClassLoader();
+                            Collection<Class<?>> classes =
+                                    ClassFinder.findImplement(new BundleUrlType(bundle), "org.kimios", clazz, bundleCl);
                         /*if(serviceClass != null) {
                             logger.info("registering {} as service for type {}", clazz, serviceClass, bundle);
                             bundle.getBundleContext().registerService(serviceClass.getName(), clazz.newInstance(), null);
                         } */
-                        for(Class clItem: classes) {
-                            logger.info("Kimios Extender Found item For Type {} ==> {}. will be put in registry", clazz, clItem);
-                            ExtensionRegistryManager.addClass(clItem);
+                            for(Class clItem: classes) {
+                                logger.info("Kimios Extender Found item For Type {} ==> {}. will be put in registry", clazz, clItem);
+                                ExtensionRegistryManager.addClass(clItem);
+                            }
+                        } catch (ClassNotFoundException e) {
+                            logger.error("Could not find class " + interfaceClassName, e);
                         }
-                    } catch (ClassNotFoundException e) {
-                        logger.error("Could not find class " + interfaceClassName, e);
-                    }
-                    catch (Exception e) {
-                        logger.error("extender exception fro " + interfaceClassName, e);
+                        catch (Exception e) {
+                            logger.error("extender exception fro " + interfaceClassName, e);
+                        }
                     }
                 }
+
             }
         }
     }

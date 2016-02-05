@@ -43,6 +43,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=9">
     <link rel="shortcut icon" type="image/png" href="<%=request.getContextPath()%>/images/kimios-favico.ico"/>
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/js/ext/resources/css/ext-all.css"/>
+    <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/js/ext/resources/css/htmleditorplugins.css"/>
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/js/ext/resources/css/kimios-theme.css"/>
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/client-dm-viewer.css"/>
     <link rel="stylesheet" type="text/css" href="<%=request.getContextPath()%>/css/StatusBar.css"/>
@@ -84,6 +85,26 @@
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/SpinnerField.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/GroupTabPanel.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/GroupTab.js"></script>
+
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/Ext.ux.form.HtmlEditor.MidasCommand.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/Ext.ux.form.HtmlEditor.Divider.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/Ext.ux.form.HtmlEditor.HR.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/Ext.ux.form.HtmlEditor.Image.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/Ext.ux.form.HtmlEditor.RemoveFormat.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/Ext.ux.form.HtmlEditor.IndentOutdent.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/Ext.ux.form.HtmlEditor.SubSuperScript.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/Ext.ux.form.HtmlEditor.RemoveFormat.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/Ext.ux.form.HtmlEditor.FindAndReplace.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/Ext.ux.form.HtmlEditor.Table.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/Ext.ux.form.HtmlEditor.Word.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/Ext.ux.form.HtmlEditor.Link.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/Ext.ux.form.HtmlEditor.SpecialCharacters.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/Ext.ux.form.HtmlEditor.UndoRedo.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/Ext.ux.form.HtmlEditor.Heading.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/Ext.ux.form.HtmlEditor.Plugins.js"></script>
+
+
+
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/main/kimios.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/main/Cookies.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/main/record.js"></script>
@@ -142,6 +163,7 @@
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/search/SearchField.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/search/AdvancedSearchPanel.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/share/share.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/share/SharedPanel.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/editors/editors.js"></script>
 
     <!-- Dashboard -->

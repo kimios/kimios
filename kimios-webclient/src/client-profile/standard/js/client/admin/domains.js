@@ -374,7 +374,7 @@ Admin.Domains = {
                     value: (usersDetailsRecord ? usersDetailsRecord.data.mail : '')
                 }];
 
-            if(usersDetailsRecord.data.emails && usersDetailsRecord.data.emails.length > 0) {
+            if(usersDetailsRecord && usersDetailsRecord.data && usersDetailsRecord.data.emails && usersDetailsRecord.data.emails.length > 0) {
                 for (var idx = 0; idx < usersDetailsRecord.data.emails.length; idx++) {
                     if(usersDetailsRecord.data.mail != usersDetailsRecord.data.emails[idx]){
                         detailsItems.push({

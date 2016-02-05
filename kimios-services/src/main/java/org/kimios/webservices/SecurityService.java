@@ -16,17 +16,18 @@
 package org.kimios.webservices;
 
 import io.swagger.annotations.*;
+import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
-import org.kimios.kernel.ws.pojo.AuthenticationSource;
-import org.kimios.kernel.ws.pojo.DMEntitySecurity;
-import org.kimios.kernel.ws.pojo.Group;
-import org.kimios.kernel.ws.pojo.User;
+import org.kimios.kernel.jobs.model.TaskInfo;
+import org.kimios.kernel.ws.pojo.*;
 import org.kimios.webservices.exceptions.DMServiceException;
 
+import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.util.List;
 
 /**
  *
@@ -48,14 +49,18 @@ public interface SecurityService
 
     @POST @ApiOperation(value ="")
     @Path("/updateDMEntitySecurities")
+    @Consumes("application/json")
     @Produces("application/json")
-    public void updateDMEntitySecurities(
-            @FormParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
-            @FormParam(value = "dmEntityId") @WebParam(name = "dmEntityId") long dmEntityId,
-            @FormParam(value = "xmlStream") @WebParam(name = "xmlStream") String xmlStream,
-            @ApiParam(name = "isRecursive", required = true)
-            @FormParam(value = "isRecursive") @WebParam(name = "isRecursive") boolean isRecursive,
-            @DefaultValue(value = "false") @FormParam(value = "appendMode") @WebParam(name = "appendMode") boolean appendMode)
+    public TaskInfo updateDMEntitySecurities(UpdateSecurityWithXmlCommand securityCommand)
+            throws DMServiceException;
+
+
+    @POST @ApiOperation(value ="")
+    @Path("/update-security")
+    @Produces("application/json")
+    @Consumes("application/json")
+    @WebMethod(operationName = "updateSecurities")
+    public TaskInfo updateDMEntitySecurities(@WebParam(name = "updateSecurityCommand") UpdateSecurityCommand securityCommand)
             throws DMServiceException;
 
     @GET @ApiOperation(value ="")

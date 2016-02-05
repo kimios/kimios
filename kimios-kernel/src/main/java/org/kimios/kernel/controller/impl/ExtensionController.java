@@ -148,17 +148,31 @@ public class ExtensionController extends AKimiosController implements IExtension
     public void trashEntity(Session session, long dmEntityId)
             throws ConfigException, DataSourceException, AccessDeniedException {
 
-        Document d = dmsFactoryInstantiator.getDocumentFactory().getDocument(dmEntityId);
-        Lock lock = d.getCheckoutLock();
-        if (lock != null) {
-            if (!session.getUserName().equals(lock.getUser())) {
-                throw new CheckoutViolationException();
+        DMEntity d = dmsFactoryInstantiator.getDmEntityFactory().getEntity(dmEntityId);
+
+        if(d instanceof Document){
+            Lock lock = ((Document) d).getCheckoutLock();
+            if (lock != null) {
+                if (!session.getUserName().equals(lock.getUser())) {
+                    throw new CheckoutViolationException();
+                }
             }
         }
-        if (getSecurityAgent().isWritable(d, session.getUserName(), session.getUserSource(), session.getGroups()) &&
-                getSecurityAgent().isWritable(d.getFolder(), session.getUserName(), session.getUserSource(), session.getGroups())) {
-            dmsFactoryInstantiator.getDmEntityFactory().trash(d);
+        if(d instanceof Folder || d instanceof Workspace){
+            if (getSecurityAgent().hasAnyChildCheckedOut(d, session.getUserName(), session.getUserSource())) {
+                throw new AccessDeniedException();
+            }
+            if (getSecurityAgent()
+                    .hasAnyChildNotWritable(d, session.getUserName(), session.getUserSource(), session.getGroups())) {
+                throw new AccessDeniedException();
+            }
+        }
+
+        if (getSecurityAgent().isWritable(d, session.getUserName(), session.getUserSource(), session.getGroups())){
+        {
+            dmsFactoryInstantiator.getDmEntityFactory().trash((DMEntityImpl)d);
             EventContext.addParameter("document", d);
+        }
         } else {
             throw new AccessDeniedException();
         }
@@ -179,11 +193,14 @@ public class ExtensionController extends AKimiosController implements IExtension
 
     @Override
     @DmsEvent(eventName = {DmsEventName.DOCUMENT_UNTRASH})
-    public Document restoreEntity(Session session, long dmEntityId)
+    public DMEntity restoreEntity(Session session, long dmEntityId)
             throws ConfigException, DataSourceException, AccessDeniedException {
-        Document d = dmsFactoryInstantiator.getDocumentFactory().getDocument(dmEntityId);
+        DMEntityImpl d = (DMEntityImpl)dmsFactoryInstantiator.getDmEntityFactory().getEntity(dmEntityId);
         if (getSecurityAgent().isAdmin(session.getUserName(), session.getUserSource())) {
             dmsFactoryInstantiator.getDmEntityFactory().untrash(d);
+
+            //reload entity
+            d = (DMEntityImpl)dmsFactoryInstantiator.getDmEntityFactory().getEntity(dmEntityId);
             EventContext.addParameter("document", d);
             return d;
         } else {

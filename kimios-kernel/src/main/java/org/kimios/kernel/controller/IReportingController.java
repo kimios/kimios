@@ -19,7 +19,12 @@ import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.exception.AccessDeniedException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.ReportingException;
+import org.kimios.kernel.reporting.model.Report;
+import org.kimios.kernel.reporting.model.ReportParam;
 import org.kimios.kernel.security.model.Session;
+
+import java.util.List;
+import java.util.Map;
 
 public interface IReportingController
 {
@@ -30,16 +35,41 @@ public interface IReportingController
             String xmlParameters) throws AccessDeniedException,
             ReportingException, ConfigException, DataSourceException;
 
+
+    /**
+     * Return specific report from given list of parameters.
+     */
+    public String getReport(Session session, String className,
+                            Map<String, ReportParam> reportParameters) throws AccessDeniedException,
+            ReportingException, ConfigException, DataSourceException;
+
     /**
      * Return XML stream containing all implemented reports.
      */
-    public String getReportsList(Session session) throws AccessDeniedException,
+    @Deprecated
+    public String getReportsListXml(Session session) throws AccessDeniedException,
+            ConfigException, DataSourceException;
+
+    /**
+     * Return XML stream containing all implemented reports.
+     */
+    public List<Report> getReportsList(Session session) throws AccessDeniedException,
             ConfigException, DataSourceException;
 
     /**
      * Return XML stream containing all attributes from a specified report by a class name.
      */
-    public String getReportAttributes(Session session, String className)
+    @Deprecated
+    public String getReportAttributesXml(Session session, String className)
+            throws ClassNotFoundException, InstantiationException,
+            IllegalAccessException, ConfigException, DataSourceException,
+            AccessDeniedException, ReportingException;
+
+
+    /**
+     * Return List containing all attributes from a specified report by a class name.
+     */
+    public List<ReportParam> getReportAttributes(Session session, String className)
             throws ClassNotFoundException, InstantiationException,
             IllegalAccessException, ConfigException, DataSourceException,
             AccessDeniedException, ReportingException;

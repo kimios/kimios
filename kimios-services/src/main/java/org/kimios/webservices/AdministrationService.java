@@ -21,11 +21,13 @@ import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.kimios.kernel.ws.pojo.*;
 import org.kimios.webservices.exceptions.DMServiceException;
 
+import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.ws.rs.*;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA. User: farf Date: 4/1/12 Time: 5:00 PM
@@ -76,15 +78,23 @@ public interface AdministrationService
             @QueryParam(value = "name") @WebParam(name = "name") String name) throws DMServiceException;
 
     @GET @ApiOperation(value ="")
-    @Path("/getAuthenticationSourceParams")
+    @Path("/getAuthenticationSourceParamsXml")
     @Produces("application/json")
-    public String getAuthenticationSourceParams(
+    public String getAuthenticationSourceParamsXml(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "name") @WebParam(name = "name") String name,
             @QueryParam(value = "className") @WebParam(name = "className") String className) throws DMServiceException;
 
     @GET @ApiOperation(value ="")
-    @Path("/createAuthenticationSource")
+    @Path("/getAuthenticationSourceParams")
+    @Produces("application/json")
+    public Map<String, String> getAuthenticationSourceParams(
+            @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+            @QueryParam(value = "name") @WebParam(name = "name") String name,
+            @QueryParam(value = "className") @WebParam(name = "className") String className) throws DMServiceException;
+
+    @GET @ApiOperation(value ="")
+    @Path("/createAuthenticationSourceFromXml")
     @Produces("application/json")
     public void createAuthenticationSource(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -95,8 +105,23 @@ public interface AdministrationService
             @QueryParam(value = "xmlParameters") @WebParam(name = "xmlParameters") String xmlParameters)
             throws DMServiceException;
 
+
+    @POST @ApiOperation(value ="")
+    @Path("/createAuthenticationSource")
+    @Produces("application/json")
+    @Consumes("application/json")
+    @WebMethod(operationName = "create-domain")
+    public void createAuthenticationSource(
+            @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+            @QueryParam(value = "name") @WebParam(name = "name") String name,
+            @QueryParam(value = "className") @WebParam(name = "className") String className,
+            @QueryParam(value = "enableSso") @WebParam(name = "enableSso") boolean enableSso,
+            @QueryParam(value = "enableMailCheck") @WebParam(name = "enableMailCheck") boolean enableMailCheck,
+            @WebParam(name = "parameters") Map<String, String> params)
+            throws DMServiceException;
+
     @GET @ApiOperation(value ="")
-    @Path("/updateAuthenticationSource")
+    @Path("/updateAuthenticationSourceFromXml")
     @Produces("application/json")
     public void updateAuthenticationSource(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
@@ -105,6 +130,21 @@ public interface AdministrationService
             @QueryParam(value = "enableSso") @WebParam(name = "enableSso") boolean enableSso,
             @QueryParam(value = "enableMailCheck") @WebParam(name = "enableMailCheck") boolean enableMailCheck,
             @QueryParam(value = "xmlParameters") @WebParam(name = "xmlParameters") String xmlParameters)
+            throws DMServiceException;
+
+
+    @POST @ApiOperation(value ="")
+    @Path("/updateAuthenticationSource")
+    @Produces("application/json")
+    @Consumes("application/json")
+    @WebMethod(operationName = "update-domain")
+    public void updateAuthenticationSource(
+            @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+            @QueryParam(value = "currentName") @WebParam(name = "currentName") String authenticationSourceName,
+            @QueryParam(value = "className") @WebParam(name = "className") String className,
+            @QueryParam(value = "enableSso") @WebParam(name = "enableSso") boolean enableSso,
+            @QueryParam(value = "enableMailCheck") @WebParam(name = "enableMailCheck") boolean enableMailCheck,
+            @WebParam(name = "params") Map<String, String>parameters)
             throws DMServiceException;
 
     @GET @ApiOperation(value ="")
@@ -117,13 +157,26 @@ public interface AdministrationService
     @GET @ApiOperation(value ="")
     @Path("/getAvailableAuthenticationSource")
     @Produces("application/json")
-    public String getAvailableAuthenticationSource(
+    public String getAvailableAuthenticationSourceXml(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId) throws DMServiceException;
+
+    @GET @ApiOperation(value ="")
+    @Path("/available-domain-types")
+    @Produces("application/json")
+    public List<String> getAvailableAuthenticationSources(
+            @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId) throws DMServiceException;
+
+    @GET @ApiOperation(value ="")
+    @Path("/getAvailableAuthenticationSourceParamsXml")
+    @Produces("application/json")
+    public String getAvailableAuthenticationSourceParamsXml(
+            @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+            @QueryParam(value = "className") @WebParam(name = "className") String className) throws DMServiceException;
 
     @GET @ApiOperation(value ="")
     @Path("/getAvailableAuthenticationSourceParams")
     @Produces("application/json")
-    public String getAvailableAuthenticationSourceParams(
+    public List<String> getAvailableAuthenticationSourceParams(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "className") @WebParam(name = "className") String className) throws DMServiceException;
 

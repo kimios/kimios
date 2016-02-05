@@ -18,9 +18,11 @@ package org.kimios.client.controller;
 
 import org.kimios.client.exception.ExceptionHelper;
 import org.kimios.kernel.share.model.MailContact;
+import org.kimios.kernel.ws.pojo.Share;
 import org.kimios.webservices.share.ShareService;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -45,7 +47,6 @@ public class ShareController {
         }
     }
 
-
     public void sendDocuments(String sessionId, List<Long> documentIds,
                               Map<String, String> recipients,
                               String subject, String content,
@@ -66,4 +67,23 @@ public class ShareController {
             throw new ExceptionHelper().convertException(e);
         }
     }
+
+    public List<Share> listDocumentSharedWithMe(String sessionId) throws Exception {
+        try {
+            return client.listEntitiesSharedWithMe(sessionId);
+        }catch (Exception ex){
+            throw new ExceptionHelper().convertException(ex);
+        }
+    }
+
+
+    public void shareDocument(String sessionId, String userId, String userSource, long dmEntityId, boolean read, boolean write, boolean fullAccess, String expirationDate, boolean notify)
+        throws Exception{
+        try {
+            client.shareDocument(sessionId, dmEntityId, userId, userSource, read, write, fullAccess, expirationDate, notify);
+        }catch (Exception ex){
+            throw new ExceptionHelper().convertException(ex);
+        }
+    }
+
 }

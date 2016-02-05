@@ -46,4 +46,12 @@
         <property name="mailContactFactory" ref="mailContactFactory" />
     </bean>
 
+
+    <bean id="shareFactory" class="org.kimios.kernel.share.factory.ShareFactory" parent="hfactory" />
+
+    <bean id="shareController" class="org.kimios.kernel.share.controller.impl.ShareController">
+        <constructor-arg name="securityController" ref="securityController" />
+        <constructor-arg name="shareFactory" ref="shareFactory" />
+    </bean>
+
 </beans>

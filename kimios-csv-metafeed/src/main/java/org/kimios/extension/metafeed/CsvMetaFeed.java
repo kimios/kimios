@@ -34,8 +34,6 @@ import java.util.List;
 /**
  * Created by farf on 04/06/15.
  */
-@Entity
-@DiscriminatorValue(value = "org.kimios.extension.metafeed.CsvMetaFeed")
 public class CsvMetaFeed extends MetaFeedImpl{
 
 

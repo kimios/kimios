@@ -1,0 +1,8 @@
+The image files in this folder have been copied from a few different freely available 
+icon sets, therefore may not fall under the same licensing terms this code is provided
+under. Please make yourself aware of the terms of each of these images before using 
+them in your project.
+
+- http://www.famfamfam.com/
+- http://code.google.com/p/fugue-icons/
+- http://www.everaldo.com/crystal/

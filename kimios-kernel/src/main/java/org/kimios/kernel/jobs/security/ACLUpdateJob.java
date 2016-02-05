@@ -25,14 +25,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.UUID;
 
 public class ACLUpdateJob extends JobImpl<List<DMEntityACL>> {
     private static Logger log = LoggerFactory.getLogger(ACLUpdateJob.class);
 
     private IACLUpdater updater;
-
-
-    private DMEntity dmEntity;
 
     private List<DMEntitySecurity> securities;
 
@@ -42,6 +40,10 @@ public class ACLUpdateJob extends JobImpl<List<DMEntityACL>> {
 
     public ACLUpdateJob(IACLUpdater updater, Session session, DMEntity dmEntity,
                         List<DMEntitySecurity> securities, List<DMEntityACL> removedAcls, boolean appendMode) {
+
+        //generate task id
+        super( UUID.randomUUID().toString() );
+
         this.updater = updater;
         this.dmEntity = dmEntity;
         this.securities = securities;
@@ -62,7 +64,11 @@ public class ACLUpdateJob extends JobImpl<List<DMEntityACL>> {
 
     @Override
     public Object getInformation() throws Exception {
-        return null;
+        //FIXME : Return data the job
+        StringBuilder builder = new StringBuilder();
+        builder.append("updateAclJob for entity ");
+        builder.append(dmEntity.getPath());
+        return builder;
     }
 }
 

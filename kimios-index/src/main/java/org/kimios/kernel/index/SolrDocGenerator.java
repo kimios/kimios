@@ -49,6 +49,7 @@ public class SolrDocGenerator {
     private DocumentWorkflowStatus st;
     private List<MetaValue> values;
     private List<DMEntityACL> acls;
+    private Lock documentLock;
 
     private ObjectMapper mp;
     private WorkflowStatus stOrg;
@@ -61,6 +62,20 @@ public class SolrDocGenerator {
     }
 
     private void loadDocumentData(Document document){
+
+        TransactionHelper txHelper = new TransactionHelper();
+        Object txStatus = null;
+        boolean shouldRollback = false;
+
+        if(!txHelper.isRunningInTransaction()){
+            try {
+                txStatus = txHelper.startNew(null);
+                shouldRollback = true;
+            }catch (Exception ex){
+                log.error("error while beginning tx", ex);
+            }
+        }
+
         version = FactoryInstantiator.getInstance().getDocumentVersionFactory().getLastDocumentVersion(document);
         req = FactoryInstantiator.getInstance().getDocumentWorkflowStatusRequestFactory().getLastPendingRequest(
                 document);
@@ -74,12 +89,22 @@ public class SolrDocGenerator {
         acls = org.kimios.kernel.security.FactoryInstantiator.getInstance().getDMEntitySecurityFactory().getDMEntityACL(
                 document);
 
+        documentLock = FactoryInstantiator.getInstance()
+                .getLockFactory().getDocumentLock(document);
+
+
+        if(shouldRollback){
+            try {
+                txHelper.rollback(txStatus);
+            }catch (Exception ex){
+                log.error("error while rollbacking tx", ex);
+            }
+        }
     }
 
 
     protected SolrInputDocument toSolrInputDocument(boolean flush,
                                                     boolean updateMetasWrapper,
-                                                    Map<String, Object> addonFields,
                                                     DocumentIndexStatus documentIndexStatus )
             throws DataSourceException, ConfigException {
 
@@ -101,8 +126,8 @@ public class SolrDocGenerator {
         doc.addField("DocumentOwner", document.getOwner() + "@" + document.getOwnerSource());
         doc.addField("DocumentOwnerId", document.getOwner());
         doc.addField("DocumentOwnerSource", document.getOwnerSource());
-        doc.addField("DocumentPath", document.getPath());
-        doc.addField("DocumentParent", document.getFolder().getPath() + "/");
+        doc.addField("DocumentPath", document.getPath().replaceAll("__TRASHED_ENTITY__", ""));
+        doc.addField("DocumentParent", document.getFolder().getPath().replaceAll("__TRASHED_ENTITY__", "") + "/");
         doc.addField("DocumentParentId", document.getFolder().getUid());
 
 
@@ -122,14 +147,12 @@ public class SolrDocGenerator {
         doc.addField("DocumentVersionLength", version.getLength());
         doc.addField("DocumentVersionHash", version.getHashMD5() + ":" + version.getHashSHA1());
 
-        Lock lock = document.getCheckoutLock();
+        doc.addField("DocumentCheckout", documentLock != null);
 
-        doc.addField("DocumentCheckout", lock != null);
-
-        if (lock != null) {
-            doc.addField("DocumentCheckoutOwnerId", lock.getUser());
-            doc.addField("DocumentCheckoutOwnerSource", lock.getUserSource());
-            doc.addField("DocumentCheckoutDate", lock.getDate());
+        if (documentLock != null) {
+            doc.addField("DocumentCheckoutOwnerId", documentLock.getUser());
+            doc.addField("DocumentCheckoutOwnerSource", documentLock.getUserSource());
+            doc.addField("DocumentCheckoutDate", documentLock.getDate());
         }
 
         boolean outOfWorkflow = true;
@@ -218,6 +241,32 @@ public class SolrDocGenerator {
         for (int i = 0; i < acls.size(); i++) {
             doc.addField("DocumentACL", acls.get(i).getRuleHash());
         }
+        return doc;
+    }
+
+    protected SolrInputDocument toSolrContentInputDocument(boolean flush,
+                                                    boolean updateMetasWrapper,
+                                                    Map<String, Object> addonFields,
+                                                    DocumentIndexStatus documentIndexStatus )
+            throws DataSourceException, ConfigException {
+
+        documentIndexStatus.setEntityId(document.getUid());
+        SimpleDateFormat dateParser = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat utcDateParser = new SimpleDateFormat("dd-MM-yyyy");
+        utcDateParser.setTimeZone(TimeZone.getTimeZone("UTC"));
+        SimpleDateFormat utcDateTimeParser = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        utcDateTimeParser.setTimeZone(TimeZone.getTimeZone("UTC"));
+        log.debug("processing document {} for path {}", document.getUid(), document.getPath());
+        SolrInputDocument doc = new SolrInputDocument();
+        doc.addField("DocumentUid", document.getUid());
+        if (version == null) {
+            log.error("Document {} has no version", document.getUid());
+            return null;
+        }
+        doc.addField("DocumentVersionLength", version.getLength());
+        doc.addField("DocumentVersionHash", version.getHashMD5() + ":" + version.getHashSHA1());
+        doc.addField("VersionFileName", version.getStoragePath());
+
         if(addonFields != null && addonFields.size() > 0){
             for(String solrInputField: addonFields.keySet())
                 doc.addField(solrInputField, addonFields.get(solrInputField));

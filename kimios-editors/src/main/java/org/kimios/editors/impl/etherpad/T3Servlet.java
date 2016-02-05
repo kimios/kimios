@@ -43,66 +43,20 @@ public class T3Servlet extends ProxyServlet  {
     private static Logger logger = LoggerFactory.getLogger(T3Servlet.class);
 
 
+    private String targetUrl;
 
-    /*@Override
-    protected void copyRequestHeaders(HttpServletRequest clientRequest, Request proxyRequest)
-    {
-        // First clear possibly existing headers, as we are going to copy those from the client request.
-        proxyRequest.getHeaders().clear();
-
-        Set<String> headersToRemove = findConnectionHeaders(clientRequest);
-
-        for (Enumeration<String> headerNames = clientRequest.getHeaderNames(); headerNames.hasMoreElements();)
-        {
-            String headerName = headerNames.nextElement();
-            String lowerHeaderName = headerName.toLowerCase(Locale.ENGLISH);
-
-            // Remove hop-by-hop headers.
-            if (HOP_HEADERS.contains(lowerHeaderName))
-                continue;
-            if (headersToRemove != null && headersToRemove.contains(lowerHeaderName))
-                continue;
-
-            for (Enumeration<String> headerValues = clientRequest.getHeaders(headerName); headerValues.hasMoreElements();)
-            {
-                String headerValue = headerValues.nextElement();
-
-                if(!headerName.equals(HttpHeader.COOKIE)){
-                    if (headerValue != null)
-                        proxyRequest.header(headerName, headerValue);
-                }
-
-            }
-        }
-
-    }*/
-
-
-    private StringBuilder convertCookies(List<HttpCookie> cookies, StringBuilder builder)
-    {
-        for (int i = 0; i < cookies.size(); ++i)
-        {
-            if (builder == null)
-                builder = new StringBuilder();
-            if (builder.length() > 0)
-                builder.append("; ");
-            HttpCookie cookie = cookies.get(i);
-            builder.append(cookie.toString());
-        }
-        return builder;
+    public String getTargetUrl() {
+        return targetUrl;
     }
 
+    public void setTargetUrl(String targetUrl) {
+        this.targetUrl = targetUrl;
+    }
 
     protected String rewriteTarget(HttpServletRequest clientRequest)
     {
-
-        StringBuffer target = new StringBuffer("http://etherpad.kimios.app");
-
-        logger.info("targetting to " + clientRequest.getPathInfo());
-
-
+        StringBuffer target = new StringBuffer(targetUrl);
         target.append(clientRequest.getPathInfo());
-
         String query = clientRequest.getQueryString();
         if (query != null)
             target.append("?").append(query);
@@ -114,132 +68,20 @@ public class T3Servlet extends ProxyServlet  {
     protected void sendProxyRequest(HttpServletRequest clientRequest, HttpServletResponse proxyResponse, Request proxyRequest)
     {
         proxyRequest.getHeaders().remove("Host");
-
-
-
         proxyRequest.getHeaders().remove("Cookie");
         for(Cookie c: clientRequest.getCookies()){
             if(c.getName().endsWith("sessionID") || c.getName().endsWith("authorID")){
                 HttpCookie coo = new HttpCookie(c.getName(), c.getValue());
                 coo.setValue(c.getValue());
-                coo.setDomain("etherpad.kimios.app");
-                coo.setPath("/");
                 proxyRequest = proxyRequest.cookie(coo);
             } else {
                 if(c.getName().equals("io") || c.getName().equals("express_sid") || c.getName().equals("sid")){
                     HttpCookie coo = new HttpCookie(c.getName(), c.getValue());
                     proxyRequest  = proxyRequest.cookie(coo);
                 }
-
             }
         }
         proxyRequest.send(newProxyResponseListener(clientRequest, proxyResponse));
     }
-
-
-
-    /*@Override
-    protected void sendProxyRequest(HttpServletRequest clientRequest, HttpServletResponse proxyResponse, Request proxyRequest)
-    {
-
-        //Customize
-
-        // Pass through the upgrade and connection header fields for websocket handshake request.
-        String upgradeValue = clientRequest.getHeader("Upgrade");
-        if (upgradeValue != null && upgradeValue.compareToIgnoreCase("websocket") == 0)
-        {
-            proxyRequest = proxyRequest.header("Upgrade", upgradeValue);
-            proxyRequest.header("Connection", clientRequest.getHeader("Connection"));
-        }
-
-
-        //add cookie
-
-
-        proxyRequest.getHeaders().remove("Cookie");
-
-        for(Cookie c: clientRequest.getCookies()){
-            if(c.getName().endsWith("sessionID") || c.getName().endsWith("authorID")){
-                HttpCookie coo = new HttpCookie(c.getName().substring("!Proxy!etherpadProxy".length()), c.getValue());
-                coo.setValue(c.getValue());
-                coo.setDomain("etherpad.kimios.app");
-                coo.setPath("/");
-                proxyRequest = proxyRequest.cookie(coo);
-            } else {
-                HttpCookie coo = new HttpCookie(c.getName(), c.getValue());
-                proxyRequest  = proxyRequest.cookie(coo);
-            }
-        }
-
-
-        logger.info(proxyRequest.getCookies() + "");
-
-        /*String cookies = "";
-        for(HttpCookie c: proxyRequest.getCookies()){
-            logger.info("final cookies: {} ================+> {}", c.getName(), c.getValue());
-
-
-            cookies += " " + c.getName() + "=" + c.getValue() + "; ";
-        }
-        if(cookies.length() > 0)
-            cookies = cookies.substring(0, cookies.length() - 2);
-
-
-        proxyRequest.header("Cookie", cookies);*/
-
-
-        /*proxyRequest.getHeaders().remove(HttpHeader.HOST);
-
-        proxyRequest.header(HttpHeader.HOST.asString(), "etherpad.kimios.app");
-
-
-
-        //proxyRequest.header(HttpHeader.COOKIE.asString(), convertCookies(proxyRequest.getCookies(), null).toString());
-
-
-
-        logger.debug("{} proxying to upstream:{}{}{}{}",
-                getRequestId(clientRequest),
-                System.lineSeparator(),
-                proxyRequest,
-                System.lineSeparator(),
-                proxyRequest.getHeaders().toString().trim());
-
-
-
-        proxyRequest.send(newProxyResponseListener(clientRequest, proxyResponse));
-    }*/
-
-
-
-
-
-    /*@Override
-    protected void onResponseHeaders(HttpServletRequest request, HttpServletResponse response, Response proxyResponse)
-    {
-        super.onResponseHeaders(request, response, proxyResponse);
-
-        // Restore the upgrade and connection header fields for websocket handshake request.
-        HttpFields fields = proxyResponse.getHeaders();
-        for (HttpField field : fields)
-        {
-            if (field.getName().compareToIgnoreCase("Upgrade") == 0)
-            {
-                String upgradeValue = field.getValue();
-                if (upgradeValue != null && upgradeValue.compareToIgnoreCase("websocket") == 0)
-                {
-                    response.setHeader(field.getName(), upgradeValue);
-                    for (HttpField searchField : fields)
-                    {
-                        if (searchField.getName().compareToIgnoreCase("Connection") == 0) {
-                            response.setHeader(searchField.getName(), searchField.getValue());
-                        }
-                    }
-                }
-            }
-        }
-    } */
-
-
 
 }

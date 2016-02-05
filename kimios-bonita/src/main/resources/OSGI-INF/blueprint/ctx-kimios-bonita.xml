@@ -68,6 +68,7 @@
 
         <property name="bonitaCfg" ref="bonitaSettings"/>
 
+        <tx:transaction method="*" value="Required"/>
     </bean>
 
 

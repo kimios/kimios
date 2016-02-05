@@ -22,11 +22,9 @@
              http://java.sun.com/xml/ns/persistence/persistence_2_1.xsd">
 
     <persistence-unit name="kimiosPu" transaction-type="JTA">
-        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+        <provider>org.hibernate.jpa.custom.CustomPersistenceProvider</provider>
         <jta-data-source>osgi:service/javax.sql.DataSource/(osgi.jndi.service.name=jdbc/kimiosds)</jta-data-source>
-        <mapping-file>org/kimios/kernel/hibernate/mapping/authentication.hbm.xml</mapping-file>
-        <mapping-file>org/kimios/kernel/hibernate/mapping/postgresql/dmpojo.hbm.xml</mapping-file>
-        <class>org.kimios.kernel.user.model.AuthenticationSourceBean</class>
+         <class>org.kimios.kernel.user.model.AuthenticationSourceBean</class>
         <class>org.kimios.kernel.dms.model.Bookmark</class>
         <class>org.kimios.kernel.dms.model.DMEntityImpl</class>
         <class>org.kimios.kernel.dms.model.Document</class>
@@ -72,6 +70,7 @@
         <class>org.kimios.kernel.jobs.model.ImportData</class>
         <class>org.kimios.kernel.index.query.model.DocumentIndexStatus</class>
         <class>org.kimios.kernel.share.model.MailContact</class>
+        <class>org.kimios.kernel.share.model.Share</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
 
         <properties>
@@ -84,7 +83,7 @@
             <property name="hibernate.connection.release_mode" value="after_statement"/>
             <property name="hibernate.transaction.flush_before_completion" value="true" />
             <property name="hibernate.jdbc.use_streams_for_binary" value="true" />
-            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL82Dialect"/>
+            <property name="hibernate.archive.autodetection" value="" />
         </properties>
     </persistence-unit>
 </persistence>

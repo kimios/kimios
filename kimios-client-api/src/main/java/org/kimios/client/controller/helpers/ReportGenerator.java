@@ -18,6 +18,8 @@ package org.kimios.client.controller.helpers;
 import org.kimios.client.controller.ReportingController;
 import org.kimios.client.controller.helpers.report.Report;
 import org.kimios.client.exception.ReportingException;
+import org.kimios.kernel.reporting.model.ReportParam;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
@@ -28,6 +30,7 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -93,16 +96,17 @@ public class ReportGenerator
     }
 
     /**
-     * Get a report object from added parameters
+     * Get a report object from added parameters (XML Form)
      */
-    public Report generate()
+    @Deprecated
+    public Report generateXml()
         throws ReportingException
     {
         try
         {
             ReportingController controller = reportingController;
             Document d = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(
-                new ByteArrayInputStream( controller.getReportAttributes( sessionUid, className ).getBytes() ) );
+                new ByteArrayInputStream( controller.getReportAttributesXml( sessionUid, className ).getBytes() ) );
             NodeList nl = d.getDocumentElement().getElementsByTagName( "parameter" );
             if ( parameters.size() > nl.getLength() )
             {
@@ -130,6 +134,50 @@ public class ReportGenerator
         }
         catch ( Exception ex )
         {
+            throw new ReportingException( ex.getMessage() );
+        }
+    }
+
+    /**
+     * Get a report object from added parameters
+     */
+    public Report generate()
+            throws ReportingException
+    {
+        try
+        {
+            ReportingController controller = reportingController;
+            List<ReportParam> definedAttributes =
+                    controller.getReportAttributes( sessionUid, className );
+            for ( String name : parameters.keySet() )
+            {
+                boolean definedAttribute = false;
+                for(ReportParam p: definedAttributes){
+                    if(p.getName() != null && p.getName().equals(name)){
+                        definedAttribute = true;
+                        break;
+                    }
+                }
+                if ( !definedAttribute )
+                {
+                    throw new ReportingException(
+                            "Named parameter \"" + name + "\" is invalid (see getReportAttributes)" );
+                }
+            }
+
+            Map<String, ReportParam> reportParamMap = new HashMap<String, ReportParam>();
+            for ( ReportParam p: definedAttributes )
+            {
+                String value = parameters.get( p.getName() );
+                p.setValue(value);
+                reportParamMap.put(p.getName(), p);
+            }
+            String xml = controller.getReport( sessionUid, className, reportParamMap);
+            return XMLGenerators.unserializeReport( xml );
+        }
+        catch ( Exception ex )
+        {
+            LoggerFactory.getLogger(ReportGenerator.class).error("error while generating report ", ex);
             throw new ReportingException( ex.getMessage() );
         }
     }

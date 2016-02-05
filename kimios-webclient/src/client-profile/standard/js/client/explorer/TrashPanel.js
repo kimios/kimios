@@ -118,7 +118,8 @@ kimios.explorer.TrashPanel = Ext.extend(Ext.grid.GridPanel, {
                        //restore
                        kimios.ajaxRequest('DmsEntity', {
                                action: 'permanentDelete',
-                               dmEntityUid: rows[u].data.uid
+                               dmEntityUid: rows[u].data.uid,
+                               dmEntityType: rows[u].data.type
                            },
                            function () {
                                _this.getStore().load();

@@ -16,40 +16,76 @@
 package org.kimios.kernel.jobs;
 
 import org.kimios.kernel.security.model.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Callable;
 
-public class ThreadManager
-{
-    private static ThreadManager manager = new ThreadManager();
+public class ThreadManager {
 
-    private ExecutorService executor;
+    private static ThreadManager manager;
 
-    synchronized public static ThreadManager getInstance()
-    {
+    private KimiosExecutor executor;
+
+    private static Logger logger = LoggerFactory.getLogger(ThreadManager.class);
+
+    synchronized public static ThreadManager getInstance() throws RuntimeException {
         if (manager == null) {
-            manager = new ThreadManager();
+            try {
+                manager = new ThreadManager();
+            }catch (Exception ex){
+                throw new RuntimeException(ex);
+            }
         }
 
         return manager;
     }
 
-    private ThreadManager()
-    {
-        executor = Executors.newFixedThreadPool(5);
+    private ThreadManager() throws Exception  {
+        executor = KimiosExecutorBuilder.build("kimios");
     }
 
-    public void startJob(Session session, Job job)
-    {
+    public void startJob(Session session, Job job) {
         job.setSession(session);
         executor.submit(job);
     }
 
 
-    public void shutDown(){
-        if(executor != null){
+    public void shutDown() {
+        if (executor != null) {
             executor.shutdownNow();
         }
+    }
+
+
+    public List listRunningJob() {
+        if (executor != null) {
+            List<Callable> items = executor.listTasks();
+            for(Callable r: items){
+                if(r instanceof Job){
+                    logger.info("loaded kimios task {} ==> {}", ((Job) r).getTaskId(), r);
+                }  else {
+                    logger.info("task isn't kimios task ==> {}", r);
+                }
+            }
+            return items;
+        }
+        return new ArrayList();
+    }
+
+    public Job taskById(String id) {
+        if (executor != null) {
+            Callable r = executor.tasksById(id);
+            if(r instanceof Job){
+                return (Job)r;
+            } else {
+                logger.info("task is null or not kimios task {}", r);
+                return null;
+            }
+        }
+        return null;
     }
 }
 

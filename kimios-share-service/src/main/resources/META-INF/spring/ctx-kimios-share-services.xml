@@ -35,6 +35,7 @@
 
     <bean id="shareServiceBean" class="org.kimios.webservices.share.impl.ShareServiceImpl">
         <constructor-arg name="mailShareController" ref="mailShareController"/>
+        <constructor-arg name="shareController" ref="shareController" />
         <constructor-arg name="serviceHelper" ref="serviceHelper"/>
     </bean>
 

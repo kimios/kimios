@@ -128,8 +128,21 @@ public class AdministrationController
     /**
      * Get authentication source parameters XML stream from authentication source name
      */
-    public String getAuthenticationSourceParams( String sessionId, String name, String className )
+    public String getAuthenticationSourceParamsXml( String sessionId, String name, String className )
         throws Exception
+    {
+        try
+        {
+            return client.getAuthenticationSourceParamsXml(sessionId, name, className);
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
+        }
+    }
+
+    public Map<String,String> getAuthenticationSourceParams( String sessionId, String name, String className )
+            throws Exception
     {
         try
         {
@@ -160,6 +173,22 @@ public class AdministrationController
         }
     }
 
+    public void createAuthenticationSource( String sessionId, String authenticationSourceName, String className,
+                                            boolean enableSsoCheck,
+                                            boolean enableMailCheck,
+                                            Map<String, String> parameters)
+            throws Exception
+    {
+        try
+        {
+            client.createAuthenticationSource( sessionId, authenticationSourceName, className, enableSsoCheck, enableMailCheck, parameters );
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
+        }
+    }
+
     /**
      * Update authentication source
      */
@@ -171,6 +200,21 @@ public class AdministrationController
         {
             client.updateAuthenticationSource(sessionId, authenticationSourceName,
                     className, enableSsoCheck, enableMailCheck, xmlParameters);
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
+        }
+    }
+
+    public void updateAuthenticationSource( String sessionId, String authenticationSourceName,
+                                            String className,  boolean enableSsoCheck,boolean enableMailCheck, Map<String, String> parameters )
+            throws Exception
+    {
+        try
+        {
+            client.updateAuthenticationSource(sessionId, authenticationSourceName,
+                    className, enableSsoCheck, enableMailCheck, parameters);
         }
         catch ( Exception e )
         {
@@ -197,12 +241,12 @@ public class AdministrationController
     /**
      * Get a class names list of all implemented authentication sources
      */
-    public String getAvailableAuthenticationSource( String sessionId )
+    public List<String> getAvailableAuthenticationSource( String sessionId )
         throws Exception
     {
         try
         {
-            return client.getAvailableAuthenticationSource( sessionId );
+            return client.getAvailableAuthenticationSources( sessionId );
         }
         catch ( Exception e )
         {
@@ -213,12 +257,25 @@ public class AdministrationController
     /**
      * Get a field names list for a given implemented authentication source
      */
-    public String getAvailableAuthenticationSourceParams( String sessionId, String className )
+    public List<String> getAvailableAuthenticationSourceParams( String sessionId, String className )
         throws Exception
     {
         try
         {
             return client.getAvailableAuthenticationSourceParams(sessionId, className);
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
+        }
+    }
+
+    public String getAvailableAuthenticationSourceParamsXml( String sessionId, String className )
+            throws Exception
+    {
+        try
+        {
+            return client.getAvailableAuthenticationSourceParamsXml(sessionId, className);
         }
         catch ( Exception e )
         {

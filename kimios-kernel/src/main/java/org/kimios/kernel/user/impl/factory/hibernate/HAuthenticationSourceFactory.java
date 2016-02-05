@@ -33,10 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 
 public class HAuthenticationSourceFactory extends HFactory implements AuthenticationSourceFactory
 {
@@ -186,10 +183,24 @@ public class HAuthenticationSourceFactory extends HFactory implements Authentica
         }
     }
 
+
+    public List<String> getAvailableAuthenticationSource()
+    {
+        Collection<Class<? extends AuthenticationSourceImpl>> classes =
+                ExtensionRegistryManager.itemsAsClass(AuthenticationSourceImpl.class);
+
+        List<String> fClasses = new ArrayList<String>();
+        for(Class c: classes){
+            fClasses.add(c.getName());
+        }
+        return fClasses;
+    }
+
+
     /**
      * Get a class name XML list of the all implemented authentication sources
      */
-    public String getAvailableAuthenticationSource()
+    public String getAvailableAuthenticationSourceXml()
     {
         Collection<Class<? extends AuthenticationSourceImpl>> classes =
                 ExtensionRegistryManager.itemsAsClass(AuthenticationSourceImpl.class);
@@ -221,7 +232,8 @@ public class HAuthenticationSourceFactory extends HFactory implements Authentica
         }
     }
 
-    public String getAvailableAuthenticationSourceParams(String className) throws ClassNotFoundException
+    @Deprecated
+    public String getAvailableAuthenticationSourceParamsXml(String className) throws ClassNotFoundException
     {
         Class<?> c = Class.forName(className);
         String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
@@ -239,6 +251,24 @@ public class HAuthenticationSourceFactory extends HFactory implements Authentica
         }
         xml += "</authentication-source>\n";
         return xml;
+    }
+
+    public List<String> getAvailableAuthenticationSourceParams(String className) throws ClassNotFoundException
+    {
+        Class<?> c = Class.forName(className);
+        List<String> items = new ArrayList<String>();
+        for (Field f : c.getDeclaredFields()) {
+            /*
+                exclude factories field for internal factory
+             */
+            if(className.equals("org.kimios.kernel.user.impl.HAuthenticationSource") && (f.getName().equals("internalUserFactory")
+                    || f.getName().equals("internalGroupFactory"))){
+                //do noting
+            } else {
+                items.add(f.getName());
+            }
+        }
+        return items;
     }
 }
 

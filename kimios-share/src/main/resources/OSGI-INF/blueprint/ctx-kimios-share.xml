@@ -30,7 +30,7 @@
     <reference id="securityAgent" interface="org.kimios.kernel.security.ISecurityAgent" />
     <reference id="pathController" interface="org.kimios.kernel.controller.IPathController" />
     <reference id="eventHandlerManager" interface="org.kimios.kernel.events.IEventHandlerManager" />
-
+    <reference id="securityController" interface="org.kimios.kernel.controller.ISecurityController" />
 
     <reference id="dmsFactoryInstantiator" interface="org.kimios.kernel.dms.IDmsFactoryInstantiator" />
     <reference id="securityFactoryInstantiator" interface="org.kimios.kernel.security.ISecurityFactoryInstantiator"/>
@@ -77,10 +77,31 @@
         <tx:transaction method="*" value="Required"/>
     </bean>
 
-    <service id="shareCtrlOsgi" ref="mailShareController"
+
+    <bean id="shareFactory" class="org.kimios.kernel.share.factory.ShareFactory">
+        <property name="provider" ref="dbFactoryProvider"></property>
+    </bean>
+
+    <bean id="shareController" class="org.kimios.kernel.share.controller.impl.ShareController">
+        <property name="dmsFactoryInstantiator" ref="dmsFactoryInstantiator"></property>
+        <property name="securityFactoryInstantiator" ref="securityFactoryInstantiator"></property>
+        <property name="authFactoryInstantiator" ref="authFactoryInstantiator"></property>
+        <property name="logFactoryInstantiator" ref="logFactoryInstantiator"></property>
+        <property name="reportFactoryInstantiator" ref="reportFactoryInstantiator"></property>
+        <property name="transferFactoryInstantiator" ref="transferFactoryInstantiator"></property>
+        <property name="securityAgent" ref="securityAgent"/>
+        <property name="aclUpdater" ref="aclUpdater"/>
+
+        <argument ref="shareFactory" />
+        <argument ref="securityController" />
+
+        <tx:transaction method="*" value="Required"/>
+    </bean>
+
+    <service id="mShareCtrlOsgi" ref="mailShareController"
              interface="org.kimios.kernel.share.controller.IMailShareController"/>
 
-
+    <service id="iShareCtrlOsgi" ref="shareController" interface="org.kimios.kernel.share.controller.IShareController" />
 
 
 </blueprint>

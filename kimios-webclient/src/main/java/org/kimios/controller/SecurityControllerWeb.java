@@ -17,13 +17,16 @@ package org.kimios.controller;
 
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
+import flexjson.transformer.DateTransformer;
 import org.kimios.core.DMEntitySecurityTransformer;
 import org.kimios.core.GroupUserTransformer;
+import org.kimios.kernel.jobs.model.TaskInfo;
 import org.kimios.kernel.ws.pojo.DMEntitySecurity;
 import org.kimios.kernel.ws.pojo.Group;
 import org.kimios.kernel.ws.pojo.User;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Map;
 import java.util.Vector;
 
@@ -91,7 +94,7 @@ public class SecurityControllerWeb extends Controller {
 	}
 
     if (action.equalsIgnoreCase("updateDMEntitySecurities")) {
-      updateDMEntitySecurities(parameters);
+        jsonResp = updateDMEntitySecurities(parameters);
     }
 
     if (jsonResp == null)
@@ -102,7 +105,7 @@ public class SecurityControllerWeb extends Controller {
     return jsonResp;
   }
 
-  private void updateDMEntitySecurities(Map<String, String> parameters) throws Exception {
+  private String updateDMEntitySecurities(Map<String, String> parameters) throws Exception {
     long uid = Long.parseLong(parameters.get("dmEntityUid"));
     int type = Integer.parseInt(parameters.get("dmEntityType"));
     String dmeJson = parameters.get("securityEntities");
@@ -123,7 +126,10 @@ public class SecurityControllerWeb extends Controller {
       entitySecurities.add(entitySecurity);
     }
     
-    securityController.updateDMEntitySecurities(sessionUid, uid, type, false, false, entitySecurities);
+    TaskInfo taskInfo = securityController.updateDMEntitySecurities(sessionUid, uid, type, false, false, entitySecurities);
+      return new JSONSerializer()
+              .transform(new DateTransformer("MM/dd/yyyy hh:mm:ss"), Date.class)
+              .serialize(taskInfo);
   }
 
 }

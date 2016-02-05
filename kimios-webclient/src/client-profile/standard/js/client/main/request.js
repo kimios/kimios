@@ -61,7 +61,7 @@ kimios.request = {
     },
 
     updateWorkspace: function (uid, name, sec, isRecursive, isRecursiveAppendMode, handle, changeSecurity) {
-        kimios.ajaxRequest('Workspace', {
+        kimios.ajaxRequestWithAnswer('Workspace', {
             action: 'UpdateWorkspace',
             uid: uid,
             name: name,
@@ -73,7 +73,7 @@ kimios.request = {
     },
 
     updateFolder: function (uid, name, sec, isRecursive, isRecursiveAppendMode, handle, changeSecurity) {
-        kimios.ajaxRequest('Folder', {
+        kimios.ajaxRequestWithAnswer('Folder', {
             action: 'UpdateFolder',
             uid: uid,
             name: name,
@@ -99,7 +99,7 @@ kimios.request = {
 
     updateEntities: function (dmEntityPojos, jsonSecurityValues, isRecursive, isRecursiveAppendMode, documentTypeUid, jsonMetaValues, handle, changeSecurity) {
         if (documentTypeUid == undefined || documentTypeUid == null || documentTypeUid == '') documentTypeUid = -1;
-        kimios.ajaxRequest('DmsEntity', {
+        kimios.ajaxRequestWithAnswer('DmsEntity', {
             action: 'UpdateEntities',
             dmEntityPojosJson: Ext.util.JSON.encode(dmEntityPojos),
             documentTypeUid: documentTypeUid,
@@ -441,6 +441,27 @@ kimios.request = {
             }
         );
 
+    },
+    ShareRequest: {
+        shareWith: function(userId, userSource, dmEntityId, read, write, fullAccess, date, notify, handler){
+            kimios.ajaxRequest('Share', {
+                action: 'ShareWith',
+                dmEntityId: dmEntityId,
+                userId: userId,
+                userSource: userSource,
+                read: read,
+                write: write,
+                fullAccess: fullAccess,
+                expirationDate: date,
+                notify: notify
+            },
+            function () {
+                kimios.Info.msg(kimios.lang('Share'), kimios.lang('ShareDocument') + ' ' + kimios.lang('Completed'));
+                if(handler){
+                    handler();
+                }
+            })
+        }
     },
 
     AdminRequest: {

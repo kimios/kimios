@@ -29,6 +29,8 @@ import org.kimios.kernel.index.query.factory.DocumentIndexStatusFactory;
 import org.kimios.kernel.index.solr.utils.SolrServerBuilder;
 import org.springframework.beans.factory.FactoryBean;
 
+import java.net.URL;
+
 /**
  * Spring factory to instantiate the @see SolrIndexManager
  *
@@ -39,6 +41,8 @@ import org.springframework.beans.factory.FactoryBean;
 public class SearchServiceSolrFactory implements FactoryBean<SolrIndexManager>
 {
     private static SolrServer solrServer;
+
+    private static SolrServer contentSolrServer;
 
     private String solrUrl;
 
@@ -129,6 +133,7 @@ public class SearchServiceSolrFactory implements FactoryBean<SolrIndexManager>
            ((EmbeddedSolrServer)solrServer).getCoreContainer().shutdown();
        } else {
            solrServer.shutdown();
+           contentSolrServer.shutdown();
        }
     }
 
@@ -139,11 +144,16 @@ public class SearchServiceSolrFactory implements FactoryBean<SolrIndexManager>
             if (serverMode) {
                 solrServer = SolrServerBuilder.initHttpServer(solrUrl);
             } else {
-                solrServer = SolrServerBuilder.initLocalServer(solrHome, coreName);
+                SolrServerBuilder.initLocalServer(solrHome, coreName, "/schema.xml");
+                URL solrHomeUrl= SolrServerBuilder.initLocalServer(solrHome, coreName + "-body", "/schema-body.xml");
+                SolrServer[] items = SolrServerBuilder.buidServers(solrHomeUrl, solrHome, coreName);
+
+                solrServer = items[0];
+                contentSolrServer = items[1];
             }
 
         }
-        SolrIndexManager manager = new SolrIndexManager(solrServer);
+        SolrIndexManager manager = new SolrIndexManager(solrServer, contentSolrServer);
         manager.setPathController(pathController);
         manager.setSolrDocumentFactory( solrDocumentFactory );
         manager.setDocumentIndexStatusFactory( documentIndexStatusFactory );

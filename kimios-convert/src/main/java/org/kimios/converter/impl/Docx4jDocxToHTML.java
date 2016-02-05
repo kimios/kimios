@@ -88,7 +88,7 @@ public class Docx4jDocxToHTML extends ConverterImpl {
 
             Thread.currentThread().setContextClassLoader(XsltCommonFunctions.class.getClassLoader());
             //Prefer the exporter, that uses a xsl transformation
-            Docx4jOsgi.toHTML(htmlSettings, os, Docx4J.FLAG_EXPORT_PREFER_XSL);
+            Docx4J.toHTML(htmlSettings, os, Docx4J.FLAG_EXPORT_PREFER_XSL);
 
             // Return HTML-based InputSource
             InputSource result = InputSourceFactory.getInputSource(targetPath);

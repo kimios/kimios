@@ -135,6 +135,11 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                     }
                 );
 
+                this.sharedPanel = new kimios.explorer.share.SharePanel({
+                    id: 'kimios-share-panel',
+                    title: kimios.lang('SharePanel')
+                })
+
 
                 this.kimiosTasksPanel = new kimios.tasks.TasksPanel({});
                 this.tasksPanel = new kimios.tasks.BonitaTasksPanel({});
@@ -148,8 +153,8 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                 // west
 
                 var groupPanelItems = [{
-                    items: [this.explorerPanel]
-                },
+                        items: [this.explorerPanel]
+                    },
                     {
                         items: [this.searchBookmarkPanel]
                     },
@@ -158,6 +163,9 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                     },
                     {
                         items: [this.recentItemsPanel]
+                    },
+                    {
+                        items: [this.sharedPanel]
                     },
                     {
                         items: [this.cartPanel]
@@ -408,9 +416,14 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                 kimios.explorer.getSearchRequestsPanel().refreshLanguage();
                 kimios.explorer.getBookmarksPanel().refreshLanguage();
                 kimios.explorer.getRecentItemsPanel().refreshLanguage();
-                Ext.getCmp('kimios-tasks-panel').refreshLanguage();
-                Ext.getCmp('kimios-assigned-tasks-panel').refreshLanguage();
+                kimios.explorer.getSharesPanel().refreshLanguage();
                 kimios.explorer.getCartPanel().refreshLanguage();
+                try {
+                    Ext.getCmp('kimios-tasks-panel').refreshLanguage();
+                    Ext.getCmp('kimios-assigned-tasks-panel').refreshLanguage();
+                }catch (e){
+
+                }
                 kimios.ContextMenu.init();
                 var mainPanel = kimios.explorer.getMainPanel();
                 for (var i = 0; i < mainPanel.items.length; i++)

@@ -23,11 +23,7 @@ public class TransactionHelper
 {
     public TransactionStatus startNew(Integer timeout) throws Exception
     {
-
-
         PlatformTransactionManager txMngr = ApplicationContextProvider.loadBean(PlatformTransactionManager.class);
-
-
         DefaultTransactionDefinition defaultTransactionDefinition = new DefaultTransactionDefinition();
         if (timeout != null) {
             defaultTransactionDefinition.setTimeout(timeout);

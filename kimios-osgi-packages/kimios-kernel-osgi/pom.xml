@@ -310,7 +310,7 @@
                         <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <Include-Resource>{maven-resources}</Include-Resource>
-                        <Kimios-Extension>org.kimios.kernel.user.model.AuthenticationSourceImpl</Kimios-Extension>
+                        <Kimios-Extension>org.kimios.kernel.user.model.AuthenticationSourceImpl,org.kimios.kernel.reporting.ReportImpl</Kimios-Extension>
                         <Import-Package>
                             org.slf4j.impl;resolution:=optional,
                             org.quartz,
@@ -366,7 +366,6 @@
                             org.kimios.kernel.configuration,
                             org.kimios.converter,
                             org.kimios.webservices;resolution:=optional,
-                            net.sourceforge.jtds.jdbc,
                             com.sun.xml.bind.marshaller;version="[2.2.11,3)",
                             *;resolution:=optional
                         </Import-Package>

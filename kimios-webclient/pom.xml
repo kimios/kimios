@@ -275,6 +275,14 @@
                             org.osgi.service.blueprint.container,
                             org.osgi.service.blueprint.reflect,
                             org.apache.aries.blueprint.reflect,
+                            org.apache.xerces.jaxp,
+                            org.w3c.dom,
+                            org.w3c.dom.xpath,
+                            org.w3c.dom.views,
+                            org.w3c.dom.traversal,
+                            org.w3c.dom.stylesheets,
+                            org.w3c.dom.ranges,
+                            javax.xml.parsers,
                             *;resolution:=optional
                         </Import-Package>
                     </instructions>

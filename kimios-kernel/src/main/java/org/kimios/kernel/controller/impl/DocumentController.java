@@ -1290,6 +1290,20 @@ public class DocumentController extends AKimiosController implements IDocumentCo
         return dmsFactoryInstantiator.getDocumentFactory().getDocumentsPojos(docs);
     }
 
+    public List<org.kimios.kernel.ws.pojo.DMEntity> convertEntitiesToPojos(Session session, List<DMEntity> items)
+            throws ConfigException, DataSourceException {
+
+        List<org.kimios.kernel.ws.pojo.DMEntity> pojos = new ArrayList<org.kimios.kernel.ws.pojo.DMEntity>();
+        for(DMEntity u: items){
+            if(u.getType() == 3){
+                pojos.add(dmsFactoryInstantiator.getDocumentFactory().getDocumentPojoFromId(u.getUid()));
+            } else {
+                pojos.add(u.toPojo());
+            }
+        }
+        return pojos;
+    }
+
     public List<org.kimios.kernel.ws.pojo.Bookmark> convertBookmarksToPojos(Session session, List<Bookmark> bookmarks)
             throws ConfigException, DataSourceException {
 

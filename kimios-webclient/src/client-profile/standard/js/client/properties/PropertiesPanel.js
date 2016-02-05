@@ -531,7 +531,7 @@ kimios.properties.PropertiesPanel = Ext.extend(Ext.TabPanel, {
                 this.securityEntityPanel.isRecursiveAppendMode(),
                 this.metaDataPanel == undefined ? undefined : this.metaDataPanel.documentTypeUid,
                 this.metaDataPanel == undefined ? undefined : this.metaDataPanel.getJsonMetaValues(),
-                function () {
+                function (data) {
                     kimios.Info.msg(kimios.lang('Entities'), kimios.lang('Update') + ' ' + kimios.lang('Completed'));
                     kimios.explorer.getViewport().refreshGrids();
                     kimios.explorer.getTreePanel().refresh();

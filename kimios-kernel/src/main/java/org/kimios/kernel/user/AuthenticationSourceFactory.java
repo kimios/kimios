@@ -19,6 +19,7 @@ import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.user.model.AuthenticationSource;
 
+import java.util.List;
 import java.util.Vector;
 
 public interface AuthenticationSourceFactory
@@ -37,8 +38,14 @@ public interface AuthenticationSourceFactory
 
     public void deleteAuthenticationSource(AuthenticationSource source) throws DataSourceException, ConfigException;
 
-    public String getAvailableAuthenticationSource();
+    public List<String> getAvailableAuthenticationSource();
 
-    public String getAvailableAuthenticationSourceParams(String className) throws ClassNotFoundException;
+    @Deprecated
+    public String getAvailableAuthenticationSourceXml();
+
+    @Deprecated
+    public String getAvailableAuthenticationSourceParamsXml(String className) throws ClassNotFoundException;
+
+    public List<String> getAvailableAuthenticationSourceParams(String className) throws ClassNotFoundException;
 }
 

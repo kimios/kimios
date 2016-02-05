@@ -28,11 +28,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@DiscriminatorValue(value = "org.kimios.kernel.dms.metafeeds.impl.ClientFeed")
 public class ClientFeed extends MetaFeedImpl {
-
-
 
     @Transient
     private String dbPrefix = "llx_";

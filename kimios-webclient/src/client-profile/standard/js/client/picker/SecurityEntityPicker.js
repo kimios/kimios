@@ -43,6 +43,12 @@ kimios.picker.SecurityEntityPicker = Ext.extend(Ext.util.Observable, {
         kimios.picker.SecurityEntityPicker.superclass.constructor.call(this, config);
     },
 
+    hide: function(){
+        if(this.currentWindow){
+            this.currentWindow.hide();
+        }
+
+    },
     show:function ()
     {
 
@@ -269,6 +275,8 @@ kimios.picker.SecurityEntityPicker = Ext.extend(Ext.util.Observable, {
         };
 
         window.show();
+
+        this.currentWindow = window;
     },
     initComponent:function ()
     {

@@ -33,13 +33,18 @@ import org.kimios.kernel.controller.IPathController;
 import org.kimios.kernel.dms.*;
 import org.kimios.kernel.dms.model.*;
 import org.kimios.kernel.events.impl.AddonDataHandler;
+import org.kimios.kernel.events.model.EventContext;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.IndexException;
 import org.kimios.kernel.index.query.factory.DocumentFactory;
 import org.kimios.kernel.index.query.factory.DocumentIndexStatusFactory;
 import org.kimios.kernel.index.query.model.DocumentIndexStatus;
 import org.kimios.kernel.index.query.model.SearchResponse;
+import org.kimios.kernel.jobs.Job;
+import org.kimios.kernel.jobs.JobImpl;
+import org.kimios.kernel.jobs.ThreadManager;
 import org.kimios.kernel.security.model.DMEntityACL;
+import org.kimios.kernel.security.model.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,14 +83,17 @@ public class SolrIndexManager
 
     private ObjectMapper mp;
 
-    public SolrIndexManager(SolrServer solr) {
+    public SolrIndexManager(SolrServer solr, SolrServer contentSolr) {
         this.solr = solr;
+        this.contentSolrServer = contentSolr;
         mp = new ObjectMapper();
         mp.configure(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS, false);
         mp.getSerializationConfig().addMixInAnnotations(Meta.class, AddonDataHandler.MetaMixIn.class);
     }
 
     private final SolrServer solr;
+
+    private final SolrServer contentSolrServer;
 
     public synchronized void reindex(String path)
             throws DataSourceException, ConfigException, IndexException {
@@ -153,58 +161,97 @@ public class SolrIndexManager
             final DocumentIndexStatus documentIndexStatus = new DocumentIndexStatus();
             documentIndexStatus.setDmEntity((DMEntityImpl)documentEntity);
 
-            long readVersionTimeOut = 60;
-            TimeUnit readVersionTimeoutTimeUnit = TimeUnit.SECONDS;
+            final long readVersionTimeOut = 60;
+            final TimeUnit readVersionTimeoutTimeUnit = TimeUnit.SECONDS;
 
 
             final Document doc = (Document)documentEntity;
-            Callable<Map<String, Object>> rn = new Callable<Map<String, Object>>() {
+
+
+            final String docPath = documentEntity.getPath();
+
+
+            final SolrDocGenerator solrDocGenerator = new SolrDocGenerator(document, mp);
+            SolrInputDocument solrInputDocument = solrDocGenerator.toSolrInputDocument(true, true, documentIndexStatus);
+
+
+            Session session = EventContext.get().getSession();
+            String taskId = UUID.randomUUID().toString();
+            Job<Map<String, Object>> rn = new JobImpl<Map<String,Object>>(taskId) {
+
+
                 @Override
-                public Map<String, Object> call() {
+                public Map<String, Object> execute() {
 
-                    return new SolrDocFileReaderCallable(null, -1, null, null)
-                            .readVersionFileToData((Document)doc,
-                                    version,
-                                    documentIndexStatus);
+                    Callable<Map<String,Object>> reader = new Callable<Map<String, Object>>() {
+                        @Override
+                        public Map<String, Object> call() throws Exception {
+                            return new SolrDocFileReaderCallable(null, -1, null, null)
+                                    .readVersionFileToData((Document) doc,
+                                            version,
+                                            documentIndexStatus);
+                        }
+                    };
+                    //handle asynchronous indexing !
 
+                    ExecutorService executorService = Executors.newSingleThreadExecutor();
+                    Future<Map<String, Object>> result = executorService.submit(reader);
+                    Map<String, Object> item = null;
+                    try {
+                        item = result.get(readVersionTimeOut, readVersionTimeoutTimeUnit);
+                        documentIndexStatus.setReadFileDatas(item);
+
+                        //put in index !!
+
+                        SolrInputDocument contentSolrInputDocument = solrDocGenerator.toSolrContentInputDocument(true, true,
+                                documentIndexStatus.getReadFileDatas(), documentIndexStatus);
+
+                        contentSolrServer.add(contentSolrInputDocument);
+                        contentSolrServer.commit();
+                        log.info("content added & committed to body index !!");
+
+
+                    }catch (InterruptedException ex){
+                        result.cancel(true);
+                        documentIndexStatus.setError("Interrupted error " + ex.getMessage());
+                        documentIndexStatus.setBodyIndexed(false);
+
+                        return null;
+                    }
+                    catch (TimeoutException ex){
+                        //Important to kill running thread !!
+                        boolean cancelled = result.cancel(true);
+                        documentIndexStatus.setError("Timeout Error (def: " + readVersionTimeOut + " " + readVersionTimeoutTimeUnit.toString() + "). " + ex.getMessage());
+                        log.error("timeout: cancelled read thread for #" + documentIndexStatus.getDmEntity().getUid() + "(" + cancelled + ")");
+                        documentIndexStatus.setBodyIndexed(false);
+
+                        return null;
+                    }
+                    catch (ExecutionException ex){
+                        result.cancel(true);
+                        documentIndexStatus.setError("Exception Error: " + ex.getMessage());
+                        documentIndexStatus.setBodyIndexed(false);
+                        log.error("exception: cancelled read thread for #" + documentIndexStatus.getDmEntity().getUid(), ex);
+
+                        return null;
+                    }
+                    catch (Exception ex){
+                        log.error("error while indexing doc", ex);
+                    }
+                    finally {
+                        try{
+                            executorService.shutdown();
+                        } catch (Exception ex){
+
+                        }
+                    }
+                    executorService.shutdownNow();
+
+                    return item;
                 }
             };
-
-            ExecutorService executorService = Executors.newSingleThreadExecutor();
-            Future<Map<String,Object>> result = executorService.submit(rn);
-
-            try {
-                Map<String, Object> item = result.get(readVersionTimeOut, readVersionTimeoutTimeUnit);
-                documentIndexStatus.setReadFileDatas(item);
-            }catch (InterruptedException ex){
-                result.cancel(true);
-                documentIndexStatus.setError("Interrupted error " + ex.getMessage());
-                documentIndexStatus.setBodyIndexed(false);
-            }
-            catch (TimeoutException ex){
-                //Important to kill running thread !!
-                boolean cancelled = result.cancel(true);
-                documentIndexStatus.setError("Timeout Error (def: " + readVersionTimeOut + " " + readVersionTimeoutTimeUnit.toString() + "). " + ex.getMessage());
-                log.error("timeout: cancelled read thread for #" + documentIndexStatus.getDmEntity().getUid() + "(" + cancelled + ")");
-                documentIndexStatus.setBodyIndexed(false);
-            }
-            catch (ExecutionException ex){
-                result.cancel(true);
-                documentIndexStatus.setError("Exception Error: " + ex.getMessage());
-                documentIndexStatus.setBodyIndexed(false);
-                log.error("exception: cancelled read thread for #" + documentIndexStatus.getDmEntity().getUid(), ex);
-            }
-
-            executorService.shutdownNow();
-
-
-            SolrInputDocument solrInputDocument =
-                    new SolrDocGenerator(document, mp).toSolrInputDocument(true, true,
-                            documentIndexStatus.getReadFileDatas(),
-                            documentIndexStatus);
-
-
-
+            rn.setSession(session);
+            ThreadManager.getInstance().startJob(session, rn);
             this.solr.add(solrInputDocument);
             this.solr.commit();
         } catch (IOException io) {
@@ -269,8 +316,6 @@ public class SolrIndexManager
                 DocumentIndexStatus documentIndexStatus = new DocumentIndexStatus();
                 documentIndexStatus.setDmEntity((DMEntityImpl) doc);
                 documentIndexStatus.setEntityId(doc.getUid());
-
-
                 if(doc instanceof Document){
                     DocumentVersion version =
                             FactoryInstantiator.getInstance().getDocumentVersionFactory().getLastDocumentVersion((Document)doc);
@@ -326,12 +371,18 @@ public class SolrIndexManager
                                             indexStatus.getReadFileDatas().get("DocumentBody") != null);
                                 }
 
-                                Future<SolrInputDocument> doc =
+                                Future<SolrInputDocument[]> doc =
                                         executorService.submit(solrDocCallable);
 
                                 try {
+                                    SolrInputDocument[] docData = doc.get();
                                     solr.deleteById(Long.toString(indexStatus.getDmEntity().getUid()));
-                                    solr.add(doc.get());
+                                    solr.add(docData[0]);
+                                    contentSolrServer.deleteById(Long.toString(indexStatus.getDmEntity().getUid()));
+                                    if(docData[1] != null){
+                                        contentSolrServer.add(docData[1]);
+                                    }
+
                                 } catch (Exception ex) {
                                     log.error("error while adding doc #" + indexStatus.getDmEntity().getUid(), ex);
                                 }
@@ -358,14 +409,18 @@ public class SolrIndexManager
                             log.debug("parsed file data fields count {}. has body - {}",
                                     indexStatus.getReadFileDatas().size(),
                                     indexStatus.getReadFileDatas().get("DocumentBody") != null);
-                            Future<SolrInputDocument> doc =
+                            Future<SolrInputDocument[]> doc =
                                     executorService.submit(solrDocCallable);
 
 
                             try {
-                                SolrInputDocument slDoc = doc.get();
+                                SolrInputDocument[] slDocs = doc.get();
                                 solr.deleteById(Long.toString(indexStatus.getDmEntity().getUid()));
-                                solr.add(slDoc);
+                                solr.add(slDocs[0]);
+                                contentSolrServer.deleteById(Long.toString(indexStatus.getDmEntity().getUid()));
+                                if(slDocs[1] != null){
+                                    contentSolrServer.add(slDocs[1]);
+                                }
                             } catch (Exception ex) {
                                 log.error("error while adding doc #" + indexStatus.getDmEntity().getUid(), ex);
                             }
@@ -377,8 +432,15 @@ public class SolrIndexManager
                     log.debug("returning doc count processed {}", docCount);
                     try {
                         solr.commit();
+
                     }catch (Exception ex){
                         log.error("error while committing block !!!", ex);
+                    }
+                    try {
+                        contentSolrServer.commit();
+
+                    }catch (Exception ex){
+                        log.error("error while committing content block !!!", ex);
                     }
 
                     return  docCount;
@@ -423,6 +485,7 @@ public class SolrIndexManager
             throws IndexException, DataSourceException, ConfigException {
         try {
             List<SolrInputDocument> updatedDocument = new ArrayList<SolrInputDocument>();
+            List<SolrInputDocument> updatedDocumentContent = new ArrayList<SolrInputDocument>();
             List<String> updatedDocumentIds = new ArrayList<String>();
             for (DMEntity doc : documentEntities) {
 
@@ -432,6 +495,7 @@ public class SolrIndexManager
                 }
 
                 SolrInputDocument solrInputDocument = null;
+                SolrInputDocument contentSolrInputDoc = null;
                 if(doc instanceof Folder){
 
                     List<VirtualFolderMetaData> metaDatas = FactoryInstantiator.getInstance()
@@ -453,12 +517,16 @@ public class SolrIndexManager
                                             .getDocumentVersionFactory().getLastDocumentVersion((Document)doc),
                                     st);
                     SolrDocGenerator n = new SolrDocGenerator((Document)doc, this.mp);
-                    solrInputDocument = n.toSolrInputDocument(false, true, fileDatas, st);
+                    solrInputDocument = n.toSolrInputDocument(false, true,  st);
+
+                    //content
+                    contentSolrInputDoc = n.toSolrContentInputDocument(false, true, st.getReadFileDatas(), st);
                 }
 
-                if (solrInputDocument != null) {
+                if (solrInputDocument != null && contentSolrInputDoc != null) {
                     updatedDocumentIds.add(String.valueOf(doc.getUid()));
                     updatedDocument.add(solrInputDocument);
+                    updatedDocumentContent.add(contentSolrInputDoc);
 
 
                     log.debug("Solr Added doc: #" + solrInputDocument.getFieldValue("DocumentId"));
@@ -477,7 +545,10 @@ public class SolrIndexManager
 
             this.solr.deleteById(updatedDocumentIds);
             this.solr.add(updatedDocument);
+            this.contentSolrServer.deleteById(updatedDocumentIds);
+            this.contentSolrServer.add(updatedDocumentContent);
             this.solr.commit();
+            this.contentSolrServer.commit();
         } catch (IOException io) {
             throw new IndexException(io, "An exception occured while indexing document list " + io.getMessage());
         } catch (SolrServerException ex) {
@@ -609,6 +680,9 @@ public class SolrIndexManager
                 for (int j = 0; j < acls.size(); j++) {
                     docUpdate.addField("DocumentACL", acls.get(j).getRuleHash());
                 }
+                /*
+                    Regenerate document body
+                 */
                 this.solr.add(docUpdate);
             }
         } catch (Exception e) {
@@ -734,6 +808,12 @@ public class SolrIndexManager
     public void closeSolr() {
         try {
             this.solr.shutdown();
+        } catch (Exception e) {
+            log.error("Error while closing Solr", e);
+        }
+
+        try {
+            this.contentSolrServer.shutdown();
         } catch (Exception e) {
             log.error("Error while closing Solr", e);
         }

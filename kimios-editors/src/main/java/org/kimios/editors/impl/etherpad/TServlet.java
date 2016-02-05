@@ -50,22 +50,9 @@ public class TServlet extends ProxyServlet {
     }
 
 
-    @Override
-    protected void service(HttpServletRequest servletRequest, HttpServletResponse servletResponse)
-            throws ServletException, IOException {
-        try{
-            super.service(servletRequest, servletResponse);
-        }   catch (ServletException ex){
-            logger.error("error on request: ", ex);
-
-        }
-        catch (IOException ex){
-            logger.error("error on request: ", ex);
-
-        }
-
-
-        logger.info("RESP STATUS {} ", servletResponse);
+    /** The string prefixing rewritten cookies. */
+    protected String getCookieNamePrefix() {
+        return "";
     }
 
 
@@ -95,7 +82,6 @@ public class TServlet extends ProxyServlet {
                         headerValue += ":"+host.getPort();
                 } else if (headerName.equalsIgnoreCase(org.apache.http.cookie.SM.COOKIE)) {
                     headerValue = getRealCookie(headerValue);
-                    logger.info("adding proxy header {} ===> {}", headerName, headerValue);
                 }
 
                 proxyRequest.addHeader(headerName, headerValue);

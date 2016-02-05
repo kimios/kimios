@@ -29,6 +29,7 @@ import org.kimios.webservices.utils.KimiosBusServiceManager;
 import javax.jws.WebService;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 @WebService(targetNamespace = "http://kimios.org", serviceName = "AdministrationService", name = "AdministrationService")
@@ -121,13 +122,26 @@ public class AdministrationServiceImpl extends CoreService implements Administra
     /**
      * Return connection parameters XML stream for the authentication sources specified by name
      */
-    public String getAuthenticationSourceParams(String sessionUid, String name, String className)
+    public String getAuthenticationSourceParamsXml(String sessionUid, String name, String className)
             throws DMServiceException
     {
         try {
             org.kimios.kernel.security.model.Session session = getHelper().getSession(sessionUid);
-            String xmlParameters = administrationController.getAuthenticationSourceParams(session, name, className);
-            return xmlParameters;
+            return administrationController.getAuthenticationSourceParamsXml(session, name, className);
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
+
+    /**
+     * Return connection parameters XML stream for the authentication sources specified by name
+     */
+    public Map<String, String> getAuthenticationSourceParams(String sessionUid, String name, String className)
+            throws DMServiceException
+    {
+        try {
+            org.kimios.kernel.security.model.Session session = getHelper().getSession(sessionUid);
+            return administrationController.getAuthenticationSourceParams(session, name, className);
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }
@@ -136,12 +150,25 @@ public class AdministrationServiceImpl extends CoreService implements Administra
     /**
      * Create new authentication source
      */
-    public void createAuthenticationSource(String sessionUid, String name, String className, boolean enableSsoCheck, boolean enableMailCheck, String xmlParameters)
+    public void createAuthenticationSource(String sessionUid, String name, String className, boolean enableSsoCheck,
+                                           boolean enableMailCheck, String xmlParameters)
             throws DMServiceException
     {
         try {
             org.kimios.kernel.security.model.Session session = getHelper().getSession(sessionUid);
             administrationController.createAuthenticationSource(session, name, className, enableSsoCheck, enableMailCheck, xmlParameters);
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
+
+    public void createAuthenticationSource(String sessionUid, String name, String className, boolean enableSsoCheck,
+                                           boolean enableMailCheck, Map<String, String> items)
+            throws DMServiceException
+    {
+        try {
+            org.kimios.kernel.security.model.Session session = getHelper().getSession(sessionUid);
+            administrationController.createAuthenticationSource(session, name, className, enableSsoCheck, enableMailCheck, items);
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }
@@ -163,6 +190,21 @@ public class AdministrationServiceImpl extends CoreService implements Administra
     }
 
     /**
+     * Update authentication source
+     */
+    public void updateAuthenticationSource(String sessionUid, String authenticationSourceName,
+                                                  String className, boolean enableSsoCheck, boolean enableMailCheck,Map<String, String> params) throws DMServiceException
+    {
+        try {
+            org.kimios.kernel.security.model.Session session = getHelper().getSession(sessionUid);
+            administrationController
+                    .updateAuthenticationSource(session, authenticationSourceName, className, enableSsoCheck, enableMailCheck, params);
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
+
+    /**
      * Delete authentication source
      */
     public void deleteAuthenticationSource(String sessionUid, String name) throws DMServiceException
@@ -178,23 +220,44 @@ public class AdministrationServiceImpl extends CoreService implements Administra
     /**
      * Get a class names list of all implemented authentication sources
      */
-    public String getAvailableAuthenticationSource(String sessionUid) throws DMServiceException
+    public String getAvailableAuthenticationSourceXml(String sessionUid) throws DMServiceException
     {
         try {
             org.kimios.kernel.security.model.Session session = getHelper().getSession(sessionUid);
-            String xmlClassName = administrationController.getAvailableAuthenticationSource(session);
+            String xmlClassName = administrationController.getAvailableAuthenticationSourceXml(session);
             return xmlClassName;
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }
     }
 
-    public String getAvailableAuthenticationSourceParams(String sessionUid, String className) throws DMServiceException
+    public List<String> getAvailableAuthenticationSources(String sessionUid) throws DMServiceException
     {
         try {
             org.kimios.kernel.security.model.Session session = getHelper().getSession(sessionUid);
-            String xmlClassName = administrationController.getAvailableAuthenticationSourceParams(session, className);
+            return administrationController.getAvailableAuthenticationSource(session);
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
+
+
+    public String getAvailableAuthenticationSourceParamsXml(String sessionUid, String className) throws DMServiceException
+    {
+        try {
+            org.kimios.kernel.security.model.Session session = getHelper().getSession(sessionUid);
+            String xmlClassName = administrationController.getAvailableAuthenticationSourceParamsXml(session, className);
             return xmlClassName;
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
+
+    public List<String> getAvailableAuthenticationSourceParams(String sessionUid, String className) throws DMServiceException
+    {
+        try {
+            org.kimios.kernel.security.model.Session session = getHelper().getSession(sessionUid);
+            return administrationController.getAvailableAuthenticationSourceParams(session, className);
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }

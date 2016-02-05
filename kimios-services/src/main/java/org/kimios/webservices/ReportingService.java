@@ -18,14 +18,15 @@ package org.kimios.webservices;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
+import org.kimios.kernel.reporting.model.Report;
+import org.kimios.kernel.reporting.model.ReportParam;
 import org.kimios.webservices.exceptions.DMServiceException;
 
+import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA. User: farf Date: 4/1/12 Time: 5:06 PM To change this template use File | Settings | File
@@ -39,23 +40,45 @@ public interface ReportingService
 {
     @GET @ApiOperation(value ="")
     @Path("/getReport")
+    @WebMethod(operationName = "getReportXml")
     @Produces("application/json")
     public String getReport(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "className") @WebParam(name = "className") String className,
             @QueryParam(value = "xmlParameters") @WebParam(name = "xmlParameters") String xmlParameters)
             throws DMServiceException;
 
+    @POST @ApiOperation(value ="")
+    @Path("/report/{className}")
+    @Produces("application/json")
+    @Consumes("application/json")
+    public String getReport(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+                            @PathParam(value = "className") @WebParam(name = "className") String className,
+                            @WebParam(name = "parameters") List<ReportParam> parameters)
+            throws DMServiceException;
+
     @GET @ApiOperation(value ="")
     @Path("/getReportsList")
     @Produces("application/json")
-    public String getReportsList(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId)
+    public String getReportsListXml(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId)
+            throws DMServiceException;
+
+    @GET @ApiOperation(value ="")
+    @Path("/reports")
+    @Produces("application/json")
+    public List<Report> getReportsList(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId)
             throws DMServiceException;
 
     @GET @ApiOperation(value ="")
     @Path("/getReportAttributes")
     @Produces("application/json")
-    public String getReportAttributes(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+    public String getReportAttributesXml(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
                                       @QueryParam(value = "className") @WebParam(name = "className") String className) throws DMServiceException;
+
+    @GET @ApiOperation(value ="")
+    @Path("/report/{className}/attributes")
+    @Produces("application/json")
+    public List<ReportParam> getReportAttributes(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+                                                 @PathParam(value = "className") @WebParam(name = "className") String className) throws DMServiceException;
 
     @GET @ApiOperation(value ="")
     @Path("/removeGhostTransaction")

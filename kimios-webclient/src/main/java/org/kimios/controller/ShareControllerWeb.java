@@ -24,11 +24,11 @@ import flexjson.JSONSerializer;
 import org.kimios.core.wrappers.DocumentType;
 import org.kimios.core.wrappers.Meta;
 import org.kimios.kernel.share.model.MailContact;
+import org.kimios.kernel.ws.pojo.DMEntity;
+import org.kimios.kernel.ws.pojo.Share;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  *
@@ -49,7 +49,13 @@ public class ShareControllerWeb extends Controller {
             if(action.equalsIgnoreCase("share")){
                 shareDocuments();
             }
+            if(action.equalsIgnoreCase("sharedWithMe")){
+                jsonResp = entitiesSharedWithMe();
+            }
 
+            if(action.equalsIgnoreCase("ShareWith")){
+                shareDocumentWith();
+            }
             return jsonResp;
         }else
             return "NOACTION";
@@ -86,7 +92,96 @@ public class ShareControllerWeb extends Controller {
                  "",
                  true
                  );
-         return;
+        return;
+    }
+
+
+    private String entitiesSharedWithMe() throws Exception {
+
+        List<Share> shares = shareController.listDocumentSharedWithMe(getSessionUid());
+        List<org.kimios.core.wrappers.DMEntity> entities = new ArrayList<org.kimios.core.wrappers.DMEntity>();
+        for(Share s: shares){
+            entities.add(new ShareEntity(s.getEntity(), s));
+        }
+
+        String jsonResp = new JSONSerializer()
+                .exclude("class")
+                .serialize(entities);
+        return jsonResp;
+    }
+
+
+    private void shareDocumentWith() throws Exception {
+
+        String userId = parameters.get("userId");
+        String userSource = parameters.get("userSource");
+        Long dmEntityId = Long.parseLong(parameters.get("dmEntityId"));
+
+        boolean read = Boolean.parseBoolean(parameters.get("read"));
+        boolean write = Boolean.parseBoolean(parameters.get("write"));
+        boolean fullAccess = Boolean.parseBoolean(parameters.get("fullAccess"));
+        boolean notify = Boolean.parseBoolean(parameters.get("notify"));
+
+        Date date = new SimpleDateFormat("dd-MM-yyyy HH:mm").parse(parameters.get("expirationDate"));
+
+        shareController.shareDocument(getSessionUid(),
+                userId,
+                userSource,
+                dmEntityId,
+                read, write, fullAccess, parameters.get("expirationDate"), notify);
+
+
+        return;
+    }
+
+
+
+    public static class ShareEntity extends org.kimios.core.wrappers.DMEntity {
+
+
+        public ShareEntity(DMEntity entity, Share share) {
+            super(entity);
+            this.expirationDate = share.getExpirationDate();
+            this.creatorId = share.getCreatorId();
+            this.creatorSource = share.getCreatorSource();
+        }
+
+        public ShareEntity(long virtualEntityCount, String virtualPath, String virtualEntityName, long uid, Share share) {
+            super(virtualEntityCount, virtualPath, virtualEntityName, uid);
+            this.expirationDate = share.getExpirationDate();
+            this.creatorId = share.getCreatorId();
+            this.creatorSource = share.getCreatorSource();
+        }
+
+        private Date expirationDate;
+
+        private String creatorId;
+
+        private String creatorSource;
+
+        public Date getExpirationDate() {
+            return expirationDate;
+        }
+
+        public void setExpirationDate(Date expirationDate) {
+            this.expirationDate = expirationDate;
+        }
+
+        public String getCreatorId() {
+            return creatorId;
+        }
+
+        public void setCreatorId(String creatorId) {
+            this.creatorId = creatorId;
+        }
+
+        public String getCreatorSource() {
+            return creatorSource;
+        }
+
+        public void setCreatorSource(String creatorSource) {
+            this.creatorSource = creatorSource;
+        }
     }
     
     

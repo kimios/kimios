@@ -15,11 +15,17 @@
  */
 package org.kimios.controller;
 
+import flexjson.JSONSerializer;
+import flexjson.transformer.DateTransformer;
 import org.kimios.client.controller.WorkspaceController;
+import org.kimios.core.DateTranformerExt;
+import org.kimios.kernel.jobs.model.TaskInfo;
+import org.kimios.kernel.ws.pojo.DMEntity;
 import org.kimios.kernel.ws.pojo.User;
 import org.kimios.kernel.ws.pojo.Workspace;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Map;
 
 public class WorkspaceActionHandler extends Controller {
@@ -32,8 +38,10 @@ public class WorkspaceActionHandler extends Controller {
         if (action != null) {
             if (action.equals("NewWorkspace"))
                 addWorkspace();
-            if (action.equals("UpdateWorkspace"))
-                updateWorkspace();
+            if (action.equals("UpdateWorkspace")) {
+                String res = updateWorkspace();
+                return res;
+            }
 
             return "";
         } else
@@ -58,7 +66,7 @@ public class WorkspaceActionHandler extends Controller {
 
     }
 
-    private void updateWorkspace() throws Exception {
+    private String updateWorkspace() throws Exception {
         WorkspaceController fsm = workspaceController;
         long workspaceUid = Long.parseLong(parameters.get("uid"));
         Workspace w = fsm.getWorkspace(sessionUid, workspaceUid);
@@ -74,13 +82,20 @@ public class WorkspaceActionHandler extends Controller {
                 if (parameters.get("appendMode") != null) {
                     appendMode = Boolean.parseBoolean(parameters.get("appendMode"));
                 }
-                securityController.updateDMEntitySecurities(sessionUid, workspaceUid, 1,
+                TaskInfo ti = securityController.updateDMEntitySecurities(sessionUid, workspaceUid, 1,
 
                         (parameters.get("isRecursive") != null && parameters.get("isRecursive").equals("true")),
                         appendMode,
                         DMEntitySecuritiesParser.parseFromJson(parameters.get("sec"), workspaceUid, 1));
+
+                ti.setTargetEntity(new DMEntity());
+                return new JSONSerializer()
+                        .exclude("class")
+                        .transform(new DateTranformerExt("MM/dd/yyyy hh:mm:ss"), "startDate")
+                        .serialize(ti);
             }
         }
+        return "";
     }
 
 }

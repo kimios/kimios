@@ -981,6 +981,9 @@ public class SolrSearchController
 
         SolrQuery indexQuery = new SolrQuery();
 
+
+        boolean contentSearch = false;
+        String contentQuery = "";
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
 
@@ -1016,6 +1019,7 @@ public class SolrSearchController
 
         for (Criteria c : criteriaList) {
 
+            log.debug("processing criteria: {}", c);
             if(c.getAddonsFields() != null && c.getAddonsFields().size() > 0){
                 fieldsDef.addAll(c.getAddonsFields());
             }
@@ -1168,7 +1172,11 @@ public class SolrSearchController
                             bld.append(ClientUtils.escapeQueryChars(u));
                             bld.append(" ");
                         }
-                        queries.add("DocumentBody:(" + bld.toString().trim() + ")");
+                        contentQuery = "DocumentBody:(" + bld.toString().trim() + ")";
+                        contentSearch = true;
+                        if(log.isDebugEnabled()){
+                            log.debug("processed field document body to query: {}", contentQuery);
+                        }
                     } else if (c.getFieldName().equals("DocumentUid")) {
                         filtersMap.put(c, "DocumentUid:" + c.getQuery());
                     } else if (c.getFieldName().equals("DocumentOwner")) {
@@ -1283,17 +1291,32 @@ public class SolrSearchController
 
         if(log.isDebugEnabled()){
             if (indexQuery.getFilterQueries() != null)
-                log.debug("Solr Final Filter Query " + Joiner.on(" ").join(indexQuery.getFilterQueries()));
+                log.debug("solr filters: " + Joiner.on(" ").join(indexQuery.getFilterQueries()));
 
             if (indexQuery.getFacetFields() != null)
-                log.debug("Solr Final Facet  " + Joiner.on(" ").join(indexQuery.getFacetFields()));
+                log.debug("solr facet: " + Joiner.on(" ").join(indexQuery.getFacetFields()));
             if (indexQuery.getFacetQuery() != null)
-                log.debug("Solr Final Facet  Query " + Joiner.on(" ").join(indexQuery.getFacetQuery()));
+                log.debug("solr facet query: " + Joiner.on(" ").join(indexQuery.getFacetQuery()));
 
-            log.debug("Solr Final Query: " + sQuery);
+            log.debug("solr final query | std core): " + sQuery);
+
+            log.debug("solr final query | content core): " + contentQuery + " (contentSearch: " + contentSearch + ")");
         }
 
-        indexQuery.setQuery(sQuery.toString());
+        if(contentSearch){
+            //add join query
+            String joinPart = " AND _query_:\"{!join from=DocumentUid to=DocumentUid fromIndex=kimios-index-body}" + contentQuery + "\"";
+            String baseQuery = sQuery.toString();
+            String joinQuery =  (baseQuery.trim().length() > 0 ? baseQuery : "*:*") +  joinPart;
+            log.debug("solr final cross core query: {}", joinQuery);
+            indexQuery.setQuery(joinQuery);
+        } else {
+            indexQuery.setQuery(sQuery.toString());
+        }
+
+
+
+
         if(fieldsDef.size() > 0){
             for(String f: fieldsDef)
                 indexQuery.addField(f);

@@ -51,7 +51,7 @@ public interface DMEntityFactory {
             throws ConfigException, DataSourceException;
 
 
-    public void deteteEntities(String path) throws ConfigException, DataSourceException;
+    public void deleteEntities(String path) throws ConfigException, DataSourceException;
 
     public void updateEntity(DMEntityImpl entity) throws ConfigException, DataSourceException;
 

@@ -71,7 +71,7 @@ public class HWorkspaceFactory extends HFactory implements WorkspaceFactory
     {
         try {
             //Criteria c = getSession().createCriteria(Workspace.class).addOrder(Order.asc("name").ignoreCase());
-            Query q = getSession().createQuery("from Workspace w order by w.name");
+            Query q = getSession().createQuery("from Workspace w where (w.trashed is null or w.trashed = false) order by w.name");
             List<Workspace> wList = q.setReadOnly(true).setFetchSize(100).list();
             return wList;
         } catch (HibernateException e) {

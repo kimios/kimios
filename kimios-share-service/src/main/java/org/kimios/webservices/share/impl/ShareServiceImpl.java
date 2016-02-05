@@ -18,16 +18,17 @@ package org.kimios.webservices.share.impl;
 
 import org.kimios.kernel.share.controller.IMailShareController;
 import org.kimios.kernel.security.model.Session;
+import org.kimios.kernel.share.controller.IShareController;
 import org.kimios.kernel.share.model.MailContact;
+import org.kimios.kernel.ws.pojo.Share;
 import org.kimios.webservices.IServiceHelper;
 import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.share.ShareService;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Created by farf on 19/07/15.
@@ -38,11 +39,15 @@ public class ShareServiceImpl implements ShareService {
 
 
     private IMailShareController mailShareController;
+    private IShareController shareController;
     private IServiceHelper helper;
 
-    public ShareServiceImpl(IMailShareController mailShareController, IServiceHelper serviceHelper){
+    public ShareServiceImpl(IMailShareController mailShareController,
+                            IShareController shareController,
+                            IServiceHelper serviceHelper){
         this.helper = serviceHelper;
         this.mailShareController = mailShareController;
+        this.shareController = shareController;
     }
 
     @Override
@@ -87,6 +92,83 @@ public class ShareServiceImpl implements ShareService {
         try {
             Session session = helper.getSession(sessionId);
             return mailShareController.searchContact(session, query);
+        } catch (Exception e) {
+            throw helper.convertException(e);
+        }
+    }
+
+
+    @Override
+    public void shareDocument(String sessionId,
+                              long dmEntityId,
+                              String userId,
+                              String userSource,
+                              boolean read,
+                              boolean write,
+                              boolean fullAccess,
+                              String expirationDate,
+                              boolean notify) throws DMServiceException {
+        try {
+            Session session = helper.getSession(sessionId);
+
+
+            Date date = null;
+            if(expirationDate != null){
+                date = new SimpleDateFormat("dd-MM-yyyy HH:mm")
+                        .parse(expirationDate);
+            }
+
+            shareController.shareEntity(session,
+                    dmEntityId,
+                    userId,
+                    userSource,
+                    read,
+                    write,
+                    fullAccess,
+                    date,
+                    notify
+                    );
+        } catch (Exception e) {
+            throw helper.convertException(e);
+        }
+    }
+
+    @Override
+    public List<Share> listEntitiesSharedWithMe(String sessionId) throws DMServiceException {
+        try {
+            Session session = helper.getSession(sessionId);
+            List<org.kimios.kernel.share.model.Share> shares =  shareController.listEntitiesSharedWithMe(session);
+            List<Share> items = new ArrayList<Share>();
+            for(org.kimios.kernel.share.model.Share s: shares){
+                items.add(s.toPojo());
+            }
+            return items;
+        } catch (Exception e) {
+            throw helper.convertException(e);
+        }
+    }
+
+    @Override
+    public List<Share> listEntitiesSharedByMe(String sessionId) throws DMServiceException {
+        try {
+            Session session = helper.getSession(sessionId);
+            List<org.kimios.kernel.share.model.Share> shares =  shareController.listEntitiesSharedByMe(session);
+            List<Share> items = new ArrayList<Share>();
+            for(org.kimios.kernel.share.model.Share s: shares){
+                items.add(s.toPojo());
+            }
+            return items;
+        } catch (Exception e) {
+            throw helper.convertException(e);
+        }
+    }
+
+    @Override
+    public void removeShare(String sessionId,long shareId)
+            throws DMServiceException {
+        try {
+            Session session = helper.getSession(sessionId);
+            shareController.removeShare(session, shareId);
         } catch (Exception e) {
             throw helper.convertException(e);
         }

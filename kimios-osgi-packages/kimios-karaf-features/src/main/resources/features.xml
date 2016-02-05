@@ -49,10 +49,12 @@
         <feature>transaction</feature>
         <feature>jpa</feature>
         <feature version="${karaf.hibernate.version}">hibernate</feature>
+        <feature>pax-jdbc-mysql</feature>
+        <feature>pax-jdbc-postgresql</feature>
         <capability>kimios-dep</capability>
     </feature>
     <feature name="kimios-solr" version="${solr4j.version}">
-        <requirement>kimios-dep</requirement>
+        <requirement prerequisite="true">kimios-dep</requirement>
         <bundle>mvn:org.apache.httpcomponents/httpclient-osgi/4.3.3</bundle>
         <bundle>mvn:org.apache.httpcomponents/httpcore-osgi/4.3.3</bundle>
         <bundle>mvn:org.kimios/kimios-solr/${solr4j.version}</bundle>
@@ -61,22 +63,24 @@
         <configfile finalname="/etc/org.kimios.server.app.cfg">mvn:org.kimios/kimios-karaf-features/${project.version}/properties/kimios-server-cfg</configfile>
     </feature>
     <feature version="${project.version}" name="kimios-model" >
-        <requirement>kimios-dep</requirement>
+        <requirement prerequisite="true">kimios-dep</requirement>
         <feature>kimios-core-settings</feature>
         <bundle>mvn:org.kimios/kimios-karaf-datasource/${project.version}</bundle>
         <bundle>mvn:org.kimios/kimios-exceptions/${project.version}/jar</bundle>
         <bundle>mvn:org.kimios/kimios-interfaces/${project.version}/jar</bundle>
+        <bundle start-level="100">mvn:org.kimios/kimios-model-persistence/${project.version}/jar</bundle>
         <bundle>mvn:org.kimios/kimios-model/${project.version}/jar/blueprint</bundle>
         <capability>kimios-model</capability>
     </feature>
     <feature version="${project.version}" name="kimios-core">
         <feature>kimios-solr</feature>
-        <requirement>kimios-model</requirement>
+        <requirement prerequisite="true">kimios-model</requirement>
         <bundle start-level="100">mvn:org.kimios/kimios-kernel-osgi/${project.version}/jar/blueprint</bundle>
         <bundle start-level="100">mvn:org.kimios/kimios-index/${project.version}/jar/osgi</bundle>
+        <capability>kimios-core</capability>
     </feature>
     <feature version="${project.version}" name="kimios-features">
-        <feature>kimios-core</feature>
+        <requirement prerequisite="true">kimios-core</requirement>
         <bundle>mvn:org.kimios/kimios-docx4j-osgi/3.2.2/jar</bundle>
         <bundle start-level="100">mvn:org.kimios/kimios-share/${project.version}/jar/osgi</bundle>
         <bundle start-level="100">mvn:org.kimios/kimios-convert/${project.version}/jar/osgi</bundle>
@@ -84,8 +88,7 @@
         <bundle start-level="100">mvn:org.kimios/kimios-karaf-commands/${project.version}</bundle>
     </feature>
     <feature version="${project.version}" name="kimios-services">
-        <requirement>kimios-dep</requirement>
-        <feature>kimios-features</feature>
+        <requirement>kimios-dep,kimios-core</requirement>
         <config name="org.apache.cxf.osgi">
             org.apache.cxf.servlet.context = /services
         </config>
@@ -98,13 +101,13 @@
     <feature name="kimios-etherpad-editor" version="${project.version}">
         <feature>kimios-core</feature>
         <bundle>mvn:org.eclipse.jetty/jetty-proxy/9.2.14.v20151106</bundle>
-        <bundle start-level="100">mvn:org.kimios/kimios-editors/${project.version}/jar/osgi</bundle>
+        <bundle start="false">mvn:org.kimios/kimios-editors/${project.version}/jar/osgi</bundle>
         <bundle>mvn:org.kimios/kimios-editors-service/${project.version}/jar/blueprint</bundle>
         <capability>editor</capability>
     </feature>
     <feature version="${project.version}" name="kimios-web-standard">
-        <feature>kimios-services</feature>
         <requirement>editor</requirement>
+        <feature>kimios-services</feature>
         <configfile finalname="/etc/org.kimios.client.app.cfg">mvn:org.kimios/kimios-karaf-features/${project.version}/properties/kimios-client-cfg</configfile>
         <bundle>mvn:org.kimios/kimios-webclient/${project.version}/war/osgi</bundle>
     </feature>

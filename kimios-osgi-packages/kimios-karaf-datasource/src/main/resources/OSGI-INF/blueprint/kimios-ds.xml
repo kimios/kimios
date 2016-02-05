@@ -17,7 +17,7 @@
 
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
            xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0">
-    <cm:property-placeholder id="kimiosServerCfg" persistent-id="org.kimios.server.app" update-strategy="reload" activation="eager">
+    <cm:property-placeholder id="kimiosServerCfg" persistent-id="org.kimios.server.app" update-strategy="none" activation="eager">
     </cm:property-placeholder>
     <reference interface="javax.transaction.TransactionManager" id="txManager1" />
     <bean id="databaseConnection" class="org.apache.commons.dbcp.managed.BasicManagedDataSource">

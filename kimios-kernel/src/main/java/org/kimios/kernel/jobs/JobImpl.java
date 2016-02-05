@@ -15,10 +15,11 @@
  */
 package org.kimios.kernel.jobs;
 
+import org.kimios.kernel.dms.model.DMEntity;
 import org.kimios.kernel.security.model.Session;
 import org.slf4j.LoggerFactory;
 
-public abstract class JobImpl<T> implements Job
+public abstract class JobImpl<T> implements Job<T>
 {
     private Session session;
 
@@ -26,9 +27,26 @@ public abstract class JobImpl<T> implements Job
 
     private int status;
 
-        public final void setSession(Session session)
+    private String user;
+
+    protected DMEntity dmEntity;
+
+    public JobImpl(String taskId){
+        this.taskId = taskId;
+    }
+
+    @Override
+    public String getUser() {
+        return user;
+    }
+
+    public final void setSession(Session session)
     {
+
         this.session = session;
+        if(session != null){
+            this.user  = session.getUserName() + "@" + session.getUserSource();
+        }
     }
 
     public T call()
@@ -48,11 +66,36 @@ public abstract class JobImpl<T> implements Job
 
     abstract public T execute() throws Exception;
 
-    abstract public Object getInformation() throws Exception;
+    public Object getInformation() throws Exception{
+        StringBuilder builder = new StringBuilder();
+        builder.append("jobId: ");
+        builder.append(this.getTaskId());
+        builder.append("\n");
+        builder.append("jobType: ");
+        builder.append("\n");
+        builder.append(this.getClass().getName());
+        builder.append("\n");
+        builder.append("Run on entity ? ");
+        if(dmEntity != null){
+            builder.append("#");
+            builder.append(dmEntity.getUid());
+            builder.append(" Path: ");
+            builder.append(dmEntity.getPath());
+        } else {
+            builder.append("N/A");
+        }
+        builder.append("\n");
+        builder.append("\n");
+        return builder;
+    }
 
     public final Session getUserSession()
     {
         return this.session;
+    }
+
+    public final String user(){
+        return this.user;
     }
 
     public final void setStackTrace(Exception e)
@@ -73,6 +116,23 @@ public abstract class JobImpl<T> implements Job
     public final void throwException() throws Exception
     {
         throw exception;
+    }
+
+    private String taskId;
+
+    @Override
+    public String toString() {
+        return "Job{" +
+                "ll=" +taskId +
+                '}';
+    }
+
+    public String getTaskId(){
+        return this.taskId;
+    }
+
+    public void setDmEntity(DMEntity entity){
+        this.dmEntity = entity;
     }
 
 }

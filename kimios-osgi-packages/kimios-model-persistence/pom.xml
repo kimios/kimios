@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Kimios - Document Management System Software
+  ~ Copyright (C) 2008-2016  DevLib'
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 2 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ aong with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>kimios-osgi-packages</artifactId>
+        <groupId>org.kimios</groupId>
+        <version>1.1-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>kimios-model-persistence</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <scope>provided</scope>
+            <version>${karaf.hibernate.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <scope>provided</scope>
+            <version>${karaf.hibernate.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-osgi</artifactId>
+            <scope>provided</scope>
+            <version>${karaf.hibernate.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <scope>provided</scope>
+            <version>${slfj.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <version>4.3.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.enterprise</artifactId>
+            <version>4.2.0</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+        <plugin>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>maven-bundle-plugin</artifactId>
+            <version>2.3.7</version>
+            <executions>
+                <execution>
+                    <id>bundle-manifest</id>
+                    <goals>
+                        <goal>bundle</goal>
+                    </goals>
+                </execution>
+            </executions>
+            <configuration>
+                <supportedProjectTypes>
+                    <supportedProjectType>jar</supportedProjectType>
+                </supportedProjectTypes>
+                <instructions>
+                    <Implementation-Build>${buildNumber}</Implementation-Build>
+                    <Bundle-SymbolicName>kimios-model-persistence</Bundle-SymbolicName>
+                    <Bundle-Name>${project.name}</Bundle-Name>
+                    <Bundle-Activator>org.hibernate.jpa.custom.CustomHibernateActivator</Bundle-Activator>
+                    <Export-Package>
+                        org.hibernate.jpa.custom
+                    </Export-Package>
+                    <Import-Package>
+                        org.osgi.framework,
+                        org.slf4j,
+                        org.osgi.service.cm,
+                        javax.persistence;version=2.1.0,
+                        javax.persistence.criteria;version=2.1.0,
+                        javax.persistence.metamodel;version=2.1.0,
+                        javax.persistence.spi;version=2.1.0,
+                        javax.transaction;version="[1.1,2)",
+                        javassist.bytecode;version="[3.18,4)",
+                        javassist.bytecode.annotation;version="[3.18,4)",
+                        javax.naming,
+                        javax.sql,
+                        javax.xml.parsers,
+                        javax.xml.transform,
+                        javax.xml.transform.dom,
+                        javax.xml.transform.stream,
+                        javax.xml.validation,
+                        org.hibernate;version="[4.3,5)",
+                        org.hibernate.jpa;version="[4.3,5)",
+                        org.hibernate.osgi;version="[4.3,5)",
+                        org.hibernate.jpa.boot.spi;version="[4.3,5)",
+                        org.hibernate.annotations.common;version="[4.0,5)",
+                        org.hibernate.annotations.common.reflection;version="[4.0,5)",
+                        org.hibernate.annotations.common.util;version="[4.0,5)",
+                        org.hibernate.boot.registry;version="[4.3,5)",
+                        org.hibernate.boot.registry.classloading.internal;version="[4.3,5)",
+                        org.hibernate.boot.registry.classloading.spi;version="[4.3,5)",
+                        org.hibernate.boot.registry.selector;version="[4.3,5)",
+                        org.hibernate.boot.registry.selector.spi;version="[4.3,5)",
+                        org.hibernate.bytecode.buildtime.spi;version="[4.3,5)",
+                        org.hibernate.bytecode.instrumentation.internal;version="[4.3,5)",
+                        org.hibernate.bytecode.instrumentation.spi;version="[4.3,5)",
+                        org.hibernate.bytecode.spi;version="[4.3,5)",
+                        org.hibernate.cache;version="[4.3,5)",
+                        org.hibernate.cache.spi;version="[4.3,5)",
+                        org.hibernate.cfg;version="[4.3,5)",
+                        org.hibernate.cfg.annotations;version="[4.3,5)",
+                        org.hibernate.cfg.beanvalidation;version="[4.3,5)",
+                        org.hibernate.collection.spi;version="[4.3,5)",
+                        org.hibernate.dialect;version="[4.3,5)",
+                        org.hibernate.dialect.lock;version="[4.3,5)",
+                        org.hibernate.engine;version="[4.3,5)",
+                        org.hibernate.engine.jdbc.connections.spi;version="[4.3,5)",
+                        org.hibernate.engine.jdbc.dialect.spi;version="[4.3,5)",
+                        org.hibernate.engine.jdbc.internal;version="[4.3,5)",
+                        org.hibernate.engine.jdbc.spi;version="[4.3,5)",
+                        org.hibernate.engine.jndi;version="[4.3,5)",
+                        org.hibernate.engine.loading.internal;version="[4.3,5)",
+                        org.hibernate.engine.query.spi;version="[4.3,5)",
+                        org.hibernate.engine.query.spi.sql;version="[4.3,5)",
+                        org.hibernate.engine.spi;version="[4.3,5)",
+                        org.hibernate.engine.transaction.internal.jdbc;version="[4.3,5)",
+                        org.hibernate.engine.transaction.internal.jta;version="[4.3,5)",
+                        org.hibernate.engine.transaction.jta.platform.spi;version="[4.3,5)",
+                        org.hibernate.engine.transaction.spi;version="[4.3,5)",
+                        org.hibernate.engine.transaction.synchronization.spi;version="[4.3,5)",
+                        org.hibernate.event.internal;version="[4.3,5)",
+                        org.hibernate.event.service.spi;version="[4.3,5)",
+                        org.hibernate.event.spi;version="[4.3,5)",
+                        org.hibernate.exception;version="[4.3,5)",
+                        org.hibernate.graph.spi;version="[4.3,5)",
+                        org.hibernate.hql.internal;version="[4.3,5)",
+                        org.hibernate.hql.spi;version="[4.3,5)",
+                        org.hibernate.id;version="[4.3,5)",
+                        org.hibernate.id.factory.spi;version="[4.3,5)",
+                        org.hibernate.integrator.spi;version="[4.3,5)",
+                        org.hibernate.internal;version="[4.3,5)",
+                        org.hibernate.internal.jaxb.cfg;version="[4.3,5)",
+                        org.hibernate.internal.util;version="[4.3,5)",
+                        org.hibernate.internal.util.collections;version="[4.3,5)",
+                        org.hibernate.internal.util.config;version="[4.3,5)",
+                        org.hibernate.mapping;version="[4.3,5)",
+                        org.hibernate.metadata;version="[4.3,5)",
+                        org.hibernate.metamodel.binding;version="[4.3,5)",
+                        org.hibernate.metamodel.domain;version="[4.3,5)",
+                        org.hibernate.metamodel.source;version="[4.3,5)",
+                        org.hibernate.metamodel.source.annotations;version="[4.3,5)",
+                        org.hibernate.metamodel.source.binder;version="[4.3,5)",
+                        org.hibernate.metamodel.spi;version="[4.3,5)",
+                        org.hibernate.persister.collection;version="[4.3,5)",
+                        org.hibernate.persister.entity;version="[4.3,5)",
+                        org.hibernate.procedure;version="[4.3,5)",
+                        org.hibernate.property;version="[4.3,5)",
+                        org.hibernate.proxy;version="[4.3,5)",
+                        org.hibernate.result;version="[4.3,5)",
+                        org.hibernate.secure.spi;version="[4.3,5)",
+                        org.hibernate.service;version="[4.3,5)",
+                        org.hibernate.service.spi;version="[4.3,5)",
+                        org.hibernate.tool.hbm2ddl;version="[4.3,5)",
+                        org.hibernate.transform;version="[4.3,5)",
+                        org.hibernate.tuple;version="[4.3,5)",
+                        org.hibernate.tuple.component;version="[4.3,5)",
+                        org.hibernate.tuple.entity;version="[4.3,5)",
+                        org.hibernate.type;version="[4.3,5)",
+                        org.jboss.jandex,
+                        org.jboss.logging;version="[3.1,4)",
+                        org.w3c.dom,
+                        org.xml.sax,
+                        javax.enterprise.inject.spi;resolution:=optional,
+                        javax.enterprise.context.spi;resolution:=optional
+                    </Import-Package>
+                </instructions>
+            </configuration>
+        </plugin>
+    </plugins>
+    </build>
+
+</project>

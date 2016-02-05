@@ -219,6 +219,20 @@ public class DMEntitySecurity implements Serializable
                 this.fullAccess);
     }
 
+
+    public static DMEntitySecurity fromPojo(org.kimios.kernel.ws.pojo.DMEntitySecurity pojo){
+        return new DMEntitySecurity(
+                pojo.getDmEntityUid(),
+                pojo.getDmEntityType(),
+                pojo.getName(),
+                pojo.getFullName(),
+                pojo.getSource(),
+                pojo.getType(),
+                pojo.isRead(),
+                pojo.isWrite(),
+                pojo.isFullAccess());
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

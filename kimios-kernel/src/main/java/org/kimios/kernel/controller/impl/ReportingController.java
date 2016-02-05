@@ -21,16 +21,29 @@ import org.kimios.kernel.controller.IReportingController;
 import org.kimios.kernel.exception.AccessDeniedException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.ReportingException;
+import org.kimios.kernel.reporting.ReportImpl;
 import org.kimios.kernel.reporting.XMLReportHelper;
 import org.kimios.kernel.reporting.impl.factory.DocumentTransactionsReportFactory;
+import org.kimios.kernel.reporting.model.Report;
+import org.kimios.kernel.reporting.model.ReportParam;
 import org.kimios.kernel.security.model.Role;
 import org.kimios.kernel.security.model.Session;
+import org.kimios.utils.extension.ExtensionRegistryManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 @Transactional
 public class ReportingController extends AKimiosController implements IReportingController
 {
     private XMLReportHelper xmlHelper = new XMLReportHelper();
+
+    private static Logger logger = LoggerFactory.getLogger(ReportingController.class);
 
     private DocumentTransactionsReportFactory documentTransactionsReportFactory;
 
@@ -60,10 +73,22 @@ public class ReportingController extends AKimiosController implements IReporting
         return new XMLReportHelper().getReport(session.getUid(), className, xmlParameters);
     }
 
+    public String getReport(Session session, String className, Map<String, ReportParam> reportParameters)
+            throws AccessDeniedException, ReportingException, ConfigException,
+            DataSourceException
+    {
+        if (securityFactoryInstantiator.getRoleFactory()
+                .getRole(Role.REPORTING, session.getUserName(), session.getUserSource()) == null)
+        {
+            throw new AccessDeniedException();
+        }
+        return new XMLReportHelper().getReport(session.getUid(), className, reportParameters);
+    }
+
     /* (non-Javadoc)
-    * @see org.kimios.kernel.controller.impl.IReportingController#getReportsList(org.kimios.kernel.security.Session)
+    * @see org.kimios.kernel.controller.impl.IReportingController#getReportsListXml(org.kimios.kernel.security.Session)
     */
-    public String getReportsList(Session session) throws AccessDeniedException, ConfigException, DataSourceException
+    public String getReportsListXml(Session session) throws AccessDeniedException, ConfigException, DataSourceException
     {
         if (securityFactoryInstantiator.getRoleFactory()
                 .getRole(Role.REPORTING, session.getUserName(), session.getUserSource()) == null)
@@ -74,9 +99,44 @@ public class ReportingController extends AKimiosController implements IReporting
     }
 
     /* (non-Javadoc)
+   * @see org.kimios.kernel.controller.impl.IReportingController#getReportsList(org.kimios.kernel.security.Session)
+   */
+    public List<Report> getReportsList(Session session) throws AccessDeniedException, ConfigException, DataSourceException
+    {
+        if (securityFactoryInstantiator.getRoleFactory()
+                .getRole(Role.REPORTING, session.getUserName(), session.getUserSource()) == null)
+        {
+            throw new AccessDeniedException();
+        }
+        Collection<Class<? extends ReportImpl>> classes = ExtensionRegistryManager.itemsAsClass(ReportImpl.class);
+        logger.info("loaded reporting registry {}", classes);
+        List<Report> items = new ArrayList<Report>();
+        for(Class c: classes){
+            Report r = new Report();
+            r.setName(c.getSimpleName());
+            r.setClassName(c.getName());
+            items.add(r);
+        }
+        return items;
+    }
+
+    /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IReportingController#getReportAttributes(org.kimios.kernel.security.Session, java.lang.String)
     */
-    public String getReportAttributes(Session session, String className)
+    @Deprecated
+    public String getReportAttributesXml(Session session, String className)
+            throws ClassNotFoundException, InstantiationException, IllegalAccessException,
+            ConfigException, DataSourceException, AccessDeniedException, ReportingException
+    {
+        if (securityFactoryInstantiator.getRoleFactory()
+                .getRole(Role.REPORTING, session.getUserName(), session.getUserSource()) == null)
+        {
+            throw new AccessDeniedException();
+        }
+        return xmlHelper.getReportAttributesXml(className);
+    }
+
+    public List<ReportParam> getReportAttributes(Session session, String className)
             throws ClassNotFoundException, InstantiationException, IllegalAccessException,
             ConfigException, DataSourceException, AccessDeniedException, ReportingException
     {

@@ -111,16 +111,26 @@ public class DmEntityControllerWeb extends Controller
         long dmEntityUid = Long.parseLong(parameters.get("dmEntityUid"));
         switch (dmEntityType) {
             case 1:
-                workspaceController.deleteWorkspace(sessionUid, dmEntityUid);
+                if(ConfigurationManager.getValue(Config.TRASH_FEATURE_ENABLED) != null
+                        && ConfigurationManager.getValue(Config.TRASH_FEATURE_ENABLED).toLowerCase().equals("true")) {
+                    extensionController.addEntityToTrash(sessionUid, dmEntityUid);
+                } else {
+                    workspaceController.deleteWorkspace(sessionUid, dmEntityUid);
+                }
                 break;
             case 2:
-                folderController.deleteFolder(sessionUid, dmEntityUid);
+                if(ConfigurationManager.getValue(Config.TRASH_FEATURE_ENABLED) != null
+                        && ConfigurationManager.getValue(Config.TRASH_FEATURE_ENABLED).toLowerCase().equals("true")) {
+                    extensionController.addEntityToTrash(sessionUid, dmEntityUid);
+                } else {
+                    folderController.deleteFolder(sessionUid, dmEntityUid);
+                }
                 break;
             case 3:
                 //mode to trash
                 if(ConfigurationManager.getValue(Config.TRASH_FEATURE_ENABLED) != null
                         && ConfigurationManager.getValue(Config.TRASH_FEATURE_ENABLED).toLowerCase().equals("true")){
-                    extensionController.addDocumentToTrash(sessionUid, dmEntityUid);
+                    extensionController.addEntityToTrash(sessionUid, dmEntityUid);
                 }else {
                     documentController.deleteDocument(sessionUid, dmEntityUid);
                 }
@@ -281,12 +291,16 @@ public class DmEntityControllerWeb extends Controller
 
             switch (dmEntityType) {
                 case 1:
-                    workspaceController.deleteWorkspace(sessionUid, dmEntityUid);
+                    if(ConfigurationManager.getValue(Config.TRASH_FEATURE_ENABLED) != null
+                            && ConfigurationManager.getValue(Config.TRASH_FEATURE_ENABLED).equals("true")) {
+                        extensionController.addEntityToTrash(sessionUid, dmEntityUid);
+                    } else
+                        workspaceController.deleteWorkspace(sessionUid, dmEntityUid);
                     break;
                 case 2:
                     if(ConfigurationManager.getValue(Config.TRASH_FEATURE_ENABLED) != null
                             && ConfigurationManager.getValue(Config.TRASH_FEATURE_ENABLED).equals("true")) {
-                        //
+                        extensionController.addEntityToTrash(sessionUid, dmEntityUid);
                     } else {
                         folderController.deleteFolder(sessionUid, dmEntityUid);
                     }
@@ -294,7 +308,7 @@ public class DmEntityControllerWeb extends Controller
                 case 3:
                     if(ConfigurationManager.getValue(Config.TRASH_FEATURE_ENABLED) != null
                             && ConfigurationManager.getValue(Config.TRASH_FEATURE_ENABLED).equals("true")){
-                        extensionController.addDocumentToTrash(sessionUid, dmEntityUid);
+                        extensionController.addEntityToTrash(sessionUid, dmEntityUid);
                     }else {
                         documentController.deleteDocument(sessionUid, dmEntityUid);
                     }
@@ -306,8 +320,19 @@ public class DmEntityControllerWeb extends Controller
     private void permanentDocumentDelete() throws Exception {
 
         long dmEntityUid = Long.parseLong(parameters.get("dmEntityUid"));
+        int dmEntityType = Integer.parseInt(parameters.get("dmEntityType"));
+        switch (dmEntityType) {
+            case 1:
+                    workspaceController.deleteWorkspace(sessionUid, dmEntityUid);
+                break;
+            case 2:
+                    folderController.deleteFolder(sessionUid, dmEntityUid);
+                    break;
+            case 3:
+                    documentController.deleteDocument(sessionUid, dmEntityUid);
+                break;
+        }
 
-        documentController.deleteDocument(sessionUid, dmEntityUid);
     }
 
     private void updateEntities() throws Exception

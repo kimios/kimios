@@ -205,6 +205,7 @@
                             org.kimios.kernel.share.*,
                             org.kimios.kernel.security,
                             org.kimios.utils.logging,
+                            org.kimios.webservices.utils,
                             org.apache.cxf.aegis,
                             org.apache.cxf.aegis.databinding,
                             org.apache.cxf.jaxws.support,

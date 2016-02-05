@@ -280,14 +280,14 @@ public class DocumentActionHandler
             throws Exception
     {
         Long documentId = Long.parseLong(parameters.get("documentId"));
-        extensionController.restoreDocumentFromTrash(sessionUid, documentId);
+        extensionController.restoreEntityFromTrash(sessionUid, documentId);
     }
 
     private void addToTrash()
             throws Exception
     {
         Long documentId = Long.parseLong(parameters.get("documentId"));
-        extensionController.addDocumentToTrash(sessionUid, documentId);
+        extensionController.restoreEntityFromTrash(sessionUid, documentId);
     }
 
 

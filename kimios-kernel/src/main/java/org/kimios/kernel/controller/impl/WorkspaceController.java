@@ -29,7 +29,8 @@ import org.kimios.kernel.exception.NamingException;
 import org.kimios.kernel.log.model.DMEntityLog;
 import org.kimios.kernel.security.model.Role;
 import org.kimios.kernel.security.model.Session;
-import org.springframework.context.annotation.Bean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
@@ -44,6 +45,9 @@ import java.util.Vector;
 @Transactional
 public class WorkspaceController extends AKimiosController implements IWorkspaceController
 {
+
+    private static Logger logger = LoggerFactory.getLogger(WorkspaceController.class);
+
     /**
      * Return workspace for a given id
      *
@@ -136,10 +140,20 @@ public class WorkspaceController extends AKimiosController implements IWorkspace
         if (getSecurityAgent().isWritable(w,
                 session.getUserName(), session.getUserSource(), session.getGroups()))
         {
+            //check if name change
+            if(!name.equals(w.getName())){
+                //update path
+                logger.debug("workspace change..., will update path. CurrentName: {} ==> Submitted Name {}", w.getName(), name);
+                dmsFactoryInstantiator.getDmEntityFactory().updatePath(w, name);
+                logger.debug("workspace change, sub paths updated");
+                w.setUpdateDate(new Date());
+                dmsFactoryInstantiator.getWorkspaceFactory().updateWorkspace(w);
+            } else {
+                //do nothing
+                logger.debug("workspace name didn't change...  nothing t do! CurrentName: {} ==> Submitted Name {}", w.getName(), name);
+            }
 
-            dmsFactoryInstantiator.getDmEntityFactory().updatePath(w, name);
-            w.setUpdateDate(new Date());
-            dmsFactoryInstantiator.getWorkspaceFactory().updateWorkspace(w);
+
         } else {
             throw new AccessDeniedException();
         }
@@ -167,7 +181,7 @@ public class WorkspaceController extends AKimiosController implements IWorkspace
             }
 
             // delete full path
-            dmsFactoryInstantiator.getDmEntityFactory().deteteEntities(w.getPath());
+            dmsFactoryInstantiator.getDmEntityFactory().deleteEntities(w.getPath());
             EventContext.addParameter("removed", w);
         } else {
             throw new AccessDeniedException();

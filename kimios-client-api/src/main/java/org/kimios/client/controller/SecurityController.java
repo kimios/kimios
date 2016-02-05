@@ -19,12 +19,12 @@ import org.kimios.client.controller.helpers.StringTools;
 import org.kimios.client.exception.AccessDeniedException;
 import org.kimios.client.exception.DMSException;
 import org.kimios.client.exception.ExceptionHelper;
-import org.kimios.kernel.ws.pojo.AuthenticationSource;
-import org.kimios.kernel.ws.pojo.DMEntitySecurity;
-import org.kimios.kernel.ws.pojo.Group;
-import org.kimios.kernel.ws.pojo.User;
+import org.kimios.kernel.jobs.model.TaskInfo;
+import org.kimios.kernel.ws.pojo.*;
 import org.kimios.webservices.SecurityService;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -325,13 +325,13 @@ public class SecurityController
     /**
      * Update rights for a given entity from an xml descriptor
      */
-    public void updateDMEntitySecurities( String sessionId, long dmEntityId, int dmEntityType, boolean isRecursive, boolean appendMode,
-                                          Vector<DMEntitySecurity> des )
+    public TaskInfo updateDMEntitySecurities(String sessionId, long dmEntityId, int dmEntityType, boolean isRecursive, boolean appendMode,
+                                             Vector<DMEntitySecurity> des )
         throws Exception, AccessDeniedException, DMSException
     {
         try
         {
-            String xmlStream = "<security-rules dmEntityId=\"" + dmEntityId + "\"" +
+            /*String xmlStream = "<security-rules dmEntityId=\"" + dmEntityId + "\"" +
                 " dmEntityTye=\"" + dmEntityType + "\">\r\n";
             for ( int i = 0; i < des.size(); i++ )
             {
@@ -344,9 +344,15 @@ public class SecurityController
                     "write=\"" + des.elementAt( i ).isWrite() + "\" " +
                     "full=\"" + des.elementAt( i ).isFullAccess() + "\" />\r\n";
             }
-            xmlStream += "</security-rules>";
-            des = null;
-            client.updateDMEntitySecurities( sessionId, dmEntityId, xmlStream, isRecursive, appendMode );
+            xmlStream += "</security-rules>";*/
+            List<DMEntitySecurity> securities = new ArrayList<DMEntitySecurity>(des);
+            UpdateSecurityCommand command = new UpdateSecurityCommand();
+            command.setSessionId(sessionId);
+            command.setDmEntityId(dmEntityId);
+            command.setRecursive(isRecursive);
+            command.setAppendMode(appendMode);
+            command.setSecurities(securities);
+            return client.updateDMEntitySecurities( command );
         }
         catch ( Exception e )
         {

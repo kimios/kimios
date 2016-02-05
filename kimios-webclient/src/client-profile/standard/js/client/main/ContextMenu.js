@@ -59,6 +59,8 @@ kimios.ContextMenu = new function () {
         this.initUnknownMenu(config);
         this.initCartMenu(config);
         this.initCartContainerMenu(config);
+        this.initShareMenu(config);
+        this.initShareContainerMenu(config);
 
         this.initSymLinkDocumentMenu(config);
         this.initViewableSymLinkDocumentMenu(config);
@@ -171,6 +173,8 @@ kimios.ContextMenu = new function () {
 
         else if (context == 'cart') {
             return this.cartMenu;
+        }  else if(context == 'shares'){
+            return this.shareMenu;
         }
 
         // versions
@@ -235,6 +239,8 @@ kimios.ContextMenu = new function () {
         // recent items container
         else if (context == 'recentItemsContainer') {
             return this.recentItemsContainerMenu;
+        } else if(context == 'sharesContainer') {
+            return this.shareMenu;
         }
 
         // no context found
@@ -245,7 +251,18 @@ kimios.ContextMenu = new function () {
      * Show the corresponding menu
      */
     this.show = function (dmEntityPojo, e, context) {
-        this.getInstance(dmEntityPojo, context).showAt(e.getXY());
+        var menu = this.getInstance(dmEntityPojo, context);
+
+        menu.items.each(function(item, index, length){
+            if(item.filterType && item.filterType.length > 0 &&
+                dmEntityPojo.extension && item.filterType.indexOf(dmEntityPojo.extension.toLowerCase()) == -1){
+                item.hide();
+            } else {
+                item.show();
+            }
+        });
+
+        menu.showAt(e.getXY());
     };
 
     this.showMultiple = function (dmEntityPojo, e, context, records) {
@@ -330,6 +347,7 @@ kimios.ContextMenu = new function () {
 
     this.getDocMenuItemsList = function (menu, hiddenItems) {
         menu.add(this.getGetDocumentItem());
+        menu.add(this.getEditDocumentItem());
         menu.addSeparator();
         menu.add(this.getShareDocumentItem());
         menu.add(this.getUpdateCurrentVersionItem());
@@ -340,7 +358,7 @@ kimios.ContextMenu = new function () {
             menu.add(this.getStartWorkflowItem());
         }
 
-        menu.add(this.getEditDocumentItem());
+
 
         if (!hiddenItems || hiddenItems.indexOf('move') == -1) {
             menu.add(this.getMoveItem());
@@ -361,9 +379,9 @@ kimios.ContextMenu = new function () {
 
     this.getViewableDocMenuItemsList = function (menu, hiddenItems) {
         menu.add(this.getViewDocumentItem());
+        menu.add(this.getEditDocumentItem());
         menu.add(this.getGetDocumentItem());
         menu.add(this.getBarcodeDocumentItem());
-        menu.add(this.getEditDocumentItem());
         menu.add(this.getShareDocumentItem());
         menu.addSeparator();
         menu.add(this.getUpdateCurrentVersionItem());
@@ -474,6 +492,17 @@ kimios.ContextMenu = new function () {
         this.searchRequestsMenu.addSeparator();
         this.searchRequestsMenu.add(this.getRefreshItem());
     };
+
+    this.initShareMenu = function (config) {
+        this.shareMenu = new Ext.menu.Menu(config);
+        this.shareMenu.add(this.getRefreshItem());
+    };
+
+
+    this.initShareContainerMenu = function(config){
+        this.shareContainerMenu = new Ext.menu.Menu(config);
+        this.shareContainerMenu.add(this.getRefreshItem());
+    }
 
 
     this.initBookmarksMenu = function (config) {
@@ -885,7 +914,7 @@ kimios.ContextMenu = new function () {
     };
 
     this.getEditDocumentItem = function(){
-        return new Ext.menu.Item({
+        var menuItem = new Ext.menu.Item({
             text: kimios.lang('StartEdit'),
             iconCls: 'edit-cls',
             scope: this,
@@ -894,7 +923,9 @@ kimios.ContextMenu = new function () {
                 var entity = this.dmEntityPojo.type == 7 ? this.dmEntityPojo.targetEntity: this.dmEntityPojo;
                 kimios.editors.startDocumentEdit(entity);
             }
-        })
+        });
+        menuItem.filterType = ['txt', 'adoc', 'asciidoc', 'js', 'c', 'htm', 'html'];
+        return menuItem;
     }
 
     this.getStartWorkflowItem = function () {
@@ -1468,6 +1499,7 @@ kimios.ContextMenu = new function () {
                 var searchRequests3 = kimios.explorer.getPublicSearchRequestsPanel();
                 var searchRequests2 = kimios.explorer.getPublishedSearchRequestsPanel();
                 var cartPanel = kimios.explorer.getCartPanel();
+                var sharePanel = kimios.explorer.getSharesPanel();
 
                 if (context == undefined || context == 'default'
                     || context == 'gridContainer') {
@@ -1497,7 +1529,10 @@ kimios.ContextMenu = new function () {
                     assignedTasksPanel.refresh();
                 } else if (context == 'cart' || context == 'cartContainer') {
                     cartPanel.refresh();
+                } else if (context == 'shares' || context == 'sharesContainer') {
+                    sharePanel.refresh();
                 }
+
             }
         });
     };

@@ -16,12 +16,17 @@
 package org.kimios.webservices.impl;
 
 
+import org.kimios.kernel.reporting.model.Report;
+import org.kimios.kernel.reporting.model.ReportParam;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.webservices.CoreService;
 import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.ReportingService;
 
 import javax.jws.WebService;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 @WebService(targetNamespace = "http://kimios.org", serviceName = "ReportingService", name = "ReportingService")
@@ -44,17 +49,46 @@ public class ReportingServiceImpl extends CoreService implements ReportingServic
     }
   }
 
+  public String getReport(String sessionId, String className, List<ReportParam> paramMap) throws DMServiceException {
+    try {
+      Session session = getHelper().getSession(sessionId);
+      Map<String, ReportParam> items = new HashMap<String, ReportParam>();
+      for(ReportParam param: paramMap)
+        items.put(param.getName(), param);
+
+      return reportingController.getReport(session, className, items);
+    } catch (Exception e) {
+      throw getHelper().convertException(e);
+    }
+  }
+
   /**
    * 
    * @param sessionId
    * @return
    * @throws DMServiceException
    */
-  public String getReportsList(String sessionId) throws DMServiceException {
+  @Deprecated
+  public String getReportsListXml(String sessionId) throws DMServiceException {
     try {
       Session session = getHelper().getSession(sessionId);
-      String reportsList = reportingController.getReportsList(session);
+      String reportsList = reportingController.getReportsListXml(session);
       return reportsList;
+    } catch (Exception e) {
+      throw getHelper().convertException(e);
+    }
+  }
+
+  /**
+   *
+   * @param sessionId
+   * @return
+   * @throws DMServiceException
+   */
+  public List<Report> getReportsList(String sessionId) throws DMServiceException {
+    try {
+      Session session = getHelper().getSession(sessionId);
+      return reportingController.getReportsList(session);
     } catch (Exception e) {
       throw getHelper().convertException(e);
     }
@@ -67,11 +101,27 @@ public class ReportingServiceImpl extends CoreService implements ReportingServic
    * @return
    * @throws DMServiceException
    */
-  public String getReportAttributes(String sessionId, String className) throws DMServiceException {
+  public String getReportAttributesXml(String sessionId, String className) throws DMServiceException {
     try {
       Session session = getHelper().getSession(sessionId);
-      String reportAttributes = reportingController.getReportAttributes(session, className);
+      String reportAttributes = reportingController.getReportAttributesXml(session, className);
       return reportAttributes;
+    } catch (Exception e) {
+      throw getHelper().convertException(e);
+    }
+  }
+
+  /**
+   *
+   * @param sessionId
+   * @param className
+   * @return
+   * @throws DMServiceException
+   */
+  public List<ReportParam> getReportAttributes(String sessionId, String className) throws DMServiceException {
+    try {
+      Session session = getHelper().getSession(sessionId);
+      return reportingController.getReportAttributes(session, className);
     } catch (Exception e) {
       throw getHelper().convertException(e);
     }

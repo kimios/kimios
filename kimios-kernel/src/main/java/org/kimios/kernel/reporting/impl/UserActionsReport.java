@@ -24,9 +24,9 @@ import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.reporting.FactoryInstantiator;
 import org.kimios.kernel.reporting.ReportImpl;
-import org.kimios.kernel.reporting.report.Cell;
-import org.kimios.kernel.reporting.report.Report;
-import org.kimios.kernel.reporting.report.Row;
+import org.kimios.kernel.reporting.model.Cell;
+import org.kimios.kernel.reporting.model.Report;
+import org.kimios.kernel.reporting.model.Row;
 import org.kimios.kernel.user.model.User;
 
 import java.util.Calendar;

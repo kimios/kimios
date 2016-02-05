@@ -18,10 +18,6 @@ kimios.editors = {}
 
 kimios.editors.startDocumentEdit = function (doc) {
 
-    if(console){
-        console.log(doc);
-    }
-
     var editableTypes = ['txt', 'adoc', 'asciidoc', 'js', 'c', 'htm', 'html'];
 
     if (doc.extension && editableTypes.indexOf(doc.extension.toLowerCase()) != -1) {
@@ -33,17 +29,7 @@ kimios.editors.startDocumentEdit = function (doc) {
             documentId: doc.uid
         }, function (resp) {
 
-
-
             var editData = Ext.util.JSON.decode(resp.responseText);
-
-            if(console){
-                console.log(editData);
-                //check cookie
-
-                console.log(Ext.util.Cookies.get('!Proxy!etherpadProxysessionID'));
-                console.log(Ext.util.Cookies.get('!Proxy!etherpadProxyauthorID'));
-            }
             var iframe = new Ext.Window({
                 width: 640,
                 height: 480,
@@ -56,8 +42,8 @@ kimios.editors.startDocumentEdit = function (doc) {
                 items: [
                     {
                         html: '<iframe id="editFrame" border="0" width="100%" height="100%" ' +
-                        'frameborder="0" marginheight="12" marginwidth="16" scrolling="auto" ' +
-                        'style="padding: 16px" ' +
+                        'frameborder="0" scrolling="auto" ' +
+                        'style="margin: 0; border: none"' +
                         'src="' + editData.etherPadUrl + '"></iframe>'
                     }
                 ],
@@ -97,9 +83,6 @@ kimios.editors.startDocumentEdit = function (doc) {
             });
             iframe.show();
             iframe.maximize();
-
-
-
         })
     } else {
         //Display Error Message Regarding type. Should also check if editors features are available on the server side

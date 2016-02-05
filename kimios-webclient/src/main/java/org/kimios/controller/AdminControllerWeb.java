@@ -222,8 +222,7 @@ public class AdminControllerWeb extends Controller {
 
     private String getDomainTypeList(Map<String, String> parameters)
             throws Exception {
-        String xml = administrationController.getAvailableAuthenticationSource(sessionUid);
-        List<String> list = AuthenticationSourceUtil.getAvailable(xml);
+        List<String> list = administrationController.getAvailableAuthenticationSource(sessionUid);
         String json = new String("{impl:[");
         for (String impl : list) {
             json += "{className:'" + impl + "'},";
@@ -238,8 +237,7 @@ public class AdminControllerWeb extends Controller {
     private String getDomainFields(Map<String, String> parameters)
             throws Exception {
         String typeName = parameters.get("className");
-        String xmlParams = administrationController.getAvailableAuthenticationSourceParams(sessionUid, typeName);
-        List<String> fields = AuthenticationSourceUtil.getAvailableParams(xmlParams);
+        List<String> fields = administrationController.getAvailableAuthenticationSourceParams(sessionUid, typeName);
         String metaDatas = "{fields:[";
         for (String field : fields) {
             metaDatas += "{name:'" + field + "'},";
@@ -256,8 +254,7 @@ public class AdminControllerWeb extends Controller {
         String typeName = parameters.get("className");
         String authName = parameters.get("name");
 
-        String xmlParams = administrationController.getAuthenticationSourceParams(sessionUid, authName, typeName);
-        Map<String, String> fields = AuthenticationSourceUtil.getFields(xmlParams);
+        Map<String, String> fields = administrationController.getAuthenticationSourceParams(sessionUid, authName, typeName);
 
         String metaDatas = "{fields:[";
 
@@ -284,8 +281,7 @@ public class AdminControllerWeb extends Controller {
         String typeName = parameters.get("className");
         String authName = parameters.get("name");
 
-        String xmlParams = administrationController.getAuthenticationSourceParams(sessionUid, authName, typeName);
-        Map<String, String> fields = AuthenticationSourceUtil.getFields(xmlParams);
+        Map<String, String> fields = administrationController.getAuthenticationSourceParams(sessionUid, authName, typeName);
 
         String metaDatas = "metaData:{" + "totalProperty:'results',"
                 + "root:'rows'," + "id:'nanouninana'," + "fields:[";

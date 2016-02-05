@@ -212,6 +212,8 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
 
     public ReindexResult call() {
 
+        TransactionHelper th = new TransactionHelper();
+        Object txStatus = null;
         try {
 
             reindexProgression = 0;
@@ -242,16 +244,10 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
                 }
             }
 
-
-
-            OsgiTransactionHelper th = new OsgiTransactionHelper();
-
-
-
             List<DMEntity> itemsFromIds = null;
             List<Long> finalIdsList = null;
             if(finalPath != null){
-                th.startNew(null);
+                txStatus = th.startNew(null);
                 //List<DMEntity> entities =
 
                 total = FactoryInstantiator.getInstance()
@@ -259,7 +255,7 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
                         .getEntitiesByPathAndTypeCount(finalPath, entityType, excludedIds, extensionsExcluded)
                         .intValue();
             } else {
-                th.startNew(null);
+                txStatus = th.startNew(null);
                 total = ids.size();
                 finalIdsList = new ArrayList<Long>();
                 for(Long z: ids) {
@@ -280,10 +276,10 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
 
             log.debug("Reindexing " + total + " documents: block size " + documentBlockSize + "  / block count " + indexingBlockCount);
 
-            th.loadTxManager().getTransaction().rollback();
+            th.rollback(txStatus);
 
             for (int u = 0; u < indexingBlockCount; u++) {
-                th.loadTxManager().begin();
+                txStatus = th.startNew(null);
 
                 List<DMEntity> entityList = null;
                 if(finalPath != null){
@@ -320,9 +316,9 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
 
                 this.reindexResult.setReindexedCount(indexed);
                 if(updateDocsMetaWrapper)
-                    th.loadTxManager().commit();
+                    th.commit(txStatus);
                 else
-                    th.loadTxManager().rollback();
+                    th.rollback(txStatus);
 
 
                 if (reindexProgression < 100) {
@@ -367,7 +363,7 @@ public class ReindexerProcess implements Callable<ReindexerProcess.ReindexResult
             this.reindexResult.setException(ex);
         } finally {
             try {
-                new OsgiTransactionHelper().commit();
+                new TransactionHelper().commit(txStatus);
             } catch (Exception e) {
                 //
             }

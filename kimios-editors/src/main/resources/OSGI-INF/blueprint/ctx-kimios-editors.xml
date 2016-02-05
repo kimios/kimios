@@ -51,7 +51,7 @@
              interface="org.kimios.editors.ExternalEditor"/>
 
 
-    <!-- todo: add filter to secure using Kimios Session Id
+
     <bean id="editorProxyServlet" class="org.kimios.editors.impl.etherpad.TServlet"/>
     <service interface="javax.servlet.http.HttpServlet" ref="editorProxyServlet" depends-on="kimiosServerCfg">
         <service-properties>
@@ -59,10 +59,12 @@
             <entry key="servlet-name" value="etherpadProxy" />
             <entry key="init-prefix" value=""/>
             <entry key="log" value="true" />
-            <entry key="targetUri" value="http://testcookie/" />
+            <entry key="targetUri" value="${etherpad.url}" />
         </service-properties>
-    </service>       -->
+    </service>
 
+
+    <!-- todo: add filter to secure using Kimios Session Id
     <bean id="editorProxyServlet" class="org.kimios.editors.impl.etherpad.T3Servlet"/>
     <service interface="javax.servlet.http.HttpServlet" ref="editorProxyServlet" depends-on="kimiosServerCfg">
         <service-properties>
@@ -72,6 +74,6 @@
             <entry key="prefix" value="/etherpad" />
             <entry key="proxyTo" value="http://etherpad.kimios.app" />
         </service-properties>
-    </service>
+    </service>  -->
 
 </blueprint>

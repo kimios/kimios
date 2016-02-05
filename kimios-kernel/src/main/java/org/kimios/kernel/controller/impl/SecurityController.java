@@ -27,17 +27,20 @@ import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.XMLException;
 import org.kimios.kernel.hibernate.HFactory;
 import org.kimios.kernel.jobs.ThreadManager;
+import org.kimios.kernel.jobs.model.TaskDurationType;
 import org.kimios.kernel.jobs.security.ACLUpdateJob;
 import org.kimios.kernel.security.*;
 import org.kimios.kernel.security.model.*;
 import org.kimios.kernel.user.model.AuthenticationSource;
 import org.kimios.kernel.user.model.Group;
 import org.kimios.kernel.user.model.User;
+import org.kimios.kernel.jobs.model.TaskInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
@@ -105,15 +108,48 @@ public class SecurityController extends AKimiosController implements ISecurityCo
     }
 
 
-    private void processDMEntitySecurityUpdate(Session session, long dmEntityUid, String xmlStream,
+    @DmsEvent(eventName = { DmsEventName.ENTITY_ACL_UPDATE })
+    public void simpleSecurityAdd(Session session, long dmEntityUid, String securityEntityId, String securityEntitySource,
+                                  boolean read, boolean write, boolean fullAccess)
+            throws AccessDeniedException, ConfigException, DataSourceException {
+
+        DMEntity entity = this.getDMEntity(dmEntityUid);
+        if (entity != null && getSecurityAgent()
+                .isFullAccess(entity, session.getUserName(), session.getUserSource(), session.getGroups()))
+        {
+
+            DMEntitySecurity security = new DMEntitySecurity();
+            security.setDmEntity(entity);
+            security.setRead(read);
+            security.setWrite(write);
+            security.setFullAccess(fullAccess);
+            security.setDmEntityType(entity.getType());
+            security.setDmEntityUid(entity.getUid());
+            security.setName(securityEntityId);
+            security.setSource(securityEntitySource);
+            security.setType(SecurityEntityType.USER);
+
+
+           FactoryInstantiator.getInstance().getDMEntitySecurityFactory().saveDMEntitySecurity(security);
+           List<DMEntityACL> acls = FactoryInstantiator.getInstance().getDMEntitySecurityFactory().getDMEntityACL(entity);
+           EventContext.addParameter("acls", acls);
+        } else
+            throw new AccessDeniedException();
+    }
+
+    private TaskInfo processDMEntitySecurityUpdate(Session session, long dmEntityUid, String xmlStream,
                                                boolean isRecursive, boolean appendMode){
 
 
 
 
         DMEntity entity = this.getDMEntity(dmEntityUid);
-
         if (entity != null) {
+            TaskInfo info = new TaskInfo();
+            info.setTargetEntity(entity.toPojo());
+            info.setStartDate(new Date());
+            info.setOwner(session.getUserName() + "@" + session.getUserSource());
+            info.setMessages("Acl Update on " + entity.getPath() + "." + (isRecursive ? " Recursive Mode." : ""));
             DMEntitySecurityFactory fact = FactoryInstantiator.getInstance().getDMEntitySecurityFactory();
             if (getSecurityAgent()
                     .isFullAccess(entity, session.getUserName(), session.getUserSource(), session.getGroups()))
@@ -123,6 +159,7 @@ public class SecurityController extends AKimiosController implements ISecurityCo
                             .hasAnyChildNotFullAccess(entity, session.getUserName(), session.getUserSource(),
                                     session.getGroups()))
                     {
+                        log.error("won't launch acl update process because of not full access entities");
                         throw new AccessDeniedException();
                     }
                 }
@@ -156,6 +193,8 @@ public class SecurityController extends AKimiosController implements ISecurityCo
                     }
                     ThreadManager.getInstance()
                             .startJob(session, new ACLUpdateJob(aclUpdater, session, entity, newSubmittedSecurities, removedAcls, appendMode));
+                    info.setTaskResultType(TaskDurationType.FUTURE_RESULT);
+
                 } else {
                     try {
                         fact.cleanACL(entity);
@@ -165,6 +204,8 @@ public class SecurityController extends AKimiosController implements ISecurityCo
                         }
                         //set acl in the context for event handler
                         EventContext.addParameter("acls", nAcls);
+                        info.setTaskResultType(TaskDurationType.IMMEDIATE_RESULT);
+                        info.getResults().put("acls", nAcls);
                     }catch (Exception ex){
                         log.error("an error happen during entity update", ex);
                     }
@@ -172,17 +213,23 @@ public class SecurityController extends AKimiosController implements ISecurityCo
             } else {
                 throw new AccessDeniedException();
             }
+            return info;
         } else {
             throw new AccessDeniedException();
         }
     }
 
 
-    private void processDMEntitySecurityUpdate(Session session, long dmEntityUid, List<DMEntitySecurity> submittedSecurities,
+    private TaskInfo processDMEntitySecurityUpdate(Session session, long dmEntityUid, List<DMEntitySecurity> submittedSecurities,
                                                boolean isRecursive, boolean appendMode){
         DMEntity entity = this.getDMEntity(dmEntityUid);
 
         if (entity != null) {
+            TaskInfo info = new TaskInfo();
+            info.setTargetEntity(entity.toPojo());
+            info.setStartDate(new Date());
+            info.setOwner(session.getUserName() + "@" + session.getUserSource());
+            info.setMessages("Acl Update on " + entity.getPath() + "." + (isRecursive ? " Recursive Mode." : ""));
             DMEntitySecurityFactory fact = FactoryInstantiator.getInstance().getDMEntitySecurityFactory();
             if (getSecurityAgent()
                     .isFullAccess(entity, session.getUserName(), session.getUserSource(), session.getGroups()))
@@ -241,6 +288,8 @@ public class SecurityController extends AKimiosController implements ISecurityCo
             } else {
                 throw new AccessDeniedException();
             }
+
+            return info;
         } else {
             throw new AccessDeniedException();
         }
@@ -248,23 +297,25 @@ public class SecurityController extends AKimiosController implements ISecurityCo
 
 
     @DmsEvent(eventName = { DmsEventName.ENTITY_ACL_UPDATE })
-    public void updateDMEntitySecurities(Session session, long dmEntityUid, String xmlStream,
-                                         boolean isRecursive, boolean appendMode) throws AccessDeniedException, ConfigException, DataSourceException,
+    public TaskInfo updateDMEntitySecurities(Session session, long dmEntityUid, String xmlStream,
+                                             boolean isRecursive, boolean appendMode) throws AccessDeniedException, ConfigException, DataSourceException,
             XMLException
     {
-        processDMEntitySecurityUpdate(session, dmEntityUid, xmlStream, isRecursive, appendMode);
+        TaskInfo info = processDMEntitySecurityUpdate(session, dmEntityUid, xmlStream, isRecursive, appendMode);
+        return info;
     }
 
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.ISecurityController#updateDMEntitySecurities(org.kimios.kernel.security.Session, long, int, java.lang.String, boolean)
     */
     @DmsEvent(eventName = { DmsEventName.ENTITY_ACL_UPDATE })
-    public void updateDMEntitySecurities(Session session, long dmEntityUid, List<DMEntitySecurity> items,
+    public TaskInfo updateDMEntitySecurities(Session session, long dmEntityUid, List<DMEntitySecurity> items,
                                          boolean isRecursive, boolean appendMode)
                         throws AccessDeniedException, ConfigException, DataSourceException,
             XMLException
     {
-        processDMEntitySecurityUpdate(session, dmEntityUid, items, isRecursive, appendMode);
+        TaskInfo info = processDMEntitySecurityUpdate(session, dmEntityUid, items, isRecursive, appendMode);
+        return info;
     }
 
     /**

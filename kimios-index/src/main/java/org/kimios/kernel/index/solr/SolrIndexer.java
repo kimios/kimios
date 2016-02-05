@@ -17,6 +17,7 @@
 package org.kimios.kernel.index.solr;
 
 import org.kimios.kernel.dms.*;
+import org.kimios.kernel.dms.hibernate.HDMEntityFactory;
 import org.kimios.kernel.dms.model.*;
 import org.kimios.kernel.events.model.EventContext;
 import org.kimios.kernel.events.GenericEventHandler;
@@ -26,12 +27,17 @@ import org.kimios.api.events.annotations.DmsEventOccur;
 import org.kimios.kernel.filetransfer.model.DataTransfer;
 import org.kimios.kernel.index.AbstractIndexManager;
 import org.kimios.kernel.index.SolrIndexManager;
+import org.kimios.kernel.index.TransactionHelper;
+import org.kimios.kernel.jobs.JobImpl;
+import org.kimios.kernel.jobs.ThreadManager;
+import org.kimios.kernel.jobs.model.TaskInfo;
 import org.kimios.kernel.security.model.DMEntityACL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 import java.util.Vector;
 
 public class SolrIndexer extends GenericEventHandler
@@ -159,10 +165,11 @@ public class SolrIndexer extends GenericEventHandler
         try {
             log.debug("Starting Launching index acl update process " + Thread.currentThread().getName());
             List<DMEntityACL> acls = (List<DMEntityACL>) EventContext.getParameters().get("acls");
-            if (acls == null) {
-                acls = (List<DMEntityACL>) retour;
+            if (acls == null && retour instanceof TaskInfo) {
+                TaskInfo info = (TaskInfo)retour;
+                acls = (List<DMEntityACL>) ((TaskInfo) retour).getResults().get("acls");
             }
-            if (acls == null) {
+            if (acls == null || acls.size() == 0) {
                 log.debug("No datas for acl update " + Thread.currentThread().getName());
                 return;
             }
@@ -342,12 +349,16 @@ public class SolrIndexer extends GenericEventHandler
     @DmsEvent( eventName = {DmsEventName.DOCUMENT_TRASH}, when = DmsEventOccur.AFTER)
     public void trashDocument(Object[] obj, Object retour, EventContext ctx) throws Exception
     {
-        log.debug("Removind document from index on trash: " + (Long) obj[1]);
+        log.debug("Removing entities from index on trash: " + (Long) obj[1]);
         try {
             if(ctx.getEntity() == null)
                 ctx.setEntity((DMEntity)EventContext.getParameters().get("document"));
             if(ctx.getEntity() != null && ctx.getEntity().getType() == DMEntityType.DOCUMENT){
                 indexManager.deleteDocument(ctx.getEntity());
+            } else if(ctx.getEntity() != null && (ctx.getEntity().getType() == DMEntityType.WORKSPACE ||
+                ctx.getEntity().getType() == DMEntityType.FOLDER)) {
+                log.info("removing from index with path " + ctx.getEntity().getPath());
+                indexManager.deletePath(ctx.getEntity().getPath());
             }
 
         } catch (Exception e) {
@@ -356,7 +367,7 @@ public class SolrIndexer extends GenericEventHandler
     }
 
     @DmsEvent( eventName = {DmsEventName.DOCUMENT_UNTRASH}, when = DmsEventOccur.AFTER)
-    public void untrashDocument(Object[] obj, Object retour, EventContext ctx) throws Exception
+    public void untrashDocument(Object[] obj, Object retour, final EventContext ctx) throws Exception
     {
         log.debug("Removing document from trash, so index it back " + (Long) obj[1]);
         try {
@@ -364,6 +375,40 @@ public class SolrIndexer extends GenericEventHandler
                 ctx.setEntity((DMEntity)EventContext.getParameters().get("document"));
             if(ctx.getEntity() != null && ctx.getEntity().getType() == DMEntityType.DOCUMENT){
                 indexManager.indexDocument(ctx.getEntity());
+            } else if(ctx.getEntity() != null && (ctx.getEntity().getType() == DMEntityType.WORKSPACE ||
+                    ctx.getEntity().getType() == DMEntityType.FOLDER)) {
+                //reindex doc ref with thread !
+
+                // load entities befores !!!
+
+                final String path = ctx.getEntity().getPath().replaceAll("__TRASHED_ENTITY__", "");
+                log.info("look for path : " + path);
+                final List<DMEntity> items = FactoryInstantiator.getInstance()
+                        .getDmEntityFactory()
+                        .getEntities(path);
+                String taskId = UUID.randomUUID().toString();
+                ThreadManager.getInstance()
+                        .startJob(ctx.getSession(), new JobImpl(taskId) {
+                            @Override
+                            public Object execute() throws Exception {
+                                log.info("reindexing doc after untrash!");
+                                TransactionHelper thHelper = new TransactionHelper();
+                                Object o = thHelper.startNew(null);
+                                log.info("found doc to reindex: {}", items);
+                                for(DMEntity item: items){
+
+                                    log.info("reindexed path {}", item.getPath());
+                                    item.setPath(item.getPath().replaceAll("__TRASHED_ENTITY__", ""));
+                                    if(item instanceof Document)
+                                        indexManager.indexDocument(item);
+                                }
+                                log.info("reindexing doc after untrash! done");
+                                thHelper.rollback(o);
+                                return null;
+
+                            }
+                        });
+
             }
 
         } catch (Exception e) {

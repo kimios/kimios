@@ -18,12 +18,25 @@ package org.kimios.kernel.user;
 import org.kimios.kernel.exception.AuthenticationSourceException;
 import org.kimios.kernel.xml.XSDException;
 
+import java.util.Map;
+
 public interface AuthenticationSourceParamsFactory
 {
-    String getParams(String name);
+    Map<String, String> getParams(String name);
 
+    @Deprecated
+    String getParamsXml(String name);
+
+    @Deprecated
     void createParams(String sourceName, String xml) throws AuthenticationSourceException, XSDException;
 
+    void createParams(String sourceName, Map<String, String> params) throws AuthenticationSourceException, XSDException;
+
+    @Deprecated
     void updateParams(String sourceName, String xml, boolean enableSso, boolean enableMailCheck) throws AuthenticationSourceException, XSDException;
+
+    void updateParams(String sourceName, Map<String, String> params , boolean enableSso, boolean enableMailCheck);
+
+
 }
 

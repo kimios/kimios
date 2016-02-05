@@ -19,7 +19,7 @@ import org.kimios.kernel.security.model.Session;
 
 import java.util.concurrent.Callable;
 
-public interface Job extends Callable
+public interface Job<T> extends Callable<T>
 {
     public static final int FINISHED = 0;
     public static final int STOPPED_IN_ERROR = 2;
@@ -33,12 +33,14 @@ public interface Job extends Callable
     /*
     *  Start
     */
-    public Object execute() throws Exception;
+    public T execute() throws Exception;
 
     /*
     *  Return the session owner of the started job
     */
     public Session getUserSession();
+
+    public String getUser();
 
     /*
     *  Return informations about the processing job
@@ -64,6 +66,9 @@ public interface Job extends Callable
     *  Throw the catched exception
     */
     public void throwException() throws Exception;
+
+
+    public String getTaskId();
 
 }
 

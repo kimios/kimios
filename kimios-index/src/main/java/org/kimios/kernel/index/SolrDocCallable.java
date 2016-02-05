@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by farf on 28/10/15.
  */
-public class SolrDocCallable implements Callable<SolrInputDocument> {
+public class SolrDocCallable implements Callable<SolrInputDocument[]> {
 
     private static Logger log = LoggerFactory.getLogger(SolrDocCallable.class);
 
@@ -71,19 +71,23 @@ public class SolrDocCallable implements Callable<SolrInputDocument> {
     }
 
     @Override
-    public SolrInputDocument call() throws Exception {
+    public SolrInputDocument[] call() throws Exception {
         if (documentIndexStatus.getDmEntity() instanceof Document) {
             Document document = (Document)documentIndexStatus.getDmEntity();
             log.debug("started solr input document for doc #" + document.getUid()
                     + " (" + document.getPath() + ")");
             SolrInputDocument solrInputDocument = new SolrDocGenerator(document, this.mp)
-                    .toSolrInputDocument(flush, updateDocsMetaWrapper, null, documentIndexStatus);
+                    .toSolrInputDocument(flush, updateDocsMetaWrapper, documentIndexStatus);
+            SolrInputDocument contentSolrInputDocument = null;
             if(fileData != null){
                 //sync data !
                 for(String solrInputField: fileData.keySet())
                     solrInputDocument.addField(solrInputField, fileData.get(solrInputField));
+
+                contentSolrInputDocument = new SolrDocGenerator(document, this.mp)
+                        .toSolrContentInputDocument(flush, updateDocsMetaWrapper, fileData, documentIndexStatus);
             }
-            return solrInputDocument;
+            return new SolrInputDocument[]{solrInputDocument, contentSolrInputDocument};
         } else if (documentIndexStatus.getDmEntity() instanceof Folder) {
             Folder folder = (Folder)documentIndexStatus.getDmEntity();
             List<VirtualFolderMetaData> metaDataList = FactoryInstantiator.getInstance()
@@ -95,7 +99,7 @@ public class SolrDocCallable implements Callable<SolrInputDocument> {
                     metaDataList,
                     this.mp);
             SolrInputDocument solrInputDocument = solrFolderGenerator.toSolrInputDocument(folder, metaDataList);
-            return solrInputDocument;
+            return new SolrInputDocument[]{solrInputDocument, null};
         } else {
             return null;
         }

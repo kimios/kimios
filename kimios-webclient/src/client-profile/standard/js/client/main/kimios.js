@@ -27,7 +27,7 @@ kimios = {
         this.implPackage = impl;
     },
     viewableExtensions: new Array('png', 'jpg', 'jpeg', 'tif', 'tiff', 'gif', 'pdf', 'PDF', 'odt', 'odp', 'xls', 'xlsx',
-        'docx', 'doc','txt', 'java', 'cs', 'cpp', 'c', 'py', 'sql', 'xml', 'eml'),
+        'docx', 'doc','txt', 'java', 'cs', 'cpp', 'c', 'py', 'sql', 'xml', 'eml', 'asciidoc', 'adoc', 'ps'),
 
     isViewableExtension: function (ext) {
         var exts = kimios.viewableExtensions;
@@ -354,7 +354,9 @@ kimios = {
         getRecentItemsPanel: function () {
             return Ext.getCmp('kimios-recent-items-panel');
         },
-
+        getSharesPanel: function(){
+            return Ext.getCmp('kimios-share-panel');
+        },
         getAdvancedSearchPanel: function () {
             return Ext.getCmp('kimios-advanced-search-panel');
         },

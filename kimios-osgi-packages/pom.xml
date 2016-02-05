@@ -27,8 +27,12 @@
 
     <artifactId>kimios-osgi-packages</artifactId>
     <packaging>pom</packaging>
+    <properties>
+        <karaf.hibernate.version>4.3.6.Final</karaf.hibernate.version>
+    </properties>
     <modules>
         <module>kimios-karaf-datasource</module>
+        <module>kimios-model-persistence</module>
         <module>kimios-solr</module>
         <module>kimios-docx4j-osgi</module>
         <module>kimios-kernel-osgi</module>

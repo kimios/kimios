@@ -301,6 +301,9 @@ public interface IDocumentController {
     public List<org.kimios.kernel.ws.pojo.Document> convertToPojos(Session session, List<Document> docs)
             throws ConfigException, DataSourceException;
 
+    public List<org.kimios.kernel.ws.pojo.DMEntity> convertEntitiesToPojos(Session session, List<DMEntity> items)
+            throws ConfigException, DataSourceException;
+
     public List<org.kimios.kernel.ws.pojo.Document> convertToPojosFromIds(Session session, List<Long> docsIds)
             throws ConfigException, DataSourceException;
 

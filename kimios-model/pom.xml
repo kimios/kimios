@@ -27,8 +27,6 @@
     <artifactId>kimios-model</artifactId>
     <packaging>jar</packaging>
 
-
-
     <dependencies>
         <dependency>
             <groupId>org.kimios</groupId>
@@ -99,12 +97,30 @@
             <version>2.2</version>
             <scope>provided</scope>
         </dependency>
+
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <scope>provided</scope>
+            <version>4.3.6.Final</version>
+        </dependency>
+
+
         <!-- embedded dependencies -->
 
         <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
             <version>0.9.8</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.thoughtworks.xstream</groupId>
+            <artifactId>xstream</artifactId>
+            <version>${xstream.version}</version>
+            <type>jar</type>
             <scope>compile</scope>
         </dependency>
     </dependencies>
@@ -152,19 +168,19 @@
                 <version>2.3.2</version>
                 <executions>
                     <execution>
+                        <id>pojo</id>
                         <goals>
                             <goal>jar</goal>
                         </goals>
                         <configuration>
-                            <!--<archive>
-                                <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
-                            </archive>-->
                             <classifier>pojos</classifier>
                             <includes>
                                 <include>org/kimios/kernel/dms/MetaValue</include>
                                 <include>org/kimios/kernel/ws/pojo/**</include>
                                 <include>org/kimios/kernel/index/query/model/**</include>
                                 <include>org/kimios/kernel/share/model/**</include>
+                                <include>org/kimios/kernel/jobs/model/**</include>
+                                <include>org/kimios/kernel/reporting/model/**</include>
                             </includes>
                         </configuration>
                     </execution>
@@ -193,7 +209,6 @@
                     <instructions>
                         <Implementation-Build>${buildNumber}</Implementation-Build>
                         <Bundle-SymbolicName>kimios-model</Bundle-SymbolicName>
-                        <!--<Bundle-Activator>org.kimios.utils.osgi.KimiosActivator</Bundle-Activator>-->
                         <Bundle-Name>${project.name}</Bundle-Name>
                         <Export-Package>
                             org.kimios.*,org.kimios.kernel.configuration.*
@@ -202,7 +217,6 @@
                         <Kimios-Extension>org.kimios.api.MetaFeed</Kimios-Extension>
                         <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
-                        <Include-Resource>{maven-resources}</Include-Resource>
                         <Import-Package>
                             org.slf4j.impl;resolution:=optional,
                             org.quartz,
@@ -253,7 +267,6 @@
                             visad.data.vis5d;resolution:=optional,
                             visad.jmet;resolution:=optional,
                             visad.util;resolution:=optional,
-                            net.sourceforge.jtds.jdbc,
                             com.sun.xml.bind.marshaller;version="[2.2.11,3)",
                             *;resolution:=optional
                         </Import-Package>

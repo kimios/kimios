@@ -47,7 +47,7 @@ public abstract class ExtensionRegistry<T> {
         if (classes != null) {
             for (Class<T> c : classes) {
                 try {
-                    logger.info("extension registry adding {}", c);
+                    logger.debug("extension registry adding {}", c);
                     this.addClass(c);
                 } catch (Exception ex){
                     logger.error("error while adding {}. Msg: {}", c, ex.getMessage());
@@ -64,7 +64,7 @@ public abstract class ExtensionRegistry<T> {
     public void addClass(Class<? extends T> extension){
             _registry.put(extension.getName(), extension);
             handleAdd(extension);
-            logger.info("added class {}", extension.getName());
+            logger.debug("added class {}", extension.getName());
     }
 
     public Class<? extends T> readClass(String clazz){
@@ -74,7 +74,7 @@ public abstract class ExtensionRegistry<T> {
     public void removeClass(String clazz){
         Class<? extends T> t = _registry.remove(clazz);
         handleRemove(t);
-        logger.info("removed class {}",clazz);
+        logger.debug("removed class {}",clazz);
     }
 
     public Collection<String> listAsString(){

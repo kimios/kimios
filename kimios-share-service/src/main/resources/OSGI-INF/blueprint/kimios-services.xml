@@ -28,10 +28,18 @@
     http://cxf.apache.org/blueprint/jaxws http://cxf.apache.org/schemas/blueprint/jaxws.xsd
   http://cxf.apache.org/blueprint/core http://cxf.apache.org/schemas/blueprint/core.xsd">
 
-    <cxf:bus id="kimios-bus" name="kimios-bus" />
+
+    <cxf:bus id="kimios-bus" name="kimios-bus">
+        <cxf:features>
+            <cxf:logging/>
+        </cxf:features>
+    </cxf:bus>
 
     <reference id="mailShareController"
                interface="org.kimios.kernel.share.controller.IMailShareController"/>
+
+    <reference id="shareController"
+               interface="org.kimios.kernel.share.controller.IShareController"/>
 
     <reference id="serviceHelper"
                interface="org.kimios.webservices.IServiceHelper"/>
@@ -39,6 +47,7 @@
 
     <bean id="shareServiceBean" class="org.kimios.webservices.share.impl.ShareServiceImpl">
         <argument ref="mailShareController"/>
+        <argument ref="shareController" />
         <argument ref="serviceHelper"/>
     </bean>
 

@@ -15,15 +15,22 @@
  */
 package org.kimios.kernel.reporting;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.model.DMEntityImpl;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.exception.ReportingException;
+import org.kimios.kernel.log.ActionType;
+import org.kimios.kernel.reporting.model.ReportParam;
+import org.kimios.kernel.user.*;
+import org.kimios.kernel.user.FactoryInstantiator;
+import org.kimios.kernel.user.model.AuthenticationSource;
 import org.kimios.kernel.user.model.User;
-import org.kimios.utils.extension.ClassFinder;
 import org.kimios.kernel.xml.XSDException;
 import org.kimios.kernel.xml.XSDUtil;
 import org.kimios.utils.extension.ExtensionRegistryManager;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -35,10 +42,9 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.util.*;
 
 public class XMLReportHelper
 {
@@ -138,6 +144,111 @@ public class XMLReportHelper
         }
     }
 
+    public String getReport(String sessionUid, String className, Map<String, ReportParam> parameters) throws ReportingException,
+            ConfigException, DataSourceException
+    {
+        try {
+            Class c = Class.forName(className);
+            ReportImpl reportImpl = (ReportImpl) c.newInstance();
+            reportImpl.setSessionUid(sessionUid);
+
+            // Check unknown parameter names
+            for (String paramName: parameters.keySet()) {
+                if (!checkIfUnknownParam(paramName, c)) {
+                    throw new ReportingException("Parameter name: " + paramName
+                            + " is invalid");
+                }
+            }
+
+            // Check already set parameter names
+            List<String> savedParams = new ArrayList<String>();
+            for (String paramName: parameters.keySet()) {
+                if (savedParams.contains(paramName)) {
+                    throw new ReportingException("Parameter name: " + paramName
+                            + " is already set");
+                }
+                savedParams.add(paramName);
+            }
+
+            for (String paramName: parameters.keySet()) {
+                for (Field field : c.getDeclaredFields()) {
+                    ReportParam p = parameters.get(paramName);
+                    String paramType = p.getType();
+                    String paramValue = p.getValue();
+                    if (paramName.equals(field.getName())) {
+                        field.setAccessible(true);
+                        Class cc = Class.forName(paramType);
+                        if (cc.equals(Boolean.class)) {
+                            field.set(reportImpl, Boolean.parseBoolean(paramValue));
+                        } else if (cc.equals(Integer.class)) {
+                            field.set(reportImpl, Integer.parseInt(paramValue));
+                        } else if (cc.equals(Long.class)) {
+                            field.set(reportImpl, Long.parseLong(paramValue));
+                        } else if (cc.equals(Date.class)) {
+                            field.set(reportImpl, new Date(Long.parseLong(paramValue)));
+                        } else if (cc.equals(User.class)) {
+                            User user = new User();
+                            String value[] = paramValue.split("@");
+                            if (value.length == 2) {
+                                user.setUid(value[0]);
+                                user.setAuthenticationSourceName(value[1]);
+                            }
+                            field.set(reportImpl, user);
+                        } else if (cc.equals(DMEntityImpl.class)) {
+                            DMEntityImpl dm = new DMEntityImpl();
+                            dm.setUid(Long.parseLong(paramValue));
+                            field.set(reportImpl, dm);
+                        } else if(cc.equals(List.class)) {
+                            ParameterizedType stringListType = (ParameterizedType) field.getGenericType();
+                            Class<?> listClass = (Class<?>) stringListType.getActualTypeArguments()[0];
+
+                            if(listClass.equals(User.class)){
+                                //should deserialize user list !!!
+                                List<User> users = new ArrayList<User>();
+                                String val = parameters.get(paramName).getValue();
+                                if(StringUtils.isNotBlank(val)){
+                                    String[] items  = val.split(",");
+                                    for(String uId: items){
+                                        if(StringUtils.isNotBlank(uId)){
+                                            String userId = uId.split("@")[0];
+                                            String userSource = uId.split("@")[1];
+                                            users.add(org.kimios.kernel.user.FactoryInstantiator.getInstance()
+                                                    .getAuthenticationSourceFactory().getAuthenticationSource(userSource)
+                                                    .getUserFactory().getUser(userId));
+                                        }
+                                    }
+                                }
+
+                                field.set(reportImpl, users);
+                            } else {
+                                List<String> vals = new ArrayList<String>();
+                                String val = parameters.get(paramName).getValue();
+                                if(StringUtils.isNotBlank(val)) {
+                                    String[] items = val.split(",");
+                                    for(String uId: items) {
+                                        if (StringUtils.isNotBlank(uId)) {
+                                            vals.add(uId);
+                                        }
+                                    }
+                                }
+                                field.set(reportImpl, vals);
+                            }
+                        } else {
+                            field.set(reportImpl, paramValue);
+                        }
+                    }
+                }
+            }
+            return reportImpl.getData();
+        } catch (ClassNotFoundException e) {
+            throw new ReportingException(e.getMessage());
+        } catch (InstantiationException e) {
+            throw new ReportingException(e.getMessage());
+        } catch (IllegalAccessException e) {
+            throw new ReportingException(e.getMessage());
+        }
+    }
+
     private boolean checkIfUnknownParam(String paramName, Class c)
     {
         for (Field field : c.getDeclaredFields()) {
@@ -151,7 +262,8 @@ public class XMLReportHelper
     /**
      * Return report attributes from a given class name
      */
-    public String getReportAttributes(String className) throws ReportingException
+    @Deprecated
+    public String getReportAttributesXml(String className) throws ReportingException
     {
         try {
             Class c = Class.forName(className);
@@ -168,6 +280,46 @@ public class XMLReportHelper
             throw new ReportingException(e);
         }
     }
+
+    public List<ReportParam> getReportAttributes(String className) throws ReportingException
+    {
+        try {
+            Class c = Class.forName(className);
+            List<ReportParam> items = new ArrayList<ReportParam>();
+            for (Field field : c.getDeclaredFields()) {
+                ReportParam p = new ReportParam();
+                p.setName(field.getName());
+                p.setType(field.getType().getName());
+                p.setValue("");
+                if(field.getType().equals(List.class)){
+                    ParameterizedType fType = (ParameterizedType) field.getGenericType();
+                    Class<?> listClass = (Class<?>) fType.getActualTypeArguments()[0];
+                    if(listClass != null){
+                        p.setListType(listClass.getName());
+
+                    }
+                    //FIXME
+                    if(p.getName().equals("actionType")){
+                        p.setAvailableValues(new ArrayList<String>());
+                        for(Field f: ActionType.class.getFields()){
+                            if(Modifier.isStatic(f.getModifiers())){
+                                try {
+                                    p.getAvailableValues().add(f.getName());
+                                }catch (Exception ex){
+                                    ex.printStackTrace(System.err);
+                                }
+                            }
+                        }
+                    }
+                }
+                items.add(p);
+            }
+            return items;
+        } catch (ClassNotFoundException e) {
+            throw new ReportingException(e);
+        }
+    }
+
 
     /**
      * Return a list containing all reports

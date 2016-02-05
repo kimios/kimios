@@ -19,6 +19,7 @@ package org.kimios.kernel.index.query.model;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.kimios.kernel.dms.model.DMEntityImpl;
+import org.kimios.kernel.dms.model.DocumentVersion;
 
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
@@ -35,7 +36,7 @@ public class DocumentIndexStatus {
 
     @Id
     @Column(name = "dm_doc_index_status_id")
-    @GeneratedValue(generator = "seq", strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = "seq", strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(name = "dm_indexed_date", nullable = false)
@@ -115,6 +116,8 @@ public class DocumentIndexStatus {
     public void setError(String error) {
         this.error = error;
     }
+
+
 
     @Override
     public String toString() {

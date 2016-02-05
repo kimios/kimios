@@ -15,11 +15,16 @@
  */
 package org.kimios.controller;
 
+import flexjson.JSONSerializer;
+import flexjson.transformer.DateTransformer;
 import org.kimios.client.controller.FolderController;
+import org.kimios.kernel.jobs.model.TaskInfo;
+import org.kimios.kernel.ws.pojo.DMEntity;
 import org.kimios.kernel.ws.pojo.Folder;
 import org.kimios.kernel.ws.pojo.User;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Map;
 
 public class FolderActionHandler extends Controller {
@@ -31,7 +36,7 @@ public class FolderActionHandler extends Controller {
   public String execute() throws Exception {
     if (action != null) {
       if (action.equals("UpdateFolder"))
-        updateFolder();
+        return updateFolder();
       if (action.equals("NewFolder"))
         addFolder();
 
@@ -64,7 +69,7 @@ public class FolderActionHandler extends Controller {
     }
   }
 
-  private void updateFolder() throws Exception {
+  private String updateFolder() throws Exception {
     FolderController fsm = folderController;
     long folderUid = Long.parseLong(parameters.get("uid"));
     Folder f = fsm.getFolder(sessionUid, folderUid);
@@ -79,10 +84,18 @@ public class FolderActionHandler extends Controller {
         changeSecurity = Boolean.parseBoolean(parameters.get("changeSecurity"));
       if (parameters.get("appendMode") != null)
           appendSecMode = Boolean.parseBoolean(parameters.get("appendSecMode"));
-      if  (changeSecurity == true)
-        securityController.updateDMEntitySecurities(sessionUid, folderUid, 2, recursive, appendSecMode,
+      if  (changeSecurity == true) {
+        TaskInfo ti = securityController.updateDMEntitySecurities(sessionUid, folderUid, 2, recursive, appendSecMode,
                 DMEntitySecuritiesParser.parseFromJson(parameters.get("sec"), folderUid, 2));
+        ti.setTargetEntity(new DMEntity());
+        return new JSONSerializer()
+                .exclude("class")
+                .transform(new DateTransformer("MM/dd/yyyy hh:mm:ss"), "startDate")
+                .serialize(ti);
+
+      }
     }
+    return "";
   }
 }
 

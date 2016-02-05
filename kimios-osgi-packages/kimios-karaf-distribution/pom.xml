@@ -153,7 +153,7 @@
                 <configuration>
                     <bootRepositories>
                         <bootRepository>mvn:org.apache.karaf.features/spring/4.0.4/xml/features</bootRepository>
-                        <bootRepository> mvn:org.apache.karaf.features/standard/4.0.4/xml/features</bootRepository>
+                        <bootRepository>mvn:org.apache.karaf.features/standard/4.0.4/xml/features</bootRepository>
                         <bootRepository>mvn:org.apache.karaf.features/framework/4.0.4/xml/features</bootRepository>
                         <bootRepository>mvn:org.apache.karaf.features/enterprise/4.0.4/xml/features</bootRepository>
                     </bootRepositories>
@@ -164,6 +164,7 @@
                         <feature>kimios-dependencies</feature>
                         <feature>kimios-solr</feature>
                         <feature>kimios-model</feature>
+                        <feature>kimios-core</feature>
                         <feature>kimios-features</feature>
                         <feature>kimios-services</feature>
                         <feature>kimios-etherpad-editor</feature>

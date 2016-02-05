@@ -105,7 +105,10 @@ public class HFolderFactory extends HFactory implements FolderFactory
                     .add(Restrictions.eq("parentType", DMEntityType.FOLDER))
                     .addOrder(Order.asc("name").ignoreCase());
             Query q = getSession().createQuery(
-                    "from Folder f where parentUid=:parentUid and parentType =:parentType order by f.name");
+                    "from Folder f where parentUid=:parentUid " +
+                            "and parentType =:parentType " +
+                            "and (f.trashed = false or f.trashed is null) " +
+                            "order by f.name");
             q.setLong("parentUid", f.getUid());
             q.setInteger("parentType", DMEntityType.FOLDER);
             List<Folder> fList = c.list();
@@ -119,15 +122,12 @@ public class HFolderFactory extends HFactory implements FolderFactory
             DataSourceException
     {
         try {
-            Criteria c = getSession().createCriteria(Folder.class)
-                    .add(Restrictions.eq("parentUid", w.getUid()))
-                    .add(Restrictions.eq("parentType", DMEntityType.WORKSPACE))
-                    .addOrder(Order.asc("name").ignoreCase());
             Query q = getSession().createQuery(
-                    "from Folder f where parentUid=:parentUid and parentType =:parentType order by f.name");
+                    "from Folder f where parentUid=:parentUid and (f.trashed = false or f.trashed is null) " +
+                            "and parentType =:parentType order by f.name");
             q.setLong("parentUid", w.getUid());
             q.setInteger("parentType", DMEntityType.WORKSPACE);
-            List<Folder> fList = c.list();
+            List<Folder> fList = q.list();
             return fList;
         } catch (HibernateException e) {
             throw new DataSourceException(e);

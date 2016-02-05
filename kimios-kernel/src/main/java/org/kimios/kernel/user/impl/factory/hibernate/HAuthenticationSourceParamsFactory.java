@@ -34,6 +34,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,17 +43,16 @@ import java.util.Map;
  */
 public class HAuthenticationSourceParamsFactory extends HFactory implements AuthenticationSourceParamsFactory
 {
-    /**
-     * Get a XML stream containing authentication source parameters for a given authentication source name
-     */
-    public final String getParams(String name)
+
+    public final Map<String, String> getParams(String name)
     {
         AuthenticationSourceBean beanAuth =
                 (AuthenticationSourceBean) getSession().createCriteria(AuthenticationSourceBean.class)
                         .add(Restrictions.eq("name", name))
                         .uniqueResult();
 
-        Map<String, String> params = beanAuth.getParameters();
+        Map<String, String> params = new HashMap<String, String>();
+        params.putAll(beanAuth.getParameters());
 
         /*
             list class params, to add them if not already created inside database
@@ -61,6 +61,50 @@ public class HAuthenticationSourceParamsFactory extends HFactory implements Auth
         List<String> missingParams = new ArrayList<String>();
         try{
 
+            Class<?> c = Class.forName(beanAuth.getJavaClass());
+            for (Field f : c.getDeclaredFields()) {
+                missingParams.add(f.getName());
+            }
+        }catch (Exception e){
+
+        }
+
+
+
+        if(beanAuth.getJavaClass().equals(HAuthenticationSource.class.getName())){
+            //exclude factories field
+            missingParams.remove("internalUserFactory");
+            missingParams.remove("internalGroupFactory");
+        }
+        for (String fieldName : params.keySet()) {
+            missingParams.remove(fieldName);
+        }
+        for(String fieldName: missingParams){
+            params.put(fieldName, "");
+        }
+        return params;
+    }
+
+
+    /**
+     * Get a XML stream containing authentication source parameters for a given authentication source name
+     */
+    public final String getParamsXml(String name)
+    {
+        AuthenticationSourceBean beanAuth =
+                (AuthenticationSourceBean) getSession().createCriteria(AuthenticationSourceBean.class)
+                        .add(Restrictions.eq("name", name))
+                        .uniqueResult();
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.putAll(beanAuth.getParameters());
+
+        /*
+            list class params, to add them if not already created inside database
+         */
+
+        List<String> missingParams = new ArrayList<String>();
+        try{
             Class<?> c = Class.forName(beanAuth.getJavaClass());
             for (Field f : c.getDeclaredFields()) {
                missingParams.add(f.getName());
@@ -99,6 +143,7 @@ public class HAuthenticationSourceParamsFactory extends HFactory implements Auth
     /**
      * Create authentication source parameters with XML parameters for a new given authentication source name
      */
+    @Deprecated
     public final void createParams(String sourceName, String xml) throws AuthenticationSourceException, XSDException
     {
         try {
@@ -127,6 +172,19 @@ public class HAuthenticationSourceParamsFactory extends HFactory implements Auth
         } catch (XSDException e) {
             throw new XSDException(e);
         }
+    }
+
+    public final void createParams(String sourceName, Map<String, String> params) throws AuthenticationSourceException, XSDException
+    {
+        AuthenticationSourceBean beanAuth =
+                (AuthenticationSourceBean) getSession().createCriteria(AuthenticationSourceBean.class)
+                        .add(Restrictions.eq("name", sourceName))
+                        .uniqueResult();
+
+        beanAuth.getParameters().putAll(params);
+        getSession().update(beanAuth);
+        getSession().flush();
+
     }
 
     /**
@@ -165,6 +223,23 @@ public class HAuthenticationSourceParamsFactory extends HFactory implements Auth
         } catch (XSDException e) {
             throw new XSDException(e);
         }
+    }
+
+    public void updateParams(String sourceName, Map<String, String> fields,
+                             boolean enableSso, boolean enableMailCheck)
+    {
+        AuthenticationSourceBean beanAuth =
+                (AuthenticationSourceBean) getSession().createCriteria(AuthenticationSourceBean.class)
+                        .add(Restrictions.eq("name", sourceName))
+                        .uniqueResult();
+
+        beanAuth.getParameters()
+                .putAll(fields);
+
+        beanAuth.setEnableSso(enableSso);
+        beanAuth.setEnableMailCheck(enableMailCheck);
+        getSession().update(beanAuth);
+        getSession().flush();
     }
 }
 

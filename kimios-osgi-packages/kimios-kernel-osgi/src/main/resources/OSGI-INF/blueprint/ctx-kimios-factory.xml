@@ -428,6 +428,20 @@
     </bean>
 
 
+    <bean id="jobController" class="org.kimios.kernel.jobs.controller.JobControllerImpl">
+        <property name="dmsFactoryInstantiator" ref="dmsfi"></property>
+        <property name="securityFactoryInstantiator" ref="securityfi"></property>
+        <property name="authFactoryInstantiator" ref="userfi"></property>
+        <property name="logFactoryInstantiator" ref="logfi"></property>
+        <property name="reportFactoryInstantiator" ref="reportfi"></property>
+        <property name="transferFactoryInstantiator" ref="transferfi"></property>
+        <property name="securityAgent" ref="securityAgent"/>
+        <property name="aclUpdater" ref="aclUpdater"/>
+
+        <tx:transaction method="*" value="Required"/>
+    </bean>
+
+
 
 
     <!-- session manager -->

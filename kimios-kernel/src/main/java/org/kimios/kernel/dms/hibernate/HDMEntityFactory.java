@@ -328,7 +328,7 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory {
     }
 
 
-    public void deteteEntities(String path) throws ConfigException, DataSourceException {
+    public void deleteEntities(String path) throws ConfigException, DataSourceException {
         try {
             /*
                 Update versions
@@ -373,6 +373,8 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory {
             throw new DataSourceException(e, e.getMessage());
         }
     }
+
+
 
     public void updateEntity(DMEntityImpl entity) throws ConfigException,
             DataSourceException {
@@ -527,33 +529,50 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory {
 
 
     public List<DMEntity> listTrashedEntities(Integer start, Integer count) throws ConfigException, DataSourceException {
+
         Criteria criteria = getSession().createCriteria(DMEntityImpl.class);
-        criteria.setProjection(Projections.distinct(Projections.id()))
+        criteria.add(Restrictions.like("path", TRASH_PREFIX + "%", MatchMode.START))
+                .add(Restrictions.eq("trashed", true))
+                .add(Restrictions.in("type", new Object[]{DMEntityType.WORKSPACE, DMEntityType.FOLDER}));
+
+        List<DMEntityImpl> trashedContainers = criteria.list();
+
+        Criteria fCriteria = getSession().createCriteria(DMEntityImpl.class);
+        fCriteria.setProjection(Projections.distinct(Projections.id()))
                 .add(Restrictions.like("path", TRASH_PREFIX + "%", MatchMode.START))
                 .add(Restrictions.eq("trashed", true))
-                .add(Restrictions.eq("type", 3));
+                .add(Restrictions.in("type", new Object[]{DMEntityType.WORKSPACE, DMEntityType.FOLDER, DMEntityType.DOCUMENT}));
 
-        if (start != null && count != null) {
-            criteria.setFirstResult(start);
-            criteria.setMaxResults(count);
+        //exclude parent path
+        for(DMEntityImpl tr: trashedContainers){
+            fCriteria = fCriteria.add(Restrictions.not(Restrictions.like("path", tr.getPath() + "/%", MatchMode.START)));
+            log.info("excluding path {}", tr.getPath() + "/%");
         }
 
 
-        List uniqueSubList = criteria.list();
+        if (start != null && count != null) {
+            fCriteria.setFirstResult(start);
+            fCriteria.setMaxResults(count);
+        }
+
+
+        List uniqueSubList = fCriteria.list();
+        log.info("found items: {}", uniqueSubList);
         if (uniqueSubList.size() > 0) {
-            criteria.setProjection(null);
-            criteria.setFirstResult(0);
-            criteria.setMaxResults(Integer.MAX_VALUE);
-            criteria.add(Restrictions.in("uid", uniqueSubList));
-            criteria.addOrder(Order.desc("updateDate"));
-            criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-            List<DMEntity> items =  criteria.list();
+            fCriteria.setProjection(null);
+            fCriteria.setFirstResult(0);
+            fCriteria.setMaxResults(Integer.MAX_VALUE);
+            fCriteria.add(Restrictions.in("uid", uniqueSubList));
+            fCriteria.addOrder(Order.desc("updateDate"));
+            fCriteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+            List<DMEntity> items =  fCriteria.list();
             Collections.sort(items, new Comparator<DMEntity>() {
                 @Override
                 public int compare(DMEntity o1, DMEntity o2) {
                     return ((DMEntityImpl)o2).getUpdateDate().compareTo(((DMEntityImpl)o1).getUpdateDate());
                 }
             });
+            log.info("retuning trashed items: {}", items);
             return items;
         } else {
             return new ArrayList<DMEntity>();
@@ -569,6 +588,16 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory {
             entity.setTrashed(true);
             getSession().saveOrUpdate(entity);
             getSession().flush();
+        }  else if( entity.getType() == DMEntityType.FOLDER || entity.getType() == DMEntityType.WORKSPACE){
+            Date updateDate = new Date();
+            getSession().createQuery("update DMEntityImpl set trashed = true, updateDate = :upDate, path = " +
+                    "concat('" + TRASH_PREFIX + "', path) where path like :pathExact or path like :pathExt ")
+                    .setDate("upDate", updateDate)
+                    .setString("pathExact", entity.getPath())
+                    .setString("pathExt", entity.getPath() + "/%")
+                    .executeUpdate();
+
+            getSession().flush();
         }
     }
 
@@ -578,6 +607,18 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory {
             entity.setUpdateDate(new Date());
             entity.setTrashed(false);
             getSession().saveOrUpdate(entity);
+            getSession().flush();
+        }  else if( entity.getType() == DMEntityType.FOLDER || entity.getType() == DMEntityType.WORKSPACE){
+
+            Date updateDate = new Date();
+            getSession().createQuery("update DMEntityImpl set trashed = false , updateDate = :upDate, path = " +
+                    "substring(path," + (TRASH_PREFIX.length()  + 1) + ", length(path) - " + TRASH_PREFIX.length() + ") " +
+                    "where path like :pathExact or path like :pathExt ")
+                    .setDate("upDate", updateDate)
+                    .setString("pathExact", entity.getPath())
+                    .setString("pathExt", entity.getPath() + "/%")
+                    .executeUpdate();
+
             getSession().flush();
         }
     }

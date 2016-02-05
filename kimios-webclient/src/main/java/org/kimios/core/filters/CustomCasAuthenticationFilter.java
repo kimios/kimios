@@ -102,12 +102,11 @@ public class CustomCasAuthenticationFilter extends AbstractCasFilter {
 
         SecurityController securityController = Controller.getSecurityController();
 
-
-        log.debug(((HttpServletRequest)servletRequest).getQueryString());
-        if (casAuthEnabled) {
-
-            final HttpServletRequest request = (HttpServletRequest) servletRequest;
-            final HttpServletResponse response = (HttpServletResponse) servletResponse;
+        final HttpServletRequest request = (HttpServletRequest) servletRequest;
+        final HttpServletResponse response = (HttpServletResponse) servletResponse;
+        if(log.isDebugEnabled())
+            log.debug(((HttpServletRequest)servletRequest).getQueryString());
+        if (casAuthEnabled && (!request.getServletPath().startsWith("/__admininternal"))) {
             final HttpSession session = request.getSession(false);
             final Assertion assertion = session != null ? (Assertion) session.getAttribute(CONST_CAS_ASSERTION) : null;
 

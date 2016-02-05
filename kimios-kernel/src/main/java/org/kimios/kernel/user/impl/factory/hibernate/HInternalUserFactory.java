@@ -136,9 +136,12 @@ public class HInternalUserFactory extends HFactory {
             ConfigException {
         try {
             Set<User> sUsers = group.getUsers();
+            initializeAndUnproxy(group.getUsers());
             Vector<User> users = new Vector<User>();
             for (User u : sUsers) {
-                users.add(u);
+                User loadedUser = getUser(u.getID(), u.getAuthenticationSourceName());
+                initializeAndUnproxy(loadedUser.getEmails());
+                users.add(loadedUser);
             }
             return users;
         } catch (HibernateException he) {

@@ -16,7 +16,13 @@
 package org.kimios.client.controller;
 
 import org.kimios.client.exception.ExceptionHelper;
+import org.kimios.kernel.reporting.model.Report;
+import org.kimios.kernel.reporting.model.ReportParam;
 import org.kimios.webservices.ReportingService;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * ReportingController is used to call the reporting functionalities
@@ -55,11 +61,49 @@ public class ReportingController
     }
 
     /**
+     * Return specific report from given parameters
+     */
+    public String getReport(String sessionId, String className, Map<String, ReportParam> reportParams)
+            throws Exception
+    {
+        try
+        {
+            List<ReportParam> items = new ArrayList<ReportParam>();
+            items.addAll(reportParams.values());
+            return client.getReport( sessionId, className, items );
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
+        }
+    }
+
+    /**
      * Return XML stream containing all attributes from a specified report with
      * its class name
      */
-    public String getReportAttributes( String sessionId, String className )
+    @Deprecated
+    public String getReportAttributesXml( String sessionId, String className )
         throws Exception
+    {
+        try
+        {
+            return client.getReportAttributesXml( sessionId, className );
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
+        }
+    }
+
+
+
+    /**
+     * Return list containing all attributes from a specified report with
+     * its class name
+     */
+    public List<ReportParam> getReportAttributes(String sessionId, String className )
+            throws Exception
     {
         try
         {
@@ -74,8 +118,24 @@ public class ReportingController
     /**
      * Return XML stream containing all implemented reports
      */
-    public String getReportsList( String sessionId )
+    public String getReportsListXml( String sessionId )
         throws Exception
+    {
+        try
+        {
+            return client.getReportsListXml( sessionId );
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
+        }
+    }
+
+    /**
+     * Return Stream containing all implemented reports
+     */
+    public List<Report> getReportsList(String sessionId )
+            throws Exception
     {
         try
         {

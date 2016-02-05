@@ -18,5 +18,6 @@
 <solr persistent="false">
     <cores adminPath="/admin/{core-name}" sharedLib="lib">
         <core name="{core-name}" instanceDir="{core-name}"/>
+        <core name="{core-name}-body" instanceDir="{core-name}-body"/>
     </cores>
 </solr>

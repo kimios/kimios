@@ -23,8 +23,6 @@ public interface MetaFeed
 {
     public String getJavaClass();
 
-    public void setJavaClass(String javaClass);
-
     public List<String> getValues();
 
     public String[] search(String criteria) throws MetaFeedSearchException;

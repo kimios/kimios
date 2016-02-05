@@ -39,8 +39,6 @@ public abstract class MetaFeedImpl implements MetaFeed
     @Column(name = "java_class", nullable = false, insertable = false, updatable = false)
     private String javaClass;
 
-
-
     @ElementCollection(fetch = FetchType.LAZY)
     @MapKeyColumn(name = "mf_pref_name")
     @Column(name="mf_pref_value")

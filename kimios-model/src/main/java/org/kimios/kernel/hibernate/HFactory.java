@@ -67,7 +67,7 @@ public abstract class HFactory
     public void flush(){
         if(provider instanceof JpaHibernateFactory){
             getEntityManager()
-            .unwrap(HibernateEntityManager.class)
+            .unwrap(org.hibernate.jpa.HibernateEntityManager.class)
             .getSession().flush();
         }else {
             getSession().flush();

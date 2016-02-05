@@ -34,6 +34,8 @@ import org.kimios.kernel.index.solr.utils.SolrServerBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URL;
+
 /**
  * Factory to instantiate the @see SolrIndexManager.
  *
@@ -46,6 +48,8 @@ public class SolrIndexFactory {
     private static Logger log = LoggerFactory.getLogger(SolrIndexFactory.class);
 
     private static SolrServer solrServer;
+
+    private static SolrServer contentSolrServer;
 
     private String solrUrl;
 
@@ -171,11 +175,16 @@ public class SolrIndexFactory {
             if (serverMode) {
                 solrServer = SolrServerBuilder.initHttpServer(solrUrl);
             } else {
-                solrServer = SolrServerBuilder.initLocalServer(solrHome, coreName);
+                SolrServerBuilder.initLocalServer(solrHome, coreName, "/schema.xml");
+                URL solrHomeUrl= SolrServerBuilder.initLocalServer(solrHome, coreName + "-body", "/schema-body.xml");
+                SolrServer[] items = SolrServerBuilder.buidServers(solrHomeUrl, solrHome, coreName);
+
+                solrServer = items[0];
+                contentSolrServer = items[1];
             }
         }
 
-        SolrIndexManager manager = new SolrIndexManager(solrServer);
+        SolrIndexManager manager = new SolrIndexManager(solrServer, contentSolrServer);
         manager.setPathController(pathController);
         manager.setSolrDocumentFactory(solrDocumentFactory);
         manager.setDocumentIndexStatusFactory(documentIndexStatusFactory);

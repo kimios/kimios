@@ -45,6 +45,18 @@ kimios.util.PreviewHelper = {
            xlsx: [{
                 target: 'html',
                 conv: 'org.kimios.converter.impl.XlsToHTML'
+            }],
+            asciidoc: [{
+                target: 'html',
+                conv:'org.kimios.converter.impl.AsciiDocToHTML'
+            }],
+            adoc: [{
+                target: 'html',
+                conv:'org.kimios.converter.impl.AsciiDocToHTML'
+            }],
+            ps: [{
+                target: 'pdf',
+                conv: 'org.kimios.converter.impl.PostscriptToPDF'
             }]
            //pdf: [{conv: 'org.kimios.kernel.converter.impl.PDFMerger', target: 'pdf'}]
         }

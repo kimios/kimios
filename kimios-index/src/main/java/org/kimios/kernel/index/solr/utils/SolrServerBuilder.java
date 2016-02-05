@@ -50,7 +50,7 @@ public class SolrServerBuilder {
         }
     }
 
-    public static SolrServer initLocalServer(String solrHome, String coreName)
+    public static URL initLocalServer(String solrHome, String coreName, String schemaName)
     {
         try {
 
@@ -68,25 +68,41 @@ public class SolrServerBuilder {
                 }
 
             }
+
             File home = new File(solrHomeUrl.getFile());
-            checkSolrXmlFile(home, coreName);
+            File f = new File(home, "solr.xml");
+            checkSolrXmlFile(home, coreName, schemaName);
             /*
                 Check solr.xml existence. If not exist (create it)
-                */
-            File f = new File(home, "solr.xml");
-            ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            Thread.currentThread().setContextClassLoader(SolrServerBuilder.class.getClassLoader());
-            CoreContainer coreContainer = CoreContainer.createAndLoad(solrHome, f);
-            EmbeddedSolrServer server = new EmbeddedSolrServer(coreContainer, coreName);
-            Thread.currentThread().setContextClassLoader(cl);
-            return server;
+
+            */
+
+            return solrHomeUrl;
+
         } catch (Exception ex) {
             log.error("Error initializing SOLR server", ex);
             return null;
         }
     }
 
-    private static void checkSolrXmlFile(File solrHome, String coreName) throws IOException, IndexException
+
+    public static SolrServer[] buidServers(URL solrHomeUrl, String solrHome, String coreName){
+
+        File home = new File(solrHomeUrl.getFile());
+        File solrXml = new File(home, "solr.xml");
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(SolrServerBuilder.class.getClassLoader());
+        CoreContainer coreContainer = CoreContainer.createAndLoad(solrHome, solrXml);
+        EmbeddedSolrServer server = new EmbeddedSolrServer(coreContainer, coreName);
+        EmbeddedSolrServer contentServer = new EmbeddedSolrServer(coreContainer, coreName + "-body");
+
+        Thread.currentThread().setContextClassLoader(cl);
+
+        return new SolrServer[]{server, contentServer};
+
+    }
+
+    private static void checkSolrXmlFile(File solrHome, String coreName, String schemaName) throws IOException, IndexException
     {
         /*
             Check Solr Version. Below is for >= 5
@@ -156,20 +172,23 @@ public class SolrServerBuilder {
             } else {
                 throw new IndexException("Unable to create solr conf file");
             }
-
-            File fCore = new File(solrHome, coreName);
-            fCore.mkdir();
-
-            File f = new File(fCore, "conf");
-            f.mkdir();
-
-            createEmptySettingsFile(f);
         }
+
+
+        File fCore = new File(solrHome, coreName);
+        fCore.mkdir();
+
+        File f = new File(fCore, "conf");
+        if(!f.exists()){
+            f.mkdir();
+            createEmptySettingsFile(f, schemaName);
+        }
+
     }
 
 
-    private static void createEmptySettingsFile(File indexDirectory) throws IOException {
-        InputStream schemaStream = SolrServerBuilder.class.getResourceAsStream("/schema.xml");
+    private static void createEmptySettingsFile(File indexDirectory, String customSchema) throws IOException {
+        InputStream schemaStream = SolrServerBuilder.class.getResourceAsStream(customSchema);
         InputStream cfgStream = SolrServerBuilder.class.getResourceAsStream("/solrconfig.xml");
         InputStream mappingAccent = SolrServerBuilder.class.getResourceAsStream("/mapping-ISOLatin1Accent.txt");
 

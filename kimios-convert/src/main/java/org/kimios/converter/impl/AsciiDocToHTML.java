@@ -46,7 +46,7 @@ import static org.asciidoctor.Asciidoctor.Factory.create;
 public class AsciiDocToHTML extends ConverterImpl {
 
     private static final String[] INPUT_EXTENSIONS = new String[]{"asciidoc"};
-    private static final String OUTPUT_EXTENSION = "pdf";
+    private static final String OUTPUT_EXTENSION = "html";
 
     @Override
     public InputSource convertInputSource(InputSource source) throws ConverterException {

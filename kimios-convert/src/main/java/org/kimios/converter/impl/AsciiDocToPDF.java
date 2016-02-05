@@ -23,12 +23,14 @@ import static org.asciidoctor.Asciidoctor.Factory.create;
 import org.asciidoctor.OptionsBuilder;
 import org.asciidoctor.internal.JRubyAsciidoctor;
 import org.jruby.RubyInstanceConfig;
+import org.jruby.embed.osgi.OSGiScriptingContainer;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.kimios.converter.exceptions.BadInputSource;
 import org.kimios.exceptions.ConverterException;
 import org.kimios.api.InputSource;
 import org.kimios.converter.source.InputSourceFactory;
 import org.kimios.converter.ConverterImpl;
+import org.osgi.framework.FrameworkUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -69,10 +71,42 @@ public class AsciiDocToPDF extends ConverterImpl {
 
             targetPath +=  "/" + fileName + "." + OUTPUT_EXTENSION;
 
-            RubyInstanceConfig config = new RubyInstanceConfig();
-            config.setLoader(this.getClass().getClassLoader());
-            JavaEmbedUtils.initialize(Arrays.asList("META-INF/jruby.home/lib/ruby/2.0", "gems/asciidoctor-1.5.4/lib", "gems/asciidoctor-pdf-1.5.0.alpha.11/lib"), config);
-            Asciidoctor asciidoctor = Asciidoctor.Factory.create(JRubyAsciidoctor.class.getClassLoader());
+
+
+
+            Asciidoctor asciidoctor = null;
+            /*try{
+                OSGiScriptingContainer container = new OSGiScriptingContainer(FrameworkUtil.getBundle(JRubyAsciidoctor.class));
+                asciidoctor = Asciidoctor.Factory.create(container.getOSGiBundleClassLoader());
+            } catch (Exception ex){*/
+                /*RubyInstanceConfig config = new RubyInstanceConfig();
+                config.setLoader(this.getClass().getClassLoader());
+                JavaEmbedUtils.initialize(Arrays.asList("META-INF/jruby.home/lib/ruby/2.0",
+                        "gems/asciidoctor-1.5.4/lib",
+                        "gems/asciidoctor-pdf-1.5.0.alpha.11/lib",
+                        "gems/addressable-2.4.0/lib",
+                        "gems/afm-0.2.2/lib",
+                        "gems/Ascii85-1.0.2/lib",
+                        "gems/css_parser-1.3.7/lib",
+                        "gems/hashery-2.1.1/lib",
+                        "gems/pdf-core-0.4.0/lib",
+                        "gems/pdf-reader-1.3.3/lib",
+                        "gems/polyglot-0.3.5/lib",
+                        "gems/prawn-1.3.0/lib",
+                        "gems/prawn-icon-1.0.0/lib",
+                        "gems/prawn-svg-0.21.0/lib",
+                        "gems/prawn-table-0.2.2/lib",
+                        "gems/prawn-templates-0.0.3.0/lib",
+                        "gems/rouge-1.10.1/lib",
+                        "gems/ruby-rc4-0.1.5/lib",
+                        "gems/safe_yaml-1.0.4/lib",
+                        "gems/treetop-1.5.3/lib",
+                        "gems/ttfunk-1.4.0/lib"), config);  */
+                //asciidoctor = Asciidoctor.Factory.create(JRubyAsciidoctor.class.getClassLoader());
+                asciidoctor = Asciidoctor.Factory.create(new OSGiScriptingContainer(FrameworkUtil.getBundle(JRubyAsciidoctor.class)).getOSGiBundleClassLoader(), "gems");
+                /*     OSGiScriptingContainer container = new OSGiScriptingContainer(FrameworkUtil.getBundle(JRubyAsciidoctor.class));
+                    asciidoctor = Asciidoctor.Factory.create(container.getOSGiBundleClassLoader());*/
+            //}
             Map<String, Object> attributes = new HashMap<String, Object>();
             attributes.put("backend", "pdf");
 

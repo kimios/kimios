@@ -992,6 +992,131 @@ kimios.record = {
                 type:'string'
             }
         ])
-    }
+    },
+    sharedEntityRecord: Ext.data.Record.create([
+        {
+            name: 'ownerSource',
+            type: 'string'
+        },
+        {
+            name: 'creationDate',
+            type: 'long'
 
+        },
+        {
+            name: 'updateDate',
+            type: 'long',
+            sortDir: 'desc'
+        },
+        {
+            name: 'lastVersionCreationDate',
+            type: 'long'
+
+        },
+        {
+            name: 'lastVersionUpdateDate',
+            type: 'long'
+        },
+        {
+            name: 'name',
+            type: 'string'
+        },
+        {
+            name: 'owner',
+            type: 'string'
+        },
+        {
+            name: 'uid',
+            type: 'long'
+        },
+        {
+            name: 'type',
+            type: 'int'
+        },
+        {
+            name: 'length',
+            type: 'long'
+        },
+        {
+            name: 'extension',
+            type: 'string'
+        },
+        {
+            name: 'checkedOut',
+            type: 'boolean'
+        },
+        {
+            name: 'checkoutDate',
+            type: 'long'
+        },
+        {
+            name: 'checkoutUser',
+            type: 'string'
+        },
+        {
+            name: 'checkoutUserSource',
+            type: 'string'
+        },
+        {
+            name: 'documentTypeName',
+            type: 'string'
+        },
+        {
+            name: 'documentTypeUid',
+            type: 'long'
+        },
+        {
+            name: 'outOfWorkflow',
+            type: 'boolean'
+        },
+        {
+            name: 'workflowStatusName',
+            type: 'string'
+        },
+        {
+            name: 'workflowStatusUid',
+            type: 'long'
+        },
+        {
+            name: 'path',
+            type: 'string'
+        },
+        {
+            name: 'parentType',
+            type: 'int'
+        },
+        {
+            name: 'parentUid',
+            type: 'long'
+        },
+        {
+            name: 'statusUserName',
+            type: 'string'
+        },
+        {
+            name: 'statusUserSource',
+            type: 'string'
+        },
+        {
+            name: 'statusDate',
+            type: 'long'
+        },
+        {
+            name: 'status',
+            type: 'string'
+        },
+        {
+            name: 'dmEntityAddonData',
+            type: 'string'
+        },
+        {
+            name: 'targetEntity'
+        },{
+            name:'expirationDate'
+        },{
+            name: 'creatorId'
+        },{
+            name: 'creatorSource'
+        }
+    ]),
 };

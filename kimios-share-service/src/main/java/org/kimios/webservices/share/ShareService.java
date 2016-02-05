@@ -17,8 +17,10 @@
 package org.kimios.webservices.share;
 
 import io.swagger.annotations.*;
+import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.kimios.kernel.share.model.MailContact;
+import org.kimios.kernel.ws.pojo.Share;
 import org.kimios.webservices.exceptions.DMServiceException;
 
 import javax.jws.WebMethod;
@@ -27,6 +29,7 @@ import javax.jws.WebService;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -52,6 +55,41 @@ public interface ShareService {
             @WebParam(name = "defaultSender")  Boolean defaultSender)
             throws DMServiceException;
 
+
+
+    @POST
+    @Path("/share-document")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    void shareDocument(@FormParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+                       @FormParam(value = "dmEntityId") @WebParam(name = "dmEntityId") long dmEntityId,
+                       @FormParam(value = "targetUserId") @WebParam(name = "targetUserId") String userId,
+                       @FormParam(value = "targetUserSource") @WebParam(name = "targetUserId") String userSource,
+                       @FormParam(value = "read") @WebParam(name = "read") boolean read,
+                       @FormParam(value = "write") @WebParam(name = "write") boolean write,
+                       @FormParam(value = "fullAccess") @WebParam(name = "fullAccess") boolean fullAccess,
+                       @FormParam(value = "expirationDate") @WebParam(name="expirationDate") String expirationDate,
+                       @FormParam(value = "notify")@WebParam(name = "notity") boolean notify) throws DMServiceException;
+
+
+
+    @GET
+    @Path("/with-me")
+    List<Share> listEntitiesSharedWithMe(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId)
+        throws DMServiceException;
+
+
+    @GET
+    @Path("/by-me")
+    List<Share> listEntitiesSharedByMe(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId)
+            throws DMServiceException;
+
+
+    @POST
+    @Path("/remove")
+    @Consumes("multipart/form-data")
+    void removeShare(@Multipart(value="sessionId") @WebParam(name = "sessionId") String sessionId,
+                     @Multipart(value="shareId") @WebParam(name = "shareId") long shareId)
+        throws DMServiceException;
 
 
 

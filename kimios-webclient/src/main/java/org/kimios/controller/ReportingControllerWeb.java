@@ -20,15 +20,14 @@ import flexjson.JSONSerializer;
 import org.kimios.client.controller.helpers.ReportGenerator;
 import org.kimios.client.controller.helpers.report.Column;
 import org.kimios.client.controller.helpers.report.Row;
+import org.kimios.kernel.reporting.model.Report;
+import org.kimios.kernel.reporting.model.ReportParam;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -56,20 +55,38 @@ public class ReportingControllerWeb extends Controller {
         return "";
     }
 
-    private String getAttributes(Map<String, String> parameters) throws Exception {
-        String xmlAttributes = reportingController.getReportAttributes(sessionUid, parameters.get("impl"));
-        ByteArrayInputStream in = new ByteArrayInputStream(xmlAttributes.getBytes());
-        Document d = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(in);
-        NodeList nl = d.getDocumentElement().getElementsByTagName("parameter");
 
+    public static String join(Collection<?> values, String delimiter)
+    {
+        if (values == null)
+        {
+            return new String();
+        }
+
+        StringBuffer strbuf = new StringBuffer();
+
+        boolean first = true;
+
+        for (Object value : values)
+        {
+            if (!first) { strbuf.append(delimiter); } else { first = false; }
+            strbuf.append(value.toString());
+        }
+
+        return strbuf.toString();
+    }
+
+    private String getAttributes(Map<String, String> parameters) throws Exception {
+        List<ReportParam> reportParameters =
+                reportingController.getReportAttributes(getSessionUid(), parameters.get("impl"));
         List<Map<String, String>> attributes = new ArrayList<Map<String, String>>();
-        for (int i = 0; i < nl.getLength(); i++) {
+        for (ReportParam param: reportParameters) {
             Map<String, String> attribute = new HashMap<String, String>();
-            String name = nl.item(i).getAttributes().getNamedItem("name").getNodeValue();
-            String type = nl.item(i).getAttributes().getNamedItem("type").getNodeValue();
-            if (!"order".equals(name) && !"asc".equals(name)) {
-                attribute.put("name", name);
-                attribute.put("type", type);
+            if (!"order".equals(param.getName()) && !"asc".equals(param.getName())) {
+                attribute.put("name", param.getName());
+                attribute.put("type", param.getType());
+                attribute.put("listType", param.getListType());
+                attribute.put("availableValues", join(param.getAvailableValues(), ","));
                 attributes.add(attribute);
             }
         }
@@ -77,7 +94,8 @@ public class ReportingControllerWeb extends Controller {
     }
 
     private String getReport(Map<String, String> parameters) throws Exception {
-        ArrayList<Map<String, String>> paramsList = (ArrayList<Map<String, String>>) new JSONDeserializer().deserialize(parameters.get("jsonParameters"));
+        ArrayList<Map<String, String>> paramsList =
+                (ArrayList<Map<String, String>>) new JSONDeserializer().deserialize(parameters.get("jsonParameters"));
         ReportGenerator generator = new ReportGenerator(sessionUid, parameters.get("impl"), reportingController);
 
         for (Map<String, String> param : paramsList) {
@@ -120,8 +138,8 @@ public class ReportingControllerWeb extends Controller {
     }
 
     private String getReportsList() throws Exception {
-        String xmlReportsList = reportingController.getReportsList(sessionUid);
-        ByteArrayInputStream in = new ByteArrayInputStream(xmlReportsList.getBytes());
+        List<Report> reports = reportingController.getReportsList(sessionUid);
+        /*ByteArrayInputStream in = new ByteArrayInputStream(xmlReportsList.getBytes());
         Document d = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(in);
         NodeList nl = d.getDocumentElement().getElementsByTagName("report");
 
@@ -132,6 +150,13 @@ public class ReportingControllerWeb extends Controller {
             String className = nl.item(i).getAttributes().getNamedItem("className").getNodeValue();
             attribute.put("name", name);
             attribute.put("className", className);
+            reportsList.add(attribute);
+        } */
+        List<Map<String, String>> reportsList = new ArrayList<Map<String, String>>();
+        for (Report r: reports) {
+            Map<String, String> attribute = new HashMap<String, String>();
+            attribute.put("name", r.getName());
+            attribute.put("className", r.getClassName());
             reportsList.add(attribute);
         }
 

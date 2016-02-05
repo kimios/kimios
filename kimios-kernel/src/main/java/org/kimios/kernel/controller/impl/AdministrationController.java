@@ -133,7 +133,27 @@ public class AdministrationController extends AKimiosController implements IAdmi
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IAdministrationController#getAuthenticationSourceParams(org.kimios.kernel.security.Session, java.lang.String, java.lang.String)
     */
-    public String getAuthenticationSourceParams(Session session, String name, String className) throws ConfigException,
+    @Deprecated
+    public String getAuthenticationSourceParamsXml(Session session, String name, String className) throws ConfigException,
+            DataSourceException, AccessDeniedException
+    {
+        if (securityFactoryInstantiator.getRoleFactory()
+                .getRole(Role.ADMIN, session.getUserName(), session.getUserSource()) == null)
+        {
+            throw new AccessDeniedException();
+        }
+        try {
+            return authFactoryInstantiator.getAuthenticationSourceParamsFactory()
+                    .getParamsXml(name);
+        } catch (Exception e) {
+            throw new ConfigException(e.getMessage());
+        }
+    }
+
+    /* (non-Javadoc)
+    * @see org.kimios.kernel.controller.impl.IAdministrationController#getAuthenticationSourceParams(org.kimios.kernel.security.Session, java.lang.String, java.lang.String)
+    */
+    public Map<String, String> getAuthenticationSourceParams(Session session, String name, String className) throws ConfigException,
             DataSourceException, AccessDeniedException
     {
         if (securityFactoryInstantiator.getRoleFactory()
@@ -148,6 +168,7 @@ public class AdministrationController extends AKimiosController implements IAdmi
             throw new ConfigException(e.getMessage());
         }
     }
+
 
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IAdministrationController#createAuthenticationSource(org.kimios.kernel.security.Session, java.lang.String, java.lang.String, java.lang.String)
@@ -174,6 +195,29 @@ public class AdministrationController extends AKimiosController implements IAdmi
         }
     }
 
+    public void createAuthenticationSource(Session session, String name, String className, boolean enableSso, boolean enableMailCheck,
+                                           Map<String, String> parameters)
+            throws AccessDeniedException, ConfigException, DataSourceException
+    {
+        if (securityFactoryInstantiator.getRoleFactory()
+                .getRole(Role.ADMIN, session.getUserName(), session.getUserSource()) == null)
+        {
+            throw new AccessDeniedException();
+        }
+        try {
+            AuthenticationSource authenticationSource = (AuthenticationSource) Class.forName(className).newInstance();
+            authenticationSource.setName(name);
+            authenticationSource.setEnableSSOCheck(enableSso);
+            authenticationSource.setEnableAuthByEmail(enableMailCheck);
+            authFactoryInstantiator.getAuthenticationSourceFactory()
+                    .saveAuthenticationSource(authenticationSource, className);
+            authFactoryInstantiator.getAuthenticationSourceParamsFactory().createParams(name, parameters);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ConfigException(e.getMessage());
+        }
+    }
+
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IAdministrationController#updateAuthenticationSource(org.kimios.kernel.security.Session, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
     */
@@ -194,6 +238,26 @@ public class AdministrationController extends AKimiosController implements IAdmi
     }
 
     /* (non-Javadoc)
+   * @see org.kimios.kernel.controller.impl.IAdministrationController#updateAuthenticationSource(org.kimios.kernel.security.Session, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+   */
+    public void updateAuthenticationSource(Session session, String name, String className, boolean enableSso,
+                                           boolean enableMailCheck, Map<String, String> params)
+            throws AccessDeniedException, ConfigException, DataSourceException
+    {
+        if (securityFactoryInstantiator.getRoleFactory()
+                .getRole(Role.ADMIN, session.getUserName(), session.getUserSource()) == null)
+        {
+            throw new AccessDeniedException();
+        }
+        try {
+            authFactoryInstantiator.getAuthenticationSourceParamsFactory().updateParams(name, params, enableSso, enableMailCheck);
+        } catch (Exception e) {
+            throw new ConfigException(e.getMessage());
+        }
+    }
+
+
+    /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IAdministrationController#deleteAuthenticationSource(org.kimios.kernel.security.Session, java.lang.String)
     */
     public void deleteAuthenticationSource(Session session, String name) throws AccessDeniedException, ConfigException,
@@ -212,7 +276,19 @@ public class AdministrationController extends AKimiosController implements IAdmi
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IAdministrationController#getAvailableAuthenticationSource(org.kimios.kernel.security.Session)
     */
-    public String getAvailableAuthenticationSource(Session session) throws ConfigException, DataSourceException,
+    public String getAvailableAuthenticationSourceXml(Session session) throws ConfigException, DataSourceException,
+            AccessDeniedException
+    {
+        if (securityFactoryInstantiator.getRoleFactory().getRole(Role.ADMIN, session.getUserName(),
+                session.getUserSource()) == null)
+        {
+            throw new AccessDeniedException();
+        }
+        return authFactoryInstantiator.getAuthenticationSourceFactory()
+                .getAvailableAuthenticationSourceXml();
+    }
+
+    public List<String> getAvailableAuthenticationSource(Session session) throws ConfigException, DataSourceException,
             AccessDeniedException
     {
         if (securityFactoryInstantiator.getRoleFactory().getRole(Role.ADMIN, session.getUserName(),
@@ -227,7 +303,24 @@ public class AdministrationController extends AKimiosController implements IAdmi
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IAdministrationController#getAvailableAuthenticationSourceParams(org.kimios.kernel.security.Session, java.lang.String)
     */
-    public String getAvailableAuthenticationSourceParams(Session session, String className) throws ConfigException,
+    @Deprecated
+    public String getAvailableAuthenticationSourceParamsXml(Session session, String className) throws ConfigException,
+            DataSourceException, AccessDeniedException, ClassNotFoundException
+    {
+        if (securityFactoryInstantiator.getRoleFactory().getRole(Role.ADMIN, session.getUserName(),
+                session.getUserSource()) == null)
+        {
+            throw new AccessDeniedException();
+        }
+        return authFactoryInstantiator.getAuthenticationSourceFactory()
+                .getAvailableAuthenticationSourceParamsXml(className);
+    }
+
+
+    /* (non-Javadoc)
+    * @see org.kimios.kernel.controller.impl.IAdministrationController#getAvailableAuthenticationSourceParams(org.kimios.kernel.security.Session, java.lang.String)
+    */
+    public List<String> getAvailableAuthenticationSourceParams(Session session, String className) throws ConfigException,
             DataSourceException, AccessDeniedException, ClassNotFoundException
     {
         if (securityFactoryInstantiator.getRoleFactory().getRole(Role.ADMIN, session.getUserName(),

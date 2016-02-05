@@ -29,6 +29,10 @@
             </action>
         </command>
         <command>
+            <action class="org.kimios.osgi.karaf.JobListCommand">
+            </action>
+        </command>
+        <command>
             <action class="org.kimios.osgi.karaf.ClearLockCommand">
             </action>
             <completers>

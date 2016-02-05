@@ -71,12 +71,7 @@ public class EditorServiceImpl implements EditorService {
                 for (String cName : data.getCookiesData(session.getUserName(), session.getUserSource()).keySet()) {
                     javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie(cName,
                             data.getCookiesData(session.getUserName(), session.getUserSource()).get(cName));
-                    cookie.setPath("/etherpad");
-                    cookie.setDomain(request.getServerName());
-                    cookie.setMaxAge(3600);
                     response.addCookie(cookie);
-                    if(logger.isDebugEnabled())
-                    logger.debug("added cookie " + cookie.getName() + " " + cookie.getValue());
                     data.getCookiesDatas().put(cookie.getName(), cookie.getValue());
                 }
             }
@@ -95,14 +90,9 @@ public class EditorServiceImpl implements EditorService {
             if (data.getCookiesData(session.getUserName(), session.getUserSource())
                     != null && data.getCookiesData(session.getUserName(), session.getUserSource()).size() > 0) {
                 for (String cName : data.getCookiesData(session.getUserName(), session.getUserSource()).keySet()) {
-                    javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie("!Proxy!" + data.getProxyName() + cName,
+                    javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie(cName,
                             data.getCookiesData(session.getUserName(), session.getUserSource()).get(cName));
-                    cookie.setPath("/etherpad");
-                    cookie.setDomain(request.getServerName());
-                    cookie.setMaxAge(3600);
                     response.addCookie(cookie);
-                    if(logger.isDebugEnabled())
-                        logger.debug("added cookie " + cookie.getName() + " " + cookie.getValue());
                 }
             }
             return data;

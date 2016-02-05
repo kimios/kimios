@@ -56,7 +56,7 @@ public class ExtensionController {
 
 
 
-    public void addDocumentToTrash(String sessionId, long documentId)
+    public void addEntityToTrash(String sessionId, long documentId)
         throws Exception {
         try {
             client.trashEntity(sessionId, documentId);
@@ -65,7 +65,7 @@ public class ExtensionController {
         }
     }
 
-    public void restoreDocumentFromTrash(String sessionId, long documentId)
+    public void restoreEntityFromTrash(String sessionId, long documentId)
             throws Exception {
         try {
             client.restoreFromTrash(sessionId, documentId);

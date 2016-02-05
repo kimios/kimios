@@ -57,7 +57,7 @@ public interface IExtensionController
 
 
     @DmsEvent(eventName = {DmsEventName.DOCUMENT_UNTRASH})
-    public Document restoreEntity(Session session, long dmEntityId)
+    public DMEntity restoreEntity(Session session, long dmEntityId)
             throws ConfigException, DataSourceException, AccessDeniedException;
 
     public boolean canHandleAutomaticDocumentDeposit(Session session)

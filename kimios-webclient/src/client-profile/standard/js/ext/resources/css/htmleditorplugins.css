@@ -1,0 +1,72 @@
+/*
+	These are examples of styles for the button icons (you must supply the icon files yourself)
+	
+	For nice icon sets, check out the following sites.
+	- http://www.famfamfam.com/
+	- http://code.google.com/p/fugue-icons/
+    - http://www.everaldo.com/crystal/
+    
+    See the notice.txt file in the images folder for possible licence conflicts with these images.
+    Some icons may be licenced under the Creative Commons licence - http://creativecommons.org/licenses/by/2.5/
+    
+    Some icons have been modified slightly from their source files, in which case the original authors license still applies.
+    
+*/
+.x-edit-wordpaste {background: url(../images/default/editor/edit-word-text.png) 0 0 no-repeat !important;}
+.x-edit-table {background: url(../images/default/editor/edit-table.png) 0 0 no-repeat !important;}
+.x-edit-hr {background: url(../images/default/editor/edit-rule.png) 0 0 no-repeat !important;}
+.x-edit-indent {background: url(../images/default/editor/edit-indent.png) 0 0 no-repeat !important;}
+.x-edit-char {background: url(../images/default/editor/edit-char.png) 0 0 no-repeat !important;}
+.x-edit-outdent {background: url(../images/default/editor/edit-outdent.png) 0 0 no-repeat !important;}
+.x-edit-subscript {background: url(../images/default/editor/edit-subscript.png) 0 0 no-repeat !important;}
+.x-edit-superscript {background: url(../images/default/editor/edit-superscript.png) 0 0 no-repeat !important;}
+.x-edit-removeFormat {background: url(../images/default/editor/edit-removeFormat.png) 0 0 no-repeat !important;}
+.x-edit-image {background: url(../images/default/editor/edit-image.png) 0 0 no-repeat !important;}
+.x-edit-findandreplace {background: url(../images/default/editor/edit-findandreplace.png) 0 0 no-repeat !important;}
+.x-edit-undo {background: url(../images/default/editor/edit-undo.png) 0 0 no-repeat !important;}
+.x-edit-redo {background: url(../images/default/editor/edit-redo.png) 0 0 no-repeat !important;}
+.x-edit-formatblock-h1 {background: url(../images/default/editor/edit-heading-h1.png) 0 0 no-repeat !important;}
+.x-edit-formatblock-h2 {background: url(../images/default/editor/edit-heading-h2.png) 0 0 no-repeat !important;}
+
+/*
+    When using the famfamfam set of icons, the following styles can be used, assuming the famfamfam 
+    set of icons was extracted to a folder named 'icons' - Thanks to 'dearsina' on the Ext JS Forums for this.
+
+.x-edit-wordpaste {background: url(icons/page_white_word.png) 0 0 no-repeat !important;}
+.x-edit-table {background: url(icons/table.png) 0 0 no-repeat !important;}
+.x-edit-hr {background: url(icons/text_horizontalrule.png) 0 0 no-repeat !important;}
+.x-edit-indent {background: url(icons/text_indent.png) 0 0 no-repeat !important;}
+.x-edit-char {background: url(icons/text_letter_omega.png) 0 0 no-repeat !important;}
+.x-edit-outdent {background: url(icons/text_indent_remove.png) 0 0 no-repeat !important;}
+.x-edit-subscript {background: url(icons/text_subscript.png) 0 0 no-repeat !important;}
+.x-edit-superscript {background: url(icons/text_superscript.png) 0 0 no-repeat !important;}
+.x-edit-removeFormat {background: url(icons/exclamation.png) 0 0 no-repeat !important;} 
+.x-edit-undo {background: url(../images/default/editor/arrow_undo.png) 0 0 no-repeat !important;}
+.x-edit-redo {background: url(../images/default/editor/arrow_redo.png) 0 0 no-repeat !important;}
+
+*/
+
+/*
+	These styles are used for the character map
+*/
+.char-item {
+	float: left; 
+	border: 1px solid #99BBE8; 
+	margin: 3px; 
+	text-align: center; 
+	vertical-align: middle; 
+	width: 20px; 
+	height: 20px; 
+	font-size: 14px;
+	color: #15428B;
+	cursor: pointer;
+}
+
+.char-item.x-view-selected {
+	background-color: #777;
+}
+
+.char-over {
+	border: 1px solid #15428B;
+	background-color:#d0def0;
+}

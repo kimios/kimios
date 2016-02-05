@@ -26,6 +26,7 @@ import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.user.model.AuthenticationSource;
 import org.kimios.kernel.user.model.Group;
 import org.kimios.kernel.user.model.User;
+import org.kimios.kernel.jobs.model.TaskInfo;
 
 import java.util.List;
 
@@ -37,19 +38,29 @@ public interface ISecurityController
     public List<DMEntitySecurity> getDMEntitySecurityies(Session session, long dmEntityUid)
             throws ConfigException, DataSourceException;
 
+
     /**
      * Update rights for a given entity from an xml descriptor
      */
     @DmsEvent(eventName = { DmsEventName.ENTITY_ACL_UPDATE })
-    public void updateDMEntitySecurities(Session session, long dmEntityUid, String xmlStream,
+    public void simpleSecurityAdd(Session session, long dmEntityUid, String securityEntityId, String securityEntitySource,
+                                      boolean read, boolean write, boolean fullAccess)
+            throws AccessDeniedException, ConfigException, DataSourceException;
+
+
+    /**
+     * Update rights for a given entity from an xml descriptor
+     */
+    @DmsEvent(eventName = { DmsEventName.ENTITY_ACL_UPDATE })
+    public TaskInfo updateDMEntitySecurities(Session session, long dmEntityUid, String xmlStream,
                                          boolean isRecursive, boolean appendMode)
             throws AccessDeniedException, ConfigException, DataSourceException,
             XMLException;
 
 
     @DmsEvent(eventName = { DmsEventName.ENTITY_ACL_UPDATE })
-    public void updateDMEntitySecurities(Session session, long dmEntityUid, List<DMEntitySecurity> items,
-                             boolean isRecursive, boolean appendMode) throws AccessDeniedException, ConfigException, DataSourceException;
+    public TaskInfo updateDMEntitySecurities(Session session, long dmEntityUid, List<DMEntitySecurity> items,
+                                             boolean isRecursive, boolean appendMode) throws AccessDeniedException, ConfigException, DataSourceException;
 
     /**
      * Can given user read the given entity ?

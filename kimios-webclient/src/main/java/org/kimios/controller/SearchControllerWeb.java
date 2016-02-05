@@ -348,7 +348,8 @@ public class SearchControllerWeb
                 new JSONSerializer().exclude("class")
                         .serialize(it);
         String virtualTree =
-                new JSONSerializer().exclude("class").transform(new DateTransformer("MM/dd/yyyy hh:mm:ss"),
+                new JSONSerializer().exclude("class")
+                        .transform(new DateTransformer("MM/dd/yyyy hh:mm:ss"),
                         "creationDate").transform(
                         new DateTransformer("MM/dd/yyyy hh:mm:ss"), "checkoutDate").serialize(vEntities);
         String fullResp =

@@ -795,6 +795,12 @@ kimios.store = {
                     {
                         name: 'type',
                         type: 'string' //javaClass
+                    },{
+                        name: 'listType',
+                        type: 'string'
+                    }, {
+                        name: 'availableValues',
+                        type: 'string'
                     }
                 ]
             });

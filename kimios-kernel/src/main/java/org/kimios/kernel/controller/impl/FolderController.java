@@ -338,7 +338,7 @@ public class FolderController extends AKimiosController implements IFolderContro
             ((HFactory)dmsFactoryInstantiator.getVirtualFolderFactory()).flush();
 
             // delete full path
-            dmsFactoryInstantiator.getDmEntityFactory().deteteEntities(f.getPath());
+            dmsFactoryInstantiator.getDmEntityFactory().deleteEntities(f.getPath());
             EventContext.addParameter("removed", f);
             return true;
         } else {

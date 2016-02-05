@@ -28,6 +28,7 @@ import org.kimios.kernel.user.model.Group;
 import org.kimios.kernel.user.model.User;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 public interface IAdministrationController
@@ -65,11 +66,20 @@ public interface IAdministrationController
             String name) throws AccessDeniedException, ConfigException,
             DataSourceException;
 
+
     /**
      * Return connection parameters XML stream for the authentication sources specified by name
      */
-    public String getAuthenticationSourceParams(Session session, String name,
-            String className) throws ConfigException, DataSourceException,
+    @Deprecated
+    public String getAuthenticationSourceParamsXml(Session session, String name,
+                                                             String className) throws ConfigException, DataSourceException,
+            AccessDeniedException;
+
+    /**
+     * Return connection parameters for the authentication sources specified by name
+     */
+    public Map<String, String> getAuthenticationSourceParams(Session session, String name,
+                                             String className) throws ConfigException, DataSourceException,
             AccessDeniedException;
 
     /**
@@ -80,10 +90,25 @@ public interface IAdministrationController
             throws AccessDeniedException, ConfigException, DataSourceException;
 
     /**
+     * Create new authentication source
+     */
+    public void createAuthenticationSource(Session session, String name,
+                                           String className, boolean enableSso, boolean enableMailCheck, Map<String, String> parameters)
+            throws AccessDeniedException, ConfigException, DataSourceException;
+
+    /**
+     * Update authentication source (xml parameters)
+     */
+    @Deprecated
+    public void updateAuthenticationSource(Session session, String name, String className,
+                                           boolean enableSso, boolean enableMailCheck, String xmlParameters)
+            throws AccessDeniedException, ConfigException, DataSourceException;
+
+    /**
      * Update authentication source
      */
     public void updateAuthenticationSource(Session session, String name, String className,
-                                           boolean enableSso, boolean enableMailCheck, String xmlParameters)
+                                           boolean enableSso, boolean enableMailCheck, Map<String, String> params)
             throws AccessDeniedException, ConfigException, DataSourceException;
 
     /**
@@ -95,11 +120,19 @@ public interface IAdministrationController
     /**
      * Get a class names list of all implemented authentication sources
      */
-    public String getAvailableAuthenticationSource(Session session)
+    public String getAvailableAuthenticationSourceXml(Session session)
             throws ConfigException, DataSourceException, AccessDeniedException;
 
-    public String getAvailableAuthenticationSourceParams(Session session,
+
+    public List<String> getAvailableAuthenticationSource(Session session) throws ConfigException, DataSourceException,
+            AccessDeniedException;
+
+    public String getAvailableAuthenticationSourceParamsXml(Session session,
             String className) throws ConfigException, DataSourceException,
+            AccessDeniedException, ClassNotFoundException;
+
+    public List<String> getAvailableAuthenticationSourceParams(Session session,
+                                                         String className) throws ConfigException, DataSourceException,
             AccessDeniedException, ClassNotFoundException;
 
     /* (non-Javadoc)

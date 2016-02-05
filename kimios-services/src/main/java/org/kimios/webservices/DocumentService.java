@@ -126,19 +126,19 @@ public interface DocumentService {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public long createDocumentFromFullPathWithPropertiesNoHash(
             @ApiParam(name = "sessionId")
-            @FormParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+            @Multipart(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @ApiParam(name = "path")
-            @FormParam(value = "path") @WebParam(name = "path") String name,
+            @Multipart(value = "path") @WebParam(name = "path") String name,
             @ApiParam(name = "isSecurityInherited")
-            @FormParam(value = "isSecurityInherited") @WebParam(name = "isSecurityInherited") boolean isSecurityInherited,
+            @Multipart(value = "isSecurityInherited") @WebParam(name = "isSecurityInherited") boolean isSecurityInherited,
             @ApiParam(name = "securityItems")
-            @FormParam(value = "securityItems") @WebParam(name = "securityItems") String securityItemsJson,
+            @Multipart(value = "securityItems") @WebParam(name = "securityItems") String securityItemsJson,
             @ApiParam(name = "isRecursive")
-            @FormParam(value = "isRecursive") @WebParam(name = "isRecursive") boolean isRecursive,
+            @Multipart(value = "isRecursive") @WebParam(name = "isRecursive") boolean isRecursive,
             @ApiParam(name = "documentTypeId")
-            @FormParam(value = "documentTypeId") @WebParam(name = "documentTypeId") Long documentTypeId,
+            @Multipart(value = "documentTypeId") @WebParam(name = "documentTypeId") Long documentTypeId,
             @ApiParam(name = "metaItems")
-            @FormParam(value = "metaItems") @WebParam(name = "metaItems") String metaValuesJson,
+            @Multipart(value = "metaItems") @WebParam(name = "metaItems") String metaValuesJson,
             @ApiParam(name = "document", required = true)
             @Multipart(value = "document") InputStream documentStream,
             @ApiParam(name = "md5")

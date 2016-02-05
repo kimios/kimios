@@ -31,7 +31,9 @@ Reporting.Generic = {
                         value = item.getValue().format('Uu');
                       }else if (item instanceof kimios.form.DMEntityField){
                         value = item.hiddenUid;
-                      }else{
+                      }else if(item instanceof Ext.ux.form.LovCombo) {
+                        value = item.getCheckedValue();
+                      }else {
                         value = item.getValue();
                       }
                         params.push({
@@ -77,7 +79,7 @@ Reporting.Generic = {
 
         attributesStore.on('load', function(st, recs){
             Ext.each(recs, function(rec, ind){
-                formPanel.add(Reporting.Generic.getFieldByClassName(rec.data.name, rec.data.type));
+                formPanel.add(Reporting.Generic.getFieldByClassName(rec.data.name, rec.data.type, rec.data.listType, rec.data.availableValues));
             });
             formPanel.doLayout();
             genericContainer.doLayout();
@@ -104,7 +106,7 @@ Reporting.Generic = {
         return panel;
     },
 
-    getFieldByClassName: function(name, impl){
+    getFieldByClassName: function(name, impl, listType,listData){
         var field = null;
         if (impl == 'java.lang.Boolean'){
             field = new Ext.form.Checkbox({
@@ -119,14 +121,14 @@ Reporting.Generic = {
                 editable: false,
                 value: new Date()
             });
-        } else if (impl == 'org.kimios.kernel.user.User'){
+        } else if (impl == 'org.kimios.kernel.user.model.User'){
             field = new kimios.form.SecurityEntityField({
                 name: name,
                 fieldLabel: name,
                 entityMode: 'user',
                 singleSelect: true
             });
-        } else if (impl == 'org.kimios.kernel.dms.DMEntityImpl'){
+        } else if (impl == 'org.kimios.kernel.dms.model.DMEntityImpl'){
             field = new kimios.form.DMEntityField({
                 name: name,
                 fieldLabel : name,
@@ -139,7 +141,51 @@ Reporting.Generic = {
           field = new Ext.form.NumberField({
         name : name,
         fieldLabel : name
-      });
+        });
+        } else if (impl == 'java.util.List'){
+            //display selector
+            if(listType == 'org.kimios.kernel.user.model.User') {
+                field = new kimios.form.SecurityEntityField({
+                    name: name,
+                    fieldLabel: name,
+                    entityMode: 'user',
+                    singleSelect: false
+                });
+
+            } else if(listType == 'java.lang.String') {
+
+                var valuesStore = new Ext.data.ArrayStore({
+                    autoDestroy: true,
+                    // reader configs
+                    idIndex: 0,
+                    fields: [
+                        'value'
+                    ]
+                });
+                var data = listData.split(',');
+                if(data){
+                    var fData = [];
+                    for(var u = 0; u < data.length; u++){
+                        fData.push([data[u]]);
+                    }
+                }
+                valuesStore.loadData(fData);
+
+                field = new Ext.ux.form.LovCombo({
+                    fieldLabel: name,
+                    hiddenName: name,
+                    valueField:'value',
+                    displayField :'value',
+                    triggerAction:'all',
+                    maxHeight:200,
+                    multiSelect:true,
+                    mode: 'local',
+                    hideOnSelect:false,
+                    triggerAction:'all',
+                    store: valuesStore
+                });
+
+            }
         } else if (impl == 'java.lang.Long'){
           field = new Ext.form.NumberField({
         name : name,

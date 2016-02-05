@@ -311,10 +311,10 @@ public class SessionManager extends HFactory implements ISessionManager
             int nbSessions = 0;
             List<Session> lSessions = getSession().createCriteria(Session.class).list();
             for (Session s : lSessions) {
-                User u =
-                        authenticationSourceFactory.getAuthenticationSource(s.getUserSource()).getUserFactory().getUser(
-                                s.getUserName());
                 try {
+                    User u =
+                            authenticationSourceFactory.getAuthenticationSource(s.getUserSource()).getUserFactory().getUser(
+                                    s.getUserName());
                     u.getGroups();
                     Vector<Group> grps = new Vector<Group>();
                     for (Group g : u.getGroups()) {
@@ -325,6 +325,7 @@ public class SessionManager extends HFactory implements ISessionManager
                     getSession().delete(s);
                     nbSessions++;
                 } catch (NullPointerException e) {
+                    getSession().delete(s);
                 }
             }
             log.info("[kimios - SESSION MANAGER Initialization:" + nbSessions + " have been re-loaded!");

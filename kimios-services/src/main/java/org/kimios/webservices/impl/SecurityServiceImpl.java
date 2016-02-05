@@ -15,16 +15,21 @@
  */
 package org.kimios.webservices.impl;
 
+import org.kimios.kernel.jobs.model.TaskInfo;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.user.model.AuthenticationSource;
 import org.kimios.kernel.user.model.Group;
 import org.kimios.kernel.ws.pojo.DMEntitySecurity;
+import org.kimios.kernel.ws.pojo.UpdateSecurityCommand;
+import org.kimios.kernel.ws.pojo.UpdateSecurityWithXmlCommand;
 import org.kimios.kernel.ws.pojo.User;
 import org.kimios.webservices.CoreService;
 import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.SecurityService;
 
 import javax.jws.WebService;
+import javax.ws.rs.core.Response;
+import java.util.ArrayList;
 import java.util.List;
 
 @WebService(targetNamespace = "http://kimios.org", serviceName = "SecurityService", name = "SecurityService")
@@ -47,17 +52,43 @@ public class SecurityServiceImpl extends CoreService implements SecurityService
         }
     }
 
-    public void updateDMEntitySecurities(String sessionId, long dmEntityId, String xmlStream, boolean isRecursive,
-                                         boolean appendMode)
+    public TaskInfo updateDMEntitySecurities(UpdateSecurityWithXmlCommand updateSecurityWithXmlCommand)
             throws DMServiceException
     {
         try {
-            Session session = getHelper().getSession(sessionId);
-            securityController.updateDMEntitySecurities(session, dmEntityId, xmlStream, isRecursive, appendMode);
+            Session session = getHelper().getSession(updateSecurityWithXmlCommand.getSessionId());
+            TaskInfo info =
+                    securityController.updateDMEntitySecurities(session,
+                            updateSecurityWithXmlCommand.getDmEntityId(),
+                            updateSecurityWithXmlCommand.getXmlStream(),
+                            updateSecurityWithXmlCommand.isRecursive(),
+                            updateSecurityWithXmlCommand.isAppendMode());
+            return info;
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }
     }
+
+    public TaskInfo updateDMEntitySecurities(UpdateSecurityCommand updateSecurityCommand)
+            throws DMServiceException
+    {
+        try {
+            Session session = getHelper().getSession(updateSecurityCommand.getSessionId());
+            List<org.kimios.kernel.security.model.DMEntitySecurity> items =
+                    new ArrayList<org.kimios.kernel.security.model.DMEntitySecurity>();
+            for(DMEntitySecurity pojo: updateSecurityCommand.getSecurities())
+                items.add(org.kimios.kernel.security.model.DMEntitySecurity.fromPojo(pojo));
+            TaskInfo info =
+                    securityController.updateDMEntitySecurities(session,
+                            updateSecurityCommand.getDmEntityId(), items,
+                            updateSecurityCommand.isRecursive(),
+                            updateSecurityCommand.isAppendMode());
+            return info;
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
+
     public DMEntitySecurity[] getDefaultDMEntitySecurities(String sessionId, String objectType) throws
             DMServiceException
     {
