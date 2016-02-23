@@ -65,5 +65,6 @@ public interface DMEntitySecurityFactory {
 
     public void createSecurityEntityRules(String secEntityName, String secEntitySource, int secEntityType);
 
+    public void deleteSecurityEntityRules(String secEntityName, String secEntitySource, int secEntityType);
 }
 

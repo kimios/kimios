@@ -15,8 +15,10 @@
  */
 package org.kimios.kernel.security.factory;
 
+import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.NonUniqueObjectException;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.type.LongType;
 import org.kimios.exceptions.ConfigException;
@@ -24,14 +26,17 @@ import org.kimios.kernel.dms.model.DMEntity;
 import org.kimios.kernel.dms.model.DMEntityImpl;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
-import org.kimios.kernel.security.*;
+import org.kimios.kernel.security.DMEntitySecurityFactory;
 import org.kimios.kernel.security.model.*;
-import org.kimios.kernel.user.model.AuthenticationSource;
 import org.kimios.kernel.user.FactoryInstantiator;
+import org.kimios.kernel.user.model.AuthenticationSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Vector;
 
 public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecurityFactory {
     final Logger log = LoggerFactory.getLogger(HDMEntitySecurityFactory.class);
@@ -244,6 +249,36 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
         }
     }
 
+    public void deleteSecurityEntityRules(String secEntityName, String secEntitySource, int secEntityType)
+            throws ConfigException, DataSourceException {
+
+        List<DMSecurityRule> secRules =  getSession().createCriteria(DMSecurityRule.class)
+                .add( Restrictions.eq( "securityEntityUid", secEntityName))
+                .add( Restrictions.eq( "securityEntitySource", secEntitySource))
+                .add( Restrictions.eq( "securityEntityType", secEntityType))
+                .list();
+        try {
+            for (DMSecurityRule secRule : secRules) {
+                this.deleteAclsForSecurityRule(secRule.getRuleHash());
+                getSession().delete(secRule);
+                getSession().flush();
+            }
+        } catch (HibernateException ex) {
+            throw new DataSourceException(ex);
+        }
+    }
+
+    public void deleteAclsForSecurityRule (String ruleHash)
+            throws ConfigException, DataSourceException {
+        try {
+            String deleteAclsQuery = "delete from DMEntityACL acl where acl.ruleHash = :ruleHash";
+
+            getSession().createQuery(deleteAclsQuery).setString("ruleHash", ruleHash).executeUpdate();
+            getSession().flush();
+        } catch (HibernateException ex) {
+            throw new DataSourceException(ex);
+        }
+    }
 
     public void addACLToDmEntity(SecurityEntity sec,
                                  DMEntityImpl a, short rule) {

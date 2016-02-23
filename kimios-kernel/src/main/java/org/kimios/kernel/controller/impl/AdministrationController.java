@@ -432,6 +432,9 @@ public class AdministrationController extends AKimiosController implements IAdmi
         {
             throw new AccessDeniedException();
         }
+        // clean user permissions
+        this.deleteUserPermissions(session, uid, authenticationSourceName);
+
         UserFactory f = authFactoryInstantiator.getAuthenticationSourceFactory()
                 .getAuthenticationSource(authenticationSourceName)
                 .getUserFactory();
@@ -877,6 +880,17 @@ public class AdministrationController extends AKimiosController implements IAdmi
             throw new AccessDeniedException();
         }
         return u;
+    }
+
+    public void deleteUserPermissions(Session session, String uid, String authenticationSourceName) throws AccessDeniedException, ConfigException, DataSourceException {
+        if (securityFactoryInstantiator.getRoleFactory()
+                .getRole(Role.ADMIN, session.getUserName(), session.getUserSource()) == null)
+        {
+            throw new AccessDeniedException();
+        }
+        User user = new User(uid, authenticationSourceName);
+        int entityType = user.getType();
+        securityFactoryInstantiator.getDMEntitySecurityFactory().deleteSecurityEntityRules(uid, authenticationSourceName, entityType);
     }
 }
 

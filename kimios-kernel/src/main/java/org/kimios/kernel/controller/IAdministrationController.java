@@ -302,4 +302,7 @@ public interface IAdministrationController
             String attributeValue)
             throws ConfigException, DataSourceException,
             AccessDeniedException;
+
+    public void deleteUserPermissions(Session session, String userId, String authenticationSourceName) throws AccessDeniedException,
+            ConfigException, DataSourceException;
 }
