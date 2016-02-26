@@ -351,5 +351,9 @@ public class GenericLDAPUserFactory extends GenericLDAPFactory implements UserFa
     public void addUserEmails(String uid, List<String> emails) {
         throw new NotImplementedException();
     }
+
+    public List<User> searchUsers(String searchText) {
+        return null;
+    }
 }
 

@@ -60,5 +60,7 @@ public interface UserFactory
             throws DataSourceException, ConfigException;
 
     public void addUserEmails(String uid, List<String> emails);
+
+    public List<User> searchUsers(String searchText);
 }
 

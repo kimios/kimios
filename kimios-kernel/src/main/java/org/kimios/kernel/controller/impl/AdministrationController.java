@@ -892,5 +892,14 @@ public class AdministrationController extends AKimiosController implements IAdmi
         int entityType = user.getType();
         securityFactoryInstantiator.getDMEntitySecurityFactory().deleteSecurityEntityRules(uid, authenticationSourceName, entityType);
     }
+
+    public Vector<User> searchUsers(Session session, String searchText) throws AccessDeniedException, ConfigException, DataSourceException {
+        Vector<User> users = new Vector<User>();
+        Vector<AuthenticationSource> authSources = authFactoryInstantiator.getAuthenticationSourceFactory().getAuthenticationSources();
+        for (AuthenticationSource authSource : authSources) {
+            users.addAll(authSource.getUserFactory().searchUsers(searchText));
+        }
+        return users;
+    }
 }
 

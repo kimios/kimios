@@ -18,11 +18,14 @@ package org.kimios.kernel.user.impl.factory.hibernate;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.user.impl.HAuthenticationSource;
-import org.kimios.kernel.user.model.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.kimios.kernel.user.model.AuthenticationSource;
+import org.kimios.kernel.user.model.Group;
+import org.kimios.kernel.user.model.User;
+import org.kimios.kernel.user.model.UserFactory;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
 
 public class HUserFactory implements UserFactory
 {
@@ -123,6 +126,10 @@ public class HUserFactory implements UserFactory
     @Override
     public void addUserEmails(String uid, List<String> emails) {
         internalUserFactory.addUserEmails(uid, this.auth.getName(), emails);
+    }
+
+    public List<User> searchUsers(String searchText) {
+        return internalUserFactory.searchUsers(searchText);
     }
 }
 

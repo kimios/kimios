@@ -305,4 +305,6 @@ public interface IAdministrationController
 
     public void deleteUserPermissions(Session session, String userId, String authenticationSourceName) throws AccessDeniedException,
             ConfigException, DataSourceException;
+
+    public Vector<User> searchUsers(Session session, String searchText) throws AccessDeniedException, ConfigException, DataSourceException;
 }

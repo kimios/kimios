@@ -189,5 +189,10 @@ public class Joomla15UserFactory implements UserFactory
     public void addUserEmails(String uid, List<String> emails) {
         throw new ConfigException("Not Implemented Yet");
     }
+
+    @Override
+    public List<User> searchUsers(String searchText) {
+        return null;
+    }
 }
 

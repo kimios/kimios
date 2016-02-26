@@ -16,13 +16,14 @@
 
 package org.kimios.kernel.user.impl.factory.hibernate;
 
-import org.hibernate.FetchMode;
 import org.hibernate.HibernateException;
+import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
+import org.kimios.kernel.index.query.model.Criteria;
 import org.kimios.kernel.security.FactoryInstantiator;
 import org.kimios.kernel.security.pwdgen.md5.MD5Generator;
 import org.kimios.kernel.user.model.AuthenticationSourceBean;
@@ -273,6 +274,23 @@ public class HInternalUserFactory extends HFactory {
             u.getEmails().clear();
             u.getEmails().addAll(emails);
             getSession().saveOrUpdate(u);
+        } catch (HibernateException he) {
+            throw new DataSourceException(he);
+        }
+    }
+
+    public List<User> searchUsers(String searchText)
+            throws DataSourceException, ConfigException {
+        String searchPattern = "%" + searchText + "%";
+        try {
+            List<User> list = (List<User>) getSession()
+                    .createCriteria(User.class)
+                    .add(Restrictions.disjunction())
+                    .add(Restrictions.like("name", searchPattern).ignoreCase())
+                    .add(Restrictions.like("firstName", searchPattern).ignoreCase())
+                    .add(Restrictions.like("mail", searchPattern).ignoreCase())
+                    .list();
+            return list;
         } catch (HibernateException he) {
             throw new DataSourceException(he);
         }
