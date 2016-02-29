@@ -285,11 +285,12 @@ public class HInternalUserFactory extends HFactory {
         try {
             List<User> list = (List<User>) getSession()
                     .createCriteria(User.class)
-                    .add(Restrictions.disjunction())
-                    .add(Restrictions.like("name", searchPattern).ignoreCase())
-                    .add(Restrictions.like("firstName", searchPattern).ignoreCase())
-                    .add(Restrictions.like("mail", searchPattern).ignoreCase())
+                    .add(Restrictions.disjunction()
+                            .add(Restrictions.like("name", searchPattern).ignoreCase())
+                            .add(Restrictions.like("firstName", searchPattern).ignoreCase())
+                            .add(Restrictions.like("mail", searchPattern).ignoreCase()))
                     .list();
+
             return list;
         } catch (HibernateException he) {
             throw new DataSourceException(he);
