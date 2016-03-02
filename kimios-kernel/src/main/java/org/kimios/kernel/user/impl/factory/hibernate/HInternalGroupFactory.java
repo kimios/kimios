@@ -24,7 +24,6 @@ import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
 import org.kimios.kernel.user.model.Group;
-import org.kimios.kernel.user.model.GroupFactory;
 import org.kimios.kernel.user.model.User;
 
 import java.util.List;
@@ -110,6 +109,23 @@ public class HInternalGroupFactory extends HFactory {
             getSession().update(group);
         } catch (HibernateException e) {
             throw new DataSourceException(e, e.getMessage());
+        }
+    }
+
+    public List<Group> searchGroups(String searchText)
+            throws DataSourceException, ConfigException {
+        String searchPattern = "%" + searchText + "%";
+        try {
+            List<Group> list = (List<Group>) getSession()
+                    .createCriteria(Group.class)
+                    .add(Restrictions.disjunction()
+                            .add(Restrictions.like("name", searchPattern).ignoreCase())
+                            .add(Restrictions.like("gid", searchPattern).ignoreCase()))
+                    .list();
+
+            return list;
+        } catch (HibernateException he) {
+            throw new DataSourceException(he);
         }
     }
 }

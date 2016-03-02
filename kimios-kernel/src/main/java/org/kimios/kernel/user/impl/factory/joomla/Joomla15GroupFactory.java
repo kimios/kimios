@@ -24,6 +24,7 @@ import org.kimios.kernel.user.impl.AuthenticationSourceJoomla15;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Vector;
 
 //NB : Joomla 1.5 : database field for id group = id 
@@ -44,6 +45,10 @@ public class Joomla15GroupFactory implements GroupFactory
     public void deleteGroup(Group group) throws DataSourceException, ConfigException
     {
 
+    }
+
+    public List<Group> searchGroups(String searchText) throws DataSourceException, ConfigException {
+        return null;
     }
 
     public Group getGroup(String gid) throws DataSourceException, ConfigException

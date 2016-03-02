@@ -15,6 +15,7 @@
  */
 package org.kimios.kernel.controller.impl;
 
+import org.apache.commons.lang.StringUtils;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.IAdministrationController;
@@ -25,6 +26,8 @@ import org.kimios.api.events.annotations.DmsEventOccur;
 import org.kimios.kernel.exception.AccessDeniedException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.security.model.Role;
+import org.kimios.kernel.security.model.SecurityEntity;
+import org.kimios.kernel.security.model.SecurityEntityType;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.security.SessionManager;
 import org.kimios.kernel.user.model.*;
@@ -893,13 +896,34 @@ public class AdministrationController extends AKimiosController implements IAdmi
         securityFactoryInstantiator.getDMEntitySecurityFactory().deleteSecurityEntityRules(uid, authenticationSourceName, entityType);
     }
 
-    public Vector<User> searchUsers(Session session, String searchText) throws AccessDeniedException, ConfigException, DataSourceException {
-        Vector<User> users = new Vector<User>();
-        Vector<AuthenticationSource> authSources = authFactoryInstantiator.getAuthenticationSourceFactory().getAuthenticationSources();
-        for (AuthenticationSource authSource : authSources) {
-            users.addAll(authSource.getUserFactory().searchUsers(searchText));
+    public List<SecurityEntity> searchSecurityEntities(Session session, String searchText, String sourceName, int securityEntityType) throws AccessDeniedException, ConfigException, DataSourceException {
+        List<SecurityEntity> securityEntities = new ArrayList<SecurityEntity>();
+        // users
+        if (StringUtils.isNotBlank(sourceName)) {
+            securityEntities.addAll(this.searchSecurityEntitiesFromAuthenticationSource(searchText, this.getAuthenticationSource(session, sourceName), securityEntityType));
+        } else {
+            Vector<AuthenticationSource> authSources = authFactoryInstantiator.getAuthenticationSourceFactory().getAuthenticationSources();
+            for (AuthenticationSource authSource : authSources) {
+                securityEntities.addAll(this.searchSecurityEntitiesFromAuthenticationSource(searchText, authSource, securityEntityType));
+            }
         }
-        return users;
+        return securityEntities;
+    }
+
+    private List<SecurityEntity> searchSecurityEntitiesFromAuthenticationSource(String searchText, AuthenticationSource authSource, int securityEntityType) {
+        List<SecurityEntity> securityEntities = new ArrayList<SecurityEntity>();
+        switch (securityEntityType) {
+            case SecurityEntityType.USER:
+                securityEntities.addAll(authSource.getUserFactory().searchUsers(searchText));
+                break;
+            case SecurityEntityType.GROUP:
+                securityEntities.addAll(authSource.getGroupFactory().searchGroups(searchText));
+                break;
+            default:
+                securityEntities.addAll(authSource.getUserFactory().searchUsers(searchText));
+                securityEntities.addAll(authSource.getGroupFactory().searchGroups(searchText));
+        }
+        return securityEntities;
     }
 }
 

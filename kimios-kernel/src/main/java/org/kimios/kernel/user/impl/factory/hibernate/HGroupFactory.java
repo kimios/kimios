@@ -22,6 +22,7 @@ import org.kimios.kernel.user.model.AuthenticationSource;
 import org.kimios.kernel.user.model.Group;
 import org.kimios.kernel.user.model.GroupFactory;
 
+import java.util.List;
 import java.util.Vector;
 
 public class HGroupFactory implements GroupFactory
@@ -45,6 +46,10 @@ public class HGroupFactory implements GroupFactory
             ConfigException
     {
         internalGroupFactory.deleteGroup(group, internalUserFactory);
+    }
+
+    public List<Group> searchGroups(String searchText) throws DataSourceException, ConfigException {
+        return internalGroupFactory.searchGroups(searchText);
     }
 
     public Group getGroup(String gid) throws DataSourceException,

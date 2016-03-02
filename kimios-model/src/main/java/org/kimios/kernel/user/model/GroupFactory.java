@@ -18,6 +18,7 @@ package org.kimios.kernel.user.model;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.exception.DataSourceException;
 
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -38,5 +39,7 @@ public interface GroupFactory
     public void updateGroup(Group group) throws DataSourceException, ConfigException;
 
     public void deleteGroup(Group group) throws DataSourceException, ConfigException;
+
+    public List<Group> searchGroups(String searchText) throws DataSourceException, ConfigException;
 }
 

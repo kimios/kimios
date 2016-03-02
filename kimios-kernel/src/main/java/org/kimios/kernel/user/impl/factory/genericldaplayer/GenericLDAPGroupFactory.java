@@ -223,6 +223,10 @@ public class GenericLDAPGroupFactory extends GenericLDAPFactory implements Group
     {
     }
 
+    public List<Group> searchGroups(String searchText) throws DataSourceException, ConfigException {
+        return null;
+    }
+
     public void saveGroup(Group group) throws DataSourceException, ConfigException
     {
     }

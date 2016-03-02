@@ -22,6 +22,7 @@ import org.kimios.api.events.annotations.DmsEventName;
 import org.kimios.kernel.exception.AccessDeniedException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.security.model.Role;
+import org.kimios.kernel.security.model.SecurityEntity;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.user.model.AuthenticationSource;
 import org.kimios.kernel.user.model.Group;
@@ -306,5 +307,5 @@ public interface IAdministrationController
     public void deleteUserPermissions(Session session, String userId, String authenticationSourceName) throws AccessDeniedException,
             ConfigException, DataSourceException;
 
-    public Vector<User> searchUsers(Session session, String searchText) throws AccessDeniedException, ConfigException, DataSourceException;
+    public List<SecurityEntity> searchSecurityEntities(Session session, String searchText, String sourceName, int securityEntityType) throws AccessDeniedException, ConfigException, DataSourceException;
 }
