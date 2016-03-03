@@ -286,6 +286,7 @@ public class HInternalUserFactory extends HFactory {
             List<User> list = (List<User>) getSession()
                     .createCriteria(User.class)
                     .add(Restrictions.disjunction()
+                            .add(Restrictions.like("uid", searchPattern).ignoreCase())
                             .add(Restrictions.like("name", searchPattern).ignoreCase())
                             .add(Restrictions.like("firstName", searchPattern).ignoreCase())
                             .add(Restrictions.like("mail", searchPattern).ignoreCase()))
