@@ -61,6 +61,6 @@ public interface UserFactory
 
     public void addUserEmails(String uid, List<String> emails);
 
-    public List<User> searchUsers(String searchText);
+    public List<User> searchUsers(String searchText, String sourceName);
 }
 

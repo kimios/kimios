@@ -54,9 +54,19 @@ public class SecurityControllerWeb extends Controller {
     }
 
     if (action.equalsIgnoreCase("getUsers")) {
-      String source = parameters.get("sourceUid");
-      res = securityController.getUsers(sessionUid, source);
+        String source = parameters.get("sourceUid");
+        res = securityController.getUsers(sessionUid, source);
     }
+      if (action.equalsIgnoreCase("search-entities")) {
+          String source = parameters.get("sourceUid");
+          String typeParam = parameters.get("type");
+          int entityType = 0;
+          if (typeParam != null) {
+              entityType = Integer.parseInt(typeParam);
+          }
+          String searchText = parameters.get("searchText");
+          res = securityController.searchSecurityEntities(sessionUid, searchText, source, entityType);
+      }
     if (action.equalsIgnoreCase("getGroups")) {
       String source = parameters.get("sourceUid");
       res = securityController.getGroups(sessionUid, source);

@@ -147,6 +147,19 @@ public class SecurityController
     }
 
     /**
+     * Search users and groups
+     */
+    public SecurityEntity[] searchSecurityEntities( String sessionId, String searchText, String source, int entityType )
+            throws Exception, AccessDeniedException, DMSException {
+        try {
+            return client.searchSecurityEntities(sessionId, searchText, source, entityType);
+        }
+        catch ( Exception e ) {
+            throw new ExceptionHelper().convertException( e );
+        }
+    }
+
+    /**
      * Get group for a given authentication source and a given gid
      */
     public Group[] getGroups( String sessionId, String source )

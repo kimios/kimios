@@ -47,7 +47,7 @@ public class Joomla15GroupFactory implements GroupFactory
 
     }
 
-    public List<Group> searchGroups(String searchText) throws DataSourceException, ConfigException {
+    public List<Group> searchGroups(String searchText, String sourceName) throws DataSourceException, ConfigException {
         return null;
     }
 

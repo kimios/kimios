@@ -191,7 +191,7 @@ public class Joomla15UserFactory implements UserFactory
     }
 
     @Override
-    public List<User> searchUsers(String searchText) {
+    public List<User> searchUsers(String searchText, String sourceName) {
         return null;
     }
 }

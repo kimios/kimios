@@ -352,7 +352,7 @@ public class GenericLDAPUserFactory extends GenericLDAPFactory implements UserFa
         throw new NotImplementedException();
     }
 
-    public List<User> searchUsers(String searchText) {
+    public List<User> searchUsers(String searchText, String sourceName) {
         return null;
     }
 }

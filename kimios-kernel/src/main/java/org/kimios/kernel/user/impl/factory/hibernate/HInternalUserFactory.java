@@ -112,6 +112,7 @@ public class HInternalUserFactory extends HFactory {
             User u = (User) getSession()
                     .createCriteria(User.class)
                     .add(Restrictions.eq("uid", user.getUid()).ignoreCase())
+                    .add(Restrictions.eq("authenticationSourceName", user.getAuthenticationSourceName()))
                     .uniqueResult();
             getSession().delete(u);
         } catch (HibernateException e) {
@@ -279,12 +280,14 @@ public class HInternalUserFactory extends HFactory {
         }
     }
 
-    public List<User> searchUsers(String searchText)
+    public List<User> searchUsers(String searchText, String sourceName)
             throws DataSourceException, ConfigException {
+        List<User> initializedUsers = new ArrayList<User>();
         String searchPattern = "%" + searchText + "%";
         try {
             List<User> list = (List<User>) getSession()
                     .createCriteria(User.class)
+                    .add(Restrictions.eq("authenticationSourceName", sourceName))
                     .add(Restrictions.disjunction()
                             .add(Restrictions.like("uid", searchPattern).ignoreCase())
                             .add(Restrictions.like("name", searchPattern).ignoreCase())
@@ -292,7 +295,12 @@ public class HInternalUserFactory extends HFactory {
                             .add(Restrictions.like("mail", searchPattern).ignoreCase()))
                     .list();
 
-            return list;
+            for (User u : list) {
+                initializeAndUnproxy(u.getEmails());
+                initializedUsers.add(u);
+            }
+
+            return initializedUsers;
         } catch (HibernateException he) {
             throw new DataSourceException(he);
         }

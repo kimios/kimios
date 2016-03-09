@@ -112,12 +112,13 @@ public class HInternalGroupFactory extends HFactory {
         }
     }
 
-    public List<Group> searchGroups(String searchText)
+    public List<Group> searchGroups(String searchText, String sourceName)
             throws DataSourceException, ConfigException {
         String searchPattern = "%" + searchText + "%";
         try {
             List<Group> list = (List<Group>) getSession()
                     .createCriteria(Group.class)
+                    .add(Restrictions.eq("authenticationSourceName", sourceName))
                     .add(Restrictions.disjunction()
                             .add(Restrictions.like("name", searchPattern).ignoreCase())
                             .add(Restrictions.like("gid", searchPattern).ignoreCase()))

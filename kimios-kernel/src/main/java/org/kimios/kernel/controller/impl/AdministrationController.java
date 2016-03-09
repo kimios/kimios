@@ -40,7 +40,7 @@ import java.util.*;
  * 
  *  Administration Controller  :
  *  
- *    - Here are all of the aministration functionnalities (domain management, user and group, roles)
+ *    - Here are all of the administration functionnalities (domain management, user and group, roles)
  * 
  */
 @Transactional
@@ -896,11 +896,13 @@ public class AdministrationController extends AKimiosController implements IAdmi
         securityFactoryInstantiator.getDMEntitySecurityFactory().deleteSecurityEntityRules(uid, authenticationSourceName, entityType);
     }
 
-    public List<SecurityEntity> searchSecurityEntities(Session session, String searchText, String sourceName, int securityEntityType) throws AccessDeniedException, ConfigException, DataSourceException {
+    public List<SecurityEntity> searchSecurityEntities(String searchText, String sourceName, int securityEntityType) throws AccessDeniedException, ConfigException, DataSourceException {
         List<SecurityEntity> securityEntities = new ArrayList<SecurityEntity>();
         // users
         if (StringUtils.isNotBlank(sourceName)) {
-            securityEntities.addAll(this.searchSecurityEntitiesFromAuthenticationSource(searchText, this.getAuthenticationSource(session, sourceName), securityEntityType));
+            AuthenticationSource authSource = authFactoryInstantiator.getAuthenticationSourceFactory()
+                    .getAuthenticationSource(sourceName);
+            securityEntities.addAll(this.searchSecurityEntitiesFromAuthenticationSource(searchText, authSource, securityEntityType));
         } else {
             Vector<AuthenticationSource> authSources = authFactoryInstantiator.getAuthenticationSourceFactory().getAuthenticationSources();
             for (AuthenticationSource authSource : authSources) {
@@ -914,14 +916,14 @@ public class AdministrationController extends AKimiosController implements IAdmi
         List<SecurityEntity> securityEntities = new ArrayList<SecurityEntity>();
         switch (securityEntityType) {
             case SecurityEntityType.USER:
-                securityEntities.addAll(authSource.getUserFactory().searchUsers(searchText));
+                securityEntities.addAll(authSource.getUserFactory().searchUsers(searchText, authSource.getName()));
                 break;
             case SecurityEntityType.GROUP:
-                securityEntities.addAll(authSource.getGroupFactory().searchGroups(searchText));
+                securityEntities.addAll(authSource.getGroupFactory().searchGroups(searchText, authSource.getName()));
                 break;
             default:
-                securityEntities.addAll(authSource.getUserFactory().searchUsers(searchText));
-                securityEntities.addAll(authSource.getGroupFactory().searchGroups(searchText));
+                securityEntities.addAll(authSource.getUserFactory().searchUsers(searchText, authSource.getName()));
+                securityEntities.addAll(authSource.getGroupFactory().searchGroups(searchText, authSource.getName()));
         }
         return securityEntities;
     }

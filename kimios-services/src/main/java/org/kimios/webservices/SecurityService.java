@@ -171,6 +171,15 @@ public interface SecurityService
             throws DMServiceException;
 
     @GET @ApiOperation(value ="")
+    @Path("/search-entities")
+    @Produces("application/json")
+    public SecurityEntity[] searchSecurityEntities(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+                                                   @QueryParam(value = "searchText") @WebParam(name = "searchText") String searchText,
+                                                   @QueryParam(value = "userSource") @WebParam(name = "userSource") String userSource,
+                                                   @QueryParam(value = "entType") @WebParam(name = "entType") int securityEntityType)
+            throws DMServiceException;
+
+    @GET @ApiOperation(value ="")
     @Path("/getGroup")
     @Produces("application/json")
     public Group getGroup(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,

@@ -24,5 +24,7 @@ public interface SecurityEntity
     public String getAuthenticationSourceName();
 
     public String getName();
+
+    public org.kimios.kernel.ws.pojo.SecurityEntity toPojo();
 }
 

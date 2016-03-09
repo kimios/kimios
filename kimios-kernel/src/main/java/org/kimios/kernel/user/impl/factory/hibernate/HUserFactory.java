@@ -128,8 +128,8 @@ public class HUserFactory implements UserFactory
         internalUserFactory.addUserEmails(uid, this.auth.getName(), emails);
     }
 
-    public List<User> searchUsers(String searchText) {
-        return internalUserFactory.searchUsers(searchText);
+    public List<User> searchUsers(String searchText, String sourceName) {
+        return internalUserFactory.searchUsers(searchText, sourceName);
     }
 }
 

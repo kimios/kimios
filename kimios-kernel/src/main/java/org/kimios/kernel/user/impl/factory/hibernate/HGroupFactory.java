@@ -48,8 +48,8 @@ public class HGroupFactory implements GroupFactory
         internalGroupFactory.deleteGroup(group, internalUserFactory);
     }
 
-    public List<Group> searchGroups(String searchText) throws DataSourceException, ConfigException {
-        return internalGroupFactory.searchGroups(searchText);
+    public List<Group> searchGroups(String searchText, String sourceName) throws DataSourceException, ConfigException {
+        return internalGroupFactory.searchGroups(searchText, sourceName);
     }
 
     public Group getGroup(String gid) throws DataSourceException,

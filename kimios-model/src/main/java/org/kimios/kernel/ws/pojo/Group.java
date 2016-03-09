@@ -15,7 +15,9 @@
  */
 package org.kimios.kernel.ws.pojo;
 
-public class Group
+import org.kimios.kernel.security.model.*;
+
+public class Group extends SecurityEntity
 {
     private String gid;
 

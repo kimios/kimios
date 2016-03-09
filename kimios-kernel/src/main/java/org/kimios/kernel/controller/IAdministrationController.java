@@ -307,5 +307,5 @@ public interface IAdministrationController
     public void deleteUserPermissions(Session session, String userId, String authenticationSourceName) throws AccessDeniedException,
             ConfigException, DataSourceException;
 
-    public List<SecurityEntity> searchSecurityEntities(Session session, String searchText, String sourceName, int securityEntityType) throws AccessDeniedException, ConfigException, DataSourceException;
+    public List<SecurityEntity> searchSecurityEntities(String searchText, String sourceName, int securityEntityType) throws AccessDeniedException, ConfigException, DataSourceException;
 }

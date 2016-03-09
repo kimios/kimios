@@ -19,16 +19,12 @@ import org.kimios.kernel.jobs.model.TaskInfo;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.user.model.AuthenticationSource;
 import org.kimios.kernel.user.model.Group;
-import org.kimios.kernel.ws.pojo.DMEntitySecurity;
-import org.kimios.kernel.ws.pojo.UpdateSecurityCommand;
-import org.kimios.kernel.ws.pojo.UpdateSecurityWithXmlCommand;
-import org.kimios.kernel.ws.pojo.User;
+import org.kimios.kernel.ws.pojo.*;
 import org.kimios.webservices.CoreService;
-import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.SecurityService;
+import org.kimios.webservices.exceptions.DMServiceException;
 
 import javax.jws.WebService;
-import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -240,6 +236,22 @@ public class SecurityServiceImpl extends CoreService implements SecurityService
 
             List<org.kimios.kernel.user.model.User> v = securityController.getUsers(userSource);
             User[] r = new User[v.size()];
+            for (int i = 0; i < v.size(); i++) {
+                r[i] = v.get(i).toPojo();
+            }
+
+            return r;
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
+
+    public SecurityEntity[] searchSecurityEntities(String sessionId, String searchText, String userSource, int securityEntityType) throws DMServiceException {
+        try {
+            getHelper().getSession(sessionId);
+
+            List<org.kimios.kernel.security.model.SecurityEntity> v = this.administrationController.searchSecurityEntities(searchText, userSource, securityEntityType);
+            org.kimios.kernel.ws.pojo.SecurityEntity[] r = new org.kimios.kernel.ws.pojo.SecurityEntity[v.size()];
             for (int i = 0; i < v.size(); i++) {
                 r[i] = v.get(i).toPojo();
             }

@@ -19,7 +19,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class User
+public class User extends SecurityEntity
 {
     private String uid;
 

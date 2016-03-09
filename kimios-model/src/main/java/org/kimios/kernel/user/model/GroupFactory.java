@@ -40,6 +40,6 @@ public interface GroupFactory
 
     public void deleteGroup(Group group) throws DataSourceException, ConfigException;
 
-    public List<Group> searchGroups(String searchText) throws DataSourceException, ConfigException;
+    public List<Group> searchGroups(String searchText, String sourceName) throws DataSourceException, ConfigException;
 }
 
