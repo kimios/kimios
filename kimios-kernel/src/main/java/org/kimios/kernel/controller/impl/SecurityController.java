@@ -276,6 +276,7 @@ public class SecurityController extends AKimiosController implements ISecurityCo
                     }
                     ThreadManager.getInstance()
                             .startJob(session, new ACLUpdateJob(aclUpdater, session, entity, newSubmittedSecurities, removedAcls, appendMode));
+                    info.setTaskResultType(TaskDurationType.FUTURE_RESULT);
                 } else {
                     fact.cleanACL(entity);
                     List<DMEntityACL> nAcls = new ArrayList<DMEntityACL>();

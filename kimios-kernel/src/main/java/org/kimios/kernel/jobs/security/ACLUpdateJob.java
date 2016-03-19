@@ -56,7 +56,6 @@ public class ACLUpdateJob extends JobImpl<List<DMEntityACL>> {
         log.debug("Starting ACL Recursive Mode Update job execution for entity {}", dmEntity.getPath());
         List<DMEntityACL> acls = null;
         acls = updater.updateAclsRecursiveMode(getUserSession(), securities, dmEntity, appendMode, removedAcls);
-        EventContext.addParameter("acls", acls);
         log.debug("Ending job execution");
         return acls;
     }

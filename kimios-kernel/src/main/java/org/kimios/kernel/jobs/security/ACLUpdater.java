@@ -19,6 +19,7 @@ import org.kimios.kernel.dms.model.DMEntity;
 import org.kimios.kernel.dms.FactoryInstantiator;
 import org.kimios.api.events.annotations.DmsEvent;
 import org.kimios.api.events.annotations.DmsEventName;
+import org.kimios.kernel.events.model.EventContext;
 import org.kimios.kernel.hibernate.HFactory;
 import org.kimios.kernel.security.*;
 import org.kimios.kernel.security.model.DMEntityACL;
@@ -106,7 +107,7 @@ public class ACLUpdater implements IACLUpdater {
 
         }
 
-
+        EventContext.addParameter("acls", listAclToIndex);
         return listAclToIndex;
     }
 }
