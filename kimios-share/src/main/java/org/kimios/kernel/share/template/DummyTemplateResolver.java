@@ -31,8 +31,6 @@ public class DummyTemplateResolver implements IResourceResolver {
 
     private static Logger logger = LoggerFactory.getLogger(DummyTemplateResolver.class);
 
-
-
     @Override
     public String getName() {
         return DummyTemplateResolver.class.getName();

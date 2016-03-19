@@ -24,6 +24,7 @@ import org.kimios.utils.spring.ApplicationContextProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -74,18 +75,36 @@ public class EventHandlerManager extends ExtensionRegistry<GenericEventHandler> 
         return handlers;
     }
 
+
+    private List<Class<?>> instantiatedHandlers = new ArrayList<Class<?>>();
+
     @Override
     protected void handleAdd(Class<? extends GenericEventHandler> classz) {
         try {
-            log.debug("creating event handler " + classz);
-            GenericEventHandler handler = classz.newInstance();
-            if(handlers == null || handlers.isEmpty()){
-                handlers = new ArrayList<GenericEventHandler>();
-                handlers.add(new ActionLogger());
-                handlers.add(new WorkflowMailer());
+            if(this.instantiatedHandlers == null) this.instantiatedHandlers = new ArrayList<Class<?>>();
+            if(!this.instantiatedHandlers.contains(classz)){
+                Constructor<?>[] constructors = classz.getDeclaredConstructors();
+                boolean hasDefaultConstructor = false;
+                for(Constructor c: constructors){
+                    if(c.getParameterTypes().length == 0){
+                        hasDefaultConstructor = true;
+                        break;
+                    }
+                }
+                if(!hasDefaultConstructor){
+                    log.warn("can't build {}, cause it has no default constructor.", classz);
+                    return;
+                }
+                GenericEventHandler handler = classz.newInstance();
+                if(handlers == null || handlers.isEmpty()){
+                    handlers = new ArrayList<GenericEventHandler>();
+                    handlers.add(new ActionLogger());
+                    handlers.add(new WorkflowMailer());
+                }
+                handlers.add(handler);
+                log.info("instantiated event handler {}", classz);
+                instantiatedHandlers.add(handler.getClass());
             }
-            handlers.add(handler);
-            log.info("instantiating event handler", classz);
         } catch (Exception e) {
             log.error("error while adding event handler " + classz, e);
         }
@@ -123,12 +142,31 @@ public class EventHandlerManager extends ExtensionRegistry<GenericEventHandler> 
 
             Map<String, GenericEventHandler> springInstantiatedHandlers =
                     ApplicationContextProvider.loadBeans(GenericEventHandler.class);
+            if(log.isDebugEnabled()){
+                log.debug("spring instantiated event handlers: {} ", springInstantiatedHandlers);
+            }
             for (GenericEventHandler manager : springInstantiatedHandlers.values()) {
-                log.info("Adding event handler " + manager.getClass().getName());
+                log.info("adding event handler from spring context: " + manager.getClass().getName());
+                /*
+                    Replace with sring instantiated one (if duplicate)...
+                 */
+                GenericEventHandler toreplace = null;
+                for(GenericEventHandler h: handlers){
+                    log.debug("checking class {} againt {}", h, manager);
+                    if(h.getClass().equals(manager.getClass())){
+                        toreplace = h;
+                        log.debug("should replace !!");
+                        break;
+                    }
+                }
+                if(toreplace != null){
+                    boolean removed = handlers.remove(toreplace);
+                    log.debug("removing {} , result: {}", toreplace, removed);
+                }
                 handlers.add(manager);
             }
         } catch (Exception ex){
-            log.info("not spring enabled");
+            log.info("kimios isn't running on spring.");
         }
 
         try {

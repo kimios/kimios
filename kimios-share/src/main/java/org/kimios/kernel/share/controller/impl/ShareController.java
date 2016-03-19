@@ -27,6 +27,7 @@ import org.kimios.kernel.share.factory.ShareFactory;
 import org.kimios.kernel.share.model.Share;
 import org.kimios.kernel.share.model.ShareStatus;
 import org.kimios.kernel.share.model.ShareType;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -34,6 +35,7 @@ import java.util.List;
 /**
  * Created by farf on 15/02/16.
  */
+@Transactional
 public class ShareController extends AKimiosController implements IShareController {
 
     private ShareFactory shareFactory;

@@ -36,7 +36,6 @@ public class SessionEndHandler extends GenericEventHandler
 
     private static Logger logger = LoggerFactory.getLogger(SessionEndHandler.class);
 
-
     private SearchRequestFactory requestFactory;
 
     public SessionEndHandler(SearchRequestFactory factory){

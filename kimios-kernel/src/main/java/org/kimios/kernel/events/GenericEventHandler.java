@@ -59,8 +59,11 @@ public abstract class GenericEventHandler implements org.kimios.api.EventHandler
 
                         if (nameList.contains(nCurrent) && st.when().equals(_when)) {
 
-                            logger.trace(" will call " + it.getName() + " on " + this.getClass().getName() + " with "
-                                    + ctx + " ( " + ctx.getEntity() + ") on event " + nCurrent.name() + ". accepted ? " + nameList.contains(nCurrent) + " / " + _when.name());
+                            if(logger.isTraceEnabled()){
+                                logger.trace(" will call " + it.getName() + " on " + this.getClass().getName() + " with "
+                                        + ctx + " ( " + ctx.getEntity() + ") on event " + nCurrent.name() + ". accepted ? " + nameList.contains(nCurrent) + " / " + _when.name());
+                            }
+
                             /*
                             *  Generate the before context
                             */

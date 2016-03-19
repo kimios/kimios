@@ -32,10 +32,6 @@ public class MailTaskRunnable implements Runnable {
     private Email email;
 
     public MailTaskRunnable(Email email) {
-
-
-
-
         this.email = email;
     }
 

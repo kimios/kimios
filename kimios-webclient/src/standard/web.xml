@@ -71,6 +71,14 @@
         <servlet-name>Converter</servlet-name>
         <servlet-class>org.kimios.controller.ConverterServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>__admininternal</servlet-name>
+        <jsp-file>/index.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>__admininternal</servlet-name>
+        <url-pattern>/__admininternal</url-pattern>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Main</servlet-name>
         <url-pattern>/Main</url-pattern>

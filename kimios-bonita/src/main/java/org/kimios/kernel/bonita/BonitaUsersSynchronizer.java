@@ -53,8 +53,7 @@ public class BonitaUsersSynchronizer implements IBonitaUsersSynchronizer {
 
             if(!bonitaCfg.isBonitaEnabled()){
                 log.error("Bonita Link is Disabled. Sync job is now disabled until next Kimios restart.");
-                throw new Exception("BonitaDisabled");
-
+                return;
             }
 
             bonitaCfg.init();

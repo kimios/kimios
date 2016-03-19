@@ -17,7 +17,6 @@
 package org.kimios.kernel.index.solr;
 
 import org.kimios.kernel.dms.*;
-import org.kimios.kernel.dms.hibernate.HDMEntityFactory;
 import org.kimios.kernel.dms.model.*;
 import org.kimios.kernel.events.model.EventContext;
 import org.kimios.kernel.events.GenericEventHandler;
@@ -54,6 +53,9 @@ public class SolrIndexer extends GenericEventHandler
     public void setIndexManager(AbstractIndexManager indexManager)
     {
         this.indexManager = indexManager;
+        if(log.isDebugEnabled()){
+            log.debug("Index Manager Instance : {}", indexManager);
+        }
     }
 
     @DmsEvent(eventName = { DmsEventName.DOCUMENT_UPDATE }, when = DmsEventOccur.AFTER)
@@ -72,7 +74,7 @@ public class SolrIndexer extends GenericEventHandler
     @DmsEvent(eventName = { DmsEventName.DOCUMENT_COPY }, when = DmsEventOccur.AFTER)
     public void documentCopy(Object[] obj, Object retour, EventContext ctx) throws Exception
     {
-        log.debug("Indexing document on copy: " + (Long) obj[1]);
+        log.debug("indexing document on copy: " + (Long) obj[1]);
         Document doc = (Document)EventContext.getParameters().get("document");
         try {
             indexManager.indexDocument(doc);
@@ -84,7 +86,7 @@ public class SolrIndexer extends GenericEventHandler
     @DmsEvent(eventName = { DmsEventName.DOCUMENT_VERSION_UPDATE }, when = DmsEventOccur.AFTER)
     public void documentVersionUpdate(Object[] obj, Object retour, EventContext ctx) throws Exception
     {
-        log.debug("Indexing version update: " + (Long) obj[1]);
+        log.debug("indexing version update: " + (Long) obj[1]);
         Document doc = FactoryInstantiator.getInstance()
                 .getDocumentFactory().getDocument((Long) obj[1]);
         try {
@@ -97,10 +99,7 @@ public class SolrIndexer extends GenericEventHandler
     @DmsEvent(eventName = { DmsEventName.FILE_UPLOAD }, when = DmsEventOccur.AFTER)
     public void documentVersionUpdateUpload(Object[] obj, Object retour, EventContext ctx) throws Exception
     {
-
-        log.info("Inside Solr Indexer");
         DMEntity doc = ctx.getEntity();
-        log.info("doc " + doc);
         if(doc == null || !(doc instanceof Document)){
             /*
                 Check inside parameters
@@ -115,7 +114,9 @@ public class SolrIndexer extends GenericEventHandler
             }
 
         }
-
+        if(log.isDebugEnabled()){
+            log.info("give document {} to {} on FILE_UPLOAD", doc, indexManager);
+        }
         try {
             indexManager.indexDocument(doc);
         } catch (Exception e) {
@@ -163,11 +164,11 @@ public class SolrIndexer extends GenericEventHandler
     public void updateAcl(Object[] obj, Object retour, EventContext ctx)
     {
         try {
-            log.debug("Starting Launching index acl update process " + Thread.currentThread().getName());
+            log.debug("starting Launching index acl update process " + Thread.currentThread().getName());
             List<DMEntityACL> acls = (List<DMEntityACL>) EventContext.getParameters().get("acls");
             if (acls == null && retour instanceof TaskInfo) {
                 TaskInfo info = (TaskInfo)retour;
-                acls = (List<DMEntityACL>) ((TaskInfo) retour).getResults().get("acls");
+                acls = (List<DMEntityACL>) info.getResults().get("acls");
             }
             if (acls == null || acls.size() == 0) {
                 log.debug("No datas for acl update " + Thread.currentThread().getName());
