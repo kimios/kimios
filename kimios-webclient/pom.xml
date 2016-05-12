@@ -301,12 +301,6 @@
                         <phase>package</phase>
                         <configuration>
                             <webXml>src/standard/web.xml</webXml>
-                            <webResources>
-                                <resource>
-                                    <directory>src/client-profile/standard</directory>
-                                    <targetPath />
-                                </resource>
-                            </webResources>
                             <!--
                                       Exclude JCL and LOG4J since all logging should go through SLF4J.
                                       Note that we're excluding log4j-<version>.jar but keeping
@@ -335,16 +329,8 @@
                         <phase>package</phase>
                         <configuration>
                             <classifier>osgi</classifier>
-
                             <webappDirectory>${project.build.directory}/${project.build.finalName}-osgi</webappDirectory>
-                            <webResources>
-                                <resource>
-                                    <directory>src/client-profile/standard</directory>
-                                    <targetPath />
-                                </resource>
-                            </webResources>
                             <webXml>src/osgi/WEB-INF/web.xml</webXml>
-
                             <packagingExcludes>
                                 WEB-INF/lib/commons-logging-*.jar,
                                 WEB-INF/lib/cxf-*.jar,
