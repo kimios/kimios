@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Kimios - Document Management System Software
+  ~ Copyright (C) 2008-2016  DevLib'
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 2 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ aong with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>kimios-osgi-packages</artifactId>
+        <groupId>org.kimios</groupId>
+        <version>1.1-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>kimios-fabric8</artifactId>
+    <packaging>jar</packaging>
+
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <version.maven-bundle-plugin>2.3.7</version.maven-bundle-plugin>
+
+        <!-- fabric8 version -->
+        <fabric8.version>2.2.96</fabric8.version>
+        <docker.maven.plugin.version>0.14.2</docker.maven.plugin.version>
+
+        <!-- configure the versions you want to use here -->
+        <cxf.version>3.1.4</cxf.version>
+        <cxf.plugin.version>3.1.4</cxf.plugin.version>
+        <karaf.version>4.0.4</karaf.version>
+        <karaf.plugin.version>4.0.4</karaf.plugin.version>
+
+        <docker.from>fabric8/s2i-karaf:1.2</docker.from>
+        <fabric8.dockerUser>kimios/</fabric8.dockerUser>
+        <docker.image>${fabric8.dockerUser}${project.artifactId}:${project.version}</docker.image>
+        <docker.assemblyDescriptor>${basedir}/src/main/fabric8/assembly.xml</docker.assemblyDescriptor>
+        <docker.port.container.jolokia>8778</docker.port.container.jolokia>
+        <docker.port.container.http>8181</docker.port.container.http>
+
+        <fabric8.namespace>kimios</fabric8.namespace>
+
+
+        <fabric8.service.name>${project.artifactId}</fabric8.service.name>
+        <fabric8.service.port>80</fabric8.service.port>
+        <fabric8.service.containerPort>8181</fabric8.service.containerPort>
+        <fabric8.service.type>LoadBalancer</fabric8.service.type>
+        <fabric8.abric8.containerPrivileged>true</fabric8.abric8.containerPrivileged>
+        <fabric8.label.component>${project.artifactId}</fabric8.label.component>
+        <fabric8.label.container>karaf</fabric8.label.container>
+        <fabric8.label.group>quickstarts</fabric8.label.group>
+        <fabric8.iconRef>karaf</fabric8.iconRef>
+        <fabric8.env.KIMIOS_PG_LINK><![CDATA[jdbc:postgresql://127.0.0.1:5432/kimios]]></fabric8.env.KIMIOS_PG_LINK>
+        <fabric8.env.KIMIOS_PGUSER>kimios</fabric8.env.KIMIOS_PGUSER>
+        <fabric8.env.KIMIOS_PGPASS>kimios</fabric8.env.KIMIOS_PGPASS>
+        <fabric8.replicationController.name>kimios-server</fabric8.replicationController.name>
+        <fabric8.containerPrivileged>true</fabric8.containerPrivileged>
+
+
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.fabric8</groupId>
+                <artifactId>fabric8-project-bom-with-platform-deps</artifactId>
+                <version>${fabric8.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+
+
+        <!-- Karaf microcontainer dependencies -->
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-karaf-distribution</artifactId>
+            <version>${project.version}</version>
+            <type>tar.gz</type>
+        </dependency>
+
+        <dependency>
+            <groupId>io.fabric8</groupId>
+            <artifactId>kubernetes-generator</artifactId>
+            <version>${fabric8.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+          <plugins>
+             <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>fabric8-maven-plugin</artifactId>
+                <version>${fabric8.version}</version>
+                <executions>
+                    <execution>
+                        <id>json</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>json</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>attach</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attach</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- attach feature file to install for karaf assembly -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.9.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-artifacts</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attach-artifact</goal>
+                        </goals>
+                        <configuration>
+                            <artifacts>
+                                <artifact>
+                                        <file>${project.basedir}/../kimios-karaf-distribution/target/kimios-karaf-distribution-${project.version}.tar.gz</file>
+                                        <type>tar.gz</type>
+                                        <classifier>optional</classifier>
+                                </artifact>
+                            </artifacts>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- 3. create docker image -->
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>${docker.maven.plugin.version}</version>
+                <configuration>
+                    <images>
+                        <image>
+                            <name>${docker.image}</name>
+                            <build>
+                                <from>${docker.from}</from>
+                                <volumes>
+                                    <volume>/home/kimios/repository</volume>
+                                </volumes>
+                                <assembly>
+                                    <basedir>/deployments</basedir>
+                                    <user>root:root:root</user>
+                                    <inline xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
+                                            xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
+                                        <id>${project.artifactId}</id>
+                                        <files>
+                                            <!-- copy karaf archive -->
+                                            <file>
+                                                <source>${project.basedir}/../kimios-karaf-distribution/target/kimios-karaf-distribution-${project.version}.tar.gz</source>
+                                                <outputDirectory>/</outputDirectory>
+                                            </file>
+                                        </files>
+                                    </inline>
+                                </assembly>
+                                <cmd>
+                                    <shell>/deployments/deploy-and-run.sh</shell>
+                                </cmd>
+                            </build>
+                        </image>
+                    </images>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>f8-build</id>
+            <build>
+                <defaultGoal>clean install docker:build fabric8:json</defaultGoal>
+            </build>
+        </profile>
+        <profile>
+            <id>f8-deploy</id>
+            <properties>
+                <fabric8.imagePullPolicySnapshot>Always</fabric8.imagePullPolicySnapshot>
+                <fabric8.recreate>true</fabric8.recreate>
+            </properties>
+            <build>
+                <defaultGoal>clean install docker:build docker:push fabric8:json fabric8:apply</defaultGoal>
+            </build>
+        </profile>
+        <profile>
+            <id>f8-local-deploy</id>
+            <properties>
+                <fabric8.recreate>true</fabric8.recreate>
+            </properties>
+            <build>
+                <defaultGoal>clean fabric8:json compile docker:build fabric8:delete-pods fabric8:apply</defaultGoal>
+            </build>
+        </profile>
+    </profiles>
+
+
+</project>
