@@ -118,6 +118,7 @@
         <module>kimios-server-war</module>
         <module>kimios-editors-service</module>
         <module>kimios-editors</module>
+        <module>kimios-templates</module>
         <module>kimios-osgi-packages</module>
         <module>kimios-test</module>
     </modules>
