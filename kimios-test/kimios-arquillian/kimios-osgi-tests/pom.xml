@@ -17,6 +17,7 @@
         <kimios.jmxuser>karaf</kimios.jmxuser>
         <kimios.jmxpassword>karaf</kimios.jmxpassword>
         <docker.host>192.168.99.100</docker.host>
+        <docker.version>1.22</docker.version>
     </properties>
 
     <dependencies>
