@@ -17,5 +17,5 @@ karaf:
       sleepTime: 200 s
     links: !!set {'postgresql_karaf:postgresql': null}
     portBindings: [8089/tcp, 8181/tcp, 44444/tcp, 1099/tcp, 8101/tcp]
-    env: !!set {CURRENT_HOSTNAME=${docker.host} : null,'KIMIOS_PG_LINK=jdbc:postgresql://postgresql_karaf:5432/kimios': null, KIMIOS_PG_USER=kimios: null,
+    env: !!set {CURRENT_HOSTNAME=${jmxhostname} : null,'KIMIOS_PG_LINK=jdbc:postgresql://postgresql_karaf:5432/kimios': null, KIMIOS_PG_USER=kimios: null,
           KIMIOS_PG_PASS=kimios: null}
