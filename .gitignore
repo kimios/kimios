@@ -15,3 +15,4 @@ kimios-server-war/profiles/dev/*
 gradle*
 gradle/*
 generated/
+hs_err_pid*
