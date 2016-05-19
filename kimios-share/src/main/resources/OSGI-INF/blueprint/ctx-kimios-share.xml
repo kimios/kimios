@@ -41,6 +41,9 @@
     <reference id="aclUpdater" interface="org.kimios.kernel.jobs.security.IACLUpdater"/>
 
 
+    <reference id="fileTransferController" interface="org.kimios.kernel.controller.IFileTransferController" />
+    <reference id="templateProvider" interface="org.kimios.api.templates.ITemplateProvider" />
+    <reference id="templateProcessor" interface="org.kimios.api.templates.ITemplateProcessor" />
 
     <bean id="attachmentNameGenerator" class="org.kimios.kernel.share.mail.AttachmentNameGenerator">
         <argument value="${dms.share.attachment.meta.name}"></argument>
@@ -74,11 +77,17 @@
         <property name="mailerSender"  value="${dms.mail.sendername}" />
         <property name="mailContactFactory" ref="mailContactFactory" />
 
+        <property name="fileTransferController" ref="fileTransferController" />
+        <property name="templateProcessor"  ref="templateProcessor" />
+        <property name="templateProvider"  ref="templateProvider" />
+
         <tx:transaction method="*" value="Required"/>
     </bean>
 
 
     <bean id="shareFactory" class="org.kimios.kernel.share.factory.ShareFactory">
+        <argument ref="dmsFactoryInstantiator" />
+
         <property name="provider" ref="dbFactoryProvider"></property>
     </bean>
 
@@ -94,6 +103,9 @@
 
         <argument ref="shareFactory" />
         <argument ref="securityController" />
+        <argument ref="mailShareController" />
+
+
 
         <tx:transaction method="*" value="Required"/>
     </bean>

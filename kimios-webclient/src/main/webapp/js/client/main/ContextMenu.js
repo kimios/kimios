@@ -173,10 +173,10 @@ kimios.ContextMenu = new function () {
 
         else if (context == 'cart') {
             return this.cartMenu;
-        }  else if(context == 'shares'){
+        }
+        else if(context == 'shares'){
             return this.shareMenu;
         }
-
         // versions
         else if (context == 'versions') {
             return this.versionsMenu;
@@ -495,6 +495,9 @@ kimios.ContextMenu = new function () {
 
     this.initShareMenu = function (config) {
         this.shareMenu = new Ext.menu.Menu(config);
+        this.shareMenu.add(this.getGetDocumentItem());
+        this.shareMenu.add(this.getUpdateCurrentVersionItem());
+        this.shareMenu.add(this.getPropertiesItem());
         this.shareMenu.add(this.getRefreshItem());
     };
 

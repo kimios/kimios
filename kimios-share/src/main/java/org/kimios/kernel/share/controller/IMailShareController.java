@@ -36,4 +36,6 @@ public interface IMailShareController {
         throws DmsKernelException;
 
     List<MailContact> searchContact(Session session, String searchQuery);
+
+    String loadDefaultMailTemplate(Session session) throws Exception;
 }

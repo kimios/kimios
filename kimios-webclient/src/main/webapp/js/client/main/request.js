@@ -443,6 +443,16 @@ kimios.request = {
 
     },
     ShareRequest: {
+        loadTemplate: function(handler){
+            kimios.ajaxRequestWithAnswer('Share', {
+                    action: 'GetShareDefaultTemplate'
+                },
+                function (data) {
+                    if(handler){
+                        handler(data.responseText);
+                    }
+                })
+        },
         shareWith: function(userId, userSource, dmEntityId, read, write, fullAccess, date, notify, handler){
             kimios.ajaxRequest('Share', {
                 action: 'ShareWith',

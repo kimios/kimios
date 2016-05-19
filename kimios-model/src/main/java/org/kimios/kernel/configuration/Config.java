@@ -61,4 +61,6 @@ public class Config
     public static String MAIL_SENDER_ADDRESS = "dms.mail.senderemail";
 
     public static String MAIL_SENDER_NAME = "dms.mail.sendername";
+
+    public static String PUBLIC_URL = "dms.public.url";
 }

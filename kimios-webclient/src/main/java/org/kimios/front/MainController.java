@@ -123,6 +123,9 @@ public class MainController extends HttpServlet {
             }
             if (action.equalsIgnoreCase("Share")) {
                 c = new ShareControllerWeb(params);
+                if(params.get("action") != null && params.get("action").equals("GetShareDefaultTemplate")){
+                    response.setContentType("text/plain");
+                }
             }
             if (action.equalsIgnoreCase("Editor")) {
                 c = new EditorsControllerWeb(params, request, response);

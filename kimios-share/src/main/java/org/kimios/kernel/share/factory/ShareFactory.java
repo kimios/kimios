@@ -16,10 +16,20 @@
 
 package org.kimios.kernel.share.factory;
 
+import org.kimios.kernel.dms.DocumentFactory;
+import org.kimios.kernel.dms.FolderFactory;
+import org.kimios.kernel.dms.IDmsFactoryInstantiator;
+import org.kimios.kernel.dms.WorkspaceFactory;
+import org.kimios.kernel.dms.model.DMEntity;
+import org.kimios.kernel.dms.model.Document;
+import org.kimios.kernel.dms.model.Folder;
+import org.kimios.kernel.dms.model.Workspace;
 import org.kimios.kernel.hibernate.HFactory;
 import org.kimios.kernel.share.model.MailContact;
 import org.kimios.kernel.share.model.Share;
 import org.kimios.kernel.share.model.ShareStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sun.security.provider.SHA;
 
 import java.util.List;
@@ -30,6 +40,19 @@ import java.util.List;
 public class ShareFactory extends HFactory {
 
 
+    private static Logger logger = LoggerFactory.getLogger(ShareFactory.class);
+
+
+    private IDmsFactoryInstantiator dmsFactoryInstantiator;
+    private DocumentFactory documentFactory;
+    private FolderFactory folderFactory;
+    private WorkspaceFactory workspaceFactory;
+
+    public ShareFactory(IDmsFactoryInstantiator dmsFactoryInstantiator) {
+        this.documentFactory = dmsFactoryInstantiator.getDocumentFactory();
+        this.folderFactory = dmsFactoryInstantiator.getFolderFactory();
+        this.workspaceFactory = dmsFactoryInstantiator.getWorkspaceFactory();
+    }
 
     public Share findById(long id){
         return (Share)getSession().load(Share.class, id);
@@ -41,13 +64,36 @@ public class ShareFactory extends HFactory {
                 " and s.shareStatus in (:shareStatuses)" +
                 " and s.expirationDate >=  CURRENT_TIMESTAMP()" +
                 " and (ent.trashed = false or ent.trashed is null)";
-        return getSession()
+        List<Share> items = getSession()
                 .createQuery(query)
                 .setString("userId", userId)
                 .setString("userSource", userSource)
                 .setParameterList("shareStatuses", shareStatuses)
                 .list();
+        return items;
     }
+
+    public List<Share> listExpiredShares(){
+        String query = "select s from Share s join s.entity as ent fetch all properties " +
+                " where s.expirationDate >=  CURRENT_TIMESTAMP()" +
+                " and (ent.trashed = false or ent.trashed is null)";
+        List<Share> items = getSession()
+                .createQuery(query)
+                .list();
+        return items;
+    }
+
+
+    public Share getShareByToken(String token){
+        String query = "select s from Share s join s.entity as ent fetch all properties " +
+                " where s.downloadToken = :token";
+        Share item = (Share)getSession()
+                .createQuery(query)
+                .setParameter("token", token)
+                .uniqueResult();
+        return item;
+    }
+
 
     public List<Share> listEntitiesSharedBy(String userId, String userSource, ShareStatus ... shareStatuses){
         String query = "select s from Share s where s.creatorId = :userId and s.creatorSource = :userSource " +

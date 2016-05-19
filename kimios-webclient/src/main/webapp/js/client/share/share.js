@@ -21,12 +21,12 @@ kimios.share = {};
 kimios.share.MailPanel = Ext.extend(kimios.FormPanel, {
     constructor: function (config) {
 
+        
+        var meMailPanel = this;
+        
         config.baseCls = 'x-plain';
-        config.labelWidth = 55;
-        /*config.layout = {
-            type: 'vbox',
-            align: 'stretch'  // Child items are stretched to full width
-        };*/
+        config.labelWidth = 120;
+
         config.defaults = {
             xtype: 'textfield'
         };
@@ -79,6 +79,10 @@ kimios.share.MailPanel = Ext.extend(kimios.FormPanel, {
                             Ext.getCmp('shareUserNotify').hide();
                             Ext.getCmp('shareUserIdDisplay').hide();
 
+                            if(Ext.getCmp('shareMailContent').getValue().trim() == ''){
+                                Ext.getCmp('shareMailContent').setValue(meMailPanel.defaultContent)
+
+                            }
                         } else {
                             Ext.getCmp('shareMailSubject').hide();
                             Ext.getCmp('shareMail').hide();
@@ -132,16 +136,9 @@ kimios.share.MailPanel = Ext.extend(kimios.FormPanel, {
 
         config.items.push({
             xtype: 'compositefield',
+            fieldLabel: kimios.lang('ShareChooseUser'),
             id:'shareUserIdDisplay',
             items: [
-                {
-                    xtype: 'displayfield',
-                    id: 'shareUserDisplay',
-                    scope: this,
-                    value: kimios.lang('NoUserSelected'),
-                    fieldLabel: kimios.lang('ShareChooseUser'),
-                    flex: 1,
-                },
                 {
                     xtype: 'button',
                     id:'shareUserId',
@@ -152,28 +149,41 @@ kimios.share.MailPanel = Ext.extend(kimios.FormPanel, {
                     },
                     width: 150,
                     scope: this
-                },{
+                },
+                {
+                    xtype: 'displayfield',
+                    id: 'shareUserDisplay',
+                    scope: this,
+                    value: kimios.lang('NoUserSelected'),
+                    flex: 1,
+                }
+                ]
+        });
+
+        config.items.push({
+            xtype: 'checkboxgroup',
+            fieldLabel: kimios.lang('ShareChooseUser'),
+            itemCls: 'x-check-group-alt',
+            items: [{
                     xtype: 'checkbox',
                     id:'readChx',
-                    fieldLabel: kimios.lang('Read'),
-                    text: kimios.lang('Read'),
+                    boxLabel: kimios.lang('Read'),
                     scope: this
                 },
                 {
                     xtype: 'checkbox',
                     id:'writeChx',
-                    fieldLabel: kimios.lang('Write'),
-                    text: kimios.lang('Write'),
+                    boxLabel: kimios.lang('Write'),
                     scope: this
                 },
                 {
                     xtype: 'checkbox',
                     id:'faChx',
-                    fieldLabel: kimios.lang('FullAccess'),
-                    text: kimios.lang('FullAccess'),
+                    boxLabel: kimios.lang('FullAccess'),
                     scope: this
                 }]
         });
+
         config.items.push( {
             xtype: 'checkbox',
             id:'shareUserNotify',
@@ -186,30 +196,16 @@ kimios.share.MailPanel = Ext.extend(kimios.FormPanel, {
 
         config.items.push({
                 xtype: 'compositefield',
-                items: [{
-                        xtype: 'combo',
-                        id: 'shareMail',
-                        plugins: [ Ext.ux.FieldLabeler ],
-                        store: [],
-                        mode: 'local',
-                        triggerAction: 'query',
-                        typeAhead: true,
-                        fieldLabel: kimios.lang('ShareSendTo'),
-                        name: 'recipients',
-                        displayField: 'emailAddress',
-                        valueField: 'emailAdddress'
-                    }, {
-                        xtype: 'button',
-                        text: kimios.lang('ShareAddRecipient'),
-                        listeners: {
-                            click: {
-                                fn: function(){
-
-                                }
-                            }
-                        }
-                    }
-                ]
+                fieldLabel: kimios.lang('ShareSendTo'),
+                xtype: 'combo',
+                id: 'shareMail',
+                store: [],
+                mode: 'local',
+                triggerAction: 'query',
+                typeAhead: true,
+                name: 'recipients',
+                displayField: 'emailAddress',
+                valueField: 'emailAdddress'
             }
         );
         config.items.push({
@@ -217,15 +213,29 @@ kimios.share.MailPanel = Ext.extend(kimios.FormPanel, {
             fieldLabel: kimios.lang('ShareSubject'),
             name: 'subject'
         });
+
+        
         config.items.push( {
             xtype: 'htmleditor',
             id:'shareMailContent',
             fieldLabel: kimios.lang('ShareContent'),
-            hideLabel: true,
+            hideLabel: false,
             name: 'content',
-            flex: 1,
             plugins: Ext.ux.form.HtmlEditor.plugins(),
+
         });
+
+
+        kimios.request.ShareRequest.loadTemplate(function(content){
+            if(console){
+                console.log(content);
+            }
+
+            meMailPanel.defaultContent = content;
+
+        })
+        
+        
 
         kimios.share.MailPanel.superclass.constructor.call(this, config);
     },
@@ -251,6 +261,8 @@ kimios.share.MailPanel = Ext.extend(kimios.FormPanel, {
     },
 
     showInWindow: function(){
+        
+        //load default template
         var me = this;
         var w = new Ext.Window({
             title: kimios.lang('Share'),
@@ -269,7 +281,10 @@ kimios.share.MailPanel = Ext.extend(kimios.FormPanel, {
                 text: kimios.lang('ShareSend'),
                 handler: function(){
                     //submit
-                    if(Ext.getCmp('shareType')){
+                    if(console){
+                        console.log(Ext.getCmp('shareType').getValue().getRawValue());
+                    }
+                    if(Ext.getCmp('shareType').getValue().getRawValue() == 'internal'){
                         //share for 30 jours
                         if(!me.pickedUser){
                             alert(kimios.lang('ShareSelectUser'));
@@ -328,6 +343,7 @@ kimios.share.MailPanel = Ext.extend(kimios.FormPanel, {
             }, {
                 text: kimios.lang('ShareCancel'),
                 handler: function(){
+
                     w.close();
                 }
             }]

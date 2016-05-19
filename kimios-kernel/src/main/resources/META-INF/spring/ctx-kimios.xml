@@ -83,6 +83,7 @@
                 <value>org.kimios.kernel.filetransfer</value>
                 <value>org.kimios.kernel.index</value>
                 <value>org.kimios.kernel.share</value>
+                <value>org.kimios.kernel.templates</value>
             </list>
         </property>
         <property name="mappingLocations">
@@ -107,7 +108,8 @@
         <constructor-arg ref="ruleManager" />
     </bean>
 
-    <bean id="kernelAspect" class="org.kimios.kernel.events.interceptors.KimiosKernelAspect" factory-method="aspectOf">
+    <bean id="kernelAspect" class="org.kimios.kernel.events.interceptors.KimiosKernelAspect"
+          factory-method="aspectOf" depends-on="eventHandlerManager,ruleManager">
         <property name="ruleManager" ref="ruleManager" />
         <property name="eventHandlerManager" ref="eventHandlerManager" />
     </bean>

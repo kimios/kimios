@@ -60,6 +60,27 @@
             <type>xml</type>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-webclient</artifactId>
+            <version>1.1-SNAPSHOT</version>
+            <type>war</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-kernel-osgi</artifactId>
+            <version>1.1-SNAPSHOT</version>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-kernel</artifactId>
+            <version>1.1-SNAPSHOT</version>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

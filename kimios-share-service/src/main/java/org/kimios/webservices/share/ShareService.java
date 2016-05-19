@@ -144,4 +144,12 @@ public interface ShareService {
             @QueryParam(value = "query") @WebParam(name = "query") String query
             )
         throws DMServiceException;
+
+
+    @GET
+    @Path("/load-default-template")
+    @ApiOperation(value = "")
+    String loadDefaultTemplate(@ApiParam(value = "sessionId", name = "sessionId", required = true)
+                               @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId)
+        throws DMServiceException;
 }

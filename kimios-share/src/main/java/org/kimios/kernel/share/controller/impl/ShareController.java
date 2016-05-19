@@ -22,15 +22,16 @@ import org.kimios.kernel.dms.model.DMEntity;
 import org.kimios.kernel.dms.model.Document;
 import org.kimios.kernel.exception.AccessDeniedException;
 import org.kimios.kernel.security.model.Session;
+import org.kimios.kernel.share.controller.IMailShareController;
 import org.kimios.kernel.share.controller.IShareController;
 import org.kimios.kernel.share.factory.ShareFactory;
 import org.kimios.kernel.share.model.Share;
 import org.kimios.kernel.share.model.ShareStatus;
 import org.kimios.kernel.share.model.ShareType;
+import org.kimios.kernel.user.model.User;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by farf on 15/02/16.
@@ -42,9 +43,16 @@ public class ShareController extends AKimiosController implements IShareControll
 
     private ISecurityController securityController;
 
-    public ShareController(ShareFactory shareFactory, ISecurityController securityController){
+    private IMailShareController mailShareController;
+
+
+
+    public ShareController(ShareFactory shareFactory,
+                           ISecurityController securityController,
+                           IMailShareController mailShareController){
         this.shareFactory = shareFactory;
         this.securityController = securityController;
+        this.mailShareController = mailShareController;
     }
 
 
@@ -113,6 +121,26 @@ public class ShareController extends AKimiosController implements IShareControll
                         read, write, fullAcces);
 
                 //if notify : should add message on queue, to send on transaction commit !
+                if(notify){
+
+                    //load share target user
+                    User recipient = authFactoryInstantiator
+                            .getAuthenticationSourceFactory()
+                            .getAuthenticationSource(sharedToUserSource)
+                            .getUserFactory()
+                            .getUser(sharedToUserId);
+                    List<Long> documentIds = new ArrayList<Long>();
+                    documentIds.add(s.getEntity().getUid());
+                    Map<String, String> recipients = new HashMap<String, String>();
+                    recipients.put(recipient.getMail(), recipient.getFirstName() + " "
+                        + recipient.getLastName());
+                    //TODO: translate Mail Subject
+                    //TODO: handle external subject submission
+
+                    mailShareController.sendDocumentByEmail(session,
+                            documentIds, recipients, "Kimios Internal Share",
+                            "<html><body>__DOCUMENTSLINKS__</body></html>", null, null, true);
+                }
 
                 return s;
 
@@ -123,4 +151,7 @@ public class ShareController extends AKimiosController implements IShareControll
             throw new AccessDeniedException();
 
     }
+
+
+
 }

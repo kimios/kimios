@@ -56,6 +56,12 @@ public class ShareControllerWeb extends Controller {
             if(action.equalsIgnoreCase("ShareWith")){
                 shareDocumentWith();
             }
+
+            if(action.equalsIgnoreCase("GetShareDefaultTemplate")){
+                jsonResp = loadDefaultTemplate();
+            }
+
+
             return jsonResp;
         }else
             return "NOACTION";
@@ -93,6 +99,12 @@ public class ShareControllerWeb extends Controller {
                  true
                  );
         return;
+    }
+
+
+    private String loadDefaultTemplate() throws  Exception {
+        String content = shareController.getDefaultTemplate(getSessionUid());
+        return content;
     }
 
 

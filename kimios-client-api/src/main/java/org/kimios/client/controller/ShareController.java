@@ -18,6 +18,7 @@ package org.kimios.client.controller;
 
 import org.kimios.client.exception.ExceptionHelper;
 import org.kimios.kernel.share.model.MailContact;
+import org.kimios.kernel.share.model.ShareStatus;
 import org.kimios.kernel.ws.pojo.Share;
 import org.kimios.webservices.share.ShareService;
 
@@ -81,6 +82,15 @@ public class ShareController {
         throws Exception{
         try {
             client.shareDocument(sessionId, dmEntityId, userId, userSource, read, write, fullAccess, expirationDate, notify);
+        }catch (Exception ex){
+            throw new ExceptionHelper().convertException(ex);
+        }
+    }
+
+    public String getDefaultTemplate(String sessionId)
+        throws Exception {
+        try{
+            return client.loadDefaultTemplate(sessionId);
         }catch (Exception ex){
             throw new ExceptionHelper().convertException(ex);
         }

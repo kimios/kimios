@@ -1,0 +1,8 @@
+<table>
+    <tr>
+        <th>Shared Document(s)</th>
+    </tr>
+    <tr th:each="docLink : \$\{links\}">
+        <td><a  th:href="\$\{docLink.key\}" th:text="\$\{docLink.value.name\}" /></td>
+    </tr>
+</table>

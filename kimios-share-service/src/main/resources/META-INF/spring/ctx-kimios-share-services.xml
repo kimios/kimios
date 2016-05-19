@@ -36,16 +36,16 @@
     <bean id="shareServiceBean" class="org.kimios.webservices.share.impl.ShareServiceImpl">
         <constructor-arg name="mailShareController" ref="mailShareController"/>
         <constructor-arg name="shareController" ref="shareController" />
+        <constructor-arg name="documentController" ref="documentController" />
         <constructor-arg name="serviceHelper" ref="serviceHelper"/>
     </bean>
 
     <!-- Service endpoint -->
-    <jaxws:endpoint id="converterServiceWs"
+    <jaxws:endpoint id="shareServiceWs"
                     implementorClass="org.kimios.webservices.share.impl.ShareServiceImpl"
                     implementor="#shareServiceBean"
                     address="/ShareService"
-                    endpointName="ShareService"
-            >
+                    endpointName="ShareService">
         <jaxws:binding>
             <soap:soapBinding name="ShareService"/>
         </jaxws:binding>

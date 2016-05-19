@@ -16,6 +16,8 @@
 
 package org.kimios.webservices.share.impl;
 
+import org.kimios.kernel.controller.IDocumentController;
+import org.kimios.kernel.dms.model.Document;
 import org.kimios.kernel.share.controller.IMailShareController;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.share.controller.IShareController;
@@ -41,13 +43,16 @@ public class ShareServiceImpl implements ShareService {
     private IMailShareController mailShareController;
     private IShareController shareController;
     private IServiceHelper helper;
+    private IDocumentController documentController;
 
     public ShareServiceImpl(IMailShareController mailShareController,
                             IShareController shareController,
+                            IDocumentController documentController,
                             IServiceHelper serviceHelper){
         this.helper = serviceHelper;
         this.mailShareController = mailShareController;
         this.shareController = shareController;
+        this.documentController = documentController;
     }
 
     @Override
@@ -140,7 +145,11 @@ public class ShareServiceImpl implements ShareService {
             List<org.kimios.kernel.share.model.Share> shares =  shareController.listEntitiesSharedWithMe(session);
             List<Share> items = new ArrayList<Share>();
             for(org.kimios.kernel.share.model.Share s: shares){
-                items.add(s.toPojo());
+                Share sPojo = s.toPojo();
+                if(s.getEntity().getType() == 3){
+                    sPojo.setEntity(documentController.getDocumentPojo((Document)s.getEntity()));
+                }
+                items.add(sPojo);
             }
             return items;
         } catch (Exception e) {
@@ -155,7 +164,11 @@ public class ShareServiceImpl implements ShareService {
             List<org.kimios.kernel.share.model.Share> shares =  shareController.listEntitiesSharedByMe(session);
             List<Share> items = new ArrayList<Share>();
             for(org.kimios.kernel.share.model.Share s: shares){
-                items.add(s.toPojo());
+                Share sPojo = s.toPojo();
+                if(s.getEntity().getType() == 3){
+                    sPojo.setEntity(documentController.getDocumentPojo((Document)s.getEntity()));
+                }
+                items.add(sPojo);
             }
             return items;
         } catch (Exception e) {
@@ -169,6 +182,17 @@ public class ShareServiceImpl implements ShareService {
         try {
             Session session = helper.getSession(sessionId);
             shareController.removeShare(session, shareId);
+        } catch (Exception e) {
+            throw helper.convertException(e);
+        }
+    }
+
+    @Override
+    public String loadDefaultTemplate(String sessionId)
+            throws DMServiceException{
+        try {
+            Session session = helper.getSession(sessionId);
+            return mailShareController.loadDefaultMailTemplate(session);
         } catch (Exception e) {
             throw helper.convertException(e);
         }

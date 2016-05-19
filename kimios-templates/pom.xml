@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ Kimios - Document Management System Software
-  ~ Copyright (C) 2008-2015  DevLib'
+  ~ Copyright (C) 2008-2016  DevLib'
   ~ This program is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU Affero General Public License as
   ~ published by the Free Software Foundation, either version 2 of the
@@ -25,7 +25,9 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>kimios-share</artifactId>
+    <artifactId>kimios-templates</artifactId>
+    <packaging>jar</packaging>
+
 
     <dependencies>
         <dependency>
@@ -53,58 +55,10 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.kimios</groupId>
-            <artifactId>kimios-exceptions</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.kimios</groupId>
-            <artifactId>kimios-utils</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.kimios</groupId>
-            <artifactId>kimios-templates</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.5</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.hibernate.javax.persistence</groupId>
             <artifactId>hibernate-jpa-2.0-api</artifactId>
             <version>1.0.1.Final</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-email</artifactId>
-            <version>1.4</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-tx</artifactId>
-            <version>${spring.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.thymeleaf</groupId>
-            <artifactId>thymeleaf</artifactId>
-            <version>2.1.4.RELEASE</version>
-            <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -113,22 +67,20 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>javax.mail</groupId>
-            <artifactId>mail</artifactId>
-            <version>1.4.7</version>
-            <scope>compile</scope>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slfj.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-email</artifactId>
-            <version>1.4</version>
-            <scope>compile</scope>
+            <groupId>org.thymeleaf</groupId>
+            <artifactId>thymeleaf</artifactId>
+            <version>${thymeleaf.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.quartz-scheduler</groupId>
-            <artifactId>quartz</artifactId>
-            <version>1.8.6</version>
-            <scope>compile</scope>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+            <version>${spring.version}</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
@@ -157,13 +109,10 @@
                         quartz,xerces,xercesImpl,dom4j,commons-codec,commons-collections,commons-lang,javassist,xml-apis,stax-api,commons-logging,slf4j-api,log4j,solr*,lucene*
                     </excludeDependencies>
                     <instructions>
-                        <Bundle-SymbolicName>kimios-share</Bundle-SymbolicName>
+                        <Bundle-SymbolicName>kimios-templates</Bundle-SymbolicName>
                         <Bundle-Name>${project.name}</Bundle-Name>
-                        <Export-Package>
-                            org.kimios.kernel.share,org.kimios.kernel.share.controller
-                        </Export-Package>
                         <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
-                        <Embed-Transitive>false</Embed-Transitive>
+                        <Embed-Transitive>true</Embed-Transitive>
                         <Include-Resource>{maven-resources}</Include-Resource>
                         <Import-Package>
                             org.slf4j.impl;resolution:=optional,

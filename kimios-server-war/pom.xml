@@ -112,6 +112,12 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-templates</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-email</artifactId>
             <version>1.4</version>

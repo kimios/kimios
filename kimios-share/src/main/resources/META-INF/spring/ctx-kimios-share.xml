@@ -44,14 +44,22 @@
         <property name="mailerSenderMail" value="${dms.mail.senderemail}" />
         <property name="mailerSender"  value="${dms.mail.sendername}" />
         <property name="mailContactFactory" ref="mailContactFactory" />
+
+        <property name="fileTransferController" ref="fileTransferController" />
+        <property name="templateProcessor"  ref="templateProcessor" />
+        <property name="templateProvider"  ref="templateProvider" />
     </bean>
 
 
-    <bean id="shareFactory" class="org.kimios.kernel.share.factory.ShareFactory" parent="hfactory" />
+    <bean id="shareFactory" class="org.kimios.kernel.share.factory.ShareFactory" parent="hfactory">
+        <constructor-arg ref="dmsfi" />
+    </bean>
 
-    <bean id="shareController" class="org.kimios.kernel.share.controller.impl.ShareController">
+    <bean id="shareController" class="org.kimios.kernel.share.controller.impl.ShareController"
+          parent="kimiosCoreCtrl">
         <constructor-arg name="securityController" ref="securityController" />
         <constructor-arg name="shareFactory" ref="shareFactory" />
+        <constructor-arg name="mailShareController" ref="mailShareController" />
     </bean>
 
 </beans>
