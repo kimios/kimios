@@ -1,0 +1,2 @@
+CATALINA_OPTS=-Djava.security.egd=file:/dev/./urandom
+JAVA_OPTS=-Dkimios.home=/usr/local/tomcat/kimios_home -Djdbc.url=jdbc:postgresql://postgresql:5432/kimios -Djdbc.user=kimios -Djdbc.password=kimios -Djava.rmi.server.hostname=dockerServerIp -Dcom.sun.management.jmxremote.rmi.port=8088 -Dcom.sun.management.jmxremote.port=8089 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Dlogback.configurationFile=/usr/local/tomcat/kimios_home/server/conf/logback.xml

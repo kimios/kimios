@@ -99,7 +99,6 @@
         <module>kimios-interfaces</module>
         <module>kimios-utils</module>
         <module>kimios-model</module>
-        <module>kimios-test</module>
         <module>kimios-kernel</module>
         <module>kimios-index</module>
         <module>kimios-services</module>
@@ -113,12 +112,13 @@
         <module>kimios-webclient</module>
         <module>kimios-home</module>
         <module>kimios-sso</module>
-        <module>kimios-osgi-packages</module>
         <module>kimios-csv-metafeed</module>
         <module>kimios-dolibarr</module>
         <module>kimios-server-war</module>
         <module>kimios-editors-service</module>
         <module>kimios-editors</module>
+        <module>kimios-osgi-packages</module>
+        <module>kimios-test</module>
     </modules>
     <packaging>pom</packaging>
     <dependencies>
@@ -185,6 +185,4 @@
 
          </plugins>
     </build>
-
-
 </project>

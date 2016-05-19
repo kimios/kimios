@@ -1,0 +1,23 @@
+<arquillian xmlns="http://jboss.org/schema/arquillian"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="
+        http://jboss.org/schema/arquillian
+        http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
+
+
+    <extension qualifier="docker">
+        <property name="serverVersion">1.22</property>
+        <property name="serverUri">tcp://192.168.99.100:2376</property>
+        <property name="tlsVerify">true</property>
+        <property name="certPath">~/.docker/machine/machines/default</property>
+        <property name="machineName">default</property>
+        <property name="definitionFormat">CUBE</property>
+    </extension>
+    <container qualifier="karaf" default="true" >
+        <configuration>
+            <property name="jmxServiceURL">service:jmx:rmi://192.168.99.100:44444/jndi/rmi://192.168.99.100:1099/karaf-root</property>
+            <property name="jmxUsername">karaf</property>
+            <property name="jmxPassword">karaf</property>
+        </configuration>
+    </container>
+</arquillian>

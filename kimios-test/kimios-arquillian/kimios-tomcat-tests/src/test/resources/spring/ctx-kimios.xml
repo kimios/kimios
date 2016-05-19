@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~ Kimios - Document Management System Software
+  ~ Copyright (C) 2008-2015  DevLib'
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 2 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ aong with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+
+    <!-- JNDI Data Source Settings Example :
+
+    JNDI Sping Bean
+    <bean id="kimiosDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+      <property name="jndiName" value="${jdbc.jndids}" />
+  </bean>
+
+  Tomcat JNDI Setup Example (inside webappDir/META-INF/context.xml
+
+ <Context ...>
+  <Resource name="jdbc/dms" auth="Container" type="com.atomikos.jdbc.nonxa.AtomikosNonXADataSourceBean"
+        factory="org.apache.naming.factory.BeanFactory"
+        driverClassName="org.postgresql.Driver"
+        uniqueResourceName="jdbc/dms"
+        user="postgres" password="farfou" url="jdbc:postgresql://localhost:5432/kimios-test"
+    maxPoolSize="50" minPoolSize="30" maxIdleTime="1000" readOnly="true" />
+  <Transaction name="UserTransaction" factory="com.atomikos.icatch.jta.UserTransactionFactory" />
+</Context>
+  -->
+
+
+    <!-- Data Source -->
+    <bean id="kimiosDataSource" class="com.atomikos.jdbc.nonxa.AtomikosNonXADataSourceBean" destroy-method="close">
+        <property name="uniqueResourceName" value="jdbc/dms"/>
+        <property name="maxPoolSize" value="100"/>
+        <property name="minPoolSize" value="20"/>
+        <property name="maxIdleTime" value="1000"/>
+        <property name="driverClassName">
+            <value>${jdbc.driver}</value>
+        </property>
+        <property name="url">
+            <value>${jdbc.url}</value>
+        </property>
+        <property name="user">
+            <value>${jdbc.user}</value>
+        </property>
+        <property name="password">
+            <value>${jdbc.password}</value>
+        </property>
+        <property name="testQuery">
+            <value>select 1;</value>
+        </property>
+    </bean>
+
+    <!--<import resource="datasource/${datastdaource.mode}/ctx-kimios-ds.xml"/>  -->
+    <tx:annotation-driven mode="aspectj" transaction-manager="transactionManager"/>
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method read-only="true" name="reindex" timeout="3600000"/>
+            <tx:method name="updateAclsRecursiveMode" timeout="3600000"/>
+            <tx:method name="*"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <!-- Initialize Transaction Manager -->
+    <bean id="userTransactionService"
+          class="com.atomikos.icatch.config.UserTransactionServiceImp"
+          init-method="init" destroy-method="shutdownForce">
+        <constructor-arg>
+            <props>
+                <prop key="com.atomikos.icatch.service">
+                    com.atomikos.icatch.standalone.UserTransactionServiceFactory
+                </prop>
+                <prop key="com.atomikos.icatch.output_dir">${kimios.home}/server/txlogs</prop>
+                <prop key="com.atomikos.icatch.log_base_dir">${kimios.home}/server/txlogs</prop>
+                <prop key="com.atomikos.icatch.automatic_resource_registration">true</prop>
+                <prop key="com.atomikos.icatch.console_log_level">ERROR</prop>
+                <prop key="com.atomikos.icatch.max_timeout">2200000</prop>
+                <prop key="com.atomikos.icatch.enable_logging">false</prop>
+                <prop key="com.atomikos.icatch.lock_logs">false</prop>
+            </props>
+        </constructor-arg>
+    </bean>
+    <bean id="AtomikosTransactionManager"
+          class="com.atomikos.icatch.jta.UserTransactionManager"
+          init-method="init" destroy-method="close"
+          depends-on="userTransactionService">
+        <property name="forceShutdown" value="false"/>
+    </bean>
+    <bean id="AtomikosUserTransaction"
+          class="com.atomikos.icatch.jta.UserTransactionImp"
+          depends-on="userTransactionService">
+        <property name="transactionTimeout" value="300"/>
+    </bean>
+    <bean id="transactionManager"
+          class="org.springframework.transaction.jta.JtaTransactionManager"
+          depends-on="userTransactionService">
+        <property name="transactionManager" ref="AtomikosTransactionManager"/>
+        <property name="userTransaction" ref="AtomikosUserTransaction"/>
+    </bean>
+
+
+
+    <bean class="org.kimios.utils.extension.ExtensionRegistryManager" factory-method="init" />
+
+    <!-- Load the standard Kimios Spring Configuration files -->
+    <import resource="classpath*:/META-INF/spring/ctx-kimios*.xml"/>
+
+
+
+    <bean id="propertyConfigurer" class="org.kimios.utils.spring.PropertiesHolderPropertyPlaceholderConfigurer">
+        <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE"></property>
+        <property name="locations">
+            <list>
+                <value>file:${kimios.home}/server/conf/kimios.properties</value>
+            </list>
+        </property>
+    </bean>
+
+
+    <!-- enable annotation for tests -->
+    <context:component-scan base-package="org.kimios.tests.spring"/>
+</beans>
+

@@ -1,0 +1,21 @@
+postgresql_karaf:
+    alwaysPull: false
+    binds:
+      - ${project.basedir}/pg_conf:/docker-entrypoint-initdb.d
+    env: !!set {POSTGRESQL_ADMIN_PASSWORD=kimios: null, POSTGRESQL_PASSWORD=kimios: null,
+      POSTGRESQL_USER=kimios: null, POSTGRESQL_DATABASE=kimios: null}
+    image: postgres:9.4
+    portBindings: !!set {54499->5432/tcp: null}
+    readonlyRootfs: false
+karaf:
+    buildImage:
+      dockerfileLocation: ${project.build.testOutputDirectory}/karaf_docker
+      noCache: false
+      remove: true
+    await:
+      strategy: sleeping
+      sleepTime: 200 s
+    links: !!set {'postgresql_karaf:postgresql': null}
+    portBindings: [8089/tcp, 8181/tcp, 44444/tcp, 1099/tcp, 8101/tcp]
+    env: !!set {'KIMIOS_PG_LINK=jdbc:postgresql://postgresql_karaf:5432/kimios': null, KIMIOS_PG_USER=kimios: null,
+          KIMIOS_PG_PASS=kimios: null}

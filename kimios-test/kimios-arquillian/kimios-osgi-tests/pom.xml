@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>kimios-tests</artifactId>
+        <groupId>org.kimios</groupId>
+        <version>1.1-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>kimios-osgi-tests</artifactId>
+
+
+    <properties>
+        <kimios.jmxurl>service:jmx:rmi://192.168.99.100:44444/jndi/rmi://192.168.99.100:1099/karaf-root</kimios.jmxurl>
+        <kimios.jmxuser>karaf</kimios.jmxuser>
+        <kimios.jmxpassword>karaf</kimios.jmxpassword>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <version>4.3.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.arquillian.container</groupId>
+            <artifactId>arquillian-container-karaf-remote</artifactId>
+            <version>2.1.0.Final</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-karaf-distribution</artifactId>
+            <version>${kimios.version}</version>
+            <type>tar.gz</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.arquillian.cube</groupId>
+            <artifactId>arquillian-cube-docker</artifactId>
+            <version>1.0.0.Alpha10</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-kernel</artifactId>
+            <version>1.1-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+
+        <testResources>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
+        </testResources>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <systemPropertyVariables>
+                        <kimios.karaf.jmx>${kimios.jmxurl}</kimios.karaf.jmx>
+                        <kimios.karaf.jmxuser>${kimios.jmxuser}</kimios.karaf.jmxuser>
+                        <kimios.karaf.jmxpassword>${kimios.jmxpassword}</kimios.karaf.jmxpassword>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <configuration>
+                    <excludeTransitive>true</excludeTransitive>
+                    <includeTypes>tar.gz,war</includeTypes>
+                    <artifactItems>
+                        <artifactItem>
+                            <groupId>org.kimios</groupId>
+                            <artifactId>kimios-karaf-distribution</artifactId>
+                            <version>${kimios.version}</version>
+                            <type>tar.gz</type>
+                            <overWrite>true</overWrite>
+                            <outputDirectory>${project.build.testOutputDirectory}/karaf_docker</outputDirectory>
+                        </artifactItem>
+                    </artifactItems>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>cpbinaries</id>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <phase>compile</phase>
+                        <configuration>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+
+
+</project>

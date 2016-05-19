@@ -1,0 +1,26 @@
+postgresql_tomcat:
+    alwaysPull: false
+    binds:
+      - ${project.basedir}/pg_conf:/docker-entrypoint-initdb.d
+    env: !!set {POSTGRESQL_ADMIN_PASSWORD=kimios: null, POSTGRESQL_PASSWORD=kimios: null,
+      POSTGRESQL_USER=kimios: null, POSTGRESQL_DATABASE=kimios: null}
+    image: postgres:9.4
+    portBindings: !!set {54499->5432/tcp: null}
+    readonlyRootfs: false
+tomcat:
+    alwaysPull: false
+    await: {strategy: polling}
+    binds: ['${project.basedir}/tc_conf/tomcat-users.xml:/usr/local/tomcat/conf/tomcat-users.xml',
+      '${project.basedir}/kimios_conf:/usr/local/tomcat/kimios_home']
+    env: !!set {TOMCAT_PASS=arquillian: null, ? 'JAVA_OPTS=-Dkimios.home=/usr/local/tomcat/kimios_home
+        -Djdbc.url=jdbc:postgresql://postgresql:5432/kimios -Djava.rmi.server.hostname=dockerServerIp
+        -Dcom.sun.management.jmxremote.rmi.port=8088 -Dcom.sun.management.jmxremote.port=8089
+        -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false
+        -Dkimios.home=/usr/local/tomcat/kimios_home -Djdbc.url=jdbc:postgresql://postgresql:5432/kimios -Djdbc.user=kimios -Djdbc.password=kimios -Djava.rmi.server.hostname=dockerServerIp -Dcom.sun.management.jmxremote.rmi.port=8088 -Dcom.sun.management.jmxremote.port=8089 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Dlogback.configurationFile=/usr/local/tomcat/kimios_home/server/conf/logback.xml'
+      : null, 'CATALINA_OPTS=-Djava.security.egd=file:/dev/./urandom': null}
+    image: tomcat:7.0
+    links: !!set {'postgresql_tomcat:postgresql': null}
+    portBindings: !!set {8088/tcp: null, 8080/tcp: null, 8089/tcp: null}
+    readonlyRootfs: false
+    volumes: !!set {/usr/local/tomcat/conf/tomcat-users.xml: null, /home/kimios-repository: null,
+      /usr/local/tomcat/kimios_home: null}

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!--
   ~ Kimios - Document Management System Software
   ~ Copyright (C) 2008-2015  DevLib'
@@ -14,20 +15,14 @@
   ~ You should have received a copy of the GNU Affero General Public License
   ~ aong with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <parent>
-    <artifactId>kimios</artifactId>
-    <groupId>org.kimios</groupId>
-    <version>1.1-SNAPSHOT</version>
-  </parent>
-  <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>kimios-test</artifactId>
-  <packaging>pom</packaging>
-  <modules>
-    <module>kimios-arquillian</module>
-  </modules>
-</project>
+</beans>
+
