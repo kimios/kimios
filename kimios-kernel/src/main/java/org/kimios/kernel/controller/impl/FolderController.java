@@ -159,6 +159,7 @@ public class FolderController extends AKimiosController implements IFolderContro
                 }
             }
             EventContext.get().setEntity(f);
+            EventContext.addParameter("folder", f);
 
             return f.getUid();
         } else {

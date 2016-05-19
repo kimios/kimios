@@ -422,10 +422,12 @@ public class DocumentController extends AKimiosController implements IDocumentCo
             if (documentTypeId > 0)
                 vrsCtrl.updateDocumentVersion(s, documentId, documentTypeId, metasXmlStream);
 
-            return documentId;
 
+            EventContext.addParameter("document", document);
+
+            return documentId;
         } catch (IOException e) {
-            throw new AccessDeniedException();
+            throw new AccessDeniedException(e);
         }
     }
 

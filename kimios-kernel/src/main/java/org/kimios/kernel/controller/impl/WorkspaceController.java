@@ -117,6 +117,8 @@ public class WorkspaceController extends AKimiosController implements IWorkspace
         {
             dmsFactoryInstantiator.getDmEntityFactory().generatePath(w);
             dmsFactoryInstantiator.getWorkspaceFactory().saveWorkspace(w);
+
+            EventContext.addParameter("workspace", w);
             return w.getUid();
         } else {
             throw new AccessDeniedException();

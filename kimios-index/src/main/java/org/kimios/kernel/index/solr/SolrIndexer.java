@@ -105,14 +105,21 @@ public class SolrIndexer extends GenericEventHandler
                 Check inside parameters
              */
             doc = (Document)EventContext.getParameters().get("document");
-            log.info("doc from event param " + doc);
+            if(log.isDebugEnabled()){
+                log.debug("doc from event param " + doc);
+            }
 
-            if(doc == null){
+            if(retour instanceof Long){
+                //load from id
+                doc = FactoryInstantiator.getInstance().getDocumentFactory().getDocument((Long)retour);
+            } else if(retour instanceof DataTransfer){
                 doc = FactoryInstantiator.getInstance()
                         .getDocumentVersionFactory().getDocumentVersion(((DataTransfer) retour).getDocumentVersionUid())
                         .getDocument();
             }
-
+        }
+        if(doc == null){
+            log.error("on FILE_UPLOAD, no document has been found for indexing. Method return was {}", retour);
         }
         if(log.isDebugEnabled()){
             log.info("give document {} to {} on FILE_UPLOAD", doc, indexManager);
@@ -120,7 +127,7 @@ public class SolrIndexer extends GenericEventHandler
         try {
             indexManager.indexDocument(doc);
         } catch (Exception e) {
-            log.error(" index action Exception on Document " + doc.getUid(), e);
+            log.error(" index action Exception on Document " + doc, e);
         }
     }
 

@@ -20,6 +20,13 @@ import org.kimios.exceptions.DmsKernelException;
 @SuppressWarnings("serial")
 public class AccessDeniedException extends DmsKernelException
 {
+
+    public AccessDeniedException(){}
+
+    public AccessDeniedException(Exception ex){
+        super(ex);
+    }
+
     public String toString()
     {
         return "Access is denied";

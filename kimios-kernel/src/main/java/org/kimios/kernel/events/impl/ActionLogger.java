@@ -187,13 +187,28 @@ public class ActionLogger extends GenericEventHandler
     private <T extends DMEntityImpl> void saveLog(DMEntityLog<T> log, int actionType, EventContext ctx)
     {
         try {
-            logger.debug("Save log on: " + ctx.getEvent() + " - " +
-                    (ctx.getEntity() != null ? ctx.getEntity().getUid() : " Entity is null"));
+
+            DMEntity entity = null;
+            if(ctx.getEntity() == null){
+                //try from parameters
+                if(EventContext.getParameters().get("document") instanceof Document){
+                    entity = (Document)EventContext.getParameters().get("document");
+                } else
+                if(EventContext.getParameters().get("folder") instanceof Folder){
+                    entity = (Document)EventContext.getParameters().get("folder");
+                } else
+                if(EventContext.getParameters().get("workspace") instanceof Workspace){
+                    entity = (Document)EventContext.getParameters().get("workspace");
+                }
+            }
+            if(logger.isDebugEnabled()){
+                logger.debug("Save log on event: {} - entity: {} - contextParameters: {}", ctx, entity, EventContext.getParameters());
+            }
             log.setDate(new Date());
             log.setUser(ctx.getSession().getUserName());
             log.setUserSource(ctx.getSession().getUserSource());
             log.setAction(actionType);
-            log.setDMEntity(ctx.getEntity());
+            log.setDMEntity(entity);
             //if delete action, store item data as json
             if(actionType == ActionType.DELETE){
                 if(ctx.getEntity() != null){
