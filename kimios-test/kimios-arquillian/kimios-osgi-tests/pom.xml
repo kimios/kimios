@@ -18,6 +18,7 @@
         <kimios.jmxpassword>karaf</kimios.jmxpassword>
         <docker.host>192.168.99.100</docker.host>
         <docker.version>1.22</docker.version>
+        <docker.port>2376</docker.port>
     </properties>
 
     <dependencies>

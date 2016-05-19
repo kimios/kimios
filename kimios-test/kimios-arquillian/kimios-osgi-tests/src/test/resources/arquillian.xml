@@ -7,7 +7,7 @@
 
     <extension qualifier="docker">
         <property name="serverVersion">${docker.version}</property>
-        <property name="serverUri">tcp://${docker.host}:2376</property>
+        <property name="serverUri">tcp://${docker.host}:${docker.port}</property>
         <property name="tlsVerify">true</property>
         <property name="certPath">~/.docker/machine/machines/default</property>
         <!--<property name="machineName">default</property>-->
