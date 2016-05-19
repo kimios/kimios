@@ -168,6 +168,7 @@ public class MailShareController extends AKimiosController implements IMailShare
             }
 
 
+
             if (StringUtils.isNotBlank(senderAddress)) {
                 if (StringUtils.isNotBlank(senderName)) {
                     email.setFrom(senderAddress, senderName);

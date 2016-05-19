@@ -97,7 +97,7 @@ public class EmailFactory {
     }
 
     public MultiPartEmail getMultipartEmailObject() throws EmailException {
-        MultiPartEmail email = new MultiPartEmail();
+        MultiPartEmail email = new HtmlEmail();
         email.setHostName(mailServer);
         email.setSmtpPort(mailServerPort);
         if(StringUtils.isNotBlank(mailAccount)) {
