@@ -75,7 +75,7 @@ kimios.explorer.Cart = Ext.extend(Ext.Panel, {
                         var link = srcContextPath + '/Converter?sessionId=' + sessionUid;
                         for (var i = 0; i < records.length; ++i)
                             link += '&documentId=' + records[i].data.uid;
-                        link += '&converterImpl=org.kimios.kernel.converter.impl.FileToZip';
+                        link += '&converterImpl=org.kimios.converter.impl.FileToZip';
                         window.location.href = link;
                     }
                 }
