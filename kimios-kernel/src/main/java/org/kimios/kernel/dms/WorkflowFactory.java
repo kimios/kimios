@@ -25,6 +25,8 @@ public interface WorkflowFactory
 {
     public Workflow getWorkflow(long uid) throws ConfigException, DataSourceException;
 
+    public Workflow getWorkflow(String workflowName) throws ConfigException, DataSourceException;
+
     public Vector<Workflow> getWorkflows() throws ConfigException, DataSourceException;
 
     public long saveWorkflow(Workflow wf) throws ConfigException, DataSourceException;

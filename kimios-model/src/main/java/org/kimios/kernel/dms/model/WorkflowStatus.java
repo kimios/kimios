@@ -146,5 +146,17 @@ public class WorkflowStatus
         return new org.kimios.kernel.ws.pojo.WorkflowStatus(this.uid, this.name,
                 (this.successorUid != null ? this.successorUid : -1), this.workflowUid);
     }
+
+    @Override
+    public String toString() {
+        return "WorkflowStatus{" +
+                "uid=" + uid +
+                ", name='" + name + '\'' +
+                ", successorUid=" + successorUid +
+                ", workflowUid=" + workflowUid +
+                ", workflow=" + workflow +
+                ", successor=" + successor +
+                '}';
+    }
 }
 

@@ -16,3 +16,4 @@ gradle*
 gradle/*
 generated/
 hs_err_pid*
+kimios-test/**/*.jar

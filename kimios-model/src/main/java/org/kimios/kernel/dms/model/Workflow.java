@@ -33,6 +33,9 @@ public class Workflow
     @Column(name = "workflow_description", length = 5000)
     private String description;
 
+    @Column(name = "workflow_automatic_restart", nullable = true)
+    private Boolean automaticStatusRestart = false;
+
     public Workflow()
     {
     }
@@ -74,9 +77,27 @@ public class Workflow
         this.uid = uid;
     }
 
+    public Boolean getAutomaticStatusRestart() {
+        return automaticStatusRestart;
+    }
+
+    public void setAutomaticStatusRestart(Boolean automaticStatusRestart) {
+        this.automaticStatusRestart = automaticStatusRestart;
+    }
+
     public org.kimios.kernel.ws.pojo.Workflow toPojo()
     {
-        return new org.kimios.kernel.ws.pojo.Workflow(this.uid, this.name, this.description);
+        return new org.kimios.kernel.ws.pojo.Workflow(this.uid, this.name, this.description, this.automaticStatusRestart != null ? this.automaticStatusRestart : false);
+    }
+
+    @Override
+    public String toString() {
+        return "Workflow{" +
+                "uid=" + uid +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", automaticStatusRestart=" + automaticStatusRestart +
+                '}';
     }
 }
 

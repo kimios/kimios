@@ -173,6 +173,15 @@ public interface IStudioController
             AccessDeniedException, ConfigException, DataSourceException,
             XSDException;
 
+
+    /**
+     * Create a new worfklow from an xml descriptor
+     */
+    public long createWorkflowWithAutomaticRestartOption(Session session, String name,
+                               String description, boolean automaticRestart, String xmlStream) throws XMLException,
+            AccessDeniedException, ConfigException, DataSourceException,
+            XSDException;
+
     /**
      * Update workflow from an xml descriptor
      */
@@ -180,6 +189,16 @@ public interface IStudioController
             String description, String xmlStream) throws XMLException,
             AccessDeniedException, ConfigException, DataSourceException,
             XSDException;
+
+    /**
+     * Update workflow from an xml descriptor
+     */
+    public void updateWorkflowWithAutomaticRestart(Session session, long workflowUid, String name,
+                               String description, boolean automaticRestart, String xmlStream) throws XMLException,
+            AccessDeniedException, ConfigException, DataSourceException,
+            XSDException;
+
+
 
     /**
      * Remove workflow

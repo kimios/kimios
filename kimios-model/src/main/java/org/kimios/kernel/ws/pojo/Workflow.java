@@ -23,6 +23,8 @@ public class Workflow
 
     private String description;
 
+    private boolean automaticStatusRestart;
+
     public Workflow()
     {
     }
@@ -32,6 +34,13 @@ public class Workflow
         this.uid = uid;
         this.name = name;
         this.description = description;
+    }
+
+    public Workflow(long uid, String name, String description, boolean automaticStatusRestart) {
+        this.uid = uid;
+        this.name = name;
+        this.description = description;
+        this.automaticStatusRestart = automaticStatusRestart;
     }
 
     public String getDescription()
@@ -62,6 +71,14 @@ public class Workflow
     public void setUid(long uid)
     {
         this.uid = uid;
+    }
+
+    public boolean isAutomaticStatusRestart() {
+        return automaticStatusRestart;
+    }
+
+    public void setAutomaticStatusRestart(boolean automaticStatusRestart) {
+        this.automaticStatusRestart = automaticStatusRestart;
     }
 }
 

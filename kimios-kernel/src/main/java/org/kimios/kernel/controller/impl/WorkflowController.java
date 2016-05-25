@@ -33,14 +33,20 @@ import org.kimios.kernel.security.model.SecurityEntityType;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.user.model.Group;
 import org.kimios.utils.configuration.ConfigurationManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Vector;
 
 @Transactional
 public class WorkflowController extends AKimiosController implements IWorkflowController
 {
+
+    private static Logger logger = LoggerFactory.getLogger(WorkflowController.class);
+
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IWorkflowController#createWorkflowRequest(org.kimios.kernel.security.Session, long, long)
     */
@@ -225,6 +231,42 @@ public class WorkflowController extends AKimiosController implements IWorkflowCo
         newRequest.setStatus(RequestStatus.REJECTED);
         dmsFactoryInstantiator.getDocumentWorkflowStatusRequestFactory().updateRequest(newRequest);
         EventContext.addParameter("workflowRequest", newRequest);
+
+        /*
+        *
+        * If automated workflow restart activated, recreate the previous status request in the chain (after removing
+        * previously validated request)
+        *
+        */
+        org.kimios.kernel.dms.model.WorkflowStatus wfs =
+                dmsFactoryInstantiator.getWorkflowStatusFactory().getWorkflowStatus(newRequest.getWorkflowStatusUid());
+
+        Workflow workflow = dmsFactoryInstantiator.getWorkflowFactory().getWorkflow(wfs.getWorkflowUid());
+        if (workflow.getAutomaticStatusRestart() != null &&  workflow.getAutomaticStatusRestart())
+        {
+            //reload previous reques
+            WorkflowStatus st = dmsFactoryInstantiator.getWorkflowStatusFactory()
+                    .getWorkflowStatus(workflowStatusUid);
+            List<WorkflowStatus> status = dmsFactoryInstantiator.getWorkflowStatusFactory()
+                    .getWorkflowStatuses(dmsFactoryInstantiator.getWorkflowFactory().getWorkflow(st.getWorkflowUid()));
+            WorkflowStatus toKeepWorkflow = null;
+            int count = 0;
+            for(WorkflowStatus c: status){
+                if(c.getUid() == workflowStatusUid){
+                    break;
+                }
+                count++;
+            }
+            if(count - 1 >= 0){
+                toKeepWorkflow = status.get(count - 1);
+            }
+            if(logger.isDebugEnabled()){
+                logger.debug("workflow should restart automatically on status {}", toKeepWorkflow);
+            }
+            if(toKeepWorkflow != null){
+                this.createWorkflowRequest(session, documentUid, toKeepWorkflow.getUid());
+            }
+        }
     }
 
     /* (non-Javadoc)

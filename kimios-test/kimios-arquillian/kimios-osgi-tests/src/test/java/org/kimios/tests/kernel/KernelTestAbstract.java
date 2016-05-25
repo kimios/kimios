@@ -24,14 +24,17 @@ public abstract class KernelTestAbstract extends TestAbstract {
     BundleContext context;
 
 
-    IAdministrationController administrationController;
-    ISecurityController securityController;
-    IWorkspaceController workspaceController;
-    IFolderController folderController;
-    IDocumentController documentController;
+    protected IAdministrationController administrationController;
+    protected ISecurityController securityController;
+    protected IWorkspaceController workspaceController;
+    protected IFolderController folderController;
+    protected IDocumentController documentController;
+    protected IWorkflowController workflowController;
+    protected IStudioController studioController;
+    protected IRuleManagementController rulesController;
 
-    Session adminSession;
-    Workspace workspaceTest;
+    protected Session adminSession;
+    protected Workspace workspaceTest;
 
     public static String ADMIN_LOGIN = "admin";
     public static String ADMIN_PWD = "kimios";
@@ -66,6 +69,30 @@ public abstract class KernelTestAbstract extends TestAbstract {
         this.documentController = documentController;
     }
 
+    public IRuleManagementController getRulesController() {
+        return rulesController;
+    }
+
+    public void setRulesController(IRuleManagementController rulesController) {
+        this.rulesController = rulesController;
+    }
+
+    public IWorkflowController getWorkflowController() {
+        return workflowController;
+    }
+
+    public void setWorkflowController(IWorkflowController workflowController) {
+        this.workflowController = workflowController;
+    }
+
+    public IStudioController getStudioController() {
+        return studioController;
+    }
+
+    public void setStudioController(IStudioController studioController) {
+        this.studioController = studioController;
+    }
+
     public void init() {
 
         ArrayList<String> controllerNames = new ArrayList<String>();
@@ -74,6 +101,9 @@ public abstract class KernelTestAbstract extends TestAbstract {
         controllerNames.add("workspaceController");
         controllerNames.add("folderController");
         controllerNames.add("documentController");
+        controllerNames.add("workflowController");
+        controllerNames.add("studioController");
+        controllerNames.add("rulesController");
 
         this.initServices(controllerNames);
     }

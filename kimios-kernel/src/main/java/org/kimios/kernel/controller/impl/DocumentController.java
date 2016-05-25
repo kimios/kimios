@@ -313,7 +313,6 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                 secCtrl.updateDMEntitySecurities(s, documentId, securitiesXmlStream, isRecursive, false);
 
 
-            long versionId = vrsCtrl.createDocumentVersion(s, documentId);
             DataTransfer dt = ftCtrl.startUploadTransaction(s, documentId, false);
             DataTransfer transac = transferFactoryInstantiator.getDataTransferFactory().getDataTransfer(dt.getUid());
             DocumentVersion dv =

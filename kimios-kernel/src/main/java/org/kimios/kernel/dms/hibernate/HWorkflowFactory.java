@@ -51,6 +51,20 @@ public class HWorkflowFactory extends HFactory implements WorkflowFactory
         }
     }
 
+    public Workflow getWorkflow(String name) throws ConfigException,
+            DataSourceException
+    {
+        try {
+            String query = "select w from Workflow w where w.name = :workflowName";
+            Workflow wf = (Workflow) getSession().
+                    createQuery(query).setString("workflowName", name)
+                    .uniqueResult();
+            return wf;
+        } catch (HibernateException e) {
+            throw new DataSourceException(e);
+        }
+    }
+
     public Vector<Workflow> getWorkflows() throws ConfigException,
             DataSourceException
     {

@@ -26,6 +26,7 @@ public class OsgiDeployment {
                 builder.addBundleManifestVersion(2);
                 builder.addDynamicImportPackages("org.kimios.kernel.*");
                 builder.addDynamicImportPackages("org.kimios.client.*");
+                builder.addDynamicImportPackages("org.kimios.api.*");
                 builder.addImportPackages("org.osgi.util.tracker");
                 builder.addImportPackages("org.slf4j");
                 return builder.openStream();

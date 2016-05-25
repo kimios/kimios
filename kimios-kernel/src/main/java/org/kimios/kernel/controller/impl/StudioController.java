@@ -521,6 +521,37 @@ public class StudioController extends AKimiosController implements IStudioContro
     }
 
     /**
+     * Create a new worfklow from an xml descriptor With automatic restart Option
+     */
+    public synchronized long createWorkflowWithAutomaticRestartOption(Session session, String name, String description,
+                                            boolean automaticRestart, String xmlStream)
+            throws XMLException, AccessDeniedException,
+            ConfigException, DataSourceException, XSDException
+    {
+        if (securityFactoryInstantiator.getRoleFactory()
+                .getRole(Role.STUDIO, session.getUserName(), session.getUserSource()) == null)
+        {
+            throw new AccessDeniedException();
+        }
+        Workflow wf = new Workflow(-1, name, description);
+        wf.setAutomaticStatusRestart(automaticRestart);
+        long wUid = dmsFactoryInstantiator.getWorkflowFactory().saveWorkflow(wf);
+        Vector<StatusManagers> sms = this.getWorkflowStatusesFromXml(xmlStream, wUid);
+        long wfsUid = -1;
+        for (int i = sms.size() - 1; i >= 0; i--) {
+            sms.elementAt(i).getStatus().setWorkflowUid(wUid);
+            sms.elementAt(i).getStatus().setSuccessorUid(wfsUid);
+            wfsUid = dmsFactoryInstantiator.getWorkflowStatusFactory().saveWorkflowStatus(sms.elementAt(i).getStatus());
+            for (WorkflowStatusManager m : sms.elementAt(i).getManagers()) {
+                m.setWorkflowStatusUid(wfsUid);
+                dmsFactoryInstantiator.getWorkflowStatusManagerFactory().saveWorkflowStatusManager(m);
+            }
+        }
+
+        return wUid;
+    }
+
+    /**
      * Update workflow from an xml descriptor
      */
     public synchronized void updateWorkflow(Session session, long workflowUid, String name, String description,
@@ -535,6 +566,55 @@ public class StudioController extends AKimiosController implements IStudioContro
         Workflow wf = dmsFactoryInstantiator.getWorkflowFactory().getWorkflow(workflowUid);
         wf.setDescription(description);
         wf.setName(name);
+        dmsFactoryInstantiator.getWorkflowFactory().updateWorkflow(wf);
+        Vector<StatusManagers> sms = this.getWorkflowStatusesFromXml(xmlStream, workflowUid);
+        WorkflowStatusFactory wfsf = dmsFactoryInstantiator.getWorkflowStatusFactory();
+        Vector<WorkflowStatus> v = wfsf.getWorkflowStatuses(wf);
+        for (int i = 0; i < v.size(); i++) {
+            if (!isIn(v.elementAt(i), sms)) {
+                wfsf.deleteWorkflowStatus(v.elementAt(i));
+            }
+        }
+        Vector<WorkflowStatus> vOrdered = new Vector<WorkflowStatus>();
+        for (StatusManagers sMan : sms) {
+            vOrdered.add(new WorkflowStatus(sMan.getStatus().getUid(), sMan.getStatus().getName(),
+                    sMan.getStatus().getSuccessorUid(), sMan.getStatus()
+                    .getWorkflowUid()));
+        }
+        long wfsUid = -1;
+        for (int i = sms.size() - 1; i >= 0; i--) {
+            wfsf.updateWorkflowStatus(vOrdered.elementAt(i), vOrdered, i);
+            sms.elementAt(i).setStatus(vOrdered.elementAt(i));
+            wfsUid = sms.elementAt(i).getStatus().getUid();
+            Vector<WorkflowStatusManager> managers =
+                    this.getWorkflowStatusManagers(session, sms.elementAt(i).getStatus().getUid());
+            for (WorkflowStatusManager m : managers) {
+                dmsFactoryInstantiator.getWorkflowStatusManagerFactory().deleteWorkflowStatusManager(m);
+            }
+            for (WorkflowStatusManager m : sms.elementAt(i).getManagers()) {
+                m.setWorkflowStatusUid(wfsUid);
+                dmsFactoryInstantiator.getWorkflowStatusManagerFactory().saveWorkflowStatusManager(m);
+            }
+        }
+    }
+
+    /**
+     * Update workflow from an xml descriptor
+     */
+    public synchronized void updateWorkflowWithAutomaticRestart(Session session, long workflowUid, String name, String description,
+                                            boolean automaticRestart,
+                                            String xmlStream) throws XMLException,
+            AccessDeniedException, ConfigException, DataSourceException, XSDException
+    {
+        if (securityFactoryInstantiator.getRoleFactory()
+                .getRole(Role.STUDIO, session.getUserName(), session.getUserSource()) == null)
+        {
+            throw new AccessDeniedException();
+        }
+        Workflow wf = dmsFactoryInstantiator.getWorkflowFactory().getWorkflow(workflowUid);
+        wf.setDescription(description);
+        wf.setName(name);
+        wf.setAutomaticStatusRestart(automaticRestart);
         dmsFactoryInstantiator.getWorkflowFactory().updateWorkflow(wf);
         Vector<StatusManagers> sms = this.getWorkflowStatusesFromXml(xmlStream, workflowUid);
         WorkflowStatusFactory wfsf = dmsFactoryInstantiator.getWorkflowStatusFactory();
