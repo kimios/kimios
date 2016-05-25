@@ -1,6 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2008-2015  DevLib'
+ * Copyright (C) 2008-2016  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -14,7 +14,7 @@
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.kimios.kernel.converter.impl.vendors.impl;
+package org.kimios.converter.impl.vendors.aspose;
 
 import com.aspose.slides.*;
 import org.apache.commons.io.FileUtils;

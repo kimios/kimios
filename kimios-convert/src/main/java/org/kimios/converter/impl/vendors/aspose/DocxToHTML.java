@@ -1,6 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2008-2015  DevLib'
+ * Copyright (C) 2008-2016  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -14,32 +14,34 @@
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.kimios.kernel.converter.impl.vendors.impl;
+package org.kimios.converter.impl.vendors.aspose;
 
-import com.aspose.cells.HtmlSaveOptions;
-import com.aspose.cells.ImageFormat;
-import com.aspose.cells.SaveFormat;
-import com.aspose.cells.Workbook;
+import com.aspose.words.*;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.poi.xwpf.converter.core.FileImageExtractor;
+import org.apache.poi.xwpf.converter.core.FileURIResolver;
+import org.apache.poi.xwpf.converter.xhtml.XHTMLConverter;
+import org.apache.poi.xwpf.converter.xhtml.XHTMLOptions;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.kimios.kernel.converter.ConverterImpl;
 import org.kimios.kernel.converter.exception.BadInputSource;
 import org.kimios.kernel.converter.exception.ConverterException;
 import org.kimios.kernel.converter.impl.FileNameGenerator;
-import org.kimios.kernel.converter.impl.utils.ToHtml;
 import org.kimios.kernel.converter.source.InputSource;
 import org.kimios.kernel.converter.source.InputSourceFactory;
 
-import java.awt.*;
 import java.io.*;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 
 /**
- * Allows to convert .xlsx and .xls to HTML content
+ * Allows to convert .DOCX to HTML content
  */
-public class XlsToHTML extends ConverterImpl {
+public class DocxToHTML extends ConverterImpl {
 
-    private static final String[] INPUT_EXTENSIONS = new String[]{"xlsx", "xls", "ods"};
+    private static final String[] INPUT_EXTENSIONS = new String[]{"docx", "odt", "doc"};
     private static final String OUTPUT_EXTENSION = "html";
 
     @Override
@@ -62,31 +64,62 @@ public class XlsToHTML extends ConverterImpl {
             String targetPath = temporaryRepository + "/" +
                     fileName + "_dir/" + fileName + "." + OUTPUT_EXTENSION;
 
+            // Load DOCX into XWPFDocument
+            InputStream in = new FileInputStream(sourcePath);
             String targetPathImg = targetPath + "_img";
             File imgFolder = new File(targetPathImg);
             imgFolder.mkdirs();
 
-            //Load a spreadsheet to be converted
-            Workbook book = new Workbook(sourcePath);
-            HtmlSaveOptions saveOptions = new HtmlSaveOptions(SaveFormat.HTML);
-            saveOptions.getImageOptions().setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            saveOptions.getImageOptions().setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-            book.save(targetPath, saveOptions);
+
+            // The encoding of the text file is automatically detected.
+            Document doc = new Document(sourcePath);
+
+            // Create and pass the object which implements the handler methods.
+            HtmlSaveOptions options = new HtmlSaveOptions(SaveFormat.HTML);
+            options.setImagesFolder(imgFolder.getAbsolutePath());
+            options.setExportTextInputFormFieldAsText(true);
+            options.setImageSavingCallback(new HandleImageSaving());
+            options.setEncoding(Charset.forName("UTF-8"));
+            doc.save(new FileOutputStream(targetPath), options);
+
+
+
+            String content = FileUtils.readFileToString(new File(targetPath));
+
+            content = content.replaceAll("Evaluation Only\\. Created with Aspose\\.Words\\. Copyright 2003\\-2015 Aspose Pty Ltd\\.","");
+
+            FileUtils.writeStringToFile(new File(targetPath), content);
+
 
             // Return HTML-based InputSource
             InputSource result = InputSourceFactory.getInputSource(targetPath);
             result.setHumanName(source.getName() + "_" + source.getType() + "." + OUTPUT_EXTENSION);
 
+            /*
+                Set url, to use in cache.
+             */
             result.setPublicUrl(targetPath);
             result.setMimeType(this.converterTargetMimeType());
             return result;
 
         } catch (Exception e) {
-            log.error("error while converting xls like document", e);
             throw new ConverterException(e);
+
         } finally {
+
             // Delete obsolete file
             new File(sourcePath).delete();
+        }
+    }
+
+
+    public class HandleImageSaving implements IImageSavingCallback
+    {
+        public void imageSaving(ImageSavingArgs e) throws Exception
+        {
+            // Change any images in the document being exported with the extension of "jpeg" to "jpg".
+            if (e.getImageFileName().endsWith(".jpeg"))
+                e.setImageFileName(e.getImageFileName().replace(".jpeg", ".jpg"));
         }
     }
 
@@ -103,4 +136,5 @@ public class XlsToHTML extends ConverterImpl {
     public String converterTargetMimeType() {
         return "text/html";
     }
+
 }

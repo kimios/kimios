@@ -77,50 +77,55 @@ kimios.util.PreviewHelper = {
     }
 
     extensionMapping : function(){
+
+
+        var baseConverterPath = 'org.kimios.converter.impl.';
+        var baseVendorConverterPath = baseConverterPath + 'vendors.';
+
         var extMapping = {
             doc: [{
                 target: 'html',
-                conv:'org.kimios.kernel.converter.impl.vendors.impl.DocxToHTML'
+                conv: baseVendorConverterPath + 'DocxToHTML'
             }],
             docx: [{
                 target: 'html',
-                conv:'org.kimios.kernel.converter.impl.vendors.impl.DocxToHTML'
+                conv: baseVendorConverterPath + 'DocxToHTML'
             }],
             odt: [{
                 target: 'html',
-                conv:'org.kimios.kernel.converter.impl.vendors.impl.DocxToHTML'
+                conv: baseVendorConverterPath + 'DocxToHTML'
             }],
             eml: [{
                 target: 'html',
-                conv:'org.kimios.kernel.converter.impl.vendors.impl.MailToHTML'
+                conv: baseVendorConverterPath + 'MailToHTML'
             }],
             msg: [{
                 target: 'html',
-                conv:'org.kimios.kernel.converter.impl.vendors.impl.MailToHTML'
+                conv: baseVendorConverterPath + 'MailToHTML'
             }],
             xls: [{
                 target: 'html',
-                conv:'org.kimios.kernel.converter.impl.vendors.impl.XlsToHTML'
+                conv: baseVendorConverterPath + 'XlsToHTML'
             }],
             xlsx: [{
                 target: 'html',
-                conv:'org.kimios.kernel.converter.impl.vendors.impl.XlsToHTML'
+                conv: baseVendorConverterPath + 'XlsToHTML'
             }],
             ods: [{
                 target: 'html',
-                conv:'org.kimios.kernel.converter.impl.vendors.impl.XlsToHTML'
+                conv: baseVendorConverterPath + 'XlsToHTML'
             }],
             ppt: [{
                 target: 'html',
-                conv:'org.kimios.kernel.converter.impl.vendors.impl.PptToHTML'
+                conv:baseVendorConverterPath + 'PptToHTML'
             }],
             pptx: [{
                 target: 'html',
-                conv:'org.kimios.kernel.converter.impl.vendors.impl.PptToHTML'
+                conv:baseVendorConverterPath + 'PptToHTML'
             }],
             odp: [{
                 target: 'html',
-                conv:'org.kimios.kernel.converter.impl.vendors.impl.PptToHTML'
+                conv:baseVendorConverterPath + 'PptToHTML'
             }]
 
             //pdf: [{conv: 'org.kimios.kernel.converter.impl.PDFMerger', target: 'pdf'}]
