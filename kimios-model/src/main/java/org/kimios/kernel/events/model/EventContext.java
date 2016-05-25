@@ -23,6 +23,7 @@ import org.kimios.kernel.security.model.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -163,6 +164,19 @@ public class EventContext implements IEventContext
     public void setSession(Session session)
     {
         this.session = session;
+    }
+
+
+    @Override
+    public String toString() {
+        return "EventContext{" +
+                "event=" + event +
+                ", contextParameters=" + Arrays.toString(contextParameters) +
+                ", entity=" + entity +
+                ", parentEntity=" + parentEntity +
+                ", session=" + session +
+                ", currentOccur=" + currentOccur +
+                '}';
     }
 }
 

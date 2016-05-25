@@ -81,7 +81,7 @@ public class GenericInterceptor implements MethodInterceptor
         //process rules (after state)
         if (rulesManagementEnabled) {
             //pass selected beans for the current event/path
-            ruleManager.processRulesAfter(rulesBeans, ctx);
+            ruleManager.processRulesAfter(rulesBeans, evt.eventName()[0], ctx);
         }
         //process handler after
         for (GenericEventHandler it : eventHandlerManager.handlers()) {

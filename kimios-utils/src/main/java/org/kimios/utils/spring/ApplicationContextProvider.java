@@ -41,7 +41,6 @@ public class ApplicationContextProvider implements ApplicationContextAware, Bean
         return ctx;
     }
 
-
     public static <T> T loadBean(Class<T> _class){
         if(ctx != null){
             return ctx.getBean(_class);

@@ -27,6 +27,11 @@ import java.util.List;
 
 public class RuleBeanFactory extends HFactory
 {
+
+    public RuleBean loadRuleById(long ruleId){
+        return (RuleBean)getSession().get(RuleBean.class, ruleId);
+    }
+
     public long save(RuleBean bean) throws DataSourceException
     {
         try {

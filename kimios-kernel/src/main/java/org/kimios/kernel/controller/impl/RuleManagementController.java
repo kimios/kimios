@@ -60,12 +60,15 @@ public class RuleManagementController extends AKimiosController implements IRule
 
     public void deleteRule(long idRule) throws DataSourceException
     {
-        // TODO Auto-generated method stub
+        //TODO Implements role and rights management
+        RuleBean rb = ruleFactory.loadRuleById(idRule);
+        ruleFactory.deleleRuleBean(rb);
     }
 
-    public void getRule(Session session, long uid) throws DataSourceException
+    public RuleBean getRule(Session session, long uid) throws DataSourceException
     {
-        // TODO Auto-generated method stub
+        //TODO Implements role and rights management
+        return ruleFactory.loadRuleById(uid);
 
     }
 
@@ -80,17 +83,15 @@ public class RuleManagementController extends AKimiosController implements IRule
         return xml;
     }
 
-    public void getRules(Session session) throws DataSourceException
+    public List<RuleBean> getRules(Session session) throws DataSourceException
     {
-        // TODO Auto-generated method stub
-
+        return null;
     }
 
-    public void getRulesByPath(Session session, String path)
+    public List<RuleBean> getRulesByPath(Session session, String path)
             throws DataSourceException
     {
-        // TODO Auto-generated method stub
-
+        return null;
     }
 
     public Collection<Class<? extends RuleImpl>> getRulesClass(Session session) throws DataSourceException
@@ -105,30 +106,8 @@ public class RuleManagementController extends AKimiosController implements IRule
         return ruleClasses;
     }
 
-//  public void saveRule(Session session, String ruleJavaClass,
-//      Set<EventBean> events, Map<String, Serializable> parameters,
-//      String path, String ruleName) throws DataSourceException, ConfigException, AccessDeniedException {
-//    DMEntity entity = dmsFactoryInstantiator.getDmEntityFactory().getEntity(path);
-//    if(SecurityAgent.getInstance().isReadable(entity, session.getUserName(), session.getUserSource(), session.getGroups())){
-//      RuleBean cb = new RuleBean();
-//      cb.setJavaClass(ruleJavaClass);
-//      /*
-//       *  Generating values from xml
-//       */
-//      cb.setParameters(parameters);
-//      cb.setEvents(events);
-//      cb.setRuleOwner(session.getUserName());
-//      cb.setRuleOwnerSource(session.getUserSource());
-//      cb.setRuleCreationDate(new Date());
-//      cb.setRuleUpdateDate(new Date());
-//      cb.setPath(path);
-//      cb.setName(ruleName);
-//      ruleFactory.save(cb);
-//    }else
-//      throw new AccessDeniedException();
-//  }
 
-    public void createRule(Session session, String ruleJavaClass, String path, String ruleName, String xmlStream)
+    public long createRule(Session session, String ruleJavaClass, String path, String ruleName, String xmlStream)
             throws DataSourceException, ConfigException, AccessDeniedException, SAXException, IOException,
             ParserConfigurationException
     {
@@ -136,7 +115,6 @@ public class RuleManagementController extends AKimiosController implements IRule
         if (SecurityAgent.getInstance()
                 .isReadable(entity, session.getUserName(), session.getUserSource(), session.getGroups()))
         {
-//      new XSDUtil().validateXmlStream(xmlStream, xsdFileName);
             org.w3c.dom.Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder()
                     .parse(new java.io.ByteArrayInputStream(xmlStream.getBytes()));
             Element root = doc.getDocumentElement();
@@ -168,10 +146,22 @@ public class RuleManagementController extends AKimiosController implements IRule
             cb.setRuleUpdateDate(new Date());
             cb.setPath(path);
             cb.setName(ruleName);
-            ruleFactory.save(cb);
+            return ruleFactory.save(cb);
         } else {
             throw new AccessDeniedException();
         }
+    }
+
+    public long createRule(Session session, RuleBean ruleBean)
+        throws DataSourceException, ConfigException
+    {
+        if(getSecurityAgent().isAdmin(session.getUserName(), session.getUserSource())){
+            long ruleId = ruleFactory.save(ruleBean);
+            return ruleId;
+        } else {
+            throw new AccessDeniedException();
+        }
+
     }
 }
 

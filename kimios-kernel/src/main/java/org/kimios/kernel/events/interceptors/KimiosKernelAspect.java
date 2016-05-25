@@ -21,6 +21,9 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.kimios.kernel.dms.model.Document;
+import org.kimios.kernel.dms.model.Folder;
+import org.kimios.kernel.dms.model.Workspace;
 import org.kimios.kernel.events.ContextBuilder;
 import org.kimios.kernel.events.IEventHandlerManager;
 import org.kimios.kernel.events.model.EventContext;
@@ -32,6 +35,7 @@ import org.kimios.kernel.rules.RuleManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -89,15 +93,22 @@ public class KimiosKernelAspect {
 
         if(method != null){
 
-            log.trace(" Rule Manager  " + ruleManager + " | Rule Managerment Enabled " + rulesManagementEnabled);
-
+            if(log.isTraceEnabled()){
+                log.trace("Rule Management Enabled: {}. ManagerRef: {}", rulesManagementEnabled, ruleManager);
+            }
             EventContext ctx = EventContext.get();
             DmsEvent evt = method.getAnnotation(DmsEvent.class);
-            log.trace(evt + " | " +
-                    (evt != null ? evt.eventName()[0] : " no event defined. for " + method.getName()));
+            if(log.isTraceEnabled()) {
+                log.trace("{} ", evt, method.getName());
+            }
             if (evt != null) {
                 ctx = ContextBuilder.buildContext(evt.eventName()[0], method, pjp.getArgs());
-                log.trace("defined event: " + ctx.getEvent().name() + " | " + ctx.getEntity());
+                if(log.isTraceEnabled()) {
+                    log.trace("on method {}, defined event is: {}. Found entity is {}",
+                            method.getName(),
+                            ctx.getEvent().name(),
+                            ctx.getEntity());
+                }
             }
 
             ctx.setCurrentOccur(DmsEventOccur.BEFORE);
@@ -105,31 +116,53 @@ public class KimiosKernelAspect {
 
             List<RuleBean> rulesBeans = null;
             if(evt != null){
-                log.trace("event entity context {} ", ctx.getEntity());
+                if(log.isTraceEnabled()){
+                    log.trace("event entity context {} ", ctx.getEntity());
+                }
                 for (GenericEventHandler it : eventHandlerManager.handlers()) {
-                    log.trace("BEFORE processing event handler {}", it.getClass().getName());
+                    if(log.isTraceEnabled()) {
+                        log.trace("BEFORE {} processing event handler {}", evt.eventName(), it.getClass().getName());
+                    }
                     it.process(method, pjp.getArgs(), DmsEventOccur.BEFORE, null, ctx);
                 }
                 //process rules before (before state)
                 if (rulesManagementEnabled) {
                     //keep rules bean selected
                     rulesBeans = ruleManager.processRulesBefore(method, pjp.getArgs());
-                    log.trace("BEFORE following processing rules, rules beans count is {}", rulesBeans != null ? rulesBeans.size() : 0);
+                    if(log.isTraceEnabled()) {
+                        log.trace("BEFORE {} following processing rules, rules beans count is {}", evt.eventName(),
+                                rulesBeans != null ? rulesBeans.size() : 0);
+                    }
                 }
             }
 
             Object ret = pjp.proceed();
             ctx.setCurrentOccur(DmsEventOccur.AFTER);
+            if(evt != null){
+                //IMPORTANT: reset event. Should reset Context Parameters ?
+                ctx.setEvent(evt.eventName()[0]);
+            }
             EventContext.addParameter("callReturn", ret);
+            //Reset Entity with generated one if exists
+            //TODO: Move processed entity to key "entity", and generalize in all Kernel Controllers
+            if(EventContext.getParameters().get("document") != null){
+                ctx.setEntity((Document)EventContext.getParameters().get("document"));
+            } else if(EventContext.getParameters().get("workspace") != null){
+                ctx.setEntity((Workspace)EventContext.getParameters().get("workspace"));
+            } else if(EventContext.getParameters().get("folder") != null){
+                ctx.setEntity((Folder)EventContext.getParameters().get("folder"));
+            }
             if(evt != null){
                 //process rules (after state)
                 if (rulesManagementEnabled && rulesBeans != null && rulesBeans.size() > 0) {
                     //pass selected beans for the current event/path
-                    ruleManager.processRulesAfter(rulesBeans, ctx);
+                    ruleManager.processRulesAfter(rulesBeans, evt.eventName()[0], ctx);
                 }
                 //process handler after
                 for (GenericEventHandler it : eventHandlerManager.handlers()) {
-                    log.trace("AFTER processing event handler {}", it.getClass().getName());
+                    if(log.isTraceEnabled()) {
+                        log.trace("AFTER {} processing event handler {}", evt.eventName(), it.getClass().getName());
+                    }
                     it.process(method, pjp.getArgs(), DmsEventOccur.AFTER, ret, ctx);
                 }
             }

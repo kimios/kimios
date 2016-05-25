@@ -18,12 +18,14 @@ package org.kimios.kernel.rules;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
+import org.kimios.api.events.annotations.DmsEventName;
 import org.kimios.kernel.events.model.EventContext;
 import org.kimios.api.events.annotations.DmsEvent;
 import org.kimios.api.events.annotations.DmsEventOccur;
 import org.kimios.kernel.rules.impl.RuleImpl;
 import org.kimios.kernel.rules.model.EventBean;
 import org.kimios.kernel.rules.model.RuleBean;
+import org.kimios.utils.context.ContextHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +41,8 @@ public class RuleManager
 
     private static String SLASH_SEPARATOR = "/";
 
+    private ContextHolder contextHolder;
+
     private RuleBeanFactory ruleBeanFactory;
 
     public RuleBeanFactory getRuleBeanFactory()
@@ -51,14 +55,18 @@ public class RuleManager
         this.ruleBeanFactory = ruleBeanFactory;
     }
 
+    public ContextHolder getContextHolder() {
+        return contextHolder;
+    }
+
+    public void setContextHolder(ContextHolder contextHolder) {
+        this.contextHolder = contextHolder;
+    }
+
     private ObjectMapper objectMapper;
 
     public RuleManager(){
-
-
         objectMapper = new ObjectMapper();
-        log.info("Creating Rules Manager");
-
     }
 
     public List<RuleBean> processRulesBefore(Method method, Object[] arguments) throws Throwable
@@ -91,29 +99,34 @@ public class RuleManager
                 path = path.substring(0, path.lastIndexOf("/"));
                 beans = ruleBeanFactory.loadConditionByEventAndPath(ctx.getEvent(), path, fPaths);
                 if (beans != null && beans.size() > 0) {
-                    evalutate(beans, ctx, DmsEventOccur.BEFORE);
+                    evaluate(beans, evt.eventName()[0], DmsEventOccur.BEFORE, ctx);
                 }
             }
         }
         return beans;
     }
 
-    public void processRulesAfter(List<RuleBean> beans, EventContext ctx) throws Throwable
+    public void processRulesAfter(List<RuleBean> beans, DmsEventName eventName, EventContext ctx) throws Throwable
     {
         if (ctx != null && beans != null && beans.size() > 0) {
-            evalutate(beans, ctx, DmsEventOccur.AFTER);
+            evaluate(beans, eventName, DmsEventOccur.AFTER, ctx);
         }
     }
 
-    private void evalutate(List<RuleBean> beans, EventContext ctx, DmsEventOccur occur)
+    private void evaluate(List<RuleBean> beans, DmsEventName eventName, DmsEventOccur occur, EventContext ctx)
     {
-        EventBean currentEvent = new EventBean(ctx.getEvent().ordinal(), occur.ordinal());
-        log.debug(ctx.getEvent().name() + "/" + ctx.getEvent().ordinal() + ", Status: " + occur.name() + " / " +
-                occur.ordinal());
-        log.debug("Loaded rules count: " + beans.size());
+        EventBean currentEvent = new EventBean(eventName.ordinal(), occur.ordinal());
+        if(log.isDebugEnabled()){
+            log.debug(eventName.name() + "/" +eventName.ordinal() + ", Status: " + occur.name() + " / " +
+                    occur.ordinal());
+            log.debug("Loaded rules count: " + beans.size());
+        }
+
         for (RuleBean each : beans) {
-            log.debug(occur.name() + " " + ctx.getEvent().name() + ": " + each.getName() + " Match event: " +
-                    each.getEvents().contains(currentEvent));
+            if(log.isDebugEnabled()){
+                log.debug(occur.name() + " " + eventName.name() + ": " + each.getName() + " Match event: " +
+                        each.getEvents().contains(currentEvent));
+            }
             if (each.getEvents().contains(currentEvent)) {
                 try {
                     Class<?> cClass = Class.forName(each.getJavaClass());
@@ -123,9 +136,11 @@ public class RuleManager
                     *  set true parameters (reflection)
                     */
                     for (String fName : each.getParameters().keySet()) {
-                        log.debug(
-                                "Set parameter " + fName + ": " + each.getParameters().get(fName).getClass().getName());
-                        log.debug("Set parameter " + fName + ": " + each.getParameters().get(fName).toString());
+                        if(log.isDebugEnabled()) {
+                            log.debug(
+                                    "Set parameter " + fName + ": " + each.getParameters().get(fName).getClass().getName());
+                            log.debug("Set parameter " + fName + ": " + each.getParameters().get(fName).toString());
+                        }
                         Field f = cClass.getDeclaredField(fName);
                         f.setAccessible(true);
                         if (f.getType().equals(Class.class)) {
@@ -146,16 +161,17 @@ public class RuleManager
                             each.setParametersData(result);
                             liveInstance.setParameters(result);
                         } catch (Exception ex){
-                            log.error("error while parsing rule parameters", ex);
+                            log.error("error while parsing rule parameters from json", ex);
                         }
                     }
 
                     liveInstance.setConditionContext(ctx);
+                    liveInstance.setContextHolder(contextHolder);
                     if (liveInstance.isTrue()) {
                         liveInstance.execute();
                     }
                 } catch (Exception e) {
-                    log.error("Exception while handling rule...", e);
+                    log.error("exception while handling rule", e);
                 }
             }
         }

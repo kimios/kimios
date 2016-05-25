@@ -15,9 +15,11 @@
  */
 package org.kimios.kernel.events;
 
+import org.apache.commons.lang.StringUtils;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.*;
 import org.kimios.kernel.dms.model.*;
+import org.kimios.kernel.dms.utils.PathUtils;
 import org.kimios.kernel.events.model.EventContext;
 import org.kimios.api.events.annotations.DmsEventName;
 import org.kimios.kernel.exception.DataSourceException;
@@ -243,18 +245,6 @@ public class ContextBuilder
         }
 
 
-        // createDocumentWithProperties
-        if (name.equalsIgnoreCase(documentMethod[7])) {
-            Document doc = (Document)EventContext.getParameters().get("document");
-            ctx.setEntity(doc);
-        }
-
-        // createDocumentFromFullPathWithProperties
-        if (name.equalsIgnoreCase(documentMethod[8])) {
-            Document doc = (Document)EventContext.getParameters().get("document");
-            ctx.setEntity(doc);
-        }
-
         // copyDocument
         if (name.equalsIgnoreCase(documentMethod[9])) {
             Document doc = (Document)EventContext.getParameters().get("document");
@@ -425,6 +415,46 @@ public class ContextBuilder
                 e.printStackTrace();
             }
         }
+
+        // createDocumentWithProperties
+        if (name.equalsIgnoreCase(documentMethod[7])) {
+            Document doc = (Document)EventContext.getParameters().get("document");
+            ctx.setEntity(doc);
+
+
+            if(ctx.getEntity() == null){
+                Document document = new Document();
+                document.setUid(-1);
+                document.setName(arguments[1] != null ? arguments[1].toString() : "");
+                document.setExtension(arguments[2] != null ? arguments[2].toString() : "");
+                document.setMimeType(arguments[3] != null ? arguments[3].toString() : "");
+                document.setFolder(FactoryInstantiator.getInstance().getFolderFactory().getFolder((Long) arguments[4]));
+                document.setType(DMEntityType.DOCUMENT);
+                FactoryInstantiator.getInstance().getDmEntityFactory().generatePath(document);
+                ctx.setEntity(document);
+            }
+        }
+
+        // createDocumentFromFullPathWithProperties
+        if (name.equalsIgnoreCase(documentMethod[8])) {
+            Document doc = (Document)EventContext.getParameters().get("document");
+            ctx.setEntity(doc);
+
+            if(ctx.getEntity() == null){
+                String documentPath = ((String)arguments[1]).substring(((String)arguments[1]).lastIndexOf("/") + 1);
+                String docName = PathUtils.getFileNameWithoutExtension(documentPath);
+                String extension = PathUtils.getFileExtension(documentPath);
+                Document document = new Document();
+                document.setUid(-1);
+                document.setName(docName);
+                document.setExtension(extension);
+                document.setType(DMEntityType.DOCUMENT);
+                document.setPath((String)arguments[1]);
+                ctx.setEntity(document);
+            }
+        }
+
+
         return ctx;
     }
 

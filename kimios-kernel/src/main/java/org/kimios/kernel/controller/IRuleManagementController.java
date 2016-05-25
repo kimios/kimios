@@ -19,30 +19,34 @@ import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.exception.AccessDeniedException;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.rules.impl.RuleImpl;
+import org.kimios.kernel.rules.model.RuleBean;
 import org.kimios.kernel.security.model.Session;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 
 public interface IRuleManagementController
 {
-    //  public void saveRule(Session session, String ruleJavaClass,  String path, String ruleName, String xmlStream) throws DataSourceException, ConfigException, AccessDeniedException;
     public void deleteRule(long idRule) throws DataSourceException, ConfigException, AccessDeniedException;
 
     public Collection<Class<? extends RuleImpl>> getRulesClass(Session session) throws DataSourceException;
 
     public String getRuleClassParameters(Session session, String javaClassName) throws DataSourceException, Exception;
 
-    public void getRule(Session session, long uid) throws DataSourceException;
+    public RuleBean getRule(Session session, long uid) throws DataSourceException;
 
-    public void getRules(Session session) throws DataSourceException;
+    public List<RuleBean> getRules(Session session) throws DataSourceException;
 
-    public void getRulesByPath(Session session, String path) throws DataSourceException;
+    public List<RuleBean> getRulesByPath(Session session, String path) throws DataSourceException;
 
-    public void createRule(Session session, String ruleJavaClass, String path, String ruleName, String xmlStream)
+    public long createRule(Session session, String ruleJavaClass, String path, String ruleName, String xmlStream)
             throws DataSourceException, ConfigException, AccessDeniedException, SAXException, IOException,
             ParserConfigurationException;
+
+    public long createRule(Session session, RuleBean ruleBean)
+            throws DataSourceException, ConfigException;
 }
 

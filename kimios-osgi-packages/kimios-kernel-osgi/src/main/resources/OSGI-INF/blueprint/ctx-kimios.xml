@@ -45,8 +45,11 @@
         <property name="configurationManager" ref="configurationManager"/>
     </bean>
 
+    <bean id="contextHolder" class="org.kimios.utils.context.OsgiServiceHolder" />
+
     <bean id="ruleManager" class="org.kimios.kernel.rules.RuleManager">
          <property name="ruleBeanFactory" ref="ruleFactory"></property>
+         <property name="contextHolder" ref="contextHolder" />
      </bean>
 
      <bean id="eventInterceptor" class="org.kimios.kernel.events.interceptors.GenericInterceptor" init-method="init">

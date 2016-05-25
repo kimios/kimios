@@ -18,6 +18,7 @@ package org.kimios.kernel.rules.impl;
 import org.kimios.kernel.events.model.EventContext;
 import org.kimios.kernel.rules.model.Condition;
 import org.kimios.kernel.rules.model.RuleApplication;
+import org.kimios.utils.context.ContextHolder;
 
 import java.util.Map;
 
@@ -28,6 +29,8 @@ public abstract class RuleImpl implements Condition, RuleApplication
     protected Map<String, String> parameters;
 
     public abstract boolean isTrue();
+
+    protected ContextHolder contextHolder;
 
     final public EventContext getContext()
     {
@@ -47,6 +50,14 @@ public abstract class RuleImpl implements Condition, RuleApplication
 
     public void setParameters(Map<String, String> parameters) {
         this.parameters = parameters;
+    }
+
+    public ContextHolder getContextHolder() {
+        return contextHolder;
+    }
+
+    public void setContextHolder(ContextHolder contextHolder) {
+        this.contextHolder = contextHolder;
     }
 }
 

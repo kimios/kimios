@@ -1,6 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2008-2015  DevLib'
+ * Copyright (C) 2008-2016  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -16,11 +16,22 @@
 
 package org.kimios.utils.context;
 
+import org.kimios.utils.spring.ApplicationContextProvider;
+
+import java.util.Map;
+
 /**
- * Created by farf on 6/17/14.
+ * Created by farf on 23/05/16.
  */
-public interface ContextHolder {
+public class SpringServiceHolder implements ContextHolder {
 
-
-    public <T> T getService(Class<T> clazz);
+    @Override
+    public <T> T getService(Class<T> clazz) {
+        Map<String, T> item = ApplicationContextProvider.loadBeans(clazz);
+        if(item.size() == 1){
+            return item.get(item.keySet().iterator().next());
+        } else {
+            return null;
+        }
+    }
 }

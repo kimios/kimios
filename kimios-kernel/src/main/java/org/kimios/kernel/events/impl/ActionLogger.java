@@ -200,6 +200,8 @@ public class ActionLogger extends GenericEventHandler
                 if(EventContext.getParameters().get("workspace") instanceof Workspace){
                     entity = (Document)EventContext.getParameters().get("workspace");
                 }
+            } else {
+                entity = ctx.getEntity();
             }
             if(logger.isDebugEnabled()){
                 logger.debug("Save log on event: {} - entity: {} - contextParameters: {}", ctx, entity, EventContext.getParameters());

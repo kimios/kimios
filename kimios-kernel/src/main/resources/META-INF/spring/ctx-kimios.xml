@@ -94,8 +94,11 @@
         </property>
     </bean>
 
+    <bean id="contextHolder" class="org.kimios.utils.context.OsgiServiceHolder" />
+
     <bean id="ruleManager" class="org.kimios.kernel.rules.RuleManager">
         <property name="ruleBeanFactory" ref="ruleFactory"></property>
+        <property name="contextHolder" ref="contextHolder" />
     </bean>
 
     <bean id="eventHandlerManager" class="org.kimios.kernel.events.EventHandlerManager" factory-method="getInstance"
