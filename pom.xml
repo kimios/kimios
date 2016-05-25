@@ -74,6 +74,8 @@
         <bonita.version>7.1.3</bonita.version>
         <xstream.version>1.4.2</xstream.version>
         <thymeleaf.version>2.1.4.RELEASE</thymeleaf.version>
+        <osgi.version>4.3.1</osgi.version>
+        <osgi.enterprise.version>4.2.0</osgi.enterprise.version>
         <!-- releases properties -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <KIMIOS_VERSION>1.0-SNAPSHOT</KIMIOS_VERSION>
