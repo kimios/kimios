@@ -318,7 +318,8 @@ public class DocumentController extends AKimiosController implements IDocumentCo
             DocumentVersion dv =
                     dmsFactoryInstantiator.getDocumentVersionFactory().getDocumentVersion(transac.getDocumentVersionUid());
 
-
+            User u = authFactoryInstantiator.getAuthenticationSourceFactory().getAuthenticationSource(
+                    s.getUserSource()).getUserFactory().getUser(s.getUserName());
             if (!getSecurityAgent().isWritable(d, s.getUserName(), s.getUserSource(),
                     s.getGroups())) {
                 throw new AccessDeniedException();
@@ -334,16 +335,9 @@ public class DocumentController extends AKimiosController implements IDocumentCo
             out.flush();
             out.close();
             if (StringUtils.isNotBlank(hashMd5) && StringUtils.isNotBlank(hashSha1)) {
-                User u = authFactoryInstantiator.getAuthenticationSourceFactory().getAuthenticationSource(
-                        s.getUserSource()).getUserFactory().getUser(s.getUserName());
-                if (!getSecurityAgent().isWritable(d, s.getUserName(), s.getUserSource(), s.getGroups())) {
-                    throw new AccessDeniedException();
-                }
-
                 //Return inpustream on file transmitted
                 InputStream in = FileCompressionHelper.getTransactionFile(transac);
-
-               /* Hash Calculation */
+                /* Hash Calculation */
                 String recHashMD5 = "";
                 String recHashSHA1 = "";
                 try {
@@ -415,7 +409,29 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                     dmsFactoryInstantiator.getLockFactory().checkin(d, u);
                 }
                 transferFactoryInstantiator.getDataTransferFactory().removeDataTransfer(transac);
+            } else {
+
+                log.warn("No hash transmitted. Will calculate");
+                //simple add :
+                //Return inpustream on file transmitted
+                InputStream in = FileCompressionHelper.getTransactionFile(transac);
+                /* Hash Calculation */
+                HashCalculator hc = new HashCalculator("MD5");
+                String recHashMD5 = (hc.hashToString(in).replaceAll(" ", ""));
+                in = FileCompressionHelper.getTransactionFile(transac);
+                hc.setAlgorithm("SHA-1");
+                String recHashSHA1 = (hc.hashToString(in).replaceAll(" ", ""));
+                in = FileCompressionHelper.getTransactionFile(transac);
+                dv.setHashMD5(recHashMD5);
+                dv.setHashSHA1(recHashSHA1);
+                RepositoryManager.writeVersion(dv, in);
+                FactoryInstantiator.getInstance().getDocumentVersionFactory().updateDocumentVersion(dv);
             }
+            new File(ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH) + transac.getFilePath()).delete();
+            if (transac.isHasBeenCheckedOutOnStart()) {
+                dmsFactoryInstantiator.getLockFactory().checkin(document, u);
+            }
+            transferFactoryInstantiator.getDataTransferFactory().removeDataTransfer(transac);
 
 
             if (documentTypeId > 0)
@@ -427,6 +443,10 @@ public class DocumentController extends AKimiosController implements IDocumentCo
             return documentId;
         } catch (IOException e) {
             throw new AccessDeniedException(e);
+        } catch (NoSuchAlgorithmException e) {
+            throw new ConfigException(e);
+        } catch (Exception e){
+            throw new DmsKernelException(e);
         }
     }
 
@@ -792,7 +812,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                 dv.setHashSHA1(recHashSHA1);
                 RepositoryManager.writeVersion(dv, in);
                 FactoryInstantiator.getInstance().getDocumentVersionFactory().updateDocumentVersion(dv);
-	    }
+	        }
             new File(ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH) + transac.getFilePath()).delete();
             if (transac.isHasBeenCheckedOutOnStart()) {
                 dmsFactoryInstantiator.getLockFactory().checkin(document, u);
