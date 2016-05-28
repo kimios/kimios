@@ -97,6 +97,13 @@
             <version>${cxf.version}</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slfj.version}</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
 
@@ -208,7 +215,8 @@
                             org.codehaus.jackson.annotate,
                             org.apache.cxf.jaxrs.ext,
                             org.kimios.utils.spring,
-                            org.apache.commons.io
+                            org.apache.commons.io,
+                            org.kimios.utils.configuration
                         </Import-Package>
                     </instructions>
                 </configuration>

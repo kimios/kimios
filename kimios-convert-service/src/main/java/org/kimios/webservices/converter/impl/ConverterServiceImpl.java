@@ -18,13 +18,20 @@ package org.kimios.webservices.converter.impl;
 
 import org.kimios.api.InputSource;
 import org.kimios.converter.controller.IConverterController;
+import org.kimios.kernel.configuration.Config;
 import org.kimios.kernel.security.model.Session;
+import org.kimios.utils.configuration.ConfigurationManager;
 import org.kimios.webservices.converter.ConverterService;
 import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.IServiceHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.jws.WebMethod;
 import javax.jws.WebService;
+import javax.ws.rs.CookieParam;
 import javax.ws.rs.core.Response;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +42,7 @@ public class ConverterServiceImpl implements ConverterService {
 
     private IConverterController convertController;
     private IServiceHelper helper;
+    private static Logger logger = LoggerFactory.getLogger(ConverterServiceImpl.class);
 
     public ConverterServiceImpl(IConverterController controller, IServiceHelper helper) {
         this.convertController = controller;
@@ -133,6 +141,38 @@ public class ConverterServiceImpl implements ConverterService {
                 .build();
     }
 
+    @WebMethod(exclude = true)
+    public Response preview(String sessionId, String resourcePath) throws DMServiceException {
+        try {
+            Session session = helper.getSession(sessionId);
+            //TODO: should check session
+            if(logger.isDebugEnabled()){
+                logger.debug("trying to load resource from path: {}", resourcePath);
+            }
+            String temporaryRepository = ConfigurationManager.getValue(Config.DEFAULT_TEMPORARY_PATH);
+            return Response.ok(new FileInputStream(temporaryRepository + resourcePath)).build();
+
+        } catch (Exception e) {
+            throw helper.convertException(e);
+        }
+    }
+
+
+    @WebMethod(exclude = true)
+    public Response previewPathSession(String idPreview, String resPath) throws DMServiceException {
+        try {
+            //Session session = helper.getSession(sessionId);
+            //TODO: should check session
+            if(logger.isDebugEnabled()){
+                logger.debug("trying to load resource from path: {}", idPreview, resPath);
+            }
+            String temporaryRepository = ConfigurationManager.getValue(Config.DEFAULT_TEMPORARY_PATH);
+            return Response.ok(new FileInputStream(temporaryRepository + "/" + idPreview + "_dir/" + idPreview + "_img/" + resPath)).build();
+
+        } catch (Exception e) {
+            throw helper.convertException(e);
+        }
+    }
 
     /*private String encodeFileNameInHeader(HttpServletRequest request, String docName) throws Exception {
 

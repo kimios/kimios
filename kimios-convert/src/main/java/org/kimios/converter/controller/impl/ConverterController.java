@@ -70,6 +70,7 @@ public class ConverterController extends AKimiosController implements IConverter
             ConverterCacheHandler.cachePreviewData(documentVersionId, inputSource);
             return inputSource;
         } catch (Exception e) {
+            log.error("error while generating error view", e);
             if(e instanceof ConverterException && retainedMimeType != null &&
                     retainedMimeType.equals("text/html")){
                 //return custom html error
@@ -81,7 +82,7 @@ public class ConverterController extends AKimiosController implements IConverter
                     );
                     return new FileInputSource(tempFile, "text/html");
                 }   catch (Exception ex){
-                   log.error("error while generating error view", ex);
+
                 }
             }
             throw new ConverterException(e);
@@ -121,11 +122,13 @@ public class ConverterController extends AKimiosController implements IConverter
             }
             return inputSource;
         } catch (Exception e) {
+            log.error("error while generating error view", e);
             if(e instanceof ConverterException && retainedMimeType != null &&
                     retainedMimeType.equals("text/html")){
                 //return custom html error
                 try{
                     File tempFile  = File.createTempFile("kmsprev", "");
+                    //TODO: set clean error template
                     FileUtils.writeStringToFile(tempFile,
                             "<html><body>An error happen during preview process!<br /><br />" +
                                     "Please Contact Your Administrator !</body></html>"

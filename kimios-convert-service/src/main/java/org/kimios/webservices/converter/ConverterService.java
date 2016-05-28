@@ -20,6 +20,7 @@ import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.kimios.webservices.KimiosExtension;
 import org.kimios.webservices.exceptions.DMServiceException;
 
+import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.ws.rs.*;
@@ -110,4 +111,18 @@ public interface ConverterService extends KimiosExtension {
             @QueryParam(value = "converterImpl") @WebParam(name = "converterImpl") String converterImpl,
             @DefaultValue("true") @QueryParam(value = "inline") @WebParam(name = "inline") Boolean inline)
             throws DMServiceException;
+
+
+
+
+    @GET
+    @Path("/preview/p/{idpreview}/{respath}")
+    @Produces(value = {
+            MediaType.APPLICATION_OCTET_STREAM
+    })
+    Response previewPathSession(
+            @PathParam(value="idpreview") String idpreview,
+            @PathParam(value="respath") String respath)
+            throws DMServiceException;
+
 }
