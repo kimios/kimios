@@ -135,12 +135,9 @@ public interface ConverterService extends KimiosExtension {
             @PathParam(value="respath") String respath)
             throws DMServiceException;
 
-
     @GET
     @Path("/descriptors")
     @Produces(value = {MediaType.APPLICATION_JSON})
     Map<String, List<ConverterDescriptor>> descriptors(@QueryParam(value = "sessionId") @WebParam(name="sessionId") String sessionId)
         throws DMServiceException;
-
-
 }

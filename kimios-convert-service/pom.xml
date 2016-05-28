@@ -109,7 +109,6 @@
             <version>${swagger.version}</version>
             <scope>provided</scope>
         </dependency>
-
     </dependencies>
 
 
