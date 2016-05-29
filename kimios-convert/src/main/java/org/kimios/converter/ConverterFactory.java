@@ -44,6 +44,7 @@ public class ConverterFactory {
         try {
             log.debug("calling ConverterFactory for {} {}", className, outputFormat);
 
+
             Collection<Class<? extends ConverterImpl>> impls = extensionRegistryManager.itemsAsClass(ConverterImpl.class);
 
             log.debug("converter items: " + impls);

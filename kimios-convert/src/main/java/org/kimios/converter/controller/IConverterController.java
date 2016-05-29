@@ -59,9 +59,7 @@ public interface IConverterController {
     InputSource convertDocumentVersions(Session session, List<Long> documentVersionIds,
                                         String converterImpl, String outputFormat) throws ConverterException;
 
-
     InputSource loadPreviewDataFromCache(Session session, String idPreview) throws ConverterException;
-
 
 
     Map<String, List<ConverterDescriptor>> loadDescriptors() throws Exception;
