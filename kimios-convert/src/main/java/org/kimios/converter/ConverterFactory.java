@@ -39,7 +39,7 @@ public class ConverterFactory {
                 return (Converter) Class.forName(className).newInstance();
             } else {
                 return (Converter) Class.forName(className)
-                        .getDeclaredConstructor(new Class[]{String.class}).newInstance();
+                        .getDeclaredConstructor(new Class[]{String.class}).newInstance(outputFormat);
             }
 
         } catch (InvocationTargetException e) {

@@ -42,8 +42,9 @@ public class PDFMerger extends ConverterImpl {
         try {
 
             // Prepare output PDF file
+            String fileName = FileNameGenerator.generate();
             String targetPath = temporaryRepository + "/" +
-                    FileNameGenerator.generate() + "." + OUTPUT_EXTENSION;
+                    fileName + "." + OUTPUT_EXTENSION;
             PDFMergerUtility merger = new PDFMergerUtility();
             merger.setDestinationFileName(targetPath);
 
@@ -75,7 +76,7 @@ public class PDFMerger extends ConverterImpl {
             for (String fileToDelete : filesToDelete)
                 new File(fileToDelete).delete();
 
-            InputSource result = InputSourceFactory.getInputSource(targetPath);
+            InputSource result = InputSourceFactory.getInputSource(targetPath, fileName);
             result.setHumanName(OUTPUT_PREFIX + "_" + FileNameGenerator.getTime() + "." + OUTPUT_EXTENSION);
             return result;
 

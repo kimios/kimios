@@ -26,6 +26,7 @@ public class ConverterCacheHandler {
 
 
     private Map<Long, InputSource> _cache = new ConcurrentHashMap<Long, InputSource>();
+    private Map<String, InputSource> _cacheToken = new ConcurrentHashMap<String, InputSource>();
 
 
     private static ConverterCacheHandler converterCacheHandler;
@@ -43,14 +44,24 @@ public class ConverterCacheHandler {
 
     public static void cachePreviewData(Long versionId, InputSource inputSource){
         getInstance()._cache.put(versionId, inputSource);
+        getInstance()._cacheToken.put(inputSource.getToken(), inputSource);
+
     }
 
     public static boolean cacheExist(Long versionId){
         return getInstance()._cache.get(versionId) != null;
     }
 
+    public static boolean cacheExistsFromToken(String token){
+        return getInstance()._cacheToken.get(token) != null;
+    }
+
     public static InputSource load(Long versionId){
         return getInstance()._cache.get(versionId);
+    }
+
+    public static InputSource load(String token){
+        return getInstance()._cacheToken.get(token);
     }
 
     public static void cancelCache(Long versionId){

@@ -60,8 +60,9 @@ public class MailToHtml extends ConverterImpl {
             MimeMessage message = new MimeMessage(Session.getDefaultInstance(new Properties()), source.getInputStream());
             if (message.getContent() instanceof Multipart) {
                 // Convert file located to sourcePath into HTML web content
+                String fileName = FileNameGenerator.generate();
                 String targetPath = temporaryRepository + "/" +
-                        FileNameGenerator.generate() + ".html";
+                        fileName + ".html";
                 StringBuilder buffer = new StringBuilder();
 
                 Multipart multipart = (Multipart) message.getContent();
@@ -92,7 +93,7 @@ public class MailToHtml extends ConverterImpl {
                 new PrettyXmlSerializer(props).writeToStream(node, out);
 
                 IOUtils.write(out.toString(), new FileOutputStream(targetPath), "UTF-8");
-                InputSource result = InputSourceFactory.getInputSource(targetPath);
+                InputSource result = InputSourceFactory.getInputSource(targetPath, fileName);
                 result.setHumanName(source.getName() + "_" + source.getType() + ".html");
                 result.setMimeType(this.converterTargetMimeType());
                 return result;
@@ -101,13 +102,14 @@ public class MailToHtml extends ConverterImpl {
 
                 String content = "<pre>" + message.getContent().toString() + "</pre>";
                 // Convert file located to sourcePath into HTML web content
+                String fileName = FileNameGenerator.generate();
                 String targetPath = temporaryRepository + "/" +
-                        FileNameGenerator.generate() + ".html";
+                        fileName + ".html";
 
 
                 IOUtils.write(content, new FileOutputStream(targetPath), "UTF-8");
 
-                InputSource result = InputSourceFactory.getInputSource(targetPath);
+                InputSource result = InputSourceFactory.getInputSource(targetPath, fileName);
 
                 result.setHumanName(source.getName() + "_" + source.getType() + ".html");
                 result.setMimeType(this.converterTargetMimeType());

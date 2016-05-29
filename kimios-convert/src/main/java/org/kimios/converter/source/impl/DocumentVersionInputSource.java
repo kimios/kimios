@@ -27,6 +27,8 @@ import java.io.InputStream;
 public class DocumentVersionInputSource extends InputSourceImpl {
     private DocumentVersion version;
 
+    private String token;
+
     public DocumentVersionInputSource(DocumentVersion version) {
         this.version = version;
     }
@@ -52,5 +54,12 @@ public class DocumentVersionInputSource extends InputSourceImpl {
         return version;
     }
 
+    @Override
+    public String getToken() {
+        return token;
+    }
 
+    public void setToken(String token) {
+        this.token = token;
+    }
 }

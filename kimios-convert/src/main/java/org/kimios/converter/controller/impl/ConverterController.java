@@ -37,6 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 
 @Transactional
@@ -62,7 +63,7 @@ public class ConverterController extends AKimiosController implements IConverter
             // Build InputSource
             if(log.isDebugEnabled())
                 log.debug("building inputSource for {}",version.getDocument().getName());
-            InputSource source = InputSourceFactory.getInputSource(version);
+            InputSource source = InputSourceFactory.getInputSource(version, UUID.randomUUID().toString());
             // Get converter
             if(log.isDebugEnabled())
                 log.debug("converter implementation: " + converterImpl);
@@ -114,7 +115,7 @@ public class ConverterController extends AKimiosController implements IConverter
 
                 // Build InputSource
                 log.debug("Build InputSource from " + version.getDocument().getName() + "...");
-                sources.add(InputSourceFactory.getInputSource(version));
+                sources.add(InputSourceFactory.getInputSource(version, UUID.randomUUID().toString()));
             }
             // Cache enabled for singles versions processing only.
             if (documentVersionIds.size() == 1 && ConverterCacheHandler.cacheExist(documentVersionIds.get(0))) {
@@ -171,5 +172,12 @@ public class ConverterController extends AKimiosController implements IConverter
             versionIds.add(version.getUid());
         }
         return convertDocumentVersions(session, versionIds, converterImpl, outputFormat);
+    }
+
+    public InputSource loadPreviewDataFromCache(Session session, String idPreview) throws ConverterException {
+        if(ConverterCacheHandler.cacheExistsFromToken(idPreview)){
+            return ConverterCacheHandler.load(idPreview);
+        } else
+            throw new ConverterException("PreviewNotFound");
     }
 }

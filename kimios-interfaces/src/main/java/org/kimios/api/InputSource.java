@@ -41,4 +41,6 @@ public interface InputSource {
     void setPublicUrl(String publicUrl);
 
     public String getPublicUrl();
+
+    public String getToken();
 }

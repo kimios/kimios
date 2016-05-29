@@ -168,7 +168,18 @@ public class ConverterServiceImpl implements ConverterService {
                 logger.debug("trying to load resource from path: {}", idPreview, resPath);
             }
             String temporaryRepository = ConfigurationManager.getValue(Config.DEFAULT_TEMPORARY_PATH);
-            return Response.ok(new FileInputStream(temporaryRepository + "/" + idPreview + "_dir/" + idPreview + "_img/" + resPath)).build();
+
+            //check in cache with preview id, to get data related to document
+
+            InputSource source = convertController.loadPreviewDataFromCache(null, idPreview);
+
+            return Response
+                    .ok(new FileInputStream(temporaryRepository + "/" + idPreview + "_dir/" + idPreview + "_img/" + resPath))
+                    .header(
+                            "Content-Disposition",
+                            "attachment; filename=\"" + source.getHumanName() + "\"")
+                    .header("Content-Type", source.getMimeType())
+                    .build();
 
         } catch (Exception e) {
             throw helper.convertException(e);

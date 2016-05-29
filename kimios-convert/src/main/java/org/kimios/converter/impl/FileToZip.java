@@ -45,8 +45,9 @@ public class FileToZip extends ConverterImpl {
 
         try {
             // Copy given resource to temporary repository
+            String fileName = FileNameGenerator.generate();
             sourcePath = temporaryRepository + "/" + source.getName() + "_" +
-                    FileNameGenerator.generate() + "." + source.getType();
+                    fileName + "." + source.getType();
             IOUtils.copyLarge(source.getInputStream(), new FileOutputStream(sourcePath));
 
             // Add given data to zip file
@@ -56,7 +57,7 @@ public class FileToZip extends ConverterImpl {
 
             log.debug("Adding " + sourcePath + "...");
             writer.addFile(sourcePath, source.getName() + (source.getType() != null ? "." + source.getType() : ""));
-            InputSource result = InputSourceFactory.getInputSource(targetPath);
+            InputSource result = InputSourceFactory.getInputSource(targetPath, fileName);
             result.setHumanName(source.getName() + "_"
                     + (source.getType() != null ? source.getType() : "") + "." + OUTPUT_EXTENSION);
             return result;
@@ -85,8 +86,9 @@ public class FileToZip extends ConverterImpl {
 
         try {
             // Prepare output zipped file
+            String fileName = FileNameGenerator.generate();
             String targetPath = temporaryRepository + "/" +
-                    FileNameGenerator.generate() + "." + OUTPUT_EXTENSION;
+                    fileName + "." + OUTPUT_EXTENSION;
             writer = new ZipFileWriter(targetPath);
 
             for (InputSource source: sources) {
@@ -101,7 +103,7 @@ public class FileToZip extends ConverterImpl {
                 writer.addFile(sourcePath, source.getName() + (source.getType() != null ? "." + source.getType() : ""));
             }
 
-            InputSource result = InputSourceFactory.getInputSource(targetPath);
+            InputSource result = InputSourceFactory.getInputSource(targetPath, fileName);
             result.setHumanName(OUTPUT_PREFIX + "_" + FileNameGenerator.getTime() + "." + OUTPUT_EXTENSION);
             result.setMimeType(this.converterTargetMimeType());
             return result;

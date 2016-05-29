@@ -71,7 +71,7 @@ public class XlsToHTML extends ConverterImpl {
             toHtml.printPage();
 
             // Return HTML-based InputSource
-            InputSource result = InputSourceFactory.getInputSource(targetPath);
+            InputSource result = InputSourceFactory.getInputSource(targetPath, fileName);
             result.setHumanName(source.getName() + "_" + source.getType() + "." + OUTPUT_EXTENSION);
 
             /*

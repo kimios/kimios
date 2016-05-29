@@ -70,7 +70,7 @@ public class PostscriptToPDF extends ConverterImpl {
             converter.convert(document, fos);
 
             // Return HTML-based InputSource
-            InputSource result = InputSourceFactory.getInputSource(targetPath);
+            InputSource result = InputSourceFactory.getInputSource(targetPath, fileName);
             result.setHumanName(source.getName() + "_" + source.getType() + "." + OUTPUT_EXTENSION);
             /*
                 Set url, to use in cache.

@@ -25,16 +25,20 @@ import java.io.File;
 
 public class InputSourceFactory {
 
-    public static InputSource getInputSource(DocumentVersion version) {
-        return new DocumentVersionInputSource(version);
+    public static InputSource getInputSource(DocumentVersion version, String token) {
+        DocumentVersionInputSource di = new DocumentVersionInputSource(version);
+        di.setToken(token);
+        return di;
     }
 
-    public static InputSource getInputSource(File file) {
-        return new FileInputSource(file);
+    public static InputSource getInputSource(File file, String token) {
+        FileInputSource fi = new FileInputSource(file);
+        fi.setToken(token);
+        return fi;
     }
 
-    public static InputSource getInputSource(String fileName) {
-        return getInputSource(new File(fileName));
+    public static InputSource getInputSource(String fileName, String token) {
+        return getInputSource(new File(fileName), token);
     }
 
 }

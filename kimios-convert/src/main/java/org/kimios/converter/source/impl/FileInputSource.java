@@ -30,6 +30,8 @@ import java.io.InputStream;
 public class FileInputSource extends InputSourceImpl {
     private File file;
 
+    private String token;
+
     public FileInputSource(File file) {
         this.file = file;
     }
@@ -58,5 +60,12 @@ public class FileInputSource extends InputSourceImpl {
         return file.getName();
     }
 
+    @Override
+    public String getToken() {
+        return token;
+    }
 
+    public void setToken(String token) {
+        this.token = token;
+    }
 }

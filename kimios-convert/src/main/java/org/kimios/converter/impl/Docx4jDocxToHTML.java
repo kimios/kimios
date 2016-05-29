@@ -91,7 +91,7 @@ public class Docx4jDocxToHTML extends ConverterImpl {
             Docx4J.toHTML(htmlSettings, os, Docx4J.FLAG_EXPORT_PREFER_XSL);
 
             // Return HTML-based InputSource
-            InputSource result = InputSourceFactory.getInputSource(targetPath);
+            InputSource result = InputSourceFactory.getInputSource(targetPath, fileName);
             result.setHumanName(source.getName() + "_" + source.getType() + "." + OUTPUT_EXTENSION);
 
             /*

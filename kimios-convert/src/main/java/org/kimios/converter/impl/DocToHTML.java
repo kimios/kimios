@@ -62,9 +62,11 @@ public class DocToHTML extends ConverterImpl {
                     FileNameGenerator.generate() + "." + source.getType();
             IOUtils.copyLarge(source.getInputStream(), new FileOutputStream(sourcePath));
 
+
+            String fileName = FileNameGenerator.generate();
             // Convert file located to sourcePath into HTML web content
             String targetPath = temporaryRepository + "/" +
-                    FileNameGenerator.generate() + "." + OUTPUT_EXTENSION;
+                    fileName + "." + OUTPUT_EXTENSION;
 
             HWPFDocumentCore wordDocument = WordToHtmlUtils.loadDoc(new FileInputStream(sourcePath));
 
@@ -86,7 +88,7 @@ public class DocToHTML extends ConverterImpl {
             out.close();
 
             log.debug("Converting " + sourcePath + " to HTML content...");
-            InputSource result = InputSourceFactory.getInputSource(targetPath);
+            InputSource result = InputSourceFactory.getInputSource(targetPath, fileName);
             result.setHumanName(source.getName() + "_" + source.getType() + "." + OUTPUT_EXTENSION);
             result.setMimeType(this.converterTargetMimeType());
             return result;

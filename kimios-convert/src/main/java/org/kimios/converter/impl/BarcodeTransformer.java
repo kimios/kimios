@@ -58,8 +58,8 @@ public class BarcodeTransformer extends ConverterImpl {
             PdfReader givenPdf = new PdfReader(in);
 
             // set the target path
-
-            String targetPath = temporaryRepository + "/" + FileNameGenerator.generate() + ".pdf";
+            String fileName = FileNameGenerator.generate();
+            String targetPath = temporaryRepository + "/" +  fileName + ".pdf";
             PDFMergerUtility merger = new PDFMergerUtility();
             merger.setDestinationFileName(targetPath);
             FileOutputStream out = new FileOutputStream(targetPath);
@@ -81,7 +81,7 @@ public class BarcodeTransformer extends ConverterImpl {
             watermark.addImage(qrcodeImage);
             stamper.close();
 
-            InputSource result = InputSourceFactory.getInputSource(targetPath);
+            InputSource result = InputSourceFactory.getInputSource(targetPath, fileName);
             result.setHumanName("PDF_QRCode_" + FileNameGenerator.getTime() + ".pdf");
             return result;
 
