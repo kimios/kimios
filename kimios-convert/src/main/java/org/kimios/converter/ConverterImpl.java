@@ -33,6 +33,7 @@ public abstract class ConverterImpl implements Converter {
     protected static Logger log = LoggerFactory.getLogger(ConverterImpl.class);
     protected final String temporaryRepository;
     protected final String externalBaseUrl;
+    protected String selectedOutput;
 
     protected ConverterImpl() {
         temporaryRepository = ConfigurationManager.getValue(Config.DEFAULT_TEMPORARY_PATH);

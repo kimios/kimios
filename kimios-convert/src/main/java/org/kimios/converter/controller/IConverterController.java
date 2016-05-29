@@ -29,21 +29,24 @@ public interface IConverterController {
      * get the appropriate converter by factory call, execute the convert process
      * and return a JAX RS response.
      */
-    InputSource convertDocument(Session session, Long documentId, String converterImpl) throws ConverterException;
+    InputSource convertDocument(Session session, Long documentId,
+                                String converterImpl, String outputFormat) throws ConverterException;
 
     /**
      * Check current document access, create input source from document version,
      * get the appropriate converter by factory call, execute the convert process
      * and return a JAX RS response.
      */
-    InputSource convertDocumentVersion(Session session, Long documentVersionId, String converterImpl) throws ConverterException;
+    InputSource convertDocumentVersion(Session session, Long documentVersionId,
+                                       String converterImpl, String outputFormat) throws ConverterException;
 
     /**
      * Check document accesses, create multi input sources from last versions of documents,
      * get the appropriate converter by factory call, execute the convert process
      * and return a JAX RS response.
      */
-    InputSource convertDocuments(Session session, List<Long> documentIds, String converterImpl) throws ConverterException;
+    InputSource convertDocuments(Session session, List<Long> documentIds,
+                                 String converterImpl, String outputFormat) throws ConverterException;
 
 
     /**
@@ -51,6 +54,7 @@ public interface IConverterController {
      * get the appropriate converter by factory call, execute the convert process
      * and return a JAX RS response.
      */
-    InputSource convertDocumentVersions(Session session, List<Long> documentVersionIds, String converterImpl) throws ConverterException;
+    InputSource convertDocumentVersions(Session session, List<Long> documentVersionIds,
+                                        String converterImpl, String outputFormat) throws ConverterException;
 
 }

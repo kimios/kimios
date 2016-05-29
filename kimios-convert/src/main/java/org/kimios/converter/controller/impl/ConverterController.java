@@ -44,7 +44,8 @@ public class ConverterController extends AKimiosController implements IConverter
 
     private static Logger log = LoggerFactory.getLogger(ConverterController.class);
 
-    public InputSource convertDocumentVersion(Session session, Long documentVersionId, String converterImpl) throws ConverterException {
+    public InputSource convertDocumentVersion(Session session, Long documentVersionId,
+                                              String converterImpl, String outputFormat) throws ConverterException {
 
         String retainedMimeType = null;
         try {
@@ -53,18 +54,27 @@ public class ConverterController extends AKimiosController implements IConverter
             if (version == null || !getSecurityAgent().isReadable(version.getDocument(), session.getUserName(), session.getUserSource(), session.getGroups())) {
                 throw new AccessDeniedException();
             }
-
-            // Build InputSource
-            log.debug("Build InputSource for " + version.getDocument().getName() + "...");
             if (ConverterCacheHandler.cacheExist(version.getUid())) {
+                if(log.isDebugEnabled())
+                    log.debug("input source already exists in cache, returning it");
                 return ConverterCacheHandler.load(version.getUid());
             }
+            // Build InputSource
+            if(log.isDebugEnabled())
+                log.debug("building inputSource for {}",version.getDocument().getName());
             InputSource source = InputSourceFactory.getInputSource(version);
             // Get converter
-            log.debug("Getting Converter implementation: " + converterImpl);
-            Converter converter = ConverterFactory.getConverter(converterImpl);
-
+            if(log.isDebugEnabled())
+                log.debug("converter implementation: " + converterImpl);
+            Converter converter = ConverterFactory.getConverter(converterImpl, outputFormat);
             retainedMimeType = converter.converterTargetMimeType();
+            if(retainedMimeType == null){
+                log.warn("{} not available for converter {}", retainedMimeType, converterImpl);
+                throw new ConverterException("MimeTypeNotFound");
+            }
+            if(log.isDebugEnabled()){
+                log.debug("converter will output");
+            }
             // Convert and return the result source
             InputSource inputSource = converter.convertInputSource(source);
             ConverterCacheHandler.cachePreviewData(documentVersionId, inputSource);
@@ -89,7 +99,8 @@ public class ConverterController extends AKimiosController implements IConverter
         }
     }
 
-    public InputSource convertDocumentVersions(Session session, List<Long> documentVersionIds, String converterImpl) throws ConverterException {
+    public InputSource convertDocumentVersions(Session session, List<Long> documentVersionIds,
+                                               String converterImpl, String outputFormat) throws ConverterException {
         String retainedMimeType = null;
         try {
             List<InputSource> sources = new ArrayList<InputSource>();
@@ -112,7 +123,7 @@ public class ConverterController extends AKimiosController implements IConverter
 
             // Get converter
             log.debug("Getting Converter implementation: " + converterImpl);
-            Converter converter = ConverterFactory.getConverter(converterImpl);
+            Converter converter = ConverterFactory.getConverter(converterImpl, outputFormat);
 
             // Convert and return the result source
             InputSource inputSource = converter.convertInputSources(sources);
@@ -144,22 +155,21 @@ public class ConverterController extends AKimiosController implements IConverter
 
     // aliases
 
-    public InputSource convertDocument(Session session, Long documentId, String converterImpl) throws ConverterException {
+    public InputSource convertDocument(Session session, Long documentId,
+                                       String converterImpl, String outputFormat) throws ConverterException {
         Document document = dmsFactoryInstantiator.getDocumentFactory().getDocument(documentId);
         DocumentVersion version = dmsFactoryInstantiator.getDocumentVersionFactory().getLastDocumentVersion(document);
-        return convertDocumentVersion(session, version.getUid(), converterImpl);
+        return convertDocumentVersion(session, version.getUid(), converterImpl, outputFormat);
     }
 
-    public InputSource convertDocuments(Session session, List<Long> documentIds, String converterImpl) throws ConverterException {
+    public InputSource convertDocuments(Session session, List<Long> documentIds,
+                                        String converterImpl, String outputFormat) throws ConverterException {
         List<Long> versionIds = new ArrayList<Long>();
         for (Long documentId : documentIds) {
             Document document = dmsFactoryInstantiator.getDocumentFactory().getDocument(documentId);
-            if (log.isDebugEnabled()) {
-                log.debug("Entity loaded: > " + document);
-            }
             DocumentVersion version = dmsFactoryInstantiator.getDocumentVersionFactory().getLastDocumentVersion(document);
             versionIds.add(version.getUid());
         }
-        return convertDocumentVersions(session, versionIds, converterImpl);
+        return convertDocumentVersions(session, versionIds, converterImpl, outputFormat);
     }
 }

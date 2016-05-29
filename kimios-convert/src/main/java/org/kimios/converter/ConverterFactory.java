@@ -16,6 +16,7 @@
 
 package org.kimios.converter;
 
+import org.apache.commons.lang.StringUtils;
 import org.kimios.api.Converter;
 import org.kimios.converter.impl.BarcodeTransformer;
 import org.kimios.converter.impl.DocToHTML;
@@ -25,20 +26,31 @@ import org.kimios.converter.impl.PDFMerger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.InvocationTargetException;
+
 public class ConverterFactory {
 
     private static Logger log = LoggerFactory.getLogger(ConverterFactory.class);
 
-    public static Converter getConverter(String className) throws ConverterNotFound {
+    public static Converter getConverter(String className, String outputFormat) throws ConverterNotFound {
         try {
+            log.debug("calling ConverterFactory for {} {}", className, outputFormat);
+            if (StringUtils.isBlank(outputFormat)) {
+                return (Converter) Class.forName(className).newInstance();
+            } else {
+                return (Converter) Class.forName(className)
+                        .getDeclaredConstructor(new Class[]{String.class}).newInstance();
+            }
 
-            log.debug("Calling ConverterFactory...");
-            return (Converter) Class.forName(className).newInstance();
-
+        } catch (InvocationTargetException e) {
+            throw new ConverterNotFound(e);
+        } catch (NoSuchMethodException e) {
+            //throw new ConverterNotFound(e);
+            log.warn("converter {} doesn't implement other types, returning default", className);
+            return ConverterFactory.getConverter(className, null);
         } catch (ClassNotFoundException e) {
-
             /*
-            Check if given converter corresponds to file extension
+                 Check if given converter corresponds to file extension
              */
             log.warn("Converter implementation not found, trying to get from extension...");
 

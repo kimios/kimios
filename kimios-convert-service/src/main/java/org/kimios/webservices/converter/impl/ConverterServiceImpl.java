@@ -50,23 +50,23 @@ public class ConverterServiceImpl implements ConverterService {
     }
 
 
-    public Response convertDocument(String sessionId, Long documentId, String converterImpl, Boolean inline) throws DMServiceException {
+    public Response convertDocument(String sessionId, Long documentId, String converterImpl, String outputFormat, Boolean inline) throws DMServiceException {
         try {
             Session session = helper.getSession(sessionId);
             if (inline) {
-                return wrapResponseInline(convertController.convertDocument(session, documentId, converterImpl));
+                return wrapResponseInline(convertController.convertDocument(session, documentId, converterImpl, outputFormat));
             } else
-                return wrapResponse(convertController.convertDocument(session, documentId, converterImpl));
+                return wrapResponse(convertController.convertDocument(session, documentId, converterImpl, outputFormat));
 
         } catch (Exception e) {
             throw helper.convertException(e);
         }
     }
 
-    public String convertDocumentUrlOnly(String sessionId, Long documentId, String converterImpl) throws DMServiceException {
+    public String convertDocumentUrlOnly(String sessionId, Long documentId, String converterImpl, String outputFormat) throws DMServiceException {
         try {
             Session session = helper.getSession(sessionId);
-            InputSource inputSource = convertController.convertDocument(session, documentId, converterImpl);
+            InputSource inputSource = convertController.convertDocument(session, documentId, converterImpl, outputFormat);
             String retUrl = inputSource.getPublicUrl();
             return helper.getResourceUrl(retUrl);
         } catch (Exception e) {
@@ -74,20 +74,20 @@ public class ConverterServiceImpl implements ConverterService {
         }
     }
 
-    public Response convertDocumentVersion(String sessionId, Long versionId, String converterImpl, Boolean inline) throws DMServiceException {
+    public Response convertDocumentVersion(String sessionId, Long versionId, String converterImpl, String outputFormat, Boolean inline) throws DMServiceException {
         try {
             Session session = helper.getSession(sessionId);
             if (inline) {
-                return wrapResponseInline(convertController.convertDocumentVersion(session, versionId, converterImpl));
+                return wrapResponseInline(convertController.convertDocumentVersion(session, versionId, converterImpl, outputFormat));
             } else
-                return wrapResponse(convertController.convertDocumentVersion(session, versionId, converterImpl));
+                return wrapResponse(convertController.convertDocumentVersion(session, versionId, converterImpl, outputFormat));
 
         } catch (Exception e) {
             throw helper.convertException(e);
         }
     }
 
-    public Response convertDocuments(String sessionId, Long[] documentIds, String converterImpl, Boolean inline) throws DMServiceException {
+    public Response convertDocuments(String sessionId, Long[] documentIds, String converterImpl, String outputFormat, Boolean inline) throws DMServiceException {
         try {
             Session session = helper.getSession(sessionId);
             List<Long> documents = new ArrayList<Long>();
@@ -95,16 +95,17 @@ public class ConverterServiceImpl implements ConverterService {
                 documents.add(documentId);
             }
             if (inline) {
-                return wrapResponseInline(convertController.convertDocuments(session, documents, converterImpl));
+                return wrapResponseInline(convertController.convertDocuments(session, documents, converterImpl, outputFormat));
             } else
-                return wrapResponse(convertController.convertDocuments(session, documents, converterImpl));
+                return wrapResponse(convertController.convertDocuments(session, documents, converterImpl, outputFormat));
 
         } catch (Exception e) {
             throw helper.convertException(e);
         }
     }
 
-    public Response convertDocumentVersions(String sessionId, Long[] versionIds, String converterImpl, Boolean inline) throws DMServiceException {
+    public Response convertDocumentVersions(String sessionId, Long[] versionIds, String converterImpl,
+                                            String outputFormat, Boolean inline) throws DMServiceException {
         try {
             Session session = helper.getSession(sessionId);
             List<Long> versions = new ArrayList<Long>();
@@ -112,9 +113,9 @@ public class ConverterServiceImpl implements ConverterService {
                 versions.add(versionId);
             }
             if (inline) {
-                return wrapResponseInline(convertController.convertDocumentVersions(session, versions, converterImpl));
+                return wrapResponseInline(convertController.convertDocumentVersions(session, versions, converterImpl, outputFormat));
             } else
-                return wrapResponse(convertController.convertDocumentVersions(session, versions, converterImpl));
+                return wrapResponse(convertController.convertDocumentVersions(session, versions, converterImpl, outputFormat));
 
         } catch (Exception e) {
             throw helper.convertException(e);
