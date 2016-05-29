@@ -18,16 +18,23 @@ package org.kimios.converter.impl.vendors.aspose;
 
 import com.aspose.email.*;
 import org.apache.commons.io.FileUtils;
-import org.kimios.kernel.converter.ConverterImpl;
-import org.kimios.kernel.converter.exception.ConverterException;
-import org.kimios.kernel.converter.impl.FileNameGenerator;
-import org.kimios.kernel.converter.source.InputSource;
-import org.kimios.kernel.converter.source.InputSourceFactory;
+import org.apache.commons.lang.StringUtils;
+import org.kimios.api.InputSource;
+import org.kimios.converter.*;
+import org.kimios.converter.impl.*;
+import org.kimios.converter.impl.vendors.aspose.utils.LicenceLoader;
+import org.kimios.converter.source.*;
+import org.kimios.exceptions.ConverterException;
+
+import org.kimios.utils.configuration.ConfigurationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.nio.charset.Charset;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MailToHTML extends ConverterImpl {
 
@@ -37,6 +44,17 @@ public class MailToHTML extends ConverterImpl {
 
     private static final String[] INPUT_EXTENSIONS = new String[]{"eml", "msg"};
     private static final String OUTPUT_EXTENSION = "html";
+
+    private static final String[] AVAILABLE_OUTPUT_TYPE = new String[]{"html", "pdf"};
+
+
+    private static final Map<String, String> types = new HashMap<String, String>();
+
+
+    static {
+        types.clear();
+        types.put("html", "text/html");
+    }
 
     @Override
     public String converterTargetMimeType() {
@@ -50,25 +68,27 @@ public class MailToHTML extends ConverterImpl {
         /*
             Try to parse email
          */
+        try{
+            String licenceFile = ConfigurationManager.getValue("dms.converters.aspose.lic");
+            if(StringUtils.isNotBlank(licenceFile)){
+                LicenceLoader.loadMailLicence(licenceFile + ".mail");
+            }
+        }catch (Exception ex){
+            log.error("error while loading Aspose licence", ex);
+        }
         try {
                 // Convert file located to sourcePath into HTML web content
+                String fileName = FileNameGenerator.generate();
                 String targetPath = temporaryRepository + "/" +
-                        FileNameGenerator.generate() + ".html";
+                        fileName + ".html";
 
                 LoadOptions options = new EmlLoadOptions();
+                options.setPrefferedTextEncoding(Charset.forName("UTF-8"));
                 MailMessage mailMessage = MailMessage.load(source.getInputStream(), options);
-                SaveOptions saveOptions = SaveOptions.createSaveOptions(MailMessageSaveType.getHtmlFormat());
+                MailMessageSaveType saveType = MailMessageSaveType.getHtmlFormat();
+                SaveOptions saveOptions = SaveOptions.createSaveOptions(saveType);
                 mailMessage.save(new FileOutputStream(targetPath), saveOptions);
-
-
-                String content = FileUtils.readFileToString(new File(targetPath));
-
-                content = content.replaceAll("<br><center>This is an evaluation copy of Aspose\\.Email for Java</center>" +
-                        "<br><a href=\\\\\"http://www\\.aspose\\.com/corporate/purchase/end\\-user\\-license\\-agreement\\.aspx\\\\\"><center>View EULA Online</center></a><hr>","");
-
-                FileUtils.writeStringToFile(new File(targetPath), content);
-
-                InputSource result = InputSourceFactory.getInputSource(targetPath);
+                InputSource result = InputSourceFactory.getInputSource(targetPath, fileName);
                 result.setHumanName(source.getName() + "_" + source.getType() + ".html");
                 result.setMimeType(this.converterTargetMimeType());
                 return result;

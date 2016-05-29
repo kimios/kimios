@@ -16,23 +16,25 @@
 
 package org.kimios.converter.impl.vendors.aspose;
 
-import com.aspose.cells.HtmlSaveOptions;
-import com.aspose.cells.ImageFormat;
-import com.aspose.cells.SaveFormat;
-import com.aspose.cells.Workbook;
+import com.aspose.cells.*;
 import org.apache.commons.io.IOUtils;
-import org.kimios.kernel.converter.ConverterImpl;
-import org.kimios.kernel.converter.exception.BadInputSource;
-import org.kimios.kernel.converter.exception.ConverterException;
-import org.kimios.kernel.converter.impl.FileNameGenerator;
-import org.kimios.kernel.converter.impl.utils.ToHtml;
-import org.kimios.kernel.converter.source.InputSource;
-import org.kimios.kernel.converter.source.InputSourceFactory;
+import org.apache.commons.lang.StringUtils;
+import org.kimios.api.InputSource;
+import org.kimios.converter.*;
+import org.kimios.converter.exceptions.*;
+import org.kimios.converter.impl.*;
+import org.kimios.converter.impl.vendors.aspose.utils.LicenceLoader;
+import org.kimios.converter.source.*;
+import org.kimios.exceptions.ConverterException;
+import org.kimios.utils.configuration.ConfigurationManager;
 
 import java.awt.*;
 import java.io.*;
+import java.net.URLEncoder;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Allows to convert .xlsx and .xls to HTML content
@@ -42,6 +44,21 @@ public class XlsToHTML extends ConverterImpl {
     private static final String[] INPUT_EXTENSIONS = new String[]{"xlsx", "xls", "ods"};
     private static final String OUTPUT_EXTENSION = "html";
 
+    private static final Map<String, String> types = new HashMap<String, String>();
+    static {
+        types.clear();
+        types.put("pdf", "application/pdf");
+        types.put("html", "text/html");
+    }
+
+    public XlsToHTML(){
+        this.selectedOutput = OUTPUT_EXTENSION;
+    }
+
+    public XlsToHTML(String outputMimeType){
+        this.selectedOutput = outputMimeType;
+    }
+
     @Override
     public InputSource convertInputSource(InputSource source) throws ConverterException {
 
@@ -50,7 +67,14 @@ public class XlsToHTML extends ConverterImpl {
         }
 
         String sourcePath = null;
-
+        try{
+            String licenceFile = ConfigurationManager.getValue("dms.converters.aspose.lic");
+            if(StringUtils.isNotBlank(licenceFile)){
+                LicenceLoader.loadCellsLicence(licenceFile + ".cells");
+            }
+        }catch (Exception ex){
+            log.error("error while loading Aspose licence", ex);
+        }
         try {
             // Copy given resource to temporary repository
             sourcePath = temporaryRepository + "/" + source.getName() + "_" +
@@ -58,24 +82,38 @@ public class XlsToHTML extends ConverterImpl {
             IOUtils.copyLarge(source.getInputStream(), new FileOutputStream(sourcePath));
 
             String fileName = FileNameGenerator.generate();
-            // Convert file located to sourcePath into HTML web content
-            String targetPath = temporaryRepository + "/" +
-                    fileName + "_dir/" + fileName + "." + OUTPUT_EXTENSION;
-
-            String targetPathImg = targetPath + "_img";
+            String baseDir = fileName + "_dir/";
+            String fileExtension = StringUtils.isNotBlank(selectedOutput) ? selectedOutput : OUTPUT_EXTENSION;
+            String finalFileName = fileName + "." + fileExtension;
+            String targetPath = temporaryRepository + "/" + baseDir;
+            String targetPathImg = targetPath + fileName + "_img";
             File imgFolder = new File(targetPathImg);
             imgFolder.mkdirs();
 
             //Load a spreadsheet to be converted
             Workbook book = new Workbook(sourcePath);
-            HtmlSaveOptions saveOptions = new HtmlSaveOptions(SaveFormat.HTML);
-            saveOptions.getImageOptions().setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            saveOptions.getImageOptions().setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            SaveOptions saveOptions = null;
+            if(this.selectedOutput != null && this.selectedOutput.equalsIgnoreCase("pdf")){
+                saveOptions = new PdfSaveOptions(SaveFormat.PDF);
+                ((PdfSaveOptions)saveOptions).setImageType(ImageFormat.getPng());
+                ((PdfSaveOptions)saveOptions).setCalculateFormula(true);
+                ((PdfSaveOptions)saveOptions).setOnePagePerSheet(true);
+            } else {
+                saveOptions = new HtmlSaveOptions(SaveFormat.HTML);
+                ((HtmlSaveOptions)saveOptions).setFullPathLink(true);
+                ((HtmlSaveOptions)saveOptions).getImageOptions().setImageFormat(ImageFormat.getPng());
+                ((HtmlSaveOptions)saveOptions).getImageOptions().setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                ((HtmlSaveOptions)saveOptions).getImageOptions().setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+                ((HtmlSaveOptions)saveOptions).setAttachedFilesUrlPrefix(externalBaseUrl + fileName);
+                ((HtmlSaveOptions)saveOptions).setAttachedFilesDirectory(targetPathImg);
+            }
+
+            targetPath += "/" + finalFileName;
             book.save(targetPath, saveOptions);
 
             // Return HTML-based InputSource
-            InputSource result = InputSourceFactory.getInputSource(targetPath);
-            result.setHumanName(source.getName() + "_" + source.getType() + "." + OUTPUT_EXTENSION);
+            InputSource result = InputSourceFactory.getInputSource(targetPath, fileName);
+            result.setHumanName(source.getName() + "_" + source.getType() + "." + selectedOutput);
 
             result.setPublicUrl(targetPath);
             result.setMimeType(this.converterTargetMimeType());
@@ -101,6 +139,6 @@ public class XlsToHTML extends ConverterImpl {
 
     @Override
     public String converterTargetMimeType() {
-        return "text/html";
+        return types.get(selectedOutput);
     }
 }

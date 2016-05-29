@@ -62,6 +62,7 @@ public class OsgiDeployment {
         File exportedFile = new File(jarName);
         archive.as(ZipExporter.class).exportTo(exportedFile, true);
 
+
         return archive;
     }
 

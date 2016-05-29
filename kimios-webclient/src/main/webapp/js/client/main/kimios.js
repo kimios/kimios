@@ -26,13 +26,13 @@ kimios = {
     setImplPackage: function (impl) {
         this.implPackage = impl;
     },
-    viewableExtensions: new Array('png', 'jpg', 'jpeg', 'tif', 'tiff', 'gif', 'pdf', 'PDF', 'odt', 'odp', 'xls', 'xlsx',
-        'docx', 'doc','txt', 'java', 'cs', 'cpp', 'c', 'py', 'sql', 'xml', 'eml', 'asciidoc', 'adoc', 'ps'),
+    viewableExtensions: new Array('png', 'jpg', 'jpeg', 'tif', 'tiff', 'gif', 'pdf', 'PDF', 'odt', 'odp', 'ods', 'xls', 'xlsx',
+        'docx', 'doc','txt', 'java', 'cs', 'cpp', 'c', 'py', 'sql', 'xml', 'eml', 'asciidoc', 'adoc', 'ps', 'pptx', 'ppt'),
 
     isViewableExtension: function (ext) {
         var exts = kimios.viewableExtensions;
         for (var i = 0; i < exts.length; i++) {
-            if (ext.toLowerCase() == exts[i]) {
+            if (ext.toLowerCase() == exts[i].toLowerCase()) {
                 return true;
             }
         }

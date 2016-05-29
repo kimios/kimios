@@ -17,7 +17,9 @@ RUN mkdir /opt/karaf; \
     mkdir -p /home/kimios/repository; \
     mkdir /opt/karaf/deploy; \
     tar --strip-components=1 -C /opt/karaf -xzf kimios-karaf-distribution-1.1-SNAPSHOT.tar.gz; \
-    rm /kimios-karaf-distribution-1.1-SNAPSHOT.tar.gz;
+    rm /kimios-karaf-distribution-1.1-SNAPSHOT.tar.gz; \
+    wget http://www.itzgeek.com/msttcore-fonts-2.0-3.noarch.rpm; \
+    yum -y install msttcore-fonts-2.0-3.noarch.rpm;
 COPY setenv /opt/karaf/bin/
 COPY custom.properties /opt/karaf/etc/
 RUN chmod +x /opt/karaf/bin/setenv

@@ -80,7 +80,7 @@ kimios.util.PreviewHelper = {
 
 
         var baseConverterPath = 'org.kimios.converter.impl.';
-        var baseVendorConverterPath = baseConverterPath + 'vendors.';
+        var baseVendorConverterPath = baseConverterPath + 'vendors.aspose.';
 
         var extMapping = {
             doc: [{

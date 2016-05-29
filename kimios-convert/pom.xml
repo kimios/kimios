@@ -34,7 +34,19 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <aspose-slides.version>16.4.0</aspose-slides.version>
+        <aspose-cells.version>8.8.0</aspose-cells.version>
+        <aspose-words.version>16.4.0</aspose-words.version>
+        <aspose-email.version>6.5.0</aspose-email.version>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>AsposeJavaAPI</id>
+            <name>Aspose Java API</name>
+            <url>http://maven.aspose.com/artifactory/simple/ext-release-local/</url>
+        </repository>
+    </repositories>
 
     <dependencies>
 
@@ -307,7 +319,10 @@
             <scope>compile</scope>
         </dependency>
 
-        <!--aspose-->
+        <!--aspose
+
+
+
 
         <dependency>
             <groupId>aspose</groupId>
@@ -330,7 +345,41 @@
             <groupId>aspose</groupId>
             <artifactId>aspose-slides</artifactId>
             <version>1.0</version>
+        </dependency>-->
+
+        <dependency>
+            <groupId>com.aspose</groupId>
+            <artifactId>aspose-cells</artifactId>
+            <version>${aspose-cells.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.aspose</groupId>
+            <artifactId>aspose-words</artifactId>
+            <version>${aspose-words.version}</version>
+            <classifier>jdk16</classifier>
+        </dependency>
+
+        <!--<dependency>
+            <groupId>com.aspose</groupId>
+            <artifactId>aspose-pdf</artifactId>
+            <version>${aspose-pdf.version}</version>
+        </dependency>-->
+
+        <dependency>
+            <groupId>com.aspose</groupId>
+            <artifactId>aspose-slides</artifactId>
+            <version>${aspose-slides.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.aspose</groupId>
+            <artifactId>aspose-email</artifactId>
+            <version>${aspose-email.version}</version>
+            <classifier>jdk16</classifier>
+        </dependency>
+
+
 
         <dependency>
             <groupId>org.osgi</groupId>

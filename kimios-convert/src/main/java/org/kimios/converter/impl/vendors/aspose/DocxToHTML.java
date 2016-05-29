@@ -1,6 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2008-2016  DevLib'
+ * Copyright (C) 2008-2015  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -17,24 +17,23 @@
 package org.kimios.converter.impl.vendors.aspose;
 
 import com.aspose.words.*;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.poi.xwpf.converter.core.FileImageExtractor;
-import org.apache.poi.xwpf.converter.core.FileURIResolver;
-import org.apache.poi.xwpf.converter.xhtml.XHTMLConverter;
-import org.apache.poi.xwpf.converter.xhtml.XHTMLOptions;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.kimios.kernel.converter.ConverterImpl;
-import org.kimios.kernel.converter.exception.BadInputSource;
-import org.kimios.kernel.converter.exception.ConverterException;
-import org.kimios.kernel.converter.impl.FileNameGenerator;
-import org.kimios.kernel.converter.source.InputSource;
-import org.kimios.kernel.converter.source.InputSourceFactory;
+import org.apache.commons.lang.StringUtils;
+import org.kimios.api.InputSource;
+import org.kimios.converter.*;
+import org.kimios.converter.exceptions.*;
+import org.kimios.converter.impl.*;
+import org.kimios.converter.impl.vendors.aspose.utils.LicenceLoader;
+import org.kimios.converter.source.*;
+import org.kimios.exceptions.ConverterException;
+import org.kimios.utils.configuration.ConfigurationManager;
+
 
 import java.io.*;
-import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Allows to convert .DOCX to HTML content
@@ -43,6 +42,25 @@ public class DocxToHTML extends ConverterImpl {
 
     private static final String[] INPUT_EXTENSIONS = new String[]{"docx", "odt", "doc"};
     private static final String OUTPUT_EXTENSION = "html";
+
+    private static final String[] AVAILABLE_OUTPUT_TYPE = new String[]{"html", "pdf"};
+
+
+    private static final Map<String, String> types = new HashMap<String, String>();
+    static {
+        types.clear();
+        types.put("pdf", "application/pdf");
+        types.put("html", "text/html");
+    }
+
+
+    public DocxToHTML(){
+        this.selectedOutput = OUTPUT_EXTENSION;
+    }
+
+    public DocxToHTML(String selectedOutput){
+        this.selectedOutput = selectedOutput;
+    }
 
     @Override
     public InputSource convertInputSource(InputSource source) throws ConverterException {
@@ -53,48 +71,83 @@ public class DocxToHTML extends ConverterImpl {
 
         String sourcePath = null;
 
+        try{
+            String licenceFile = ConfigurationManager.getValue("dms.converters.aspose.lic");
+            if(StringUtils.isNotBlank(licenceFile)){
+                LicenceLoader.loadWordLicence(licenceFile + ".words");
+            }
+        }catch (Exception ex){
+            log.error("error while loading Aspose licence", ex);
+        }
+
+        int loadFormat = -1;
+        if(source.getType().equalsIgnoreCase("odt")){
+            loadFormat = LoadFormat.ODT;
+        } else if(source.getType().equalsIgnoreCase("doc")){
+            loadFormat = LoadFormat.DOC;
+        } else if(source.getType().equalsIgnoreCase("docx")){
+            loadFormat = LoadFormat.DOCX;
+        }
+
+
         try {
             // Copy given resource to temporary repository
             sourcePath = temporaryRepository + "/" + source.getName() + "_" +
                     FileNameGenerator.generate() + "." + source.getType();
             IOUtils.copyLarge(source.getInputStream(), new FileOutputStream(sourcePath));
 
-            String fileName = FileNameGenerator.generate();
-            // Convert file located to sourcePath into HTML web content
-            String targetPath = temporaryRepository + "/" +
-                    fileName + "_dir/" + fileName + "." + OUTPUT_EXTENSION;
+            final String fileName = FileNameGenerator.generate();
 
-            // Load DOCX into XWPFDocument
-            InputStream in = new FileInputStream(sourcePath);
-            String targetPathImg = targetPath + "_img";
+            String baseDir = fileName + "_dir/";
+            String fileExtension = StringUtils.isNotBlank(selectedOutput) ? selectedOutput : OUTPUT_EXTENSION;
+            final String finalFileName = fileName + "." + fileExtension;
+            String targetPath = temporaryRepository + "/" + baseDir;
+            String targetPathImg = targetPath + fileName + "_img";
             File imgFolder = new File(targetPathImg);
             imgFolder.mkdirs();
 
 
+            final String finalTargetPath = targetPath;
             // The encoding of the text file is automatically detected.
-            Document doc = new Document(sourcePath);
-
+            LoadOptions lOptions = new LoadOptions();
+            if(loadFormat != -1)
+                lOptions.setLoadFormat(loadFormat);
+            Document doc = new Document(sourcePath, lOptions);
             // Create and pass the object which implements the handler methods.
-            HtmlSaveOptions options = new HtmlSaveOptions(SaveFormat.HTML);
-            options.setImagesFolder(imgFolder.getAbsolutePath());
-            options.setExportTextInputFormFieldAsText(true);
-            options.setImageSavingCallback(new HandleImageSaving());
-            options.setEncoding(Charset.forName("UTF-8"));
-            doc.save(new FileOutputStream(targetPath), options);
+            SaveOptions saveOptions = null;
+            if(selectedOutput.equalsIgnoreCase("pdf")){
+                PdfSaveOptions pdfSaveOptions = new PdfSaveOptions();
+                pdfSaveOptions.setSaveFormat(SaveFormat.PDF);
+                saveOptions = pdfSaveOptions;
+            } else {
+                HtmlSaveOptions htmlSaveOptions = new HtmlSaveOptions();
+                htmlSaveOptions.setImagesFolder(imgFolder.getAbsolutePath());
+                htmlSaveOptions.setExportTextInputFormFieldAsText(true);
+                htmlSaveOptions.setImageSavingCallback(new HandleImageSaving());
+                htmlSaveOptions.setImagesFolderAlias(externalBaseUrl + fileName);
+                htmlSaveOptions.setDocumentSplitCriteria(DocumentSplitCriteria.PAGE_BREAK);
+                htmlSaveOptions.setDocumentPartSavingCallback(new IDocumentPartSavingCallback() {
 
+                    public int i = 1;
+                    @Override
+                    public void documentPartSaving(DocumentPartSavingArgs documentPartSavingArgs) throws Exception {
+                        documentPartSavingArgs.setDocumentPartFileName(fileName + "_" + i + "." + selectedOutput);
+                        documentPartSavingArgs.setDocumentPartStream(new FileOutputStream(finalTargetPath + "/" + fileName + "_" + i + "." + selectedOutput));
+                        i++;
+                    }
+                });
+                saveOptions = htmlSaveOptions;
+            }
 
-
-            String content = FileUtils.readFileToString(new File(targetPath));
-
-            content = content.replaceAll("Evaluation Only\\. Created with Aspose\\.Words\\. Copyright 2003\\-2015 Aspose Pty Ltd\\.","");
-
-            FileUtils.writeStringToFile(new File(targetPath), content);
-
-
-            // Return HTML-based InputSource
-            InputSource result = InputSourceFactory.getInputSource(targetPath);
-            result.setHumanName(source.getName() + "_" + source.getType() + "." + OUTPUT_EXTENSION);
-
+            targetPath += "/" + finalFileName;
+            if(selectedOutput.equalsIgnoreCase("pdf")){
+                saveOptions.setSaveFormat(SaveFormat.PDF);
+            } else{
+                saveOptions.setSaveFormat(SaveFormat.HTML);
+            }
+            doc.save(new FileOutputStream(targetPath), saveOptions);
+            InputSource result = InputSourceFactory.getInputSource(targetPath, fileName);
+            result.setHumanName(source.getName() + "_" + source.getType() + "." + selectedOutput);
             /*
                 Set url, to use in cache.
              */
@@ -134,7 +187,7 @@ public class DocxToHTML extends ConverterImpl {
 
     @Override
     public String converterTargetMimeType() {
-        return "text/html";
+        return types.get(selectedOutput);
     }
 
 }

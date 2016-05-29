@@ -17,23 +17,30 @@
 package org.kimios.converter.impl.vendors.aspose;
 
 import com.aspose.slides.*;
+import com.aspose.slides.LoadFormat;
+import com.aspose.slides.LoadOptions;
+import com.aspose.slides.SaveFormat;
+import com.aspose.slides.SaveOptions;
+import com.aspose.words.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.kimios.kernel.converter.ConverterImpl;
-import org.kimios.kernel.converter.exception.BadInputSource;
-import org.kimios.kernel.converter.exception.ConverterException;
-import org.kimios.kernel.converter.impl.FileNameGenerator;
-import org.kimios.kernel.converter.source.InputSource;
-import org.kimios.kernel.converter.source.InputSourceFactory;
+import org.apache.commons.lang.StringUtils;
+import org.kimios.api.InputSource;
+import org.kimios.converter.*;
+import org.kimios.converter.exceptions.*;
+import org.kimios.converter.impl.*;
+import org.kimios.converter.impl.vendors.aspose.utils.LicenceLoader;
+import org.kimios.converter.source.*;
+import org.kimios.exceptions.ConverterException;
+import org.kimios.utils.configuration.ConfigurationManager;
 
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Allows to convert .DOCX to HTML content
@@ -43,6 +50,21 @@ public class PptToHTML extends ConverterImpl {
     private static final String[] INPUT_EXTENSIONS = new String[]{"ppt", "pptx", "odp"};
     private static final String OUTPUT_EXTENSION = "html";
 
+    private static final Map<String, String> types = new HashMap<String, String>();
+    static {
+        types.clear();
+        types.put("pdf", "application/pdf");
+        types.put("html", "text/html");
+    }
+
+    public PptToHTML(){
+        this.selectedOutput = OUTPUT_EXTENSION;
+    }
+
+    public PptToHTML(String outputMimeType){
+        this.selectedOutput = outputMimeType;
+    }
+
     @Override
     public InputSource convertInputSource(InputSource source) throws ConverterException {
 
@@ -51,6 +73,23 @@ public class PptToHTML extends ConverterImpl {
         }
 
         String sourcePath = null;
+        try{
+            String licenceFile = ConfigurationManager.getValue("dms.converters.aspose.lic");
+            if(StringUtils.isNotBlank(licenceFile)){
+                LicenceLoader.loadSlidesLicence(licenceFile + ".slides");
+            }
+        }catch (Exception ex){
+            log.error("error while loading Aspose licence", ex);
+        }
+        int loadFormat = -1;
+        if(source.getType().equalsIgnoreCase("odp")){
+            loadFormat = LoadFormat.Odp;
+        } else if(source.getType().equalsIgnoreCase("ppt")){
+            loadFormat = LoadFormat.Ppt;
+        } else if(source.getType().equalsIgnoreCase("pptx")){
+            loadFormat = LoadFormat.Pptx;
+        } else
+            loadFormat = LoadFormat.Auto;
 
         try {
             // Copy given resource to temporary repository
@@ -59,35 +98,42 @@ public class PptToHTML extends ConverterImpl {
             IOUtils.copyLarge(source.getInputStream(), new FileOutputStream(sourcePath));
 
             String fileName = FileNameGenerator.generate();
-            // Convert file located to sourcePath into HTML web content
-            String targetPath = temporaryRepository + "/" +
-                    fileName + "_dir/" + fileName + "." + OUTPUT_EXTENSION;
 
-            String targetPathImg = targetPath + "_img";
+            String baseDir = fileName + "_dir/";
+            String fileExtension = StringUtils.isNotBlank(selectedOutput) ? selectedOutput : OUTPUT_EXTENSION;
+            String finalFileName = fileName + "." + fileExtension;
+            String targetPath = temporaryRepository + "/" + baseDir;
+            String targetPathImg = targetPath + fileName + "_img";
             File imgFolder = new File(targetPathImg);
             imgFolder.mkdirs();
 
 
             // The encoding of the text file is automatically detected.
+            int saveFormat = -1;
+            LoadOptions loadOptions = new LoadOptions();
+            loadOptions.setLoadFormat(loadFormat);
             Presentation pres = new Presentation(sourcePath);
-            HtmlOptions htmlOpt = new HtmlOptions();
-            htmlOpt.setHtmlFormatter(HtmlFormatter.createDocumentFormatter("", false));
+
+            SaveOptions saveOptions = null;
+            if(selectedOutput != null && selectedOutput.equalsIgnoreCase("pdf")){
+                PdfOptions pdfOptions = new PdfOptions();
+                saveFormat = SaveFormat.Pdf;
+                saveOptions = pdfOptions;
+            } else {
+                HtmlOptions htmlOpt = new HtmlOptions();
+                htmlOpt.setHtmlFormatter(HtmlFormatter.createDocumentFormatter("", false));
+                saveFormat = SaveFormat.Html;
+                saveOptions = htmlOpt;
+            }
+
             //Saving the Presentation1 to HTML
-            pres.save(targetPath, SaveFormat.Html, htmlOpt);
 
+            targetPath += "/" + finalFileName;
 
-
-            String content = FileUtils.readFileToString(new File(targetPath));
-
-            content = content.replaceAll("Evaluation only.", "").replaceAll("Created with Aspose.Slides for Java 15.7.0.0.", "").replaceAll("Copyright 2004-2015 Aspose Pty Ltd.", "");
-
-            FileUtils.writeStringToFile(new File(targetPath), content);
-
-
+            pres.save(targetPath, saveFormat, saveOptions);
             // Return HTML-based InputSource
-            InputSource result = InputSourceFactory.getInputSource(targetPath);
-            result.setHumanName(source.getName() + "_" + source.getType() + "." + OUTPUT_EXTENSION);
-
+            InputSource result = InputSourceFactory.getInputSource(targetPath, fileName);
+            result.setHumanName(source.getName() + "_" + source.getType() + "." + selectedOutput);
             /*
                 Set url, to use in cache.
              */
@@ -116,6 +162,6 @@ public class PptToHTML extends ConverterImpl {
 
     @Override
     public String converterTargetMimeType() {
-        return "text/html";
+        return types.get(selectedOutput);
     }
 }
