@@ -60,7 +60,6 @@ public interface IConverterController {
                                         String converterImpl, String outputFormat) throws ConverterException;
 
 
-
     InputSource loadPreviewDataFromCache(Session session, String idPreview) throws ConverterException;
 
 

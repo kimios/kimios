@@ -51,6 +51,7 @@ public class ConverterController extends AKimiosController implements IConverter
 
     private static Logger log = LoggerFactory.getLogger(ConverterController.class);
 
+<<<<<<< HEAD
 
     private ConverterFactory converterFactory;
 
@@ -62,6 +63,8 @@ public class ConverterController extends AKimiosController implements IConverter
         this.converterFactory = converterFactory;
     }
 
+=======
+>>>>>>> [kimios-convert kimios-convert-service] Add Preview Method in ConvertService (rest only). Add protected attribute externalUrl on abstract Converter.
     public InputSource convertDocumentVersion(Session session, Long documentVersionId,
                                               String converterImpl, String outputFormat) throws ConverterException {
 
@@ -80,11 +83,19 @@ public class ConverterController extends AKimiosController implements IConverter
             // Build InputSource
             if(log.isDebugEnabled())
                 log.debug("building inputSource for {}",version.getDocument().getName());
+<<<<<<< HEAD
             InputSource source = InputSourceFactory.getInputSource(version, UUID.randomUUID().toString());
             // Get converter
             if(log.isDebugEnabled())
                 log.debug("converter implementation: " + converterImpl);
             Converter converter = converterFactory.getConverter(converterImpl, outputFormat);
+=======
+            InputSource source = InputSourceFactory.getInputSource(version);
+            // Get converter
+            if(log.isDebugEnabled())
+                log.debug("converter implementation: " + converterImpl);
+            Converter converter = ConverterFactory.getConverter(converterImpl, outputFormat);
+>>>>>>> [kimios-convert kimios-convert-service] Add Preview Method in ConvertService (rest only). Add protected attribute externalUrl on abstract Converter.
             retainedMimeType = converter.converterTargetMimeType();
             if(retainedMimeType == null){
                 log.warn("{} not available for converter {}", retainedMimeType, converterImpl);
@@ -141,7 +152,11 @@ public class ConverterController extends AKimiosController implements IConverter
 
             // Get converter
             log.debug("Getting Converter implementation: " + converterImpl);
+<<<<<<< HEAD
             Converter converter = converterFactory.getConverter(converterImpl, outputFormat);
+=======
+            Converter converter = ConverterFactory.getConverter(converterImpl, outputFormat);
+>>>>>>> [kimios-convert kimios-convert-service] Add Preview Method in ConvertService (rest only). Add protected attribute externalUrl on abstract Converter.
 
             // Convert and return the result source
             InputSource inputSource = converter.convertInputSources(sources);
