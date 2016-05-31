@@ -33,6 +33,7 @@ public class LicenceLoader {
         try {
             com.aspose.email.License license = new com.aspose.email.License();
             license.setLicense(new FileInputStream(licenceFileName));
+            logger.info("licence Aspose Mail {}", license.isLicensed());
         }catch (Exception ex){
             logger.warn("unable to load Aspose licence", ex);
         }
@@ -42,6 +43,7 @@ public class LicenceLoader {
         try {
             com.aspose.words.License license = new com.aspose.words.License();
             license.setLicense(new FileInputStream(licenceFileName));
+            logger.info("licence Aspose Word {}", license.getIsLicensed());
         }catch (Exception ex){
             logger.warn("unable to load Aspose licence", ex);
         }
@@ -51,6 +53,7 @@ public class LicenceLoader {
         try {
             com.aspose.cells.License license = new com.aspose.cells.License();
             license.setLicense(new FileInputStream(licenceFileName));
+            logger.info("licence Aspose Cells {}", license);
         }catch (Exception ex){
             logger.warn("unable to load Aspose licence", ex);
         }
@@ -60,6 +63,7 @@ public class LicenceLoader {
         try {
             com.aspose.slides.License license = new com.aspose.slides.License();
             license.setLicense(new FileInputStream(licenceFileName));
+            logger.info("licence Aspose Slides {}", license.isLicensed());
         }catch (Exception ex){
             logger.warn("unable to load Aspose licence", ex);
         }
