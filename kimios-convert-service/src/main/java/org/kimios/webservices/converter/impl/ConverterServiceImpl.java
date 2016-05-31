@@ -172,13 +172,8 @@ public class ConverterServiceImpl implements ConverterService {
             //check in cache with preview id, to get data related to document
 
             InputSource source = convertController.loadPreviewDataFromCache(null, idPreview);
-
             return Response
                     .ok(new FileInputStream(temporaryRepository + "/" + idPreview + "_dir/" + idPreview + "_img/" + resPath))
-                    .header(
-                            "Content-Disposition",
-                            "attachment; filename=\"" + source.getHumanName() + "\"")
-                    .header("Content-Type", source.getMimeType())
                     .build();
 
         } catch (Exception e) {
