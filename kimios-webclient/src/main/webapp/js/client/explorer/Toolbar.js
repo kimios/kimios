@@ -110,7 +110,7 @@ kimios.explorer.Toolbar = Ext.extend(Ext.Toolbar, {
             assigned: 0,
             handler: function () {
                 var vp = kimios.explorer.getViewport();
-                vp.westPanel.setActiveGroup(5);     // my tasks panel
+                vp.westPanel.setActiveGroup(6);     // my tasks panel
                 vp.westPanel.activeGroup.setActiveTab(0);
             },
             refresh: function (p, a) {
