@@ -53,11 +53,11 @@
         <feature>pax-jdbc-postgresql</feature>
         <capability>kimios-dep</capability>
     </feature>
-    <feature name="kimios-solr" version="${solr4j.version}">
+    <feature name="kimios-solr" version="${project.version}">
         <requirement prerequisite="true">kimios-dep</requirement>
         <bundle>mvn:org.apache.httpcomponents/httpclient-osgi/4.3.3</bundle>
         <bundle>mvn:org.apache.httpcomponents/httpcore-osgi/4.3.3</bundle>
-        <bundle>mvn:org.kimios/kimios-solr/${solr4j.version}</bundle>
+        <bundle>mvn:org.kimios/kimios-solr/${project.version}</bundle>
     </feature>
     <feature version="${project.version}" name="kimios-core-settings">
         <configfile finalname="/etc/org.kimios.server.app.cfg">mvn:org.kimios/kimios-karaf-features/${project.version}/properties/kimios-server-cfg</configfile>
@@ -81,7 +81,7 @@
     </feature>
     <feature version="${project.version}" name="kimios-features">
         <requirement prerequisite="true">kimios-core</requirement>
-        <bundle>mvn:org.kimios/kimios-docx4j-osgi/3.2.2/jar</bundle>
+        <bundle>mvn:org.kimios/kimios-docx4j-osgi/${project.version}/jar</bundle>
         <bundle start-level="100">mvn:org.kimios/kimios-templates/${project.version}/jar/osgi</bundle>
         <bundle start-level="100">mvn:org.kimios/kimios-share/${project.version}/jar/osgi</bundle>
         <bundle start-level="100">mvn:org.kimios/kimios-convert/${project.version}/jar/osgi</bundle>
@@ -94,7 +94,7 @@
             org.apache.cxf.servlet.context = /services
         </config>
         <bundle>mvn:io.swagger/swagger-annotations/1.5.4</bundle>
-        <bundle>mvn:org.kimios/kimios-services/1.1-SNAPSHOT/jar/blueprint</bundle>
+        <bundle>mvn:org.kimios/kimios-services/${project.version}/jar/blueprint</bundle>
         <bundle>mvn:org.kimios/kimios-bonita-service/${project.version}/jar/blueprint</bundle>
         <bundle>mvn:org.kimios/kimios-convert-service/${project.version}/jar/blueprint</bundle>
         <bundle>mvn:org.kimios/kimios-share-service/${project.version}/jar/blueprint</bundle>

@@ -27,23 +27,152 @@
 
     <artifactId>kimios-karaf-features</artifactId>
     <packaging>pom</packaging>
-
     <properties>
         <karaf.version>4.0.4</karaf.version>
+        <karaf.spring.version>4.0.7.RELEASE_3</karaf.spring.version>
+        <karaf.hibernate.version>4.3.6.Final</karaf.hibernate.version>
+        <swagger.version>1.5.4</swagger.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.kimios</groupId>
             <artifactId>kimios-kernel</artifactId>
-            <version>1.1-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.kimios</groupId>
             <artifactId>kimios-client-api</artifactId>
-            <version>1.1-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-karaf-datasource</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-exceptions</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-interfaces</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-model</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+            <classifier>blueprint</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-model-persistence</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-solr</artifactId>
+            <version>4.6.0</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-index</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-kernel-osgi</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+            <classifier>blueprint</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-templates</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+            <classifier>osgi</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-share</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+            <classifier>osgi</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-convert</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+            <classifier>osgi</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-bonita</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+            <classifier>osgi</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-editors</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+            <classifier>osgi</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-karaf-commands</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-services</artifactId>
+            <version>${project.version}</version>
+            <classifier>blueprint</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-bonita-service</artifactId>
+            <version>${project.version}</version>
+            <classifier>blueprint</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-share-service</artifactId>
+            <version>${project.version}</version>
+            <classifier>blueprint</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-convert-service</artifactId>
+            <version>${project.version}</version>
+            <classifier>blueprint</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-editors-service</artifactId>
+            <version>${project.version}</version>
+            <classifier>blueprint</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-webclient</artifactId>
+            <version>${project.version}</version>
+            <classifier>osgi</classifier>
+            <type>war</type>
         </dependency>
     </dependencies>
 
@@ -167,6 +296,31 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.apache.karaf.tooling</groupId>
+                <artifactId>karaf-maven-plugin</artifactId>
+                <extensions>true</extensions>
+                <version>${karaf.version}</version>
+                <executions>
+                    <execution>
+                        <id>featuregen</id>
+                        <goals>
+                            <goal>features-generate-descriptor</goal>
+                        </goals>
+                        <configuration>
+                            <attachmentArtifactClassifier>features</attachmentArtifactClassifier>
+                            <attachmentArtifactType>xml</attachmentArtifactType>
+                            <aggregateFeatures>true</aggregateFeatures>
+                            <includeTransitiveDependency>false</includeTransitiveDependency>
+                            <checkDependencyChange>true</checkDependencyChange>
+                            <failOnDependencyChange>false</failOnDependencyChange>
+                            <logDependencyChanges>true</logDependencyChanges>
+                            <overwriteChangedDependencies>true</overwriteChangedDependencies>
+                            <inputFile>${project.build.directory}/classes/features.xml</inputFile>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
                 <executions>
@@ -179,36 +333,34 @@
                         <configuration>
                             <artifacts>
                                 <artifact>
-                                    <file>target/classes/features.xml</file>
-                                    <type>pro</type>
-                                    <classifier>features</classifier>
-                                </artifact>
-                                <artifact>
-                                    <file>${project.build.directory}/server-conf-ok/META-INF/settings/tpl/kimios.properties</file>
+                                    <file>
+                                        ${project.build.directory}/server-conf-ok/META-INF/settings/tpl/kimios.properties
+                                    </file>
                                     <type>properties</type>
                                     <classifier>kimios-server-cfg</classifier>
                                 </artifact>
                                 <artifact>
-                                    <file>${project.build.directory}/client-conf-ok/META-INF/settings/tpl/kimios.properties</file>
+                                    <file>
+                                        ${project.build.directory}/client-conf-ok/META-INF/settings/tpl/kimios.properties
+                                    </file>
                                     <type>properties</type>
                                     <classifier>kimios-client-cfg</classifier>
-                                </artifact>
-                                <artifact>
-                                    <file>target/classes/features.xml</file>
-                                    <type>xml</type>
-                                    <classifier>features</classifier>
                                 </artifact>
                                 <artifact>
                                     <file>target/classes/kimios-ds.xml</file>
                                     <type>xml</type>
                                     <classifier>datasource</classifier>
                                 </artifact>
+                                <artifact>
+                                    <file>${project.build.directory}/feature/feature.xml</file>
+                                    <type>xml</type>
+                                    <classifier>features</classifier>
+                                </artifact>
                             </artifacts>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
     </build>
 

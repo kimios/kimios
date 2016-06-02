@@ -32,7 +32,6 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <kimios.version>${project.version}</kimios.version>
         <karaf.version>4.0.4</karaf.version>
     </properties>
 
@@ -54,28 +53,28 @@
         <dependency>
             <groupId>org.kimios</groupId>
             <artifactId>kimios-model</artifactId>
-            <version>${kimios.version}</version>
+            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.kimios</groupId>
             <artifactId>kimios-kernel-osgi</artifactId>
-            <version>${kimios.version}</version>
+            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.kimios</groupId>
             <artifactId>kimios-kernel</artifactId>
-            <version>${kimios.version}</version>
+            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.kimios</groupId>
             <artifactId>kimios-bonita</artifactId>
-            <version>${kimios.version}</version>
+            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -83,21 +82,21 @@
         <dependency>
             <groupId>org.kimios</groupId>
             <artifactId>kimios-index</artifactId>
-            <version>${kimios.version}</version>
+            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.kimios</groupId>
             <artifactId>kimios-exceptions</artifactId>
-            <version>${kimios.version}</version>
+            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.kimios</groupId>
             <artifactId>kimios-utils</artifactId>
-            <version>${kimios.version}</version>
+            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
 

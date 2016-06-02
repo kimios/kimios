@@ -53,7 +53,7 @@
         <dependency>
             <groupId>org.kimios</groupId>
             <artifactId>kimios-karaf-distribution</artifactId>
-            <version>${kimios.version}</version>
+            <version>1.1-SNAPSHOT</version>
             <type>tar.gz</type>
         </dependency>
 
@@ -94,7 +94,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <systemPropertyVariables>
+                    <argLine>-Xms800m -Xmx800m -XX:MaxPermSize=500m</argLine>
+		    <systemPropertyVariables>
                         <kimios.karaf.jmx>${kimios.jmxurl}</kimios.karaf.jmx>
                         <kimios.karaf.jmxuser>${kimios.jmxuser}</kimios.karaf.jmxuser>
                         <kimios.karaf.jmxpassword>${kimios.jmxpassword}</kimios.karaf.jmxpassword>
@@ -111,7 +112,7 @@
                         <artifactItem>
                             <groupId>org.kimios</groupId>
                             <artifactId>kimios-karaf-distribution</artifactId>
-                            <version>${kimios.version}</version>
+                            <version>${project.version}</version>
                             <type>tar.gz</type>
                             <overWrite>true</overWrite>
                             <outputDirectory>${project.build.testOutputDirectory}/karaf_docker</outputDirectory>

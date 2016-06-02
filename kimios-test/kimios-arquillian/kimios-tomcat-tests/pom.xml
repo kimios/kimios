@@ -26,7 +26,7 @@
         <dependency>
             <groupId>org.kimios</groupId>
             <artifactId>kimios-server-war</artifactId>
-            <version>${kimios.version}</version>
+            <version>${project.version}</version>
             <type>war</type>
         </dependency>
         <dependency>
@@ -61,7 +61,7 @@
                         <artifactItem>
                             <groupId>org.kimios</groupId>
                             <artifactId>kimios-server-war</artifactId>
-                            <version>${kimios.version}</version>
+                            <version>${project.version}</version>
                             <type>war</type>
                             <overWrite>true</overWrite>
                             <outputDirectory>${project.build.testOutputDirectory}</outputDirectory>

@@ -39,6 +39,6 @@
         <module>kimios-karaf-commands</module>
         <module>kimios-karaf-features</module>
         <module>kimios-karaf-distribution</module>
-        <module>kimios-fabric8</module>
+        <!--<module>kimios-fabric8</module>-->
     </modules>
 </project>

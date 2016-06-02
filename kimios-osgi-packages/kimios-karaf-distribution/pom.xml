@@ -56,8 +56,8 @@
             <groupId>org.kimios</groupId>
             <artifactId>kimios-karaf-features</artifactId>
             <version>${project.version}</version>
-            <classifier>features</classifier>
             <type>xml</type>
+            <classifier>features</classifier>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -74,13 +74,8 @@
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>org.kimios</groupId>
-            <artifactId>kimios-kernel</artifactId>
-            <version>1.1-SNAPSHOT</version>
-            <type>jar</type>
-            <scope>provided</scope>
-        </dependency>
+        
+
     </dependencies>
 
     <build>
@@ -172,6 +167,12 @@
                 <extensions>true</extensions>
                 <version>${karaf.version}</version>
                 <configuration>
+                    <aggregateFeatures>true</aggregateFeatures>
+                    <resolver>(obr)</resolver>
+                    <checkDependencyChange>true</checkDependencyChange>
+                    <failOnDependencyChange>false</failOnDependencyChange>
+                    <logDependencyChanges>true</logDependencyChanges>
+                    <overwriteChangedDependencies>true</overwriteChangedDependencies>
                     <bootRepositories>
                         <bootRepository>mvn:org.apache.karaf.features/spring/4.0.4/xml/features</bootRepository>
                         <bootRepository>mvn:org.apache.karaf.features/standard/4.0.4/xml/features</bootRepository>
