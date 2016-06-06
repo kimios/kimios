@@ -311,10 +311,10 @@
                             <attachmentArtifactType>xml</attachmentArtifactType>
                             <aggregateFeatures>true</aggregateFeatures>
                             <includeTransitiveDependency>false</includeTransitiveDependency>
-                            <checkDependencyChange>true</checkDependencyChange>
+                            <checkDependencyChange>false</checkDependencyChange>
                             <failOnDependencyChange>false</failOnDependencyChange>
-                            <logDependencyChanges>true</logDependencyChanges>
-                            <overwriteChangedDependencies>true</overwriteChangedDependencies>
+                            <logDependencyChanges>false</logDependencyChanges>
+                            <overwriteChangedDependencies>false</overwriteChangedDependencies>
                             <inputFile>${project.build.directory}/classes/features.xml</inputFile>
                         </configuration>
                     </execution>
