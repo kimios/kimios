@@ -126,12 +126,11 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.7</version>
+                <version>1.8</version>
                 <executions>
                     <execution>
                         <id>add-source</id>
                         <phase>generate-sources</phase>
-
                         <goals>
                             <goal>add-source</goal>
                         </goals>
@@ -161,7 +160,8 @@
                                 <property name="buildtime" value="${maven.build.timestamp}" />
                                 <property name="buildnumber" value="${buildNumber}" />
                                 <property name="mavenversion" value="${project.version}" />
-
+                                <mkdir dir="${src.dir}"/>
+                                <mkdir dir="${src.dir}/${package.dir}"/>
                                 <echo file="${src.dir}/${package.dir}/Version.java" message="package ${package.name};${line.separator}" />
                                 <echo file="${src.dir}/${package.dir}/Version.java" append="true" message="public final class Version {${line.separator}" />
                                 <echo file="${src.dir}/${package.dir}/Version.java" append="true"
