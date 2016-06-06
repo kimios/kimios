@@ -124,6 +124,26 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>generate-sources</phase>
+
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-sources/java/</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <version>1.3</version>
@@ -135,7 +155,7 @@
                         <phase>generate-sources</phase>
                         <configuration>
                             <tasks>
-                                <property name="src.dir" value="${project.build.sourceDirectory}" />
+                                <property name="src.dir" value="${project.build.directory}/generated-sources/java" />
                                 <property name="package.dir" value="org/kimios/utils/version" />
                                 <property name="package.name" value="org.kimios.utils.version" />
                                 <property name="buildtime" value="${maven.build.timestamp}" />
