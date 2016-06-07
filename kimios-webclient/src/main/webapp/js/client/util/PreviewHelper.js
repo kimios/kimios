@@ -84,15 +84,15 @@ kimios.util.PreviewHelper = {
 
         var extMapping = {
             doc: [{
-                target: 'html',
+                target: 'pdf',
                 conv: baseVendorConverterPath + 'DocxToHTML'
             }],
             docx: [{
-                target: 'html',
+                target: 'pdf',
                 conv: baseVendorConverterPath + 'DocxToHTML'
             }],
             odt: [{
-                target: 'html',
+                target: 'pdf',
                 conv: baseVendorConverterPath + 'DocxToHTML'
             }],
             eml: [{
@@ -104,27 +104,27 @@ kimios.util.PreviewHelper = {
                 conv: baseVendorConverterPath + 'MailToHTML'
             }],
             xls: [{
-                target: 'html',
+                target: 'pdf',
                 conv: baseVendorConverterPath + 'XlsToHTML'
             }],
             xlsx: [{
-                target: 'html',
+                target: 'pdf',
                 conv: baseVendorConverterPath + 'XlsToHTML'
             }],
             ods: [{
-                target: 'html',
+                target: 'pdf',
                 conv: baseVendorConverterPath + 'XlsToHTML'
             }],
             ppt: [{
-                target: 'html',
+                target: 'pdf',
                 conv:baseVendorConverterPath + 'PptToHTML'
             }],
             pptx: [{
-                target: 'html',
+                target: 'pdf',
                 conv:baseVendorConverterPath + 'PptToHTML'
             }],
             odp: [{
-                target: 'html',
+                target: 'pdf',
                 conv:baseVendorConverterPath + 'PptToHTML'
             }]
 
