@@ -248,7 +248,7 @@ public class DMEntitySecurity implements Serializable
         if (fullAccess != security.fullAccess) return false;
         if (!name.equals(security.name)) return false;
         if (!source.equals(security.source)) return false;
-        return fullName.equals(security.fullName);
+        return true;
 
     }
 
@@ -258,7 +258,7 @@ public class DMEntitySecurity implements Serializable
         result = 31 * result + dmEntityType;
         result = 31 * result + name.hashCode();
         result = 31 * result + source.hashCode();
-        result = 31 * result + fullName.hashCode();
+        //result = 31 * result + fullName.hashCode();
         result = 31 * result + type;
         result = 31 * result + (read ? 1 : 0);
         result = 31 * result + (write ? 1 : 0);
