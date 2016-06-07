@@ -20,11 +20,12 @@ kimios.util.PreviewHelper = {
         var link = srcContextPath + '/Converter?sessionId=' + sessionUid;
         link += '&documentId=' + entityRecord.uid;
         link += '&converterImpl=' + (converter ? converter : kimios.util.PreviewHelper.extensionMapping()[entityRecord.extension.toLowerCase()][0].conv) ;
+        link += "&outputFormat=" + (kimios.util.PreviewHelper.extensionMapping()[entityRecord.extension.toLowerCase()][0].target);
         link += "&inline=true";
         return link;
     },
 
-    extensionMapping : function(){
+    /*extensionMapping : function(){
         var extMapping = {
            doc: [{
                target: 'html',
@@ -59,6 +60,63 @@ kimios.util.PreviewHelper = {
                 conv: 'org.kimios.converter.impl.PostscriptToPDF'
             }]
            //pdf: [{conv: 'org.kimios.kernel.converter.impl.PDFMerger', target: 'pdf'}]
+        }
+        return extMapping;
+    }*/
+
+    extensionMapping : function(){
+
+
+        var baseConverterPath = 'org.kimios.converter.impl.';
+        var baseVendorConverterPath = baseConverterPath + 'vendors.aspose.';
+
+        var extMapping = {
+            doc: [{
+                target: 'pdf',
+                conv: baseVendorConverterPath + 'DocxToHTML'
+            }],
+            docx: [{
+                target: 'pdf',
+                conv: baseVendorConverterPath + 'DocxToHTML'
+            }],
+            odt: [{
+                target: 'pdf',
+                conv: baseVendorConverterPath + 'DocxToHTML'
+            }],
+            eml: [{
+                target: 'html',
+                conv: baseVendorConverterPath + 'MailToHTML'
+            }],
+            msg: [{
+                target: 'html',
+                conv: baseVendorConverterPath + 'MailToHTML'
+            }],
+            xls: [{
+                target: 'pdf',
+                conv: baseVendorConverterPath + 'XlsToHTML'
+            }],
+            xlsx: [{
+                target: 'pdf',
+                conv: baseVendorConverterPath + 'XlsToHTML'
+            }],
+            ods: [{
+                target: 'pdf',
+                conv: baseVendorConverterPath + 'XlsToHTML'
+            }],
+            ppt: [{
+                target: 'pdf',
+                conv:baseVendorConverterPath + 'PptToHTML'
+            }],
+            pptx: [{
+                target: 'pdf',
+                conv:baseVendorConverterPath + 'PptToHTML'
+            }],
+            odp: [{
+                target: 'pdf',
+                conv:baseVendorConverterPath + 'PptToHTML'
+            }]
+
+            //pdf: [{conv: 'org.kimios.kernel.converter.impl.PDFMerger', target: 'pdf'}]
         }
         return extMapping;
     }
