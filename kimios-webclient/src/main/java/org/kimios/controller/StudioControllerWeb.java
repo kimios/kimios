@@ -468,7 +468,6 @@ public class StudioControllerWeb extends Controller {
 //            status.setUid(statusUid);
             status.setName(String.valueOf(statusMap.get("name")));
             status.setSuccessorUid(successorUid);
-
             //WorkflowStatusManagers
 
             ArrayList<Map<String, String>> managersList = (ArrayList<Map<String, String>>) statusMap.get("managers");
@@ -489,21 +488,14 @@ public class StudioControllerWeb extends Controller {
             statusDefinitionList.add(statusDefinition);
         }
 
-        studioController.createWorkflow(sessionUid, parameters.get("name"), parameters.get("description"), XMLGenerators.getWorkflowXMLDescriptor(-1, statusDefinitionList));
+        boolean automaticRestart = parameters.get("automaticRestart") != null
+                && parameters.get("automaticRestart").equals("true");
+        studioController.createWorkflow(sessionUid,
+                parameters.get("name"),
+                parameters.get("description"),
+                automaticRestart,
+                XMLGenerators.getWorkflowXMLDescriptor(-1, statusDefinitionList));
         return "";
-    }
-
-    public static String cleanString(String str) {
-        String r = "";
-        for (int g = 0; g < str.length(); g++) {
-            int i = (int) str.charAt(g);
-            if (i >= 48 && i <= 57 || i >= 65 && i <= 90 || i >= 97 && i <= 122) {
-                r += str.charAt(g);
-            } else {
-                r += "&#" + i + ";";
-            }
-        }
-        return r;
     }
 }
 

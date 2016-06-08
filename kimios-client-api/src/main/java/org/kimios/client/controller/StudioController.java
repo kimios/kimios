@@ -266,12 +266,12 @@ public class StudioController
     /**
      * Create a new worfklow from an xml descriptor
      */
-    public long createWorkflow( String sessionId, String name, String description, String xmlStream )
+    public long createWorkflow( String sessionId, String name, String description, boolean automaticRestart, String xmlStream )
         throws Exception, AccessDeniedException, DMSException, XMLException
     {
         try
         {
-            return client.createWorkflow( sessionId, name, description, xmlStream );
+            return client.createWorkflow( sessionId, name, automaticRestart, description, xmlStream );
         }
         catch ( Exception e )
         {

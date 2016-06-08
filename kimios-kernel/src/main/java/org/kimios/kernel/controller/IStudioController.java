@@ -168,7 +168,8 @@ public interface IStudioController
     /**
      * Create a new worfklow from an xml descriptor
      */
-    public long createWorkflow(Session session, String name,
+    public long createWorkflow(Session session,
+                               String name,
             String description, String xmlStream) throws XMLException,
             AccessDeniedException, ConfigException, DataSourceException,
             XSDException;

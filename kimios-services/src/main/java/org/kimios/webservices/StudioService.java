@@ -23,10 +23,7 @@ import org.kimios.webservices.exceptions.DMServiceException;
 
 import javax.jws.WebParam;
 import javax.jws.WebService;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 
 /**
  * Created by IntelliJ IDEA. User: farf Date: 4/1/12 Time: 5:07 PM To change this template use File | Settings | File
@@ -194,6 +191,7 @@ public interface StudioService
     @Produces("application/json")
     public long createWorkflow(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "name") @WebParam(name = "name") String name,
+            @DefaultValue(value = "false") @QueryParam(value = "automaticRestart") @WebParam(name = "automaticRestart") Boolean  automaticRestart,
             @QueryParam(value = "description") @WebParam(name = "description") String description,
             @QueryParam(value = "xmlStream") @WebParam(name = "xmlStream") String xmlStream) throws DMServiceException;
 

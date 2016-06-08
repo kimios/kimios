@@ -133,14 +133,22 @@ Studio.Workflows = {
             tooltip: kimios.lang('Save'),
             iconCls: 'save',
             handler: function(){
-                kimios.request.StudioRequest.saveWorkflow(Ext.getCmp('wf-name').getValue(), Ext.getCmp('hidden-workflow-uid').getValue(), Ext.getCmp('wf-desc').getValue(), workflowsStore, contextPanel, statusGrid.getStore(), workflowNameTextField.getValue(), workflowRecord);
+                kimios.request.StudioRequest.saveWorkflow(Ext.getCmp('wf-name').getValue(), 
+                    Ext.getCmp('hidden-workflow-uid').getValue(),
+                    Ext.getCmp('wf-desc').getValue(),
+                    Ext.getCmp('wf-autorestart').getValue(),
+                    workflowsStore, 
+                    contextPanel, 
+                    statusGrid.getStore(), 
+                    workflowNameTextField.getValue(), 
+                    workflowRecord);
             }
         });
 
         var formPanel = new kimios.FormPanel({
             title: (workflowRecord ? workflowRecord.data.name : kimios.lang('NewWorkflow')),
 //            iconCls: 'studio-cls-wf',
-            labelWidth: 120,
+            labelWidth: 220,
             bodyStyle:'padding:5px;background-color:transparent;',
             defaults: {
                 selectOnFocus: true,
@@ -185,11 +193,23 @@ Studio.Workflows = {
             enableKeyEvents: true
         });
 
+        var automaticRestartField = new Ext.form.Checkbox({
+            anchor: '100%',
+            id : 'wf-autorestart',
+            name: 'automaticRestart',
+            inputValue: "true",
+            fieldLabel: kimios.lang('AutomaticRestart'),
+            checked: workflowRecord ? workflowRecord.data.automaticRestart : false,
+            value: (workflowRecord ? workflowRecord.data.automaticRestart : "false"),
+            enableKeyEvents: true
+        });
+
         formPanel.add(hiddenField);
         formPanel.add(workflowNameTextField);
         formPanel.add(descriptionTextField);
+        formPanel.add(automaticRestartField);
         formPanel.add(new Ext.Panel({
-            anchor: '100% -52',
+            anchor: '100% -78',
             layout: 'fit',
             border: false,
             items: [statusGrid]

@@ -1195,7 +1195,7 @@ kimios.request = {
 
         },
 
-        saveWorkflow: function (name, uid, desc, workflowsStore, contextPanel, statusGridStore, newName, workflowRecord) {
+        saveWorkflow: function (name, uid, desc, autoRestart, workflowsStore, contextPanel, statusGridStore, newName, workflowRecord) {
             if (name == '') {
                 kimios.MessageBox.exception({
                     exception: kimios.lang('WorkflowNameEmptyJS')
@@ -1243,7 +1243,8 @@ kimios.request = {
                     jsonParameters: jsonParams,
                     name: name,
                     uid: uid,
-                    description: desc
+                    description: desc,
+                    automaticRestart: autoRestart
                 },
                 function (form, action) {
                     workflowsStore.load({

@@ -249,7 +249,7 @@ public class WorkflowController extends AKimiosController implements IWorkflowCo
                     .getWorkflowStatus(workflowStatusUid);
             List<WorkflowStatus> status = dmsFactoryInstantiator.getWorkflowStatusFactory()
                     .getWorkflowStatuses(dmsFactoryInstantiator.getWorkflowFactory().getWorkflow(st.getWorkflowUid()));
-            WorkflowStatus toKeepWorkflow = null;
+            WorkflowStatus statusToRestartOn = null;
             int count = 0;
             for(WorkflowStatus c: status){
                 if(c.getUid() == workflowStatusUid){
@@ -258,13 +258,24 @@ public class WorkflowController extends AKimiosController implements IWorkflowCo
                 count++;
             }
             if(count - 1 >= 0){
-                toKeepWorkflow = status.get(count - 1);
+                statusToRestartOn = status.get(count - 1);
             }
             if(logger.isDebugEnabled()){
-                logger.debug("workflow should restart automatically on status {}", toKeepWorkflow);
+                logger.debug("workflow should restart automatically on status {}", statusToRestartOn);
             }
-            if(toKeepWorkflow != null){
-                this.createWorkflowRequest(session, documentUid, toKeepWorkflow.getUid());
+            if(statusToRestartOn != null){
+                //Load previously created status and clean it.
+
+                DocumentWorkflowStatus previouslyValidatedStatus =
+                        dmsFactoryInstantiator.getDocumentWorkflowStatusFactory()
+                                .getDocumentWorkflowStatus(documentUid, statusToRestartOn.getUid());
+
+                if(previouslyValidatedStatus != null){
+                    dmsFactoryInstantiator.getDocumentWorkflowStatusFactory()
+                            .deleteDocumentWorkflowStatus(previouslyValidatedStatus);
+                }
+
+                this.createWorkflowRequest(session, documentUid, statusToRestartOn.getUid());
             }
         }
     }
