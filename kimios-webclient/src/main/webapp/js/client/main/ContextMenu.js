@@ -780,7 +780,7 @@ kimios.ContextMenu = new function () {
                 }
 
                 var vp = kimios.explorer.getViewport();
-                vp.westPanel.setActiveGroup(4);     // cart panel
+                vp.westPanel.setActiveGroup(5);     // cart panel
                 vp.westPanel.activeGroup.setActiveTab(0);
             }
         });

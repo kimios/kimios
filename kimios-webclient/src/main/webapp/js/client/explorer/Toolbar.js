@@ -97,7 +97,7 @@ kimios.explorer.Toolbar = Ext.extend(Ext.Toolbar, {
 //            enableToggle: true,
             handler: function (b, s) {
                 var vp = kimios.explorer.getViewport();
-                vp.westPanel.setActiveGroup(4);     // cart panel
+                vp.westPanel.setActiveGroup(5);     // cart panel
                 vp.westPanel.activeGroup.setActiveTab(0);
             }
         });
