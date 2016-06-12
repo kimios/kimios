@@ -21,36 +21,88 @@
     <groupId>org.kimios</groupId>
     <artifactId>kimios</artifactId>
     <version>1.1-SNAPSHOT</version>
+
+    <!-- GitHub Software Configuration Management -->
+    <scm>
+        <url>https://github.com/kimios/kimios</url>
+        <connection>scm:git:ssh://git@github.com/kimios/kimios.git</connection>
+        <developerConnection>scm:git:ssh://git@ggithub.com/kimios/kimios.git</developerConnection>
+    </scm>
+    <!-- internal Git Connexion
     <scm>
         <connection>scm:git:ssh://git@gitlab.devlib.infra/org-kimios/kimios.git</connection>
         <developerConnection>scm:git:ssh://git@gitlab.devlib.infra/org-kimios/kimios.git</developerConnection>
         <tag>HEAD</tag>
-    </scm>
+    </scm>-->
+    <developers>
+        <developer>
+            <id>farf</id>
+            <name>Fabien Alin</name>
+            <email>fabien.alin@gmail.com</email>
+            <timezone>+1</timezone>
+            <roles>
+                <role>Java Developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>jludmann</id>
+            <name>Jérôme Ludmann</name>
+            <email>jerome.ludmann@gmail.com</email>
+            <timezone>+1</timezone>
+            <roles>
+                <role>Java Developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>tlornet</id>
+            <name>Thomas Lornet</name>
+            <email>tlornet@teclib.com</email>
+            <timezone>+1</timezone>
+            <roles>
+                <role>Java Developer</role>
+            </roles>
+        </developer>
+    </developers>
+    <!-- Continous Integration build hosted by CloudBees -->
+    <ciManagement>
+        <system>jenkins</system>
+        <url>https://jenkins.devlib.fr/job/kimios-build</url>
+    </ciManagement>
+    <issueManagement>
+        <system>github</system>
+        <url>https://issues.kimios.com</url>
+    </issueManagement>
+    <licenses>
+        <license>
+            <name>Affero GPL v2</name>
+            <url>http://www.gnu.org/licenses/licenses.fr.html#AGPL</url>
+        </license>
+    </licenses>
     <repositories>
-        <!--<repository>
-            <id>kimios-releases</id>
-            <name>kimios-releases</name>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <layout>default</layout>
-            <url>http://maven.devlib.infra/repository/kimios-releases</url>
-        </repository>
-        <repository>
-            <id>kimios-internal</id>
-            <name>kimios-internal</name>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <layout>default</layout>
-            <url>http://maven.devlib.infra/repository/kimios-internal</url>
-        </repository>  -->
+    <!--<repository>
+        <id>kimios-releases</id>
+        <name>kimios-releases</name>
+        <releases>
+            <enabled>true</enabled>
+        </releases>
+        <snapshots>
+            <enabled>false</enabled>
+        </snapshots>
+        <layout>default</layout>
+        <url>http://maven.devlib.infra/repository/kimios-releases</url>
+    </repository>
+    <repository>
+        <id>kimios-internal</id>
+        <name>kimios-internal</name>
+        <releases>
+            <enabled>true</enabled>
+        </releases>
+        <snapshots>
+            <enabled>true</enabled>
+        </snapshots>
+        <layout>default</layout>
+        <url>http://maven.devlib.infra/repository/kimios-internal</url>
+    </repository>  -->
     </repositories>
     <properties>
         <spring.version>3.2.2.RELEASE</spring.version>
@@ -76,18 +128,30 @@
         <thymeleaf.version>2.1.4.RELEASE</thymeleaf.version>
         <osgi.version>4.3.1</osgi.version>
         <osgi.enterprise.version>4.2.0</osgi.enterprise.version>
+
+
         <!-- releases properties -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <KIMIOS_VERSION>1.0-SNAPSHOT</KIMIOS_VERSION>
+        <KIMIOS_VERSION>${project.version}</KIMIOS_VERSION>
         <releaseRepoUrl>http://repositories.k.devlib.fr/repository/kimios-private</releaseRepoUrl>
         <snapshotRepoUrl>http://repositories.k.devlib.fr/repository/kimios-private</snapshotRepoUrl>
+        <deployRepoId>${releaseRepoId}</deployRepoId>
         <deployRepoUrl>${releaseRepoUrl}</deployRepoUrl>
         <releaseRepoId>kimios-releases</releaseRepoId>
         <snapshotRepoId>kimios-private</snapshotRepoId>
-        <deployRepoId>${releaseRepoId}</deployRepoId>
-        <isRelease>true</isRelease>
     </properties>
     <distributionManagement>
+
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+
+        <!--internal
         <snapshotRepository>
             <id>kimios-private</id>
             <url>${snapshotRepoUrl}</url>
@@ -96,6 +160,7 @@
             <id>kimios-releases</id>
             <url>${releaseRepoUrl}</url>
         </repository>
+        -->
     </distributionManagement>
     <modules>
         <module>kimios-exceptions</module>
@@ -197,4 +262,51 @@
 
          </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
