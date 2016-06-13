@@ -79,30 +79,30 @@
         </license>
     </licenses>
     <repositories>
-    <!--<repository>
-        <id>kimios-releases</id>
-        <name>kimios-releases</name>
-        <releases>
-            <enabled>true</enabled>
-        </releases>
-        <snapshots>
-            <enabled>false</enabled>
-        </snapshots>
-        <layout>default</layout>
-        <url>http://maven.devlib.infra/repository/kimios-releases</url>
-    </repository>
-    <repository>
-        <id>kimios-internal</id>
-        <name>kimios-internal</name>
-        <releases>
-            <enabled>true</enabled>
-        </releases>
-        <snapshots>
-            <enabled>true</enabled>
-        </snapshots>
-        <layout>default</layout>
-        <url>http://maven.devlib.infra/repository/kimios-internal</url>
-    </repository>  -->
+        <!--<repository>
+            <id>kimios-releases</id>
+            <name>kimios-releases</name>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <layout>default</layout>
+            <url>http://maven.devlib.infra/repository/kimios-releases</url>
+        </repository>
+        <repository>
+            <id>kimios-internal</id>
+            <name>kimios-internal</name>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <layout>default</layout>
+            <url>http://maven.devlib.infra/repository/kimios-internal</url>
+        </repository>  -->
     </repositories>
     <properties>
         <spring.version>3.2.2.RELEASE</spring.version>
@@ -133,33 +133,35 @@
         <!-- releases properties -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <KIMIOS_VERSION>${project.version}</KIMIOS_VERSION>
-        <releaseRepoUrl>http://repositories.k.devlib.fr/repository/kimios-private</releaseRepoUrl>
-        <snapshotRepoUrl>http://repositories.k.devlib.fr/repository/kimios-private</snapshotRepoUrl>
-        <deployRepoId>${releaseRepoId}</deployRepoId>
-        <deployRepoUrl>${releaseRepoUrl}</deployRepoUrl>
         <releaseRepoId>kimios-releases</releaseRepoId>
+        <releaseRepoUrl>http://repositories.k.devlib.fr/repository/kimios-private</releaseRepoUrl>
         <snapshotRepoId>kimios-private</snapshotRepoId>
+        <snapshotRepoUrl>http://repositories.k.devlib.fr/repository/kimios-private</snapshotRepoUrl>
     </properties>
     <distributionManagement>
-
         <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-
-        <!--internal
-        <snapshotRepository>
-            <id>kimios-private</id>
+            <id>${snapshotRepoId}</id>
             <url>${snapshotRepoUrl}</url>
         </snapshotRepository>
         <repository>
-            <id>kimios-releases</id>
+            <id>${releaseRepoId}</id>
             <url>${releaseRepoUrl}</url>
         </repository>
+        <!--internal
+            <snapshotRepository>
+                <id>kimios-private</id>
+                <url>http://repositories.k.devlib.fr/repository/kimios-private</url>
+            </snapshotRepository>
+            <repository>
+                <id>kimios-releases</id>
+                <url>http://repositories.k.devlib.fr/repository/kimios-private</url>
+            </repository>
+        -->
+        <!-- ORSSH
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         -->
     </distributionManagement>
     <modules>
@@ -260,9 +262,30 @@
                 </configuration>
             </plugin>
 
-         </plugins>
+        </plugins>
     </build>
     <profiles>
+        <profile>
+            <id>sign</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <profile>
             <id>release</id>
             <build>
@@ -287,20 +310,6 @@
                                 <id>attach-sources</id>
                                 <goals>
                                     <goal>jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.6</version>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
                                 </goals>
                             </execution>
                         </executions>
