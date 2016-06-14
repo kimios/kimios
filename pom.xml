@@ -78,32 +78,6 @@
             <url>http://www.gnu.org/licenses/licenses.fr.html#AGPL</url>
         </license>
     </licenses>
-    <repositories>
-        <!--<repository>
-            <id>kimios-releases</id>
-            <name>kimios-releases</name>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <layout>default</layout>
-            <url>http://maven.devlib.infra/repository/kimios-releases</url>
-        </repository>
-        <repository>
-            <id>kimios-internal</id>
-            <name>kimios-internal</name>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <layout>default</layout>
-            <url>http://maven.devlib.infra/repository/kimios-internal</url>
-        </repository>  -->
-    </repositories>
     <properties>
         <spring.version>3.2.2.RELEASE</spring.version>
         <slfj.version>1.7.5</slfj.version>
@@ -128,42 +102,10 @@
         <thymeleaf.version>2.1.4.RELEASE</thymeleaf.version>
         <osgi.version>4.3.1</osgi.version>
         <osgi.enterprise.version>4.2.0</osgi.enterprise.version>
-
-
         <!-- releases properties -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <KIMIOS_VERSION>${project.version}</KIMIOS_VERSION>
-        <releaseRepoId>kimios-releases</releaseRepoId>
-        <releaseRepoUrl>http://repositories.k.devlib.fr/repository/kimios-private</releaseRepoUrl>
-        <snapshotRepoId>kimios-private</snapshotRepoId>
-        <snapshotRepoUrl>http://repositories.k.devlib.fr/repository/kimios-private</snapshotRepoUrl>
     </properties>
-    <distributionManagement>
-        <snapshotRepository>
-            <id>${snapshotRepoId}</id>
-            <url>${snapshotRepoUrl}</url>
-        </snapshotRepository>
-        <repository>
-            <id>${releaseRepoId}</id>
-            <url>${releaseRepoUrl}</url>
-        </repository>
-        <!--internal
-            <snapshotRepository>
-                <id>kimios-private</id>
-                <url>http://repositories.k.devlib.fr/repository/kimios-private</url>
-            </snapshotRepository>
-            <repository>
-                <id>kimios-releases</id>
-                <url>http://repositories.k.devlib.fr/repository/kimios-private</url>
-            </repository>
-        -->
-        <!-- ORSSH
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        -->
-    </distributionManagement>
     <modules>
         <module>kimios-exceptions</module>
         <module>kimios-interfaces</module>
@@ -265,6 +207,42 @@
         </plugins>
     </build>
     <profiles>
+        <profile>
+            <id>internal-distrib</id>
+            <activation>
+                <property>
+                    <name>!publicRelease</name>
+                </property>
+            </activation>
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>kimios-private</id>
+                    <url>http://repositories.k.devlib.fr/repository/kimios-private</url>
+                </snapshotRepository>
+                <repository>
+                    <id>kimios-releases</id>
+                    <url>http://repositories.k.devlib.fr/repository/kimios-private</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+        <profile>
+            <id>external-distrib</id>
+            <activation>
+                <property>
+                    <name>publicRelease</name>
+                </property>
+            </activation>
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>ossrh</id>
+                    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+                </snapshotRepository>
+                <repository>
+                    <id>ossrh</id>
+                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+                </repository>
+            </distributionManagement>
+        </profile>
         <profile>
             <id>sign</id>
             <build>
