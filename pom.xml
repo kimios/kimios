@@ -228,8 +228,10 @@
         <profile>
             <id>external-distrib</id>
             <activation>
+                <activeByDefault>false</activeByDefault>
                 <property>
                     <name>publicRelease</name>
+                    <value>true</value>
                 </property>
             </activation>
             <distributionManagement>
