@@ -10,12 +10,10 @@ import org.slf4j.LoggerFactory;
  */
 public class KimiosContextListener implements BlueprintListener {
 
-
-
     private static Logger logger = LoggerFactory.getLogger(KimiosContextListener.class);
 
     public void blueprintEvent(BlueprintEvent event) {
-        logger.info("event " + event.getType() + " ");
+        logger.info("event {}", event.getType());
 
         if(event.getCause() != null){
             logger.error("event cause: ", event.getCause());
