@@ -16,9 +16,10 @@
 
 package org.kimios.kernel.events.impl;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.SerializationConfig;
 import org.kimios.kernel.dms.*;
 import org.kimios.kernel.dms.model.DMEntityAttribute;
 import org.kimios.kernel.dms.model.*;
@@ -45,8 +46,8 @@ public class AddonDataHandler extends GenericEventHandler {
     public AddonDataHandler(ObjectMapper mapper) {
         this.objectMapper = mapper;
 
-        mapper.configure(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS, false);
-        mapper.getSerializationConfig().addMixInAnnotations(Meta.class, MetaMixIn.class);
+        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        mapper.addMixInAnnotations(Meta.class, MetaMixIn.class);
     }
 
 

@@ -26,8 +26,9 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.util.SimpleOrderedMap;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.SerializationConfig;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.controller.IPathController;
 import org.kimios.kernel.dms.*;
@@ -87,8 +88,8 @@ public class SolrIndexManager
         this.solr = solr;
         this.contentSolrServer = contentSolr;
         mp = new ObjectMapper();
-        mp.configure(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS, false);
-        mp.getSerializationConfig().addMixInAnnotations(Meta.class, AddonDataHandler.MetaMixIn.class);
+        mp.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        mp.addMixInAnnotations(Meta.class, AddonDataHandler.MetaMixIn.class);
     }
 
     private final SolrServer solr;

@@ -65,7 +65,7 @@
     
     <bean id="addonDataHandler" class="org.kimios.kernel.events.impl.AddonDataHandler">
         <argument>
-            <bean class="org.codehaus.jackson.map.ObjectMapper"
+            <bean class="com.fasterxml.jackson.databind.ObjectMapper"
                   factory-ref="cstMapperBuilder"
                   factory-method="createInstance" />
         </argument>

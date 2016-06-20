@@ -220,8 +220,8 @@
                         <Export-Package>org.kimios.custom,org.kimios.webservices,org.kimios.webservices.utils,org.kimios.webservices.exceptions</Export-Package>
                         <Import-Package>
                             org.codehaus.jackson.jaxrs,
-                            org.codehaus.jackson.map,
-                            org.codehaus.jackson.type,
+                            com.fasterxml.jackson.databind,
+                            com.fasterxml.jackson.core.type,
                             org.osgi.service.blueprint,
                             org.codehaus.jackson.annotate,
                             org.slf4j,

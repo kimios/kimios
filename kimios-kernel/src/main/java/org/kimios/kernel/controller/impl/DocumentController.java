@@ -16,8 +16,9 @@
 package org.kimios.kernel.controller.impl;
 
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.SerializationConfig;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.exceptions.DmsKernelException;
 import org.kimios.kernel.configuration.Config;
@@ -1331,8 +1332,8 @@ public class DocumentController extends AKimiosController implements IDocumentCo
         List<org.kimios.kernel.ws.pojo.Bookmark> bookmarksPojoList =
                 new ArrayList<org.kimios.kernel.ws.pojo.Bookmark>();
         ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS, false);
-        mapper.getSerializationConfig().addMixInAnnotations(Meta.class, AddonDataHandler.MetaMixIn.class);
+        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        mapper.addMixInAnnotations(Meta.class, AddonDataHandler.MetaMixIn.class);
 
             for (Bookmark bookmark : bookmarks) {
                 org.kimios.kernel.ws.pojo.Bookmark bookmarkPojo = bookmark.toPojo();
