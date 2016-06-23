@@ -23,6 +23,9 @@ import org.bouncycastle.openpgp.operator.PBESecretKeyDecryptor;
 import org.bouncycastle.openpgp.operator.bc.BcPBESecretKeyDecryptorBuilder;
 import org.bouncycastle.openpgp.operator.bc.BcPGPDigestCalculatorProvider;
 import org.bouncycastle.openpgp.operator.bc.BcPublicKeyDataDecryptorFactory;
+import org.bouncycastle.openpgp.operator.bc.BcPGPDataEncryptorBuilder;
+import org.bouncycastle.openpgp.operator.bc.BcKeyFingerprintCalculator;
+import org.bouncycastle.openpgp.operator.bc.BcPublicKeyKeyEncryptionMethodGenerator;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -59,10 +62,12 @@ public class PGPEncryptionUtil {
         this.armoredOutputStream = new ArmoredOutputStream(out);
 
         // create an encrypted payload and set the public key on the data generator
-        PGPEncryptedDataGenerator encryptGen = new PGPEncryptedDataGenerator(PAYLOAD_ENCRYPTION_ALG,
-                new SecureRandom(), BC_PROVIDER_NAME);
+        BcPGPDataEncryptorBuilder builder = new BcPGPDataEncryptorBuilder(PAYLOAD_ENCRYPTION_ALG);
+        builder.setSecureRandom(new SecureRandom());
+        PGPEncryptedDataGenerator encryptGen = new PGPEncryptedDataGenerator(builder);
 
-        encryptGen.addMethod(key);
+        BcPublicKeyKeyEncryptionMethodGenerator encKey = new BcPublicKeyKeyEncryptionMethodGenerator(key);
+        encryptGen.addMethod(encKey);
 
 
         byte[] buffer = new byte[2048];
@@ -118,7 +123,7 @@ public class PGPEncryptionUtil {
     public static PGPPublicKeyRing getKeyring(InputStream keyBlockStream) throws IOException {
         // PGPUtil.getDecoderStream() will detect ASCII-armor automatically and decode it,
         // the PGPObject factory then knows how to read all the data in the encoded stream
-        PGPObjectFactory factory = new PGPObjectFactory(PGPUtil.getDecoderStream(keyBlockStream));
+        PGPObjectFactory factory = new PGPObjectFactory(PGPUtil.getDecoderStream(keyBlockStream), new BcKeyFingerprintCalculator());
 
         // these files should really just have one object in them,
         // and that object should be a PGPPublicKeyRing.
@@ -153,7 +158,7 @@ public class PGPEncryptionUtil {
     public  static PGPPrivateKey findPrivateKey(InputStream keyIn, long keyID, char[] pass)
             throws IOException, PGPException, NoSuchProviderException
     {
-        PGPSecretKeyRingCollection pgpSec = new PGPSecretKeyRingCollection(PGPUtil.getDecoderStream(keyIn));
+        PGPSecretKeyRingCollection pgpSec = new PGPSecretKeyRingCollection(PGPUtil.getDecoderStream(keyIn), new BcKeyFingerprintCalculator());
         return findPrivateKey(pgpSec.getSecretKey(keyID), pass);
 
     }
@@ -180,7 +185,7 @@ public class PGPEncryptionUtil {
 
         in = org.bouncycastle.openpgp.PGPUtil.getDecoderStream(in);
 
-        PGPObjectFactory pgpF = new PGPObjectFactory(in);
+        PGPObjectFactory pgpF = new PGPObjectFactory(in, new BcKeyFingerprintCalculator());
         PGPEncryptedDataList enc;
         Object o = pgpF.nextObject();
         if (o instanceof  PGPEncryptedDataList) {
@@ -192,13 +197,13 @@ public class PGPEncryptionUtil {
         PGPPublicKeyEncryptedData pbe = it.next();
 
         InputStream clear = pbe.getDataStream(new BcPublicKeyDataDecryptorFactory(skey));
-        PGPObjectFactory plainFact = new PGPObjectFactory(clear);
+        PGPObjectFactory plainFact = new PGPObjectFactory(clear, new BcKeyFingerprintCalculator());
 
         Object message = plainFact.nextObject();
 
         if (message instanceof  PGPCompressedData) {
             PGPCompressedData cData = (PGPCompressedData) message;
-            PGPObjectFactory pgpFact = new PGPObjectFactory(cData.getDataStream());
+            PGPObjectFactory pgpFact = new PGPObjectFactory(cData.getDataStream(), new BcKeyFingerprintCalculator());
 
             message = pgpFact.nextObject();
         }
@@ -235,7 +240,7 @@ public class PGPEncryptionUtil {
 
         in = org.bouncycastle.openpgp.PGPUtil.getDecoderStream(in);
 
-        PGPObjectFactory pgpF = new PGPObjectFactory(in);
+        PGPObjectFactory pgpF = new PGPObjectFactory(in, new BcKeyFingerprintCalculator());
         PGPEncryptedDataList enc;
 
         Object o = pgpF.nextObject();
@@ -267,13 +272,13 @@ public class PGPEncryptionUtil {
 
         InputStream clear = pbe.getDataStream(new BcPublicKeyDataDecryptorFactory(sKey));
 
-        PGPObjectFactory plainFact = new PGPObjectFactory(clear);
+        PGPObjectFactory plainFact = new PGPObjectFactory(clear, new BcKeyFingerprintCalculator());
 
         Object message = plainFact.nextObject();
 
         if (message instanceof  PGPCompressedData) {
             PGPCompressedData cData = (PGPCompressedData) message;
-            PGPObjectFactory pgpFact = new PGPObjectFactory(cData.getDataStream());
+            PGPObjectFactory pgpFact = new PGPObjectFactory(cData.getDataStream(), new BcKeyFingerprintCalculator());
 
             message = pgpFact.nextObject();
         }
