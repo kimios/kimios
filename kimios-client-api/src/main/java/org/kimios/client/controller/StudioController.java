@@ -282,12 +282,12 @@ public class StudioController
     /**
      * Update workflow from an xml descriptor
      */
-    public void updateWorkflow( String sessionId, long workflowId, String name, String description, String xmlStream )
+    public void updateWorkflow( String sessionId, long workflowId, String name, String description, boolean automaticWorkflowRestart, String xmlStream )
         throws Exception, AccessDeniedException, DMSException, XMLException
     {
         try
         {
-            client.updateWorkflow( sessionId, workflowId, name, description, xmlStream );
+            client.updateWorkflow( sessionId, workflowId, name, description, automaticWorkflowRestart, xmlStream );
         }
         catch ( Exception e )
         {

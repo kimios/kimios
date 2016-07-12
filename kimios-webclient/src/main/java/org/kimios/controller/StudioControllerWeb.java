@@ -379,7 +379,10 @@ public class StudioControllerWeb extends Controller {
         xmlStream += "</status>\n";
         xmlStream += "</workflow>\n";
 
-        studioController.updateWorkflow(sessionUid, workflowUid, workflowName, workflowDescription, xmlStream);
+        boolean automaticRestart = parameters.get("automaticRestart") != null
+                && parameters.get("automaticRestart").equals("true");
+
+        studioController.updateWorkflow(sessionUid, workflowUid, workflowName, workflowDescription, automaticRestart, xmlStream);
         return "";
     }
 
@@ -450,7 +453,12 @@ public class StudioControllerWeb extends Controller {
             statusDefinitionList.add(statusDefinition);
         }
 
-        studioController.updateWorkflow(sessionUid, Long.parseLong(parameters.get("uid")), parameters.get("name"), parameters.get("description"), XMLGenerators.getWorkflowXMLDescriptor(-1, statusDefinitionList));
+
+        boolean automaticRestart = parameters.get("automaticRestart") != null
+                && parameters.get("automaticRestart").equals("true");
+
+        studioController.updateWorkflow(sessionUid, Long.parseLong(parameters.get("uid")), parameters.get("name"),
+                parameters.get("description"), automaticRestart, XMLGenerators.getWorkflowXMLDescriptor(-1, statusDefinitionList));
         return "";
     }
 

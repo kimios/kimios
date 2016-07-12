@@ -604,6 +604,9 @@ kimios.record = {
             },
             {
                 name: 'description'
+            },
+            {
+                name: 'automaticStatusRestart'
             }
         ]),
 
@@ -619,9 +622,6 @@ kimios.record = {
             },
             {
                 name: 'position'
-            },
-            {
-                name: 'automaticStatusRestart'
             }
         ]),
 

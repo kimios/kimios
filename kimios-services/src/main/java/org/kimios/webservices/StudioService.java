@@ -202,6 +202,7 @@ public interface StudioService
             @QueryParam(value = "workflowId") @WebParam(name = "workflowId") long workflowId,
             @QueryParam(value = "name") @WebParam(name = "name") String name,
             @QueryParam(value = "description") @WebParam(name = "description") String description,
+            @DefaultValue(value = "false") @QueryParam(value = "automaticRestart") @WebParam(name = "automaticRestart") Boolean  automaticRestart,
             @QueryParam(value = "xmlStream") @WebParam(name = "xmlStream") String xmlStream) throws DMServiceException;
 
     @GET @ApiOperation(value="")

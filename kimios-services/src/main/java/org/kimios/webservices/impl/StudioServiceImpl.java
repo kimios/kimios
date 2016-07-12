@@ -391,13 +391,12 @@ public class StudioServiceImpl extends CoreService implements StudioService {
         }
     }
 
-    public void updateWorkflow(String sessionId, long workflowId, String name, String description, String xmlStream) throws DMServiceException {
+    public void updateWorkflow(String sessionId, long workflowId, String name, String description, Boolean automaticRestart, String xmlStream) throws DMServiceException {
 
         try {
 
             Session session = getHelper().getSession(sessionId);
-
-            studioController.updateWorkflow(session, workflowId, name, description, xmlStream);
+            studioController.updateWorkflowWithAutomaticRestart(session, workflowId, name, description, automaticRestart != null ? automaticRestart : false, xmlStream);
 
         } catch (Exception e) {
 
