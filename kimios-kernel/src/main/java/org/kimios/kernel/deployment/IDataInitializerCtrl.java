@@ -1,6 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2008-2015  DevLib'
+ * Copyright (C) 2008-2016  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -13,28 +13,15 @@
  * You should have received a copy of the GNU Affero General Public License
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.kimios.kernel.deployment;
 
-/***
- *
- *
+import org.springframework.transaction.annotation.Transactional;
+
+/**
+ * Created by farf on 12/07/16.
  */
-public class DataInitializer
-{
-    private IDataInitializerCtrl dataInitializerCtrl;
-
-    public IDataInitializerCtrl getDataInitializerCtrl()
-    {
-        return dataInitializerCtrl;
-    }
-
-    public void setDataInitializerCtrl(IDataInitializerCtrl dataInitializerCtrl)
-    {
-        this.dataInitializerCtrl = dataInitializerCtrl;
-    }
-
-    public void checkSettings() throws Exception
-    {
-        dataInitializerCtrl.checkSettings();
-    }
+public interface IDataInitializerCtrl {
+    @Transactional
+    void checkSettings() throws Exception;
 }

@@ -43,5 +43,6 @@
     <logger name="org.kimios.kernel.events" level="INFO" />
     <logger name="org.kimios.kernel.index" level="INFO" />
     <logger name="org.kimios.kernel.events.interceptors" level="INFO" />
+    <logger name="org.kimios.kernel.rules.impl.AutomaticWorkflowStartRule" level="DEBUG" />
 
 </configuration>

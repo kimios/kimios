@@ -199,8 +199,8 @@ Studio.Workflows = {
             name: 'automaticRestart',
             inputValue: "true",
             fieldLabel: kimios.lang('AutomaticRestart'),
-            checked: workflowRecord ? workflowRecord.data.automaticRestart : false,
-            value: (workflowRecord ? workflowRecord.data.automaticRestart : "false"),
+            checked: workflowRecord ? workflowRecord.data.automaticStatusRestart : false,
+            value: (workflowRecord ? workflowRecord.data.automaticStatusRestart : "false"),
             enableKeyEvents: true
         });
 

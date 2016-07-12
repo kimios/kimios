@@ -32,8 +32,7 @@ import java.util.List;
  *
  */
 
-public class DataInitializerCtrl
-{
+public class DataInitializerCtrl implements IDataInitializerCtrl {
     private static Logger log = LoggerFactory.getLogger(DataInitializerCtrl.class);
 
     private FactoryInstantiator userFactoryInstantiator;
@@ -70,6 +69,7 @@ public class DataInitializerCtrl
         this.dmsFactoryInstantiator = dmsFactoryInstantiator;
     }
 
+    @Override
     @Transactional
     public void checkSettings() throws Exception
     {

@@ -619,6 +619,9 @@ kimios.record = {
             },
             {
                 name: 'position'
+            },
+            {
+                name: 'automaticStatusRestart'
             }
         ]),
 

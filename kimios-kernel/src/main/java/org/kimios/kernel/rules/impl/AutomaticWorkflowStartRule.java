@@ -47,6 +47,8 @@ public class AutomaticWorkflowStartRule extends RuleImpl {
         logger.debug("starting rule {} for {}", this.getClass().getName(), this.getContext().getEntity());
         //get workflow reference
         String workflowNameOrId = parameters.get("workflowName");
+        String workflowStatusNameOrId = parameters.get("workflowStatus");
+        logger.debug("loading workflow {}, with status {}", workflowNameOrId, workflowStatusNameOrId);
         Workflow workflow = null;
         try{
 
@@ -56,10 +58,25 @@ public class AutomaticWorkflowStartRule extends RuleImpl {
             logger.warn("workflow not found for name {}", workflowNameOrId);
             return;
         }
+
         if(workflow != null){
             //start workflow
-            WorkflowStatus workflowStatus = FactoryInstantiator.getInstance().getWorkflowStatusFactory()
-                    .getStartWorkflowStatus(workflow);
+            WorkflowStatus workflowStatus = null;
+            if(workflowStatusNameOrId != null){
+                logger.debug("loading workflow status {}", workflowStatusNameOrId);
+                List<WorkflowStatus> items = FactoryInstantiator.getInstance().getWorkflowStatusFactory()
+                        .getWorkflowStatuses(workflow);
+                for(WorkflowStatus status: items){
+                    if(status.getName().equals(workflowStatusNameOrId)){
+                        workflowStatus = status;
+                        break;
+                    }
+                }
+            }
+            if(workflowStatus == null){
+                workflowStatus = FactoryInstantiator.getInstance().getWorkflowStatusFactory()
+                        .getStartWorkflowStatus(workflow);
+            }
             if(logger.isDebugEnabled()){
                 logger.debug("starting workflow {} on status {}", workflow, workflowStatus);
             }

@@ -16,73 +16,65 @@
   -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+      http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
-  <!-- provide a SolrIndexManager class / No interface here -->
-  <bean id="indexManagerSolr" class="org.kimios.kernel.index.solr.SearchServiceSolrFactory" scope="singleton"
-        depends-on="pathController" destroy-method="shutdownSolr">
-    <property name="serverMode" value="${dms.index.solr.mode.server}"/>
-    <property name="solrHome" value="${dms.index.solr.home}"/>
-    <property name="solrUrl" value="${dms.index.solr.server.url}"/>
-    <property name="coreName" value="${dms.index.corename}"/>
-    <property name="pathController" ref="pathController"/>
-    <property name="solrDocumentFactory" ref="solrDocumentFactory" />
-    <property name="documentIndexStatusFactory" ref="documentIndexStatusFactory" />
-  </bean>
+    <!-- provide a SolrIndexManager class / No interface here -->
+    <bean id="indexManagerSolr" class="org.kimios.kernel.index.solr.SearchServiceSolrFactory" scope="singleton"
+          depends-on="pathController" destroy-method="shutdownSolr">
+        <property name="serverMode" value="${dms.index.solr.mode.server}"/>
+        <property name="solrHome" value="${dms.index.solr.home}"/>
+        <property name="solrUrl" value="${dms.index.solr.server.url}"/>
+        <property name="coreName" value="${dms.index.corename}"/>
+        <property name="pathController" ref="pathController"/>
+        <property name="solrDocumentFactory" ref="solrDocumentFactory"/>
+        <property name="documentIndexStatusFactory" ref="documentIndexStatusFactory"/>
+    </bean>
 
 
-
-
-   <bean class="org.kimios.kernel.events.impl.AddonDataHandler">
+    <bean class="org.kimios.kernel.events.impl.AddonDataHandler">
         <constructor-arg>
-            <bean class="org.kimios.utils.spring.ObjectMapperFactoryBean" />
+            <bean class="org.kimios.utils.spring.ObjectMapperFactoryBean"/>
         </constructor-arg>
-   </bean>
+    </bean>
 
 
-   <bean id="solrIndexEventHandler" class="org.kimios.kernel.index.solr.SolrIndexer">
-       <property name="indexManager" ref="indexManagerSolr"/>
-   </bean>
+    <bean id="solrIndexEventHandler" class="org.kimios.kernel.index.solr.SolrIndexer">
+        <property name="indexManager" ref="indexManagerSolr"/>
+    </bean>
 
-  <bean id="searchRequestFactory" class="org.kimios.kernel.index.query.factory.SearchRequestFactory" parent="hfactory" />
+    <bean id="searchRequestFactory" class="org.kimios.kernel.index.query.factory.SearchRequestFactory"
+          parent="hfactory"/>
 
-  <bean id="solrDocumentFactory" class="org.kimios.kernel.index.query.factory.DocumentFactory" />
+    <bean id="solrDocumentFactory" class="org.kimios.kernel.index.query.factory.DocumentFactory"/>
 
-  <bean id="searchController" class="org.kimios.kernel.index.controller.impl.SolrSearchController" parent="kimiosCoreCtrl">
-    <property name="solrIndexManager" ref="indexManagerSolr"/>
-    <property name="searchRequestFactory" ref="searchRequestFactory" />
-    <property name="searchRequestSecurityFactory" ref="searchRequestSecurityFactory" />
-  </bean>
+    <bean id="searchController" class="org.kimios.kernel.index.controller.impl.SolrSearchController"
+          parent="kimiosCoreCtrl">
+        <property name="solrIndexManager" ref="indexManagerSolr"/>
+        <property name="searchRequestFactory" ref="searchRequestFactory"/>
+        <property name="searchRequestSecurityFactory" ref="searchRequestSecurityFactory"/>
+    </bean>
 
-  <bean id="searchManagementController" class="org.kimios.kernel.index.controller.impl.SearchManagementController" parent="kimiosCoreCtrl">
-    <property name="indexManager" ref="indexManagerSolr"/>
-  </bean>
-
-
-    <bean id="searchRequestSecurityFactory" class="org.kimios.kernel.index.query.factory.SearchRequestSecurityFactory" parent="hfactory" />
-
-    <bean id="documentIndexStatusFactory" class="org.kimios.kernel.index.query.factory.DocumentIndexStatusFactory" parent="hfactory" />
+    <bean id="searchManagementController" class="org.kimios.kernel.index.controller.impl.SearchManagementController"
+          parent="kimiosCoreCtrl">
+        <property name="indexManager" ref="indexManagerSolr"/>
+    </bean>
 
 
+    <bean id="searchRequestSecurityFactory" class="org.kimios.kernel.index.query.factory.SearchRequestSecurityFactory"
+          parent="hfactory"/>
 
-
-    <!-- index filter mapping Old filter mapping loading method. Now replaced with Unified Tika Filter
-    <bean class="org.kimios.kernel.index.FiltersMapper" factory-method="getInstance"
-          init-method="loadFiltersMapping"/>
-
+    <bean id="documentIndexStatusFactory" class="org.kimios.kernel.index.query.factory.DocumentIndexStatusFactory"
+          parent="hfactory"/>
 
     <aop:config>
-      <aop:pointcut id="searchService"
-                    expression="execution(* org.kimios.kernel.controller.ISearchController.*(..))"/>
-
+        <aop:pointcut id="searchService"
+                      expression="execution(* org.kimios.kernel.index.controller.ISearchController.*(..))"/>
         <aop:pointcut id="searchMngService"
-                      expression="execution(* org.kimios.kernel.controller.ISearchManagementController.*(..))"/>
-
-          <aop:advisor advice-ref="txAdvice" pointcut-ref="searchService"/>
-
-
+                      expression="execution(* org.kimios.kernel.index.controller.ISearchManagementController.*(..))"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="searchService"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="searchMngService"/>
-    </aop:config> -->
+    </aop:config>
 
 </beans>

@@ -17,11 +17,12 @@
   -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
 
-    <bean id="attachmentNameGenerator" class="org.kimios.kernel.share.mail.AttachmentNameGenerator">
+<bean id="attachmentNameGenerator" class="org.kimios.kernel.share.mail.AttachmentNameGenerator">
         <constructor-arg value="${dms.share.attachment.meta.name}"></constructor-arg>
     </bean>
     
@@ -61,5 +62,14 @@
         <constructor-arg name="shareFactory" ref="shareFactory" />
         <constructor-arg name="mailShareController" ref="mailShareController" />
     </bean>
+
+    <aop:config>
+        <aop:pointcut id="shareTx"
+                      expression="execution(* org.kimios.kernel.share.controller.IShareController.*(..))"/>
+        <aop:pointcut id="mailShareTx"
+                      expression="execution(* org.kimios.kernel.share.controller.IMailShareController.*(..))"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="shareTx"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="mailShareTx"/>
+    </aop:config>
 
 </beans>

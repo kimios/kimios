@@ -18,7 +18,6 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-
       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
 
@@ -94,7 +93,7 @@
         </property>
     </bean>
 
-    <bean id="contextHolder" class="org.kimios.utils.context.OsgiServiceHolder" />
+    <bean id="contextHolder" class="org.kimios.utils.context.SpringServiceHolder" />
 
     <bean id="ruleManager" class="org.kimios.kernel.rules.RuleManager">
         <property name="ruleBeanFactory" ref="ruleFactory"></property>
@@ -117,8 +116,10 @@
         <property name="eventHandlerManager" ref="eventHandlerManager" />
     </bean>
 
+
+    <aop:aspectj-autoproxy />
     <aop:config>
-        <!--<aop:pointcut id="securityService"
+        <aop:pointcut id="securityService"
                 expression="execution(* org.kimios.kernel.controller.ISecurityController.*(..))"/>
         <aop:pointcut id="informationService"
                 expression="execution(* org.kimios.kernel.controller.IServerInformationController.*(..))"/>
@@ -149,14 +150,15 @@
         <aop:pointcut id="pathService" expression="execution(* org.kimios.kernel.controller.IPathController.*(..))"/>
         <aop:pointcut id="extService"
                 expression="execution(* org.kimios.kernel.controller.IExtensionController.*(..))"/>
-
         <aop:pointcut id="repoService"
-                expression="execution(* org.kimios.kernel.repositories.RepositoryService.*(..))"/>
-
-
+                expression="execution(* org.kimios.kernel.repositories.impl.RepositoryService.*(..))"/>
         <aop:pointcut id="sessManagerPct"
                 expression="execution(* org.kimios.kernel.security.SessionManager.*SessionContext(..))"/>
+        <aop:pointcut id="dataInitPct"
+                      expression="execution(* org.kimios.kernel.deployment.IDataInitializerCtrl.*(..))"/>
 
+
+        <!-- map pointcut to Tx -->
         <aop:advisor advice-ref="txAdvice" pointcut-ref="securityService"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="informationService"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="folderService"/>
@@ -172,24 +174,10 @@
         <aop:advisor advice-ref="txAdvice" pointcut-ref="ruleService"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="pathService"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="extService"/>
-
         <aop:advisor advice-ref="txAdvice" pointcut-ref="aclUpdateService"/>
-
         <aop:advisor advice-ref="txAdvice" pointcut-ref="repoService"/>
-        <aop:advisor advice-ref="txAdvice" pointcut-ref="sessManagerPct"/> -->
-
-
-        <!--<aop:advisor advice-ref="eventInterceptor" pointcut-ref="aclUpdateService"/>
-        <aop:advisor advice-ref="eventInterceptor" pointcut-ref="securityService"/>
-        <aop:advisor advice-ref="eventInterceptor" pointcut-ref="workspaceService"/>
-        <aop:advisor advice-ref="eventInterceptor" pointcut-ref="folderService"/>
-        <aop:advisor advice-ref="eventInterceptor" pointcut-ref="documentService"/>
-        <aop:advisor advice-ref="eventInterceptor" pointcut-ref="workflowService"/>
-        <aop:advisor advice-ref="eventInterceptor" pointcut-ref="documentVersionService"/>
-        <aop:advisor advice-ref="eventInterceptor" pointcut-ref="fileTransferService"/>
-        <aop:advisor advice-ref="eventInterceptor" pointcut-ref="administrationService"/>
-        <aop:advisor advice-ref="eventInterceptor" pointcut-ref="extService"/> -->
-
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="sessManagerPct"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="dataInitPct"/>
     </aop:config>
     <bean id="appContextProvider" class="org.kimios.utils.spring.ApplicationContextProvider"/>
 </beans>

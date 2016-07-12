@@ -200,6 +200,12 @@
             <version>1.4</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>1.8.2</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
     <build>
         <resources>

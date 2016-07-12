@@ -17,24 +17,30 @@
   -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
-
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
     <bean id="templateFactory" class="org.kimios.templates.impl.factory.TemplateFactory"
-          parent="hfactory" />
+          parent="hfactory"/>
 
     <bean id="kimiosTplResolver" class="org.kimios.templates.impl.thymeleaf.KimiosTemplateResolver">
-        <constructor-arg name="templateFactory" ref="templateFactory" />
+        <constructor-arg name="templateFactory" ref="templateFactory"/>
     </bean>
 
     <bean id="templateProvider" class="org.kimios.templates.impl.TemplateProvider"
           parent="kimiosCoreCtrl">
-        <constructor-arg name="templateFactory" ref="templateFactory" />
+        <constructor-arg name="templateFactory" ref="templateFactory"/>
     </bean>
 
     <bean id="templateProcessor" class="org.kimios.templates.impl.TemplateProcessor">
-        <constructor-arg name="kimiosTemplateResolver" ref="kimiosTplResolver" />
+        <constructor-arg name="kimiosTemplateResolver" ref="kimiosTplResolver"/>
     </bean>
+
+    <aop:config>
+        <aop:pointcut id="templateProviderTx"
+                      expression="execution(* org.kimios.api.templates.ITemplateProvider.*(..))"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="templateProviderTx"/>
+    </aop:config>
 
 </beans>

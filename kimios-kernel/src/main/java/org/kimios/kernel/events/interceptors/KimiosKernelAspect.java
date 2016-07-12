@@ -19,6 +19,7 @@ package org.kimios.kernel.events.interceptors;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.DeclarePrecedence;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.kimios.kernel.dms.model.Document;
@@ -40,6 +41,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 @Aspect
+@DeclarePrecedence("AnnotationTransactionAspect")
 public class KimiosKernelAspect {
 
 
