@@ -15,8 +15,8 @@
  */
 package org.kimios.webservices.impl;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.kimios.kernel.dms.model.Bookmark;
 import org.kimios.kernel.dms.model.MetaValue;
 import org.kimios.kernel.dms.model.SymbolicLink;
@@ -234,7 +234,7 @@ public class DocumentServiceImpl extends CoreService implements DocumentService 
                 targetList.add(new org.kimios.kernel.security.DMEntitySecurity(des.getDmEntityUid(), des.getDmEntityType(), des.getName(), des.getSource(), des.getType(), des.isRead(), des.isWrite(), des.isFullAccess())); */
 
 
-            List<MetaValue> metaValues = new ObjectMapper().readValue(metaItemsJsonString, new TypeReference<List<MetaValue>>() {
+            List<MetaValue> metaValues = new ObjectMapper().readValue(metaItemsJsonString, new TypeReference<List<MetaValue>>(){
             });
             /*for(MetaValue mv: metaItems){
                 MetaValueBean mvb = null;

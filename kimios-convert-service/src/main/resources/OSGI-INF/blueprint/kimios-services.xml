@@ -96,7 +96,7 @@
     <jaxrs:server id="kimiosConvertRestServer"
                   address="/rest/converter/">
         <jaxrs:providers>
-            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
             <bean class="org.kimios.webservices.DateParamConverter"/>
             <bean id="exceptionMapper" class="org.kimios.webservices.JaxRSExceptionMapper"/>
             <bean id="corsFilter" class="org.apache.cxf.rs.security.cors.CrossOriginResourceSharingFilter" />

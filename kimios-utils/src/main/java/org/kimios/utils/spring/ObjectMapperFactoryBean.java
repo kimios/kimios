@@ -16,8 +16,9 @@
 
 package org.kimios.utils.spring;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 
 /**
@@ -25,14 +26,14 @@ import org.springframework.beans.factory.config.AbstractFactoryBean;
  */
 public class ObjectMapperFactoryBean extends AbstractFactoryBean<ObjectMapper> {
 
-    public Class<org.codehaus.jackson.map.ObjectMapper> getObjectType() {
+    public Class<ObjectMapper> getObjectType() {
         return ObjectMapper.class;
     }
 
     public ObjectMapper createInstance() {
         ObjectMapper mapper = new ObjectMapper();
 
-        mapper.setSerializationInclusion(JsonSerialize.Inclusion.NON_NULL);
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
 
         return mapper;

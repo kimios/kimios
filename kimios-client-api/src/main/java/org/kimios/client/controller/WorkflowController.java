@@ -18,7 +18,7 @@ package org.kimios.client.controller;
 import org.apache.cxf.jaxrs.client.Client;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import org.kimios.client.exception.*;
 import org.kimios.kernel.ws.pojo.DocumentWorkflowStatusRequest;
 import org.kimios.kernel.ws.pojo.WorkflowStatus;

@@ -16,8 +16,9 @@
 
 package org.kimios.kernel.index.query.factory;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.kimios.kernel.exception.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
 import org.kimios.kernel.index.query.model.Criteria;

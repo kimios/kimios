@@ -15,13 +15,13 @@
  */
 package org.kimios.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import flexjson.JSONSerializer;
 import flexjson.transformer.DateTransformer;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang.time.DateUtils;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
 import org.kimios.core.wrappers.DMEntity;
 import org.kimios.core.wrappers.VirtualTreeEntity;
 import org.kimios.kernel.index.query.model.Criteria;

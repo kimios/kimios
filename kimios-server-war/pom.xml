@@ -397,12 +397,17 @@
             <scope>compile</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.fasterxml.jackson.jaxrs</groupId>
+            <artifactId>jackson-jaxrs-json-provider</artifactId>
+            <version>${jackson.version}</version>
+            <scope>${jackson.version}</scope>
+        </dependency>
 
         <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-jaxrs</artifactId>
-            <version>1.9.0</version>
-            <scope>compile</scope>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
 
 

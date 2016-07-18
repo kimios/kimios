@@ -8,13 +8,16 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY oSr FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
  * You should have received a copy of the GNU Affero General Public License
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.kimios.kernel.index;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationConfig;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.lucene.search.Query;
 import org.apache.solr.client.solrj.*;
 import org.apache.solr.client.solrj.response.FacetField;
@@ -26,8 +29,6 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.util.SimpleOrderedMap;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.controller.IPathController;
 import org.kimios.kernel.dms.*;
@@ -87,8 +88,8 @@ public class SolrIndexManager
         this.solr = solr;
         this.contentSolrServer = contentSolr;
         mp = new ObjectMapper();
-        mp.configure(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS, false);
-        mp.getSerializationConfig().addMixInAnnotations(Meta.class, AddonDataHandler.MetaMixIn.class);
+        mp.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        mp.addMixIn(Meta.class, AddonDataHandler.MetaMixIn.class);
     }
 
     private final SolrServer solr;

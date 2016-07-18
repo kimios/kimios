@@ -15,7 +15,7 @@
  */
 package org.kimios.kernel.dms.model;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.kimios.kernel.exception.MetaValueTypeException;

@@ -16,8 +16,8 @@
 
 package org.kimios.kernel.index;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.solr.common.SolrInputDocument;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.*;
 import org.kimios.kernel.dms.model.*;

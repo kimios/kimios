@@ -16,8 +16,8 @@
 
 package org.kimios.kernel.dms;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.model.*;
 import org.kimios.kernel.exception.DataSourceException;

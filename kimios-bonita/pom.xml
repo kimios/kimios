@@ -46,6 +46,12 @@
             <groupId>org.bonitasoft.engine</groupId>
             <artifactId>bonita-common</artifactId>
             <version>${bonita.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson</groupId>
+                    <artifactId>jackson-annotations</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>

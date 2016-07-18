@@ -66,7 +66,7 @@
                   serviceClass="org.kimios.webservices.AdministrationService"
                   address="${server.url}${service.context}/rest/">
         <jaxrs:providers>
-            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
             <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
         </jaxrs:providers>
         <jaxrs:headers>
@@ -77,7 +77,7 @@
     <jaxrs:client threadSafe="true" id="securityServiceBean" serviceClass="org.kimios.webservices.SecurityService"
                   address="${server.url}${service.context}/rest/">
         <jaxrs:providers>
-            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
             <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
         </jaxrs:providers>
         <jaxrs:headers>
@@ -88,7 +88,7 @@
     <jaxrs:client threadSafe="true" id="studioServiceBean" serviceClass="org.kimios.webservices.StudioService"
                   address="${server.url}${service.context}/rest/">
         <jaxrs:providers>
-            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
             <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
         </jaxrs:providers>
         <jaxrs:headers>
@@ -99,7 +99,7 @@
     <jaxrs:client threadSafe="true" id="documentServiceBean" serviceClass="org.kimios.webservices.DocumentService"
                   address="${server.url}${service.context}/rest/">
         <jaxrs:providers>
-            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
             <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
         </jaxrs:providers>
         <jaxrs:headers>
@@ -111,7 +111,7 @@
                   serviceClass="org.kimios.webservices.DocumentVersionService"
                   address="${server.url}${service.context}/rest/">
         <jaxrs:providers>
-            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
             <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
         </jaxrs:providers>
         <jaxrs:headers>
@@ -122,7 +122,7 @@
     <jaxrs:client threadSafe="true" id="folderServiceBean" serviceClass="org.kimios.webservices.FolderService"
                   address="${server.url}${service.context}/rest/">
         <jaxrs:providers>
-            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
             <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
         </jaxrs:providers>
         <jaxrs:headers>
@@ -133,7 +133,7 @@
     <jaxrs:client threadSafe="true" id="workspaceServiceBean" serviceClass="org.kimios.webservices.WorkspaceService"
                   address="${server.url}${service.context}/rest/">
         <jaxrs:providers>
-            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
             <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
         </jaxrs:providers>
         <jaxrs:headers>
@@ -144,7 +144,7 @@
     <jaxrs:client threadSafe="true" id="notificationServiceBean" serviceClass="org.kimios.webservices.NotificationService"
                   address="${server.url}${service.context}/rest/" bus="cxf">
         <jaxrs:providers>
-            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
             <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
             <bean class="org.kimios.webservices.DateParamConverter"/>
         </jaxrs:providers>
@@ -156,7 +156,7 @@
     <jaxrs:client threadSafe="true" id="reportingServiceBean" serviceClass="org.kimios.webservices.ReportingService"
                   address="${server.url}${service.context}/rest/">
         <jaxrs:providers>
-            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
             <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
         </jaxrs:providers>
         <jaxrs:headers>
@@ -167,7 +167,7 @@
     <jaxrs:client threadSafe="true" id="fileTransferServiceBean" serviceClass="org.kimios.webservices.FileTransferService"
                   address="${server.url}${service.context}/rest/">
         <jaxrs:providers>
-            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
             <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
         </jaxrs:providers>
         <jaxrs:headers>
@@ -178,7 +178,7 @@
     <jaxrs:client threadSafe="true" id="extensionServiceBean" serviceClass="org.kimios.webservices.ExtensionService"
                   address="${server.url}${service.context}/rest/">
         <jaxrs:providers>
-            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
             <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
         </jaxrs:providers>
         <jaxrs:headers>
@@ -189,7 +189,7 @@
     <jaxrs:client threadSafe="true" id="logServiceBean" serviceClass="org.kimios.webservices.LogService"
                   address="${server.url}${service.context}/rest/">
         <jaxrs:providers>
-            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
             <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
         </jaxrs:providers>
         <jaxrs:headers>
@@ -200,7 +200,7 @@
     <jaxrs:client threadSafe="true" id="informationServiceBean" serviceClass="org.kimios.webservices.InformationService"
                   address="${server.url}${service.context}/rest/">
         <jaxrs:providers>
-            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
             <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
         </jaxrs:providers>
         <jaxrs:headers>
@@ -211,7 +211,7 @@
     <jaxrs:client threadSafe="true" id="searchServiceBean" serviceClass="org.kimios.webservices.SearchService"
                   address="${server.url}${service.context}/rest/">
         <jaxrs:providers>
-            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
             <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
         </jaxrs:providers>
         <jaxrs:headers>
@@ -222,7 +222,7 @@
     <jaxrs:client threadSafe="true" id="ruleServiceBean" serviceClass="org.kimios.webservices.RuleService"
                   address="${server.url}${service.context}/rest/">
         <jaxrs:providers>
-            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
             <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
         </jaxrs:providers>
         <jaxrs:headers>
@@ -234,7 +234,7 @@
     <jaxrs:client threadSafe="true" id="bonitaServiceBean" serviceClass="org.kimios.webservices.bonita.BonitaService"
                   address="${server.url}${service.context}/rest/bonita">
         <jaxrs:providers>
-            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
             <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
         </jaxrs:providers>
         <jaxrs:headers>
@@ -246,7 +246,7 @@
     <jaxrs:client threadSafe="true" id="shareServiceBean" serviceClass="org.kimios.webservices.share.ShareService"
                   address="${server.url}${service.context}/rest/share">
         <jaxrs:providers>
-            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
             <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
         </jaxrs:providers>
         <jaxrs:headers>
@@ -257,7 +257,7 @@
     <jaxrs:client threadSafe="true" id="editorServiceBean" serviceClass="org.kimios.webservices.editors.EditorService"
                   address="${server.url}${service.context}/rest/editors">
         <jaxrs:providers>
-            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
             <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
         </jaxrs:providers>
         <jaxrs:headers>

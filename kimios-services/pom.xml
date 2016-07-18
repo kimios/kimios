@@ -130,9 +130,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-jaxrs</artifactId>
-            <version>1.9.0</version>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -219,11 +219,11 @@
                         <Private-Package>org.kimios.webservices.impl,org.kimios.kernel.ws.pojo</Private-Package>
                         <Export-Package>org.kimios.custom,org.kimios.webservices,org.kimios.webservices.utils,org.kimios.webservices.exceptions</Export-Package>
                         <Import-Package>
-                            org.codehaus.jackson.jaxrs,
-                            org.codehaus.jackson.map,
-                            org.codehaus.jackson.type,
+                            com.fasterxml.jackson.databind,
+                            com.fasterxml.jackson.core.type,
+                            com.fasterxml.jackson.annotation,
+                            com.fasterxml.jackson.jaxrs.json,
                             org.osgi.service.blueprint,
-                            org.codehaus.jackson.annotate,
                             org.slf4j,
                             org.apache.cxf,
                             org.apache.cxf.annotations,

@@ -13,9 +13,14 @@
         <bundle>mvn:org.apache.commons/commons-email/1.4</bundle>
         <bundle><![CDATA[wrap:mvn:postgresql/postgresql/9.1-901.jdbc3$Bundle-SymbolicName=postgresql&Bundle-Version=9.1]]></bundle>
         <bundle><![CDATA[wrap:mvn:net.sourceforge.jtds/jtds/1.3.1$Bundle-SymbolicName=jtds&Bundle-Version=1.3.1]]></bundle>
-        <bundle>mvn:org.codehaus.jackson/jackson-core-asl/1.9.13</bundle>
+        <!--<bundle>mvn:com.fasterxml.jackson/jac/1.9.13</bundle>
         <bundle>mvn:org.codehaus.jackson/jackson-mapper-asl/1.9.13</bundle>
-        <bundle>mvn:org.codehaus.jackson/jackson-jaxrs/1.9.13</bundle>	
+        <bundle>mvn:org.codehaus.jackson/jackson-jaxrs/1.9.13</bundle>-->
+        <bundle>mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-json-provider/${jackson.version}</bundle>
+        <bundle>mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-base/${jackson.version}</bundle>
+        <bundle>mvn:com.fasterxml.jackson.core/jackson-core/${jackson.version}</bundle>
+        <bundle>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson.version}</bundle>
+        <bundle>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson.version}</bundle>
         <feature>cxf</feature>
         <feature>cxf-core</feature>
         <feature>cxf-ws-policy</feature>
