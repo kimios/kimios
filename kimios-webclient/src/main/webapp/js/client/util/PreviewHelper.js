@@ -69,8 +69,8 @@ kimios.util.PreviewHelper = {
 
         var baseConverterPath = 'org.kimios.converter.impl.';
         var baseVendorConverterPath = baseConverterPath + 'vendors.aspose.';
-
-        var extMapping = {
+        
+        var vendorMappingModel = {
             doc: [{
                 target: 'pdf',
                 conv: baseVendorConverterPath + 'DocxToHTML'
@@ -118,6 +118,54 @@ kimios.util.PreviewHelper = {
 
             //pdf: [{conv: 'org.kimios.kernel.converter.impl.PDFMerger', target: 'pdf'}]
         }
+        
+        var osMappingModel = {
+            doc: [{
+                target: 'html',
+                conv: baseConverterPath + 'DocToHTML'
+            }],
+            docx: [{
+                target: 'html',
+                conv: baseConverterPath + 'Docx4jDocxToHTML'
+            }],
+            eml: [{
+                target: 'html',
+                conv: baseConverterPath + 'MailToHTML'
+            }],
+            msg: [{
+                target: 'html',
+                conv: baseConverterPath + 'MailToHTML'
+            }],
+            xls: [{
+                target: 'html',
+                conv: baseConverterPath + 'XlsToHTML'
+            }],
+            xlsx: [{
+                target: 'html',
+                conv: baseConverterPath + 'XlsToHTML'
+            }],
+            ods: [{
+                target: 'html',
+                conv: baseConverterPath + 'XlsToHTML'
+            }],
+            asciidoc: [{
+                target: 'html',
+                conv:'org.kimios.converter.impl.AsciiDocToHTML'
+            }],
+            adoc: [{
+                target: 'html',
+                conv:'org.kimios.converter.impl.AsciiDocToHTML'
+            }],
+            ps: [{
+                target: 'pdf',
+                conv: 'org.kimios.converter.impl.PostscriptToPDF'
+            }]
+            //pdf: [{conv: 'org.kimios.kernel.converter.impl.PDFMerger', target: 'pdf'}]
+        };
+        
+        
+        
+        var extMapping = osMappingModel;
         return extMapping;
     }
 };
