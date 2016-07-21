@@ -26,6 +26,8 @@ kimios.properties.WorkflowPanel = Ext.extend(Ext.Panel, {
         this.bodyStyle = 'background-color:transparent;';
         this.readOnly = config.readOnly;
 
+
+        
         this.cancelWorkflowButton = new Ext.Button({
             text: kimios.lang('CancelWorkflow'),
             scope: this,
@@ -148,6 +150,20 @@ kimios.properties.WorkflowPanel = Ext.extend(Ext.Panel, {
                 callback: function (records, options, success) {
                     this.workflowUid = records[0].data.workflowUid;
                     this.statusName = records[0].data.name;
+
+                    this.recordsStore = new DmsJsonStore({
+                        url: 'Studio',
+                        baseParams: {
+                            action :'GetWorkflowStatus',
+                            workflowUid: this.workflowUid
+                        },
+                        fields: kimios.record.StudioRecord.workflowStatusRecord,
+                        sortInfo: {
+                            field: 'position',
+                            direction: 'ASC'
+                        }
+                    });
+                    this.recordsStore.load();
 
                     this.requestForStatusField = new kimios.form.WorkflowStatusField({
                         fieldLabel: kimios.lang('NewRequestForStatus'),
@@ -284,10 +300,10 @@ kimios.properties.WorkflowPanel = Ext.extend(Ext.Panel, {
                 scope: this,
                 renderer: function (value, metaData, record, rowIndex, colIndex, store) {
                     var html = '';
-                    var store = this.requestForStatusField.getStore();
+                    var store = this.recordsStore;
                     for (var i = 0; i < store.getCount(); i++) {
                         if (record.get('workflowStatusUid') == store.getAt(i).data.uid) {
-                            html += kimios.lang('RequestedStatus') + ': ' + store.getAt(i).data.name + '<br/>';
+                            html += kimios.lang('RequestedStatus') + ': <span style="font-size:10px;color:gray;">' + store.getAt(i).data.name + '</span><br/>';
                             break;
                         }
                     }
