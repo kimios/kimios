@@ -39,7 +39,9 @@ public class AutomaticWorkflowStartRule extends RuleImpl {
 
     @Override
     public boolean isTrue() {
-        return true;
+        return this.getContext().getEntity() instanceof Document &&
+                FactoryInstantiator.getInstance().getDocumentWorkflowStatusRequestFactory()
+                        .getLastPendingRequest((Document)this.getContext().getEntity()) == null;
     }
 
     @Override
