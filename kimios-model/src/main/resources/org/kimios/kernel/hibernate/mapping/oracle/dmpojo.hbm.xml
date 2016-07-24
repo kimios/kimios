@@ -28,7 +28,8 @@
             SELECT doc.id, doc.dm_entity_name, doc.dm_entity_owner, doc.dm_entity_owner_source, doc.creation_date,
             doc.update_date, doc.folder_id, doc.mime_type, doc.extension, doc.path AS document_path, dv.id AS
             version_id, dv.type_name, dv.version_length AS file_length, dv.creation_date AS version_creation_date,
-            dv.modification_date AS version_update_date, dv.document_type_id, doc.locked, doc.lock_by, doc.lock_source,
+            dv.modification_date AS version_update_date, dv.document_type_id, dv.custom_version as custom_version, dv.custom_version_pending as custom_version_pending,
+            doc.locked, doc.lock_by, doc.lock_source,
             doc.lock_date, req.outofworkflow, stat.status_name, stat.last_wfs, doc.dm_entity_addon_data FROM ((((SELECT d.id, dm.dm_entity_name,
             dm.dm_entity_owner, dm.dm_entity_owner_source, dm.creation_date, dm.update_date, d.folder_id, d.mime_type,
             d.extension, dm.dm_entity_addon_data, CASE WHEN (chk.username IS NOT NULL) THEN 1 ELSE 0 END AS locked, chk.username AS
@@ -36,7 +37,7 @@
             ((document d LEFT JOIN checkout chk ON ((d.id = chk.document_id))) LEFT JOIN dm_entity dm ON (((d.id =
             dm.dm_entity_id) AND (dm.dm_entity_type = 3))))) doc JOIN (SELECT b.id, b.author, b.author_source,
             b.creation_date, b.modification_date, b.document_id, b.storage_path, b.version_length, b.document_type_id,
-            b.hash_md5, b.hash_sha1, dt.type_name FROM (((SELECT document_version.document_id,
+            b.hash_md5, b.hash_sha1, b.custom_version, b.custom_version_pending, dt.type_name FROM (((SELECT document_version.document_id,
             max(document_version.creation_date) AS creation_date FROM document_version GROUP BY
             document_version.document_id) a JOIN document_version b ON (((a.creation_date = b.creation_date) AND
             (a.document_id = b.document_id)))) LEFT JOIN document_type dt ON ((b.document_type_id = dt.id)))) dv ON
@@ -123,6 +124,12 @@
         </property>
         <property name="addonDatas">
             <column name="dm_entity_addon_data"></column>
+        </property>
+        <property name="customVersion">
+            <column name="custom_version"/>
+        </property>
+        <property name="customVersionPending">
+            <column name="custom_version_pending"/>
         </property>
     </class>
 </hibernate-mapping>

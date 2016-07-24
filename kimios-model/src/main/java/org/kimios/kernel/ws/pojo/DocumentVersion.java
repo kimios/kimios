@@ -41,13 +41,18 @@ public class DocumentVersion
 
     private String hashSha;
 
+    private String customVersion;
+
+    private String customVersionPending;
+
     public DocumentVersion()
     {
     }
 
     public DocumentVersion(long uid, String author, String authorSource,
             Date creationDate, Date modificationDate, long documentUid,
-            long length, long documentTypeUid, String documentTypeName, String hashMd5, String hashSha)
+            long length, long documentTypeUid, String documentTypeName, String hashMd5, String hashSha,
+            String customVersion, String customVersionPending)
     {
         this.uid = uid;
         this.author = author;
@@ -60,6 +65,8 @@ public class DocumentVersion
         this.documentTypeName = documentTypeName;
         this.hashMd5 = hashMd5;
         this.hashSha = hashSha;
+        this.customVersion = customVersion;
+        this.customVersionPending = customVersionPending;
     }
 
     public long getUid()
@@ -170,6 +177,22 @@ public class DocumentVersion
     public void setHashSha(String hashSha)
     {
         this.hashSha = hashSha;
+    }
+
+    public String getCustomVersion() {
+        return customVersion;
+    }
+
+    public void setCustomVersion(String customVersion) {
+        this.customVersion = customVersion;
+    }
+
+    public String getCustomVersionPending() {
+        return customVersionPending;
+    }
+
+    public void setCustomVersionPending(String customVersionPending) {
+        this.customVersionPending = customVersionPending;
     }
 }
 

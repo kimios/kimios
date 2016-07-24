@@ -53,7 +53,10 @@ kimios.DMEntityPojo = function (entity) {
 
     this.versionUid = entity.versionUid;
     this.dmEntityAddonData = entity.dmEntityAddonData;
-
+    
+    this.customVersion = entity.customVersion;
+    this.customVersionPending = entity.customVersionPending;
+    this.lastVersionId = entity.lastVersionId;
     this.targetEntity = entity.type == 7 ? entity.targetEntity : null;
 
 };

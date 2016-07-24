@@ -88,6 +88,7 @@
         <field name="DocumentVersionOwnerSource" type="string_ci" indexed="true" stored="true" required="true"/>
         <field name="DocumentVersionLength" type="tlong" indexed="true" stored="true" required="false" />
         <field name="DocumentVersionHash" type="string" indexed="true" stored="true" required="false" />
+        <field name="DocumentVersionCustomVersion" type="string" indexed="true" stored="true" required="false" />
         <field name="DocumentTypeUid" type="tlong" indexed="true" stored="true" required="false" multiValued="true"/>
         <field name="DocumentTypeName" type="string" indexed="true" stored="true" required="false" multiValued="false"/>
         <field name="DocumentBody" type="text" indexed="true" stored="false" required="false"/>
@@ -100,6 +101,8 @@
         <field name="DocumentWorkflowStatusUid" type="tlong" indexed="true" stored="true" required="false" />
         <field name="DocumentOutWorkflow" type="boolean" indexed="true" stored="true" required="false" />
         <field name="DocumentRawAddonDatas" type="string" indexed="false" stored="true" required="false" />
+        <field name="DocumentVersionCustomVersion" type="string" indexed="true" stored="true" required="false" />
+        <field name="DocumentVersionCustomVersionPending" type="string" indexed="true" stored="true" required="false" />
         <dynamicField name="MetaDataDate_*" type="tdate" indexed="true" stored="true" required="false"/>
         <dynamicField name="MetaDataString_*" type="string_ci" indexed="true" stored="true" required="false"/>
         <dynamicField name="MetaDataNumber_*" type="tdouble" indexed="true" stored="true" required="false"/>

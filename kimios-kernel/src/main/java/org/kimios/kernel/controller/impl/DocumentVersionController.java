@@ -71,9 +71,10 @@ public class DocumentVersionController extends AKimiosController implements IDoc
             throws CheckoutViolationException, ConfigException, DataSourceException, AccessDeniedException {
         DocumentFactory docFactory = dmsFactoryInstantiator.getDocumentFactory();
         Document d = docFactory.getDocument(documentUid);
+        DocumentVersion previousVersion = dmsFactoryInstantiator.getDocumentVersionFactory().getLastDocumentVersion(d);
         DocumentVersion dv =
-                new DocumentVersion(-1, session.getUserName(), session.getUserSource(), new Date(), new Date(),
-                        documentUid, 0, null);
+                org.kimios.kernel.factory.DocumentVersionFactory.createDocumentVersion(-1, session.getUserName(), session.getUserSource(), new Date(), new Date(),
+                        d, previousVersion != null ? previousVersion.getCustomVersion() : null ,  0, null);
         if (getSecurityAgent().isWritable(d, session.getUserName(), session.getUserSource(), session.getGroups())) {
             dmsFactoryInstantiator.getDocumentVersionFactory().saveDocumentVersion(dv);
             return dv.getUid();
@@ -92,8 +93,8 @@ public class DocumentVersionController extends AKimiosController implements IDoc
         Document doc = dmsFactoryInstantiator.getDocumentFactory().getDocument(documentUid);
         DocumentVersion dv = this.getLastDocumentVersion(session, documentUid);
         DocumentVersion newVersion =
-                new DocumentVersion(-1, session.getUserName(), session.getUserSource(), new Date(), new Date(),
-                        doc.getUid(), dv.getLength(), dv.getDocumentType());
+                org.kimios.kernel.factory.DocumentVersionFactory.createDocumentVersion(-1, session.getUserName(), session.getUserSource(), new Date(), new Date(),
+                        doc, dv.getCustomVersion(), dv.getLength(), dv.getDocumentType());
         newVersion.setHashMD5(dv.getHashMD5());
         newVersion.setHashSHA1(dv.getHashSHA1());
         /*
@@ -664,6 +665,23 @@ public class DocumentVersionController extends AKimiosController implements IDoc
 
     public List<DocumentVersion> getOprhansDocumentVersion() {
         return FactoryInstantiator.getInstance().getDocumentVersionFactory().getVersionsToDelete();
+    }
+
+    @Override
+    @DmsEvent(eventName = {DmsEventName.DOCUMENT_VERSION_UPDATE})
+    public void updateDocumentVersionId(Session session, long documentVersionId, String customVersion)
+            throws CheckoutViolationException, ConfigException, DataSourceException, AccessDeniedException {
+        DocumentVersion dv = dmsFactoryInstantiator.getDocumentVersionFactory().getDocumentVersion(documentVersionId);
+        if (getSecurityAgent()
+                .isWritable(dv.getDocument(), session.getUserName(), session.getUserSource(), session.getGroups())) {
+            logger.debug("updating custom version id for document {}, version {}, new id: {}", dv.getDocument(), dv, customVersion);
+            dv.setCustomVersion(customVersion);
+            dmsFactoryInstantiator.getDocumentVersionFactory().updateDocumentVersion(dv);
+            EventContext.addParameter("version", dv);
+
+        } else {
+            throw new AccessDeniedException();
+        }
     }
 }
 

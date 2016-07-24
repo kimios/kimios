@@ -86,9 +86,8 @@ public class SolrIndexer extends GenericEventHandler
     @DmsEvent(eventName = { DmsEventName.DOCUMENT_VERSION_UPDATE }, when = DmsEventOccur.AFTER)
     public void documentVersionUpdate(Object[] obj, Object retour, EventContext ctx) throws Exception
     {
-        log.debug("indexing version update: " + (Long) obj[1]);
-        Document doc = FactoryInstantiator.getInstance()
-                .getDocumentFactory().getDocument((Long) obj[1]);
+        log.debug("indexing version update: {}", ctx.getEntity());
+        Document doc = (Document)ctx.getEntity();
         try {
             indexManager.indexDocument(doc);
         } catch (Exception e) {

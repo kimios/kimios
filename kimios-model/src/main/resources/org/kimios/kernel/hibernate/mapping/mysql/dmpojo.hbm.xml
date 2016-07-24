@@ -31,6 +31,7 @@
             `d`.`dm_entity_update_date`,`d`.`folder_id`,`d`.`mime_type`,
             `d`.`extension`, `d`.`dm_entity_path`, `dv`.`id` AS `version_id`,
             `dv`.`type_name`,`dv`.`version_length`,`dv`.`document_type_id`,
+            dv.custom_version as custom_version, dv.custom_version_pending as custom_version_pending,
             `dv`.`creation_date` AS `version_creation_date`,`dv`.`modification_date` AS
             `version_update_date`,if(isnull(`chk`.`document_id`),0,1) AS `locked`,
             `chk`.`username` AS `lock_by`,`chk`.`user_source` AS `lock_source`,`chk`.`checkout_date` AS
@@ -42,7 +43,7 @@
             (select `v1`.`creation_date` AS `maxCreationDate`,
             `v2`.`id`,`v2`.`author`,`v2`.`author_source`,
             `v2`.`creation_date`,`v2`.`modification_date`,
-            `v2`.`document_id`,`v2`.`storage_path`,`v2`.`document_type_id`,
+            `v2`.`document_id`,`v2`.`storage_path`,`v2`.`document_type_id`, v2.custom_version, v2.custom_version_pending,
             `v2`.`version_length`,`v2`.`hash_md5`,`v2`.`hash_sha1`,`dt`.`type_name`
             from (((select max(`document_version`.`creation_date`) AS `creation_date`,
             `document_version`.`document_id` from `document_version` group by
@@ -151,6 +152,12 @@
         </property>
         <property name="addonDatas">
             <column name="dm_entity_addon_data"></column>
+        </property>
+        <property name="customVersion">
+            <column name="custom_version"/>
+        </property>
+        <property name="customVersionPending">
+            <column name="custom_version_pending"/>
         </property>
     </class>
     <sql-query name="documentPojosUid">

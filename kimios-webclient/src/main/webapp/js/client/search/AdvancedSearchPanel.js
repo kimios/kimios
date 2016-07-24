@@ -43,7 +43,8 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Window, {
             DocumentOwner: this.ownerField.getValue(),
             DocumentTypeUid: this.documentTypeField.getValue() == -1 ? '' : this.documentTypeField.getValue(),
             DocumentVersionUpdateDate_from: this.documentDateFromField.getValue() ? this.documentDateFromField.getValue().format('Y-m-d') : null,
-            DocumentVersionUpdateDate_to: this.documentDateToField.getValue() ? this.documentDateToField.getValue().format('Y-m-d') : null
+            DocumentVersionUpdateDate_to: this.documentDateToField.getValue() ? this.documentDateToField.getValue().format('Y-m-d') : null,
+            DocumentWorkflowStatusName: this.workflowStatusNameField.getValue()
         }, this.form2, this.searchRequest);
         this.clearButton.setDisabled(false);
         vp.searchRequest = tmpSearchReq;
@@ -63,6 +64,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Window, {
         this.documentTypeField.setValue("");
         this.documentDateFromField.setValue("");
         this.documentDateToField.setValue("");
+        this.workflowStatusNameField.setValue("");
         this.form2.removeAll();
         this.clearButton.setDisabled(true);
     },
@@ -137,6 +139,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Window, {
                 params.DocumentTypeUid = this.documentTypeField.getValue() == -1 ? '' : this.documentTypeField.getValue();
                 params.DocumentParent = this.locationField.getValue();
                 params.DocumentOwner = this.ownerField.getValue();
+                params.DocumentWorkflowStatusName = this.workflowStatusNameField.getValue();
                 if (this.documentDateFromField.getValue())
                     params.DocumentVersionUpdateDate_from = this.documentDateFromField.getValue().format('Y-m-d');
                 if (this.documentDateToField.getValue())
@@ -342,6 +345,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Window, {
                 this.documentTypeField.setValue("");
                 this.documentDateFromField.setValue("");
                 this.documentDateToField.setValue("");
+                this.workflowStatusNameField.setValue("");
                 this.form2.removeAll();
 
                 // Display the advanced search panel
@@ -374,6 +378,8 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Window, {
                     } else if (fieldName == 'DocumentTypeUid' && query != '') {
                         this.documentTypeField.setValue(query);
                         this.documentTypeField.fireEvent('select');
+                    } else if(fieldName == 'DocumentWorkflowStatusName'){
+                        this.workflowStatusNameField.setValue(query);
                     }
 
                     // Meta Data parsing when document type set
@@ -492,6 +498,12 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Window, {
             editable: false,
             labelSeparator: kimios.lang('LabelSeparator')
         });
+        this.workflowStatusNameField = new Ext.form.TextField({
+            name: 'DocumentWorkflowStatusName',
+            fieldLabel: kimios.lang('WorkflowStatus'),
+            labelSeparator: kimios.lang('LabelSeparator'),
+            setFieldLabel: setFieldLabelHandler
+        })
 
         //TODO: add fields regarding document/version creation/update date and owner/ownerSource
         this.documentTypeField.on('select', function (store, metasRecords, options) {
@@ -616,6 +628,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Window, {
         this.form1.add(this.locationField);
         this.form1.add(this.documentDateFromField);
         this.form1.add(this.documentDateToField);
+        this.form1.add(this.workflowStatusNameField);
         this.form1.add(this.documentTypeField);
         this.form1.doLayout();
         this.form2.doLayout();
@@ -692,6 +705,7 @@ kimios.search.AdvancedSearchPanel = Ext.extend(Ext.Window, {
         this.ownerField.setFieldLabel(kimios.lang('DocumentOwner'));
         this.locationField.setFieldLabel(kimios.lang('InFolder'));
         this.documentTypeField.setFieldLabel(kimios.lang('DocumentType'));
+        this.workflowStatusNameField.setFieldLabel(kimios.lang('WorkflowStatus'));
 
         this.doLayout();
     }

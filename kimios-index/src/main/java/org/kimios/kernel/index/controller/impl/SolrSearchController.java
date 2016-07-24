@@ -1181,6 +1181,8 @@ public class SolrSearchController
                         filtersMap.put(c, "DocumentUid:" + c.getQuery());
                     } else if (c.getFieldName().equals("DocumentOwner")) {
                         filtersMap.put(c, "DocumentOwner:*" + c.getQuery() + "*");
+                    } if (c.getFieldName().equals("DocumentWorkflowStatusName")) {
+                        queries.add("DocumentWorkflowStatusName:*" + ClientUtils.escapeQueryChars(c.getQuery()) + "*");
                     } else if (c.getFieldName().equals("DocumentParent")) {
                         filtersMap.put(c, QueryBuilder.documentParentQuery(c.getQuery()));
                     } else if (c.getFieldName().equals("DocumentVersionUpdateDate")) {

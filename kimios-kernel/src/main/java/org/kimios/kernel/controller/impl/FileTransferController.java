@@ -23,7 +23,6 @@ import org.kimios.kernel.dms.*;
 import org.kimios.kernel.dms.model.*;
 import org.kimios.api.events.annotations.DmsEvent;
 import org.kimios.api.events.annotations.DmsEventName;
-import org.kimios.kernel.events.model.EventContext;
 import org.kimios.kernel.exception.*;
 import org.kimios.kernel.filetransfer.model.DataTransfer;
 import org.kimios.kernel.filetransfer.zip.FileCompressionHelper;
@@ -67,8 +66,8 @@ public class FileTransferController
         boolean hasBeanCheckedOut = dmsFactoryInstantiator.getLockFactory().checkout(d, u);
         DocumentVersion dv = dmsFactoryInstantiator.getDocumentVersionFactory().getLastDocumentVersion(d);
         if (dv == null) {
-            dv = new DocumentVersion(-1, session.getUserName(), session.getUserSource(), new Date(), new Date(),
-                    d.getUid(), 0, null);
+            dv = org.kimios.kernel.factory.DocumentVersionFactory.createDocumentVersion(-1, session.getUserName(), session.getUserSource(), new Date(), new Date(),
+                    d, null, 0, null);
             dmsFactoryInstantiator.getDocumentVersionFactory().saveDocumentVersion(dv);
         }
 

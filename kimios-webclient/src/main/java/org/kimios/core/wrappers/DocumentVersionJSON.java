@@ -39,6 +39,8 @@ public class DocumentVersionJSON {
     private String modificationDate;
     private String owner;
     private String ownerSource;
+    private String customVersion;
+    private String customVersionPending;
 
     public String getDocumentTypeName() {
         return documentTypeName;
@@ -111,9 +113,23 @@ public class DocumentVersionJSON {
     public void setOwnerSource(String ownerSource) {
         this.ownerSource = ownerSource;
     }
-    
-    
-    
+
+    public String getCustomVersion() {
+        return customVersion;
+    }
+
+    public void setCustomVersion(String customVersion) {
+        this.customVersion = customVersion;
+    }
+
+    public String getCustomVersionPending() {
+        return customVersionPending;
+    }
+
+    public void setCustomVersionPending(String customVersionPending) {
+        this.customVersionPending = customVersionPending;
+    }
+
     public DocumentVersionJSON(DocumentVersion ver){
         this.uid = ver.getUid();
         this.documentTypeName = ver.getDocumentTypeName();
@@ -124,6 +140,8 @@ public class DocumentVersionJSON {
         this.modificationDate = new SimpleDateFormat("MM/dd/yyy hh:mm:ss").format(ver.getModificationDate().getTime());
         this.owner = ver.getAuthor();
         this.ownerSource = ver.getAuthorSource();
+        this.customVersion = ver.getCustomVersion();
+        this.customVersionPending = ver.getCustomVersionPending();
     }
 
 }

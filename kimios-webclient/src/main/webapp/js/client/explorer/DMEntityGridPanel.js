@@ -654,6 +654,7 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
             params.DocumentOwner = searchConfig.DocumentOwner;
             params.DocumentVersionUpdateDate_from = searchConfig.DocumentVersionUpdateDate_from;
             params.DocumentVersionUpdateDate_to = searchConfig.DocumentVersionUpdateDate_to;
+            params.DocumentWorkflowStatusName = searchConfig.DocumentWorkflowStatusName;
 
 
             params.autoSave = form.autoSave;
@@ -841,7 +842,6 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
             {
                 header: kimios.lang('DocumentName'),
                 dataIndex: 'name',
-//        width : 100,
                 readOnly: true,
                 sortable: true,
                 hideable: false,
@@ -980,6 +980,15 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
                         return (val / 1024).toFixed(2) + ' ' + kimios.lang('Kb');
 
                 }
+            },
+            {
+                header: kimios.lang('CustomVersion'),
+                dataIndex: 'customVersion',
+                width: 20,
+                readOnly: true,
+                sortable: true,
+                menuDisabled: false,
+                align: 'right'
             }
         ];
 

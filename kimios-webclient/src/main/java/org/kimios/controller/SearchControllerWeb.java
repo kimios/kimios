@@ -62,6 +62,7 @@ public class SearchControllerWeb
         sortFieldMapping.put("owner", "DocumentOwner");
         sortFieldMapping.put("length", "DocumentVersionLength");
         sortFieldMapping.put("documentTypeName", "DocumentTypeName");
+        sortFieldMapping.put("workflowStatusName", "DocumentWorkflowStatusName");
     }
 
 

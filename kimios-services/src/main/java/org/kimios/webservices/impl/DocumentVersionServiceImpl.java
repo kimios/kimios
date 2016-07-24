@@ -174,6 +174,24 @@ public class DocumentVersionServiceImpl extends CoreService implements DocumentV
     }
 
     /**
+     * @param sessionId
+     * @param documentVersionId
+     * @param customVersion
+     * @throws DMServiceException
+     */
+    public void updateDocumentVersionId(String sessionId, long documentVersionId,
+                                      String customVersion) throws DMServiceException
+    {
+        try {
+            Session session = getHelper().getSession(sessionId);
+            documentVersionController.updateDocumentVersionId(session,
+                    documentVersionId, customVersion);
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
+
+    /**
      * @param sessionUid
      * @param documentVersionUid
      * @param metaUid

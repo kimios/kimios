@@ -57,7 +57,7 @@ public class ContextBuilder
     private static String[] workspaceMethod = { "createWorkspace", "updateWorkspace", "deleteWorkspace" };
 
     private static String[] documentVersionMethod = { "createDocumentVersion", "createDocumentVersionFromLatest",
-            "updateDocumentVersion", "deleteDocumentVersion", "startDownloadTransaction" };
+            "updateDocumentVersion", "deleteDocumentVersion", "startDownloadTransaction", "updateDocumentVersionId" };
 
     private static String[] fileTransferMethod = { "endUploadTransaction" };
 
@@ -307,6 +307,8 @@ public class ContextBuilder
             }
         }
 
+
+
         // deleteDocumentVersion
         if (name.equalsIgnoreCase(documentVersionMethod[3])) {
             try {
@@ -337,7 +339,20 @@ public class ContextBuilder
             }
         }
 
-
+        // updateDocumentVersionId
+        if (name.equalsIgnoreCase(documentVersionMethod[5])) {
+            DocumentVersionFactory fc = FactoryInstantiator.getInstance().getDocumentVersionFactory();
+            DocumentVersion version = fc.getDocumentVersion((Long)arguments[1]);
+            HFactory t = (HFactory) fc;
+            if(version != null){
+                t.getSession().evict(version);
+                Document document = version.getDocument();
+                ctx.setEntity(document);
+            }
+            EventContext.addParameter("version", version);
+            log.trace("added version to context: " + version);
+            log.trace("item " + document);
+        }
         return ctx;
     }
 

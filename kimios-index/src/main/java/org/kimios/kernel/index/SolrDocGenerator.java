@@ -146,6 +146,8 @@ public class SolrDocGenerator {
         doc.addField("DocumentVersionOwnerSource", version.getAuthorSource());
         doc.addField("DocumentVersionLength", version.getLength());
         doc.addField("DocumentVersionHash", version.getHashMD5() + ":" + version.getHashSHA1());
+        doc.addField("DocumentVersionCustomVersion", version.getCustomVersion());
+        doc.addField("DocumentVersionCustomVersionPending", version.getCustomVersionPending());
 
         doc.addField("DocumentCheckout", documentLock != null);
 

@@ -62,6 +62,7 @@ kimios.ContextMenu = new function () {
         this.initShareMenu(config);
         this.initShareContainerMenu(config);
 
+
         this.initSymLinkDocumentMenu(config);
         this.initViewableSymLinkDocumentMenu(config);
     };
@@ -351,6 +352,7 @@ kimios.ContextMenu = new function () {
         menu.addSeparator();
         menu.add(this.getShareDocumentItem());
         menu.add(this.getUpdateCurrentVersionItem());
+        menu.add(this.getSetVersionItem());
         menu.add(this.getCheckInCheckOutItem());
         if (bonitaEnabled) {
             menu.add(this.getStartProcessItem());
@@ -385,6 +387,7 @@ kimios.ContextMenu = new function () {
         menu.add(this.getShareDocumentItem());
         menu.addSeparator();
         menu.add(this.getUpdateCurrentVersionItem());
+        menu.add(this.getSetVersionItem());
         menu.add(this.getCheckInCheckOutItem());
 
         if (bonitaEnabled) {
@@ -501,6 +504,8 @@ kimios.ContextMenu = new function () {
         this.shareMenu.add(this.getRefreshItem());
     };
 
+    
+
 
     this.initShareContainerMenu = function(config){
         this.shareContainerMenu = new Ext.menu.Menu(config);
@@ -548,6 +553,7 @@ kimios.ContextMenu = new function () {
 
     this.initVersionsMenu = function (config) {
         this.versionsMenu = new Ext.menu.Menu(config);
+        this.versionsMenu.add(this.getSetVersionItem());
         this.versionsMenu.add(this.getGetDocumentItem());
         this.versionsMenu.addSeparator();
         this.versionsMenu.add(this.getPropertiesItem());
@@ -1554,4 +1560,19 @@ kimios.ContextMenu = new function () {
             }
         });
     };
+    
+    this.getSetVersionItem = function(){
+        return new Ext.menu.Item({
+            text: kimios.lang('UpdateCustomVersionTitle'),
+            iconCls: 'version',
+            scope: this,
+            handler: function () {
+                var entity = this.dmEntityPojo.type == 7 ? this.dmEntityPojo.targetEntity : this.dmEntityPojo;
+                new kimios.picker.CustomVersionPicker({
+                    dmEntityPojo: entity
+                }).show();
+            }
+        });
+    }
+
 };

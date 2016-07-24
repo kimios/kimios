@@ -75,9 +75,13 @@ public class DMEntity {
 
     private Date updateDate;
 
+    private long lastVersionId;
+
     private Date lastVersionCreationDate;
     private Date lastVersionUpdateDate;
     private String dmEntityAddonData;
+    private String customVersion;
+    private String customVersionPending;
 
     private Map<String, MetaValue> metaDatas;
 
@@ -86,6 +90,22 @@ public class DMEntity {
 
     private long virtualFolderCount;
 
+
+    public String getCustomVersion() {
+        return customVersion;
+    }
+
+    public void setCustomVersion(String customVersion) {
+        this.customVersion = customVersion;
+    }
+
+    public String getCustomVersionPending() {
+        return customVersionPending;
+    }
+
+    public void setCustomVersionPending(String customVersionPending) {
+        this.customVersionPending = customVersionPending;
+    }
 
     public DMEntity(org.kimios.kernel.ws.pojo.DMEntity entity){
 
@@ -127,6 +147,10 @@ public class DMEntity {
             this.dmEntityAddonData = ((org.kimios.kernel.ws.pojo.Document)entity).getAddonDatas();
 
             this.metaDatas = ((org.kimios.kernel.ws.pojo.Document)entity).getMetaDatas();
+
+            this.lastVersionId = ((org.kimios.kernel.ws.pojo.Document)entity).getLastVersionId();
+            this.customVersion = ((org.kimios.kernel.ws.pojo.Document)entity).getCustomVersion();
+            this.customVersionPending = ((org.kimios.kernel.ws.pojo.Document)entity).getCustomVersionPending();
         }
         if(entity instanceof SymbolicLink){
             this.parentUid = ((SymbolicLink) entity).getParentUid();
@@ -398,6 +422,14 @@ public class DMEntity {
 
     public void setMetaDatas(Map<String, MetaValue> metaDatas) {
         this.metaDatas = metaDatas;
+    }
+
+    public long getLastVersionId() {
+        return lastVersionId;
+    }
+
+    public void setLastVersionId(long lastVersionId) {
+        this.lastVersionId = lastVersionId;
     }
 }
 

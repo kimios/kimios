@@ -49,6 +49,10 @@ public class Document extends DMEntity implements Serializable
 
     private long length;
 
+    private String customVersion;
+
+    private String customVersionPending;
+
     private Long workflowStatusUid = 0L;
 
     private String workflowStatusName;
@@ -73,7 +77,7 @@ public class Document extends DMEntity implements Serializable
             boolean checkedOut, String checkoutUser,
             String checkoutUserSource, Date checkoutDate, long length,
             long workflowStatusUid, String workflowStatusName,
-            boolean isOutOfWorkflow, String path, String addonDatas)
+            boolean isOutOfWorkflow, String path, String addonDatas, String customVersion, String customVersionPending)
     {
         this.uid = uid;
         this.name = name;
@@ -105,6 +109,9 @@ public class Document extends DMEntity implements Serializable
         this.documentTypeUid = documentTypeUid;
         this.path = path;
         this.addonDatas = addonDatas;
+
+        this.customVersion = customVersion;
+        this.customVersionPending = customVersionPending;
 
         this.type = 3;
     }
@@ -277,6 +284,22 @@ public class Document extends DMEntity implements Serializable
         this.indexScore = indexScore;
     }
 
+    public String getCustomVersion() {
+        return customVersion;
+    }
+
+    public void setCustomVersion(String customVersion) {
+        this.customVersion = customVersion;
+    }
+
+    public String getCustomVersionPending() {
+        return customVersionPending;
+    }
+
+    public void setCustomVersionPending(String customVersionPending) {
+        this.customVersionPending = customVersionPending;
+    }
+
     @Override
     public String toString() {
         return "Document{" +
@@ -291,12 +314,14 @@ public class Document extends DMEntity implements Serializable
                 ", checkoutUserSource='" + checkoutUserSource + '\'' +
                 ", checkoutDate=" + checkoutDate +
                 ", length=" + length +
+                ", customVersion='" + customVersion + '\'' +
+                ", customVersionPending='" + customVersionPending + '\'' +
                 ", workflowStatusUid=" + workflowStatusUid +
                 ", workflowStatusName='" + workflowStatusName + '\'' +
                 ", isOutOfWorkflow=" + isOutOfWorkflow +
                 ", documentTypeName='" + documentTypeName + '\'' +
                 ", documentTypeUid=" + documentTypeUid +
-                ", addonDatas='" + addonDatas + '\'' +
+                ", indexScore=" + indexScore +
                 '}';
     }
 }

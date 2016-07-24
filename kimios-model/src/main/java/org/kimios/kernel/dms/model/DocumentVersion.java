@@ -65,6 +65,12 @@ public class DocumentVersion implements Serializable {
     @Column(name = "hash_sha1")
     private String hashSHA1;
 
+    @Column(name = "custom_version", nullable = true)
+    private String customVersion;
+
+    @Column(name = "custom_version_pending", nullable = true)
+    private String customVersionPending;
+
     public DocumentVersion() {
     }
 
@@ -181,6 +187,22 @@ public class DocumentVersion implements Serializable {
         this.documentType = documentType;
     }
 
+    public String getCustomVersion() {
+        return customVersion;
+    }
+
+    public void setCustomVersion(String customVersion) {
+        this.customVersion = customVersion;
+    }
+
+    public String getCustomVersionPending() {
+        return customVersionPending;
+    }
+
+    public void setCustomVersionPending(String customVersionPending) {
+        this.customVersionPending = customVersionPending;
+    }
+
     public org.kimios.kernel.ws.pojo.DocumentVersion toPojo() throws Exception {
         long docTypeUid = -1;
         String docTypeName = "";
@@ -191,7 +213,7 @@ public class DocumentVersion implements Serializable {
         return new org.kimios.kernel.ws.pojo.DocumentVersion(this.uid, this.author, this.authorSource,
                 this.creationDate,
                 this.modificationDate, this.documentUid, this.length, docTypeUid, docTypeName, this.hashMD5,
-                this.hashSHA1);
+                this.hashSHA1, this.customVersion, this.customVersionPending);
     }
 
     public boolean equals(Object o) {
@@ -222,6 +244,8 @@ public class DocumentVersion implements Serializable {
                 ", documentType=" + documentType +
                 ", hashMD5='" + hashMD5 + '\'' +
                 ", hashSHA1='" + hashSHA1 + '\'' +
+                ", customVersion='" + customVersion + '\'' +
+                ", customVersionPending='" + customVersionPending + '\'' +
                 '}';
     }
 }

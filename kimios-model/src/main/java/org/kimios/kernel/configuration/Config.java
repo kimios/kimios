@@ -63,4 +63,9 @@ public class Config
     public static String MAIL_SENDER_NAME = "dms.mail.sendername";
 
     public static String PUBLIC_URL = "dms.public.url";
+
+    public static String VERSION_AUTOMATIC_INCREMENT = "dms.version.automatic.increment";
+
+    public static String VERSION_ID_INCREMENTOR = "dms.version.id.incrementor";
+
 }

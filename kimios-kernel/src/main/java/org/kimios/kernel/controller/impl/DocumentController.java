@@ -18,7 +18,6 @@ package org.kimios.kernel.controller.impl;
 import org.apache.commons.lang.StringUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.SerializationConfig;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.exceptions.DmsKernelException;
 import org.kimios.kernel.configuration.Config;
@@ -52,7 +51,6 @@ import org.kimios.kernel.security.model.DMEntitySecurity;
 import org.kimios.kernel.security.model.SecurityEntityType;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.user.model.User;
-import org.kimios.kernel.ws.pojo.*;
 import org.kimios.utils.hash.HashCalculator;
 import org.kimios.utils.configuration.ConfigurationManager;
 import org.slf4j.Logger;
@@ -1438,8 +1436,8 @@ public class DocumentController extends AKimiosController implements IDocumentCo
 
                 DocumentVersion dv = dmsFactoryInstantiator.getDocumentVersionFactory().getLastDocumentVersion(document);
                 DocumentVersion newVersion =
-                        new DocumentVersion(-1, session.getUserName(), session.getUserSource(), new Date(), new Date(),
-                                documentCopy.getUid(), dv.getLength(), dv.getDocumentType());
+                        org.kimios.kernel.factory.DocumentVersionFactory.createDocumentVersion(-1, session.getUserName(), session.getUserSource(), new Date(), new Date(),
+                                documentCopy, dv.getCustomVersion(), dv.getLength(), dv.getDocumentType());
                 newVersion.setHashMD5(dv.getHashMD5());
                 newVersion.setHashSHA1(dv.getHashSHA1());
                 dmsFactoryInstantiator.getDocumentVersionFactory().saveDocumentVersion(newVersion);

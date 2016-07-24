@@ -66,9 +66,7 @@ public class AddonDataHandler extends GenericEventHandler {
 
     @DmsEvent(eventName = {DmsEventName.DOCUMENT_VERSION_UPDATE}, when = DmsEventOccur.AFTER)
     public void documentVersionUpdate(Object[] obj, Object retour, EventContext ctx) throws Exception {
-        log.debug("Indexing version update: " + (Long) obj[1]);
-        Document doc = FactoryInstantiator.getInstance()
-                .getDocumentFactory().getDocument((Long) obj[1]);
+        Document doc = (Document)ctx.getEntity();
         try {
             doc.setAddOnDatas(generateMetaDatas(doc));
             FactoryInstantiator.getInstance().getDocumentFactory().updateDocument(doc);

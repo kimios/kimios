@@ -103,6 +103,10 @@ public class DocumentFactory {
                 pojo.setUpdateDate(updateDate);
 
                 pojo.setLastVersionId((Long) doc.get("DocumentVersionId"));
+                pojo.setCustomVersion(doc.get("DocumentVersionCustomVersion") != null ?
+                doc.get("DocumentVersionCustomVersion").toString() : "");
+                pojo.setCustomVersionPending(doc.get("DocumentVersionCustomVersionPending") != null ?
+                        doc.get("DocumentVersionCustomVersionPending").toString() : "");
 
                 Calendar versionCreationDate = Calendar.getInstance();
                 versionCreationDate.setTime((Date) doc.get("DocumentVersionCreationDate"));

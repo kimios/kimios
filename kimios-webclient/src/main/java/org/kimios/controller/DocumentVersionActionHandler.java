@@ -24,6 +24,8 @@ import org.kimios.kernel.ws.pojo.DocumentComment;
 import org.kimios.kernel.ws.pojo.DocumentVersion;
 import org.kimios.kernel.ws.pojo.Meta;
 import org.kimios.utils.configuration.ConfigurationManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.mail.internet.MimeUtility;
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +37,9 @@ import java.util.*;
 
 public class DocumentVersionActionHandler extends Controller
 {
+
+    private static Logger logger = LoggerFactory.getLogger(DocumentVersionActionHandler.class);
+
     private HttpServletResponse resp;
     private HttpServletRequest request;
 
@@ -93,6 +98,10 @@ public class DocumentVersionActionHandler extends Controller
                 getTemporaryFile();
             }
 
+            if (action.equals("setVersionId")) {
+                setVersionId();
+            }
+
             if(Arrays.asList(DL_ACTIONS).indexOf(action) > - 1){
                 jsonResp = "downloadaction";
             }
@@ -101,6 +110,13 @@ public class DocumentVersionActionHandler extends Controller
         } else {
             return "{\"success\":false}";
         }
+    }
+
+    private void setVersionId() throws Exception
+    {
+        Long versionId = Long.parseLong(parameters.get("versionId"));
+        String customVersionId = parameters.get("customVersionId");
+        documentVersionController.updateDocumentVersionId(sessionUid, versionId, customVersionId);
     }
 
     private String pdfToImage() throws Exception
@@ -256,10 +272,13 @@ public class DocumentVersionActionHandler extends Controller
             version.put("creationDate", dv.getCreationDate().getTime());
             version.put("documentTypeName", dv.getDocumentTypeName());
             version.put("documentTypeUid", dv.getDocumentTypeUid());
-            version.put("uid", dv.getDocumentUid());
+            version.put("uid", dv.getUid());
+            version.put("lastVersionId", dv.getUid());
             version.put("length", dv.getLength());
-            version.put("documentUid", dv.getUid());
+            version.put("documentUid", dv.getDocumentUid());
             version.put("modificationDate", dv.getModificationDate().getTime());
+            version.put("customVersion", dv.getCustomVersion());
+            version.put("customVersionPending", dv.getCustomVersionPending());
             versions.add(version);
         }
         return new JSONSerializer().serialize(versions);

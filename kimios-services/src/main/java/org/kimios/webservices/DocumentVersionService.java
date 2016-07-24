@@ -86,6 +86,14 @@ public interface DocumentVersionService
             @QueryParam(value = "xmlStream") @WebParam(name = "xmlStream") String xmlStream) throws DMServiceException;
 
     @GET @ApiOperation(value ="")
+    @Path("/updateDocumentVersionId")
+    @Produces("application/json")
+    public void updateDocumentVersionId(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+                                      @QueryParam(value = "documentVersionId") @WebParam(name = "documentVersionId") long documentVersionId,
+                                      @QueryParam(value = "customVersion") @WebParam(name = "customVersion") String customVersionId)
+            throws DMServiceException;
+
+    @GET @ApiOperation(value ="")
     @Path("/getMetaString")
     @Produces("application/json")
     public String getMetaString(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,

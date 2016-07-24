@@ -95,6 +95,22 @@ public class DocumentVersionController
     }
 
     /**
+     * Update document version id
+     */
+    public void updateDocumentVersionId( String sessionId, long documentVersionId, String customVersion)
+            throws Exception, DMSException, ConfigException, AccessDeniedException
+    {
+        try
+        {
+            client.updateDocumentVersionId( sessionId, documentVersionId, customVersion );
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
+        }
+    }
+
+    /**
      * Return the current Document version for a given document
      */
     public DocumentVersion getLastDocumenVersion( String sessionId, long documentId )

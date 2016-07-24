@@ -143,11 +143,23 @@ kimios.record = {
             type: 'long'
         },
         {
+            name: 'lastVersionId',
+            type: 'long'
+        },
+        {
             name: 'status',
             type: 'string'
         },
         {
             name: 'dmEntityAddonData',
+            type: 'string'
+        },
+        {
+            name: 'customVersion',
+            type: 'string'
+        },
+        {
+            name: 'customVersionPending',
             type: 'string'
         },
         {
@@ -186,6 +198,14 @@ kimios.record = {
         },
         {
             name: 'ownerSource',
+            type: 'string'
+        },
+        {
+            name: 'customVersion',
+            type: 'string'
+        },
+        {
+            name: 'customVersionPending',
             type: 'string'
         },
         {

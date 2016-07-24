@@ -21,6 +21,14 @@ kimios.request = {
         uploader.on('finished', handle, this);
     },
 
+    updateVersionId: function (form, documentVersionUid, customVersion, handle) {
+        kimios.ajaxRequest('DocumentVersion', {
+            action: 'setVersionId',
+            versionId: documentVersionUid,
+            customVersionId: customVersion,
+        }, handle);
+    },
+
     uploadDocument: function (newDocument, form, name, parentUid, isSecurityInherited, securityDatas, documentTypeUid, metaValues, handle, documentFileItem) {
         if (newDocument == true) {
             var uploader = new DmsSimpleUpload();

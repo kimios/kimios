@@ -165,6 +165,7 @@
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/share/share.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/share/SharedPanel.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/editors/editors.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/picker/CustomVersionPicker.js"></script>
 
     <!-- Dashboard -->
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/explorer/DashBoard.js"></script>

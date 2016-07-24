@@ -24,52 +24,9 @@ kimios.util.PreviewHelper = {
         link += "&inline=true";
         return link;
     },
-
-    /*extensionMapping : function(){
-        var extMapping = {
-           doc: [{
-               target: 'html',
-               conv:'org.kimios.converter.impl.DocToHTML'
-           }],
-           docx: [{
-                target: 'html',
-                conv:'org.kimios.converter.impl.Docx4jDocxToHTML'
-           }],
-           eml: [{
-               target: 'html',
-               conv: 'org.kimios.converter.impl.MailToHtml'
-           }],
-           xls: [{
-               target: 'html',
-               conv: 'org.kimios.converter.impl.XlsToHTML'
-           }],
-           xlsx: [{
-                target: 'html',
-                conv: 'org.kimios.converter.impl.XlsToHTML'
-            }],
-            asciidoc: [{
-                target: 'html',
-                conv:'org.kimios.converter.impl.AsciiDocToHTML'
-            }],
-            adoc: [{
-                target: 'html',
-                conv:'org.kimios.converter.impl.AsciiDocToHTML'
-            }],
-            ps: [{
-                target: 'pdf',
-                conv: 'org.kimios.converter.impl.PostscriptToPDF'
-            }]
-           //pdf: [{conv: 'org.kimios.kernel.converter.impl.PDFMerger', target: 'pdf'}]
-        }
-        return extMapping;
-    }*/
-
     extensionMapping : function(){
-
-
         var baseConverterPath = 'org.kimios.converter.impl.';
         var baseVendorConverterPath = baseConverterPath + 'vendors.aspose.';
-        
         var vendorMappingModel = {
             doc: [{
                 target: 'pdf',
@@ -115,10 +72,7 @@ kimios.util.PreviewHelper = {
                 target: 'pdf',
                 conv:baseVendorConverterPath + 'PptToHTML'
             }]
-
-            //pdf: [{conv: 'org.kimios.kernel.converter.impl.PDFMerger', target: 'pdf'}]
         }
-        
         var osMappingModel = {
             doc: [{
                 target: 'html',
@@ -160,11 +114,7 @@ kimios.util.PreviewHelper = {
                 target: 'pdf',
                 conv: 'org.kimios.converter.impl.PostscriptToPDF'
             }]
-            //pdf: [{conv: 'org.kimios.kernel.converter.impl.PDFMerger', target: 'pdf'}]
         };
-        
-        
-        
         var extMapping = osMappingModel;
         return extMapping;
     }

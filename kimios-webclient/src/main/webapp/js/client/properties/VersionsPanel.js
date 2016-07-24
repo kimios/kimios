@@ -83,6 +83,12 @@ kimios.properties.VersionsPanel = Ext.extend(Ext.Panel, {
           name : 'documentTypeName',
           type : 'string'
         },{
+          name : 'customVersion',
+          type : 'string'
+        },{
+          name : 'customVersionPending',
+          type : 'string'
+        },{
           name : 'documentTypeUid',
           type : 'int'
         },{
@@ -139,10 +145,14 @@ kimios.properties.VersionsPanel = Ext.extend(Ext.Panel, {
       var sm = grid.getSelectionModel();
       sm.selectRow(rowIndex);
       var data = sm.getSelected().data;
+      console.log(data);
       data.type = 3; // missing type
       var pojo = new kimios.DMEntityPojo(data);
-      pojo.versionUid = data.documentUid;
-          kimios.ContextMenu.show(pojo, e, 'versions');
+      pojo.type = 3;
+      pojo.uid = data.documentUid;
+      pojo.versionUid = data.uid;
+      pojo.lastVersionId = data.uid;
+      kimios.ContextMenu.show(pojo, e, 'versions');
     }, this);
     
     this.grid.on('rowdblclick', function(grid, rowIndex, ev) {
@@ -171,7 +181,7 @@ kimios.properties.VersionsPanel = Ext.extend(Ext.Panel, {
       }
     },{
       header : kimios.lang('VersionNum'),
-      dataIndex : 'documentUid',
+      dataIndex : 'uid',
       width : 80,
       fixed : true,
       readOnly : true,
@@ -234,6 +244,14 @@ kimios.properties.VersionsPanel = Ext.extend(Ext.Panel, {
       renderer : function(value){
         return kimios.date(value);
       }
+    },{
+      header : kimios.lang('CustomVersion'),
+      dataIndex : 'customVersion',
+      readOnly : true,
+      sortable : true,
+      hideable : false,
+      menuDisabled : true,
+      align : 'left'
     }]);
   }
 });
