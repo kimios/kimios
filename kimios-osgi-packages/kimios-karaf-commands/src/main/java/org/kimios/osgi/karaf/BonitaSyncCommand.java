@@ -1,10 +1,12 @@
 package org.kimios.osgi.karaf;
 
-import org.apache.karaf.shell.commands.Command;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 
 /**
  */
+@Service
 @Command(
         scope = "kimios",
         name = "bonita-sync-users",

@@ -2,11 +2,13 @@ package org.kimios.osgi.karaf;
 
 import java.util.List;
 
-import org.apache.karaf.shell.commands.Command;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 import org.kimios.kernel.dms.model.Document;
 
 /**
  */
+@Service
 @Command(
         scope = "kimios",
         name = "list-locked-documents",
@@ -17,9 +19,7 @@ public class CheckedOutCommand extends KimiosCommand
     {
         if (this.isConnected()) {
             List<Document> locked = administrationController.getCheckedOutDocuments(this.getCurrentSession());
-
             String lockTpl = "ID: %d\tPath: %s\t\t\tLock Owner: %s";
-
             if (locked.size() > 0) {
                 for (Document doc : locked) {
                     System.out.println(String.format(lockTpl, doc.getUid(), doc.getPath(),

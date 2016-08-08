@@ -16,7 +16,8 @@
 
 package org.kimios.osgi.karaf;
 
-import org.apache.karaf.shell.commands.Command;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 import org.kimios.kernel.dms.model.MetaFeedImpl;
 import org.kimios.kernel.dms.metafeeds.MetaFeedManager;
 import org.kimios.utils.extension.ExtensionRegistry;
@@ -25,6 +26,7 @@ import org.kimios.utils.extension.ExtensionRegistryManager;
 
 /**
  */
+@Service
 @Command(
         scope = "kimios",
         name = "metafeed-registry",

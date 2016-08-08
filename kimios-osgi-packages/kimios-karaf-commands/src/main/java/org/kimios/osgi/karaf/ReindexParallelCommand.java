@@ -1,8 +1,9 @@
 package org.kimios.osgi.karaf;
 
-import org.apache.karaf.shell.commands.Argument;
-import org.apache.karaf.shell.commands.Command;
-import org.apache.karaf.shell.commands.Option;
+import org.apache.karaf.shell.api.action.Argument;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.Option;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 import org.kimios.kernel.index.ReindexerProcess;
 
 import java.util.*;
@@ -11,6 +12,7 @@ import java.util.concurrent.*;
 
 /**
  */
+@Service
 @Command(
         scope = "kimios",
         name = "parallel-reindexer",

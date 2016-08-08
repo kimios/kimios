@@ -16,8 +16,9 @@
 
 package org.kimios.osgi.karaf;
 
-import org.apache.karaf.shell.commands.Command;
-import org.apache.karaf.shell.commands.Option;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.Option;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 import org.kimios.kernel.controller.IAdministrationController;
 import org.kimios.kernel.dms.model.Document;
 import org.kimios.kernel.jobs.IJobController;
@@ -27,6 +28,7 @@ import java.util.List;
 
 /**
  */
+@Service
 @Command(
         scope = "kimios",
         name = "list-jobs",

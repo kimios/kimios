@@ -16,8 +16,11 @@
 
 package org.kimios.osgi.karaf;
 
-import org.apache.karaf.shell.commands.Command;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 import org.kimios.kernel.index.ReindexerProcess;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -27,12 +30,15 @@ import java.util.concurrent.Future;
 
 /**
  */
+@Service
 @Command(
         scope = "kimios",
         name = "viewreindex",
         description = "View reindex process running")
 public class ReindexViewCommand extends KimiosCommand {
 
+
+    private static Logger log = LoggerFactory.getLogger(ReindexViewCommand.class);
 
     @Override
     protected void doExecuteKimiosCommand() throws Exception {

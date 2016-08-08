@@ -16,8 +16,9 @@
 
 package org.kimios.osgi.karaf;
 
-import org.apache.karaf.shell.commands.Command;
-import org.apache.karaf.shell.commands.Option;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.Option;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 import org.kimios.kernel.dms.model.DMEntity;
 import org.kimios.kernel.dms.FactoryInstantiator;
 import org.kimios.kernel.hibernate.HFactory;
@@ -34,6 +35,7 @@ import java.util.List;
 
 /**
  */
+@Service
 @Command(description = "Security Utility", name = "security-add", scope = "kimios")
 public class MassiveSecurityUpdate extends KimiosCommand {
 
@@ -61,7 +63,6 @@ public class MassiveSecurityUpdate extends KimiosCommand {
     @Option(name = "-e", aliases = "--entity-path", required = false, multiValued = true)
     String[] paths;
 
-
     @Option(name = "-t", aliases = "--entity-type", required = false, multiValued = true)
     int[] entityTypes = new int[]{3};
 
@@ -70,15 +71,16 @@ public class MassiveSecurityUpdate extends KimiosCommand {
     protected void doExecuteKimiosCommand() throws Exception {
 
 
-        List<DMEntitySecurity> securities = (List) this.session.get("currentAddedSecurities");
+
+
+        List<DMEntitySecurity> securities = (List) this.karafSession.get("currentAddedSecurities");
         if (!runMode) {
             String secId = userDef.split("@")[0];
             String secSource = userDef.split("@")[1];
 
-
             if (securities == null) {
                 securities = new ArrayList<DMEntitySecurity>();
-                this.session.put("currentAddedSecurities", securities);
+                this.karafSession.put("currentAddedSecurities", securities);
             }
 
 
@@ -97,10 +99,9 @@ public class MassiveSecurityUpdate extends KimiosCommand {
 
             securities.add(security);
 
-
             System.out.println("Currently Set Securities: ");
             for (DMEntitySecurity sec : securities) {
-                this.session.getConsole().println((sec.getType() == 1 ? "user" : "group") + "\t" + sec.getName() + "@" + sec.getSource()
+                this.karafSession.getConsole().println((sec.getType() == 1 ? "user" : "group") + "\t" + sec.getName() + "@" + sec.getSource()
                         + " read: " + sec.isRead() + " write: " + sec.isWrite() + " full: " + sec.isFullAccess());
             }
 

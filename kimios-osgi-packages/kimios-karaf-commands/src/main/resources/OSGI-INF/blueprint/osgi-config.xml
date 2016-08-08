@@ -1,78 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0" default-activation="lazy">
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0" default-activation="eager">
 
     <reference id="adminCtrl" interface="org.kimios.kernel.controller.IAdministrationController"/>
-
-    <reference id="secCtrl" interface="org.kimios.kernel.controller.ISecurityController"/>
-
-    <reference id="docCtrl" interface="org.kimios.kernel.controller.IDocumentController"/>
-
-    <reference id="searchCtrl" interface="org.kimios.kernel.index.controller.ISearchController"/>
-
-    <reference id="searchMngCtrl" interface="org.kimios.kernel.index.controller.ISearchManagementController"/>
-
-
-    <reference id="bonitaCtrl" interface="org.kimios.kernel.bonita.interfaces.IBonitaUsersSynchronizer"/>
-
-
-    <command-bundle xmlns="http://karaf.apache.org/xmlns/shell/v1.1.0">
-        <command>
-            <action class="org.kimios.osgi.karaf.AdminCommand">
-            </action>
-        </command>
-        <command>
-            <action class="org.kimios.osgi.karaf.EndCommand">
-            </action>
-        </command>
-        <command>
-            <action class="org.kimios.osgi.karaf.CheckedOutCommand">
-            </action>
-        </command>
-        <command>
-            <action class="org.kimios.osgi.karaf.JobListCommand">
-            </action>
-        </command>
-        <command>
-            <action class="org.kimios.osgi.karaf.ClearLockCommand">
-            </action>
-            <completers>
-                <ref component-id="lockCompleter"/>
-                <null/>
-            </completers>
-        </command>
-        <command>
-            <action class="org.kimios.osgi.karaf.SearchFieldsCommand" />
-        </command>
-        <command>
-            <action class="org.kimios.osgi.karaf.ReindexCommand" />
-        </command>
-        <command>
-            <action class="org.kimios.osgi.karaf.ReindexParallelCommand" />
-        </command>
-        <command>
-            <action class="org.kimios.osgi.karaf.ReindexViewCommand" />
-        </command>
-        <command>
-            <action class="org.kimios.osgi.karaf.ReindexCleanCommand" />
-        </command>
-        <command>
-            <action class="org.kimios.osgi.karaf.BonitaSyncCommand" />
-        </command>
-        <command>
-            <action class="org.kimios.osgi.karaf.PathElementCommand" />
-        </command>
-        <command>
-            <action class="org.kimios.osgi.karaf.AddDefaultSecurityRuleCommand" />
-        </command>
-        <command>
-            <action class="org.kimios.osgi.karaf.MassiveSecurityUpdate" />
-        </command>
-        <command>
-            <action class="org.kimios.osgi.karaf.MetaFeedRegistryViewCommand" />
-        </command>
-    </command-bundle>
 
     <bean id="lockCompleter" class="org.kimios.osgi.karaf.CheckedOutCompleter">
         <property name="administrationController" ref="adminCtrl"/>
     </bean>
+
+
 </blueprint>

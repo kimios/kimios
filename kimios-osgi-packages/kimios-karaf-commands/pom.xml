@@ -136,6 +136,13 @@
         </dependency>
 
         <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.compendium</artifactId>
+            <version>${osgi.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.aries.jpa</groupId>
             <artifactId>org.apache.aries.jpa.container.context</artifactId>
             <version>1.0.0</version>
@@ -155,7 +162,6 @@
             <version>${slfj.version}</version>
             <scope>provided</scope>
         </dependency>
-
     </dependencies>
 
     <build>

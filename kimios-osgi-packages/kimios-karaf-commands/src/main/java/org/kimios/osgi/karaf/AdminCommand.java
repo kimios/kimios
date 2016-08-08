@@ -1,11 +1,13 @@
 package org.kimios.osgi.karaf;
 
-import org.apache.karaf.shell.commands.Command;
-import org.apache.karaf.shell.commands.Option;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.Option;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 import org.kimios.kernel.security.model.Session;
 
 /**
  */
+@Service
 @Command(description = "Kimios Administration Command", name = "admin", scope = "kimios")
 public class AdminCommand extends KimiosCommand
 {
@@ -26,6 +28,6 @@ public class AdminCommand extends KimiosCommand
         String user = login.split("@")[0];
         String domain = login.split("@")[1];
         Session kimiosSession = securityController.startSession(user, domain, password);
-        this.session.put(KIMIOS_SESSION, kimiosSession);
+        this.karafSession.put(KIMIOS_SESSION, kimiosSession);
     }
 }

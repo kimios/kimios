@@ -1,19 +1,20 @@
 package org.kimios.osgi.karaf;
 
-import org.apache.karaf.shell.commands.Argument;
-import org.apache.karaf.shell.commands.Command;
+import org.apache.karaf.shell.api.action.Argument;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 import java.util.List;
 
 /**
  */
+@Service
 @Command(
         scope = "kimios",
         name = "reindex",
         description = "Launch reindex process")
 public class ReindexCommand extends KimiosCommand
 {
-
 
     @Argument(index = 0, name = "path",
             description = "Kimios Path to reindex",

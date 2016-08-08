@@ -16,8 +16,9 @@
 
 package org.kimios.osgi.karaf;
 
-import org.apache.karaf.shell.commands.Command;
-import org.apache.karaf.shell.commands.Option;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.Option;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 import org.kimios.kernel.dms.utils.PathElement;
 
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ import java.util.List;
 
 /**
  */
+@Service
 @Command(description = "Path Template Utility", name = "path-element", scope = "kimios")
 public class PathElementCommand extends KimiosCommand
 {

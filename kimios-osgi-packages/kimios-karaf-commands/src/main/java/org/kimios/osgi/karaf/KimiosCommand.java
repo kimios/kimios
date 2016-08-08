@@ -16,13 +16,17 @@
 
 package org.kimios.osgi.karaf;
 
-import org.apache.karaf.shell.console.OsgiCommandSupport;
+import org.apache.karaf.shell.api.action.Action;
+import org.apache.karaf.shell.api.action.lifecycle.Reference;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 import org.kimios.kernel.bonita.interfaces.IBonitaUsersSynchronizer;
 import org.kimios.kernel.controller.*;
 import org.kimios.kernel.index.ISolrIndexManager;
 import org.kimios.kernel.index.controller.ISearchController;
 import org.kimios.kernel.index.controller.ISearchManagementController;
 import org.kimios.kernel.security.model.Session;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,80 +37,48 @@ import javax.transaction.TransactionManager;
  * Created with IntelliJ IDEA. User: farf Date: 1/10/13 Time: 3:19 PM To change this template use File | Settings | File
  * Templates.
  */
-public abstract class KimiosCommand extends OsgiCommandSupport
+public abstract class KimiosCommand implements Action
 {
-    protected static String KIMIOS_SESSION = "kimios-session";
-
-    protected ISecurityController securityController;
-
-    protected IAdministrationController administrationController;
-
-    protected ISearchController searchController;
-
-    protected ISearchManagementController searchManagementController;
-
-    protected IPathController pathController;
-
-    protected ISolrIndexManager indexManager;
-
-    protected IBonitaUsersSynchronizer bonitaUsersSynchronizer;
-
-
-    protected TransactionManager transactionManager;
-
-
     private static Logger logger = LoggerFactory.getLogger(KimiosCommand.class);
 
-    @Override protected Object doExecute() throws Exception
+    protected static String KIMIOS_SESSION = "kimios-session";
+
+    @Reference
+    protected ISecurityController securityController;
+
+    @Reference
+    protected IAdministrationController administrationController;
+
+    @Reference
+    protected ISearchController searchController;
+
+    @Reference
+    protected ISearchManagementController searchManagementController;
+
+    @Reference
+    protected IPathController pathController;
+
+    @Reference
+    protected ISolrIndexManager indexManager;
+
+    @Reference
+    protected IBonitaUsersSynchronizer bonitaUsersSynchronizer;
+
+    @Reference
+    protected IWorkspaceController workspaceController;
+
+    @Reference
+    protected IFileTransferController fileTransferController;
+
+    @Reference
+    protected TransactionManager transactionManager;
+
+    @Reference
+    protected org.apache.karaf.shell.api.console.Session karafSession;
+
+    @Override
+    public Object execute() throws Exception
     {
-        Class<IAdministrationController> cAdmin = IAdministrationController.class;
-        administrationController = getService(cAdmin);
-
-        Class<ISecurityController> cSec = ISecurityController.class;
-        securityController = getService(cSec);
-
-        Class<ISearchController> cSearch = ISearchController.class;
-        searchController = getService(cSearch);
-
-
-        Class<ISearchManagementController> cSearchMng = ISearchManagementController.class;
-        searchManagementController = getService(cSearchMng);
-
-
-        Class<IPathController> cPath = IPathController.class;
-        pathController = getService(cPath);
-
-
-
-        Class<IBonitaUsersSynchronizer> cBonitaSync =
-                IBonitaUsersSynchronizer.class;
-
-        bonitaUsersSynchronizer = getService(cBonitaSync);
-
-
-        Class<ISolrIndexManager> cSolrIdx = ISolrIndexManager.class;
-        indexManager = getService(cSolrIdx);
-
-
-
-        Class<TransactionManager> cTransactionManager = TransactionManager.class;
-        transactionManager = getService(cTransactionManager);
-
-
-        if (securityController == null) {
-            logger.error("Kimios Security service is unavailable.");
-            return null;
-        }
-
-        if (administrationController == null) {
-            logger.error("Kimios Administration service is unavailable.");
-            return null;
-        }
-
-
-
-
-
         doExecuteKimiosCommand();
         return null;
     }
@@ -115,8 +87,9 @@ public abstract class KimiosCommand extends OsgiCommandSupport
 
     protected Session getCurrentSession()
     {
-        if (this.session != null) {
-            return (Session) this.session.get(KIMIOS_SESSION);
+
+        if (this.karafSession != null) {
+            return (Session) this.karafSession.get(KIMIOS_SESSION);
         }
         return null;
     }
@@ -124,17 +97,24 @@ public abstract class KimiosCommand extends OsgiCommandSupport
     protected boolean isConnected()
     {
         boolean connected = false;
-        if (this.session != null && this.session.get(KIMIOS_SESSION) != null) {
+        if (this.karafSession != null && this.karafSession.get(KIMIOS_SESSION) != null) {
 
-            connected = this.securityController.isSessionAlive(((Session) this.session.get(KIMIOS_SESSION)).getUid());
+            connected = this.securityController.isSessionAlive(((Session) this.karafSession.get(KIMIOS_SESSION)).getUid());
         } else {
             connected = false;
         }
         if(!connected){
             String message = "Kimios Session unavailable. You should connect with kimios:admin";
             logger.error(message);
-            System.out.println(message);
+            this.karafSession.getConsole().println(message);
         }
         return connected;
+    }
+
+    public <T> T getService(Class<T> contract) {
+        ServiceReference<T> refCurr = FrameworkUtil.getBundle(this.getClass())
+                .getBundleContext().getServiceReference(contract);
+        return FrameworkUtil.getBundle(contract)
+                .getBundleContext().getService(refCurr);
     }
 }
