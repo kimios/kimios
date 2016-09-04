@@ -988,7 +988,14 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
                 readOnly: true,
                 sortable: true,
                 menuDisabled: false,
-                align: 'right'
+                align: 'right',
+                renderer: function(val, metaData, record, rowIndex, colIndex, store){
+                    if (record.data.type == 7) {
+                        return record.data.targetEntity.customVersion;
+                    } else {
+                        return record.data.customVersion;
+                    }
+                }
             }
         ];
 
