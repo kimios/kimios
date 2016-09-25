@@ -1,3 +1,3 @@
-#[submodule "kimios-ng"]
-#	path = kimios-ng
-#	url = git@gitlab.devlib.infra:org-kimios/kimios-ng.git
+[submodule "kimios-ng"]
+	path = kimios-ng
+	url = git@gitlab.devlib.infra:org-kimios/kimios-ng.git
