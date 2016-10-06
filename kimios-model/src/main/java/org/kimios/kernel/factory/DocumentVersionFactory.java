@@ -45,6 +45,7 @@ public class DocumentVersionFactory {
                 && ConfigurationManager.getValue(Config.VERSION_AUTOMATIC_INCREMENT).toLowerCase().equals("true")){
 
             String incrementor = ConfigurationManager.getValue(Config.VERSION_ID_INCREMENTOR) != null
+                    &&   ConfigurationManager.getValue(Config.VERSION_ID_INCREMENTOR).trim().length()> 0
                      ? ConfigurationManager.getValue(Config.VERSION_ID_INCREMENTOR) : SemVerIncrementor.class.getName();
             String version = null;
             logger.debug("try to generata version id automatically with {}", incrementor);
