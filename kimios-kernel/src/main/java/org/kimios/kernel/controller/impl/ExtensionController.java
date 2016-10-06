@@ -41,6 +41,8 @@ import org.kimios.kernel.utils.PasswordGenerator;
 import org.kimios.kernel.utils.TemplateUtil;
 import org.kimios.utils.configuration.ConfigurationManager;
 import org.kimios.utils.extension.ExtensionRegistryManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -49,6 +51,9 @@ import java.util.List;
 
 @Transactional
 public class ExtensionController extends AKimiosController implements IExtensionController {
+
+    private static Logger logger = LoggerFactory.getLogger(ExtensionController.class);
+
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IExtensionController#setAttribute(org.kimios.kernel.security.Session, long, java.lang.String, java.lang.String, boolean)
     */
@@ -148,6 +153,7 @@ public class ExtensionController extends AKimiosController implements IExtension
     public void trashEntity(Session session, long dmEntityId)
             throws ConfigException, DataSourceException, AccessDeniedException {
 
+
         DMEntity d = dmsFactoryInstantiator.getDmEntityFactory().getEntity(dmEntityId);
 
         if(d instanceof Document){
@@ -157,6 +163,7 @@ public class ExtensionController extends AKimiosController implements IExtension
                     throw new CheckoutViolationException();
                 }
             }
+            EventContext.addParameter("document", d);
         }
         if(d instanceof Folder || d instanceof Workspace){
             if (getSecurityAgent().hasAnyChildCheckedOut(d, session.getUserName(), session.getUserSource())) {
@@ -166,12 +173,15 @@ public class ExtensionController extends AKimiosController implements IExtension
                     .hasAnyChildNotWritable(d, session.getUserName(), session.getUserSource(), session.getGroups())) {
                 throw new AccessDeniedException();
             }
+            if(d instanceof Folder)
+                EventContext.addParameter("folder", d);
+            if(d instanceof Workspace)
+                EventContext.addParameter("workspace", d);
         }
 
         if (getSecurityAgent().isWritable(d, session.getUserName(), session.getUserSource(), session.getGroups())){
         {
             dmsFactoryInstantiator.getDmEntityFactory().trash((DMEntityImpl)d);
-            EventContext.addParameter("document", d);
         }
         } else {
             throw new AccessDeniedException();
@@ -201,7 +211,13 @@ public class ExtensionController extends AKimiosController implements IExtension
 
             //reload entity
             d = (DMEntityImpl)dmsFactoryInstantiator.getDmEntityFactory().getEntity(dmEntityId);
+
+            if(d instanceof Document)
             EventContext.addParameter("document", d);
+            if(d instanceof Folder)
+                EventContext.addParameter("folder", d);
+            if(d instanceof Workspace)
+                EventContext.addParameter("workspace", d);
             return d;
         } else {
             throw new AccessDeniedException();

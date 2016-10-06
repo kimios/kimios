@@ -67,5 +67,9 @@ public class ActionType
 
     public final static int DOCUMENT_SHARED = 24;
 
+    public final static int TRASH_ENTITY = 25;
+
+    public final static int UNTRASH_ENTITY = 26;
+
 }
 

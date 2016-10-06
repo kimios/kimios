@@ -156,14 +156,27 @@ public class ActionLogger extends GenericEventHandler
     public void trashDocument(Object[] paramsObj, Object returnObj, EventContext ctx)
     {
         ctx.setEntity((DMEntity)EventContext.getParameters().get("document"));
-        saveLog(new DMEntityLog<Document>(), ActionType.TRASH_DOCUMENT, ctx);
+        if(ctx.getEntity() instanceof Document){
+            saveLog(new DMEntityLog<Document>(), ActionType.TRASH_DOCUMENT, ctx);
+        } else if(ctx.getEntity() instanceof Folder){
+            saveLog(new DMEntityLog<Folder>(), ActionType.TRASH_ENTITY, ctx);
+        } else if(ctx.getEntity() instanceof Workspace){
+            saveLog(new DMEntityLog<Workspace>(), ActionType.TRASH_ENTITY, ctx);
+        }
+
     }
 
     @DmsEvent(eventName = { DmsEventName.DOCUMENT_UNTRASH }, when = DmsEventOccur.AFTER)
     public void untrashDocument(Object[] paramsObj, Object returnObj, EventContext ctx)
     {
         ctx.setEntity((DMEntity)EventContext.getParameters().get("document"));
-        saveLog(new DMEntityLog<Document>(), ActionType.UNTRASH_DOCUMENT, ctx);
+        if(ctx.getEntity() instanceof Document)
+            saveLog(new DMEntityLog<Document>(), ActionType.UNTRASH_DOCUMENT, ctx);
+        else if(ctx.getEntity() instanceof Folder){
+            saveLog(new DMEntityLog<Folder>(), ActionType.UNTRASH_ENTITY, ctx);
+        } else if(ctx.getEntity() instanceof Workspace){
+            saveLog(new DMEntityLog<Workspace>(), ActionType.UNTRASH_ENTITY, ctx);
+        }
     }
 
     @DmsEvent(eventName = { DmsEventName.DOCUMENT_COPY }, when = DmsEventOccur.AFTER)
