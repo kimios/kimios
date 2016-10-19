@@ -49,7 +49,9 @@ public class ConfigurationManagerBuilder {
         Properties properties = holder.getAllProperties();
         log.debug("loaded properties: {} (keyset: {})", properties.size(), properties.keySet().size());
         for (Object o : properties.keySet()) {
-            System.setProperty("kimios." + o.toString(), properties.getProperty(o.toString()));
+            if(properties.getProperty(o.toString()) != null){
+                System.setProperty("kimios." + o.toString(), properties.getProperty(o.toString()));
+            }
         }
         for (Object u : System.getProperties().keySet()) {
             if (u.toString().startsWith("kimios.")) {
