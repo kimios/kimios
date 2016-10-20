@@ -34,6 +34,12 @@
             <artifactId>docx4j</artifactId>
             <version>3.2.2</version>
             <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>xalan</groupId>
+                    <artifactId>xalan</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
 
@@ -65,6 +71,7 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>1.7.5</version>
+            <scope>provided</scope>
         </dependency>
 
         <!--  instead of FOP's commons-logging -->
@@ -72,6 +79,7 @@
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
             <version>1.7.5</version>
+            <scope>provided</scope>
         </dependency>
 
         <!--  .. default to log4j implementation, just like docx4j 2.8.1 and earlier.  -->
@@ -79,11 +87,13 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>1.7.5</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>1.2.17</version>
+            <scope>provided</scope>
             <exclusions>
                 <exclusion>
                     <groupId>javax.mail</groupId>
@@ -110,6 +120,7 @@
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
             <version>2.4</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <!--  required for ole introspection -->
@@ -122,6 +133,7 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>1.3.1</version> <!--  2.2 works -->
+            <scope>provided</scope>
         </dependency>
 
         <!-- To use a version of FOP more recent than 1.1
@@ -172,6 +184,10 @@
                     <groupId>commons-logging</groupId>
                     <artifactId>commons-logging</artifactId>
                 </exclusion>
+                    <exclusion>
+                        <groupId>xalan</groupId>
+                        <artifactId>xalan</artifactId>
+                    </exclusion>
             </exclusions>
         </dependency>
 
@@ -189,22 +205,22 @@
             <artifactId>avalon-framework-impl</artifactId>
             <version>4.3.1</version>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>xalan</groupId>
             <artifactId>xalan</artifactId>
             <version>2.7.1</version>
-            <!--<exclusions>
+            <exclusions>
                 <exclusion>
                     <groupId>xml-apis</groupId>
                     <artifactId>xml-apis</artifactId>
                 </exclusion>
-            </exclusions>-->
-        </dependency>
-        <dependency>
+            </exclusions>
+        </dependency>-->
+        <!--<dependency>
             <groupId>org.codehaus.woodstox</groupId>
             <artifactId>woodstox-core-asl</artifactId>
             <version>4.4.1</version>
-        </dependency>
+        </dependency>-->
 
 
 
@@ -362,7 +378,103 @@
         </dependency>-->
 
 
-
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+            <version>2.11.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>xml-apis</groupId>
+            <artifactId>xml-apis-ext</artifactId>
+            <version>1.3.04</version>
+            <scope>provided</scope>
+        </dependency>
+        <!--<dependency>
+            <groupId>xml-apis</groupId>
+            <artifactId>xml-apis</artifactId>
+            <version>1.4.01</version>
+            <scope>provided</scope>
+        </dependency>-->
+        <dependency>
+            <groupId>xml-resolver</groupId>
+            <artifactId>xml-resolver</artifactId>
+            <version>1.2</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>xml-apis</groupId>
+            <artifactId>xml-apis</artifactId>
+            <version>1.4.01</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>xalan</groupId>
+            <artifactId>serializer</artifactId>
+            <version>2.7.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>xalan</groupId>
+            <artifactId>xalan</artifactId>
+            <version>2.7.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.woodstox</groupId>
+            <artifactId>woodstox-core-asl</artifactId>
+            <version>4.4.1</version>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>stax-api</artifactId>
+                    <groupId>javax.xml.stream</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.2.11</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <version>2.2.11</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-core</artifactId>
+            <version>2.2.11</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.parsers</groupId>
+            <artifactId>jaxp-ri</artifactId>
+            <version>1.4.5</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.activation</groupId>
+            <artifactId>activation</artifactId>
+            <version>1.1.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>stax</groupId>
+            <artifactId>stax-api</artifactId>
+            <version>1.0.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/stax/stax -->
+        <dependency>
+            <groupId>stax</groupId>
+            <artifactId>stax</artifactId>
+            <version>1.2.0</version>
+            <scope>provided</scope>
+        </dependency>
 
     </dependencies>
 
@@ -378,30 +490,15 @@
                         <Bundle-SymbolicName>${pom.groupId}.${pom.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${pom.artifactId}</Bundle-Name>
                         <Bundle-Version>${pom.version}</Bundle-Version>
-                        <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
+                        <Embed-Dependency>
+                            *;scope=compile|runtime;inline=false
+                        </Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <Import-Package>
                             com.google.common.cache;version="[17.0,18)";resolution:=optional,
-                            com.sun.org.apache.xerces.internal.util;resolution:=optional,
-                            com.sun.xml.bind.marshaller;resolution:=optional,
-                            com.sun.xml.internal.bind.marshaller;resolution:=optional,
                             com.topologi.diffx.event;resolution:=optional,
                             com.topologi.diffx.xml;resolution:=optional,
                             com.topologi.diffx.xml.esc;resolution:=optional,
-                            javax.xml.bind,
-                            javax.xml.bind.annotation,
-                            javax.xml.bind.annotation.adapters,
-                            javax.xml.bind.util,
-                            <!--javax.xml.datatype,
-                            javax.xml.namespace,
-                            javax.xml.parsers,
-                            javax.xml.stream,
-                            javax.xml.transform,
-                            javax.xml.transform.dom,
-                            javax.xml.transform.sax,
-                            javax.xml.transform.stream,
-                            javax.xml.validation,
-                            javax.xml.xpath,-->
                             net.arnx.wmf2svg.gdi;resolution:=optional,
                             net.arnx.wmf2svg.gdi.svg;resolution:=optional,
                             net.arnx.wmf2svg.gdi.wmf;resolution:=optional,
@@ -423,30 +520,55 @@
                             org.apache.poi.poifs.crypt;resolution:=optional,
                             org.apache.poi.poifs.dev;resolution:=optional,
                             org.apache.poi.poifs.filesystem;resolution:=optional,
-                            <!--org.apache.xalan.extensions;resolution:=optional,-->
                             org.apache.xmlgraphics.fonts;resolution:=optional,
                             org.apache.xmlgraphics.image.loader;resolution:=optional,
                             org.apache.xmlgraphics.image.loader.cache;resolution:=optional,
                             org.apache.xmlgraphics.image.loader.impl;resolution:=optional,
                             org.apache.xmlgraphics.java2d;resolution:=optional,
-                            org.plutext.jaxb.svg11;resolution:=optional,
-                            org.plutext.jaxb.xmldsig;resolution:=optional,
-                            org.plutext.jaxb.xslfo;resolution:=optional,
                             org.slf4j;version="[1.6,2)";resolution:=optional,
+                            org.slf4j.impl;version="[1.6,2)";resolution:=optional,
+                            org.apache.xml.utils;resolution:=optional,
+                            javax.xml.stream,
+                            javax.xml.stream.events,
+                            javax.xml.stream.util,
+                            javax.xml,
+                            javax.xml.datatype,
+                            javax.xml.namespace;
+                            javax.xml.parsers,
+                            javax.xml.transform,
+                            javax.xml.transform.dom,
+                            javax.xml.transform.sax,
+                            javax.xml.transform.stax,
+                            javax.xml.transform.stream,
+                            javax.xml.validation,
+                            javax.xml.xpath,
+                            javax.xml.bind,
+                            javax.xml.bind.util,
+                            javax.xml.bind.annotation,
+                            javax.xml.bind.annotation.adapters,
+                            javax.xml.bind.attachment,
+                            javax.xml.bind.helpers,
                             org.w3c.dom,
+                            org.w3c.dom.bootstrap,
                             org.w3c.dom.css,
+                            org.w3c.dom.events,
+                            org.w3c.dom.html,
+                            org.w3c.dom.ls,
+                            org.w3c.dom.ranges,
+                            org.w3c.dom.stylesheets,
                             org.w3c.dom.traversal,
+                            org.w3c.dom.views,
+                            org.w3c.dom.xpath,
                             org.xml.sax,
                             org.xml.sax.ext,
-                            org.xml.sax.helpers
+                            org.xml.sax.helpers,
+                            org.apache.xalan.processor;resolution:=optional
                         </Import-Package>
                         <Export-Package>
                             com.topologi.diffx.xml,
                             com.topologi.diffx.xml.esc,
                             com.topologi.diffx.event,
-
                             com.google.common.cache,
-
                             net.arnx.wmf2svg.gdi,
                             net.arnx.wmf2svg.gdi.svg,
                             net.arnx.wmf2svg.gdi.wmf,
@@ -460,9 +582,6 @@
                             org.apache.xmlgraphics.image.loader.cache,
                             org.apache.xmlgraphics.image.loader.impl,
                             org.apache.xmlgraphics.java2d,
-
-                            org.apache.xalan.extensions,
-
                             org.plutext.jaxb.*,
                             org.docx4j.*
                         </Export-Package>

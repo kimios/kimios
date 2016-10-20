@@ -317,6 +317,8 @@
         </dependency>
 
 
+
+
     </dependencies>
     <build>
         <plugins>
@@ -377,13 +379,6 @@
                         <Import-Package>
                             org.slf4j.impl;resolution:=optional,
                             org.kimios.utils.osgi,
-                            org.w3c.dom,
-                            org.w3c.dom.xpath,
-                            org.w3c.dom.views,
-                            org.w3c.dom.traversal,
-                            org.w3c.dom.stylesheets,
-                            org.w3c.dom.ranges,
-                            javax.xml.parsers,
                             org.apache.http*,
                             org.apache.commons.logging,
                             org.apache.commons.io,
@@ -399,6 +394,11 @@
                             org.apache.commons.dbcp.managed,
                             org.apache.commons.dbcp.datasources,
                             org.kimios.webservices;resolution:=optional,
+                            org.docx4j.openpackaging.packages;resolution:=optional,
+                            org.docx4j.convert.out;resolution:=optional,
+                            org.docx4j.convert.out.common;resolution:=optional,
+                            org.docx4j;resolution:=optional,
+                            org.apache.xalan.processor;resolution:=optional,
                             *;resolution:=optional
                         </Import-Package>
                     </instructions>

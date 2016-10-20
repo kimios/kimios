@@ -48,6 +48,7 @@
 	    <feature>cxf-rs-security-cors</feature>
         <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.quartz/1.8.6_1</bundle>
         <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.aopalliance/1.0_6</bundle>
+        <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xalan/2.7.2_3</bundle>
         <feature>war</feature>
         <feature>blueprint-web</feature>
         <feature version="${karaf.spring.version}">spring</feature>

@@ -18,8 +18,8 @@ package org.kimios.converter.impl;
 
 import org.apache.commons.io.IOUtils;
 import org.docx4j.Docx4J;
-import org.kimios.converter.impl.docx4j.osgi.Docx4jOsgi;
 import org.docx4j.Docx4jProperties;
+import org.docx4j.XmlUtils;
 import org.docx4j.convert.out.HTMLSettings;
 import org.docx4j.convert.out.common.XsltCommonFunctions;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
@@ -29,6 +29,7 @@ import org.kimios.api.InputSource;
 import org.kimios.converter.source.InputSourceFactory;
 import org.kimios.converter.ConverterImpl;
 
+import javax.xml.transform.TransformerFactory;
 import java.io.*;
 import java.util.Arrays;
 import java.util.List;
@@ -69,11 +70,13 @@ public class Docx4jDocxToHTML extends ConverterImpl {
             imgFolder.mkdirs();
 
             WordprocessingMLPackage wordMLPackage;
+            ClassLoader orgCl = Thread.currentThread().getContextClassLoader();
+            Thread.currentThread().setContextClassLoader(XsltCommonFunctions.class.getClassLoader());
+            TransformerFactory fac = XmlUtils.getTransformerFactory();
             wordMLPackage = Docx4J.load(new java.io.File(sourcePath));
             HTMLSettings htmlSettings = Docx4J.createHTMLSettings();
-            htmlSettings.setImageDirPath(sourcePath + "_files");
-            htmlSettings.setImageTargetUri(sourcePath.substring(sourcePath.lastIndexOf("/") + 1)
-                    + "_files");
+            htmlSettings.setImageDirPath("");
+            htmlSettings.setImageTargetUri("");
             htmlSettings.setWmlPackage(wordMLPackage);
             String userCSS = "html, body, div, span, h1, h2, h3, h4, h5, h6, p, a, img,  ol, ul, li, table, caption, tbody, tfoot, thead, tr, th, td " +
                     "{ margin: 0; padding: 0; border: 0;}" +
@@ -81,15 +84,16 @@ public class Docx4jDocxToHTML extends ConverterImpl {
             htmlSettings.setUserCSS(userCSS);
             OutputStream os;
             os = new FileOutputStream(targetPath);
-
             // If you want XHTML output
             Docx4jProperties.setProperty("docx4j.Convert.Out.HTML.OutputMethodXML", true);
 
-
-            Thread.currentThread().setContextClassLoader(XsltCommonFunctions.class.getClassLoader());
+            //Thread.currentThread().setContextClassLoader(XsltCommonFunctions.class.getClassLoader());
             //Prefer the exporter, that uses a xsl transformation
             Docx4J.toHTML(htmlSettings, os, Docx4J.FLAG_EXPORT_PREFER_XSL);
 
+
+
+            Thread.currentThread().setContextClassLoader(orgCl);
             // Return HTML-based InputSource
             InputSource result = InputSourceFactory.getInputSource(targetPath, fileName);
             result.setHumanName(source.getName() + "_" + source.getType() + "." + OUTPUT_EXTENSION);

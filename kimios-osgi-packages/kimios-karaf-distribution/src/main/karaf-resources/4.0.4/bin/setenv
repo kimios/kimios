@@ -43,6 +43,12 @@ then
 else
    export JAVA_MAX_MEM=$KMS_MAX_MEMORY
 fi
+if [ "$FABRIC8_CM_BRIDGE_ENABLED" = "" ]
+then
+    export FABRIC8_CM_BRIDGE_ENABLED=false
+else
+    export FABRIC8_CM_BRIDGE_ENABLED=true
+fi
 #export JAVA_PERM_MEM # Minimum perm memory for the JVM
 export JAVA_MAX_PERM_MEM=512m # Maximum perm memory for the JVM
 # export EXTRA_JAVA_OPTS # Additional JVM options
@@ -50,7 +56,7 @@ export JAVA_MAX_PERM_MEM=512m # Maximum perm memory for the JVM
 # export KARAF_DATA # Karaf data folder
 # export KARAF_BASE # Karaf base folder
 # export KARAF_ETC  # Karaf etc  folder
-export KARAF_OPTS="-Dkimios.db.url=${KIMIOS_PG_LINK} -Dkimios.user=${KIMIOS_PGUSER} -Dkimios.password=${KIMIOS_PGPASS}"
+export KARAF_OPTS="-Dkimios.db.url=${KIMIOS_PG_LINK} -Dkimios.user=${KIMIOS_PGUSER} -Dkimios.password=${KIMIOS_PGPASS} -Djavax.xml.transform.TransformerFactory=org.apache.xalan.processor.TransformerFactoryImpl"
 # export KARAF_DEBUG # Enable debug mode
 # export KARAF_REDIRECT # Enable/set the std/err redirection when using bin/start
 

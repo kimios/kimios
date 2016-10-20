@@ -16,6 +16,7 @@
 
 package org.kimios.converter.impl.docx4j.osgi;
 
+import org.docx4j.Docx4J;
 import org.docx4j.Docx4jProperties;
 import org.docx4j.XmlUtils;
 import org.docx4j.convert.out.HTMLSettings;
@@ -133,6 +134,12 @@ public class HTMLExporterOsgi extends AbstractHTMLExporter3 {
                 // loading of Templates in the delegates is synchronized on the
                 // XmlUtils.getTransformerFactory() but other parts of the application
                 // are not.
+
+
+                TransformerFactory factory = TransformerFactory.newInstance(
+                        org.apache.xalan.processor.TransformerFactoryImpl.class.getName(), Docx4J.class.getClassLoader());
+
+                factory.setURIResolver(RESOURCES_URI_RESOLVER);
                 XmlUtils.getTransformerFactory().setURIResolver(RESOURCES_URI_RESOLVER);
                 if (Docx4jProperties.getProperty(PROPERTY_HTML_OUTPUT_TYPE, true)){
                     log.info("Outputting well-formed XHTML..");

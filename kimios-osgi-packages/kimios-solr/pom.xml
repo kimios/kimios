@@ -61,7 +61,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <excludeDependencies>
-                        slf4j-api,slf4j-log4j12,log4j
+                        slf4j-api,slf4j-log4j12,log4j,wstx-asl
                     </excludeDependencies>
                     <instructions>
                         <Bundle-Name>Devlib' :: Apache SolR ${solr4j.version} OSGI</Bundle-Name>
@@ -178,6 +178,7 @@
                             sun.misc;resolution:=optional,
                             sun.net.dns;resolution:=optional,
                             sun.net.util;resolution:=optional,
+                            org.apache.xalan.processor;resolution:=optional,
                             *;resolution:=optional
                         </Import-Package>
                     </instructions>
