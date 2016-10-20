@@ -150,7 +150,7 @@
         <dependency>
             <groupId>io.swagger</groupId>
             <artifactId>swagger-jaxrs</artifactId>
-            <version>1.5.4</version>
+            <version>${swagger.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -339,47 +339,6 @@
                 </executions>
             </plugin>
 
-            <plugin>
-                <groupId>com.github.kongchen</groupId>
-                <artifactId>swagger-maven-plugin</artifactId>
-                <version>3.1.2</version>
-                <configuration>
-                    <apiSources>
-                        <apiSource>
-                            <info>
-                                <title>Kimios API</title>
-                                <version>${project.version} - ${buildNumber}</version>
-                                <description>Kimios Sample API</description>
-                                <termsOfService>
-                                    http://www.kimios.com/terms-of-service
-                                </termsOfService>
-                                <contact>
-                                    <email>documentation@kimios.com</email>
-                                    <name>Kimios</name>
-                                    <url>http://www.kimios.com</url>
-                                </contact>
-                                <license>
-                                    <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
-                                    <name>Affero GPL v2</name>
-                                </license>
-                            </info>
-                            <springmvc>false</springmvc>
-                            <schemes>http,https</schemes>
-                            <locations>org.kimios.webservices</locations>
-                            <swaggerDirectory>generated/apidocs</swaggerDirectory>
-                            <basePath>/rest/</basePath>
-                        </apiSource>
-                    </apiSources>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 </project>

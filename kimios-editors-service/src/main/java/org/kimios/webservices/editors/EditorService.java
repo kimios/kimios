@@ -16,6 +16,7 @@
 
 package org.kimios.webservices.editors;
 
+import io.swagger.annotations.Api;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.kimios.editors.model.EditorData;
 
@@ -26,6 +27,7 @@ import javax.ws.rs.core.Response;
 
 @WebService(targetNamespace = "http://kimios.org", serviceName = "EditorService")
 @CrossOriginResourceSharing(allowAllOrigins = true)
+@Api(value = "/editors", description = "External Editors Workflow Operations")
 public interface EditorService {
 
 

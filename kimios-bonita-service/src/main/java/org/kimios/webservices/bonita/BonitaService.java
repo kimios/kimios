@@ -16,6 +16,7 @@
 
 package org.kimios.webservices.bonita;
 
+import io.swagger.annotations.Api;
 import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.KimiosExtension;
 import org.kimios.kernel.bonita.webservices.pojo.CommentWrapper;
@@ -32,6 +33,7 @@ import java.util.List;
 
 //@Path("/bonita")
 @WebService(targetNamespace = "http://kimios.org", serviceName = "BonitaService", name = "BonitaService")
+@Api(value = "/search", description = "Search Operations")
 public interface BonitaService extends KimiosExtension {
 
     @GET

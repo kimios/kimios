@@ -103,6 +103,7 @@
         <thymeleaf.version>2.1.4.RELEASE</thymeleaf.version>
         <osgi.version>4.3.1</osgi.version>
         <osgi.enterprise.version>4.2.0</osgi.enterprise.version>
+        <swagger.version>1.5.4</swagger.version>
         <!-- releases properties -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <KIMIOS_VERSION>${project.version}</KIMIOS_VERSION>
@@ -131,6 +132,7 @@
         <module>kimios-editors-service</module>
         <module>kimios-editors</module>
         <module>kimios-templates</module>
+        <module>kimios-docs</module>
         <module>kimios-osgi-packages</module>
         <module>kimios-test</module>
     </modules>

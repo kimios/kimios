@@ -104,6 +104,14 @@
             <version>${slfj.version}</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>${swagger.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
 
 
@@ -217,7 +225,9 @@
                             org.apache.cxf.jaxrs.ext,
                             org.kimios.utils.spring,
                             org.apache.commons.io,
-                            org.kimios.utils.configuration
+                            org.kimios.utils.configuration,
+                            io.swagger.annotations,
+                            org.apache.cxf.jaxrs.swagger
                         </Import-Package>
                     </instructions>
                 </configuration>

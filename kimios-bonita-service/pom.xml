@@ -98,6 +98,14 @@
             <version>${cxf.version}</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>${swagger.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
 
 
@@ -217,7 +225,9 @@
                             org.bonitasoft.engine.bpm.comment,
                             org.bonitasoft.engine.bpm.flownode,
                             org.bonitasoft.engine.bpm.process,
-                            org.bonitasoft.engine.identity
+                            org.bonitasoft.engine.identity,
+                            io.swagger.annotations,
+                            org.apache.cxf.jaxrs.swagger
                         </Import-Package>
                     </instructions>
                 </configuration>

@@ -100,7 +100,7 @@
         <dependency>
             <groupId>io.swagger</groupId>
             <artifactId>swagger-jaxrs</artifactId>
-            <version>1.5.4</version>
+            <version>${swagger.version}</version>
             <scope>provided</scope>
         </dependency>
 
@@ -266,48 +266,6 @@
                                 <exclude>org/kimios/kernel/*</exclude>
                             </excludes>
                         </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>com.github.kongchen</groupId>
-                <artifactId>swagger-maven-plugin</artifactId>
-                <version>3.1.2</version>
-                <configuration>
-                    <apiSources>
-                        <apiSource>
-                            <info>
-                                <title>Test</title>
-                                <version>v1</version>
-                                <description>This is a sample for swagger-maven-plugin</description>
-                                <termsOfService>
-                                    http://www.github.com/kongchen/swagger-maven-plugin
-                                </termsOfService>
-                                <contact>
-                                    <email>kongchen@gmail.com</email>
-                                    <name>Kong Chen</name>
-                                    <url>http://kongch.com</url>
-                                </contact>
-                                <license>
-                                    <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
-                                    <name>Apache 2.0</name>
-                                </license>
-                            </info>
-                            <springmvc>false</springmvc>
-                            <schemes>http,https</schemes>
-                            <host>petstore.swagger.wordnik.com</host>
-                            <locations>org.kimios.webservices.share</locations>
-                            <swaggerDirectory>generated/apidocs</swaggerDirectory>
-                            <basePath>/rest/share</basePath>
-                        </apiSource>
-                    </apiSources>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
                     </execution>
                 </executions>
             </plugin>

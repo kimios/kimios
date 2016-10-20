@@ -16,6 +16,7 @@
 
 package org.kimios.webservices.converter;
 
+import io.swagger.annotations.Api;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.kimios.webservices.KimiosExtension;
 import org.kimios.webservices.exceptions.DMServiceException;
@@ -30,6 +31,7 @@ import javax.ws.rs.core.Response;
 //@Path("/converter")
 @WebService(targetNamespace = "http://kimios.org", serviceName = "ConverterService")
 @CrossOriginResourceSharing(allowAllOrigins = true)
+@Api(value = "/converter", description = "Document Converters Operations")
 public interface ConverterService extends KimiosExtension {
 
     /**

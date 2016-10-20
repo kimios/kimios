@@ -129,6 +129,14 @@
             <version>${slfj.version}</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-jaxrs</artifactId>
+            <version>${swagger.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -241,6 +249,8 @@
                             org.apache.commons.io,
                             org.kimios.editors,
                             org.kimios.editors.model,
+                            io.swagger.annotations,
+                            org.apache.cxf.jaxrs.swagger,
                             *;resolution:=optional
                         </Import-Package>
                     </instructions>
