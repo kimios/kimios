@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<!--
+  ~ Kimios - Document Management System Software
+  ~ Copyright (C) 2008-2016  DevLib'
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 2 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ aong with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+             http://www.osgi.org/xmlns/blueprint/v1.0.0 https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
+             http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd"
+           xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
+            >
+    <cm:property-placeholder id="kimiosServerCfg" persistent-id="org.kimios.server.app" update-strategy="none"
+                             activation="eager">
+    </cm:property-placeholder>
+
+    <bean id="propertyConfigurer" class="org.kimios.utils.configuration.OsgiConfigurationHolder"
+          depends-on="kimiosServerCfg">
+        <argument ref="blueprintBundleContext"/>
+        <argument value="org.kimios.server.app"/>
+    </bean>
+
+    <bean id="configurationManagerHolder" class="org.kimios.utils.configuration.ConfigurationManagerBuilder">
+        <property name="holder" ref="propertyConfigurer"/>
+    </bean>
+
+    <bean id="configurationManager" class="org.kimios.utils.configuration.ConfigurationManager"
+          factory-ref="configurationManagerHolder"
+          factory-method="createInstance">
+    </bean>
+    <camelContext id="kimios" xmlns="http://camel.apache.org/schema/blueprint">
+        <packageScan>
+            <package>org.kimios.camel.routes</package>
+            <includes>**.*</includes>
+        </packageScan>
+    </camelContext>
+
+</blueprint>

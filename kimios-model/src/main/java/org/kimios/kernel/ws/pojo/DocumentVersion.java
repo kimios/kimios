@@ -45,6 +45,10 @@ public class DocumentVersion
 
     private String customVersionPending;
 
+    private String lastUpdateAuthor;
+
+    private String lastUpdateAuthorSource;
+
     public DocumentVersion()
     {
     }
@@ -52,7 +56,7 @@ public class DocumentVersion
     public DocumentVersion(long uid, String author, String authorSource,
             Date creationDate, Date modificationDate, long documentUid,
             long length, long documentTypeUid, String documentTypeName, String hashMd5, String hashSha,
-            String customVersion, String customVersionPending)
+            String customVersion, String customVersionPending, String lastUpdateAuthor, String lastUpdateAuthorSource)
     {
         this.uid = uid;
         this.author = author;
@@ -67,6 +71,8 @@ public class DocumentVersion
         this.hashSha = hashSha;
         this.customVersion = customVersion;
         this.customVersionPending = customVersionPending;
+        this.lastUpdateAuthor = lastUpdateAuthor;
+        this.lastUpdateAuthorSource = lastUpdateAuthorSource;
     }
 
     public long getUid()
@@ -193,6 +199,22 @@ public class DocumentVersion
 
     public void setCustomVersionPending(String customVersionPending) {
         this.customVersionPending = customVersionPending;
+    }
+
+    public String getLastUpdateAuthor() {
+        return lastUpdateAuthor;
+    }
+
+    public void setLastUpdateAuthor(String lastUpdateAuthor) {
+        this.lastUpdateAuthor = lastUpdateAuthor;
+    }
+
+    public String getLastUpdateAuthorSource() {
+        return lastUpdateAuthorSource;
+    }
+
+    public void setLastUpdateAuthorSource(String lastUpdateAuthorSource) {
+        this.lastUpdateAuthorSource = lastUpdateAuthorSource;
     }
 }
 

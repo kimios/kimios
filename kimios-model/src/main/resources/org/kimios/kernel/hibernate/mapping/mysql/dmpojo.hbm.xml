@@ -32,18 +32,23 @@
             `d`.`extension`, `d`.`dm_entity_path`, `dv`.`id` AS `version_id`,
             `dv`.`type_name`,`dv`.`version_length`,`dv`.`document_type_id`,
             dv.custom_version as custom_version, dv.custom_version_pending as custom_version_pending,
+            dv.last_update_author, dv.last_update_author_source,
             `dv`.`creation_date` AS `version_creation_date`,`dv`.`modification_date` AS
             `version_update_date`,if(isnull(`chk`.`document_id`),0,1) AS `locked`,
             `chk`.`username` AS `lock_by`,`chk`.`user_source` AS `lock_source`,`chk`.`checkout_date` AS
             `lock_date`,`ds`.`id` AS `last_wfs`,
-            `req`.`outOfWorkflow` AS `outofworkflow`,`ds`.`status_name`, `d`.`dm_entity_addon_data` from (select dent.dm_entity_id, dent.dm_entity_name, dent.dm_entity_path, dent.dm_entity_owner_source,
+            `req`.`outOfWorkflow` AS `outofworkflow`,`ds`.`status_name`,
+            ds.validator_user_name, ds.validator_user_source,
+            `d`.`dm_entity_addon_data` from (select dent.dm_entity_id, dent.dm_entity_name, dent.dm_entity_path, dent.dm_entity_owner_source,
             dent.dm_entity_owner,
             dent.update_date as dm_entity_update_date, dent.creation_date as dm_entity_creation_date, dent.dm_entity_addon_data as dm_entity_addon_data,doc.*
             from dm_entity dent join document doc on dent.dm_entity_id = doc.id) `d` join
             (select `v1`.`creation_date` AS `maxCreationDate`,
             `v2`.`id`,`v2`.`author`,`v2`.`author_source`,
             `v2`.`creation_date`,`v2`.`modification_date`,
-            `v2`.`document_id`,`v2`.`storage_path`,`v2`.`document_type_id`, v2.custom_version, v2.custom_version_pending,
+            `v2`.`document_id`,`v2`.`storage_path`,`v2`.`document_type_id`,
+            v2.custom_version, v2.custom_version_pending,
+            v2.last_update_author, v2.last_update_author_source,
             `v2`.`version_length`,`v2`.`hash_md5`,`v2`.`hash_sha1`,`dt`.`type_name`
             from (((select max(`document_version`.`creation_date`) AS `creation_date`,
             `document_version`.`document_id` from `document_version` group by
@@ -70,7 +75,8 @@
             on((`d`.`id` = `req`.`document_id`))
             left join
             (select `e`.`document_id`,
-            max(`e`.`status_date`),`ws`.`id` AS `id`,
+            max(`e`.`status_date`), f.security_entity_name as validator_user_name, f.security_entity_source as validator_user_source,
+            `ws`.`id` AS `id`,
             `ws`.`status_name` from ((`document_workflow_status` `e` join `document_workflow_status`
             `f`
             on(((`f`.`document_id` = `e`.`document_id`) and (`e`.`status_date` = `f`.`status_date`)))) join
@@ -159,6 +165,18 @@
         <property name="customVersionPending">
             <column name="custom_version_pending"/>
         </property>
+        <property name="lastUpdateAuthor">
+            <column name="last_update_author"/>
+        </property>
+        <property name="lastUpdateAuthorSource">
+            <column name="last_update_author_source"/>
+        </property>
+        <property name="validatorUserName">
+            <column name="validator_user_name"/>
+        </property>
+        <property name="validatorUserSource">
+            <column name="validator_user_source"/>
+        </property>
     </class>
     <sql-query name="documentPojosUid">
         <return class="DocumentPojo"/>
@@ -169,11 +187,16 @@
           d.dm_entity_update_date,d.folder_id AS folder_id,d.mime_type AS mime_type,
           d.extension AS extension, d.dm_entity_path, dv.id AS version_id,
           dv.type_name AS type_name,dv.version_length,dv.document_type_id,
+          dv.custom_version as custom_version,
+          dv.custom_version_pending as custom_version_pending,
+          dv.last_update_author, dv.last_update_author_source,
           dv.creation_date AS version_creation_date,dv.modification_date AS
           version_update_date,if(isnull(chk.document_id),0,1) AS locked,
           chk.username AS lock_by,chk.user_source AS lock_source,chk.checkout_date AS
           lock_date,ds.id AS last_wfs,
-          req.outOfWorkflow AS outofworkflow,ds.status_name AS status_name, d.dm_entity_addon_data AS dm_entity_addon_data from
+          req.outOfWorkflow AS outofworkflow,ds.status_name AS status_name,
+          ds.validator_user_name, ds.validator_user_source,
+          d.dm_entity_addon_data AS dm_entity_addon_data from
           ((((
             (select dent.dm_entity_id, dent.dm_entity_name, dent.dm_entity_path, dent.dm_entity_owner_source,
           dent.dm_entity_owner,
@@ -185,7 +208,11 @@
           v2.document_id AS document_id,v2.storage_path AS storage_path,v2.document_type_id AS
           document_type_id,
           v2.version_length AS version_length,v2.hash_md5 AS hash_md5,v2.hash_sha1 AS
-          hash_sha1,dt.type_name AS type_name
+          hash_sha1,dt.type_name AS type_name,
+          v2.custom_version,
+          v2.custom_version_pending,
+          v2.last_update_author,
+          v2.last_update_author_source
           from (((select max(document_version.creation_date) AS creation_date,
           document_version.document_id AS document_id from document_version group by
           document_version.document_id) v1 join document_version v2 on(v1.document_id =
@@ -211,6 +238,7 @@
           on((d.id = req.document_id)))
           left join
           (select e.document_id AS document_id,
+          f.security_entity_name as validator_user_name, f.security_entity_source as validator_user_source,
           max(e.status_date),ws.id AS id,
           ws.status_name AS status_name from ((document_workflow_status e join document_workflow_status
           f
@@ -232,9 +260,14 @@
           dv.type_name AS type_name,dv.version_length,dv.document_type_id,
           dv.creation_date AS version_creation_date,dv.modification_date AS
           version_update_date,if(isnull(chk.document_id),0,1) AS locked,
+          dv.custom_version as custom_version,
+          dv.custom_version_pending as custom_version_pending,
+          dv.last_update_author, dv.last_update_author_source,
           chk.username AS lock_by,chk.user_source AS lock_source,chk.checkout_date AS
           lock_date,ds.id AS last_wfs,
-          req.outOfWorkflow AS outofworkflow,ds.status_name AS status_name, d.dm_entity_addon_data AS dm_entity_addon_data from
+          req.outOfWorkflow AS outofworkflow,ds.status_name AS status_name,
+          ds.validator_user_name, ds.validator_user_source,
+          d.dm_entity_addon_data AS dm_entity_addon_data from
           ((((
             (select dent.dm_entity_id, dent.dm_entity_name, dent.dm_entity_path, dent.dm_entity_owner_source,
           dent.dm_entity_owner,
@@ -246,7 +279,11 @@
           v2.document_id AS document_id,v2.storage_path AS storage_path,v2.document_type_id AS
           document_type_id,
           v2.version_length AS version_length,v2.hash_md5 AS hash_md5,v2.hash_sha1 AS
-          hash_sha1,dt.type_name AS type_name
+          hash_sha1,dt.type_name AS type_name,
+          v2.custom_version,
+          v2.custom_version_pending,
+          v2.last_update_author,
+          v2.last_update_author_source
           from (((select max(document_version.creation_date) AS creation_date,
           document_version.document_id AS document_id from document_version group by
           document_version.document_id) v1 join document_version v2 on(v1.document_id =
@@ -272,7 +309,8 @@
           on((d.id = req.document_id)))
           left join
           (select e.document_id AS document_id,
-          max(e.status_date),ws.id AS id,
+          f.security_entity_name as validator_user_name, f.security_entity_source as validator_user_source,
+          max(e.status_date),ws.id AS id
           ws.status_name AS status_name from ((document_workflow_status e join document_workflow_status
           f
           on(((f.document_id = e.document_id) and (e.status_date = f.status_date)))) join

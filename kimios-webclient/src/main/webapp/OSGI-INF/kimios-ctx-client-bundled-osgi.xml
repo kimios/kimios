@@ -103,7 +103,7 @@
             <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
         </jaxrs:providers>
         <jaxrs:headers>
-            <entry key="Accept" value="application/json"/>
+            <entry key="Accept" value="application/json,text/csv"/>
         </jaxrs:headers>
     </jaxrs:client>
 
@@ -215,7 +215,7 @@
             <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
         </jaxrs:providers>
         <jaxrs:headers>
-            <entry key="Accept" value="application/json"/>
+            <entry key="Accept" value="application/json,text/csv"/>
         </jaxrs:headers>
     </jaxrs:client>
 

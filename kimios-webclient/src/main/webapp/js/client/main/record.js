@@ -163,6 +163,22 @@ kimios.record = {
             type: 'string'
         },
         {
+            name: 'lastUpdateAuthor',
+            type: 'string'
+        },
+        {
+            name: 'lastUpdateAuthorSource',
+            type: 'string'
+        },
+        {
+            name: 'validatorUserName',
+            type: 'string'
+        },
+        {
+            name: 'validatorUserSource',
+            type: 'string'
+        },
+        {
             name: 'targetEntity'
         }
     ]),

@@ -16,11 +16,15 @@
 package org.kimios.webservices.impl;
 
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
+import org.kimios.kernel.configuration.Config;
 import org.kimios.kernel.index.query.model.Criteria;
 import org.kimios.kernel.index.query.model.SearchRequest;
 import org.kimios.kernel.index.query.model.SearchResponse;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.ws.pojo.Document;
+import org.kimios.utils.configuration.ConfigurationManager;
 import org.kimios.webservices.CoreService;
 import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.SearchService;
@@ -28,12 +32,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jws.WebService;
+import javax.ws.rs.core.Response;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @WebService( targetNamespace = "http://kimios.org", serviceName = "SearchService", name = "SearchService" )
 public class SearchServiceImpl
         extends CoreService
-        implements SearchService {
+        implements SearchService, CamelContextAware {
 
     private static Logger log = LoggerFactory.getLogger(SearchService.class);
 
@@ -239,6 +251,53 @@ public class SearchServiceImpl
         {
             throw getHelper().convertException( e );
         }
+    }
+
+    public InputStream advancedSearchDocumentsExport(String sessionId, List<Criteria> criterias, int start, int pageSize,
+                                                  String sortField, String sortDir, String virtualPath, long requestId )
+            throws DMServiceException
+    {
+        try
+        {
+            Session s = getHelper().getSession(sessionId);
+            SearchResponse searchResponse = searchController.advancedSearchDocuments( s, criterias, start, pageSize, sortField, sortDir,
+                    virtualPath, requestId, false );
+            org.apache.camel.ProducerTemplate template = camelContext.createProducerTemplate();
+            //read file
+            String fileName = "Kimios_Export_" + new SimpleDateFormat("yyyy_MM_dd_HH_mm").format(new Date()) + ".csv";
+            template.sendBodyAndHeader("direct:csvExport", searchResponse.getRows(), "kimiosCsvFileName", fileName);
+            //read file
+            /*Response.ResponseBuilder response = Response.ok(
+                    new FileInputStream(ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH) + "/csv/" + fileName));
+            response.header("Content-Description", "File Transfer");
+            response.header("Content-Type", "text/csv");
+            response.header("Content-Transfer-Encoding", "binary");
+            response.header("Expires", "0");
+            response.header("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
+            response.header("Pragma", "public");
+            response.header("Content-Length",
+                    new File(ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH) + "/csv/" + fileName).length());
+            response.header("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+            return response.build();*/
+            return new FileInputStream(ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH) + "/csv/" + fileName);
+
+        }
+        catch ( Exception e )
+        {
+            throw getHelper().convertException( e );
+        }
+    }
+
+    private CamelContext camelContext;
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
     }
 }
 

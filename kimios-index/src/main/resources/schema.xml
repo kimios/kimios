@@ -102,6 +102,10 @@
         <field name="DocumentRawAddonDatas" type="string" indexed="false" stored="true" required="false" />
         <field name="DocumentVersionCustomVersion" type="string" indexed="true" stored="true" required="false" />
         <field name="DocumentVersionCustomVersionPending" type="string" indexed="true" stored="true" required="false" />
+        <field name="DocumentVersionLastUpdateAuthor" type="string" indexed="true" stored="true" required="false" />
+        <field name="DocumentVersionLastUpdateAuthorSource" type="string" indexed="true" stored="true" required="false" />
+        <field name="DocumentWorkflowValidatorUser" type="string" indexed="true" stored="true" required="false" />
+        <field name="DocumentWorkflowValidatorUserSource" type="string" indexed="true" stored="true" required="false" />
         <dynamicField name="MetaDataDate_*" type="tdate" indexed="true" stored="true" required="false"/>
         <dynamicField name="MetaDataString_*" type="string_ci" indexed="true" stored="true" required="false"/>
         <dynamicField name="MetaDataNumber_*" type="tdouble" indexed="true" stored="true" required="false"/>

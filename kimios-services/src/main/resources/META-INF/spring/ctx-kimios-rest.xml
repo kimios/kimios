@@ -98,7 +98,7 @@
             <ref bean="searchServiceBean"/>
         </jaxrs:serviceBeans>
         <jaxrs:extensionMappings>
-            <entry key="json" value="application/json"/>
+            <entry key="csv" value="text/csv"/>
         </jaxrs:extensionMappings>
     </jaxrs:server>
 

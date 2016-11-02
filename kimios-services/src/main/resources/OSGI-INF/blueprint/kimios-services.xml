@@ -33,6 +33,8 @@
     <service id="serviceHelperOsgi" ref="serviceHelper"
              interface="org.kimios.webservices.IServiceHelper"/>
 
+    <reference id="kimiosCamelContext" interface="org.apache.camel.CamelContext" filter="(camel.context.name=kimios)" />
+
 
     <bean id="kimiosBusManager" class="org.kimios.webservices.utils.KimiosBusServiceManager" />
     <bean id="loggingFeature" class="org.apache.cxf.feature.LoggingFeature" />
@@ -422,6 +424,7 @@
         <property name="ruleController" ref="rulesController"/>
         <property name="extensionController" ref="extensionController"/>
         <property name="converterController" ref="converterController"/>
+        <property name="camelContext" ref="kimiosCamelContext" />
     </bean>
 
     <bean id="documentVersionServiceBean" class="org.kimios.webservices.impl.DocumentVersionServiceImpl">
@@ -506,6 +509,7 @@
         <property name="ruleController" ref="rulesController"/>
         <property name="extensionController" ref="extensionController"/>
         <property name="converterController" ref="converterController"/>
+        <property name="camelContext" ref="kimiosCamelContext" />
     </bean>
 
     <bean id="notificationServiceBean" class="org.kimios.webservices.impl.NotificationServiceImpl">

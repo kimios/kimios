@@ -17,6 +17,13 @@ package org.kimios.webservices.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.annotations.ApiOperation;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.component.file.FileConsumer;
+import org.apache.camel.component.file.FileEndpoint;
+import org.kimios.kernel.configuration.Config;
 import org.kimios.kernel.dms.model.Bookmark;
 import org.kimios.kernel.dms.model.MetaValue;
 import org.kimios.kernel.dms.model.SymbolicLink;
@@ -24,17 +31,23 @@ import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.security.model.DMEntitySecurity;
 import org.kimios.kernel.ws.pojo.Document;
 import org.kimios.kernel.ws.pojo.WorkflowStatus;
+import org.kimios.utils.configuration.ConfigurationManager;
 import org.kimios.webservices.CoreService;
 import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.DocumentService;
 
+import javax.jws.WebParam;
 import javax.jws.WebService;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Response;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @WebService(targetNamespace = "http://kimios.org", serviceName = "DocumentService", name = "DocumentService")
-public class DocumentServiceImpl extends CoreService implements DocumentService {
+public class DocumentServiceImpl extends CoreService implements DocumentService, CamelContextAware {
     /**
      * @param sessionId
      * @param documentId
@@ -664,6 +677,48 @@ public class DocumentServiceImpl extends CoreService implements DocumentService 
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }
+    }
+
+
+    public InputStream exportToCsv(String sessionId, long folderId) throws DMServiceException {
+        try {
+            Session session = getHelper().getSession(sessionId);
+            List<Document> documents = documentController.getDocumentsPojos(session, folderId);
+            org.apache.camel.ProducerTemplate template = camelContext.createProducerTemplate();
+            String fileName = "Kimios_Export_" + new SimpleDateFormat("yyyy_MM_dd_HH_mm").format(new Date()) + ".csv";
+            template.sendBodyAndHeader("direct:csvExport", documents, "kimiosCsvFileName", fileName);
+            //read file
+
+            /*Response.ResponseBuilder response = Response.ok(
+                    new FileInputStream(ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH) + "/csv/" + fileName));
+            response.header("Content-Description", "File Transfer");
+            response.header("Content-Type", "text/csv");
+            response.header("Content-Transfer-Encoding", "binary");
+            response.header("Expires", "0");
+            response.header("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
+            response.header("Pragma", "public");
+            response.header("Content-Length",
+                    new File(ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH) + "/csv/" + fileName).length());
+            response.header("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+            return response.build();*/
+            return new FileInputStream(ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH) + "/csv/" + fileName);
+
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
+
+
+    private CamelContext camelContext;
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
     }
 }
 

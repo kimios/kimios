@@ -82,6 +82,10 @@ public class DMEntity {
     private String dmEntityAddonData;
     private String customVersion;
     private String customVersionPending;
+    private String lastUpdateAuthor;
+    private String lastUpdateAuthorSource;
+    private String validatorUserName;
+    private String validatorUserSource;
 
     private Map<String, MetaValue> metaDatas;
 
@@ -151,6 +155,10 @@ public class DMEntity {
             this.lastVersionId = ((org.kimios.kernel.ws.pojo.Document)entity).getLastVersionId();
             this.customVersion = ((org.kimios.kernel.ws.pojo.Document)entity).getCustomVersion();
             this.customVersionPending = ((org.kimios.kernel.ws.pojo.Document)entity).getCustomVersionPending();
+            this.lastUpdateAuthor = ((org.kimios.kernel.ws.pojo.Document)entity).getLastUpdateAuthor();
+            this.lastUpdateAuthorSource = ((org.kimios.kernel.ws.pojo.Document)entity).getLastUpdateAuthorSource();
+            this.validatorUserName = ((org.kimios.kernel.ws.pojo.Document)entity).getValidatorUserName();
+            this.validatorUserSource = ((org.kimios.kernel.ws.pojo.Document)entity).getValidatorUserSource();
         }
         if(entity instanceof SymbolicLink){
             this.parentUid = ((SymbolicLink) entity).getParentUid();
@@ -430,6 +438,38 @@ public class DMEntity {
 
     public void setLastVersionId(long lastVersionId) {
         this.lastVersionId = lastVersionId;
+    }
+
+    public String getLastUpdateAuthor() {
+        return lastUpdateAuthor;
+    }
+
+    public void setLastUpdateAuthor(String lastUpdateAuthor) {
+        this.lastUpdateAuthor = lastUpdateAuthor;
+    }
+
+    public String getLastUpdateAuthorSource() {
+        return lastUpdateAuthorSource;
+    }
+
+    public void setLastUpdateAuthorSource(String lastUpdateAuthorSource) {
+        this.lastUpdateAuthorSource = lastUpdateAuthorSource;
+    }
+
+    public String getValidatorUserName() {
+        return validatorUserName;
+    }
+
+    public void setValidatorUserName(String validatorUserName) {
+        this.validatorUserName = validatorUserName;
+    }
+
+    public String getValidatorUserSource() {
+        return validatorUserSource;
+    }
+
+    public void setValidatorUserSource(String validatorUserSource) {
+        this.validatorUserSource = validatorUserSource;
     }
 }
 

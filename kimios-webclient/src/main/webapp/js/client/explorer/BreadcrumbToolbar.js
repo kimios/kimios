@@ -63,6 +63,7 @@ kimios.explorer.BreadcrumbToolbar = Ext.extend(Ext.Toolbar, {
         this.newWorkspaceButton.setTooltip(kimios.lang('NewWorkspace'));
         this.newFolderButton.setTooltip(kimios.lang('NewFolder'));
         this.importDocumentButton.setTooltip(kimios.lang('ImportDocument'));
+        this.importDocumentButton.setTooltip(kimios.lang('ExportCsv'));
         this.doLayout();
     } ,
 
@@ -217,6 +218,15 @@ kimios.explorer.BreadcrumbToolbar = Ext.extend(Ext.Toolbar, {
                 }).show();
             }
         });
+        this.exportCsvButton = new Ext.Toolbar.Button({
+            tooltip: kimios.lang('ExportCsv'),
+            iconCls: 'exportcsv',
+            disabled: ap.type != 2,
+            scope: this,
+            handler: function () {
+                ap.csvExport();
+            }
+        });
 
         this.add(this.refreshButton);
         this.add(this.upButton);
@@ -224,6 +234,7 @@ kimios.explorer.BreadcrumbToolbar = Ext.extend(Ext.Toolbar, {
         this.add(this.newWorkspaceButton);
         this.add(this.newFolderButton);
         this.add(this.importDocumentButton);
+        this.add(this.exportCsvButton);
         this.add(' ');
         this.add(' ');
         this.add(' ');

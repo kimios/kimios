@@ -53,9 +53,17 @@ public class Document extends DMEntity implements Serializable
 
     private String customVersionPending;
 
+    private String lastUpdateAuthor;
+
+    private String lastUpdateAuthorSource;
+
     private Long workflowStatusUid = 0L;
 
     private String workflowStatusName;
+
+    private String validatorUserName;
+
+    private String validatorUserSource;
 
     private Boolean isOutOfWorkflow = true;
 
@@ -77,7 +85,10 @@ public class Document extends DMEntity implements Serializable
             boolean checkedOut, String checkoutUser,
             String checkoutUserSource, Date checkoutDate, long length,
             long workflowStatusUid, String workflowStatusName,
-            boolean isOutOfWorkflow, String path, String addonDatas, String customVersion, String customVersionPending)
+            boolean isOutOfWorkflow, String path, String addonDatas,
+                    String customVersion, String customVersionPending,
+                    String lastUpdateAuthor, String lastUpdateAuthorSource,
+                    String validatorUserName, String validatorUserSource)
     {
         this.uid = uid;
         this.name = name;
@@ -112,6 +123,12 @@ public class Document extends DMEntity implements Serializable
 
         this.customVersion = customVersion;
         this.customVersionPending = customVersionPending;
+
+        this.lastUpdateAuthor = lastUpdateAuthor;
+        this.lastUpdateAuthorSource = lastUpdateAuthorSource;
+
+        this.validatorUserName = validatorUserName;
+        this.validatorUserSource = validatorUserSource;
 
         this.type = 3;
     }
@@ -316,12 +333,48 @@ public class Document extends DMEntity implements Serializable
                 ", length=" + length +
                 ", customVersion='" + customVersion + '\'' +
                 ", customVersionPending='" + customVersionPending + '\'' +
+                ", lastUpdateAuthor='" + lastUpdateAuthor + '\'' +
+                ", lastUpdateAuthorSource='" + lastUpdateAuthorSource + '\'' +
                 ", workflowStatusUid=" + workflowStatusUid +
                 ", workflowStatusName='" + workflowStatusName + '\'' +
+                ", validatorUserName='" + validatorUserName + '\'' +
+                ", validatorUserSource='" + validatorUserSource + '\'' +
                 ", isOutOfWorkflow=" + isOutOfWorkflow +
                 ", documentTypeName='" + documentTypeName + '\'' +
                 ", documentTypeUid=" + documentTypeUid +
                 ", indexScore=" + indexScore +
                 '}';
+    }
+
+    public String getLastUpdateAuthor() {
+        return lastUpdateAuthor;
+    }
+
+    public void setLastUpdateAuthor(String lastUpdateAuthor) {
+        this.lastUpdateAuthor = lastUpdateAuthor;
+    }
+
+    public String getLastUpdateAuthorSource() {
+        return lastUpdateAuthorSource;
+    }
+
+    public void setLastUpdateAuthorSource(String lastUpdateAuthorSource) {
+        this.lastUpdateAuthorSource = lastUpdateAuthorSource;
+    }
+
+    public String getValidatorUserName() {
+        return validatorUserName;
+    }
+
+    public void setValidatorUserName(String validatorUserName) {
+        this.validatorUserName = validatorUserName;
+    }
+
+    public String getValidatorUserSource() {
+        return validatorUserSource;
+    }
+
+    public void setValidatorUserSource(String validatorUserSource) {
+        this.validatorUserSource = validatorUserSource;
     }
 }

@@ -71,6 +71,12 @@ public class DocumentVersion implements Serializable {
     @Column(name = "custom_version_pending", nullable = true)
     private String customVersionPending;
 
+    @Column(name = "last_update_author", nullable = true)
+    private String lastUpdateAuthor;
+
+    @Column(name = "last_update_author_source", nullable = true)
+    private String lastUpdateAuthorSource;
+
     public DocumentVersion() {
     }
 
@@ -203,6 +209,22 @@ public class DocumentVersion implements Serializable {
         this.customVersionPending = customVersionPending;
     }
 
+    public String getLastUpdateAuthor() {
+        return lastUpdateAuthor;
+    }
+
+    public void setLastUpdateAuthor(String lastUpdateAuthor) {
+        this.lastUpdateAuthor = lastUpdateAuthor;
+    }
+
+    public String getLastUpdateAuthorSource() {
+        return lastUpdateAuthorSource;
+    }
+
+    public void setLastUpdateAuthorSource(String lastUpdateAuthorSource) {
+        this.lastUpdateAuthorSource = lastUpdateAuthorSource;
+    }
+
     public org.kimios.kernel.ws.pojo.DocumentVersion toPojo() throws Exception {
         long docTypeUid = -1;
         String docTypeName = "";
@@ -212,8 +234,17 @@ public class DocumentVersion implements Serializable {
         }
         return new org.kimios.kernel.ws.pojo.DocumentVersion(this.uid, this.author, this.authorSource,
                 this.creationDate,
-                this.modificationDate, this.documentUid, this.length, docTypeUid, docTypeName, this.hashMD5,
-                this.hashSHA1, this.customVersion, this.customVersionPending);
+                this.modificationDate,
+                this.documentUid,
+                this.length,
+                docTypeUid,
+                docTypeName,
+                this.hashMD5,
+                this.hashSHA1,
+                this.customVersion,
+                this.customVersionPending,
+                this.lastUpdateAuthor,
+                this.lastUpdateAuthorSource);
     }
 
     public boolean equals(Object o) {
@@ -246,6 +277,8 @@ public class DocumentVersion implements Serializable {
                 ", hashSHA1='" + hashSHA1 + '\'' +
                 ", customVersion='" + customVersion + '\'' +
                 ", customVersionPending='" + customVersionPending + '\'' +
+                ", lastUpdateAuthor='" + lastUpdateAuthor + '\'' +
+                ", lastUpdateAuthorSource='" + lastUpdateAuthorSource + '\'' +
                 '}';
     }
 }

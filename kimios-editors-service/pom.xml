@@ -250,7 +250,6 @@
                             org.kimios.editors,
                             org.kimios.editors.model,
                             io.swagger.annotations,
-                            org.apache.cxf.jaxrs.swagger,
                             *;resolution:=optional
                         </Import-Package>
                     </instructions>

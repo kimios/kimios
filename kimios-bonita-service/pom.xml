@@ -226,8 +226,7 @@
                             org.bonitasoft.engine.bpm.flownode,
                             org.bonitasoft.engine.bpm.process,
                             org.bonitasoft.engine.identity,
-                            io.swagger.annotations,
-                            org.apache.cxf.jaxrs.swagger
+                            io.swagger.annotations
                         </Import-Package>
                     </instructions>
                 </configuration>

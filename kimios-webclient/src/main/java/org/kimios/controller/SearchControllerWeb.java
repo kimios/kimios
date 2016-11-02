@@ -19,6 +19,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import flexjson.JSONSerializer;
 import flexjson.transformer.DateTransformer;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -29,9 +30,12 @@ import org.kimios.kernel.index.query.model.SearchRequest;
 import org.kimios.kernel.index.query.model.SearchRequestSecurity;
 import org.kimios.kernel.index.query.model.SearchResponse;
 import org.kimios.kernel.ws.pojo.Document;
+import org.kimios.utils.configuration.ConfigurationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -64,6 +68,7 @@ public class SearchControllerWeb
         sortFieldMapping.put("documentTypeName", "DocumentTypeName");
         sortFieldMapping.put("workflowStatusName", "DocumentWorkflowStatusName");
     }
+
 
 
     public String execute()
@@ -140,9 +145,7 @@ public class SearchControllerWeb
 
             return retSearchResp(searchResponse);
 
-        }
-
-        // SaveQuery
+        } // SaveQuery
         else if (action.equalsIgnoreCase("SaveQuery")) {
             String sort = parameters.get("sort") != null ? sortFieldMapping.get(parameters.get("sort")) : null;
             String sortDir = parameters.get("dir") != null ? parameters.get("dir").toLowerCase() : null;
@@ -264,6 +267,46 @@ public class SearchControllerWeb
             return retSearchResp( searchResponse );
 
         }*/
+        else if(action.equals("AdvancedExport")){
+
+                // ######### keep below for simulate quick search
+                String positionUidS = parameters.get("dmEntityUid");
+                String positionTypeS = parameters.get("dmEntityType");
+                long positionUid = -1;
+                try {
+                    positionUid = Long.parseLong(positionUidS);
+                } catch (Exception e) {
+                }
+                int positionType = -1;
+                try {
+                    positionType = Integer.parseInt(positionTypeS);
+                } catch (Exception e) {
+                }
+                // ######### end of: keep below for simulate quick search
+
+                List<Criteria> criteriaList = parseCriteriaList(parameters);
+
+                int page = parameters.get("start") != null ? Integer.parseInt(parameters.get("start")) : -1;
+                int pageSize = parameters.get("limit") != null ? Integer.parseInt(parameters.get("limit")) : -1;
+
+                String sort = parameters.get("sort") != null ? sortFieldMapping.get(parameters.get("sort")) : null;
+                String sortDir = parameters.get("dir") != null ? parameters.get("dir").toLowerCase() : null;
+                String virtualPath = parameters.get("virtualPath");
+
+                boolean autoSave = parameters.get("autoSave") != null ? Boolean.parseBoolean(parameters.get("autoSave")) : false;
+                InputStream io =
+                        searchController.advancedSearchDocumentExport(sessionUid, criteriaList, page, pageSize, sort, sortDir,
+                                virtualPath, -1);
+                //copy to file
+
+                String fileName = "Kimios_Export_"
+                        + new SimpleDateFormat("yyyy_MM_dd_HH_mm").format(new Date()) + ".csv";
+                IOUtils.copyLarge(io, new FileOutputStream(ConfigurationManager.getValue("temp.directory") + "/" + fileName));
+                String fullResp =
+                        "[{\"fileExport\":\"" + fileName + "\"}]";
+
+                return fullResp;
+        }
         else {
             return "NOACTION";
         }

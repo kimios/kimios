@@ -27,6 +27,7 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.io.InputStream;
 
 /**
@@ -314,4 +315,12 @@ public interface DocumentService {
             @QueryParam(value = "sourceDocumentId") @WebParam(name = "sourceDocumentId") long sourceDocumentId,
             @QueryParam(value = "documentCopyName") @WebParam(name = "documentCopyName") String documentCopyName)
             throws DMServiceException;
+
+
+    @GET @ApiOperation(value ="")
+    @Path("/get/{folderId}/csv")
+    @Consumes(value = "*/*")
+    @Produces("text/csv")
+    public InputStream exportToCsv(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+                                @PathParam(value = "folderId") @WebParam(name = "folderId") long folderUid) throws DMServiceException;
 }

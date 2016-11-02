@@ -168,6 +168,8 @@ public class FileTransferController
                     // storing data
                     dv.setHashMD5(hashMD5);
                     dv.setHashSHA1(hashSHA1);
+                    dv.setLastUpdateAuthor(session.getUserName());
+                    dv.setLastUpdateAuthorSource(session.getUserSource());
                     RepositoryManager.writeVersion(dv, in);
                     FactoryInstantiator.getInstance().getDocumentVersionFactory().updateDocumentVersion(dv);
                 } else {
@@ -180,6 +182,8 @@ public class FileTransferController
                 if (!hashMD5.equalsIgnoreCase(dv.getHashMD5()) && !hashSHA1.equalsIgnoreCase(dv.getHashSHA1())) {
                     dv.setHashMD5(hashMD5);
                     dv.setHashSHA1(hashSHA1);
+                    dv.setLastUpdateAuthor(session.getUserName());
+                    dv.setLastUpdateAuthorSource(session.getUserSource());
                     RepositoryManager.writeVersion(dv, in);
                     FactoryInstantiator.getInstance().getDocumentVersionFactory().updateDocumentVersion(dv);
                 } else {
@@ -189,6 +193,8 @@ public class FileTransferController
                 && !hashMD5.equalsIgnoreCase(dv.getHashMD5()) && !hashSHA1.equalsIgnoreCase(dv.getHashSHA1())) {
             dv.setHashMD5(hashMD5);
             dv.setHashSHA1(hashSHA1);
+            dv.setLastUpdateAuthor(session.getUserName());
+            dv.setLastUpdateAuthorSource(session.getUserSource());
             RepositoryManager.writeVersion(dv, in);
             FactoryInstantiator.getInstance().getDocumentVersionFactory().updateDocumentVersion(dv);
         }

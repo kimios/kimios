@@ -115,6 +115,15 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
             scope: this
         });
 
+        this.exportCsvButton = new Ext.Toolbar.Button({
+            tooltip: kimios.lang('ExportCsv'),
+            iconCls: 'exportcsv',
+            scope: this,
+            handler: function () {
+                kimios.explorer.getActivePanel().csvExport();
+            }
+        });
+
         this.pagingToolBar = new Ext.PagingToolbar({
             store: this.entityStore,
             displayInfo: true,
@@ -126,6 +135,7 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
             items: [
                 '-',
                 this.editSearchButton,
+                this.exportCsvButton,
                 'Page Size ',
                 comboPageSize
             ]
@@ -589,6 +599,47 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
         this.hideVirtualTree();
         this.contextToolbar.show();
     },
+    
+    csvExport: function(){
+        var tab = kimios.explorer.getActivePanel();
+
+        if (tab.lockSearch) {
+
+            var params = {};
+            for(var c in tab.searchRequest.criteriaList){
+                var el = tab.searchRequest.criteriaList[c];
+                if(el && el.fieldName)
+                    params[el.fieldName] = el.query;
+            }
+            params.autoSave = false;
+            var searchStore = kimios.store.getAdvancedSearchCsvExportStore(params);
+            searchStore.load({
+                scope: this,
+                params: {
+                    start: 0,
+                    limit: this.pagingSize
+                },
+                callback: function (records, options, success) {
+                    if (console) {
+                        console.log(records);
+                    }
+                    window.location.href = getBackEndUrl('__dl__csv__') + '&__f=' + records[0].get('fileExport');
+                }
+            });
+        } else {
+            // standard folder export
+            if(this.type == 2){
+                kimios.ajaxRequestWithAnswer('DmsEntity', {
+                    action: 'exportCsv',
+                    folderId: this.uid
+                }, function(data){
+                    var res = Ext.util.JSON.decode(data.responseText);
+                    window.location.href = getBackEndUrl('__dl__csv__') + '&__f=' + res[0]['fileExport']
+                })
+            }
+        }
+
+    },
 
     advancedSearch: function (searchConfig, form, existingRequest) {
 
@@ -707,7 +758,7 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
     refresh: function () {
         this.loadEntity();
     },
-
+          
     loadEntity: function (entityConfig, me) {
         var tab = kimios.explorer.getActivePanel();
         tab.contextToolbar.show();
@@ -933,6 +984,22 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
                 }
             },
             {
+                header: kimios.lang('LastAuthor'),
+                dataIndex: 'lastUpdateAuthor',
+                width: 80,
+                readOnly: true,
+                sortable: true,
+                menuDisabled: false,
+                align: 'left',
+                renderer: function (val, metaData, record, rowIndex, colIndex, store) {
+                    if(record.data.type == 1 || record.data.type == 2) return;
+                    if (record.data.type == 7) {
+                        return record.data.targetEntity.lastUpdateAuthor + '@' + record.data.targetEntity.lastUpdateAuthorSource;
+                    }
+                    return val + '@' + record.get('lastUpdateAuthorSource');
+                }
+            },
+            {
                 header: kimios.lang('DocumentType'),
                 dataIndex: 'documentTypeName',
                 width: 50,
@@ -1050,6 +1117,22 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
                             return '<span style="' + getStyle('olive') + '">' + val + '</span>';
                         }
                     }
+                }
+            });
+            cmArray.push({
+                header: kimios.lang('ValidatorUser'),
+                dataIndex: 'validatorUserName',
+                width: 80,
+                readOnly: true,
+                sortable: true,
+                menuDisabled: false,
+                align: 'left',
+                renderer: function (val, metaData, record, rowIndex, colIndex, store) {
+                    if(record.data.type == 1 || record.data.type == 2) return;
+                    if (record.data.type == 7) {
+                        return record.data.targetEntity.validatorUserName + '@' + record.data.targetEntity.validatorUserSource;
+                    }
+                    return val + '@' + record.get('validatorUserSource');
                 }
             });
         }

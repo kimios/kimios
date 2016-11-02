@@ -925,7 +925,7 @@ kimios.ContextMenu = new function () {
     this.getEditDocumentItem = function(){
         var menuItem = new Ext.menu.Item({
             text: kimios.lang('StartEdit'),
-            iconCls: 'edit-cls',
+            iconCls: 'editor',
             scope: this,
             handler: function(){
                 //check if data available
@@ -1042,7 +1042,7 @@ kimios.ContextMenu = new function () {
     this.getShareDocumentItem = function () {
         return new Ext.menu.Item({
             text: kimios.lang('Share'),
-            iconCls: 'mail',
+            iconCls: 'share',
             scope: this,
             handler: function () {
                 //show window
@@ -1564,7 +1564,7 @@ kimios.ContextMenu = new function () {
     this.getSetVersionItem = function(){
         return new Ext.menu.Item({
             text: kimios.lang('UpdateCustomVersionTitle'),
-            iconCls: 'version',
+            iconCls: 'setversion',
             scope: this,
             handler: function () {
                 var entity = this.dmEntityPojo.type == 7 ? this.dmEntityPojo.targetEntity : this.dmEntityPojo;

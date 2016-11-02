@@ -148,6 +148,8 @@ public class SolrDocGenerator {
         doc.addField("DocumentVersionHash", version.getHashMD5() + ":" + version.getHashSHA1());
         doc.addField("DocumentVersionCustomVersion", version.getCustomVersion());
         doc.addField("DocumentVersionCustomVersionPending", version.getCustomVersionPending());
+        doc.addField("DocumentVersionLastUpdateAuthor", version.getLastUpdateAuthor());
+        doc.addField("DocumentVersionLastUpdateAuthorSource", version.getLastUpdateAuthorSource());
 
         doc.addField("DocumentCheckout", documentLock != null);
 
@@ -167,6 +169,8 @@ public class SolrDocGenerator {
             if (stOrg.getSuccessorUid() == null) {
                 outOfWorkflow = true;
             }
+            doc.addField("DocumentWorkflowValidatorUser", req.getValidatorUserName());
+            doc.addField("DocumentWorkflowValidatorUserSource", req.getValidatorUserSource());
         }
         doc.addField("DocumentOutWorkflow", outOfWorkflow);
         if (version.getDocumentType() != null && values != null) {

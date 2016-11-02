@@ -378,6 +378,8 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                             // storing data
                             dv.setHashMD5(hashMd5);
                             dv.setHashSHA1(hashSha1);
+                            dv.setLastUpdateAuthor(s.getUserName());
+                            dv.setLastUpdateAuthorSource(s.getUserSource());
                             RepositoryManager.writeVersion(dv, in);
                             FactoryInstantiator.getInstance().getDocumentVersionFactory().updateDocumentVersion(dv);
                         } else {
@@ -390,6 +392,8 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                         if (!hashMd5.equalsIgnoreCase(dv.getHashMD5()) && !hashSha1.equalsIgnoreCase(dv.getHashSHA1())) {
                             dv.setHashMD5(hashMd5);
                             dv.setHashSHA1(hashSha1);
+                            dv.setLastUpdateAuthor(s.getUserName());
+                            dv.setLastUpdateAuthorSource(s.getUserSource());
                             RepositoryManager.writeVersion(dv, in);
                             FactoryInstantiator.getInstance().getDocumentVersionFactory().updateDocumentVersion(dv);
                         } else {
@@ -399,6 +403,8 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                     if (twoLast.size() == 1 && twoLast.contains(dv)) {
                         dv.setHashMD5(hashMd5);
                         dv.setHashSHA1(hashSha1);
+                        dv.setLastUpdateAuthor(s.getUserName());
+                        dv.setLastUpdateAuthorSource(s.getUserSource());
                         RepositoryManager.writeVersion(dv, in);
                         FactoryInstantiator.getInstance().getDocumentVersionFactory().updateDocumentVersion(dv);
                     }
@@ -423,6 +429,8 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                 in = FileCompressionHelper.getTransactionFile(transac);
                 dv.setHashMD5(recHashMD5);
                 dv.setHashSHA1(recHashSHA1);
+                dv.setLastUpdateAuthor(s.getUserName());
+                dv.setLastUpdateAuthorSource(s.getUserSource());
                 RepositoryManager.writeVersion(dv, in);
                 FactoryInstantiator.getInstance().getDocumentVersionFactory().updateDocumentVersion(dv);
             }
@@ -610,6 +618,8 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                             // storing data
                             dv.setHashMD5(hashMd5);
                             dv.setHashSHA1(hashSha1);
+                            dv.setLastUpdateAuthor(s.getUserName());
+                            dv.setLastUpdateAuthorSource(s.getUserSource());
                             RepositoryManager.writeVersion(dv, in);
                             FactoryInstantiator.getInstance().getDocumentVersionFactory().updateDocumentVersion(dv);
                         } else {
@@ -622,6 +632,8 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                         if (!hashMd5.equalsIgnoreCase(dv.getHashMD5()) && !hashSha1.equalsIgnoreCase(dv.getHashSHA1())) {
                             dv.setHashMD5(hashMd5);
                             dv.setHashSHA1(hashSha1);
+                            dv.setLastUpdateAuthor(s.getUserName());
+                            dv.setLastUpdateAuthorSource(s.getUserSource());
                             RepositoryManager.writeVersion(dv, in);
                             FactoryInstantiator.getInstance().getDocumentVersionFactory().updateDocumentVersion(dv);
                         } else {
@@ -631,6 +643,8 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                     if (twoLast.size() == 1 && twoLast.contains(dv)) {
                         dv.setHashMD5(hashMd5);
                         dv.setHashSHA1(hashSha1);
+                        dv.setLastUpdateAuthor(s.getUserName());
+                        dv.setLastUpdateAuthorSource(s.getUserSource());
                         RepositoryManager.writeVersion(dv, in);
                         FactoryInstantiator.getInstance().getDocumentVersionFactory().updateDocumentVersion(dv);
                     }
@@ -770,6 +784,8 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                             // storing data
                             dv.setHashMD5(hashMd5);
                             dv.setHashSHA1(hashSha1);
+                            dv.setLastUpdateAuthor(s.getUserName());
+                            dv.setLastUpdateAuthorSource(s.getUserSource());
                             RepositoryManager.writeVersion(dv, in);
                             FactoryInstantiator.getInstance().getDocumentVersionFactory().updateDocumentVersion(dv);
                         } else {
@@ -782,6 +798,8 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                         if (!hashMd5.equalsIgnoreCase(dv.getHashMD5()) && !hashSha1.equalsIgnoreCase(dv.getHashSHA1())) {
                             dv.setHashMD5(hashMd5);
                             dv.setHashSHA1(hashSha1);
+                            dv.setLastUpdateAuthor(s.getUserName());
+                            dv.setLastUpdateAuthorSource(s.getUserSource());
                             RepositoryManager.writeVersion(dv, in);
                             FactoryInstantiator.getInstance().getDocumentVersionFactory().updateDocumentVersion(dv);
                         } else {
@@ -791,6 +809,8 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                     if (twoLast.size() == 1 && twoLast.contains(dv)) {
                         dv.setHashMD5(hashMd5);
                         dv.setHashSHA1(hashSha1);
+                        dv.setLastUpdateAuthor(s.getUserName());
+                        dv.setLastUpdateAuthorSource(s.getUserSource());
                         RepositoryManager.writeVersion(dv, in);
                         FactoryInstantiator.getInstance().getDocumentVersionFactory().updateDocumentVersion(dv);
                     }
@@ -809,6 +829,8 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                 in = FileCompressionHelper.getTransactionFile(transac);
                 dv.setHashMD5(recHashMD5);
                 dv.setHashSHA1(recHashSHA1);
+                dv.setLastUpdateAuthor(s.getUserName());
+                dv.setLastUpdateAuthorSource(s.getUserSource());
                 RepositoryManager.writeVersion(dv, in);
                 FactoryInstantiator.getInstance().getDocumentVersionFactory().updateDocumentVersion(dv);
 	        }
@@ -1440,6 +1462,8 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                                 documentCopy, dv.getCustomVersion(), dv.getLength(), dv.getDocumentType());
                 newVersion.setHashMD5(dv.getHashMD5());
                 newVersion.setHashSHA1(dv.getHashSHA1());
+                newVersion.setLastUpdateAuthor(session.getUserName());
+                newVersion.setLastUpdateAuthorSource(session.getUserSource());
                 dmsFactoryInstantiator.getDocumentVersionFactory().saveDocumentVersion(newVersion);
                 RepositoryManager.copyVersion(dv, newVersion);
                 //Copying metas values

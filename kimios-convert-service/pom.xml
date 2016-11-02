@@ -226,8 +226,7 @@
                             org.kimios.utils.spring,
                             org.apache.commons.io,
                             org.kimios.utils.configuration,
-                            io.swagger.annotations,
-                            org.apache.cxf.jaxrs.swagger
+                            io.swagger.annotations
                         </Import-Package>
                     </instructions>
                 </configuration>

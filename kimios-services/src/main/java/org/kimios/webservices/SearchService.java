@@ -28,6 +28,8 @@ import org.kimios.webservices.exceptions.DMServiceException;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Response;
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -175,4 +177,20 @@ public interface SearchService {
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @WebParam(name = "searchRequest") SearchRequest searchRequest)
         throws DMServiceException;
+
+    @POST @ApiOperation(value="")
+    @Path("/advanced/csv")
+    @Consumes("application/json")
+    @Produces("text/csv")
+    public InputStream advancedSearchDocumentsExport(
+            @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+            @WebParam(name = "criterias") List<Criteria> criterias,
+            @QueryParam(value = "start") @WebParam(name = "start") int start,
+            @QueryParam(value = "pageSize") @WebParam(name = "pageSize") int pageSize,
+            @QueryParam(value = "sortField") @WebParam(name = "sortField") String sortField,
+            @QueryParam(value = "sortDir") @WebParam(name = "sortDir") String sortDir,
+            @QueryParam(value = "virtualPath") @WebParam(name = "virtualPath") String virtualPath,
+            @QueryParam(value = "requestId") @WebParam(name = "requestId") @DefaultValue(value = "-1") long requestId
+    )
+            throws DMServiceException;
 }

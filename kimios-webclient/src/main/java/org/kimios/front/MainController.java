@@ -20,9 +20,11 @@
 package org.kimios.front;
 
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.kimios.controller.*;
 import org.kimios.core.ParametersExtractor;
+import org.kimios.utils.configuration.ConfigurationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,9 +33,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.util.Map;
 
 /**
@@ -119,7 +119,8 @@ public class MainController extends HttpServlet {
                 c = new FolderActionHandler(params);
             }
             if (action.equalsIgnoreCase("Search")) {
-                c = new SearchControllerWeb(params);
+                SearchControllerWeb scw = new SearchControllerWeb(params);
+                c = scw;
             }
             if (action.equalsIgnoreCase("Share")) {
                 c = new ShareControllerWeb(params);
@@ -159,6 +160,18 @@ public class MainController extends HttpServlet {
             if (action.equalsIgnoreCase("Lang")) {
                 c = new InternationalizationControllerWeb(params);
                 ((InternationalizationControllerWeb) c).setResponse(response);
+            }
+            if(action.equalsIgnoreCase("__dl__csv__")){
+                response.setContentType("text/csv");
+
+                String fileName = request.getParameter("__f");
+                response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+                response.setHeader("Content-Length", String.valueOf(new File(ConfigurationManager.getValue("temp.directory") + "/" +
+                        fileName).length()));
+                IOUtils.copyLarge(new FileInputStream(ConfigurationManager.getValue("temp.directory") + "/" +
+                    fileName), response.getOutputStream());
+                response.flushBuffer();
+                return;
             }
             if (login) {
                 sessionUid = c.execute();

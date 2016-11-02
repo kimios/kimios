@@ -217,8 +217,7 @@
                             org.osgi.service.blueprint,
                             org.apache.cxf.jaxrs.ext,
                             org.apache.commons.io,
-                            io.swagger.annotations,
-                            org.apache.cxf.jaxrs.swagger
+                            io.swagger.annotations
                         </Import-Package>
                     </instructions>
                 </configuration>

@@ -26,6 +26,7 @@ import org.kimios.kernel.ws.pojo.Document;
 import org.kimios.webservices.SearchService;
 
 
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -120,6 +121,23 @@ public class SearchController
         {
             return client.advancedSearchDocuments(sessionId, criteriaList, start, pageSize, sort, sortDir,
                     virtualPath, reqId, mustSave);
+
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
+        }
+    }
+
+    public InputStream advancedSearchDocumentExport(String sessionId, List<Criteria> criteriaList, int start,
+                                              int pageSize, String sort, String sortDir, String virtualPath,
+                                              long reqId )
+            throws Exception
+    {
+        try
+        {
+            return client.advancedSearchDocumentsExport(sessionId, criteriaList, start, pageSize, sort, sortDir,
+                    virtualPath, reqId);
 
         }
         catch ( Exception e )

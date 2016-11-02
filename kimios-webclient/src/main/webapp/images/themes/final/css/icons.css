@@ -382,3 +382,27 @@
     background-image: url(../icons/16x16/news.png) !important;
     background-repeat: no-repeat;
 }
+
+.exportcsv {
+    background-image: url(../icons/16x16/large32book-lines-2.png) !important;
+    background-size: 16px 16px;
+    background-repeat: no-repeat;
+}
+
+.share {
+    background-image: url(../icons/16x16/large32mail.png) !important;
+    background-size: 16px 16px;
+    background-repeat: no-repeat;
+}
+
+.setversion {
+    background-image: url(../icons/16x16/large32book-lines-2.png) !important;
+    background-size: 16px 16px;
+    background-repeat: no-repeat;
+}
+
+.editor {
+    background-image: url(../icons/16x16/large32book-lines-2.png) !important;
+    background-size: 16px 16px;
+    background-repeat: no-repeat;
+}

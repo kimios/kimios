@@ -59,6 +59,8 @@ public class DocumentVersionFactory {
                 }
                 logger.debug("document {}: automatic incrementor generated version {}", document, version);
                 documentVersion.setCustomVersion(version);
+                documentVersion.setLastUpdateAuthor(author);
+                documentVersion.setLastUpdateAuthorSource(authorSource);
             }catch (Exception ex){
                 logger.error("an error happen during automatic version incr for doc {}, version {}",
                         document, documentVersion, ex);

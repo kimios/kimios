@@ -21,6 +21,7 @@ package org.kimios.controller;
 
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
+import org.apache.commons.io.IOUtils;
 import org.kimios.client.controller.DocumentController;
 import org.kimios.client.controller.FolderController;
 import org.kimios.client.controller.SearchController;
@@ -31,7 +32,11 @@ import org.kimios.core.wrappers.DMEntity;
 import org.kimios.kernel.ws.pojo.*;
 import org.kimios.utils.configuration.ConfigurationManager;
 
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -77,7 +82,26 @@ public class DmEntityControllerWeb extends Controller
         if(action.equalsIgnoreCase("permanentDelete")){
             permanentDocumentDelete();
         }
+        if(action.equalsIgnoreCase("exportCsv")){
+            return exportCsv();
+        }
         return "";
+    }
+
+    private String exportCsv() throws Exception {
+
+        long folderId = Long.parseLong(parameters.get("folderId"));
+        InputStream io =
+                documentController.exportToCsv(sessionUid, folderId);
+        //copy to file
+
+        String fileName = "Kimios_Export_"
+                + new SimpleDateFormat("yyyy_MM_dd_HH_mm").format(new Date()) + ".csv";
+        IOUtils.copyLarge(io, new FileOutputStream(ConfigurationManager.getValue("temp.directory") + "/" + fileName));
+        String fullResp =
+                "[{\"fileExport\":\"" + fileName + "\"}]";
+
+        return fullResp;
     }
 
     private String getEntity() throws Exception

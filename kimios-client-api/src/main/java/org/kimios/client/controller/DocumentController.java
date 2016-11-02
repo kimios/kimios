@@ -34,6 +34,7 @@ import org.kimios.webservices.DocumentService;
 import javax.activation.DataHandler;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.wsdl.Input;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
@@ -358,6 +359,14 @@ public class DocumentController {
             throws Exception {
         try {
             client.removeSymbolicLink(sessionId, symbolicLinkId, parentId);
+        } catch (Exception e) {
+            throw new ExceptionHelper().convertException(e);
+        }
+    }
+
+    public InputStream exportToCsv(String sessionId, long folderId) throws Exception {
+        try {
+            return client.exportToCsv(sessionId, folderId);
         } catch (Exception e) {
             throw new ExceptionHelper().convertException(e);
         }

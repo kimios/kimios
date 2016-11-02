@@ -160,6 +160,8 @@ public class DocumentVersionController extends AKimiosController implements IDoc
             //Changing document version to new type
             DocumentType newDt = typeFactory.getDocumentType(documentTypeUid);
             dv.setDocumentType(newDt);
+            dv.setLastUpdateAuthor(session.getUserName());
+            dv.setLastUpdateAuthorSource(session.getUserSource());
             if (ConfigurationManager.getValue("dms.version.date.keep.on.update") != null &&
                     ConfigurationManager.getValue("dms.version.date.keep.on.update").equals("true")) {
                 logger.debug("Will keep previous document update date !");
@@ -249,6 +251,7 @@ public class DocumentVersionController extends AKimiosController implements IDoc
                     ConfigurationManager.getValue("dms.version.date.keep.on.update").equals("true")) {
                 logger.debug("Will keep previous document update date !");
                 dmsFactoryInstantiator.getDocumentVersionFactory().updateDocumentVersionBulk(dv);
+
             } else {
                 logger.debug("Will update document update date !");
                 dv.setModificationDate(new Date());
@@ -278,6 +281,8 @@ public class DocumentVersionController extends AKimiosController implements IDoc
             //Changing document version to new type
             DocumentType newDt = typeFactory.getDocumentType(documentTypeUid);
             dv.setDocumentType(newDt);
+            dv.setLastUpdateAuthor(session.getUserName());
+            dv.setLastUpdateAuthorSource(session.getUserSource());
             if (ConfigurationManager.getValue("dms.version.date.keep.on.update") != null &&
                     ConfigurationManager.getValue("dms.version.date.keep.on.update").equals("true")) {
                 logger.debug("Will keep previous document update date !");
@@ -440,6 +445,8 @@ public class DocumentVersionController extends AKimiosController implements IDoc
                 fact.saveMetaValue(m);
             }
             dv.setModificationDate(new Date());
+            dv.setLastUpdateAuthor(session.getUserName());
+            dv.setLastUpdateAuthorSource(session.getUserSource());
             dmsFactoryInstantiator.getDocumentVersionFactory().updateDocumentVersion(dv);
         } else {
             throw new AccessDeniedException();
@@ -674,8 +681,11 @@ public class DocumentVersionController extends AKimiosController implements IDoc
         DocumentVersion dv = dmsFactoryInstantiator.getDocumentVersionFactory().getDocumentVersion(documentVersionId);
         if (getSecurityAgent()
                 .isWritable(dv.getDocument(), session.getUserName(), session.getUserSource(), session.getGroups())) {
+            if(logger.isDebugEnabled())
             logger.debug("updating custom version id for document {}, version {}, new id: {}", dv.getDocument(), dv, customVersion);
             dv.setCustomVersion(customVersion);
+            dv.setLastUpdateAuthor(session.getUserName());
+            dv.setLastUpdateAuthorSource(session.getUserSource());
             dmsFactoryInstantiator.getDocumentVersionFactory().updateDocumentVersion(dv);
             EventContext.addParameter("version", dv);
 

@@ -116,6 +116,18 @@ public class DocumentFactory {
                 pojo.setVersionUpdateDate(versionUpdateDate);
 
 
+                pojo.setLastUpdateAuthor(doc.get("DocumentVersionLastUpdateAuthor") != null ?
+                doc.get("DocumentVersionLastUpdateAuthor").toString() : "");
+
+                pojo.setLastUpdateAuthorSource(doc.get("DocumentVersionLastUpdateAuthorSource") != null ?
+                        doc.get("DocumentVersionLastUpdateAuthorSource").toString() : "");
+
+                pojo.setLastUpdateAuthor(doc.get("DocumentWorkflowValidatorUser") != null ?
+                        doc.get("DocumentWorkflowValidatorUser").toString() : "");
+
+                pojo.setLastUpdateAuthorSource(doc.get("DocumentWorkflowValidatorUserSource") != null ?
+                        doc.get("DocumentWorkflowValidatorUserSource").toString() : "");
+
                 String documentTypeName = doc.get("DocumentTypeName") != null ? doc.get("DocumentTypeName").toString() : "";
                 pojo.setDocumentTypeName(documentTypeName);
 
