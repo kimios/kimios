@@ -65,6 +65,8 @@ public class Document extends DMEntity implements Serializable
 
     private String validatorUserSource;
 
+    private String workflowName;
+
     private Boolean isOutOfWorkflow = true;
 
     private String documentTypeName;
@@ -88,7 +90,8 @@ public class Document extends DMEntity implements Serializable
             boolean isOutOfWorkflow, String path, String addonDatas,
                     String customVersion, String customVersionPending,
                     String lastUpdateAuthor, String lastUpdateAuthorSource,
-                    String validatorUserName, String validatorUserSource)
+                    String validatorUserName, String validatorUserSource,
+                    String workflowName)
     {
         this.uid = uid;
         this.name = name;
@@ -129,6 +132,8 @@ public class Document extends DMEntity implements Serializable
 
         this.validatorUserName = validatorUserName;
         this.validatorUserSource = validatorUserSource;
+
+        this.workflowName = workflowName;
 
         this.type = 3;
     }
@@ -376,5 +381,13 @@ public class Document extends DMEntity implements Serializable
 
     public void setValidatorUserSource(String validatorUserSource) {
         this.validatorUserSource = validatorUserSource;
+    }
+
+    public String getWorkflowName() {
+        return workflowName;
+    }
+
+    public void setWorkflowName(String workflowName) {
+        this.workflowName = workflowName;
     }
 }

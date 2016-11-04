@@ -33,9 +33,9 @@ public class DocumentFactory {
 
         for (SolrDocument doc : docs) {
             DMEntity basePojo = null;
-            if(doc.getFieldValue("DocumentVersionHash") != null && doc.getFieldValue("DocumentVersionHash").equals("folder")){
+            if (doc.getFieldValue("DocumentVersionHash") != null && doc.getFieldValue("DocumentVersionHash").equals("folder")) {
                 basePojo = new Folder();
-                Folder pojo = (Folder)basePojo;
+                Folder pojo = (Folder) basePojo;
                 //pojo.setIndexScore((Float)doc.getFirstValue("score"));
                 pojo.setUid((Long) doc.get("DocumentUid"));
                 pojo.setName(doc.get("DocumentNameDisplayed").toString());
@@ -56,7 +56,7 @@ public class DocumentFactory {
 
                 for (String fieldName : doc.getFieldNames()) {
 
-                    if(fieldName.startsWith("MetaData")){
+                    if (fieldName.startsWith("MetaData")) {
                         long metaId = Long.parseLong(fieldName.split("_")[1]);
                         org.kimios.kernel.ws.pojo.MetaValue mv = null;
                         mv = new MetaValue();
@@ -82,7 +82,7 @@ public class DocumentFactory {
                         }
                         mv.setMetaId(metaId);
                         mv.getMeta().setUid(metaId);
-                        mv.getMeta().setDocumentTypeUid(doc.getFieldValue("DocumentTypeUid") instanceof List && ((List)doc.getFieldValue("DocumentTypeUid")).size() >  0 ? (Long)((List)doc.getFieldValue("DocumentTypeUid")).get(0) :  -1);
+                        mv.getMeta().setDocumentTypeUid(doc.getFieldValue("DocumentTypeUid") instanceof List && ((List) doc.getFieldValue("DocumentTypeUid")).size() > 0 ? (Long) ((List) doc.getFieldValue("DocumentTypeUid")).get(0) : -1);
                         pojo.getMetaDatas().put(fieldName, mv);
                     }
 
@@ -90,8 +90,8 @@ public class DocumentFactory {
 
             } else {
                 basePojo = new Document();
-                Document pojo = (Document)basePojo;
-                pojo.setIndexScore((Float)doc.getFirstValue("score"));
+                Document pojo = (Document) basePojo;
+                pojo.setIndexScore((Float) doc.getFirstValue("score"));
                 pojo.setUid((Long) doc.get("DocumentUid"));
                 pojo.setName(doc.get("DocumentNameDisplayed").toString());
                 pojo.setPath(doc.get("DocumentPath").toString());
@@ -104,7 +104,7 @@ public class DocumentFactory {
 
                 pojo.setLastVersionId((Long) doc.get("DocumentVersionId"));
                 pojo.setCustomVersion(doc.get("DocumentVersionCustomVersion") != null ?
-                doc.get("DocumentVersionCustomVersion").toString() : "");
+                        doc.get("DocumentVersionCustomVersion").toString() : "");
                 pojo.setCustomVersionPending(doc.get("DocumentVersionCustomVersionPending") != null ?
                         doc.get("DocumentVersionCustomVersionPending").toString() : "");
 
@@ -117,7 +117,7 @@ public class DocumentFactory {
 
 
                 pojo.setLastUpdateAuthor(doc.get("DocumentVersionLastUpdateAuthor") != null ?
-                doc.get("DocumentVersionLastUpdateAuthor").toString() : "");
+                        doc.get("DocumentVersionLastUpdateAuthor").toString() : "");
 
                 pojo.setLastUpdateAuthorSource(doc.get("DocumentVersionLastUpdateAuthorSource") != null ?
                         doc.get("DocumentVersionLastUpdateAuthorSource").toString() : "");
@@ -164,12 +164,19 @@ public class DocumentFactory {
                 pojo.setWorkflowStatusName(doc.get("DocumentWorkflowStatusName") != null ? doc.get("DocumentWorkflowStatusName").toString() : "");
                 pojo.setWorkflowStatusUid((Long) (doc.get("DocumentWorkflowStatusUid") != null ? doc.get("DocumentWorkflowStatusUid") : null));
                 pojo.setOutOfWorkflow((Boolean) doc.get("DocumentOutWorkflow"));
-
+                pojo.setWorkflowStatusName(doc.get("DocumentWorkflowName") != null ? doc.get("DocumentWorkflowName").toString() : "");
+                pojo.setValidatorUserName(doc.get("DocumentWorkflowValidatorUser") != null ? doc.get("DocumentWorkflowValidatorUser").toString() : "");
+                pojo.setValidatorUserSource(doc.get("DocumentWorkflowValidatorUserSource") != null ? doc.get("DocumentWorkflowValidatorUserSource").toString() : "");
+                pojo.setWorkflowName(doc.get("DocumentWorkflowName") != null ? doc.get("DocumentWorkflowName").toString() : "");
+                pojo.setLastUpdateAuthor(doc.get("DocumentVersionLastUpdateAuthor") != null ?
+                        doc.get("DocumentVersionLastUpdateAuthor").toString() : "");
+                pojo.setLastUpdateAuthorSource(doc.get("DocumentVersionLastUpdateAuthorSource") != null ?
+                        doc.get("DocumentVersionLastUpdateAuthorSource").toString() : "");
                 pojo.setAddonDatas((String) doc.get("DocumentRawAddonDatas"));
 
                 for (String fieldName : doc.getFieldNames()) {
 
-                    if(fieldName.startsWith("MetaData")){
+                    if (fieldName.startsWith("MetaData")) {
                         long metaId = Long.parseLong(fieldName.split("_")[1]);
                         org.kimios.kernel.ws.pojo.MetaValue mv = null;
                         mv = new MetaValue();
@@ -195,7 +202,7 @@ public class DocumentFactory {
                         }
                         mv.setMetaId(metaId);
                         mv.getMeta().setUid(metaId);
-                        mv.getMeta().setDocumentTypeUid(doc.getFieldValue("DocumentTypeUid") instanceof List && ((List)doc.getFieldValue("DocumentTypeUid")).size() >  0 ? (Long)((List)doc.getFieldValue("DocumentTypeUid")).get(0) :  -1);
+                        mv.getMeta().setDocumentTypeUid(doc.getFieldValue("DocumentTypeUid") instanceof List && ((List) doc.getFieldValue("DocumentTypeUid")).size() > 0 ? (Long) ((List) doc.getFieldValue("DocumentTypeUid")).get(0) : -1);
                         pojo.getMetaDatas().put(fieldName, mv);
                     }
 
@@ -206,7 +213,6 @@ public class DocumentFactory {
 
 
             documentArrayList.add(basePojo);
-
 
 
         }

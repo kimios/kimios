@@ -169,8 +169,9 @@ public class SolrDocGenerator {
             if (stOrg.getSuccessorUid() == null) {
                 outOfWorkflow = true;
             }
-            doc.addField("DocumentWorkflowValidatorUser", req.getValidatorUserName());
-            doc.addField("DocumentWorkflowValidatorUserSource", req.getValidatorUserSource());
+            doc.addField("DocumentWorkflowValidatorUser", st.getSecurityEntityName());
+            doc.addField("DocumentWorkflowValidatorUserSource", st.getSecurityEntitySource());
+            doc.addField("DocumentWorkflowName", stOrg.getWorkflow().getName());
         }
         doc.addField("DocumentOutWorkflow", outOfWorkflow);
         if (version.getDocumentType() != null && values != null) {

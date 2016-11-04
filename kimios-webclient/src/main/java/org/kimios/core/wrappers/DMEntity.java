@@ -86,6 +86,7 @@ public class DMEntity {
     private String lastUpdateAuthorSource;
     private String validatorUserName;
     private String validatorUserSource;
+    private String workflowName;
 
     private Map<String, MetaValue> metaDatas;
 
@@ -159,6 +160,7 @@ public class DMEntity {
             this.lastUpdateAuthorSource = ((org.kimios.kernel.ws.pojo.Document)entity).getLastUpdateAuthorSource();
             this.validatorUserName = ((org.kimios.kernel.ws.pojo.Document)entity).getValidatorUserName();
             this.validatorUserSource = ((org.kimios.kernel.ws.pojo.Document)entity).getValidatorUserSource();
+            this.workflowName = ((org.kimios.kernel.ws.pojo.Document)entity).getWorkflowName();
         }
         if(entity instanceof SymbolicLink){
             this.parentUid = ((SymbolicLink) entity).getParentUid();
@@ -470,6 +472,14 @@ public class DMEntity {
 
     public void setValidatorUserSource(String validatorUserSource) {
         this.validatorUserSource = validatorUserSource;
+    }
+
+    public String getWorkflowName() {
+        return workflowName;
+    }
+
+    public void setWorkflowName(String workflowName) {
+        this.workflowName = workflowName;
     }
 }
 

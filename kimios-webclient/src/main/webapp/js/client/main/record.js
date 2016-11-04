@@ -179,6 +179,10 @@ kimios.record = {
             type: 'string'
         },
         {
+            name: 'workflowName',
+            type: 'string'
+        },
+        {
             name: 'targetEntity'
         }
     ]),

@@ -1120,6 +1120,15 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
                 }
             });
             cmArray.push({
+                header: kimios.lang('Workflow'),
+                dataIndex: 'workflowName',
+                width: 50,
+                readOnly: true,
+                sortable: true,
+                menuDisabled: false,
+                align: 'left'
+            });
+            cmArray.push({
                 header: kimios.lang('ValidatorUser'),
                 dataIndex: 'validatorUserName',
                 width: 80,
@@ -1132,7 +1141,8 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
                     if (record.data.type == 7) {
                         return record.data.targetEntity.validatorUserName + '@' + record.data.targetEntity.validatorUserSource;
                     }
-                    return val + '@' + record.get('validatorUserSource');
+                    if(val && val != '')
+                        return val + '@' + record.get('validatorUserSource');
                 }
             });
         }
