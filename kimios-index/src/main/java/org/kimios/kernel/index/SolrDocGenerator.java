@@ -53,6 +53,7 @@ public class SolrDocGenerator {
 
     private ObjectMapper mp;
     private WorkflowStatus stOrg;
+    private Workflow workflow;
 
 
     public SolrDocGenerator(Document document, ObjectMapper mp){
@@ -84,6 +85,9 @@ public class SolrDocGenerator {
         if(st != null){
             stOrg = FactoryInstantiator.getInstance().getWorkflowStatusFactory().getWorkflowStatus(
                     st.getWorkflowStatusUid());
+
+            if(stOrg != null)
+                workflow = FactoryInstantiator.getInstance().getWorkflowFactory().getWorkflow(stOrg.getWorkflowUid());
         }
         values = FactoryInstantiator.getInstance().getMetaValueFactory().getMetaValues(version);
         acls = org.kimios.kernel.security.FactoryInstantiator.getInstance().getDMEntitySecurityFactory().getDMEntityACL(
@@ -171,7 +175,8 @@ public class SolrDocGenerator {
             }
             doc.addField("DocumentWorkflowValidatorUser", st.getSecurityEntityName());
             doc.addField("DocumentWorkflowValidatorUserSource", st.getSecurityEntitySource());
-            doc.addField("DocumentWorkflowName", stOrg.getWorkflow().getName());
+            if(workflow != null)
+                doc.addField("DocumentWorkflowName", workflow.getName());
         }
         doc.addField("DocumentOutWorkflow", outOfWorkflow);
         if (version.getDocumentType() != null && values != null) {
