@@ -38,9 +38,21 @@ import java.util.List;
 
 public class DocumentListExportRoute extends RouteBuilder {
 
+
+
+    private String csvPath;
+
+    public String getCsvPath() {
+        return csvPath;
+    }
+
+    public void setCsvPath(String csvPath) {
+        this.csvPath = csvPath;
+    }
+
     @Override
     public void configure() throws Exception {
-        String basePath = ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH) + "/csv";
+        String basePath = csvPath + "/csv";
         BindyCsvDataFormat csvDataFormat = new BindyCsvDataFormat(EntityDelegate.class);
 
         from("direct:csvExport")

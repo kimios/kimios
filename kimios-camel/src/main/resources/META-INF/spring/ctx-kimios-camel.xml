@@ -21,11 +21,17 @@
       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
 
+    <bean id="documentListExportRouteBuilder"
+          class="org.kimios.camel.routes.DocumentListExportRoute">
+        <property name="csvPath" value="${dms.repository.default.path}" />
+    </bean>
+
     <camelContext xmlns="http://camel.apache.org/schema/spring" id="kimios">
         <packageScan>
-            <package>org.kimios.camel.routes</package>
+            <package>org.kimios.camel.routes.ext</package>
             <includes>**.*</includes>
         </packageScan>
+        <routeBuilder ref="documentListExportRouteBuilder" />
     </camelContext>
 </beans>
               
