@@ -35,7 +35,7 @@
             doc.locked, doc.lock_by, doc.lock_source,
             doc.lock_date,
             req.outofworkflow, stat.status_name, stat.last_wfs, stat.validator_user_name, stat.validator_user_source,
-            stat.workflow_name,
+            req.workflow_name,
             doc.dm_entity_addon_data FROM ((((SELECT d.id, dm.dm_entity_name,
             dm.dm_entity_owner, dm.dm_entity_owner_source, dm.creation_date, dm.update_date, dm.dm_entity_addon_data, d.folder_id, d.mime_type,
             d.extension, CASE WHEN (chk.username IS NOT NULL) THEN true ELSE false END AS locked, chk.username AS
@@ -50,21 +50,20 @@
             (a.document_id = b.document_id)))) LEFT JOIN document_type dt ON ((b.document_type_id = dt.id)))) dv ON
             ((dv.document_id = doc.id))) LEFT JOIN (SELECT dws.document_id,
             stu.id AS last_wfs, stu.status_name, dws.security_entity_name as validator_user_name,
-            dws.security_entity_source as validator_user_source, wk.workflow_name
+            dws.security_entity_source as validator_user_source
             FROM
             (((SELECT document_workflow_status.document_id, max(document_workflow_status.status_date) AS status_date
             FROM document_workflow_status GROUP BY document_workflow_status.document_id) c JOIN document_workflow_status
             dws ON (((c.document_id = dws.document_id) AND (c.status_date = dws.status_date))))
             JOIN workflow_status stu ON ((dws.workflow_status_id = stu.id))
-            JOIN workflow wk ON ((wk.id = stu.workflow_id))
             )) stat ON ((stat.document_id = doc.id)))
             LEFT JOIN (SELECT r2.document_id,
             CASE WHEN ((st1.successor_id IS NOT NULL) OR (r2.request_status = ANY (ARRAY[1, 3]))) THEN
-            false ELSE true END AS outofworkflow FROM (((SELECT document_workflow_status_request.document_id,
+            false ELSE true END AS outofworkflow, wk.workflow_name FROM (((SELECT document_workflow_status_request.document_id,
             max(document_workflow_status_request.request_date) AS request_date FROM document_workflow_status_request
             GROUP BY document_workflow_status_request.document_id) r1 JOIN document_workflow_status_request r2 ON
             (((r1.document_id = r2.document_id) AND (r1.request_date = r2.request_date)))) JOIN workflow_status st1 ON
-            ((r2.workflow_status_id = st1.id)))) req ON ((req.document_id = doc.id)))
+            ((r2.workflow_status_id = st1.id)) JOIN workflow wk ON ((wk.id = st1.workflow_id)))) req ON ((req.document_id = doc.id)))
         </subselect>
         <id name="uid" type="long" column="id">
             <generator class="assigned"></generator>
