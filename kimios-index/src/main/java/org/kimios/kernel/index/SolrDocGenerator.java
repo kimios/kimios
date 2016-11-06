@@ -81,7 +81,9 @@ public class SolrDocGenerator {
         req = FactoryInstantiator.getInstance().getDocumentWorkflowStatusRequestFactory().getLastPendingRequest(
                 document);
         if(req != null){
-            workflow = FactoryInstantiator.getInstance().getWorkflowFactory().getWorkflow(req.getWorkflowStatus().getWorkflowUid());
+            WorkflowStatus statusPending = FactoryInstantiator.getInstance().getWorkflowStatusFactory()
+                    .getWorkflowStatus(req.getWorkflowStatusUid());
+            workflow = FactoryInstantiator.getInstance().getWorkflowFactory().getWorkflow(statusPending.getWorkflowUid());
         }
         st = FactoryInstantiator.getInstance().getDocumentWorkflowStatusFactory().getLastDocumentWorkflowStatus(
                 document.getUid());
@@ -170,6 +172,8 @@ public class SolrDocGenerator {
         if (req != null) {
             outOfWorkflow = false;
         }
+        if(workflow != null)
+            doc.addField("DocumentWorkflowName", workflow.getName());
         if (st != null) {
             doc.addField("DocumentWorkflowStatusName", stOrg.getName());
             doc.addField("DocumentWorkflowStatusUid", st.getWorkflowStatusUid());
@@ -178,8 +182,6 @@ public class SolrDocGenerator {
             }
             doc.addField("DocumentWorkflowValidatorUser", st.getSecurityEntityName());
             doc.addField("DocumentWorkflowValidatorUserSource", st.getSecurityEntitySource());
-            if(workflow != null)
-                doc.addField("DocumentWorkflowName", workflow.getName());
         }
         doc.addField("DocumentOutWorkflow", outOfWorkflow);
         if (version.getDocumentType() != null && values != null) {
