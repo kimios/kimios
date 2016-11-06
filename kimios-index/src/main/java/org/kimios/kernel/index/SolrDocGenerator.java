@@ -80,14 +80,17 @@ public class SolrDocGenerator {
         version = FactoryInstantiator.getInstance().getDocumentVersionFactory().getLastDocumentVersion(document);
         req = FactoryInstantiator.getInstance().getDocumentWorkflowStatusRequestFactory().getLastPendingRequest(
                 document);
+        if(req != null){
+            workflow = FactoryInstantiator.getInstance().getWorkflowFactory().getWorkflow(req.getWorkflowStatus().getWorkflowUid());
+        }
         st = FactoryInstantiator.getInstance().getDocumentWorkflowStatusFactory().getLastDocumentWorkflowStatus(
                 document.getUid());
         if(st != null){
             stOrg = FactoryInstantiator.getInstance().getWorkflowStatusFactory().getWorkflowStatus(
                     st.getWorkflowStatusUid());
-
-            if(stOrg != null)
+            if(workflow == null){
                 workflow = FactoryInstantiator.getInstance().getWorkflowFactory().getWorkflow(stOrg.getWorkflowUid());
+            }
         }
         values = FactoryInstantiator.getInstance().getMetaValueFactory().getMetaValues(version);
         acls = org.kimios.kernel.security.FactoryInstantiator.getInstance().getDMEntitySecurityFactory().getDMEntityACL(
