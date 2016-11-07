@@ -164,7 +164,6 @@ public class DocumentFactory {
                 pojo.setWorkflowStatusName(doc.get("DocumentWorkflowStatusName") != null ? doc.get("DocumentWorkflowStatusName").toString() : "");
                 pojo.setWorkflowStatusUid((Long) (doc.get("DocumentWorkflowStatusUid") != null ? doc.get("DocumentWorkflowStatusUid") : null));
                 pojo.setOutOfWorkflow((Boolean) doc.get("DocumentOutWorkflow"));
-                pojo.setWorkflowStatusName(doc.get("DocumentWorkflowName") != null ? doc.get("DocumentWorkflowName").toString() : "");
                 pojo.setValidatorUserName(doc.get("DocumentWorkflowValidatorUser") != null ? doc.get("DocumentWorkflowValidatorUser").toString() : "");
                 pojo.setValidatorUserSource(doc.get("DocumentWorkflowValidatorUserSource") != null ? doc.get("DocumentWorkflowValidatorUserSource").toString() : "");
                 pojo.setWorkflowName(doc.get("DocumentWorkflowName") != null ? doc.get("DocumentWorkflowName").toString() : "");
