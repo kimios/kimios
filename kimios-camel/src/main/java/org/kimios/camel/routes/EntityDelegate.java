@@ -36,67 +36,59 @@ public class EntityDelegate {
     @DataField(columnName = "Nom", pos = 1)
     protected String name;
 
-    protected Calendar creationDate;
-
-    protected Calendar updateDate;
-
-    protected String owner;
-
-    protected String ownerSource;
+    @DataField(columnName = "Version", pos = 2)
+    private String customVersion;
 
     @DataField(columnName = "Chemin", pos = 3)
     protected String path;
 
-    private Long lastVersionId;
-
-    private Calendar versionCreationDate;
-
-    @DataField(columnName = "Date de modification", pos = 5)
-    private Date versionUpdateDate;
-
-    private long folderUid;
-
-    private String mimeType;
-
-    private String extension;
-
-    private Boolean checkedOut = false;
-
-    private String checkoutUser;
-
-    private String checkoutUserSource;
-
-    private Calendar checkoutDate;
-
-    @DataField(columnName = "Taille", pos = 9)
-    private long length;
-
-
-    @DataField(columnName = "Version", pos = 2)
-    private String customVersion;
-
-    private String customVersionPending;
-
-    @DataField(columnName = "Auteur de la dernière modification", pos = 4)
+    @DataField(columnName = "Auteur de la derniere modification", pos = 4)
     private String lastUpdateAuthor;
 
-    private String lastUpdateAuthorSource;
-
-    private Long workflowStatusUid = 0L;
-
-
-    @DataField(columnName = "Statut Chaîne de validation", pos = 8)
-    private String workflowStatusName;
+    @DataField(columnName = "Date de modification", pos = 5, pattern = "dd-MM-yyyy HH:mm")
+    private Date versionUpdateDate;
 
     @DataField(columnName = "Validateur", pos = 6)
     private String validatorUserName;
 
+    @DataField(columnName = "Type", pos = 7)
+    private String documentTypeName;
+
+    @DataField(columnName = "Statut Chaine de validation", pos = 8)
+    private String workflowStatusName;
+
+    @DataField(columnName = "Taille", pos = 9)
+    private long length;
+
+    @DataField(columnName = "Workflow name", pos = 10)
+    private String workflowName;
+
+    @DataField(columnName = "Auteur du document", pos = 11)
+    protected String owner;
+
+    @DataField(columnName = "Date de creation", pos = 12, pattern = "dd-MM-yyyy HH:mm")
+    protected Date creationDate;
+
+
+    protected Calendar updateDate;
+    protected String ownerSource;
+    private Long lastVersionId;
+    private Calendar versionCreationDate;
+    private long folderUid;
+    private String mimeType;
+    private String extension;
+    private Boolean checkedOut = false;
+    private String checkoutUser;
+    private String checkoutUserSource;
+    private Calendar checkoutDate;
+    private String customVersionPending;
+    private String lastUpdateAuthorSource;
+    private Long workflowStatusUid = 0L;
     private String validatorUserSource;
 
     private Boolean isOutOfWorkflow = true;
 
-    @DataField(columnName = "Type", pos = 7)
-    private String documentTypeName;
+
 
     private Long documentTypeUid = 0L;
 
@@ -107,12 +99,16 @@ public class EntityDelegate {
         this.name = document.getName();
         this.path = document.getPath();
         this.documentTypeName = document.getDocumentTypeName();
-        this.validatorUserName = document.getValidatorUserName();
+        if(document.getValidatorUserName() != null && document.getValidatorUserName().length() > 0)
+            this.validatorUserName = document.getValidatorUserName() + "@" + document.getValidatorUserSource();
         this.workflowStatusName = document.getWorkflowStatusName();
         this.versionUpdateDate = document.getVersionUpdateDate().getTime();
         this.length = document.getLength();
         this.customVersion = document.getCustomVersion();
-        this.lastUpdateAuthor = document.getLastUpdateAuthor();
+        this.lastUpdateAuthor = document.getLastUpdateAuthor() + "@" + document.getLastUpdateAuthorSource();
+        this.workflowName = document.getWorkflowName();
+        this.owner = document.getOwner() + "@" + document.getOwnerSource();
+        this.creationDate = document.getCreationDate().getTime();
     }
 
 
