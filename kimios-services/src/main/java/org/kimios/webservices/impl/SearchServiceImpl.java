@@ -266,19 +266,28 @@ public class SearchServiceImpl
             //read file
             String fileName = "Kimios_Export_" + new SimpleDateFormat("yyyy_MM_dd_HH_mm").format(new Date()) + ".csv";
             template.sendBodyAndHeader("direct:csvExport", searchResponse.getRows(), "kimiosCsvFileName", fileName);
+            return new FileInputStream(ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH) + "/csv/" + fileName);
+
+        }
+        catch ( Exception e )
+        {
+            throw getHelper().convertException( e );
+        }
+    }
+
+    public InputStream quickSearchExport(String sessionId, String query, long dmEntityUid, int start,
+                                         int pageSize, String sortField, String sortDir )
+            throws DMServiceException
+    {
+        try
+        {
+            Session s = getHelper().getSession(sessionId);
+            SearchResponse searchResponse =
+                    searchController.quickSearchPojos(s, query, dmEntityUid, start, pageSize, sortField, sortDir);
+            org.apache.camel.ProducerTemplate template = camelContext.createProducerTemplate();
             //read file
-            /*Response.ResponseBuilder response = Response.ok(
-                    new FileInputStream(ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH) + "/csv/" + fileName));
-            response.header("Content-Description", "File Transfer");
-            response.header("Content-Type", "text/csv");
-            response.header("Content-Transfer-Encoding", "binary");
-            response.header("Expires", "0");
-            response.header("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
-            response.header("Pragma", "public");
-            response.header("Content-Length",
-                    new File(ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH) + "/csv/" + fileName).length());
-            response.header("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
-            return response.build();*/
+            String fileName = "Kimios_Export_" + new SimpleDateFormat("yyyy_MM_dd_HH_mm").format(new Date()) + ".csv";
+            template.sendBodyAndHeader("direct:csvExport", searchResponse.getRows(), "kimiosCsvFileName", fileName);
             return new FileInputStream(ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH) + "/csv/" + fileName);
 
         }

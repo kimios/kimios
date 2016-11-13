@@ -163,7 +163,6 @@ public class MainController extends HttpServlet {
             }
             if(action.equalsIgnoreCase("__dl__csv__")){
                 response.setContentType("text/csv");
-
                 String fileName = request.getParameter("__f");
                 response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
                 response.setHeader("Content-Length", String.valueOf(new File(ConfigurationManager.getValue("temp.directory") + "/" +

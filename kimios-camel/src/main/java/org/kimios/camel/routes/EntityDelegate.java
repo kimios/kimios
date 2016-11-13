@@ -32,7 +32,6 @@ import java.util.Map;
 @CsvRecord(separator = ",", generateHeaderColumns = true)
 public class EntityDelegate {
 
-
     @DataField(columnName = "Nom", pos = 1)
     protected String name;
 
@@ -85,13 +84,8 @@ public class EntityDelegate {
     private String lastUpdateAuthorSource;
     private Long workflowStatusUid = 0L;
     private String validatorUserSource;
-
     private Boolean isOutOfWorkflow = true;
-
-
-
     private Long documentTypeUid = 0L;
-
     private Float indexScore;
 
 

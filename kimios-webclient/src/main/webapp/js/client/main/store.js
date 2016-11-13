@@ -193,6 +193,22 @@ kimios.store = {
             baseParams: baseParams
         });
     },
+    
+    getQuickSearchCsvStore: function (searchParams){
+        var baseParams = searchParams;
+        baseParams.action = 'QuickExport';
+        return new DmsJsonStore({
+            url: 'Search',
+            remoteSort: true,
+            idProperty: 'uid',
+            fields: Ext.data.Record.create([
+            {
+                name: 'fileExport',
+                type: 'string'
+            }]),
+            baseParams: baseParams
+        });
+    },
 
     getAdvancedSearchStore: function (searchParams) {
         var baseParams = searchParams;

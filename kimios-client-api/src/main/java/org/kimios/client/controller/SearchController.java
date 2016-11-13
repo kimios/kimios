@@ -63,6 +63,20 @@ public class SearchController
         }
     }
 
+    public InputStream quickSearchExport( String sessionId, int dmEntityType, long dmEntityId, String query, int start,
+                                       int pageSize, String sort, String sortDir )
+            throws Exception
+    {
+        try
+        {
+            return client.quickSearchExport( sessionId, query, dmEntityId, start, pageSize, sort, sortDir );
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
+        }
+    }
+
     /**
      * Make advanced search and get documents
      */

@@ -518,7 +518,6 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
         if (searchConfig.DocumentUid == undefined && searchConfig.DocumentBody == undefined && searchConfig.DocumentTypeUid == undefined) {
             this.quickSearch(searchConfig);
         }
-
         // advanced search
         else {
             this.advancedSearch(searchConfig);
@@ -540,7 +539,7 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
         });
         this.gridPanel.reconfigure(searchStore, this.gridPanel.getColumnModel());
         this.displayPagingToolBar(searchStore);
-
+        var me = this;
         // search by document name
         this.gridPanel.getStore().load({
             scope: this,
@@ -550,6 +549,9 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
             },
             callback: function (records, options, success) {
                 this.lockSearch = true;
+                me.quickSearchMode = true;
+                me.advancedSearchMode = false;
+                this.quickSearchConfig = searchConfig;
                 this.setTitle(kimios.lang('DocumentsFound') + ' (' + this.gridPanel.getStore().getTotalCount() + ')');
                 this.setIconClass('view');
             }
@@ -605,27 +607,55 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
 
         if (tab.lockSearch) {
 
-            var params = {};
-            for(var c in tab.searchRequest.criteriaList){
-                var el = tab.searchRequest.criteriaList[c];
-                if(el && el.fieldName)
-                    params[el.fieldName] = el.query;
-            }
-            params.autoSave = false;
-            var searchStore = kimios.store.getAdvancedSearchCsvExportStore(params);
-            searchStore.load({
-                scope: this,
-                params: {
-                    start: 0,
-                    limit: this.pagingSize
-                },
-                callback: function (records, options, success) {
-                    if (console) {
-                        console.log(records);
+            if(!this.quickSearchMode){
+                var params = null;
+                if(!this.quickSearchConfig){
+                    params = {};
+                    for(var c in tab.searchRequest.criteriaList){
+                        var el = tab.searchRequest.criteriaList[c];
+                        if(el && el.fieldName)
+                            params[el.fieldName] = el.query;
                     }
-                    window.location.href = getBackEndUrl('__dl__csv__') + '&__f=' + records[0].get('fileExport');
+                    params.autoSave = false;
+                } else {
+                    params = this.quickSearchConfig;
                 }
-            });
+                
+                var searchStore = kimios.store.getAdvancedSearchCsvExportStore(params);
+                searchStore.load({
+                    scope: this,
+                    params: {
+                        start: 0,
+                        limit: this.pagingSize
+                    },
+                    callback: function (records, options, success) {
+                        if (console) {
+                            console.log(records);
+                        }
+                        window.location.href = getBackEndUrl('__dl__csv__') + '&__f=' + records[0].get('fileExport');
+                    }
+                });
+            } else {
+                var searchStore = kimios.store.getQuickSearchCsvStore({
+                    name: this.quickSearchConfig.DocumentName,
+                    dmEntityUid: this.quickSearchConfig.fromUid,
+                    dmEntityType: this.quickSearchConfig.fromType
+                });
+                searchStore.load({
+                    scope: this,
+                    params: {
+                        start: 0,
+                        limit: this.pagingSize
+                    },
+                    callback: function (records, options, success) {
+                        if (console) {
+                            console.log(records);
+                        }
+                        window.location.href = getBackEndUrl('__dl__csv__') + '&__f=' + records[0].get('fileExport');
+                    }
+                });
+            }
+
         } else {
             // standard folder export
             if(this.type == 2){
@@ -646,7 +676,13 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
         // search by document body
         this.hideVirtualTree();
 
+        this.quickSearchMode = false;
+        this.quickSearchConfig = null;
+        this.advancedSearchMode = true;
         if (form == undefined) {
+
+            //handle Quick Search On Content !
+            this.quickSearchConfig = searchConfig;
             var searchStore = kimios.store.getAdvancedSearchStore(searchConfig);
             this.gridPanel.reconfigure(searchStore, this.gridPanel.getColumnModel());
             this.displayPagingToolBar(this.gridPanel.getStore());

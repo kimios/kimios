@@ -193,4 +193,17 @@ public interface SearchService {
             @QueryParam(value = "requestId") @WebParam(name = "requestId") @DefaultValue(value = "-1") long requestId
     )
             throws DMServiceException;
+
+    @GET @ApiOperation(value ="")
+    @Path("/quick/csv")
+    @Produces("text/csv")
+    public InputStream quickSearchExport(
+            @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionUid,
+            @QueryParam(value = "query") @WebParam(name = "query") String query,
+            @QueryParam(value = "dmEntityId") @WebParam(name = "dmEntityId") long dmEntityId,
+            @QueryParam(value = "start") @WebParam(name = "start") int start,
+            @QueryParam(value = "pageSize") @WebParam(name = "pageSize") int pageSize,
+            @QueryParam(value = "sortField") @WebParam(name = "sortField") String sortField,
+            @QueryParam(value = "sortDir") @WebParam(name = "sortDir") String sortDir)
+            throws DMServiceException;
 }

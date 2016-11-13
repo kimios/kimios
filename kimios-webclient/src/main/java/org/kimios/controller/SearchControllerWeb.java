@@ -107,6 +107,43 @@ public class SearchControllerWeb
                     + searchResponse.getRows().size() + " results / " + searchResponse.getResults());
 
             return retSearchResp(searchResponse);
+        } else if (action.equalsIgnoreCase("QuickExport")) {
+
+            long dmEntityUid = -1;
+            try {
+                dmEntityUid = Long.parseLong(parameters.get("dmEntityUid"));
+            } catch (Exception e) {
+            }
+            int dmEntityType = -1;
+            try {
+                dmEntityType = Integer.parseInt(parameters.get("dmEntityType"));
+            } catch (Exception e) {
+                dmEntityType = -1;
+            }
+            if (dmEntityUid <= 0) {
+                dmEntityUid = -1;
+                dmEntityType = -1;
+            }
+
+            int page = parameters.get("start") != null ? Integer.parseInt(parameters.get("start")) : -1;
+            int pageSize = parameters.get("limit") != null ? Integer.parseInt(parameters.get("limit")) : -1;
+
+            String sort = parameters.get("sort") != null ? sortFieldMapping.get(parameters.get("sort")) : null;
+            String sortDir = parameters.get("dir") != null ? parameters.get("dir").toLowerCase() : null;
+
+            InputStream io =
+                    searchController.quickSearchExport( sessionUid, dmEntityType, dmEntityUid, parameters.get("name"), page,
+                            pageSize, sort, sortDir);
+
+            //copy to file
+
+            String fileName = "Kimios_Export_"
+                    + new SimpleDateFormat("yyyy_MM_dd_HH_mm").format(new Date()) + ".csv";
+            IOUtils.copyLarge(io, new FileOutputStream(ConfigurationManager.getValue("temp.directory") + "/" + fileName));
+            String fullResp =
+                    "[{\"fileExport\":\"" + fileName + "\"}]";
+
+            return fullResp;
         }
 
         // Advanced
