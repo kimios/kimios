@@ -132,8 +132,8 @@ public class SearchControllerWeb
             String sortDir = parameters.get("dir") != null ? parameters.get("dir").toLowerCase() : null;
 
             InputStream io =
-                    searchController.quickSearchExport( sessionUid, dmEntityType, dmEntityUid, parameters.get("name"), page,
-                            pageSize, sort, sortDir);
+                    searchController.quickSearchExport( sessionUid, dmEntityType, dmEntityUid, parameters.get("name"), 0,
+                            Integer.MAX_VALUE, sort, sortDir);
 
             //copy to file
 
@@ -332,7 +332,8 @@ public class SearchControllerWeb
 
                 boolean autoSave = parameters.get("autoSave") != null ? Boolean.parseBoolean(parameters.get("autoSave")) : false;
                 InputStream io =
-                        searchController.advancedSearchDocumentExport(sessionUid, criteriaList, page, pageSize, sort, sortDir,
+                        searchController.advancedSearchDocumentExport(sessionUid, criteriaList, 0,
+                                Integer.MAX_VALUE, sort, sortDir,
                                 virtualPath, -1);
                 //copy to file
 
