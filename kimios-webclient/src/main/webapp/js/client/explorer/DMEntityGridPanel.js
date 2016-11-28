@@ -611,8 +611,8 @@ kimios.explorer.DMEntityGridPanel = Ext.extend(Ext.Panel, {
                 var params = null;
                 if(!this.quickSearchConfig){
                     params = {};
-                    for(var c in tab.searchRequest.criteriaList){
-                        var el = tab.searchRequest.criteriaList[c];
+                    for(var c in tab.searchRequest.criteriasList){
+                        var el = tab.searchRequest.criteriasList[c];
                         if(el && el.fieldName)
                             params[el.fieldName] = el.query;
                     }
