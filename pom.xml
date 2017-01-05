@@ -115,6 +115,12 @@
         <!-- releases properties -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <KIMIOS_VERSION>${project.version}</KIMIOS_VERSION>
+        <!--aspose stuff-->
+        <aspose-slides.version>16.11.0</aspose-slides.version>
+        <aspose-cells.version>16.11.0</aspose-cells.version>
+        <aspose-words.version>16.11.0</aspose-words.version>
+        <aspose-email.version>16.11.0</aspose-email.version>
+        <aspose.path>${user.home}/Development/DMS/patched-aspose</aspose.path>
     </properties>
     <modules>
         <module>kimios-exceptions</module>

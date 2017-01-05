@@ -20,3 +20,7 @@ kimios-test/**/*.jar
 kimios-bundle-builder/apache-tomcat*.zip
 kimios-utils/src/main/java/org/kimios/utils/version/Version.java
 .credentials
+local_aspose_repo/
+*/local_aspose_repo/
+!local_aspose_repo
+!kimios-convert/local_aspose_repo

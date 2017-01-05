@@ -34,19 +34,14 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <aspose-slides.version>16.11.0</aspose-slides.version>
-        <aspose-cells.version>16.11.0</aspose-cells.version>
-        <aspose-words.version>16.11.0</aspose-words.version>
-        <aspose-email.version>16.11.0</aspose-email.version>
-        <aspose.path>/home/jenkins/jenkins_home/patched-aspose</aspose.path>
+
     </properties>
 
     <repositories>
-        <repository>
-            <id>AsposeJavaAPI</id>
-            <name>Aspose Java API</name>
-            <url>http://maven.aspose.com/artifactory/simple/ext-release-local/</url>
-        </repository>
+            <repository>
+                <id>local_repo</id>
+                <url>file://${project.basedir}/../local_aspose_repo</url>
+            </repository>
     </repositories>
 
     <dependencies>
@@ -324,17 +319,14 @@
             <groupId>com.aspose</groupId>
             <artifactId>aspose-cells</artifactId>
             <version>${aspose-cells.version}</version>
-            <scope>system</scope>
-            <systemPath>${aspose.path}/aspose-cells-16.11.0.jar</systemPath>
+            <classifier>patched</classifier>
         </dependency>
 
         <dependency>
             <groupId>com.aspose</groupId>
             <artifactId>aspose-words</artifactId>
             <version>${aspose-words.version}</version>
-            <classifier>jdk16</classifier>
-            <scope>system</scope>
-            <systemPath>${aspose.path}/aspose-words-16.11.0-jdk16.jar</systemPath>
+            <classifier>patched</classifier>
         </dependency>
 
         <!--<dependency>
@@ -347,8 +339,7 @@
             <groupId>com.aspose</groupId>
             <artifactId>aspose-slides</artifactId>
             <version>${aspose-slides.version}</version>
-            <scope>system</scope>
-            <systemPath>${aspose.path}/aspose-slides-16.11.0.jar</systemPath>
+            <classifier>patched</classifier>
         </dependency>
 
         <dependency>
@@ -381,7 +372,60 @@
     </dependencies>
     <build>
         <plugins>
-
+            <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-install-plugin</artifactId>
+            <executions>
+                <execution>
+                    <id>fiword</id>
+                    <phase>process-resources</phase>
+                    <goals>
+                        <goal>install-file</goal>
+                    </goals>
+                    <configuration>
+                        <localRepositoryPath>local_aspose_repo</localRepositoryPath>
+                        <packaging>jar</packaging>
+                        <file>${aspose.path}/aspose-words-${aspose-words.version}-jdk16.jar</file>
+                        <artifactId>aspose-words</artifactId>
+                        <groupId>com.aspose</groupId>
+                        <classifier>patched</classifier>
+                        <version>${aspose-words.version}</version>
+                    </configuration>
+                </execution>
+                <execution>
+                    <id>ficell</id>
+                    <phase>process-resources</phase>
+                    <goals>
+                        <goal>install-file</goal>
+                    </goals>
+                    <configuration>
+                        <localRepositoryPath>local_aspose_repo</localRepositoryPath>
+                        <file>${aspose.path}/aspose-cells-${aspose-cells.version}.jar</file>
+                        <packaging>jar</packaging>
+                        <artifactId>aspose-cells</artifactId>
+                        <groupId>com.aspose</groupId>
+                        <classifier>patched</classifier>
+                        <version>${aspose-cells.version}</version>
+                    </configuration>
+                </execution>
+                <execution>
+                    <id>fislides</id>
+                    <phase>process-resources</phase>
+                    <goals>
+                        <goal>install-file</goal>
+                    </goals>
+                    <configuration>
+                        <packaging>jar</packaging>
+                        <localRepositoryPath>local_aspose_repo</localRepositoryPath>
+                        <file>${aspose.path}/aspose-slides-${aspose-slides.version}.jar</file>
+                        <artifactId>aspose-slides</artifactId>
+                        <groupId>com.aspose</groupId>
+                        <classifier>patched</classifier>
+                        <version>${aspose-slides.version}</version>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
