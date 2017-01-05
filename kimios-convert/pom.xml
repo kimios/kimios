@@ -34,10 +34,11 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <aspose-slides.version>16.4.0</aspose-slides.version>
-        <aspose-cells.version>8.8.0</aspose-cells.version>
-        <aspose-words.version>16.4.0</aspose-words.version>
-        <aspose-email.version>6.5.0</aspose-email.version>
+        <aspose-slides.version>16.11.0</aspose-slides.version>
+        <aspose-cells.version>16.11.0</aspose-cells.version>
+        <aspose-words.version>16.11.0</aspose-words.version>
+        <aspose-email.version>16.11.0</aspose-email.version>
+        <aspose.path>${user.home}/Development/DMS/patched-aspose</aspose.path>
     </properties>
 
     <repositories>
@@ -319,38 +320,12 @@
             <scope>compile</scope>
         </dependency>
 
-        <!--aspose
-
-
-
-
-        <dependency>
-            <groupId>aspose</groupId>
-            <artifactId>aspose-word</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>aspose</groupId>
-            <artifactId>aspose-excel</artifactId>
-            <version>1.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>aspose</groupId>
-            <artifactId>aspose-mail</artifactId>
-            <version>1.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>aspose</groupId>
-            <artifactId>aspose-slides</artifactId>
-            <version>1.0</version>
-        </dependency>-->
-
         <dependency>
             <groupId>com.aspose</groupId>
             <artifactId>aspose-cells</artifactId>
             <version>${aspose-cells.version}</version>
+            <scope>system</scope>
+            <systemPath>${aspose.path}/aspose-cells-16.11.0.jar</systemPath>
         </dependency>
 
         <dependency>
@@ -358,6 +333,8 @@
             <artifactId>aspose-words</artifactId>
             <version>${aspose-words.version}</version>
             <classifier>jdk16</classifier>
+            <scope>system</scope>
+            <systemPath>${aspose.path}/aspose-words-16.11.0-jdk16.jar</systemPath>
         </dependency>
 
         <!--<dependency>
@@ -370,6 +347,8 @@
             <groupId>com.aspose</groupId>
             <artifactId>aspose-slides</artifactId>
             <version>${aspose-slides.version}</version>
+            <scope>system</scope>
+            <systemPath>${aspose.path}/aspose-slides-16.11.0.jar</systemPath>
         </dependency>
 
         <dependency>
@@ -379,16 +358,13 @@
             <classifier>jdk16</classifier>
         </dependency>
 
-
-
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
             <version>${osgi.version}</version>
             <scope>provided</scope>
         </dependency>
-
-
+        
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
@@ -402,8 +378,6 @@
             <version>${jackson.version}</version>
             <scope>provided</scope>
         </dependency>
-
-
     </dependencies>
     <build>
         <plugins>
