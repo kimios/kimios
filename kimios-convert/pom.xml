@@ -38,7 +38,7 @@
         <aspose-cells.version>16.11.0</aspose-cells.version>
         <aspose-words.version>16.11.0</aspose-words.version>
         <aspose-email.version>16.11.0</aspose-email.version>
-        <aspose.path>${user.home}/Development/DMS/patched-aspose</aspose.path>
+        <aspose.path>/home/jenkins/jenkins_home/patched-aspose</aspose.path>
     </properties>
 
     <repositories>
