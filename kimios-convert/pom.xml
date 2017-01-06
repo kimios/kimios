@@ -40,7 +40,7 @@
     <repositories>
             <repository>
                 <id>local_repo</id>
-                <url>file://${project.basedir}/../local_aspose_repo</url>
+                <url>file://${project.basedir}/../../local_aspose_repo</url>
             </repository>
     </repositories>
 
