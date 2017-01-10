@@ -37,13 +37,6 @@
 
     </properties>
 
-    <repositories>
-            <repository>
-                <id>local_repo</id>
-                <url>file://${project.basedir}/../../local_aspose_repo</url>
-            </repository>
-    </repositories>
-
     <dependencies>
 
         <dependency>
@@ -372,60 +365,6 @@
     </dependencies>
     <build>
         <plugins>
-            <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-install-plugin</artifactId>
-            <executions>
-                <execution>
-                    <id>fiword</id>
-                    <phase>process-resources</phase>
-                    <goals>
-                        <goal>install-file</goal>
-                    </goals>
-                    <configuration>
-                        <localRepositoryPath>local_aspose_repo</localRepositoryPath>
-                        <packaging>jar</packaging>
-                        <file>${aspose.path}/aspose-words-${aspose-words.version}-jdk16.jar</file>
-                        <artifactId>aspose-words</artifactId>
-                        <groupId>com.aspose</groupId>
-                        <classifier>patched</classifier>
-                        <version>${aspose-words.version}</version>
-                    </configuration>
-                </execution>
-                <execution>
-                    <id>ficell</id>
-                    <phase>process-resources</phase>
-                    <goals>
-                        <goal>install-file</goal>
-                    </goals>
-                    <configuration>
-                        <localRepositoryPath>local_aspose_repo</localRepositoryPath>
-                        <file>${aspose.path}/aspose-cells-${aspose-cells.version}.jar</file>
-                        <packaging>jar</packaging>
-                        <artifactId>aspose-cells</artifactId>
-                        <groupId>com.aspose</groupId>
-                        <classifier>patched</classifier>
-                        <version>${aspose-cells.version}</version>
-                    </configuration>
-                </execution>
-                <execution>
-                    <id>fislides</id>
-                    <phase>process-resources</phase>
-                    <goals>
-                        <goal>install-file</goal>
-                    </goals>
-                    <configuration>
-                        <packaging>jar</packaging>
-                        <localRepositoryPath>local_aspose_repo</localRepositoryPath>
-                        <file>${aspose.path}/aspose-slides-${aspose-slides.version}.jar</file>
-                        <artifactId>aspose-slides</artifactId>
-                        <groupId>com.aspose</groupId>
-                        <classifier>patched</classifier>
-                        <version>${aspose-slides.version}</version>
-                    </configuration>
-                </execution>
-            </executions>
-        </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
