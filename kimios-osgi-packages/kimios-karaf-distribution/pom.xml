@@ -72,6 +72,9 @@
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
+
+
+
         
 
     </dependencies>
@@ -157,7 +160,6 @@
                     </execution>
                 </executions>
             </plugin>
-
             <!--<plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
@@ -223,5 +225,76 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>incasposelic</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <version>3.0.0</version>
+                        <executions>
+                            <execution>
+                                <id>copylicfile</id>
+                                <phase>compile</phase>
+                                <goals>
+                                    <goal>copy</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>com.aspose</groupId>
+                                            <artifactId>aspose-patched-lic</artifactId>
+                                            <version>16.11.0</version>
+                                            <type>xml</type>
+                                            <overWrite>true</overWrite>
+                                            <outputDirectory>${basedir}/target/classes/lic</outputDirectory>
+                                            <destFileName>Aspose.Total.Java.lic.words</destFileName>
+                                            <includes>**/*.xml</includes>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.aspose</groupId>
+                                            <artifactId>aspose-patched-lic</artifactId>
+                                            <version>16.11.0</version>
+                                            <type>xml</type>
+                                            <overWrite>true</overWrite>
+                                            <outputDirectory>${basedir}/target/classes/lic</outputDirectory>
+                                            <destFileName>Aspose.Total.Java.lic.cells</destFileName>
+                                            <includes>**/*.xml</includes>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.aspose</groupId>
+                                            <artifactId>aspose-patched-lic</artifactId>
+                                            <version>16.11.0</version>
+                                            <type>xml</type>
+                                            <overWrite>true</overWrite>
+                                            <outputDirectory>${basedir}/target/classes/lic</outputDirectory>
+                                            <destFileName>Aspose.Total.Java.lic.slides</destFileName>
+                                            <includes>**/*.xml</includes>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>com.aspose</groupId>
+                                            <artifactId>aspose-patched-lic</artifactId>
+                                            <version>16.11.0</version>
+                                            <type>xml</type>
+                                            <overWrite>true</overWrite>
+                                            <outputDirectory>${basedir}/target/classes/lic</outputDirectory>
+                                            <destFileName>Aspose.Total.Java.lic.mail</destFileName>
+                                            <includes>**/*.xml</includes>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>
