@@ -373,7 +373,7 @@ kimios.ContextMenu = new function () {
         menu.add(this.getRefreshItem());
         menu.addSeparator();
         menu.add(this.getCommentsItem());
-        if (Ext.isIE || Ext.isGecko) menu.add(this.getGetDocumentMailLinkItem());
+        menu.add(this.getGetDocumentMailLinkItem());
         menu.add(this.getCartItem());
         menu.addSeparator();
         menu.add(this.getPropertiesItem());
@@ -406,7 +406,7 @@ kimios.ContextMenu = new function () {
         menu.add(this.getRefreshItem());
         menu.addSeparator();
         menu.add(this.getCommentsItem());
-        if (Ext.isIE || Ext.isGecko) menu.add(this.getGetDocumentMailLinkItem());
+        menu.add(this.getGetDocumentMailLinkItem());
         menu.add(this.getCartItem());
         menu.addSeparator();
         menu.add(this.getPropertiesItem());
@@ -752,16 +752,23 @@ kimios.ContextMenu = new function () {
 
 
     this.getGetDocumentMailLinkItem = function () {
-        return new Ext.menu.Item({
+        var item = new Ext.menu.Item({
             text: kimios.lang('GetDocumentDownloadLink'),
             iconCls: 'attach',
             scope: this,
-            handler: function () {
-                var entity = this.dmEntityPojo.type == 7 ? this.dmEntityPojo.targetEntity : this.dmEntityPojo;
-                var mailLink = fullServerUrl + kimios.util.getDocumentVersionLink(entity.uid);
-                kimios.copyToClipBoard(mailLink);
-            }
         });
+        item.addListener('afterrender', function(me){
+                    var entity = this.dmEntityPojo.type == 7 ? this.dmEntityPojo.targetEntity : this.dmEntityPojo;
+                    var mailLink = fullServerUrl + kimios.util.getDocumentVersionLink(entity.uid, entity.lastVersionId);
+                    //set mail link
+                    me.getEl().dom.setAttribute('data-clipboard-text', mailLink);
+                    var clp = new Clipboard(me.getEl().dom);
+                    clp.on('success', function(e) {
+                        e.clearSelection();
+                    });
+                }, this);
+
+        return item;
     };
 
     this.getCartItem = function () {

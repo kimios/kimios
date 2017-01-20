@@ -206,6 +206,7 @@
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/reporting/reporting.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/reporting/generic-report.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/i18n/Internationalization.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/clipboard.min.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/main/run.js"></script>
     <script type="text/javascript">
         var defaultTheme = 'green-6CCA18';

@@ -48,34 +48,6 @@ kimios = {
         centerPanel.add(p);
         centerPanel.setActiveTab(p);
     },
-
-    copyToClipBoard: function (dataText) {
-        var cpFunction = function copyToClipboardFF(sText) {
-            try {
-                netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
-                var gClipboardHelper =
-                    Components.classes["@mozilla.org/widget/clipboardhelper;1"]
-                        .getService(Components.interfaces.nsIClipboardHelper);
-                gClipboardHelper.copyString(sText);
-            }
-            catch (e) {
-                alert("Please Check youf Firefox security settings, to enable ClipBoard Access.");
-
-            }
-        };
-
-        var cpFunctionIe = function (sText) {
-            window.clipboardData.setData('Text', sText);
-            return false;
-        };
-        if (Ext.isIE) {
-            cpFunctionIe(dataText);
-        } else if (Ext.isGecko) {
-            cpFunction(dataText);
-        } else {
-            alert("Unavailable feature.");
-        }
-    },
     viewDoc: function (pojo) {
         if (pojo.extension == 'pdf' || pojo.extension == 'PDF') {
             kimios.mask();
