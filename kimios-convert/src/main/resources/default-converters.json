@@ -1,42 +1,46 @@
 {
-  "doc": [{
-    "target": "html",
-    "conv": "org.kimios.converter.impl.DocToHTML"
-  }],
-  "docx": [{
-    "target": "html",
-    "conv": "org.kimios.converter.impl.Docx4jDocxToHTML"
-  }],
-  "eml": [{
-    "target": "html",
-    "conv": "org.kimios.converter.impl.MailToHTML"
-  }],
-  "msg": [{
-    "target": "html",
-    "conv": "org.kimios.converter.impl.MailToHTML"
-  }],
-  "xls": [{
-    "target": "html",
-    "conv": "org.kimios.converter.impl.XlsToHTML"
-  }],
-  "xlsx": [{
-    "target": "html",
-    "conv": "org.kimios.converter.impl.XlsToHTML"
-  }],
-  "ods": [{
-    "target": "html",
-    "conv": "org.kimios.converter.impl.XlsToHTML"
-  }],
-  "asciidoc": [{
-    "target": "html",
-    "conv":"org.kimios.converter.impl.AsciiDocToHTML"
-  }],
-  "adoc": [{
-    "target": "html",
-    "conv":"org.kimios.converter.impl.AsciiDocToHTML"
-  }],
-  "ps": [{
-    "target": "pdf",
-    "conv": "org.kimios.converter.impl.PostscriptToPDF"
-  }]
+    "doc": [{
+        "target": "pdf",
+        "conv": "org.kimios.converter.impl.vendors.aspose.DocxToHTML"
+    }],
+    "docx": [{
+        "target": "pdf",
+        "conv": "org.kimios.converter.impl.vendors.aspose.DocxToHTML"
+    }],
+    "odt": [{
+        "target": "pdf",
+        "1": "org.kimios.converter.impl.vendors.aspose.DocxToHTML"
+    }],
+    "eml": [{
+        "target": "html",
+        "conv": "org.kimios.converter.impl.vendors.aspose.MailToHTML"
+    }],
+    "msg": [{
+        "target": "html",
+        "conv": "org.kimios.converter.impl.vendors.aspose.MailToHTML"
+    }],
+    "xls": [{
+        "target": "pdf",
+        "conv": "org.kimios.converter.impl.vendors.aspose.XlsToHTML"
+    }],
+    "xlsx": [{
+        "target": "pdf",
+        "conv": "org.kimios.converter.impl.vendors.aspose.XlsToHTML"
+    }],
+    "ods": [{
+        "target": "pdf",
+        "conv": "org.kimios.converter.impl.vendors.aspose.XlsToHTML"
+    }],
+    "ppt": [{
+        "target": "pdf",
+        "conv":"org.kimios.converter.impl.vendors.aspose.PptToHTML"
+    }],
+    "pptx": [{
+        "target": "pdf",
+        "conv":"org.kimios.converter.impl.vendors.aspose.PptToHTML"
+    }],
+    "odp": [{
+        "target": "pdf",
+        "conv":"org.kimios.converter.impl.vendors.aspose.PptToHTML"
+    }]
 }
