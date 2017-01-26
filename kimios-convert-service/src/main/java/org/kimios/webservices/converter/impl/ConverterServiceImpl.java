@@ -17,6 +17,7 @@
 package org.kimios.webservices.converter.impl;
 
 import org.kimios.api.InputSource;
+import org.kimios.converter.ConverterDescriptor;
 import org.kimios.converter.controller.IConverterController;
 import org.kimios.kernel.configuration.Config;
 import org.kimios.kernel.security.model.Session;
@@ -35,6 +36,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @WebService(targetNamespace = "http://kimios.org", serviceName = "ConverterService")
 public class ConverterServiceImpl implements ConverterService {
@@ -178,6 +180,16 @@ public class ConverterServiceImpl implements ConverterService {
 
         } catch (Exception e) {
             throw helper.convertException(e);
+        }
+    }
+
+    @Override
+    public Map<String, List<ConverterDescriptor>> descriptors(String sessionId) throws DMServiceException {
+        try{
+            Session session = helper.getSession(sessionId);
+            return convertController.loadDescriptors();
+        }catch (Exception ex){
+            throw helper.convertException(ex);
         }
     }
 

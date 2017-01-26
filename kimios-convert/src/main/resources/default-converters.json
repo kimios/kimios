@@ -1,0 +1,42 @@
+{
+  "doc": [{
+    "target": "html",
+    "conv": "org.kimios.converter.impl.DocToHTML"
+  }],
+  "docx": [{
+    "target": "html",
+    "conv": "org.kimios.converter.impl.Docx4jDocxToHTML"
+  }],
+  "eml": [{
+    "target": "html",
+    "conv": "org.kimios.converter.impl.MailToHTML"
+  }],
+  "msg": [{
+    "target": "html",
+    "conv": "org.kimios.converter.impl.MailToHTML"
+  }],
+  "xls": [{
+    "target": "html",
+    "conv": "org.kimios.converter.impl.XlsToHTML"
+  }],
+  "xlsx": [{
+    "target": "html",
+    "conv": "org.kimios.converter.impl.XlsToHTML"
+  }],
+  "ods": [{
+    "target": "html",
+    "conv": "org.kimios.converter.impl.XlsToHTML"
+  }],
+  "asciidoc": [{
+    "target": "html",
+    "conv":"org.kimios.converter.impl.AsciiDocToHTML"
+  }],
+  "adoc": [{
+    "target": "html",
+    "conv":"org.kimios.converter.impl.AsciiDocToHTML"
+  }],
+  "ps": [{
+    "target": "pdf",
+    "conv": "org.kimios.converter.impl.PostscriptToPDF"
+  }]
+}

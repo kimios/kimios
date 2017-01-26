@@ -18,6 +18,7 @@ package org.kimios.webservices.converter;
 
 import io.swagger.annotations.Api;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
+import org.kimios.converter.ConverterDescriptor;
 import org.kimios.webservices.KimiosExtension;
 import org.kimios.webservices.exceptions.DMServiceException;
 
@@ -27,6 +28,8 @@ import javax.jws.WebService;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.List;
+import java.util.Map;
 
 //@Path("/converter")
 @WebService(targetNamespace = "http://kimios.org", serviceName = "ConverterService")
@@ -131,5 +134,13 @@ public interface ConverterService extends KimiosExtension {
             @PathParam(value="idpreview") String idpreview,
             @PathParam(value="respath") String respath)
             throws DMServiceException;
+
+
+    @GET
+    @Path("/descriptors")
+    @Produces(value = {MediaType.APPLICATION_JSON})
+    Map<String, List<ConverterDescriptor>> descriptors(@QueryParam(value = "sessionId") @WebParam(name="sessionId") String sessionId)
+        throws DMServiceException;
+
 
 }

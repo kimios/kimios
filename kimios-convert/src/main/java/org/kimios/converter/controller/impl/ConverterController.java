@@ -16,10 +16,13 @@
 
 package org.kimios.converter.controller.impl;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.kimios.api.Converter;
 import org.kimios.api.InputSource;
 import org.kimios.converter.ConverterCacheHandler;
+import org.kimios.converter.ConverterDescriptor;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.converter.controller.IConverterController;
 import org.kimios.converter.ConverterFactory;
@@ -30,13 +33,16 @@ import org.kimios.kernel.dms.model.Document;
 import org.kimios.kernel.dms.model.DocumentVersion;
 import org.kimios.kernel.exception.AccessDeniedException;
 import org.kimios.kernel.security.model.Session;
+import org.kimios.utils.configuration.ConfigurationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 
@@ -179,5 +185,17 @@ public class ConverterController extends AKimiosController implements IConverter
             return ConverterCacheHandler.load(idPreview);
         } else
             throw new ConverterException("PreviewNotFound");
+    }
+
+    @Override
+    public Map<String, List<ConverterDescriptor>> loadDescriptors() throws Exception {
+        //load descriptors from config file
+        String configuration = ConfigurationManager.getValue("dms.converters.descriptor.file");
+        com.fasterxml.jackson.databind.ObjectMapper mapper = new ObjectMapper();
+        if(configuration != null && new File(configuration).exists()){
+            return mapper.readValue(new FileInputStream(configuration), new TypeReference<Map<String,List<ConverterDescriptor>>>(){});
+        } else  {
+            return mapper.readValue(this.getClass().getResourceAsStream("/default-converters.json"), new TypeReference<Map<String,List<ConverterDescriptor>>>(){});
+        }
     }
 }

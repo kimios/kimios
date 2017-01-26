@@ -17,10 +17,12 @@
 package org.kimios.converter.controller;
 
 import org.kimios.api.InputSource;
+import org.kimios.converter.ConverterDescriptor;
 import org.kimios.exceptions.ConverterException;
 import org.kimios.kernel.security.model.Session;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IConverterController {
 
@@ -60,5 +62,9 @@ public interface IConverterController {
 
 
     InputSource loadPreviewDataFromCache(Session session, String idPreview) throws ConverterException;
+
+
+
+    Map<String, List<ConverterDescriptor>> loadDescriptors() throws Exception;
 
 }

@@ -72,7 +72,7 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
         kimios.mask();
 
         this.rightsStore = kimios.store.getRightsStore();
-
+        kimios.util.PreviewHelper.init();
         this.rightsStore.load({
             scope: this,
             callback: function (records, options, success) {
