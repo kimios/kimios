@@ -1,46 +1,46 @@
 {
     "doc": [{
         "target": "pdf",
-        "conv": "org.kimios.converter.impl.vendors.aspose.DocxToHTML"
+        "conv": "org.kimios.aspose.converters.DocxToHTML"
     }],
     "docx": [{
         "target": "pdf",
-        "conv": "org.kimios.converter.impl.vendors.aspose.DocxToHTML"
+        "conv": "org.kimios.aspose.converters.DocxToHTML"
     }],
     "odt": [{
         "target": "pdf",
-        "1": "org.kimios.converter.impl.vendors.aspose.DocxToHTML"
+        "1": "org.kimios.aspose.converters.DocxToHTML"
     }],
     "eml": [{
         "target": "html",
-        "conv": "org.kimios.converter.impl.vendors.aspose.MailToHTML"
+        "conv": "org.kimios.aspose.converters.MailToHTML"
     }],
     "msg": [{
         "target": "html",
-        "conv": "org.kimios.converter.impl.vendors.aspose.MailToHTML"
+        "conv": "org.kimios.aspose.converters.MailToHTML"
     }],
     "xls": [{
         "target": "pdf",
-        "conv": "org.kimios.converter.impl.vendors.aspose.XlsToHTML"
+        "conv": "org.kimios.aspose.converters.XlsToHTML"
     }],
     "xlsx": [{
         "target": "pdf",
-        "conv": "org.kimios.converter.impl.vendors.aspose.XlsToHTML"
+        "conv": "org.kimios.aspose.converters.XlsToHTML"
     }],
     "ods": [{
         "target": "pdf",
-        "conv": "org.kimios.converter.impl.vendors.aspose.XlsToHTML"
+        "conv": "org.kimios.aspose.converters.XlsToHTML"
     }],
     "ppt": [{
         "target": "pdf",
-        "conv":"org.kimios.converter.impl.vendors.aspose.PptToHTML"
+        "conv":"org.kimios.aspose.converters.PptToHTML"
     }],
     "pptx": [{
         "target": "pdf",
-        "conv":"org.kimios.converter.impl.vendors.aspose.PptToHTML"
+        "conv":"org.kimios.aspose.converters.PptToHTML"
     }],
     "odp": [{
         "target": "pdf",
-        "conv":"org.kimios.converter.impl.vendors.aspose.PptToHTML"
+        "conv":"org.kimios.aspose.converters.PptToHTML"
     }]
 }

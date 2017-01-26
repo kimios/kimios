@@ -1,6 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2008-2016  DevLib'
+ * Copyright (C) 2008-2017  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -14,23 +14,19 @@
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.kimios.converter.impl.vendors.aspose;
+package org.kimios.aspose.converters;
 
 import com.aspose.email.*;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kimios.api.InputSource;
-import org.kimios.converter.*;
-import org.kimios.converter.impl.*;
-import org.kimios.converter.impl.vendors.aspose.utils.LicenceLoader;
+import org.kimios.converter.ConverterImpl;
+import org.kimios.converter.impl.FileNameGenerator;
+import org.kimios.aspose.converters.utils.LicenceLoader;
 import org.kimios.converter.source.*;
 import org.kimios.exceptions.ConverterException;
 
 import org.kimios.utils.configuration.ConfigurationManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.charset.Charset;
 import java.util.HashMap;
@@ -39,7 +35,6 @@ import java.util.Map;
 public class MailToHTML extends ConverterImpl {
 
 
-    private static Logger logger = LoggerFactory.getLogger(MailToHTML.class);
 
 
     private static final String[] INPUT_EXTENSIONS = new String[]{"eml", "msg"};
@@ -74,7 +69,7 @@ public class MailToHTML extends ConverterImpl {
                 LicenceLoader.loadMailLicence(licenceFile + ".mail");
             }
         }catch (Exception ex){
-            log.error("error while loading Aspose licence", ex);
+            ConverterImpl.log.error("error while loading Aspose licence", ex);
         }
         try {
                 // Convert file located to sourcePath into HTML web content

@@ -318,40 +318,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.aspose</groupId>
-            <artifactId>aspose-cells</artifactId>
-            <version>${aspose-cells.version}</version>
-            <classifier>patched</classifier>
-        </dependency>
-
-        <dependency>
-            <groupId>com.aspose</groupId>
-            <artifactId>aspose-words</artifactId>
-            <version>${aspose-words.version}</version>
-            <classifier>patched</classifier>
-        </dependency>
-
-        <!--<dependency>
-            <groupId>com.aspose</groupId>
-            <artifactId>aspose-pdf</artifactId>
-            <version>${aspose-pdf.version}</version>
-        </dependency>-->
-
-        <dependency>
-            <groupId>com.aspose</groupId>
-            <artifactId>aspose-slides</artifactId>
-            <version>${aspose-slides.version}</version>
-            <classifier>patched</classifier>
-        </dependency>
-
-        <dependency>
-            <groupId>com.aspose</groupId>
-            <artifactId>aspose-email</artifactId>
-            <version>${aspose-email.version}</version>
-            <classifier>jdk16</classifier>
-        </dependency>
-
-        <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
             <version>${osgi.version}</version>

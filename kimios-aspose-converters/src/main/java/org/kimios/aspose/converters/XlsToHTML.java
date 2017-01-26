@@ -1,6 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2008-2016  DevLib'
+ * Copyright (C) 2008-2017  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -14,23 +14,22 @@
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.kimios.converter.impl.vendors.aspose;
+package org.kimios.aspose.converters;
 
 import com.aspose.cells.*;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kimios.api.InputSource;
-import org.kimios.converter.*;
+import org.kimios.converter.ConverterImpl;
 import org.kimios.converter.exceptions.*;
-import org.kimios.converter.impl.*;
-import org.kimios.converter.impl.vendors.aspose.utils.LicenceLoader;
+import org.kimios.converter.impl.FileNameGenerator;
+import org.kimios.aspose.converters.utils.LicenceLoader;
 import org.kimios.converter.source.*;
 import org.kimios.exceptions.ConverterException;
 import org.kimios.utils.configuration.ConfigurationManager;
 
 import java.awt.*;
 import java.io.*;
-import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -73,7 +72,7 @@ public class XlsToHTML extends ConverterImpl {
                 LicenceLoader.loadCellsLicence(licenceFile + ".cells");
             }
         }catch (Exception ex){
-            log.error("error while loading Aspose licence", ex);
+            ConverterImpl.log.error("error while loading Aspose licence", ex);
         }
         try {
             // Copy given resource to temporary repository
@@ -120,7 +119,7 @@ public class XlsToHTML extends ConverterImpl {
             return result;
 
         } catch (Exception e) {
-            log.error("error while converting xls like document", e);
+            ConverterImpl.log.error("error while converting xls like document", e);
             throw new ConverterException(e);
         } finally {
             // Delete obsolete file

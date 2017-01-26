@@ -1,6 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2008-2015  DevLib'
+ * Copyright (C) 2008-2017  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -14,22 +14,27 @@
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.kimios.converter.impl.vendors.aspose;
+package org.kimios.aspose.converters;
 
-import com.aspose.words.*;
+import com.aspose.slides.*;
+import com.aspose.slides.LoadFormat;
+import com.aspose.slides.LoadOptions;
+import com.aspose.slides.SaveFormat;
+import com.aspose.slides.SaveOptions;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.kimios.api.InputSource;
-import org.kimios.converter.*;
+import org.kimios.converter.ConverterImpl;
 import org.kimios.converter.exceptions.*;
-import org.kimios.converter.impl.*;
-import org.kimios.converter.impl.vendors.aspose.utils.LicenceLoader;
+import org.kimios.converter.impl.FileNameGenerator;
+import org.kimios.aspose.converters.utils.LicenceLoader;
 import org.kimios.converter.source.*;
 import org.kimios.exceptions.ConverterException;
 import org.kimios.utils.configuration.ConfigurationManager;
 
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -38,13 +43,10 @@ import java.util.Map;
 /**
  * Allows to convert .DOCX to HTML content
  */
-public class DocxToHTML extends ConverterImpl {
+public class PptToHTML extends ConverterImpl {
 
-    private static final String[] INPUT_EXTENSIONS = new String[]{"docx", "odt", "doc"};
+    private static final String[] INPUT_EXTENSIONS = new String[]{"ppt", "pptx", "odp"};
     private static final String OUTPUT_EXTENSION = "html";
-
-    private static final String[] AVAILABLE_OUTPUT_TYPE = new String[]{"html", "pdf"};
-
 
     private static final Map<String, String> types = new HashMap<String, String>();
     static {
@@ -53,13 +55,12 @@ public class DocxToHTML extends ConverterImpl {
         types.put("html", "text/html");
     }
 
-
-    public DocxToHTML(){
+    public PptToHTML(){
         this.selectedOutput = OUTPUT_EXTENSION;
     }
 
-    public DocxToHTML(String selectedOutput){
-        this.selectedOutput = selectedOutput;
+    public PptToHTML(String outputMimeType){
+        this.selectedOutput = outputMimeType;
     }
 
     @Override
@@ -70,25 +71,23 @@ public class DocxToHTML extends ConverterImpl {
         }
 
         String sourcePath = null;
-
         try{
             String licenceFile = ConfigurationManager.getValue("dms.converters.aspose.lic");
             if(StringUtils.isNotBlank(licenceFile)){
-                LicenceLoader.loadWordLicence(licenceFile + ".words");
+                LicenceLoader.loadSlidesLicence(licenceFile + ".slides");
             }
         }catch (Exception ex){
-            log.error("error while loading Aspose licence", ex);
+            ConverterImpl.log.error("error while loading Aspose licence", ex);
         }
-
         int loadFormat = -1;
-        if(source.getType().equalsIgnoreCase("odt")){
-            loadFormat = LoadFormat.ODT;
-        } else if(source.getType().equalsIgnoreCase("doc")){
-            loadFormat = LoadFormat.DOC;
-        } else if(source.getType().equalsIgnoreCase("docx")){
-            loadFormat = LoadFormat.DOCX;
-        }
-
+        if(source.getType().equalsIgnoreCase("odp")){
+            loadFormat = LoadFormat.Odp;
+        } else if(source.getType().equalsIgnoreCase("ppt")){
+            loadFormat = LoadFormat.Ppt;
+        } else if(source.getType().equalsIgnoreCase("pptx")){
+            loadFormat = LoadFormat.Pptx;
+        } else
+            loadFormat = LoadFormat.Auto;
 
         try {
             // Copy given resource to temporary repository
@@ -96,56 +95,41 @@ public class DocxToHTML extends ConverterImpl {
                     FileNameGenerator.generate() + "." + source.getType();
             IOUtils.copyLarge(source.getInputStream(), new FileOutputStream(sourcePath));
 
-            final String fileName = FileNameGenerator.generate();
+            String fileName = FileNameGenerator.generate();
 
             String baseDir = fileName + "_dir/";
             String fileExtension = StringUtils.isNotBlank(selectedOutput) ? selectedOutput : OUTPUT_EXTENSION;
-            final String finalFileName = fileName + "." + fileExtension;
+            String finalFileName = fileName + "." + fileExtension;
             String targetPath = temporaryRepository + "/" + baseDir;
             String targetPathImg = targetPath + fileName + "_img";
             File imgFolder = new File(targetPathImg);
             imgFolder.mkdirs();
 
 
-            final String finalTargetPath = targetPath;
             // The encoding of the text file is automatically detected.
-            LoadOptions lOptions = new LoadOptions();
-            if(loadFormat != -1)
-                lOptions.setLoadFormat(loadFormat);
-            Document doc = new Document(sourcePath, lOptions);
-            // Create and pass the object which implements the handler methods.
-            SaveOptions saveOptions = null;
-            if(selectedOutput.equalsIgnoreCase("pdf")){
-                PdfSaveOptions pdfSaveOptions = new PdfSaveOptions();
-                pdfSaveOptions.setSaveFormat(SaveFormat.PDF);
-                saveOptions = pdfSaveOptions;
-            } else {
-                HtmlSaveOptions htmlSaveOptions = new HtmlSaveOptions();
-                htmlSaveOptions.setImagesFolder(imgFolder.getAbsolutePath());
-                htmlSaveOptions.setExportTextInputFormFieldAsText(true);
-                htmlSaveOptions.setImageSavingCallback(new HandleImageSaving());
-                htmlSaveOptions.setImagesFolderAlias(externalBaseUrl + fileName);
-                htmlSaveOptions.setDocumentSplitCriteria(DocumentSplitCriteria.PAGE_BREAK);
-                htmlSaveOptions.setDocumentPartSavingCallback(new IDocumentPartSavingCallback() {
+            int saveFormat = -1;
+            LoadOptions loadOptions = new LoadOptions();
+            loadOptions.setLoadFormat(loadFormat);
+            Presentation pres = new Presentation(sourcePath);
 
-                    public int i = 1;
-                    @Override
-                    public void documentPartSaving(DocumentPartSavingArgs documentPartSavingArgs) throws Exception {
-                        documentPartSavingArgs.setDocumentPartFileName(fileName + "_" + i + "." + selectedOutput);
-                        documentPartSavingArgs.setDocumentPartStream(new FileOutputStream(finalTargetPath + "/" + fileName + "_" + i + "." + selectedOutput));
-                        i++;
-                    }
-                });
-                saveOptions = htmlSaveOptions;
+            SaveOptions saveOptions = null;
+            if(selectedOutput != null && selectedOutput.equalsIgnoreCase("pdf")){
+                PdfOptions pdfOptions = new PdfOptions();
+                saveFormat = SaveFormat.Pdf;
+                saveOptions = pdfOptions;
+            } else {
+                HtmlOptions htmlOpt = new HtmlOptions();
+                htmlOpt.setHtmlFormatter(HtmlFormatter.createDocumentFormatter("", false));
+                saveFormat = SaveFormat.Html;
+                saveOptions = htmlOpt;
             }
+
+            //Saving the Presentation1 to HTML
 
             targetPath += "/" + finalFileName;
-            if(selectedOutput.equalsIgnoreCase("pdf")){
-                saveOptions.setSaveFormat(SaveFormat.PDF);
-            } else{
-                saveOptions.setSaveFormat(SaveFormat.HTML);
-            }
-            doc.save(new FileOutputStream(targetPath), saveOptions);
+
+            pres.save(targetPath, saveFormat, saveOptions);
+            // Return HTML-based InputSource
             InputSource result = InputSourceFactory.getInputSource(targetPath, fileName);
             result.setHumanName(source.getName() + "_" + source.getType() + "." + selectedOutput);
             /*
@@ -165,17 +149,6 @@ public class DocxToHTML extends ConverterImpl {
         }
     }
 
-
-    public class HandleImageSaving implements IImageSavingCallback
-    {
-        public void imageSaving(ImageSavingArgs e) throws Exception
-        {
-            // Change any images in the document being exported with the extension of "jpeg" to "jpg".
-            if (e.getImageFileName().endsWith(".jpeg"))
-                e.setImageFileName(e.getImageFileName().replace(".jpeg", ".jpg"));
-        }
-    }
-
     @Override
     public InputSource convertInputSources(List<InputSource> sources) throws ConverterException {
         if(sources.size() == 1){
@@ -189,5 +162,4 @@ public class DocxToHTML extends ConverterImpl {
     public String converterTargetMimeType() {
         return types.get(selectedOutput);
     }
-
 }
