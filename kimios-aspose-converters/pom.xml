@@ -27,6 +27,20 @@
 
     <artifactId>kimios-aspose-converters</artifactId>
 
+
+    <repositories>
+        <repository>
+            <id>aspose</id>
+            <url>http://maven.aspose.com/artifactory/simple/ext-release-local</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>org.kimios</groupId>
@@ -67,14 +81,13 @@
             <groupId>com.aspose</groupId>
             <artifactId>aspose-cells</artifactId>
             <version>${aspose-cells.version}</version>
-            <classifier>patched</classifier>
         </dependency>
 
         <dependency>
             <groupId>com.aspose</groupId>
             <artifactId>aspose-words</artifactId>
             <version>${aspose-words.version}</version>
-            <classifier>patched</classifier>
+            <classifier>jdk16</classifier>
         </dependency>
 
         <!--<dependency>
@@ -87,7 +100,6 @@
             <groupId>com.aspose</groupId>
             <artifactId>aspose-slides</artifactId>
             <version>${aspose-slides.version}</version>
-            <classifier>patched</classifier>
         </dependency>
 
         <dependency>
