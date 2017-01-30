@@ -9,7 +9,7 @@
     }],
     "odt": [{
         "target": "pdf",
-        "1": "org.kimios.aspose.converters.DocxToHTML"
+        "conv": "org.kimios.aspose.converters.DocxToHTML"
     }],
     "eml": [{
         "target": "html",

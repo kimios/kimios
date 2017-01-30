@@ -70,6 +70,7 @@
             <groupId>org.kimios</groupId>
             <artifactId>kimios-utils</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -134,18 +135,21 @@
                         quartz,xerces,xercesImpl,dom4j,commons-codec,commons-collections,commons-lang,javassist,xml-apis,stax-api,commons-logging,slf4j-api,log4j,xalan
                     </excludeDependencies>
                     <instructions>
-                        <Bundle-SymbolicName>kimios-convert</Bundle-SymbolicName>
+                        <Bundle-SymbolicName>kimios-aspose-converters</Bundle-SymbolicName>
                         <Bundle-Name>${project.name}</Bundle-Name>
                         <Export-Package>
                             org.kimios.aspose.converters.*
                         </Export-Package>
-                        <Kimios-Extension>org.kimios.api.Converter</Kimios-Extension>
+                        <Kimios-Extension>org.kimios.converter.ConverterImpl</Kimios-Extension>
                         <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <Include-Resource>{maven-resources}</Include-Resource>
                         <Import-Package>
                             org.slf4j.impl;resolution:=optional,
                             org.kimios.utils.osgi,
+                            org.kimios.api,
+                            org.kimios.exceptions,
+                            org.kimios.converter,
                             org.apache.http*,
                             org.apache.commons.logging,
                             org.apache.commons.io,
