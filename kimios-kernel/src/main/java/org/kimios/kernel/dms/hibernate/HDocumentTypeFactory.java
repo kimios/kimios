@@ -23,7 +23,7 @@ import org.hibernate.criterion.Order;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.model.DocumentType;
 import org.kimios.kernel.dms.DocumentTypeFactory;
-import org.kimios.kernel.exception.DataSourceException;
+import org.kimios.exceptions.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
 
 import java.util.Iterator;

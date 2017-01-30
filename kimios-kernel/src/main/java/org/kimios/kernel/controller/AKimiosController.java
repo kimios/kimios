@@ -16,9 +16,10 @@
 package org.kimios.kernel.controller;
 
 import org.kimios.kernel.jobs.security.IACLUpdater;
+import org.kimios.kernel.reporting.factory.IReportFactoryInstantiator;
 import org.kimios.kernel.security.ISecurityAgent;
-import org.kimios.kernel.security.SecurityAgent;
 import org.kimios.utils.configuration.ConfigurationManager;
+import org.kimios.utils.extension.IExtensionRegistryManager;
 
 public abstract class AKimiosController implements DmsController
 {
@@ -38,15 +39,15 @@ public abstract class AKimiosController implements DmsController
 
     protected org.kimios.kernel.filetransfer.IFileTransferFactoryInstantiator transferFactoryInstantiator;
 
-    protected org.kimios.kernel.reporting.IReportFactoryInstantiator reportFactoryInstantiator;
+    protected IReportFactoryInstantiator reportFactoryInstantiator;
 
-    public org.kimios.kernel.reporting.IReportFactoryInstantiator getReportFactoryInstantiator()
+    public IReportFactoryInstantiator getReportFactoryInstantiator()
     {
         return reportFactoryInstantiator;
     }
 
     public void setReportFactoryInstantiator(
-            org.kimios.kernel.reporting.IReportFactoryInstantiator reportFactoryInstantiator)
+            IReportFactoryInstantiator reportFactoryInstantiator)
     {
         this.reportFactoryInstantiator = reportFactoryInstantiator;
     }
@@ -131,6 +132,16 @@ public abstract class AKimiosController implements DmsController
 
     public void setConfigurationManager(ConfigurationManager configurationManager) {
         this.configurationManager = configurationManager;
+    }
+
+    protected IExtensionRegistryManager extensionRegistryManager;
+
+    public IExtensionRegistryManager getExtensionRegistryManager() {
+        return extensionRegistryManager;
+    }
+
+    public void setExtensionRegistryManager(IExtensionRegistryManager extensionRegistryManager) {
+        this.extensionRegistryManager = extensionRegistryManager;
     }
 }
 

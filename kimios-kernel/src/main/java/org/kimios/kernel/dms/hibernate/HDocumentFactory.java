@@ -28,7 +28,7 @@ import org.kimios.kernel.dms.model.Document;
 import org.kimios.kernel.dms.DocumentFactory;
 import org.kimios.kernel.dms.FactoryInstantiator;
 import org.kimios.kernel.dms.model.Folder;
-import org.kimios.kernel.exception.DataSourceException;
+import org.kimios.exceptions.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
 import org.kimios.utils.configuration.ConfigurationManager;
 

@@ -25,9 +25,9 @@ import org.kimios.kernel.dms.model.*;
 import org.kimios.kernel.events.model.EventContext;
 import org.kimios.api.events.annotations.DmsEvent;
 import org.kimios.api.events.annotations.DmsEventName;
-import org.kimios.kernel.exception.AccessDeniedException;
-import org.kimios.kernel.exception.CheckoutViolationException;
-import org.kimios.kernel.exception.DataSourceException;
+import org.kimios.exceptions.AccessDeniedException;
+import org.kimios.exceptions.CheckoutViolationException;
+import org.kimios.exceptions.DataSourceException;
 import org.kimios.exceptions.DmsKernelException;
 import org.kimios.kernel.mail.MailTemplate;
 import org.kimios.kernel.mail.Mailer;
@@ -40,7 +40,7 @@ import org.kimios.kernel.user.impl.HAuthenticationSource;
 import org.kimios.kernel.utils.PasswordGenerator;
 import org.kimios.kernel.utils.TemplateUtil;
 import org.kimios.utils.configuration.ConfigurationManager;
-import org.kimios.utils.extension.ExtensionRegistryManager;
+import org.kimios.utils.extension.IExtensionRegistryManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,9 +54,19 @@ public class ExtensionController extends AKimiosController implements IExtension
 
     private static Logger logger = LoggerFactory.getLogger(ExtensionController.class);
 
+    private IExtensionRegistryManager extensionRegistryManager;
+
+    public IExtensionRegistryManager getExtensionRegistryManager() {
+        return extensionRegistryManager;
+    }
+
+    public void setExtensionRegistryManager(IExtensionRegistryManager extensionRegistryManager) {
+        this.extensionRegistryManager = extensionRegistryManager;
+    }
+
     /* (non-Javadoc)
-    * @see org.kimios.kernel.controller.impl.IExtensionController#setAttribute(org.kimios.kernel.security.Session, long, java.lang.String, java.lang.String, boolean)
-    */
+        * @see org.kimios.kernel.controller.impl.IExtensionController#setAttribute(org.kimios.kernel.security.Session, long, java.lang.String, java.lang.String, boolean)
+        */
     @DmsEvent(eventName = {DmsEventName.EXTENSION_ENTITY_ATTRIBUTE_SET})
     public void setAttribute(Session session, long dmEntityId, String attributeName, String attributeValue,
                              boolean indexed) throws Exception {
@@ -240,7 +250,7 @@ public class ExtensionController extends AKimiosController implements IExtension
     public List<String> listExtensions(Session session, String extensionType)
         throws ConfigException, AccessDeniedException {
         try {
-            return new ArrayList<String>(ExtensionRegistryManager.itemsAsString(Class.forName(extensionType)));
+            return new ArrayList<String>(extensionRegistryManager.itemsAsString(Class.forName(extensionType)));
         }catch (ClassNotFoundException ex){
             throw new DmsKernelException(ex);
         }

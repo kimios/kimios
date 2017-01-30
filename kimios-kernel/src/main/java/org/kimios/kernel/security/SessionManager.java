@@ -21,7 +21,7 @@ import org.kimios.kernel.events.model.EventContext;
 import org.kimios.api.events.annotations.DmsEvent;
 import org.kimios.api.events.annotations.DmsEventName;
 import org.kimios.api.events.annotations.DmsEventOccur;
-import org.kimios.kernel.exception.DataSourceException;
+import org.kimios.exceptions.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
 import org.kimios.kernel.security.model.AuthenticatedService;
 import org.kimios.kernel.security.model.Session;

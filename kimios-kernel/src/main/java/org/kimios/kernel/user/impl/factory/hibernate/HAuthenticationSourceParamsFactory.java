@@ -16,7 +16,7 @@
 package org.kimios.kernel.user.impl.factory.hibernate;
 
 import org.hibernate.criterion.Restrictions;
-import org.kimios.kernel.exception.AuthenticationSourceException;
+import org.kimios.exceptions.AuthenticationSourceException;
 import org.kimios.kernel.hibernate.HFactory;
 import org.kimios.kernel.user.impl.HAuthenticationSource;
 import org.kimios.kernel.user.model.AuthenticationSourceBean;

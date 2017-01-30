@@ -3,7 +3,7 @@ package org.kimios.kernel.security;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.model.DMEntity;
 import org.kimios.kernel.dms.model.Document;
-import org.kimios.kernel.exception.DataSourceException;
+import org.kimios.exceptions.DataSourceException;
 import org.kimios.kernel.user.model.Group;
 
 import java.util.List;

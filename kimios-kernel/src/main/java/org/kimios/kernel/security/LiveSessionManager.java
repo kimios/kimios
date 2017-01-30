@@ -17,7 +17,7 @@ package org.kimios.kernel.security;
 
 import org.hibernate.HibernateException;
 import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.exception.DataSourceException;
+import org.kimios.exceptions.DataSourceException;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.user.model.Group;
 import org.kimios.kernel.user.model.User;

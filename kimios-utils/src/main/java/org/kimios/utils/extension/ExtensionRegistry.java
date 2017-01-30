@@ -32,14 +32,12 @@ public abstract class ExtensionRegistry<T> {
 
     private static Logger logger = LoggerFactory.getLogger(ExtensionRegistry.class);
 
-
     protected Class<T> registryClass;
 
-    public ExtensionRegistry(){
+    public ExtensionRegistry(IExtensionRegistryManager extensionRegistryManager){
         this.registryClass = (Class<T>) ((ParameterizedType) getClass()
                 .getGenericSuperclass()).getActualTypeArguments()[0];
-        ExtensionRegistryManager.registerRegistry(this);
-
+        extensionRegistryManager.registerRegistry(this);
         //Load
         Collection<Class<T>> classes = null;
         Collection colClass = ClassFinder.findImplement("org.kimios", registryClass);

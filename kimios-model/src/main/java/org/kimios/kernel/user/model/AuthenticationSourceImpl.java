@@ -17,7 +17,7 @@ package org.kimios.kernel.user.model;
 
 import org.hibernate.Session;
 import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.exception.DataSourceException;
+import org.kimios.exceptions.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
 
 /**

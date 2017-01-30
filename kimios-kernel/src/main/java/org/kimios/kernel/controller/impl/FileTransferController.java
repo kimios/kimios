@@ -15,7 +15,7 @@
  */
 package org.kimios.kernel.controller.impl;
 
-import org.kimios.exceptions.ConfigException;
+import org.kimios.exceptions.*;
 import org.kimios.kernel.configuration.Config;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.IFileTransferController;
@@ -23,7 +23,6 @@ import org.kimios.kernel.dms.*;
 import org.kimios.kernel.dms.model.*;
 import org.kimios.api.events.annotations.DmsEvent;
 import org.kimios.api.events.annotations.DmsEventName;
-import org.kimios.kernel.exception.*;
 import org.kimios.kernel.filetransfer.model.DataTransfer;
 import org.kimios.kernel.filetransfer.zip.FileCompressionHelper;
 import org.kimios.kernel.repositories.impl.RepositoryManager;

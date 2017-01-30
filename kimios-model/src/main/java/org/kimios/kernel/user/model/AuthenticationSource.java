@@ -16,7 +16,7 @@
 package org.kimios.kernel.user.model;
 
 import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.exception.DataSourceException;
+import org.kimios.exceptions.DataSourceException;
 
 /**
  * This class provides methods to handle all implemented authentication sources

@@ -18,8 +18,8 @@ package org.kimios.kernel.repositories.model;
 
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.model.DocumentVersion;
-import org.kimios.kernel.exception.DataSourceException;
-import org.kimios.kernel.exception.RepositoryException;
+import org.kimios.exceptions.DataSourceException;
+import org.kimios.exceptions.RepositoryException;
 
 import java.io.*;
 

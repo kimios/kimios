@@ -1,6 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2008-2015  DevLib'
+ * Copyright (C) 2008-2017  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -13,36 +13,36 @@
  * You should have received a copy of the GNU Affero General Public License
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kimios.kernel.reporting;
+package org.kimios.exceptions;
 
-import org.kimios.kernel.reporting.impl.factory.DocumentTransactionsReportFactory;
+import org.kimios.exceptions.DmsKernelException;
 
-public class FactoryInstantiator implements IReportFactoryInstantiator {
-    private static FactoryInstantiator instance;
-
-    synchronized public static FactoryInstantiator getInstance()
+@SuppressWarnings("serial")
+public class IndexException extends DmsKernelException
+{
+    public IndexException()
     {
-        if (instance == null) {
-            instance = new FactoryInstantiator();
-        }
-        return instance;
+        super();
     }
 
-    private FactoryInstantiator()
+    public IndexException(Exception e, String message)
     {
+        super(e, message);
     }
 
-    private DocumentTransactionsReportFactory dtrFactory;
-
-    @Override
-    public DocumentTransactionsReportFactory getDtrFactory()
+    public IndexException(Exception e)
     {
-        return dtrFactory;
+        super(e);
     }
 
-    public void setDtrFactory(DocumentTransactionsReportFactory dtrFactory)
+    public IndexException(String message)
     {
-        this.dtrFactory = dtrFactory;
+        super(message);
+    }
+
+    public String toString()
+    {
+        return "An index error has occured " + this.message;
     }
 }
 

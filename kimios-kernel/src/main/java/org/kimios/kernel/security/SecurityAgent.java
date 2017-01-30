@@ -17,7 +17,7 @@ package org.kimios.kernel.security;
 
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.model.*;
-import org.kimios.kernel.exception.DataSourceException;
+import org.kimios.exceptions.DataSourceException;
 import org.kimios.kernel.security.model.DMSecurityRule;
 import org.kimios.kernel.security.model.Role;
 import org.kimios.kernel.security.model.SecurityEntityType;

@@ -16,9 +16,6 @@
 
 package org.kimios.kernel.index.query.model;
 
-import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.exception.DataSourceException;
-
 /**
  * Created by farf on 5/9/14.
  */

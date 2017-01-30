@@ -23,32 +23,40 @@ import org.kimios.converter.impl.DocToHTML;
 import org.kimios.exceptions.ConverterNotFound;
 import org.kimios.converter.impl.FileToZip;
 import org.kimios.converter.impl.PDFMerger;
+import org.kimios.utils.extension.IExtensionRegistryManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 
 public class ConverterFactory {
 
     private static Logger log = LoggerFactory.getLogger(ConverterFactory.class);
 
-    public static Converter getConverter(String className, String outputFormat) throws ConverterNotFound {
+    private IExtensionRegistryManager extensionRegistryManager;
+
+    public ConverterFactory(IExtensionRegistryManager extensionRegistryManager){
+        this.extensionRegistryManager = extensionRegistryManager;
+    }
+
+    public Converter getConverter(String className, String outputFormat) throws ConverterNotFound {
         try {
             log.debug("calling ConverterFactory for {} {}", className, outputFormat);
-            if (StringUtils.isBlank(outputFormat)) {
-                return (Converter) Class.forName(className).newInstance();
-            } else {
-                return (Converter) Class.forName(className)
-                        .getDeclaredConstructor(new Class[]{String.class}).newInstance(outputFormat);
-            }
 
-        } catch (InvocationTargetException e) {
-            throw new ConverterNotFound(e);
-        } catch (NoSuchMethodException e) {
-            //throw new ConverterNotFound(e);
-            log.warn("converter {} doesn't implement other types, returning default", className);
-            return ConverterFactory.getConverter(className, null);
-        } catch (ClassNotFoundException e) {
+            Collection<Class<? extends ConverterImpl>> impls = extensionRegistryManager.itemsAsClass(ConverterImpl.class);
+
+            log.debug("converter items: " + impls);
+
+            for(Class<? extends ConverterImpl> c: impls){
+                if(c.getName().equals(className)){
+                    if (StringUtils.isBlank(outputFormat)) {
+                        return c.newInstance();
+                    } else {
+                        return (Converter)c.getDeclaredConstructor(new Class[]{String.class}).newInstance(outputFormat);
+                    }
+                }
+            }
             /*
                  Check if given converter corresponds to file extension
              */
@@ -70,9 +78,15 @@ public class ConverterFactory {
                 return new BarcodeTransformer();
             }
 
-            throw new ConverterNotFound(e);
+            throw new ConverterNotFound("Converter Not Found");
 
-        } catch (InstantiationException e) {
+
+        } catch (InvocationTargetException e) {
+            throw new ConverterNotFound(e);
+        } catch (NoSuchMethodException e) {
+            log.warn("converter {} doesn't implement other types, returning default", className);
+            return this.getConverter(className, null);
+        }  catch (InstantiationException e) {
             throw new ConverterNotFound(e);
 
         } catch (IllegalAccessException e) {

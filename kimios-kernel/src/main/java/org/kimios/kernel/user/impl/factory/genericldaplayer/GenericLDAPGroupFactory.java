@@ -16,7 +16,7 @@
 package org.kimios.kernel.user.impl.factory.genericldaplayer;
 
 import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.exception.DataSourceException;
+import org.kimios.exceptions.DataSourceException;
 import org.kimios.kernel.security.model.SecurityEntityType;
 import org.kimios.kernel.user.model.Group;
 import org.kimios.kernel.user.model.GroupFactory;

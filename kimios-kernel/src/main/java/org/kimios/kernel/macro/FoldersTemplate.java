@@ -19,7 +19,7 @@ import org.kimios.kernel.controller.IFolderController;
 import org.kimios.kernel.dms.model.DMEntity;
 import org.kimios.kernel.dms.model.DMEntityType;
 import org.kimios.kernel.dms.FactoryInstantiator;
-import org.kimios.kernel.exception.MacroException;
+import org.kimios.exceptions.MacroException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

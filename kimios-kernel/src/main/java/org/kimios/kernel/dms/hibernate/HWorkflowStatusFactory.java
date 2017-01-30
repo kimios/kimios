@@ -23,7 +23,7 @@ import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.model.Workflow;
 import org.kimios.kernel.dms.model.WorkflowStatus;
 import org.kimios.kernel.dms.WorkflowStatusFactory;
-import org.kimios.kernel.exception.DataSourceException;
+import org.kimios.exceptions.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
 
 import java.util.List;

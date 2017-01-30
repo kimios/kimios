@@ -22,7 +22,7 @@ import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.model.Folder;
 import org.kimios.kernel.dms.model.MetaType;
 import org.kimios.kernel.dms.model.VirtualFolderMetaData;
-import org.kimios.kernel.exception.DataSourceException;
+import org.kimios.exceptions.DataSourceException;
 import org.kimios.kernel.security.model.DMEntityACL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

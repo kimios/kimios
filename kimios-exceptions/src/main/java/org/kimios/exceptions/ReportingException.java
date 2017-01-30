@@ -1,6 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2008-2015  DevLib'
+ * Copyright (C) 2008-2017  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -13,36 +13,34 @@
  * You should have received a copy of the GNU Affero General Public License
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kimios.kernel.exception;
-
-import org.kimios.exceptions.DmsKernelException;
+package org.kimios.exceptions;
 
 @SuppressWarnings("serial")
-public class IndexException extends DmsKernelException
+public class ReportingException extends Exception
 {
-    public IndexException()
+    private String message;
+
+    public ReportingException(Throwable cause)
     {
-        super();
+        super(cause);
+        this.message = cause.getMessage();
     }
 
-    public IndexException(Exception e, String message)
+    public ReportingException(String message)
     {
-        super(e, message);
+        this.message = message;
     }
 
-    public IndexException(Exception e)
+    @Override
+    public String getMessage()
     {
-        super(e);
+        return super.getMessage();
     }
 
-    public IndexException(String message)
-    {
-        super(message);
-    }
-
+    @Override
     public String toString()
     {
-        return "An index error has occured " + this.message;
+        return message;
     }
 }
 

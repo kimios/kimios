@@ -15,18 +15,15 @@
  */
 package org.kimios.kernel.dms.hibernate;
 
-import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.model.DMEntityType;
 import org.kimios.kernel.dms.model.Folder;
 import org.kimios.kernel.dms.FolderFactory;
 import org.kimios.kernel.dms.model.Workspace;
-import org.kimios.kernel.exception.DataSourceException;
+import org.kimios.exceptions.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
 
 import java.util.List;

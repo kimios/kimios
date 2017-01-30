@@ -20,7 +20,7 @@ import org.hibernate.criterion.Order;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.MetaFeedFactory;
 import org.kimios.kernel.dms.model.MetaFeedImpl;
-import org.kimios.kernel.exception.DataSourceException;
+import org.kimios.exceptions.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -20,9 +20,9 @@ import org.kimios.kernel.dms.model.DocumentWorkflowStatus;
 import org.kimios.kernel.dms.model.DocumentWorkflowStatusRequest;
 import org.kimios.api.events.annotations.DmsEvent;
 import org.kimios.api.events.annotations.DmsEventName;
-import org.kimios.kernel.exception.AccessDeniedException;
-import org.kimios.kernel.exception.DataSourceException;
-import org.kimios.kernel.exception.WorkflowException;
+import org.kimios.exceptions.AccessDeniedException;
+import org.kimios.exceptions.DataSourceException;
+import org.kimios.exceptions.WorkflowException;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.ws.pojo.WorkflowStatus;
 

@@ -17,8 +17,8 @@ package org.kimios.kernel.index;
 
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.model.DMEntity;
-import org.kimios.kernel.exception.DataSourceException;
-import org.kimios.kernel.exception.IndexException;
+import org.kimios.exceptions.DataSourceException;
+import org.kimios.exceptions.IndexException;
 import org.kimios.kernel.security.model.DMEntityACL;
 
 import java.io.File;

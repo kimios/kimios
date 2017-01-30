@@ -19,9 +19,7 @@ package org.kimios.osgi.karaf;
 import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 import org.kimios.kernel.dms.model.MetaFeedImpl;
-import org.kimios.kernel.dms.metafeeds.MetaFeedManager;
-import org.kimios.utils.extension.ExtensionRegistry;
-import org.kimios.utils.extension.ExtensionRegistryManager;
+import org.kimios.utils.extension.IExtensionRegistryManager;
 
 
 /**
@@ -36,7 +34,7 @@ public class MetaFeedRegistryViewCommand extends KimiosCommand {
     @Override
     protected void doExecuteKimiosCommand() throws Exception {
         if (this.isConnected()) {
-            for(String c: ExtensionRegistryManager.itemsAsString(MetaFeedImpl.class)){
+            for(String c: extensionRegistryManager.itemsAsString(MetaFeedImpl.class)){
                 System.out.println("(from registry mng) found Meta feed class: " + c);
             }
         }

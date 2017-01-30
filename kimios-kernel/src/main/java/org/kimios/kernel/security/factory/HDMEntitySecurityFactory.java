@@ -15,7 +15,6 @@
  */
 package org.kimios.kernel.security.factory;
 
-import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.NonUniqueObjectException;
 import org.hibernate.criterion.Restrictions;
@@ -24,7 +23,7 @@ import org.hibernate.type.LongType;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.model.DMEntity;
 import org.kimios.kernel.dms.model.DMEntityImpl;
-import org.kimios.kernel.exception.DataSourceException;
+import org.kimios.exceptions.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
 import org.kimios.kernel.security.DMEntitySecurityFactory;
 import org.kimios.kernel.security.model.*;

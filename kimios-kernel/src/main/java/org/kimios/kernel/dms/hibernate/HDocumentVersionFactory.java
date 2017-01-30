@@ -25,7 +25,7 @@ import org.kimios.kernel.dms.model.Document;
 import org.kimios.kernel.dms.model.DocumentType;
 import org.kimios.kernel.dms.model.DocumentVersion;
 import org.kimios.kernel.dms.DocumentVersionFactory;
-import org.kimios.kernel.exception.DataSourceException;
+import org.kimios.exceptions.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
 
 import java.text.SimpleDateFormat;

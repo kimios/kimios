@@ -19,6 +19,7 @@ import org.kimios.kernel.dms.model.MetaFeedImpl;
 import org.kimios.utils.extension.ClassFinder;
 import org.kimios.utils.extension.ExtensionRegistry;
 import org.kimios.utils.extension.ExtensionRegistryManager;
+import org.kimios.utils.extension.IExtensionRegistryManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +29,9 @@ import java.util.List;
 
 public class MetaFeedManager extends ExtensionRegistry<MetaFeedImpl>
 {
-    public MetaFeedManager(){ super(); }
+    public MetaFeedManager(IExtensionRegistryManager extensionRegistryManager) {
+        super(extensionRegistryManager);
+    }
 
 }
 

@@ -15,7 +15,7 @@
  */
 package org.kimios.kernel.dms.utils;
 
-import org.kimios.kernel.exception.NamingException;
+import org.kimios.exceptions.NamingException;
 
 public class PathUtils
 {

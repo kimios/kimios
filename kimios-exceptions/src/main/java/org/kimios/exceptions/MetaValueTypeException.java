@@ -1,6 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2008-2015  DevLib'
+ * Copyright (C) 2008-2017  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -13,44 +13,36 @@
  * You should have received a copy of the GNU Affero General Public License
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kimios.kernel.reporting;
+package org.kimios.exceptions;
 
-import org.hibernate.Session;
-import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.exception.DataSourceException;
+import org.kimios.exceptions.DmsKernelException;
 
-public abstract class ReportImpl
+@SuppressWarnings("serial")
+public class MetaValueTypeException extends DmsKernelException
 {
-    protected String name;
-
-    protected String sessionUid;
-
-    protected Session getSession()
+    public MetaValueTypeException()
     {
-        return FactoryInstantiator.getInstance().getDtrFactory().getSession();
+        super();
     }
 
-    public String getName()
+    public MetaValueTypeException(Exception e, String message)
     {
-        return name;
+        super(e, message);
     }
 
-    public void setName(String name)
+    public MetaValueTypeException(Exception e)
     {
-        this.name = name;
+        super(e);
     }
 
-    public String getSessionUid()
+    public MetaValueTypeException(String message)
     {
-        return sessionUid;
+        super(message);
     }
 
-    public void setSessionUid(String sessionUid)
+    public String toString()
     {
-        this.sessionUid = sessionUid;
+        return "A MetaValueTypeException occured : " + this.getMessage();
     }
-
-    public abstract String getData() throws ConfigException,
-            DataSourceException;
 }
 

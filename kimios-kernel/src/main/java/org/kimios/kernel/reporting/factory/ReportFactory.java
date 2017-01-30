@@ -1,6 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2008-2015  DevLib'
+ * Copyright (C) 2008-2017  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -13,34 +13,13 @@
  * You should have received a copy of the GNU Affero General Public License
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kimios.kernel.exception;
+package org.kimios.kernel.reporting.factory;
 
-@SuppressWarnings("serial")
-public class ReportingException extends Exception
+import org.kimios.exceptions.ConfigException;
+import org.kimios.exceptions.DataSourceException;
+import org.kimios.api.reporting.ReportImpl;
+
+public interface ReportFactory
 {
-    private String message;
-
-    public ReportingException(Throwable cause)
-    {
-        super(cause);
-        this.message = cause.getMessage();
-    }
-
-    public ReportingException(String message)
-    {
-        this.message = message;
-    }
-
-    @Override
-    public String getMessage()
-    {
-        return super.getMessage();
-    }
-
-    @Override
-    public String toString()
-    {
-        return message;
-    }
+    public <T extends ReportImpl> String getReport(T report) throws ConfigException, DataSourceException;
 }
-

@@ -16,7 +16,7 @@
 package org.kimios.kernel.user.impl.factory.joomla;
 
 import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.exception.DataSourceException;
+import org.kimios.exceptions.DataSourceException;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

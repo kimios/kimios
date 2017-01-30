@@ -16,7 +16,7 @@
 package org.kimios.kernel.macro;
 
 import org.kimios.kernel.events.model.EventContext;
-import org.kimios.kernel.exception.MacroException;
+import org.kimios.exceptions.MacroException;
 import org.kimios.kernel.security.model.Session;
 
 public abstract class MacroImpl

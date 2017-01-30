@@ -16,7 +16,7 @@
 package org.kimios.kernel.security.model;
 
 import org.kimios.kernel.dms.model.DMEntity;
-import org.kimios.kernel.exception.XMLException;
+import org.kimios.exceptions.XMLException;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;

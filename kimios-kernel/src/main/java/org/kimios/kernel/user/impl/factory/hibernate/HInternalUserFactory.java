@@ -17,13 +17,11 @@
 package org.kimios.kernel.user.impl.factory.hibernate;
 
 import org.hibernate.HibernateException;
-import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.exception.DataSourceException;
+import org.kimios.exceptions.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
-import org.kimios.kernel.index.query.model.Criteria;
 import org.kimios.kernel.security.FactoryInstantiator;
 import org.kimios.kernel.security.pwdgen.md5.MD5Generator;
 import org.kimios.kernel.user.model.AuthenticationSourceBean;

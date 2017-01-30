@@ -20,10 +20,10 @@ import org.kimios.kernel.dms.model.Folder;
 import org.kimios.kernel.dms.model.MetaValue;
 import org.kimios.api.events.annotations.DmsEvent;
 import org.kimios.api.events.annotations.DmsEventName;
-import org.kimios.kernel.exception.AccessDeniedException;
-import org.kimios.kernel.exception.DataSourceException;
-import org.kimios.kernel.exception.NamingException;
-import org.kimios.kernel.exception.TreeException;
+import org.kimios.exceptions.AccessDeniedException;
+import org.kimios.exceptions.DataSourceException;
+import org.kimios.exceptions.NamingException;
+import org.kimios.exceptions.TreeException;
 import org.kimios.kernel.log.model.DMEntityLog;
 import org.kimios.kernel.security.model.Session;
 

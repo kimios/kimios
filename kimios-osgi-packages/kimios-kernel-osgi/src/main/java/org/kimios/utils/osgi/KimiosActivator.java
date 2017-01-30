@@ -16,11 +16,14 @@
 
 package org.kimios.utils.osgi;
 
+import org.kimios.utils.extension.ExtensionRegistryManager;
+import org.kimios.utils.extension.IExtensionRegistryManager;
 import org.osgi.framework.*;
 import org.osgi.service.cm.ManagedService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Dictionary;
 import java.util.Hashtable;
 
 /**
@@ -53,7 +56,11 @@ public class KimiosActivator implements BundleActivator {
 
 
         int trackStates = Bundle.ACTIVE;
-        kimiosExtender = new KimiosExtender(context, trackStates, null);
+
+        //manually register Extension Registry Manager, and pass it to extender
+        IExtensionRegistryManager extensionRegistryManager = new ExtensionRegistryManager();
+        context.registerService(IExtensionRegistryManager.class, extensionRegistryManager, null);
+        kimiosExtender = new KimiosExtender(context, trackStates, null, extensionRegistryManager);
         kimiosExtender.open();
         logger.info("Kimios Extender Loaded");
     }

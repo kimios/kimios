@@ -19,17 +19,15 @@ import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.IRuleManagementController;
 import org.kimios.kernel.dms.model.DMEntity;
-import org.kimios.kernel.exception.AccessDeniedException;
-import org.kimios.kernel.exception.DataSourceException;
+import org.kimios.exceptions.AccessDeniedException;
+import org.kimios.exceptions.DataSourceException;
 import org.kimios.kernel.rules.model.EventBean;
 import org.kimios.kernel.rules.model.RuleBean;
 import org.kimios.kernel.rules.RuleBeanFactory;
 import org.kimios.kernel.rules.impl.RuleImpl;
 import org.kimios.kernel.security.SecurityAgent;
 import org.kimios.kernel.security.model.Session;
-import org.kimios.utils.extension.ClassFinder;
 import org.kimios.kernel.utils.XmlClassSerializer;
-import org.kimios.utils.extension.ExtensionRegistryManager;
 import org.springframework.transaction.annotation.Transactional;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -102,7 +100,7 @@ public class RuleManagementController extends AKimiosController implements IRule
         *
         */
         Collection<Class<? extends  RuleImpl>> ruleClasses =
-                ExtensionRegistryManager.itemsAsClass(RuleImpl.class);
+            extensionRegistryManager.itemsAsClass(RuleImpl.class);
         return ruleClasses;
     }
 

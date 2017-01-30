@@ -15,7 +15,7 @@
  */
 package org.kimios.kernel.controller.impl;
 
-import org.kimios.exceptions.ConfigException;
+import org.kimios.exceptions.*;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.IDocumentVersionController;
 import org.kimios.kernel.dms.*;
@@ -24,7 +24,6 @@ import org.kimios.kernel.dms.model.*;
 import org.kimios.kernel.events.model.EventContext;
 import org.kimios.api.events.annotations.DmsEvent;
 import org.kimios.api.events.annotations.DmsEventName;
-import org.kimios.kernel.exception.*;
 import org.kimios.kernel.repositories.impl.RepositoryManager;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.utils.configuration.ConfigurationManager;

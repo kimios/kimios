@@ -20,7 +20,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.type.StringType;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.EnumerationValueFactory;
-import org.kimios.kernel.exception.DataSourceException;
+import org.kimios.exceptions.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
 
 import java.util.List;

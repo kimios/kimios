@@ -100,9 +100,10 @@
         <property name="contextHolder" ref="contextHolder" />
     </bean>
 
-    <bean id="eventHandlerManager" class="org.kimios.kernel.events.EventHandlerManager" factory-method="getInstance"
-            init-method="init">
-           <property name="configurationManager" ref="configurationManager" />
+    <bean id="eventHandlerManager" class="org.kimios.kernel.events.EventHandlerManager" init-method="init">
+        <constructor-arg ref="extensionRegistryManager" />
+
+        <property name="configurationManager" ref="configurationManager" />
     </bean>
 
     <bean id="eventInterceptor" class="org.kimios.kernel.events.interceptors.GenericInterceptor" init-method="init">

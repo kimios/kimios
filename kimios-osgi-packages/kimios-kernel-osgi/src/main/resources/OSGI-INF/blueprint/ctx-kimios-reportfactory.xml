@@ -24,7 +24,7 @@
     <bean id="dtrFactory" class="org.kimios.kernel.reporting.impl.factory.DocumentTransactionsReportFactory">
         <property name="provider" ref="dbFactoryProvider"></property>
     </bean>
-    <bean id="reportfi" class="org.kimios.kernel.reporting.FactoryInstantiator" factory-method="getInstance">
+    <bean id="reportfi" class="org.kimios.kernel.reporting.factory.FactoryInstantiator" factory-method="getInstance">
         <property name="dtrFactory" ref="dtrFactory" />
     </bean>
 </blueprint>

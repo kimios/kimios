@@ -18,7 +18,7 @@ package org.kimios.kernel.dms.hibernate;
 
 import org.kimios.kernel.dms.model.PathTemplate;
 import org.kimios.kernel.dms.utils.PathElement;
-import org.kimios.kernel.exception.AccessDeniedException;
+import org.kimios.exceptions.AccessDeniedException;
 import org.kimios.kernel.hibernate.HFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

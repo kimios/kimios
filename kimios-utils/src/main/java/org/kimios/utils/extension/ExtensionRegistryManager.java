@@ -20,111 +20,114 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by farf on 6/22/14.
  */
-public class ExtensionRegistryManager {
-
+public class ExtensionRegistryManager implements IExtensionRegistryManager {
 
     private static Logger logger = LoggerFactory.getLogger(ExtensionRegistryManager.class);
+    
+    private Map<String, ExtensionRegistry> _registries = new ConcurrentHashMap<String, ExtensionRegistry>();
 
-    private static ExtensionRegistryManager _registryManager;
+    private Map<String, ClassLoader> _tempItems = new ConcurrentHashMap<String, ClassLoader>();
 
-    private Map<String, ExtensionRegistry> _registries;
-
-
-    private Map<String, ClassLoader> _tempItems = new HashMap<String, ClassLoader>();
-
-
-    public synchronized static ExtensionRegistryManager init(){
-        if(_registryManager == null){
-            _registryManager = new ExtensionRegistryManager();
-            _registryManager._registries = new HashMap<String, ExtensionRegistry>();
-        }
-        return _registryManager;
-    }
-
-    private ExtensionRegistryManager(){ }
+    public ExtensionRegistryManager(){ }
 
 
-    public static void addClass(Class clazz){
-        ExtensionRegistry toAddRegistry = null;
-        Class spClass = clazz;
-        while(spClass != null && !spClass.equals(Object.class)){
-            if(logger.isDebugEnabled())
-                logger.debug("looking for registry for ext class {} ---> {}", spClass, _registryManager._registries.get(spClass.getName()));
-            if (_registryManager._registries.get(spClass.getName()) != null){
-                toAddRegistry = _registryManager._registries.get(spClass.getName());
-                logger.info("found registry for {}: {}", spClass, toAddRegistry);
-                break;
-            }
-            spClass = spClass.getSuperclass();
-        }
+    @Override
+    synchronized public void addClass(Class clazz){
+        logger.debug("looking for registry which can handle class {}. (available registries {})",
+                this,
+                clazz,
+                _registries.size(),
+                _registries);
+        ExtensionRegistry toAddRegistry = findMatchingRegistry(clazz);
+
         if(toAddRegistry == null){
-            if(!_registryManager._tempItems.keySet().contains(clazz)){
-                _registryManager._tempItems.put(clazz.getName(), clazz.getClassLoader());
-                logger.info("temporarily added extension for type {}: {}", spClass, clazz);
+            if(!this._tempItems.keySet().contains(clazz)){
+                this._tempItems.put(clazz.getName(), clazz.getClassLoader());
+                logger.debug("temporarily added extension for type {} ==> Final Size is {}",
+                        clazz,
+                        this._tempItems.size());
             }
         } else {
-            logger.info("adding class to registry {}: {}",spClass, clazz);
+            logger.debug("adding class to registry {} {}",
+                    toAddRegistry.registryClass,
+                    clazz);
             toAddRegistry.addClass(clazz);
         }
     }
 
 
-    protected static void registerRegistry(ExtensionRegistry registry) {
-        init();
-        logger.info("registering extension registry {}", registry.getClass().getName());
-        if (_registryManager._registries.get(registry.registryClass.getName()) != null) {
+    synchronized public void registerRegistry(ExtensionRegistry registry) {
+        logger.debug("registering extension registry {} handling type: {}. ", this,
+                registry.getClass().getName(),
+                registry.registryClass);
+        if (this._registries.get(registry.registryClass.getName()) != null) {
             logger.warn("registry for type {} was already in. previous setup wil be crushed",
                     registry.registryClass.getName());
         }
 
         //check if class already available
         List<String> _toRemove = new ArrayList<String>();
-        for(String sC: _registryManager._tempItems.keySet()) {
+        for(String sC: this._tempItems.keySet()) {
             try {
-                ClassLoader classLoader =  _registryManager._tempItems.get(sC);
+                logger.debug("processing temp plugin class {}, cl: {}", sC);
+                ClassLoader classLoader =  this._tempItems.get(sC);
                 Class _c = classLoader.loadClass(sC);
-                if(registry.registryClass.isAssignableFrom(_c) && _c != null){
-                    logger.info("class {} added async in registry {} for gen class {}", _c, registry, registry.registryClass);
+                logger.debug("processing temp plugin class found {}", _c);
+                boolean canHandle = _c != null && registry.registryClass.isAssignableFrom(_c);
+                logger.debug("can Handle class: {}", canHandle);
+                if(canHandle){
+                    logger.debug("class {} added async in registry {} for gen class {}", _c, registry, registry.registryClass);
                     registry.addClass(_c);
                     _toRemove.add(sC);
                 }
             }catch (Exception ex){
                 logger.error(sC + "  not found", ex);
             }
-
-
         }
-        _registryManager._tempItems.keySet().removeAll(_toRemove);
-
-        logger.info("Setting registry for class: {} in registryManager (manager: {}", registry.registryClass, registry.getClass());
-
-
-        //check if in osgi mode !!!
-
-
-        _registryManager._registries.put(registry.registryClass.getName(), registry);
-
+        this._tempItems.keySet().removeAll(_toRemove);
+        _registries.put(registry.registryClass.getName(), registry);
+        logger.debug("Setting registry for class: {} in registryManager (manager: {}. available registries {})", registry.registryClass, this, _registries);
     }
 
-    public static Collection<String> itemsAsString(Class classz) {
-        if (_registryManager._registries.containsKey(classz.getName())) {
-            return _registryManager._registries.get(classz.getName()).listAsString();
+    @Override
+    public Collection<String> itemsAsString(Class classz) {
+        ExtensionRegistry extensionRegistry = findMatchingRegistry(classz);
+        if (extensionRegistry != null) {
+            return extensionRegistry.listAsString();
         } else {
+            logger.warn("registry not found for {}", classz);
             return new ArrayList<String>();
         }
 
     }
 
-    public static <T> Collection<Class<? extends T>> itemsAsClass(Class<T> classz) {
-        if (_registryManager._registries.containsKey(classz.getName())) {
-            return _registryManager._registries.get(classz.getName()).list();
+    @Override
+    public <T> Collection<Class<? extends T>> itemsAsClass(Class<T> classz) {
+        ExtensionRegistry extensionRegistry = findMatchingRegistry(classz);
+        if (extensionRegistry != null) {
+            return extensionRegistry.list();
         } else {
+            logger.warn("registry not found for {}", classz);
             return new ArrayList<Class<? extends T>>();
         }
+    }
+
+    private <T>  ExtensionRegistry<T> findMatchingRegistry(Class<T> item){
+        for(ExtensionRegistry r: _registries.values()){
+            boolean canHandle = r.registryClass.isAssignableFrom(item);
+            logger.debug("looking for registry for ext class {} assignable from {}: {}", item,
+                    r.registryClass, canHandle);
+            if(canHandle){
+                logger.info("found registry for {}: {}", item, r);
+                return r;
+            }
+        }
+        return null;
     }
 
 }

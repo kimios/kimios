@@ -18,8 +18,8 @@ package org.kimios.kernel.dms.model;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.exception.DataSourceException;
-import org.kimios.kernel.exception.MetaValueTypeException;
+import org.kimios.exceptions.DataSourceException;
+import org.kimios.exceptions.MetaValueTypeException;
 
 import java.io.Serializable;
 

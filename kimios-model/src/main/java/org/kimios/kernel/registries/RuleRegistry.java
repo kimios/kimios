@@ -16,16 +16,17 @@
 
 package org.kimios.kernel.registries;
 
-import org.kimios.kernel.reporting.ReportImpl;
+import org.kimios.kernel.rules.impl.RuleImpl;
 import org.kimios.utils.extension.ExtensionRegistry;
+import org.kimios.utils.extension.IExtensionRegistryManager;
 
 /**
- * Created by farf on 13/01/16.
+ * Created by farf on 22/01/16.
  */
-public class ReportRegistry extends ExtensionRegistry<ReportImpl> {
+public class RuleRegistry extends ExtensionRegistry<RuleImpl> {
 
-    public ReportRegistry() {
-        super();
+    public RuleRegistry(IExtensionRegistryManager extensionRegistryManager) {
+        super(extensionRegistryManager);
     }
 
 }

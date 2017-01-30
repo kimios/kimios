@@ -15,7 +15,7 @@
  */
 package org.kimios.kernel.dms.model;
 
-import org.kimios.kernel.exception.MetaValueTypeException;
+import org.kimios.exceptions.MetaValueTypeException;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

@@ -15,7 +15,7 @@
  */
 package org.kimios.kernel.utils;
 
-import org.kimios.kernel.exception.XMLException;
+import org.kimios.exceptions.XMLException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;

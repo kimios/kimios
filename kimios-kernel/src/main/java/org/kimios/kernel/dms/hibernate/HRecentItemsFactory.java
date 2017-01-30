@@ -22,7 +22,7 @@ import org.kimios.kernel.configuration.Config;
 import org.kimios.kernel.dms.model.DMEntity;
 import org.kimios.kernel.dms.model.DMEntityImpl;
 import org.kimios.kernel.dms.RecentItemsFactory;
-import org.kimios.kernel.exception.DataSourceException;
+import org.kimios.exceptions.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
 import org.kimios.kernel.log.ActionType;
 import org.kimios.utils.configuration.ConfigurationManager;

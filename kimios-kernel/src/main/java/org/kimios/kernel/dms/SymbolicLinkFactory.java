@@ -18,7 +18,7 @@ package org.kimios.kernel.dms;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.model.DMEntity;
 import org.kimios.kernel.dms.model.SymbolicLink;
-import org.kimios.kernel.exception.DataSourceException;
+import org.kimios.exceptions.DataSourceException;
 
 import java.util.List;
 
@@ -28,7 +28,7 @@ import java.util.List;
 public interface SymbolicLinkFactory
 {
     /**
-     * @throws org.kimios.kernel.exception.DataSourceException return all of the SymbolicLink linked to a given
+     * @throws DataSourceException return all of the SymbolicLink linked to a given
      * DMEntity(Document or Folder)
      */
     public List<SymbolicLink> getSymbolicLinks(DMEntity dme) throws ConfigException, DataSourceException;

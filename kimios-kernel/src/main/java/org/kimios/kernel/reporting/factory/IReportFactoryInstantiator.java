@@ -1,6 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2008-2016  DevLib'
+ * Copyright (C) 2008-2017  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -14,17 +14,13 @@
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.kimios.kernel.registries;
+package org.kimios.kernel.reporting.factory;
 
-import org.kimios.api.Converter;
-import org.kimios.utils.extension.ExtensionRegistry;
+import org.kimios.kernel.reporting.impl.factory.DocumentTransactionsReportFactory;
 
 /**
- * Created by farf on 11/01/16.
+ * Created by farf on 01/04/15.
  */
-public class ConverterRegistry extends ExtensionRegistry<Converter> {
-
-    public ConverterRegistry() {
-        super();
-    }
+public interface IReportFactoryInstantiator {
+    DocumentTransactionsReportFactory getDtrFactory();
 }

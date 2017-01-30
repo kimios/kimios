@@ -25,6 +25,7 @@ import org.kimios.kernel.index.ISolrIndexManager;
 import org.kimios.kernel.index.controller.ISearchController;
 import org.kimios.kernel.index.controller.ISearchManagementController;
 import org.kimios.kernel.security.model.Session;
+import org.kimios.utils.extension.IExtensionRegistryManager;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
@@ -69,6 +70,9 @@ public abstract class KimiosCommand implements Action
 
     @Reference
     protected IFileTransferController fileTransferController;
+
+    @Reference
+    protected IExtensionRegistryManager extensionRegistryManager;
 
     @Reference
     protected TransactionManager transactionManager;

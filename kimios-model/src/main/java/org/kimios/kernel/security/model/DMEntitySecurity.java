@@ -17,7 +17,7 @@ package org.kimios.kernel.security.model;
 
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.model.DMEntity;
-import org.kimios.kernel.exception.DataSourceException;
+import org.kimios.exceptions.DataSourceException;
 
 import java.io.Serializable;
 

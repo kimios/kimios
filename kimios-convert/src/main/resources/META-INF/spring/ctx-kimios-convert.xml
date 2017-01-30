@@ -21,6 +21,11 @@
         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
     <bean id="converterController" class="org.kimios.converter.controller.impl.ConverterController"
           parent="kimiosCoreCtrl">
+        <property name="converterFactory">
+            <bean class="org.kimios.converter.ConverterFactory">
+                <constructor-arg ref="extensionRegistryManager" />
+            </bean>
+        </property>
     </bean>
 
     <!-- preview cache reset -->

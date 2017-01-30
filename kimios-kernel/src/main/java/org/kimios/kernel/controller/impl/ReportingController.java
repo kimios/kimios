@@ -18,17 +18,16 @@ package org.kimios.kernel.controller.impl;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.IReportingController;
-import org.kimios.kernel.exception.AccessDeniedException;
-import org.kimios.kernel.exception.DataSourceException;
-import org.kimios.kernel.exception.ReportingException;
-import org.kimios.kernel.reporting.ReportImpl;
-import org.kimios.kernel.reporting.XMLReportHelper;
+import org.kimios.exceptions.AccessDeniedException;
+import org.kimios.exceptions.DataSourceException;
+import org.kimios.exceptions.ReportingException;
+import org.kimios.api.reporting.ReportImpl;
+import org.kimios.kernel.reporting.utils.XMLReportHelper;
 import org.kimios.kernel.reporting.impl.factory.DocumentTransactionsReportFactory;
 import org.kimios.kernel.reporting.model.Report;
 import org.kimios.kernel.reporting.model.ReportParam;
 import org.kimios.kernel.security.model.Role;
 import org.kimios.kernel.security.model.Session;
-import org.kimios.utils.extension.ExtensionRegistryManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,8 +40,6 @@ import java.util.Map;
 @Transactional
 public class ReportingController extends AKimiosController implements IReportingController
 {
-    private XMLReportHelper xmlHelper = new XMLReportHelper();
-
     private static Logger logger = LoggerFactory.getLogger(ReportingController.class);
 
     private DocumentTransactionsReportFactory documentTransactionsReportFactory;
@@ -70,7 +67,7 @@ public class ReportingController extends AKimiosController implements IReporting
         {
             throw new AccessDeniedException();
         }
-        return new XMLReportHelper().getReport(session.getUid(), className, xmlParameters);
+        return new XMLReportHelper(extensionRegistryManager).getReport(session.getUid(), className, xmlParameters);
     }
 
     public String getReport(Session session, String className, Map<String, ReportParam> reportParameters)
@@ -82,7 +79,7 @@ public class ReportingController extends AKimiosController implements IReporting
         {
             throw new AccessDeniedException();
         }
-        return new XMLReportHelper().getReport(session.getUid(), className, reportParameters);
+        return new XMLReportHelper(extensionRegistryManager).getReport(session.getUid(), className, reportParameters);
     }
 
     /* (non-Javadoc)
@@ -95,7 +92,7 @@ public class ReportingController extends AKimiosController implements IReporting
         {
             throw new AccessDeniedException();
         }
-        return xmlHelper.getReportsList();
+        return new XMLReportHelper(extensionRegistryManager).getReportsList();
     }
 
     /* (non-Javadoc)
@@ -108,7 +105,7 @@ public class ReportingController extends AKimiosController implements IReporting
         {
             throw new AccessDeniedException();
         }
-        Collection<Class<? extends ReportImpl>> classes = ExtensionRegistryManager.itemsAsClass(ReportImpl.class);
+        Collection<Class<? extends ReportImpl>> classes = extensionRegistryManager.itemsAsClass(ReportImpl.class);
         logger.info("loaded reporting registry {}", classes);
         List<Report> items = new ArrayList<Report>();
         for(Class c: classes){
@@ -133,7 +130,7 @@ public class ReportingController extends AKimiosController implements IReporting
         {
             throw new AccessDeniedException();
         }
-        return xmlHelper.getReportAttributesXml(className);
+        return new XMLReportHelper(extensionRegistryManager).getReportAttributesXml(className);
     }
 
     public List<ReportParam> getReportAttributes(Session session, String className)
@@ -145,7 +142,7 @@ public class ReportingController extends AKimiosController implements IReporting
         {
             throw new AccessDeniedException();
         }
-        return xmlHelper.getReportAttributes(className);
+        return new XMLReportHelper(extensionRegistryManager).getReportAttributes(className);
     }
 
     /* (non-Javadoc)

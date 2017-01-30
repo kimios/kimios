@@ -18,7 +18,7 @@ package org.kimios.kernel.dms.model;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
-import org.kimios.kernel.exception.MetaValueTypeException;
+import org.kimios.exceptions.MetaValueTypeException;
 import org.kimios.kernel.hibernate.DateUserType;
 
 import javax.persistence.Column;

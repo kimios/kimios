@@ -40,10 +40,15 @@
           factory-method="createInstance">
     </bean>
 
-    <bean id="eventHandlerManager" class="org.kimios.kernel.events.EventHandlerManager" factory-method="getInstance"
-          init-method="init">
+
+
+    <bean id="eventHandlerManager" class="org.kimios.kernel.events.EventHandlerManager">
+        <argument ref="extensionRegistryManager" />
+
         <property name="configurationManager" ref="configurationManager"/>
     </bean>
+
+
 
     <bean id="contextHolder" class="org.kimios.utils.context.OsgiServiceHolder" />
 
@@ -115,7 +120,7 @@
      <service id="logFactoryInstantiatorOsgi" ref="logfi"
               interface="org.kimios.kernel.log.ILogFactoryInstantiator"></service>
      <service id="reportFactoryInstantiatorOsgi" ref="reportfi"
-              interface="org.kimios.kernel.reporting.IReportFactoryInstantiator"></service>
+              interface="org.kimios.kernel.reporting.factory.IReportFactoryInstantiator"></service>
      <service id="transferFactoryInstantiatorOsgi" ref="transferfi"
               interface="org.kimios.kernel.filetransfer.IFileTransferFactoryInstantiator"></service>
 
@@ -124,20 +129,31 @@
     <service id="jobServiceOsgi" ref="jobController"
              interface="org.kimios.kernel.jobs.IJobController"></service>
 
+    <reference id="extensionRegistryManager"
+             interface="org.kimios.utils.extension.IExtensionRegistryManager" />
+
 
 
     <!-- converter registry -->
-    <bean id="converterRegistry" class="org.kimios.kernel.registries.ConverterRegistry" />
+    <bean id="converterRegistry" class="org.kimios.kernel.registries.ConverterRegistry">
+        <argument ref="extensionRegistryManager" />
+    </bean>
 
     <!-- report registry -->
-    <bean id="reportRegistry" class="org.kimios.kernel.registries.ReportRegistry" />
+    <bean id="reportRegistry" class="org.kimios.kernel.registries.ReportRegistry">
+        <argument ref="extensionRegistryManager" />
+    </bean>
 
     <!-- auth source registry -->
     <bean id="authenticationSourceRegistry"
-          class="org.kimios.kernel.registries.AuthenticationSourceRegistry" />
+          class="org.kimios.kernel.registries.AuthenticationSourceRegistry">
+        <argument ref="extensionRegistryManager" />
+    </bean>
 
     <!-- rules registry -->
-    <bean id="ruleRegistry" class="org.kimios.kernel.registries.RuleRegistry" />
+    <bean id="ruleRegistry" class="org.kimios.kernel.registries.RuleRegistry">
+        <argument ref="extensionRegistryManager" />
+    </bean>
 
 </blueprint>
               

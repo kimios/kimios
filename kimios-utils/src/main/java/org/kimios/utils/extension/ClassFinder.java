@@ -68,8 +68,11 @@ public class ClassFinder
             it.add(bundleUrlType);
             Vfs.setDefaultURLTypes(it);
         } catch (RuntimeException e) {
+            log.error("error while loading class", e);
         } catch (Exception e) {
+            log.error("error while loading class", e);
         } catch (LinkageError e){
+            log.error("error while loading class", e);
         }
 
         Reflections reflections = new Reflections(new ConfigurationBuilder()

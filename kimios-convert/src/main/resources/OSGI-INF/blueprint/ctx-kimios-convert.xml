@@ -36,9 +36,14 @@
     <reference id="securityFactoryInstantiator" interface="org.kimios.kernel.security.ISecurityFactoryInstantiator"/>
     <reference id="authFactoryInstantiator" interface="org.kimios.kernel.user.IAuthenticationFactoryInstantiator"/>
     <reference id="logFactoryInstantiator" interface="org.kimios.kernel.log.ILogFactoryInstantiator"/>
-    <reference id="reportFactoryInstantiator" interface="org.kimios.kernel.reporting.IReportFactoryInstantiator"/>
+    <reference id="reportFactoryInstantiator" interface="org.kimios.kernel.reporting.factory.IReportFactoryInstantiator"/>
     <reference id="transferFactoryInstantiator" interface="org.kimios.kernel.filetransfer.IFileTransferFactoryInstantiator"/>
     <reference id="aclUpdater" interface="org.kimios.kernel.jobs.security.IACLUpdater"/>
+    <reference id="extensionRegistryManager" interface="org.kimios.utils.extension.IExtensionRegistryManager"/>
+
+    <bean id="converterFactory" class="org.kimios.converter.ConverterFactory">
+        <argument ref="extensionRegistryManager" />
+    </bean>
 
     <bean id="converterController" class="org.kimios.converter.controller.impl.ConverterController">
         <property name="dmsFactoryInstantiator" ref="dmsFactoryInstantiator"></property>
@@ -49,6 +54,8 @@
         <property name="transferFactoryInstantiator" ref="transferFactoryInstantiator"></property>
         <property name="securityAgent" ref="securityAgent"/>
         <property name="aclUpdater" ref="aclUpdater"/>
+        <property name="extensionRegistryManager" ref="extensionRegistryManager" />
+        <property name="converterFactory" ref="converterFactory" />
 
         <tx:transaction method="*" value="Required"/>
     </bean>

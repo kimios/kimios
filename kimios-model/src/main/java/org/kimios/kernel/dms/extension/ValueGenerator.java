@@ -16,7 +16,7 @@
 package org.kimios.kernel.dms.extension;
 
 import org.kimios.kernel.dms.model.DMEntityImpl;
-import org.kimios.kernel.exception.AccessDeniedException;
+import org.kimios.exceptions.AccessDeniedException;
 
 import java.io.Serializable;
 

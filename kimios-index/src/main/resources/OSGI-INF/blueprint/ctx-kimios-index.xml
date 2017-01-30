@@ -37,7 +37,7 @@
     <reference id="securityFactoryInstantiator" interface="org.kimios.kernel.security.ISecurityFactoryInstantiator"/>
     <reference id="authFactoryInstantiator" interface="org.kimios.kernel.user.IAuthenticationFactoryInstantiator"/>
     <reference id="logFactoryInstantiator" interface="org.kimios.kernel.log.ILogFactoryInstantiator"/>
-    <reference id="reportFactoryInstantiator" interface="org.kimios.kernel.reporting.IReportFactoryInstantiator"/>
+    <reference id="reportFactoryInstantiator" interface="org.kimios.kernel.reporting.factory.IReportFactoryInstantiator"/>
     <reference id="transferFactoryInstantiator" interface="org.kimios.kernel.filetransfer.IFileTransferFactoryInstantiator"/>
     <reference id="aclUpdater" interface="org.kimios.kernel.jobs.security.IACLUpdater"/>
 

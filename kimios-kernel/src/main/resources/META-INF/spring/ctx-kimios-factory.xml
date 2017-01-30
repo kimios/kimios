@@ -142,6 +142,7 @@
                 <property name="provider" ref="dbFactoryProvider"></property>
             </bean>
         </constructor-arg>
+        <constructor-arg ref="extensionRegistryManager" />
     </bean>
     <bean id="authenticationSourceParamsFactory"
             class="org.kimios.kernel.user.impl.factory.hibernate.HAuthenticationSourceParamsFactory" parent="hfactory"/>
@@ -182,6 +183,8 @@
         <property name="transferFactoryInstantiator" ref="transferfi"></property>
         <property name="securityAgent" ref="securityAgent"/>
         <property name="aclUpdater" ref="aclUpdater"/>
+        <property name="extensionRegistryManager" ref="extensionRegistryManager" />
+        <property name="configurationManager" ref="configurationManager" />
     </bean>
 
     <bean id="sessionManager" class="org.kimios.kernel.security.SessionManager" factory-method="getInstance"
@@ -252,22 +255,35 @@
         <property name="configurationManager" ref="configurationManager" />
     </bean>
 
+
+    <bean id="extensionRegistryManager" class="org.kimios.utils.extension.ExtensionRegistryManager" />
+
     <!-- meta feeds manager -->
-    <bean id="metaFeedManager" class="org.kimios.kernel.dms.metafeeds.MetaFeedManager"/>
+    <bean id="metaFeedManager" class="org.kimios.kernel.dms.metafeeds.MetaFeedManager">
+        <constructor-arg ref="extensionRegistryManager" />
+    </bean>
 
     <!-- converter registries -->
-    <bean id="convertRegistry" class="org.kimios.kernel.registries.ConverterRegistry" />
+    <bean id="convertRegistry" class="org.kimios.kernel.registries.ConverterRegistry">
+        <constructor-arg ref="extensionRegistryManager" />
+    </bean>
 
     <!-- report registry -->
-    <bean id="reportRegistry" class="org.kimios.kernel.registries.ReportRegistry" />
+    <bean id="reportRegistry" class="org.kimios.kernel.registries.ReportRegistry">
+        <constructor-arg ref="extensionRegistryManager" />
+    </bean>
 
     <!-- auth source registry -->
     <bean id="authenticationSourceRegistry"
-          class="org.kimios.kernel.registries.AuthenticationSourceRegistry" />
+          class="org.kimios.kernel.registries.AuthenticationSourceRegistry">
+        <constructor-arg ref="extensionRegistryManager" />
+    </bean>
 
 
     <!-- rules registry -->
-    <bean id="ruleRegistry" class="org.kimios.kernel.registries.RuleRegistry" />
+    <bean id="ruleRegistry" class="org.kimios.kernel.registries.RuleRegistry">
+        <constructor-arg ref="extensionRegistryManager" />
+    </bean>
 
 
 </beans>

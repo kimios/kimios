@@ -17,9 +17,9 @@
 package org.kimios.kernel.index.controller;
 
 import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.exception.AccessDeniedException;
-import org.kimios.kernel.exception.DataSourceException;
-import org.kimios.kernel.exception.IndexException;
+import org.kimios.exceptions.AccessDeniedException;
+import org.kimios.exceptions.DataSourceException;
+import org.kimios.exceptions.IndexException;
 import org.kimios.kernel.index.ReindexerProcess;
 import org.kimios.kernel.security.model.Session;
 

@@ -21,7 +21,7 @@ import org.hibernate.NonUniqueObjectException;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.LongType;
 import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.exception.DataSourceException;
+import org.kimios.exceptions.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
 import org.kimios.kernel.index.query.model.SearchRequest;
 import org.kimios.kernel.index.query.model.SearchRequestACL;

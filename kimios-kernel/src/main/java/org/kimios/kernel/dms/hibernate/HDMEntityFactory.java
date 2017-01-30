@@ -21,7 +21,7 @@ import org.hibernate.criterion.*;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.*;
 import org.kimios.kernel.dms.model.*;
-import org.kimios.kernel.exception.DataSourceException;
+import org.kimios.exceptions.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

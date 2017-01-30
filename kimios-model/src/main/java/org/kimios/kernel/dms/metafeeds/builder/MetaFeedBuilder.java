@@ -17,10 +17,9 @@
 package org.kimios.kernel.dms.metafeeds.builder;
 
 import org.kimios.kernel.dms.model.MetaFeedImpl;
-import org.kimios.utils.extension.ExtensionRegistryManager;
+import org.kimios.utils.extension.IExtensionRegistryManager;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,16 +27,13 @@ import java.util.Map;
  */
 public class MetaFeedBuilder {
 
+    private IExtensionRegistryManager extensionRegistryManager;
 
-
-    public static MetaFeedImpl buildMetaFeed(String javaClass, Map<String, String > preferences){
-
-
+    public MetaFeedImpl buildMetaFeed(String javaClass, Map<String, String > preferences){
         try{
 
             Collection<Class<? extends MetaFeedImpl>> items =
-                    ExtensionRegistryManager.itemsAsClass(MetaFeedImpl.class);
-
+                    extensionRegistryManager.itemsAsClass(MetaFeedImpl.class);
 
             Class<? extends MetaFeedImpl>  metafeedClass = null;
             for(Class<? extends MetaFeedImpl> c: items){
@@ -60,6 +56,4 @@ public class MetaFeedBuilder {
             return null;
         }
     }
-
-
 }

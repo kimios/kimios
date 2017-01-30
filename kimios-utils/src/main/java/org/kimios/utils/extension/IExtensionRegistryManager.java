@@ -1,6 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2008-2016  DevLib'
+ * Copyright (C) 2008-2017  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -14,18 +14,19 @@
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.kimios.kernel.registries;
+package org.kimios.utils.extension;
 
-import org.kimios.kernel.user.model.AuthenticationSourceImpl;
-import org.kimios.utils.extension.ExtensionRegistry;
+import java.util.Collection;
 
 /**
- * Created by farf on 22/01/16.
+ * Created by farf on 29/01/17.
  */
-public class AuthenticationSourceRegistry
-        extends ExtensionRegistry<AuthenticationSourceImpl> {
+public interface IExtensionRegistryManager {
+    void addClass(Class clazz);
 
-    public AuthenticationSourceRegistry(){
-        super();
-    }
+    Collection<String> itemsAsString(Class classz);
+
+    <T> Collection<Class<? extends T>> itemsAsClass(Class<T> classz);
+
+    <T> void registerRegistry(ExtensionRegistry<T> extensionRegistry);
 }

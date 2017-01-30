@@ -21,7 +21,7 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.model.Workspace;
 import org.kimios.kernel.dms.WorkspaceFactory;
-import org.kimios.kernel.exception.DataSourceException;
+import org.kimios.exceptions.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
 
 import java.util.List;

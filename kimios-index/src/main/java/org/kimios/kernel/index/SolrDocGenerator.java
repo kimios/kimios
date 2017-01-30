@@ -22,7 +22,7 @@ import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.*;
 import org.kimios.kernel.dms.model.*;
 import org.kimios.kernel.events.impl.AddonDataHandler;
-import org.kimios.kernel.exception.DataSourceException;
+import org.kimios.exceptions.DataSourceException;
 import org.kimios.kernel.index.query.model.DocumentIndexStatus;
 import org.kimios.kernel.security.model.DMEntityACL;
 import org.slf4j.Logger;

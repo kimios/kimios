@@ -16,7 +16,7 @@
 package org.kimios.kernel.index;
 
 import org.apache.lucene.search.Query;
-import org.kimios.kernel.exception.IndexException;
+import org.kimios.exceptions.IndexException;
 
 import java.util.Date;
 

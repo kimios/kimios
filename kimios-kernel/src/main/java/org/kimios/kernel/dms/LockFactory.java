@@ -18,9 +18,9 @@ package org.kimios.kernel.dms;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.model.Document;
 import org.kimios.kernel.dms.model.Lock;
-import org.kimios.kernel.exception.AccessDeniedException;
-import org.kimios.kernel.exception.CheckoutViolationException;
-import org.kimios.kernel.exception.DataSourceException;
+import org.kimios.exceptions.AccessDeniedException;
+import org.kimios.exceptions.CheckoutViolationException;
+import org.kimios.exceptions.DataSourceException;
 import org.kimios.kernel.user.model.User;
 
 public interface LockFactory

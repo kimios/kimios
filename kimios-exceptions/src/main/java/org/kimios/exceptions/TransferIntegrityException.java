@@ -1,6 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2008-2015  DevLib'
+ * Copyright (C) 2008-2017  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -13,36 +13,17 @@
  * You should have received a copy of the GNU Affero General Public License
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kimios.kernel.exception;
+package org.kimios.exceptions;
 
 import org.kimios.exceptions.DmsKernelException;
 
 @SuppressWarnings("serial")
-public class MetaValueTypeException extends DmsKernelException
+public class TransferIntegrityException extends DmsKernelException
 {
-    public MetaValueTypeException()
-    {
-        super();
-    }
-
-    public MetaValueTypeException(Exception e, String message)
-    {
-        super(e, message);
-    }
-
-    public MetaValueTypeException(Exception e)
-    {
-        super(e);
-    }
-
-    public MetaValueTypeException(String message)
-    {
-        super(message);
-    }
-
     public String toString()
     {
-        return "A MetaValueTypeException occured : " + this.getMessage();
+        return "Data Transfer Error!";
     }
 }
+
 

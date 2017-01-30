@@ -20,8 +20,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.model.DocumentVersion;
-import org.kimios.kernel.exception.DataSourceException;
-import org.kimios.kernel.exception.RepositoryException;
+import org.kimios.exceptions.DataSourceException;
+import org.kimios.exceptions.RepositoryException;
 import org.kimios.kernel.repositories.model.RepositoryAccessor;
 
 import java.io.*;

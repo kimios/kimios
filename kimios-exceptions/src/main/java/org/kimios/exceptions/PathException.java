@@ -1,6 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2008-2015  DevLib'
+ * Copyright (C) 2008-2017  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -13,29 +13,29 @@
  * You should have received a copy of the GNU Affero General Public License
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kimios.kernel.exception;
+package org.kimios.exceptions;
 
 import org.kimios.exceptions.DmsKernelException;
 
 @SuppressWarnings("serial")
-public class AuthenticationSourceException extends DmsKernelException
+public class PathException extends DmsKernelException
 {
-    public AuthenticationSourceException()
+    public PathException()
     {
         super();
     }
 
-    public AuthenticationSourceException(Exception e, String message)
+    public PathException(Exception e, String message)
     {
         super(e, message);
     }
 
-    public AuthenticationSourceException(Exception e)
+    public PathException(Exception e)
     {
         super(e);
     }
 
-    public AuthenticationSourceException(String message)
+    public PathException(String message)
     {
         super(message);
     }

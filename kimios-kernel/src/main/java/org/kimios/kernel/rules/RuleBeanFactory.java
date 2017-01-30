@@ -19,7 +19,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.criterion.Restrictions;
 import org.kimios.api.events.annotations.DmsEventName;
 import org.kimios.api.events.annotations.DmsEventOccur;
-import org.kimios.kernel.exception.DataSourceException;
+import org.kimios.exceptions.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
 import org.kimios.kernel.rules.model.RuleBean;
 

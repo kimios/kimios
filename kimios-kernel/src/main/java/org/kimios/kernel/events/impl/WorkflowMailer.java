@@ -27,7 +27,7 @@ import org.kimios.kernel.events.GenericEventHandler;
 import org.kimios.api.events.annotations.DmsEvent;
 import org.kimios.api.events.annotations.DmsEventName;
 import org.kimios.api.events.annotations.DmsEventOccur;
-import org.kimios.kernel.exception.DataSourceException;
+import org.kimios.exceptions.DataSourceException;
 import org.kimios.kernel.mail.MailTemplate;
 import org.kimios.kernel.mail.Mailer;
 import org.kimios.kernel.security.model.SecurityEntityType;

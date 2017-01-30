@@ -29,7 +29,7 @@ import org.kimios.kernel.filetransfer.model.DataTransfer;
 import org.kimios.kernel.share.controller.IMailShareController;
 import org.kimios.kernel.dms.model.Document;
 import org.kimios.kernel.dms.model.DocumentVersion;
-import org.kimios.kernel.exception.AccessDeniedException;
+import org.kimios.exceptions.AccessDeniedException;
 import org.kimios.exceptions.DmsKernelException;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.share.factory.MailContactFactory;

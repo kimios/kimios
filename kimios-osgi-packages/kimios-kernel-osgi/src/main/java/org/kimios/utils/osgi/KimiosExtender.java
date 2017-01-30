@@ -19,9 +19,11 @@ package org.kimios.utils.osgi;
 import org.kimios.utils.extension.BundleUrlType;
 import org.kimios.utils.extension.ClassFinder;
 import org.kimios.utils.extension.ExtensionRegistryManager;
+import org.kimios.utils.extension.IExtensionRegistryManager;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
+import org.osgi.framework.ServiceReference;
 import org.osgi.framework.wiring.BundleWiring;
 import org.osgi.util.tracker.BundleTracker;
 import org.osgi.util.tracker.BundleTrackerCustomizer;
@@ -39,9 +41,13 @@ public class KimiosExtender extends BundleTracker {
 
     private static Logger logger = LoggerFactory.getLogger(KimiosExtender.class);
 
-    public KimiosExtender(BundleContext context, int stateMask, BundleTrackerCustomizer customizer) {
+
+    private IExtensionRegistryManager extensionRegistryManager;
+
+    public KimiosExtender(BundleContext context, int stateMask, BundleTrackerCustomizer customizer,
+                          IExtensionRegistryManager extensionRegistryManager) {
         super(context, stateMask, customizer);
-        ExtensionRegistryManager.init();
+        this.extensionRegistryManager = extensionRegistryManager;
     }
 
     @Override
@@ -70,8 +76,6 @@ public class KimiosExtender extends BundleTracker {
                 // put in registry
                 logger.info("found header {} ==> {}", k, bundle.getHeaders().get(k));
                 String interfacesClassName =  (String)bundle.getHeaders().get(k);
-
-
                 String[] iArray = interfacesClassName.split(",");
 
                 for(String interfaceClassName: iArray){
@@ -87,13 +91,9 @@ public class KimiosExtender extends BundleTracker {
                             ClassLoader bundleCl = bw.getClassLoader();
                             Collection<Class<?>> classes =
                                     ClassFinder.findImplement(new BundleUrlType(bundle), "org.kimios", clazz, bundleCl);
-                        /*if(serviceClass != null) {
-                            logger.info("registering {} as service for type {}", clazz, serviceClass, bundle);
-                            bundle.getBundleContext().registerService(serviceClass.getName(), clazz.newInstance(), null);
-                        } */
                             for(Class clItem: classes) {
                                 logger.info("Kimios Extender Found item For Type {} ==> {}. will be put in registry", clazz, clItem);
-                                ExtensionRegistryManager.addClass(clItem);
+                                extensionRegistryManager.addClass(clItem);
                             }
                         } catch (ClassNotFoundException e) {
                             logger.error("Could not find class " + interfaceClassName, e);

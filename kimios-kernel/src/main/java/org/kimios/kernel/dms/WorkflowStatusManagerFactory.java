@@ -18,7 +18,7 @@ package org.kimios.kernel.dms;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.model.Workflow;
 import org.kimios.kernel.dms.model.WorkflowStatusManager;
-import org.kimios.kernel.exception.DataSourceException;
+import org.kimios.exceptions.DataSourceException;
 import org.kimios.kernel.security.model.SecurityEntity;
 
 import java.util.Vector;

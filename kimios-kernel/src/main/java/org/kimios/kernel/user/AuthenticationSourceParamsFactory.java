@@ -15,7 +15,7 @@
  */
 package org.kimios.kernel.user;
 
-import org.kimios.kernel.exception.AuthenticationSourceException;
+import org.kimios.exceptions.AuthenticationSourceException;
 import org.kimios.kernel.xml.XSDException;
 
 import java.util.Map;

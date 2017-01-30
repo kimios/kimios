@@ -17,7 +17,7 @@ package org.kimios.kernel.filetransfer;
 
 import org.hibernate.HibernateException;
 import org.hibernate.exception.ConstraintViolationException;
-import org.kimios.kernel.exception.DataSourceException;
+import org.kimios.exceptions.DataSourceException;
 import org.kimios.kernel.filetransfer.model.DataTransfer;
 import org.kimios.kernel.hibernate.HFactory;
 

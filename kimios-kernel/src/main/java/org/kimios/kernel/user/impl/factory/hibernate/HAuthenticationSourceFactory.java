@@ -19,16 +19,14 @@ import org.hibernate.HibernateException;
 import org.hibernate.criterion.Order;
 import org.hibernate.exception.ConstraintViolationException;
 import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.exception.DataSourceException;
+import org.kimios.exceptions.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
-import org.kimios.kernel.registries.AuthenticationSourceRegistry;
 import org.kimios.kernel.user.impl.HAuthenticationSource;
 import org.kimios.kernel.user.model.AuthenticationSource;
 import org.kimios.kernel.user.model.AuthenticationSourceBean;
 import org.kimios.kernel.user.AuthenticationSourceFactory;
 import org.kimios.kernel.user.model.AuthenticationSourceImpl;
-import org.kimios.utils.extension.ClassFinder;
-import org.kimios.utils.extension.ExtensionRegistryManager;
+import org.kimios.utils.extension.IExtensionRegistryManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,13 +39,17 @@ public class HAuthenticationSourceFactory extends HFactory implements Authentica
 
     private static Logger logger = LoggerFactory.getLogger(HAuthenticationSource.class);
 
+    private IExtensionRegistryManager extensionRegistryManager;
+
     private HInternalUserFactory internalUserFactory;
     private HInternalGroupFactory internalGroupFactory;
 
     public HAuthenticationSourceFactory(HInternalUserFactory internalUserFactory,
-                                        HInternalGroupFactory internalGroupFactory) {
+                                        HInternalGroupFactory internalGroupFactory,
+                                        IExtensionRegistryManager extensionRegistryManager) {
         this.internalUserFactory = internalUserFactory;
         this.internalGroupFactory = internalGroupFactory;
+        this.extensionRegistryManager = extensionRegistryManager;
     }
 
 
@@ -187,7 +189,7 @@ public class HAuthenticationSourceFactory extends HFactory implements Authentica
     public List<String> getAvailableAuthenticationSource()
     {
         Collection<Class<? extends AuthenticationSourceImpl>> classes =
-                ExtensionRegistryManager.itemsAsClass(AuthenticationSourceImpl.class);
+                extensionRegistryManager.itemsAsClass(AuthenticationSourceImpl.class);
 
         List<String> fClasses = new ArrayList<String>();
         for(Class c: classes){
@@ -203,7 +205,7 @@ public class HAuthenticationSourceFactory extends HFactory implements Authentica
     public String getAvailableAuthenticationSourceXml()
     {
         Collection<Class<? extends AuthenticationSourceImpl>> classes =
-                ExtensionRegistryManager.itemsAsClass(AuthenticationSourceImpl.class);
+                extensionRegistryManager.itemsAsClass(AuthenticationSourceImpl.class);
         String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         xml += "<authentication-source-list>\n";
         for (Class<?> c : classes) {

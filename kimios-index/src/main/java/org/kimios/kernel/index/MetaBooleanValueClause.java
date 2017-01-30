@@ -18,7 +18,7 @@ package org.kimios.kernel.index;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.WildcardQuery;
-import org.kimios.kernel.exception.IndexException;
+import org.kimios.exceptions.IndexException;
 
 public class MetaBooleanValueClause implements SearchClause
 {

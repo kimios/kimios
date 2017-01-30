@@ -21,15 +21,14 @@
         http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
 
 
-
     <!--<jpa:enable /> xmlns:jpa="http://aries.apache.org/xmlns/jpa/v1.0.0" -->
     <!--  <bean id="dbFactoryProvider" class="org.kimiostero.hibernate.SaasHFactory" />-->
     <!-- <bean id="dbFactoryProvider" class="org.kimios.kernel.hibernate.JpaHibernateFactory"
             factory-method="getInstance"/> -->
 
-<!--    <bean id="dbFactoryProvider" class="org.kimios.kernel.hibernate.JpaHibernateFactory" factory-method="getInstance">
-           <jpa:context unitname="kimiosPu" property="entityManager"/>
-    </bean> -->
+    <!--    <bean id="dbFactoryProvider" class="org.kimios.kernel.hibernate.JpaHibernateFactory" factory-method="getInstance">
+               <jpa:context unitname="kimiosPu" property="entityManager"/>
+        </bean> -->
     <reference id="dbFactoryProvider"
                interface="org.kimios.kernel.hibernate.IDBFactory"/>
 
@@ -42,7 +41,7 @@
     <bean id="securityfi" class="org.kimios.kernel.security.FactoryInstantiator" factory-method="getInstance">
         <property name="DMEntitySecurityFactory">
             <bean class="org.kimios.kernel.security.factory.HDMEntitySecurityFactory"
-                  >
+            >
                 <property name="provider" ref="dbFactoryProvider"></property>
             </bean>
         </property>
@@ -63,12 +62,12 @@
         <property name="dmEntityFactory">
             <bean class="org.kimios.kernel.dms.hibernate.HDMEntityFactory">
                 <property name="provider" ref="dbFactoryProvider"></property>
-             </bean>
+            </bean>
         </property>
         <property name="documentFactory">
             <bean class="org.kimios.kernel.dms.hibernate.HDocumentFactory">
                 <property name="provider" ref="dbFactoryProvider"></property>
-             </bean>
+            </bean>
         </property>
         <property name="folderFactory">
             <bean class="org.kimios.kernel.dms.hibernate.HFolderFactory">
@@ -82,12 +81,12 @@
         </property>
         <property name="documentVersionFactory">
             <bean class="org.kimios.kernel.dms.hibernate.HDocumentVersionFactory"
-                  >
+            >
                 <property name="provider" ref="dbFactoryProvider"></property>
-                  </bean>
+            </bean>
         </property>
         <property name="metaFactory">
-            <bean class="org.kimios.kernel.dms.hibernate.HMetaFactory" >
+            <bean class="org.kimios.kernel.dms.hibernate.HMetaFactory">
                 <property name="provider" ref="dbFactoryProvider"></property>
             </bean>
         </property>
@@ -103,21 +102,21 @@
         </property>
         <property name="documentCommentFactory">
             <bean class="org.kimios.kernel.dms.hibernate.HDocumentCommentFactory"
-                  >
+            >
                 <property name="provider" ref="dbFactoryProvider"></property>
-                  </bean>
+            </bean>
         </property>
         <property name="documentTypeFactory">
             <bean class="org.kimios.kernel.dms.hibernate.HDocumentTypeFactory"
-                  >
+            >
                 <property name="provider" ref="dbFactoryProvider"></property>
-                  </bean>
+            </bean>
         </property>
         <property name="symbolicLinkFactory">
-            <bean  class="org.kimios.kernel.dms.hibernate.HSymbolicLinkFactory"
-                 >
+            <bean class="org.kimios.kernel.dms.hibernate.HSymbolicLinkFactory"
+            >
                 <property name="provider" ref="dbFactoryProvider"></property>
-                 </bean>
+            </bean>
         </property>
         <property name="workflowFactory">
             <bean class="org.kimios.kernel.dms.hibernate.HWorkflowFactory">
@@ -131,9 +130,9 @@
         </property>
         <property name="workflowStatusManagerFactory">
             <bean class="org.kimios.kernel.dms.hibernate.HWorkflowStatusManagerFactory"
-                 >
+            >
                 <property name="provider" ref="dbFactoryProvider"></property>
-                 </bean>
+            </bean>
         </property>
         <property name="documentWorkflowStatusFactory">
             <bean class="org.kimios.kernel.dms.hibernate.HDocumentWorkflowStatusFactory">
@@ -141,12 +140,12 @@
             </bean>
         </property>
         <property name="documentWorkflowStatusRequestFactory">
-            <bean class="org.kimios.kernel.dms.hibernate.HDocumentWorkflowStatusRequestFactory" >
+            <bean class="org.kimios.kernel.dms.hibernate.HDocumentWorkflowStatusRequestFactory">
                 <property name="provider" ref="dbFactoryProvider"></property>
             </bean>
         </property>
         <property name="bookmarkFactory">
-            <bean class="org.kimios.kernel.dms.hibernate.HBookmarkFactory" >
+            <bean class="org.kimios.kernel.dms.hibernate.HBookmarkFactory">
                 <property name="provider" ref="dbFactoryProvider"></property>
             </bean>
         </property>
@@ -191,13 +190,14 @@
                 <property name="provider" ref="dbFactoryProvider"></property>
             </bean>
         </argument>
+        <argument ref="extensionRegistryManager"/>
 
         <property name="provider" ref="dbFactoryProvider"></property>
     </bean>
     <bean id="authenticationSourceParamsFactory"
           class="org.kimios.kernel.user.impl.factory.hibernate.HAuthenticationSourceParamsFactory">
-                <property name="provider" ref="dbFactoryProvider"></property>
-          </bean>
+        <property name="provider" ref="dbFactoryProvider"></property>
+    </bean>
     <bean id="userfi" class="org.kimios.kernel.user.FactoryInstantiator" factory-method="getInstance">
         <property name="authenticationSourceFactory" ref="authenticationSourceFactory">
         </property>
@@ -244,14 +244,15 @@
 
 
     <bean id="securityController" class="org.kimios.kernel.controller.impl.SecurityController">
-    <property name="dmsFactoryInstantiator" ref="dmsfi"></property>
-    <property name="securityFactoryInstantiator" ref="securityfi"></property>
-    <property name="authFactoryInstantiator" ref="userfi"></property>
-    <property name="logFactoryInstantiator" ref="logfi"></property>
-    <property name="reportFactoryInstantiator" ref="reportfi"></property>
-    <property name="transferFactoryInstantiator" ref="transferfi"></property>
-    <property name="securityAgent" ref="securityAgent"/>
-    <property name="aclUpdater" ref="aclUpdater"/>
+        <property name="dmsFactoryInstantiator" ref="dmsfi"></property>
+        <property name="securityFactoryInstantiator" ref="securityfi"></property>
+        <property name="authFactoryInstantiator" ref="userfi"></property>
+        <property name="logFactoryInstantiator" ref="logfi"></property>
+        <property name="reportFactoryInstantiator" ref="reportfi"></property>
+        <property name="transferFactoryInstantiator" ref="transferfi"></property>
+        <property name="securityAgent" ref="securityAgent"/>
+        <property name="aclUpdater" ref="aclUpdater"/>
+        <property name="extensionRegistryManager" ref="extensionRegistryManager"/>
 
         <tx:transaction method="*" value="Required"/>
     </bean>
@@ -264,6 +265,7 @@
         <property name="transferFactoryInstantiator" ref="transferfi"></property>
         <property name="securityAgent" ref="securityAgent"/>
         <property name="aclUpdater" ref="aclUpdater"/>
+        <property name="extensionRegistryManager" ref="extensionRegistryManager"/>
 
         <property name="wksCtrl" ref="workspaceController"/>
         <property name="fldCtrl" ref="folderController"/>
@@ -282,7 +284,8 @@
         <property name="transferFactoryInstantiator" ref="transferfi"></property>
         <property name="securityAgent" ref="securityAgent"/>
         <property name="aclUpdater" ref="aclUpdater"/>
-        <property name="configurationManager" ref="configurationManager" />
+        <property name="extensionRegistryManager" ref="extensionRegistryManager"/>
+        <property name="configurationManager" ref="configurationManager"/>
 
         <tx:transaction method="*" value="Required"/>
     </bean>
@@ -295,6 +298,7 @@
         <property name="transferFactoryInstantiator" ref="transferfi"></property>
         <property name="securityAgent" ref="securityAgent"/>
         <property name="aclUpdater" ref="aclUpdater"/>
+        <property name="extensionRegistryManager" ref="extensionRegistryManager"/>
 
         <tx:transaction method="*" value="Required"/>
     </bean>
@@ -307,6 +311,7 @@
         <property name="transferFactoryInstantiator" ref="transferfi"></property>
         <property name="securityAgent" ref="securityAgent"/>
         <property name="aclUpdater" ref="aclUpdater"/>
+        <property name="extensionRegistryManager" ref="extensionRegistryManager"/>
 
         <tx:transaction method="*" value="Required"/>
     </bean>
@@ -319,6 +324,7 @@
         <property name="transferFactoryInstantiator" ref="transferfi"></property>
         <property name="securityAgent" ref="securityAgent"/>
         <property name="aclUpdater" ref="aclUpdater"/>
+        <property name="extensionRegistryManager" ref="extensionRegistryManager"/>
 
         <tx:transaction method="*" value="Required"/>
     </bean>
@@ -331,6 +337,7 @@
         <property name="transferFactoryInstantiator" ref="transferfi"></property>
         <property name="securityAgent" ref="securityAgent"/>
         <property name="aclUpdater" ref="aclUpdater"/>
+        <property name="extensionRegistryManager" ref="extensionRegistryManager"/>
 
         <tx:transaction method="*" value="Required"/>
     </bean>
@@ -343,6 +350,7 @@
         <property name="transferFactoryInstantiator" ref="transferfi"></property>
         <property name="securityAgent" ref="securityAgent"/>
         <property name="aclUpdater" ref="aclUpdater"/>
+        <property name="extensionRegistryManager" ref="extensionRegistryManager"/>
 
         <tx:transaction method="*" value="Required"/>
     </bean>
@@ -355,8 +363,9 @@
         <property name="transferFactoryInstantiator" ref="transferfi"></property>
         <property name="securityAgent" ref="securityAgent"/>
         <property name="aclUpdater" ref="aclUpdater"/>
+        <property name="extensionRegistryManager" ref="extensionRegistryManager"/>
 
-        <property name="metaFeedManager" ref="metaFeedManager" />
+        <property name="metaFeedManager" ref="metaFeedManager"/>
 
         <tx:transaction method="*" value="Required"/>
     </bean>
@@ -369,6 +378,7 @@
         <property name="transferFactoryInstantiator" ref="transferfi"></property>
         <property name="securityAgent" ref="securityAgent"/>
         <property name="aclUpdater" ref="aclUpdater"/>
+        <property name="extensionRegistryManager" ref="extensionRegistryManager"/>
 
         <tx:transaction method="*" value="Required"/>
     </bean>
@@ -382,6 +392,7 @@
         <property name="securityAgent" ref="securityAgent"/>
         <property name="aclUpdater" ref="aclUpdater"/>
         <property name="documentTransactionsReportFactory" ref="dtrFactory"/>
+        <property name="extensionRegistryManager" ref="extensionRegistryManager"/>
 
         <tx:transaction method="*" value="Required"/>
     </bean>
@@ -394,6 +405,7 @@
         <property name="transferFactoryInstantiator" ref="transferfi"></property>
         <property name="securityAgent" ref="securityAgent"/>
         <property name="aclUpdater" ref="aclUpdater"/>
+        <property name="extensionRegistryManager" ref="extensionRegistryManager"/>
 
         <tx:transaction method="*" value="Required"/>
     </bean>
@@ -407,6 +419,7 @@
         <property name="securityAgent" ref="securityAgent"/>
         <property name="aclUpdater" ref="aclUpdater"/>
         <property name="ruleFactory" ref="ruleFactory"/>
+        <property name="extensionRegistryManager" ref="extensionRegistryManager"/>
 
         <tx:transaction method="*" value="Required"/>
     </bean>
@@ -419,12 +432,13 @@
         <property name="transferFactoryInstantiator" ref="transferfi"></property>
         <property name="securityAgent" ref="securityAgent"/>
         <property name="aclUpdater" ref="aclUpdater"/>
+        <property name="extensionRegistryManager" ref="extensionRegistryManager"/>
 
         <tx:transaction method="*" value="Required"/>
     </bean>
 
     <bean id="aclUpdater" class="org.kimios.kernel.jobs.security.ACLUpdater">
-           <tx:transaction method="*" value="Required" />
+        <tx:transaction method="*" value="Required"/>
     </bean>
 
 
@@ -437,11 +451,10 @@
         <property name="transferFactoryInstantiator" ref="transferfi"></property>
         <property name="securityAgent" ref="securityAgent"/>
         <property name="aclUpdater" ref="aclUpdater"/>
+        <property name="extensionRegistryManager" ref="extensionRegistryManager"/>
 
         <tx:transaction method="*" value="Required"/>
     </bean>
-
-
 
 
     <!-- session manager -->
@@ -452,7 +465,7 @@
 
         <property name="authenticators">
             <list>
-                <ref component-id="jasigCasAuthenticator" />
+                <ref component-id="jasigCasAuthenticator"/>
             </list>
         </property>
 
@@ -470,14 +483,15 @@
 
     <bean class="org.kimios.kernel.security.SessionCleaner" init-method="startJob" destroy-method="stopJob">
         <property name="sessionManager" ref="sessionManager"/>
-        <property name="configurationManager" ref="configurationManager" />
+        <property name="configurationManager" ref="configurationManager"/>
 
         <tx:transaction method="*" value="Required"/>
     </bean>
 
     <!-- meta feeds manager-->
-    <bean id="metaFeedManager" class="org.kimios.kernel.dms.metafeeds.MetaFeedManager"
-          />
+    <bean id="metaFeedManager" class="org.kimios.kernel.dms.metafeeds.MetaFeedManager">
+        <argument ref="extensionRegistryManager"/>
+    </bean>
 
 </blueprint>
 

@@ -279,6 +279,7 @@
                             visad.data.vis5d;resolution:=optional,
                             visad.jmet;resolution:=optional,
                             visad.util;resolution:=optional,
+                            org.kimios.api.reporting,
                             com.sun.xml.bind.marshaller;version="[2.2.11,3)",
                             *;resolution:=optional
                         </Import-Package>

@@ -20,7 +20,7 @@ import org.kimios.kernel.dms.model.Document;
 import org.kimios.kernel.dms.model.DocumentVersion;
 import org.kimios.kernel.dms.model.Meta;
 import org.kimios.kernel.dms.model.MetaValue;
-import org.kimios.kernel.exception.DataSourceException;
+import org.kimios.exceptions.DataSourceException;
 
 import java.util.List;
 

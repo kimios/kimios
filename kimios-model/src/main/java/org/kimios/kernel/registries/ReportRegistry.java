@@ -1,6 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2008-2016  DevLib'
+ * Copyright (C) 2008-2017  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -16,16 +16,17 @@
 
 package org.kimios.kernel.registries;
 
-import org.kimios.kernel.rules.impl.RuleImpl;
+import org.kimios.api.reporting.ReportImpl;
 import org.kimios.utils.extension.ExtensionRegistry;
+import org.kimios.utils.extension.IExtensionRegistryManager;
 
 /**
- * Created by farf on 22/01/16.
+ * Created by farf on 13/01/16.
  */
-public class RuleRegistry extends ExtensionRegistry<RuleImpl> {
+public class ReportRegistry extends ExtensionRegistry<ReportImpl> {
 
-    public RuleRegistry(){
-        super();
+    public ReportRegistry(IExtensionRegistryManager extensionRegistryManager) {
+        super(extensionRegistryManager);
     }
 
 }

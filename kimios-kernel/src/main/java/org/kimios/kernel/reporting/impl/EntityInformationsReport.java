@@ -21,9 +21,9 @@ import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.model.DMEntityImpl;
-import org.kimios.kernel.exception.DataSourceException;
-import org.kimios.kernel.reporting.FactoryInstantiator;
-import org.kimios.kernel.reporting.ReportImpl;
+import org.kimios.exceptions.DataSourceException;
+import org.kimios.kernel.reporting.factory.FactoryInstantiator;
+import org.kimios.api.reporting.ReportImpl;
 import org.kimios.kernel.reporting.model.Cell;
 import org.kimios.kernel.reporting.model.Report;
 import org.kimios.kernel.reporting.model.Row;
@@ -94,7 +94,7 @@ public class EntityInformationsReport extends ReportImpl
 
         String rqEntitiesNumber = "SELECT COUNT(dm_entity_id) as EntitiesNumber " + "FROM dm_entity e "
                 + "WHERE e.dm_entity_path LIKE :dmEntityPath ";
-        SQLQuery sqlEntitiesNumber = getSession().createSQLQuery(rqEntitiesNumber);
+        SQLQuery sqlEntitiesNumber = FactoryInstantiator.getInstance().getDtrFactory().getSession().createSQLQuery(rqEntitiesNumber);
         sqlEntitiesNumber.addScalar("EntitiesNumber", LongType.INSTANCE);
         sqlEntitiesNumber.setString("dmEntityPath", dmEntity.getPath() + "/%");
         cells.add(new Cell("EntitiesNumber", sqlEntitiesNumber.list().get(0)));

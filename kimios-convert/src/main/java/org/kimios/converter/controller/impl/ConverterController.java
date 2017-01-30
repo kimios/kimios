@@ -31,7 +31,7 @@ import org.kimios.converter.source.InputSourceFactory;
 import org.kimios.converter.source.impl.FileInputSource;
 import org.kimios.kernel.dms.model.Document;
 import org.kimios.kernel.dms.model.DocumentVersion;
-import org.kimios.kernel.exception.AccessDeniedException;
+import org.kimios.exceptions.AccessDeniedException;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.utils.configuration.ConfigurationManager;
 import org.slf4j.Logger;
@@ -50,6 +50,17 @@ import java.util.UUID;
 public class ConverterController extends AKimiosController implements IConverterController {
 
     private static Logger log = LoggerFactory.getLogger(ConverterController.class);
+
+
+    private ConverterFactory converterFactory;
+
+    public ConverterFactory getConverterFactory() {
+        return converterFactory;
+    }
+
+    public void setConverterFactory(ConverterFactory converterFactory) {
+        this.converterFactory = converterFactory;
+    }
 
     public InputSource convertDocumentVersion(Session session, Long documentVersionId,
                                               String converterImpl, String outputFormat) throws ConverterException {
@@ -73,7 +84,7 @@ public class ConverterController extends AKimiosController implements IConverter
             // Get converter
             if(log.isDebugEnabled())
                 log.debug("converter implementation: " + converterImpl);
-            Converter converter = ConverterFactory.getConverter(converterImpl, outputFormat);
+            Converter converter = converterFactory.getConverter(converterImpl, outputFormat);
             retainedMimeType = converter.converterTargetMimeType();
             if(retainedMimeType == null){
                 log.warn("{} not available for converter {}", retainedMimeType, converterImpl);
@@ -130,7 +141,7 @@ public class ConverterController extends AKimiosController implements IConverter
 
             // Get converter
             log.debug("Getting Converter implementation: " + converterImpl);
-            Converter converter = ConverterFactory.getConverter(converterImpl, outputFormat);
+            Converter converter = converterFactory.getConverter(converterImpl, outputFormat);
 
             // Convert and return the result source
             InputSource inputSource = converter.convertInputSources(sources);

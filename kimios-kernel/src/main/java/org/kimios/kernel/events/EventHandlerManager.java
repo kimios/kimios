@@ -20,6 +20,7 @@ import org.kimios.kernel.events.impl.WorkflowMailer;
 import org.kimios.kernel.events.model.EventContext;
 import org.kimios.utils.configuration.ConfigurationManager;
 import org.kimios.utils.extension.ExtensionRegistry;
+import org.kimios.utils.extension.IExtensionRegistryManager;
 import org.kimios.utils.spring.ApplicationContextProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,22 +45,16 @@ public class EventHandlerManager extends ExtensionRegistry<GenericEventHandler> 
         this.configurationManager = configurationManager;
     }
 
-    private EventHandlerManager()
+    public EventHandlerManager(IExtensionRegistryManager extensionRegistryManager)
     {
-    }
-
-    synchronized public static IEventHandlerManager getInstance()
-    {
-        if (instance == null) {
-            instance = new EventHandlerManager();
-        }
-        return instance;
+        super(extensionRegistryManager);
+        setup();
     }
 
     @Override
     synchronized public void addHandler(GenericEventHandler handler)
     {
-        instance.handlers.add(handler);
+        handlers.add(handler);
     }
 
     private List<GenericEventHandler> handlers;
@@ -126,7 +121,7 @@ public class EventHandlerManager extends ExtensionRegistry<GenericEventHandler> 
 
     }
 
-    public void init()
+    private void setup()
     {
         EventContext.init();
         if(handlers == null || handlers.isEmpty()){

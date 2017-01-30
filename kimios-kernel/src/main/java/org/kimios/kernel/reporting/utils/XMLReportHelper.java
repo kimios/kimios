@@ -1,6 +1,6 @@
 /*
  * Kimios - Document Management System Software
- * Copyright (C) 2008-2015  DevLib'
+ * Copyright (C) 2008-2017  DevLib'
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 2 of the
@@ -13,24 +13,20 @@
  * You should have received a copy of the GNU Affero General Public License
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kimios.kernel.reporting;
+package org.kimios.kernel.reporting.utils;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.SystemUtils;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.dms.model.DMEntityImpl;
-import org.kimios.kernel.exception.DataSourceException;
-import org.kimios.kernel.exception.ReportingException;
+import org.kimios.exceptions.DataSourceException;
+import org.kimios.exceptions.ReportingException;
 import org.kimios.kernel.log.ActionType;
+import org.kimios.api.reporting.ReportImpl;
 import org.kimios.kernel.reporting.model.ReportParam;
-import org.kimios.kernel.user.*;
-import org.kimios.kernel.user.FactoryInstantiator;
-import org.kimios.kernel.user.model.AuthenticationSource;
 import org.kimios.kernel.user.model.User;
 import org.kimios.kernel.xml.XSDException;
 import org.kimios.kernel.xml.XSDUtil;
-import org.kimios.utils.extension.ExtensionRegistryManager;
-import org.slf4j.LoggerFactory;
+import org.kimios.utils.extension.IExtensionRegistryManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -48,9 +44,11 @@ import java.util.*;
 
 public class XMLReportHelper
 {
-    public XMLReportHelper()
-    {
 
+    private IExtensionRegistryManager extensionRegistryManager;
+    public XMLReportHelper(IExtensionRegistryManager extensionRegistryManager)
+    {
+        this.extensionRegistryManager = extensionRegistryManager;
     }
 
     /**
@@ -326,7 +324,7 @@ public class XMLReportHelper
      */
     public String getReportsList()
     {
-        Collection<Class<? extends ReportImpl>> classes = ExtensionRegistryManager.itemsAsClass(ReportImpl.class);
+        Collection<Class<? extends ReportImpl>> classes = extensionRegistryManager.itemsAsClass(ReportImpl.class);
         String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
         xml += "<reportsList>\n";
         for (Class c : classes) {

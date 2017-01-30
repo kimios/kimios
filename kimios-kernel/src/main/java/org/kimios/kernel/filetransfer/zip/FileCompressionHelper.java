@@ -18,7 +18,7 @@ package org.kimios.kernel.filetransfer.zip;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.configuration.Config;
 import org.kimios.kernel.dms.model.DocumentVersion;
-import org.kimios.kernel.exception.RepositoryException;
+import org.kimios.exceptions.RepositoryException;
 import org.kimios.kernel.filetransfer.model.DataTransfer;
 import org.kimios.kernel.repositories.impl.RepositoryManager;
 import org.kimios.utils.configuration.ConfigurationManager;

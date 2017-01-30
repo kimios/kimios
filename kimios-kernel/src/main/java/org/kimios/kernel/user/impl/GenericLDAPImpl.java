@@ -16,7 +16,7 @@
 package org.kimios.kernel.user.impl;
 
 import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.exception.DataSourceException;
+import org.kimios.exceptions.DataSourceException;
 import org.kimios.kernel.user.model.AuthenticationSourceImpl;
 import org.kimios.kernel.user.model.GroupFactory;
 import org.kimios.kernel.user.model.UserFactory;

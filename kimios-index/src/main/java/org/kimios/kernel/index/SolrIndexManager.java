@@ -16,7 +16,6 @@
 package org.kimios.kernel.index;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationConfig;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.lucene.search.Query;
 import org.apache.solr.client.solrj.*;
@@ -35,8 +34,8 @@ import org.kimios.kernel.dms.*;
 import org.kimios.kernel.dms.model.*;
 import org.kimios.kernel.events.impl.AddonDataHandler;
 import org.kimios.kernel.events.model.EventContext;
-import org.kimios.kernel.exception.DataSourceException;
-import org.kimios.kernel.exception.IndexException;
+import org.kimios.exceptions.DataSourceException;
+import org.kimios.exceptions.IndexException;
 import org.kimios.kernel.index.query.factory.DocumentFactory;
 import org.kimios.kernel.index.query.factory.DocumentIndexStatusFactory;
 import org.kimios.kernel.index.query.model.DocumentIndexStatus;
