@@ -100,7 +100,7 @@
         <property name="contextHolder" ref="contextHolder" />
     </bean>
 
-    <bean id="eventHandlerManager" class="org.kimios.kernel.events.EventHandlerManager" init-method="init">
+    <bean id="eventHandlerManager" class="org.kimios.kernel.events.EventHandlerManager">
         <constructor-arg ref="extensionRegistryManager" />
 
         <property name="configurationManager" ref="configurationManager" />
