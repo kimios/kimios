@@ -405,6 +405,8 @@ public class FileTransferController
     }
 
 
+
+    @DmsEvent(eventName = {DmsEventName.DOCUMENT_VERSION_READ})
     public void readVersionStream(Session session, long transactionId, OutputStream versionStream)
             throws ConfigException, AccessDeniedException, DataSourceException, IOException {
 

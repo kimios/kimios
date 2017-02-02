@@ -56,7 +56,7 @@ public class ContextBuilder
     private static String[] workspaceMethod = { "createWorkspace", "updateWorkspace", "deleteWorkspace" };
 
     private static String[] documentVersionMethod = { "createDocumentVersion", "createDocumentVersionFromLatest",
-            "updateDocumentVersion", "deleteDocumentVersion", "startDownloadTransaction", "updateDocumentVersionId" };
+            "updateDocumentVersion", "deleteDocumentVersion", "startDownloadTransaction", "updateDocumentVersionId", "readVersionStream" };
 
     private static String[] fileTransferMethod = { "endUploadTransaction" };
 
@@ -251,6 +251,7 @@ public class ContextBuilder
         }
 
 
+
         return ctx;
     }
 
@@ -352,6 +353,35 @@ public class ContextBuilder
             log.trace("added version to context: " + version);
             log.trace("item " + document);
         }
+
+        //read version stream
+        if (name.equalsIgnoreCase(documentVersionMethod[6])) {
+            try {
+                DataTransferFactory dtFactory =
+                        org.kimios.kernel.filetransfer.FactoryInstantiator.getInstance().getDataTransferFactory();
+                DataTransfer dt =
+                        org.kimios.kernel.filetransfer.FactoryInstantiator.getInstance().getDataTransferFactory()
+                                .getDataTransfer((Long) arguments[1]);
+                HFactory t = (HFactory) dtFactory;
+                t.getSession().evict(dt);
+                DocumentVersionFactory fc = FactoryInstantiator.getInstance().getDocumentVersionFactory();
+                DocumentVersion version = fc.getDocumentVersion(dt.getDocumentVersionUid());
+                t.getSession().evict(version);
+                Document document = version.getDocument();
+                if(document == null){
+                    //load manually
+                    document = FactoryInstantiator.getInstance().getDocumentFactory()
+                            .getDocument(version.getDocumentUid());
+
+                    if(log.isDebugEnabled())
+                        log.debug("in context builder, fileupload entity read load {}", document);
+                }
+                ctx.setEntity(document);
+                EventContext.addParameter("version", version);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         return ctx;
     }
 
@@ -429,6 +459,8 @@ public class ContextBuilder
                 e.printStackTrace();
             }
         }
+
+
 
         // createDocumentWithProperties
         if (name.equalsIgnoreCase(documentMethod[7])) {

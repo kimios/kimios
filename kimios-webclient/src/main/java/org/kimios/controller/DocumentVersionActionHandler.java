@@ -131,13 +131,16 @@ public class DocumentVersionActionHandler extends Controller
                             + dv.getUid() + "_" + dv.getHashMd5() + "_" + dv.getHashSha();
             pdfPath = prefix + ".pdf";
             pdfFile = new File(pdfPath);
-            if (!pdfFile.exists()) {
-                fileTransferController
-                        .downloadFileVersion(sessionUid, dv.getUid(), new FileOutputStream(pdfPath), false);
+            if (pdfFile.exists()) {
+                try{
+                    pdfFile.delete();
+                }catch (Exception ex){
 
+                }
             }
+            fileTransferController
+                  .downloadFileVersion(sessionUid, dv.getUid(), new FileOutputStream(pdfPath), false);
             List<Map<String, String>> imgPaths = new ArrayList<Map<String, String>>(  );
-
             Map<String, String> items = new HashMap<String, String>(  );
             items.put( "num", "0" );
             items.put( "path", pdfPath );
