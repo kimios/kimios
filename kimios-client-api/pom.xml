@@ -269,6 +269,7 @@
                             <exclude>org.apache.geronimo.specs:*</exclude>
                             <exclude>org.slf4j:*</exclude>
                             <exclude>com.sun*:*</exclude>
+                            <exclude>com.fasterxml*:*</exclude>
                         </excludes>
                     </artifactSet>
                         <transformers>
