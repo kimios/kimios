@@ -37,7 +37,7 @@
     <!--<property name="cronExpression" value="*/1 * * * * ?"/>-->
     <!--</bean>-->
 
-    <bean name="jobSimpleTriggerBean" class="org.springframework.scheduling.quartz.SimpleTriggerBean">
+    <bean name="jobSimpleTriggerBean" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
         <property name="jobDetail" ref="jobDetail"/>
         <property name="startDelay" value="30000"/>
         <property name="repeatInterval" value="1000000"/>

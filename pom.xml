@@ -63,7 +63,6 @@
             </roles>
         </developer>
     </developers>
-    <!-- Continous Integration build hosted by CloudBees -->
     <ciManagement>
         <system>jenkins</system>
         <url>https://jenkins.devlib.fr/job/kimios-build</url>
@@ -79,7 +78,7 @@
         </license>
     </licenses>
     <properties>
-        <spring.version>3.2.2.RELEASE</spring.version>
+        <spring.version>4.2.3.RELEASE</spring.version>
         <slfj.version>1.7.5</slfj.version>
         <apache.poi.version>3.12-beta1</apache.poi.version>
         <lucene.version>3.6.0</lucene.version>
@@ -105,6 +104,7 @@
         <osgi.enterprise.version>4.2.0</osgi.enterprise.version>
         <swagger.version>1.5.4</swagger.version>
         <camel.version>2.17.3</camel.version>
+        <quartz.version>2.1.4</quartz.version>
         <!-- releases properties -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <KIMIOS_VERSION>${project.version}</KIMIOS_VERSION>
