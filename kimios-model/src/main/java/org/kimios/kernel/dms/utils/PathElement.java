@@ -32,8 +32,14 @@ public class PathElement {
     public final static int CREATION_DATE = 0;
     public final static int FIXED_STRING = 1;
     public final static int INDEX_FIELD = 2;
-
     public final static int VALUE_CURRENT_DATE = 3;
+    public final static int TYPE_FIELD = 4;
+    public final static int USERNAME = 5;
+    public final static int USERSOURCE = 6;
+    public final static int USER_ID = 7;
+    public final static int DOCUMENT_NAME = 8;
+    public final static int DOCUMENT_EXTENSION = 9;
+    public final static int DOCUMENT_MIME_TYPE = 10;
 
 
     private boolean isDocumentName;
@@ -84,5 +90,7 @@ public class PathElement {
         String pathStructure = new ObjectMapper().writeValueAsString(pathElements);
         return pathStructure;
     }
+
+
 
 }

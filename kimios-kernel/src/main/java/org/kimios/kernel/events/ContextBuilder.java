@@ -175,6 +175,9 @@ public class ContextBuilder
                 doc.setFolderUid(f.getUid());
                 doc.setPath((String) arguments[1]);
                 ctx.setEntity(doc);
+            } else if (arguments.length == 7){
+                //method
+                //here, unable to extrapolate data about document
             } else {
                 Document doc = new Document();
                 doc.setUid(-1);
@@ -287,9 +290,9 @@ public class ContextBuilder
                     FactoryInstantiator.getInstance().getDocumentFactory().getDocument((Long) arguments[1]);
             DocumentVersion version = fc.getLastDocumentVersion(tDoc);
             HFactory t = (HFactory) fc;
-            if(version != null){
-                t.getSession().evict(version);
+            if(ctx.getEntity() == null && version != null && version.getDocument() != null){
                 Document document = version.getDocument();
+                t.getSession().evict(version);
                 ctx.setEntity(document);
             }
 

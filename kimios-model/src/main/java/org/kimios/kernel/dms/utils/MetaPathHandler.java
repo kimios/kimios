@@ -16,12 +16,16 @@
 
 package org.kimios.kernel.dms.utils;
 
+import org.kimios.kernel.dms.model.DocumentType;
 import org.kimios.kernel.dms.model.MetaType;
 import org.kimios.kernel.dms.model.MetaValue;
+import org.kimios.kernel.dms.model.PathTemplate;
+import org.kimios.kernel.security.model.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -31,18 +35,59 @@ import java.util.List;
  */
 public class MetaPathHandler {
 
-
-
     private static Logger logger = LoggerFactory.getLogger(MetaPathHandler.class);
 
-
-
-
-    public String path(Date creationDate, List<PathElement> pathElements, List<MetaValue> metas, String mimeTypeOrExtension) {
+    public String path(Date creationDate,
+                       Session session,
+                       List<PathElement> pathElements,
+                       DocumentType documentType,
+                       List<MetaValue> metas,
+                       String mimeTypeOrExtension) {
         StringBuffer buffer = new StringBuffer();
 
         for (PathElement e : pathElements) {
             switch (e.getElementType()) {
+
+                case PathElement.USERNAME:
+                    try {
+                        buffer.append("/" + PathUtils.cleanDmEntityName(session.getUserName()));
+                    } catch (Exception ex) {
+
+                    }
+                    break;
+                case PathElement.USERSOURCE:
+                    try {
+                        buffer.append("/" + PathUtils.cleanDmEntityName(session.getUserSource()));
+                    } catch (Exception ex) {
+
+                    }
+                    break;
+
+                case PathElement.USER_ID:
+                    try {
+                        buffer.append("/" + PathUtils.cleanDmEntityName(session.getUserName()
+                                                                            + "@" +
+                                                                            session.getUserSource()));
+                    } catch (Exception ex) {
+
+                    }
+                    break;
+
+                case PathElement.DOCUMENT_EXTENSION:
+                    try {
+                        buffer.append("/" + PathUtils.cleanDmEntityName(mimeTypeOrExtension));
+                    } catch (Exception ex) {
+
+                    }
+                    break;
+
+                case PathElement.DOCUMENT_MIME_TYPE:
+                    try {
+                        buffer.append("/" + PathUtils.cleanDmEntityName(mimeTypeOrExtension));
+                    } catch (Exception ex) {
+
+                    }
+                    break;
 
                 case PathElement.CREATION_DATE:
                     try {
@@ -54,6 +99,12 @@ public class MetaPathHandler {
 
                 case PathElement.FIXED_STRING:
                             buffer.append(PathUtils.cleanDmEntityName(e.getElementValue()));
+                    break;
+
+                case PathElement.TYPE_FIELD:
+                    if(documentType != null){
+                        buffer.append(documentType.getName());
+                    }
                     break;
 
                 case PathElement.INDEX_FIELD:
@@ -100,5 +151,90 @@ public class MetaPathHandler {
             } else
                 return "/" + PathUtils.cleanDmEntityName((value.getValue().toString()));
     }
+
+    public static PathTemplate defaultPathModel(){
+
+        PathTemplate pathTemplate = new PathTemplate();
+        List<PathElement> pathElements = new ArrayList<>();
+
+        PathElement p = new PathElement();
+        p.setElementType(PathElement.FIXED_STRING);
+        p.setElementValue("Documents");
+        pathElements.add(p);
+
+        p = new PathElement();
+        p.setElementType(PathElement.TYPE_FIELD);
+        pathElements.add(p);
+
+        p = new PathElement();
+        p.setElementType(PathElement.CREATION_DATE);
+        p.setElementFormat("yyyy");
+        pathElements.add(p);
+
+
+        p = new PathElement();
+        p.setElementType(PathElement.CREATION_DATE);
+        p.setElementFormat("MM");
+        pathElements.add(p);
+
+
+        p = new PathElement();
+        p.setElementType(PathElement.CREATION_DATE);
+        p.setElementFormat("dd");
+        pathElements.add(p);
+
+        p = new PathElement();
+        p.setElementType(PathElement.CREATION_DATE);
+        p.setElementFormat("yyyy-MM-dd-hh-mm-ss");
+        p.setDocumentName(true);
+        pathElements.add(p);
+
+        pathTemplate.setTemplateName("default");
+        pathTemplate.setPathElements(pathElements);
+        return pathTemplate;
+    }
+
+    public static PathTemplate defaultUserPathModel(){
+
+        PathTemplate pathTemplate = new PathTemplate();
+        List<PathElement> pathElements = new ArrayList<>();
+
+        PathElement p = new PathElement();
+        p.setElementType(PathElement.FIXED_STRING);
+        p.setElementValue("Documents");
+        pathElements.add(p);
+
+        p = new PathElement();
+        p.setElementType(PathElement.USER_ID);
+        pathElements.add(p);
+
+        p = new PathElement();
+        p.setElementType(PathElement.CREATION_DATE);
+        p.setElementFormat("yyyy");
+        pathElements.add(p);
+
+
+        p = new PathElement();
+        p.setElementType(PathElement.CREATION_DATE);
+        p.setElementFormat("MM");
+        pathElements.add(p);
+
+
+        p = new PathElement();
+        p.setElementType(PathElement.CREATION_DATE);
+        p.setElementFormat("dd");
+        pathElements.add(p);
+
+        p = new PathElement();
+        p.setElementType(PathElement.CREATION_DATE);
+        p.setElementFormat("yyyy-MM-dd-hh-mm-ss");
+        p.setDocumentName(true);
+        pathElements.add(p);
+
+        pathTemplate.setTemplateName("default");
+        pathTemplate.setPathElements(pathElements);
+        return pathTemplate;
+    }
+
 
 }
