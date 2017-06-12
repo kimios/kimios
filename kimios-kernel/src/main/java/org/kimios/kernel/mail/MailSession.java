@@ -69,7 +69,7 @@ public class MailSession
             properties.put("mail.smtp.socketFactory.port", smtpPort);
             properties.put("mail.smtp.socketFactory.class",
                     "javax.net.ssl.SSLSocketFactory");
-            properties.put("mail.smtp.socketFactory.fallback", "false");
+            properties.put("mail.smtp.socketFactory.fallback", "true");
             properties.put("mail.smtp.quitwait", "false");
         }
         properties.put("mail." + protocol + ".starttls.enable", Boolean.toString(smtpTLSAuth));
