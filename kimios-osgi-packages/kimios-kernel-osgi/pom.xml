@@ -203,8 +203,8 @@
         </dependency>
         <dependency>
             <groupId>javax.mail</groupId>
-            <artifactId>mail</artifactId>
-            <version>1.4.7</version>
+            <artifactId>javax.mail-api</artifactId>
+            <version>${javamail.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

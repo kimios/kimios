@@ -15,6 +15,9 @@
  */
 package org.kimios.kernel.mail;
 
+import org.kimios.exceptions.ConfigException;
+import org.kimios.kernel.configuration.Config;
+import org.kimios.utils.configuration.ConfigurationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +43,21 @@ public class Mailer extends Thread
         try {
             Session session = MailSession.getSession();
             Message msg = mesg.getCompiledMessage(session);
-            Transport.send(msg);
+            String smtpPassword = "";
+            String smtpUser = "";
+            boolean smtpAuth = true;
+            try {
+                smtpUser = ConfigurationManager.getValue(Config.DEFAULT_SMTP_USER);
+                smtpPassword = ConfigurationManager.getValue(Config.DEFAULT_SMTP_PASSWORD);
+                smtpAuth = smtpUser != null && smtpPassword != null;
+            } catch (ConfigException e) {
+                smtpAuth = false;
+            }
+            if(smtpAuth){
+                Transport.send(msg, smtpUser, smtpPassword);
+            } else {
+                Transport.send(msg);
+            }
         } catch (Exception ex) {
             log.error("Mailer error on " + this.getName(), ex);
         }
