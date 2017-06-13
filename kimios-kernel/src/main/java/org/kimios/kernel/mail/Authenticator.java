@@ -23,6 +23,7 @@ public class Authenticator extends javax.mail.Authenticator
 
     public Authenticator(String user, String passord)
     {
+        super();
         String username = user;
         String password = passord;
         authentication = new PasswordAuthentication(username, password);

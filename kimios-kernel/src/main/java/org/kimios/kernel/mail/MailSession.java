@@ -64,6 +64,7 @@ public class MailSession
         String protocol = (smtpTLSAuth ? "smtps" : "smtp");
         if (smtpAuth) {
             authenticator = new Authenticator(smtpUser, smtpPassword);
+            properties.setProperty("mail.smtp.submitter", authenticator.getPasswordAuthentication().getUserName());
         }
         if (smtpTLSAuth) {
             properties.put("mail.smtp.socketFactory.port", smtpPort);
