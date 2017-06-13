@@ -379,7 +379,7 @@
         </dependency>
         <dependency>
             <groupId>javax.mail</groupId>
-            <artifactId>mail</artifactId>
+            <artifactId>javax.mail-api</artifactId>
             <version>${javamail.version}</version>
             <type>jar</type>
             <scope>compile</scope>
