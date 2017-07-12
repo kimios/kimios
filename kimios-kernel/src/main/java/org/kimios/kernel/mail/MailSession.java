@@ -36,6 +36,8 @@ public class MailSession
 
     private static boolean smtpTLSAuth;
 
+    private static boolean smtpSSL;
+
     public static Session getSession() throws ConfigException
     {
         //loading parameters
@@ -58,24 +60,32 @@ public class MailSession
             smtpTLSAuth = false;
         }
 
+        try {
+            smtpSSL = Boolean.parseBoolean(ConfigurationManager.getValue(Config.DEFAULT_SMTP_SSL));
+        } catch (ConfigException e) {
+            smtpSSL = false;
+        }
+
         //Creating session
         Authenticator authenticator = null;
         Properties properties = System.getProperties();
-        String protocol = (smtpTLSAuth ? "smtps" : "smtp");
+        String protocol = (smtpSSL ? "smtps" : "smtp");
         if (smtpAuth) {
             authenticator = new Authenticator(smtpUser, smtpPassword);
             properties.setProperty("mail.smtp.submitter", authenticator.getPasswordAuthentication().getUserName());
         }
-        if (smtpTLSAuth) {
+        if (smtpSSL) {
             properties.put("mail.smtp.socketFactory.port", smtpPort);
             properties.put("mail.smtp.socketFactory.class",
                     "javax.net.ssl.SSLSocketFactory");
             properties.put("mail.smtp.socketFactory.fallback", "true");
             properties.put("mail.smtp.quitwait", "false");
         }
-        properties.put("mail." + protocol + ".starttls.enable", Boolean.toString(smtpTLSAuth));
+        if(smtpTLSAuth){
+            properties.put("mail." + protocol + ".starttls.enable", Boolean.toString(smtpTLSAuth));
+        }
         properties.put("mail.transport.protocol", protocol);
-        properties.put("mail." + protocol + ".port", smtpPort);
+        properties.put("mail." + protocol + ".port", "" + smtpPort);
         properties.put("mail.smtp.host", smtpHost);
         properties.put("mail.smtp.auth", Boolean.toString(smtpAuth));
 

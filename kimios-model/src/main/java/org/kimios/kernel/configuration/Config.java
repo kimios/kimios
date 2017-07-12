@@ -46,6 +46,8 @@ public class Config
 
     public static String DEFAULT_SMTP_TLSAUTH = "dms.mail.tlsauth";
 
+    public static String DEFAULT_SMTP_SSL = "dms.mail.ssl";
+
     public static String DEFAULT_SMTP_DEBUG = "dms.mail.debug";
 
     public static String DEFAULT_SMTP_PORT = "dms.mail.port";
