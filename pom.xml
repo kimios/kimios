@@ -137,6 +137,7 @@
         <module>kimios-osgi-packages</module>
         <module>kimios-test</module>
         <module>kimios-camel</module>
+        <module>kimios-notifier</module>
     </modules>
     <packaging>pom</packaging>
 
