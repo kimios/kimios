@@ -316,7 +316,7 @@
                         <supportedProjectType>jar</supportedProjectType>
                     </supportedProjectTypes>
                     <excludeDependencies>
-                        sqlite-jdbc,quartz,xerces,xercesImpl,dom4j,commons-codec,commons-collections,commons-lang,javassist,xml-apis,stax-api,commons-logging,rslf4j-api,slf4j-log4j12,log4j,servlet-api,kimios-index,kimios-model,kimios-utils,kimios-exceptions,kimios-convert,kimios-share,kimios-interfaces
+                        sqlite-jdbc,quartz,xerces,xercesImpl,dom4j,commons-codec,commons-collections,commons-lang,javassist,xml-apis,stax-api,commons-logging,rslf4j-api,slf4j-log4j12,log4j,servlet-api,kimios-index,kimios-model,kimios-utils,kimios-exceptions,kimios-convert,kimios-share,kimios-interfaces,kimios-notifier
                     </excludeDependencies>
                     <instructions>
                         <Implementation-Build>${buildNumber}</Implementation-Build>

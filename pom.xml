@@ -137,6 +137,7 @@
         <module>kimios-osgi-packages</module>
         <module>kimios-test</module>
         <module>kimios-camel</module>
+        <module>kimios-notifier</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -168,6 +169,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.2</version>
                 <configuration>
                     <archive>
                         <manifest>
