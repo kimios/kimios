@@ -1,4 +1,4 @@
-package org.kimios.kernel.notifier;
+package org.kimios.osgi.utils.notifier;
 
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
