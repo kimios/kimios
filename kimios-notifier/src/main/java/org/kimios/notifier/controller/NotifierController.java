@@ -1,8 +1,11 @@
 package org.kimios.notifier.controller;
 
+import org.kimios.kernel.controller.IAdministrationController;
+import org.kimios.kernel.controller.IDocumentController;
 import org.kimios.kernel.index.controller.ISearchController;
 import org.kimios.kernel.index.query.model.Criteria;
 import org.kimios.kernel.index.query.model.SearchResponse;
+import org.kimios.kernel.security.ISessionManager;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.ws.pojo.DMEntity;
 import org.slf4j.Logger;
@@ -12,7 +15,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NotifierController {
+public class NotifierController implements INotifierController {
 
     private static Logger logger = LoggerFactory.getLogger(NotifierController.class);
 
@@ -20,10 +23,8 @@ public class NotifierController {
     private static long REMAINING_DAYS_BEFORE_NOTIFICATION = 7;
 
     private ISearchController searchController;
-
-    public NotifierController(ISearchController sService) {
-        this.searchController = sService;
-    }
+    private IDocumentController documentController;
+    private IAdministrationController administrationController;
 
     public SearchResponse searchDocuments(Session session) throws Exception {
         return this.searchController.advancedSearchDocuments(session, prepareCriteriaList(), -1, -1, null, null,
