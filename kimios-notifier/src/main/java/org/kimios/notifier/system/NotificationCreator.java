@@ -1,59 +1,63 @@
 package org.kimios.notifier.system;
 
-import org.kimios.kernel.security.SessionManager;
+import org.kimios.kernel.index.controller.impl.CustomThreadPoolExecutor;
+import org.kimios.kernel.security.ISessionManager;
 import org.kimios.kernel.security.model.Session;
-import org.kimios.notifier.controller.NotifierController;
+import org.kimios.notifier.controller.INotifierController;
+import org.kimios.notifier.jobs.NotificationCreatorJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NotificationCreator implements Runnable {
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
+
+public class NotificationCreator {
 
     private static Logger logger = LoggerFactory.getLogger(NotificationCreator.class);
 
-    private static Thread thrc;
-    private volatile boolean active = true;
-    private SessionManager sessionManager;
-    private NotifierController notifierController;
+    private static NotificationCreatorThread thrc;
+    private ISessionManager sessionManager;
+    private INotifierController notifierController;
 
-    @Override
-    public void run() {
+    public void startUp() {
         Session session = this.sessionManager.startSession("admin", "kimios");
-        while (active) {
-            try {
-                Thread.sleep(5000);
-                if (active) {
-                    logger.info("createNotifications now");
-                    this.notifierController.createNotifications(session);
+        thrc = new NotificationCreatorThread(notifierController, session);
+        thrc.run();
+    }
+
+    public static class NotificationCreatorThread extends Thread {
+
+        private volatile boolean active = true;
+        private final INotifierController notifierController;
+        private final Session session;
+        private CustomThreadPoolExecutor customThreadPoolExecutor;
+
+        public NotificationCreatorThread(INotifierController notifierController, Session session) {
+            this.notifierController = notifierController;
+            this.session = session;
+            this.customThreadPoolExecutor = new CustomThreadPoolExecutor(8, 8,
+                    10000L, TimeUnit.MILLISECONDS,
+                    new LinkedBlockingQueue<Runnable>());
+        }
+
+        public void run() {
+            while (active) {
+                try {
+                    Thread.sleep(5000);
+                    if (active) {
+                        logger.info("createNotifications now");
+                        NotificationCreatorJob job = new NotificationCreatorJob(notifierController, session);
+                        Integer i = customThreadPoolExecutor.submit(job).get();
+                        logger.info("created " + i + " notification(s)");
+                    }
+                } catch (Exception e) {
+                    System.out.println("Thread interrupted " + e.getMessage());
                 }
-            } catch (Exception e) {
-                System.out.println("Thread interrupted " + e.getMessage());
             }
         }
-    }
 
-    public void stop() {
-        active = false;
-    }
-
-    public void startJob()
-    {
-        logger.info("Kimios Notification Creator - Starting job.");
-        synchronized (this) {
-            thrc = new Thread(this, "Kimios Notification Creator");
-            thrc.start();
+        public void stopThread() {
+            active = false;
         }
-        logger.info("Kimios Notification Creator - Started job.");
-    }
-
-    public void stopJob()
-    {
-        logger.info("Kimios Notification Creator - Closing ...");
-        try {
-            this.stop();
-            thrc.join();
-        } catch (Exception e) {
-
-        }
-        logger.info("Kimios Notification Creator - Closed");
     }
 }

@@ -47,18 +47,13 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.quartz-scheduler</groupId>
-            <artifactId>quartz</artifactId>
-            <version>2.2.0</version>
-        </dependency>
-        <dependency>
             <groupId>org.kimios</groupId>
             <artifactId>kimios-model</artifactId>
             <version>1.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.kimios</groupId>
-            <artifactId>kimios-services</artifactId>
+            <artifactId>kimios-index</artifactId>
             <version>1.1-SNAPSHOT</version>
         </dependency>
         <dependency>
@@ -69,13 +64,15 @@
         </dependency>
         <dependency>
             <groupId>org.kimios</groupId>
-            <artifactId>kimios-index</artifactId>
-            <version>1.1-SNAPSHOT</version>
+            <artifactId>kimios-utils</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.kimios</groupId>
-            <artifactId>kimios-exceptions</artifactId>
-            <version>1.1-SNAPSHOT</version>
+            <artifactId>kimios-interfaces</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
@@ -107,7 +104,7 @@
                         <Bundle-SymbolicName>kimios-notifier</Bundle-SymbolicName>
                         <Bundle-Name>${project.name}</Bundle-Name>
                         <Export-Package>
-                            org.kimios.notifier.controller, org.kimios.notifier.system
+                            org.kimios.notifier.controller,org.kimios.notifier.system,org.kimios.notifier.jobs
                         </Export-Package>
                         <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
                         <Embed-Transitive>false</Embed-Transitive>
@@ -135,7 +132,6 @@
                             org.apache.commons.dbcp,
                             org.apache.commons.dbcp.managed,
                             org.apache.commons.dbcp.datasources,
-                            org.kimios.webservices;resolution:=optional,
                             *;resolution:=optional
                         </Import-Package>
                     </instructions>
