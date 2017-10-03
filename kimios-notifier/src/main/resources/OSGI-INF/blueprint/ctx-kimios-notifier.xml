@@ -42,7 +42,7 @@
         <property name="notifierController" ref="notifierController"/>
     </bean>
 
-    <!--<service id="notifCtrlOsgi" ref="notifierController"-->
-             <!--interface="org.kimios.notifier.controller.INotifierController" />-->
+    <service id="notifCtrlOsgi" ref="notifierController"
+             interface="org.kimios.notifier.controller.INotifierController" />
 
 </blueprint>
