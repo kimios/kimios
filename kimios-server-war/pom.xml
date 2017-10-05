@@ -472,6 +472,18 @@
             <version>${jackson.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-ldap-connector</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ldaptive</groupId>
+            <artifactId>ldaptive</artifactId>
+            <version>${ldaptive.version}</version>
+        </dependency>
+
 
     </dependencies>
     <build>
