@@ -105,6 +105,7 @@
         <swagger.version>1.5.4</swagger.version>
         <camel.version>2.17.3</camel.version>
         <quartz.version>2.1.4</quartz.version>
+        <ldaptive.version>1.2.2</ldaptive.version>
         <!-- releases properties -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <KIMIOS_VERSION>${project.version}</KIMIOS_VERSION>
@@ -137,6 +138,7 @@
         <module>kimios-osgi-packages</module>
         <module>kimios-test</module>
         <module>kimios-camel</module>
+        <module>kimios-ldap-connector</module>
         <module>kimios-notifier</module>
     </modules>
     <packaging>pom</packaging>
