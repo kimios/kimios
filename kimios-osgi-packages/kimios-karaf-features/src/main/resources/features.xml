@@ -88,6 +88,7 @@
     <feature version="${project.version}" name="kimios-core">
         <feature>kimios-solr</feature>
         <requirement prerequisite="true">kimios-model</requirement>
+        <bundle start-level="100">mvn:org.kimios/kimios-ldap-connector/${project.version}/jar/osgi</bundle>
         <bundle start-level="100">mvn:org.kimios/kimios-kernel-osgi/${project.version}/jar/blueprint</bundle>
         <bundle start-level="100">mvn:org.kimios/kimios-index/${project.version}/jar/osgi</bundle>
         <capability>kimios-core</capability>
