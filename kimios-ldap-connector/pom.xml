@@ -32,7 +32,7 @@
             <groupId>org.ldaptive</groupId>
             <artifactId>ldaptive</artifactId>
             <version>${ldaptive.version}</version>
-            <scope>provided</scope>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.kimios</groupId>
@@ -44,6 +44,7 @@
             <groupId>org.kimios</groupId>
             <artifactId>kimios-model</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.kimios</groupId>
@@ -63,7 +64,7 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
-                <version>2.3.7</version>
+                <version>3.3.0</version>
                 <executions>
                     <execution>
                         <id>bundle-manifest</id>
@@ -89,25 +90,9 @@
                         </Export-Package>
                         <Kimios-Extension>org.kimios.kernel.user.model.AuthenticationSourceImpl</Kimios-Extension>
                         <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
-                        <Embed-Transitive>true</Embed-Transitive>
+                        <Embed-Transitive>false</Embed-Transitive>
                         <Include-Resource>{maven-resources}</Include-Resource>
                         <Import-Package>
-                            org.slf4j.impl;resolution:=optional,
-                            org.kimios.utils.osgi,
-                            org.apache.http*,
-                            org.apache.commons.logging,
-                            org.apache.commons.io,
-                            org.apache.commons.io.comparator,
-                            org.apache.commons.io.filefilter,
-                            org.apache.commons.io.output,
-                            org.apache.commons.io.monitor,
-                            org.apache.commons.io.input,
-                            javassist.util.proxy,
-                            javax.transaction,
-                            javax.sql,
-                            org.kimios.api.*,
-                            org.kimios.kernel.configuration,
-                            com.sun.xml.bind.marshaller;version="[2.2.11,3)",
                             *;resolution:=optional
                         </Import-Package>
                     </instructions>
