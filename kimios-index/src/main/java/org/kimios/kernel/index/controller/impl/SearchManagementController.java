@@ -18,6 +18,7 @@ package org.kimios.kernel.index.controller.impl;
 
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.controller.AKimiosController;
+import org.kimios.kernel.index.controller.CustomThreadPoolExecutor;
 import org.kimios.kernel.index.controller.ISearchManagementController;
 import org.kimios.exceptions.AccessDeniedException;
 import org.kimios.exceptions.DataSourceException;

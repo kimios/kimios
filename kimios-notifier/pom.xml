@@ -57,7 +57,8 @@
             <groupId>org.kimios</groupId>
             <artifactId>kimios-index</artifactId>
             <version>1.1-SNAPSHOT</version>
-	    <scope>provided</scope>
+            <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>

@@ -25,7 +25,7 @@
     </cm:property-placeholder>
 
     <reference id="sessionManager" interface="org.kimios.kernel.security.ISessionManager" />
-    <reference id="searchController" interface="org.kimios.kernel.controller.ISearchController" />
+    <reference id="searchController" interface="org.kimios.kernel.index.controller.ISearchController" />
     <reference id="documentController" interface="org.kimios.kernel.controller.IDocumentController" />
     <reference id="administrationController" interface="org.kimios.kernel.controller.IAdministrationController" />
 
@@ -37,7 +37,8 @@
     </bean>
 
     <!-- Jobs -->
-    <bean id="notificationCreator" class="org.kimios.notifier.system.NotificationCreator" init-method="startUp">
+    <bean id="notificationCreator" class="org.kimios.notifier.system.NotificationCreator" init-method="startJob"
+          destroy-method="stopJob">
         <property name="sessionManager" ref="sessionManager"/>
         <property name="notifierController" ref="notifierController"/>
     </bean>
