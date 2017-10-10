@@ -60,4 +60,28 @@ public class NotifierController extends AKimiosController implements INotifierCo
         }
         return i;
     }
+
+    public ISearchController getSearchController() {
+        return searchController;
+    }
+
+    public void setSearchController(ISearchController searchController) {
+        this.searchController = searchController;
+    }
+
+    public IDocumentController getDocumentController() {
+        return documentController;
+    }
+
+    public void setDocumentController(IDocumentController documentController) {
+        this.documentController = documentController;
+    }
+
+    public IAdministrationController getAdministrationController() {
+        return administrationController;
+    }
+
+    public void setAdministrationController(IAdministrationController administrationController) {
+        this.administrationController = administrationController;
+    }
 }

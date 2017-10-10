@@ -14,7 +14,7 @@
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.kimios.kernel.index.controller.impl;
+package org.kimios.kernel.index.controller;
 
 import org.kimios.kernel.index.ReindexerProcess;
 import org.slf4j.Logger;
