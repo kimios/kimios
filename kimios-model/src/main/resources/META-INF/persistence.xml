@@ -72,6 +72,7 @@
         <class>org.kimios.kernel.share.model.MailContact</class>
         <class>org.kimios.kernel.share.model.Share</class>
         <class>org.kimios.kernel.templates.model.Template</class>
+        <class>org.kimios.kernel.notification.model.Notification</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
 
         <properties>

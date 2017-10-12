@@ -1,6 +1,7 @@
 package org.kimios.kernel.notification.model;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "notifications")
@@ -27,8 +28,13 @@ public class Notification {
     @Column(name = "notification_status", nullable = false)
     private NotificationStatus status;
 
-    public Notification(String userId, long docUid) {
+    @Column(name =  "creation_date", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date creationDate = new Date();
+
+    public Notification(String userId, long docUid, String userSource) {
         this.userId = userId;
+        this.userSource = userSource;
         this.documentUid = docUid;
         this.status = NotificationStatus.TO_BE_SENT;
     }

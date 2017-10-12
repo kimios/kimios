@@ -2,6 +2,7 @@ package org.kimios.notifier.controller;
 
 
 
+import org.hibernate.HibernateException;
 import org.springframework.transaction.annotation.Transactional;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.IAdministrationController;
@@ -67,8 +68,17 @@ public class NotifierController extends AKimiosController implements INotifierCo
 
             // find concerned users
             // ArrayList<User> users =
-            Notification notification = new Notification(dm.getOwner(), dm.getUid());
-            notificationFactory.saveNotification(notification);
+            Notification notification = new Notification(dm.getOwner(), dm.getUid(), dm.getOwnerSource());
+            try {
+                notificationFactory.saveNotification(notification);
+            } catch (HibernateException he) {
+                if (he.getCause().getMessage().contains("ERROR: duplicate key value violates unique constraint")) {
+                    logger.info("A notification already exists on this document for this user with same status.");
+                } else {
+                    logger.error("Error while creating notification\n" + he.getMessage());
+                }
+                continue;
+            }
 
             i++;
         }
