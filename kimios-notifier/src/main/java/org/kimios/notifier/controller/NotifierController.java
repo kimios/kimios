@@ -6,8 +6,10 @@ import org.kimios.kernel.controller.IDocumentController;
 import org.kimios.kernel.index.controller.ISearchController;
 import org.kimios.kernel.index.query.model.Criteria;
 import org.kimios.kernel.index.query.model.SearchResponse;
+import org.kimios.kernel.notification.model.Notification;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.ws.pojo.DMEntity;
+import org.kimios.notifier.factory.NotificationFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +27,8 @@ public class NotifierController extends AKimiosController implements INotifierCo
     private ISearchController searchController;
     private IDocumentController documentController;
     private IAdministrationController administrationController;
+
+    private NotificationFactory notificationFactory;
 
     public SearchResponse searchDocuments(Session session) throws Exception {
         return this.searchController.advancedSearchDocuments(session, prepareCriteriaList(), -1, -1, null, null,
@@ -55,7 +59,13 @@ public class NotifierController extends AKimiosController implements INotifierCo
             if (dm.getType() != 3) {
                 continue;
             }
-            logger.info("creating notification for document " + dm.toString());
+            logger.info("creating notifications for document " + dm.toString());
+
+            // find concerned users
+            // ArrayList<User> users =
+            Notification notification = new Notification(dm.getOwner(), dm.getUid());
+            notificationFactory.saveNotification(notification);
+
             i++;
         }
         return i;
@@ -83,5 +93,13 @@ public class NotifierController extends AKimiosController implements INotifierCo
 
     public void setAdministrationController(IAdministrationController administrationController) {
         this.administrationController = administrationController;
+    }
+
+    public NotificationFactory getNotificationFactory() {
+        return notificationFactory;
+    }
+
+    public void setNotificationFactory(NotificationFactory notificationFactory) {
+        this.notificationFactory = notificationFactory;
     }
 }
