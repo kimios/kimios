@@ -1,5 +1,8 @@
 package org.kimios.notifier.controller;
 
+
+
+import org.springframework.transaction.annotation.Transactional;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.IAdministrationController;
 import org.kimios.kernel.controller.IDocumentController;
@@ -17,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Transactional
 public class NotifierController extends AKimiosController implements INotifierController {
 
     private static Logger logger = LoggerFactory.getLogger(NotifierController.class);
