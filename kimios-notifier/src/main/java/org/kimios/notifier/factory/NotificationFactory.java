@@ -1,5 +1,6 @@
 package org.kimios.notifier.factory;
 
+import org.hibernate.HibernateException;
 import org.kimios.kernel.hibernate.HFactory;
 import org.kimios.kernel.notification.model.Notification;
 import org.slf4j.Logger;
@@ -9,9 +10,13 @@ public class NotificationFactory extends HFactory {
 
     private static Logger logger = LoggerFactory.getLogger(NotificationFactory.class);
 
-    public Notification saveNotification(Notification notification){
+    public Notification saveNotification(Notification notification) throws HibernateException {
         getSession().saveOrUpdate(notification);
-        getSession().flush();
+        try {
+            getSession().flush();
+        } catch (HibernateException he) {
+            throw he;
+        }
         return notification;
     }
 }
