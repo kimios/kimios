@@ -32,7 +32,7 @@ public class Notification {
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate = new Date();
 
-    public Notification(String userId, long docUid, String userSource) {
+    public Notification(String userId, String userSource, long docUid) {
         this.userId = userId;
         this.userSource = userSource;
         this.documentUid = docUid;
