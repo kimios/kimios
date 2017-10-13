@@ -1,25 +1,28 @@
 package org.kimios.notifier.controller;
 
 
-
 import org.hibernate.HibernateException;
-import org.springframework.transaction.annotation.Transactional;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.IAdministrationController;
 import org.kimios.kernel.controller.IDocumentController;
+import org.kimios.kernel.controller.ISecurityController;
 import org.kimios.kernel.index.controller.ISearchController;
 import org.kimios.kernel.index.query.model.Criteria;
 import org.kimios.kernel.index.query.model.SearchResponse;
 import org.kimios.kernel.notification.model.Notification;
+import org.kimios.kernel.security.model.DMEntitySecurity;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.ws.pojo.DMEntity;
 import org.kimios.notifier.factory.NotificationFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Transactional
 public class NotifierController extends AKimiosController implements INotifierController {
@@ -32,6 +35,7 @@ public class NotifierController extends AKimiosController implements INotifierCo
     private ISearchController searchController;
     private IDocumentController documentController;
     private IAdministrationController administrationController;
+    private ISecurityController securityController;
 
     private NotificationFactory notificationFactory;
 
@@ -59,6 +63,7 @@ public class NotifierController extends AKimiosController implements INotifierCo
         SearchResponse searchResponse = searchDocuments(session);
         logger.info("creating notifications now…");
         Integer i = 0;
+
         for (DMEntity dm: searchResponse.getRows()) {
             // filtering only documents
             if (dm.getType() != 3) {
@@ -67,20 +72,39 @@ public class NotifierController extends AKimiosController implements INotifierCo
             logger.info("creating notifications for document " + dm.toString());
 
             // find concerned users
-            // ArrayList<User> users =
-            Notification notification = new Notification(dm.getOwner(), dm.getUid(), dm.getOwnerSource());
+            Set<UserKey> userKeys = new HashSet<UserKey>();
+            // document's owner
+            userKeys.add(new UserKey(dm.getOwner(), dm.getOwnerSource()));
+
+            // users who can see the document
             try {
-                notificationFactory.saveNotification(notification);
-            } catch (HibernateException he) {
-                if (he.getCause().getMessage().contains("ERROR: duplicate key value violates unique constraint")) {
-                    logger.info("A notification already exists on this document for this user with same status.");
-                } else {
-                    logger.error("Error while creating notification\n" + he.getMessage());
+                List<DMEntitySecurity> securities = this.securityController.getDMEntitySecurityies(session, dm.getUid());
+                for (DMEntitySecurity security: securities) {
+                    if (security.isRead()
+                            || security.isWrite()
+                            || security.isFullAccess()) {
+                        userKeys.add(new UserKey(security.getName(), security.getSource()));
+                    }
                 }
-                continue;
+            } catch (Exception e) {
+                logger.error(e.getMessage());
             }
 
-            i++;
+            for (UserKey userKey: userKeys) {
+                Notification notification = new Notification(userKey.getUserId(), userKey.getUserSource(), dm.getUid());
+                try {
+                    notificationFactory.saveNotification(notification);
+                } catch (HibernateException he) {
+                    if (he.getCause().getMessage().contains("ERROR: duplicate key value violates unique constraint")) {
+                        logger.info("A notification already exists on this document for this user with same status.");
+                    } else {
+                        logger.error("Error while creating notification\n" + he.getMessage());
+                    }
+                    continue;
+                }
+
+                i++;
+            }
         }
         return i;
     }
@@ -115,5 +139,42 @@ public class NotifierController extends AKimiosController implements INotifierCo
 
     public void setNotificationFactory(NotificationFactory notificationFactory) {
         this.notificationFactory = notificationFactory;
+    }
+
+    public ISecurityController getSecurityController() {
+        return securityController;
+    }
+
+    public void setSecurityController(ISecurityController securityController) {
+        this.securityController = securityController;
+    }
+
+    private class UserKey implements Comparable {
+
+        private String userId;
+        private String userSource;
+
+        public UserKey(String userId, String userSource) {
+            this.userId = userId;
+            this.userSource = userSource;
+        }
+
+        public int compareTo(UserKey uk) {
+            return userId.compareTo(uk.getUserId()) == 0 ? userSource.compareTo(uk.getUserSource()) :
+                    userId.compareTo(uk.getUserId());
+        }
+
+        public String getUserId() {
+            return userId;
+        }
+
+        public String getUserSource() {
+            return userSource;
+        }
+
+        @Override
+        public int compareTo(Object o) {
+            return (o instanceof UserKey) ? this.compareTo((UserKey)o) : 0;
+        }
     }
 }
