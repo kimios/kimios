@@ -10,6 +10,7 @@ import org.kimios.kernel.index.controller.ISearchController;
 import org.kimios.kernel.index.query.model.Criteria;
 import org.kimios.kernel.index.query.model.SearchResponse;
 import org.kimios.kernel.notification.model.Notification;
+import org.kimios.kernel.notification.model.NotificationStatus;
 import org.kimios.kernel.security.model.DMEntitySecurity;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.ws.pojo.DMEntity;
@@ -38,6 +39,18 @@ public class NotifierController extends AKimiosController implements INotifierCo
     private ISecurityController securityController;
 
     private NotificationFactory notificationFactory;
+
+    public NotifierController(ISearchController searchController,
+                              IDocumentController documentController,
+                              IAdministrationController administrationController,
+                              NotificationFactory notificationFactory,
+                              ISecurityController securityController) {
+        this.searchController = searchController;
+        this.documentController = documentController;
+        this.administrationController = administrationController;
+        this.securityController = securityController;
+        this.notificationFactory = notificationFactory;
+    }
 
     public SearchResponse searchDocuments(Session session) throws Exception {
         return this.searchController.advancedSearchDocuments(session, prepareCriteriaList(), -1, -1, null, null,
@@ -93,13 +106,17 @@ public class NotifierController extends AKimiosController implements INotifierCo
             for (UserKey userKey: userKeys) {
                 Notification notification = new Notification(userKey.getUserId(), userKey.getUserSource(), dm.getUid());
                 try {
-                    notificationFactory.saveNotification(notification);
-                } catch (HibernateException he) {
-                    if (he.getCause().getMessage().contains("ERROR: duplicate key value violates unique constraint")) {
-                        logger.info("A notification already exists on this document for this user with same status.");
-                    } else {
-                        logger.error("Error while creating notification\n" + he.getMessage());
+                    List<NotificationStatus> statuses = new ArrayList<>();
+                    statuses.add(notification.getStatus());
+                    if (notificationFactory.getNotifications(
+                            notification.getUserId(),
+                            notification.getUserSource(),
+                            notification.getDocumentUid(),
+                            statuses).size() == 0) {
+                        notificationFactory.saveNotification(notification);
                     }
+                } catch (Exception e) {
+                    logger.error("Error while creating notification\n" + e.getMessage());
                     continue;
                 }
 
