@@ -45,8 +45,14 @@
         <property name="administrationController" ref="administrationController" />
         <property name="notificationFactory" ref="notificationFactory" />
         <property name="securityController" ref="securityController" />
-    
-        <tx:transaction method="*" value="Required"/>
+
+        <argument ref="searchController" />
+        <argument ref="documentController" />
+        <argument ref="administrationController" />
+        <argument ref="notificationFactory" />
+        <argument ref="securityController" />
+
+        <tx:transaction method="*" value="Required" />
     </bean>
 
     <!-- Jobs -->
