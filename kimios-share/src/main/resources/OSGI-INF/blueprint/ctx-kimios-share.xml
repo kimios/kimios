@@ -115,5 +115,7 @@
 
     <service id="iShareCtrlOsgi" ref="shareController" interface="org.kimios.kernel.share.controller.IShareController" />
 
+    <service id="iEmailFyOsgi" ref="mailFactory"
+             interface="org.kimios.kernel.share.mail.IEmailFactory"/>
 
 </blueprint>

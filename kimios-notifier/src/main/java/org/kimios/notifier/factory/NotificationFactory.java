@@ -7,7 +7,9 @@ import org.kimios.kernel.notification.model.NotificationStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class NotificationFactory extends HFactory {
 
@@ -34,5 +36,35 @@ public class NotificationFactory extends HFactory {
                 .setParameterList("statuses", statuses)
                 .setLong("documentId", documentId)
                 .list();
+    }
+
+    public List<Notification> getNotificationsToSend() {
+        String query = "select n from Notification n " +
+                " where n.status in (:statuses) ";
+        List<NotificationStatus> statuses = new ArrayList<>();
+        statuses.add(NotificationStatus.TO_BE_SENT);
+        return getSession()
+                .createQuery(query)
+                .setParameterList("statuses", statuses)
+                .list();
+    }
+
+    public Notification getNotificationById(long id) {
+        String query = "select n from Notification n " +
+                " where n.status in (:statuses) ";
+        List<NotificationStatus> statuses = new ArrayList<>();
+        statuses.add(NotificationStatus.TO_BE_SENT);
+        Optional<Notification> optional = getSession()
+                .createQuery(query)
+                .setLong("id", id)
+                .list().stream().findFirst();
+
+        return optional.isPresent() ? optional.get() : null;
+    }
+
+    public void changeNotificationStatus(long id, NotificationStatus status) {
+        Notification notification = getNotificationById(id);
+        notification.setStatus(status);
+        this.saveNotification(notification);
     }
 }

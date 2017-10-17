@@ -160,7 +160,7 @@
                         <Bundle-SymbolicName>kimios-share</Bundle-SymbolicName>
                         <Bundle-Name>${project.name}</Bundle-Name>
                         <Export-Package>
-                            org.kimios.kernel.share,org.kimios.kernel.share.controller
+                            org.kimios.kernel.share,org.kimios.kernel.share.controller,org.kimios.kernel.share.mail
                         </Export-Package>
                         <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
                         <Embed-Transitive>false</Embed-Transitive>

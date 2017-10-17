@@ -34,6 +34,8 @@
     <reference id="dbFactoryProvider"
                interface="org.kimios.kernel.hibernate.IDBFactory"/>
 
+    <reference id="emailFactory" interface="org.kimios.kernel.share.mail.IEmailFactory" />
+
     <bean id="notificationFactory" class="org.kimios.notifier.factory.NotificationFactory">
         <property name="provider" ref="dbFactoryProvider"></property>
     </bean>
@@ -45,18 +47,26 @@
         <property name="administrationController" ref="administrationController" />
         <property name="notificationFactory" ref="notificationFactory" />
         <property name="securityController" ref="securityController" />
+        <property name="emailFactory" ref="emailFactory" />
 
         <argument ref="searchController" />
         <argument ref="documentController" />
         <argument ref="administrationController" />
         <argument ref="notificationFactory" />
         <argument ref="securityController" />
+        <argument ref="emailFactory" />
 
         <tx:transaction method="*" value="Required" />
     </bean>
 
     <!-- Jobs -->
     <bean id="notificationCreator" class="org.kimios.notifier.system.NotificationCreator" init-method="startJob"
+          destroy-method="stopJob">
+        <property name="sessionManager" ref="sessionManager"/>
+        <property name="notifierController" ref="notifierController"/>
+    </bean>
+
+    <bean id="notificationSender" class="org.kimios.notifier.system.NotificationSender" init-method="startJob"
           destroy-method="stopJob">
         <property name="sessionManager" ref="sessionManager"/>
         <property name="notifierController" ref="notifierController"/>

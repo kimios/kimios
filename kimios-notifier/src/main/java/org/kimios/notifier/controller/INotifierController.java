@@ -13,4 +13,6 @@ public interface INotifierController {
     List<Criteria> prepareCriteriaList();
 
     Integer createNotifications(Session session) throws Exception;
+
+    void sendNotifications(Session session) throws Exception;
 }
