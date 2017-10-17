@@ -83,6 +83,18 @@
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-share</artifactId>
+            <version>1.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-email</artifactId>
+            <version>1.4</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
 
@@ -107,7 +119,7 @@
                         <supportedProjectType>jar</supportedProjectType>
                     </supportedProjectTypes>
                     <excludeDependencies>
-                        quartz,xerces,xercesImpl,dom4j,commons-codec,commons-collections,commons-lang,javassist,xml-apis,stax-api,commons-logging,slf4j-api,log4j,solr*,lucene*
+                        quartz,xerces,xercesImpl,dom4j,commons-codec,commons-collections,commons-lang,javassist,xml-apis,stax-api,commons-logging,slf4j-api,log4j,solr*,lucene*,commons-email
                     </excludeDependencies>
                     <instructions>
                         <Bundle-SymbolicName>kimios-notifier</Bundle-SymbolicName>
@@ -135,6 +147,7 @@
                             org.apache.commons.io.output,
                             org.apache.commons.io.monitor,
                             org.apache.commons.io.input,
+                            org.apache.commons.mail,
                             javassist.util.proxy,
                             javax.transaction,
                             javax.sql,

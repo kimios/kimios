@@ -24,7 +24,7 @@ import org.kimios.kernel.repositories.impl.RepositoryManager;
 
 import javax.activation.FileDataSource;
 
-public class EmailFactory {
+public class EmailFactory implements IEmailFactory {
 
     private String mailServer = "smtp.googlemail.com";
 

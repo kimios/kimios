@@ -1,7 +1,7 @@
 package org.kimios.notifier.controller;
 
 
-import org.hibernate.HibernateException;
+import org.apache.commons.mail.MultiPartEmail;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.IAdministrationController;
 import org.kimios.kernel.controller.IDocumentController;
@@ -13,8 +13,10 @@ import org.kimios.kernel.notification.model.Notification;
 import org.kimios.kernel.notification.model.NotificationStatus;
 import org.kimios.kernel.security.model.DMEntitySecurity;
 import org.kimios.kernel.security.model.Session;
+import org.kimios.kernel.share.mail.IEmailFactory;
 import org.kimios.kernel.ws.pojo.DMEntity;
 import org.kimios.notifier.factory.NotificationFactory;
+import org.kimios.notifier.jobs.NotificationMailRunnable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +26,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Transactional
 public class NotifierController extends AKimiosController implements INotifierController {
@@ -39,17 +44,23 @@ public class NotifierController extends AKimiosController implements INotifierCo
     private ISecurityController securityController;
 
     private NotificationFactory notificationFactory;
+    private IEmailFactory emailFactory;
+
+    private ScheduledExecutorService scheduledExecutorService;
 
     public NotifierController(ISearchController searchController,
                               IDocumentController documentController,
                               IAdministrationController administrationController,
                               NotificationFactory notificationFactory,
-                              ISecurityController securityController) {
+                              ISecurityController securityController,
+                              IEmailFactory emailFactory) {
         this.searchController = searchController;
         this.documentController = documentController;
         this.administrationController = administrationController;
         this.securityController = securityController;
         this.notificationFactory = notificationFactory;
+        this.scheduledExecutorService = Executors.newScheduledThreadPool(8);
+        this.emailFactory = emailFactory;
     }
 
     public SearchResponse searchDocuments(Session session) throws Exception {
@@ -126,6 +137,19 @@ public class NotifierController extends AKimiosController implements INotifierCo
         return i;
     }
 
+    @Override
+    public void sendNotifications(Session session) throws Exception {
+        List<Notification> notifications = this.notificationFactory.getNotificationsToSend();
+
+        for (Notification notification: notifications) {
+            MultiPartEmail email = emailFactory.getMultipartEmailObject();
+            email.setMsg("Notification about document " + notification.getDocumentUid());
+
+            scheduledExecutorService.schedule(new NotificationMailRunnable(email, notificationFactory,
+                    notification.getId()), 1000, TimeUnit.MILLISECONDS);
+        }
+    }
+
     public ISearchController getSearchController() {
         return searchController;
     }
@@ -164,6 +188,14 @@ public class NotifierController extends AKimiosController implements INotifierCo
 
     public void setSecurityController(ISecurityController securityController) {
         this.securityController = securityController;
+    }
+
+    public IEmailFactory getEmailFactory() {
+        return emailFactory;
+    }
+
+    public void setEmailFactory(IEmailFactory emailFactory) {
+        this.emailFactory = emailFactory;
     }
 
     private class UserKey implements Comparable {
