@@ -147,6 +147,7 @@
                             org.apache.commons.io.output,
                             org.apache.commons.io.monitor,
                             org.apache.commons.io.input,
+                            org.apache.commons.mail,
                             javassist.util.proxy,
                             javax.transaction,
                             javax.sql,
