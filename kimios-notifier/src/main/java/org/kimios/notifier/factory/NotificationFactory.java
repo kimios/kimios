@@ -63,8 +63,11 @@ public class NotificationFactory extends HFactory {
     }
 
     public void changeNotificationStatus(long id, NotificationStatus status) {
-        Notification notification = getNotificationById(id);
-        notification.setStatus(status);
-        this.saveNotification(notification);
+        String query = "update Notification n " +
+                " set status = :status where id = :id";
+        getSession().createQuery(query)
+                .setLong("id", id)
+                .setParameter("status", status)
+                .executeUpdate();
     }
 }

@@ -50,6 +50,10 @@ public class NotificationMailRunnable extends MailTaskRunnable {
             logger.error("error while sending email", e);
             return;
         }
-        this.notificationFactory.changeNotificationStatus(notificationId, NotificationStatus.SENT);
+        try {
+            this.notificationFactory.changeNotificationStatus(notificationId, NotificationStatus.SENT);
+        } catch (Exception e) {
+            logger.error("error while changing notification status after successful sending", e);
+        }
     }
 }

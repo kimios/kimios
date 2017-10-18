@@ -14,6 +14,7 @@ import org.kimios.kernel.notification.model.NotificationStatus;
 import org.kimios.kernel.security.model.DMEntitySecurity;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.share.mail.IEmailFactory;
+import org.kimios.kernel.user.model.User;
 import org.kimios.kernel.ws.pojo.DMEntity;
 import org.kimios.notifier.factory.NotificationFactory;
 import org.kimios.notifier.jobs.NotificationMailRunnable;
@@ -37,6 +38,9 @@ public class NotifierController extends AKimiosController implements INotifierCo
 
     private static String SEARCH_FIELD = "DEAD_LINE_DATE";
     private static long REMAINING_DAYS_BEFORE_NOTIFICATION = 7;
+
+    private String mailerSender = "Kimios'";
+    private String mailerSenderMail = "kimios@kimios.org";
 
     private ISearchController searchController;
     private IDocumentController documentController;
@@ -143,7 +147,13 @@ public class NotifierController extends AKimiosController implements INotifierCo
 
         for (Notification notification: notifications) {
             MultiPartEmail email = emailFactory.getMultipartEmailObject();
+            email.setSubject("Kimios Notification");
             email.setMsg("Notification about document " + notification.getDocumentUid());
+            User user = this.administrationController.getUser(session, notification.getUserId(), notification.getUserSource());
+            // get user mail
+            String emailAddress = user.getMail();
+            email.addTo(emailAddress, user.getFirstName() + " " + user.getLastName());
+            email.setFrom(mailerSenderMail, mailerSender);
 
             scheduledExecutorService.schedule(new NotificationMailRunnable(email, notificationFactory,
                     notification.getId()), 1000, TimeUnit.MILLISECONDS);
