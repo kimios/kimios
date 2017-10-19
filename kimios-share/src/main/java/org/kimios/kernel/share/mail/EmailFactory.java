@@ -18,13 +18,24 @@ package org.kimios.kernel.share.mail;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.mail.*;
+import org.kimios.api.templates.ITemplate;
+import org.kimios.api.templates.ITemplateProcessor;
+import org.kimios.api.templates.ITemplateProvider;
 import org.kimios.kernel.dms.model.Document;
 import org.kimios.kernel.dms.model.DocumentVersion;
 import org.kimios.kernel.repositories.impl.RepositoryManager;
 
 import javax.activation.FileDataSource;
+import java.util.HashMap;
+import java.util.Map;
 
 public class EmailFactory implements IEmailFactory {
+
+
+
+    private ITemplateProcessor templateProcessor;
+
+    private ITemplateProvider templateProvider;
 
     private String mailServer = "smtp.googlemail.com";
 
@@ -96,6 +107,14 @@ public class EmailFactory implements IEmailFactory {
         this.attachmentNameGenerator = attachmentNameGenerator;
     }
 
+    public ITemplateProcessor getTemplateProcessor() {
+        return templateProcessor;
+    }
+
+    public void setTemplateProcessor(ITemplateProcessor templateProcessor) {
+        this.templateProcessor = templateProcessor;
+    }
+
     public MultiPartEmail getMultipartEmailObject() throws EmailException {
         MultiPartEmail email = new HtmlEmail();
         email.setHostName(mailServer);
@@ -108,6 +127,41 @@ public class EmailFactory implements IEmailFactory {
         email.setDebug(mailDebug);
         return email;
     }
+
+
+    public MultiPartEmail getEmailObjectFromDescriptor(MailDescriptor descriptor) throws Exception {
+        MultiPartEmail email = new HtmlEmail();
+        email.setHostName(mailServer);
+        email.setSmtpPort(mailServerPort);
+        if(StringUtils.isNotBlank(mailAccount)) {
+            email.setAuthenticator(new DefaultAuthenticator(mailAccount, mailAccountPassword));
+        }
+
+        email.setSSLOnConnect(mailServerSsl);
+        email.setDebug(mailDebug);
+
+        email.setSubject(descriptor.getSubject());
+        if(descriptor.getFromName() != null){
+            email.setFrom(descriptor.getFrom(), descriptor.getFromName());
+        } else {
+            email.setFrom(descriptor.getFrom());
+        }
+        if(descriptor.getMailContent() != null){
+            email.setMsg(descriptor.getMailContent());
+        } else if(descriptor.getTemplateContent() != null){
+            //process
+            email.setMsg(templateProcessor.processStringTemplateToString(descriptor.getTemplateContent(), descriptor.getDatas()));
+        } else if(descriptor.getTemplateName() != null){
+            ITemplate template = templateProvider.loadTemplate(descriptor.getTemplateName());
+            email.setMsg(templateProcessor.processTemplateToString(template, descriptor.getDatas()));
+        }
+        for(String u: descriptor.getRecipients()){
+            email.addTo(u);
+        }
+
+        return email;
+    }
+
 
 
     public void addDocumentVersionAttachment(MultiPartEmail email, Document document, DocumentVersion documentVersion)

@@ -10,8 +10,6 @@ public interface INotifierController {
 
     SearchResponse searchDocuments(Session session) throws Exception;
 
-    List<Criteria> prepareCriteriaList();
-
     Integer createNotifications(Session session) throws Exception;
 
     void sendNotifications(Session session) throws Exception;

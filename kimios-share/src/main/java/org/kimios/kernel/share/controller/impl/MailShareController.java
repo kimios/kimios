@@ -18,6 +18,7 @@ package org.kimios.kernel.share.controller.impl;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.mail.Email;
 import org.apache.commons.mail.MultiPartEmail;
 import org.kimios.api.events.annotations.DmsEvent;
 import org.kimios.api.events.annotations.DmsEventName;
@@ -34,6 +35,7 @@ import org.kimios.exceptions.DmsKernelException;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.share.factory.MailContactFactory;
 import org.kimios.kernel.share.mail.EmailFactory;
+import org.kimios.kernel.share.mail.MailDescriptor;
 import org.kimios.kernel.share.mail.MailTaskRunnable;
 import org.kimios.kernel.share.model.MailContact;
 import org.kimios.kernel.user.FactoryInstantiator;
@@ -307,5 +309,9 @@ public class MailShareController extends AKimiosController implements IMailShare
         }
     }
 
-
+    @Override
+    public void scheduleMailSend(MailDescriptor mailDescriptor) throws Exception {
+        Email email = emailFactory.getEmailObjectFromDescriptor(mailDescriptor);
+        scheduledExecutorService.schedule(new MailTaskRunnable(email), 1000, TimeUnit.MILLISECONDS);
+    }
 }
