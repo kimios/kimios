@@ -1,6 +1,8 @@
 package org.kimios.notifier.controller;
 
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.mail.MultiPartEmail;
 import org.kimios.kernel.controller.*;
 import org.kimios.kernel.dms.model.Document;
@@ -26,6 +28,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.Executors;
@@ -40,7 +44,7 @@ public class NotifierController extends AKimiosController implements INotifierCo
     private static String SEARCH_FIELD = "DEAD_LINE_DATE";
     private static long REMAINING_DAYS_BEFORE_NOTIFICATION = 7;
 
-    private String mailerSender = "Kimios'";
+    private String mailerSender = "Kimios";
     private String mailerSenderMail = "kimios@kimios.org";
 
     private ISearchController searchController;
@@ -52,6 +56,8 @@ public class NotifierController extends AKimiosController implements INotifierCo
     private IStudioController studioController;
     private String documentTypeName = "SampleDoc";
     private String metaDateName = "DeadLine";
+    private String templateUrl = "classpath:/default-template.html";
+    private int remainingDaysBeforeNotification = 7;
 
     private NotificationFactory notificationFactory;
 
@@ -76,6 +82,16 @@ public class NotifierController extends AKimiosController implements INotifierCo
                 ConfigurationManager.getValue("dms.notifier.type.name") : documentTypeName;
         metaDateName = ConfigurationManager.getValue("dms.notifier.type.metaname") != null ?
                 ConfigurationManager.getValue("dms.notifier.type.metaname") : metaDateName;
+
+        templateUrl = ConfigurationManager.getValue("dms.notifier.reminder.templateurl") != null ?
+                ConfigurationManager.getValue("dms.notifier.reminder.templateurl") : templateUrl;
+
+        try {
+            remainingDaysBeforeNotification = ConfigurationManager.getValue("dms.notifier.type.metaname") != null ?
+                    Integer.parseInt(ConfigurationManager.getValue("dms.notifier.reminderdelay")) : remainingDaysBeforeNotification;
+        } catch (Exception ex){
+            logger.error("invalid notification delay. defaulted to 7 days");
+        }
     }
 
     public SearchResponse searchDocuments(Session session) throws Exception {
@@ -204,7 +220,18 @@ public class NotifierController extends AKimiosController implements INotifierCo
             mailDescriptor.setSubject("Kimios Notification");
             mailDescriptor.setFrom(mailerSenderMail);
             mailDescriptor.setFromName(mailerSender);
-            mailDescriptor.setMailContent("Notification about document " + notification.getDocumentUid());
+
+            String mailContent = "Notification about document " + notification.getDocumentUid();
+            if(templateUrl != null){
+                try {
+                    File f = new File(URI.create(templateUrl));
+                    mailContent = FileUtils.readFileToString(f);
+                } catch (Exception ex){
+                    logger.warn("exception while loading default template", ex);
+                }
+            }
+
+            mailDescriptor.setMailContent(mailContent);
             User user = this.administrationController.getUser(session, notification.getUserId(), notification.getUserSource());
             Document document = this.documentController.getDocument(session, notification.getDocumentUid());
             // get user mail
