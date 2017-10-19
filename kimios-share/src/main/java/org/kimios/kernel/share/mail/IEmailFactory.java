@@ -10,4 +10,6 @@ public interface IEmailFactory {
     MultiPartEmail getMultipartEmailObject() throws EmailException;
 
     void addDocumentVersionAttachment(MultiPartEmail email, Document document, DocumentVersion documentVersion) throws Exception;
+
+    MultiPartEmail getEmailObjectFromDescriptor(MailDescriptor descriptor) throws Exception;
 }

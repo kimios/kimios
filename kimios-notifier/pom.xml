@@ -29,10 +29,10 @@
 
     <dependencies>
         <dependency>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-tx</artifactId>
-          <version>${spring.version}</version>
-          <scope>provided</scope>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+            <version>${spring.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -50,20 +50,19 @@
             <groupId>org.kimios</groupId>
             <artifactId>kimios-kernel</artifactId>
             <version>${project.version}</version>
-	    <scope>provided</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.kimios</groupId>
             <artifactId>kimios-model</artifactId>
             <version>1.1-SNAPSHOT</version>
-	    <scope>provided</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.kimios</groupId>
             <artifactId>kimios-index</artifactId>
             <version>1.1-SNAPSHOT</version>
             <scope>provided</scope>
-            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
@@ -87,12 +86,6 @@
             <groupId>org.kimios</groupId>
             <artifactId>kimios-share</artifactId>
             <version>1.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-email</artifactId>
-            <version>1.4</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -147,7 +140,6 @@
                             org.apache.commons.io.output,
                             org.apache.commons.io.monitor,
                             org.apache.commons.io.input,
-                            org.apache.commons.mail,
                             javassist.util.proxy,
                             javax.transaction,
                             javax.sql,

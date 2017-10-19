@@ -28,13 +28,15 @@
     <reference id="sessionManager" interface="org.kimios.kernel.security.ISessionManager" />
     <reference id="searchController" interface="org.kimios.kernel.index.controller.ISearchController" />
     <reference id="documentController" interface="org.kimios.kernel.controller.IDocumentController" />
+    <reference id="documentVersionController" interface="org.kimios.kernel.controller.IDocumentVersionController" />
     <reference id="administrationController" interface="org.kimios.kernel.controller.IAdministrationController" />
+    <reference id="studioController" interface="org.kimios.kernel.controller.IStudioController" />
     <reference id="securityController" interface="org.kimios.kernel.controller.ISecurityController" />
 
     <reference id="dbFactoryProvider"
                interface="org.kimios.kernel.hibernate.IDBFactory"/>
 
-    <reference id="emailFactory" interface="org.kimios.kernel.share.mail.IEmailFactory" />
+    <reference id="mailShareController" interface="org.kimios.kernel.share.controller.IMailShareController" />
 
     <bean id="notificationFactory" class="org.kimios.notifier.factory.NotificationFactory">
         <property name="provider" ref="dbFactoryProvider"></property>
@@ -42,19 +44,15 @@
 
     <bean id="notifierController"
           class="org.kimios.notifier.controller.NotifierController">
-        <property name="searchController" ref="searchController" />
-        <property name="documentController" ref="documentController" />
-        <property name="administrationController" ref="administrationController" />
-        <property name="notificationFactory" ref="notificationFactory" />
-        <property name="securityController" ref="securityController" />
-        <property name="emailFactory" ref="emailFactory" />
 
         <argument ref="searchController" />
         <argument ref="documentController" />
         <argument ref="administrationController" />
         <argument ref="notificationFactory" />
         <argument ref="securityController" />
-        <argument ref="emailFactory" />
+        <argument ref="mailShareController" />
+        <argument ref="documentVersionController" />
+        <argument ref="studioController" />
 
         <tx:transaction method="*" value="Required" />
     </bean>

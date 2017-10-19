@@ -26,4 +26,6 @@ public interface ITemplateProvider {
     ITemplate saveTemplate(ITemplate template) throws Exception;
 
     ITemplate loadTemplate(long templateId) throws Exception;
+
+    ITemplate loadTemplate(String templateName) throws Exception;
 }

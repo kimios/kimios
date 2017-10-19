@@ -42,6 +42,12 @@ public class TemplateProvider extends AKimiosController implements ITemplateProv
         return t;
     }
 
+    @Override
+    public ITemplate loadTemplate(String templateName) throws Exception {
+        ITemplate t = templateFactory.loadTemplate(templateName);
+        return t;
+    }
+
 
     @Override
     public ITemplate getDefaultTemplate(TemplateType templateType) throws Exception{

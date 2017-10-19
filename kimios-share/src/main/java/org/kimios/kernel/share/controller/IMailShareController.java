@@ -18,6 +18,7 @@ package org.kimios.kernel.share.controller;
 
 import org.kimios.exceptions.DmsKernelException;
 import org.kimios.kernel.security.model.Session;
+import org.kimios.kernel.share.mail.MailDescriptor;
 import org.kimios.kernel.share.model.MailContact;
 
 import java.util.List;
@@ -38,4 +39,7 @@ public interface IMailShareController {
     List<MailContact> searchContact(Session session, String searchQuery);
 
     String loadDefaultMailTemplate(Session session) throws Exception;
+
+    void scheduleMailSend(MailDescriptor mailDescriptor) throws Exception;
+
 }
