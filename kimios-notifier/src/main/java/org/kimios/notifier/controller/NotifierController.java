@@ -162,7 +162,8 @@ public class NotifierController extends AKimiosController implements INotifierCo
                     Notification notification = new Notification(userKey.getUserId(), userKey.getUserSource(), dm.getUid());
                     try {
                         List<NotificationStatus> statuses = new ArrayList<>();
-                        statuses.add(notification.getStatus());
+                        statuses.add(NotificationStatus.SENT);
+                        statuses.add(NotificationStatus.TO_BE_SENT);
                         if (notificationFactory.getNotifications(
                                 notification.getUserId(),
                                 notification.getUserSource(),
