@@ -116,6 +116,7 @@ public class NotifierController extends AKimiosController implements INotifierCo
         String searchField = "MetaDataDate_" + meta.getUid();
         Criteria c = new Criteria();
         c.setFieldName(searchField);
+        c.setMetaId(meta.getUid());
         c.setLevel(0);
         c.setPosition(0);
         LocalDateTime dateTimeCriteria = LocalDateTime.now().minusDays(REMAINING_DAYS_BEFORE_NOTIFICATION);
@@ -211,7 +212,11 @@ public class NotifierController extends AKimiosController implements INotifierCo
             mailDescriptor.getDatas().put("user", user);
             mailDescriptor.getDatas().put("document", document);
             mailShareController.scheduleMailSend(mailDescriptor);
+            notification.setStatus(NotificationStatus.SENT);
         }
+
+        for(Notification s: notifications)
+            notificationFactory.saveNotification(s);
     }
 
     public ISearchController getSearchController() {

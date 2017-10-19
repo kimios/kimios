@@ -12,23 +12,20 @@ public class Notification {
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "seq")
     private long id;
 
-    //    @ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
-//    @JoinColumn(name = "user_id", nullable = true)
     @Column(name = "user_id")
     private String userId;
 
     @Column(name = "user_source", nullable = false)
     private String userSource;
 
-//    @ManyToOne(targetEntity = Document.class, fetch = FetchType.LAZY)
-//    @JoinColumn(name = "id", nullable = true)
     @Column(name = "document_uid")
     private long documentUid;
 
     @Column(name = "notification_status", nullable = false)
+    @Enumerated(EnumType.STRING)
     private NotificationStatus status;
 
-    @Column(name =  "creation_date", nullable = false)
+    @Column(name = "creation_date", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate = new Date();
 
@@ -64,5 +61,29 @@ public class Notification {
 
     public void setStatus(NotificationStatus status) {
         this.status = status;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public void setUserSource(String userSource) {
+        this.userSource = userSource;
+    }
+
+    public void setDocumentUid(long documentUid) {
+        this.documentUid = documentUid;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
     }
 }
