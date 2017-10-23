@@ -45,6 +45,8 @@ public class EmailFactory implements IEmailFactory {
 
     private int mailServerPort = 465;
 
+    private boolean mailServerTls = true;
+
     private boolean mailServerSsl = true;
 
     private boolean mailDebug = false;
@@ -95,6 +97,14 @@ public class EmailFactory implements IEmailFactory {
         return mailServerSsl;
     }
 
+    public boolean isMailServerTls() {
+        return mailServerTls;
+    }
+
+    public void setMailServerTls(boolean mailServerTls) {
+        this.mailServerTls = mailServerTls;
+    }
+
     public void setMailServerSsl(boolean mailServerSsl) {
         this.mailServerSsl = mailServerSsl;
     }
@@ -123,6 +133,8 @@ public class EmailFactory implements IEmailFactory {
             email.setAuthenticator(new DefaultAuthenticator(mailAccount, mailAccountPassword));
         }
 
+
+        email.setStartTLSEnabled(mailServerTls);
         email.setSSLOnConnect(mailServerSsl);
         email.setDebug(mailDebug);
         return email;
@@ -137,6 +149,7 @@ public class EmailFactory implements IEmailFactory {
             email.setAuthenticator(new DefaultAuthenticator(mailAccount, mailAccountPassword));
         }
 
+        email.setStartTLSEnabled(mailServerTls);
         email.setSSLOnConnect(mailServerSsl);
         email.setDebug(mailDebug);
 

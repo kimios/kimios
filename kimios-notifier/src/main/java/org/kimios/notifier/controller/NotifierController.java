@@ -315,4 +315,23 @@ public class NotifierController extends AKimiosController implements INotifierCo
             return (o instanceof UserKey) ? this.compareTo((UserKey) o) : 0;
         }
     }
+
+
+    public String getMailerSender() {
+        return mailerSender;
+    }
+
+    public void setMailerSender(String mailerSender) {
+        this.mailerSender = mailerSender;
+    }
+
+    public String getMailerSenderMail() {
+        return mailerSenderMail;
+    }
+
+    public void setMailerSenderMail(String mailerSenderMail) {
+        this.mailerSenderMail = mailerSenderMail;
+    }
+
+
 }
