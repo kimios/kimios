@@ -54,6 +54,10 @@
         <argument ref="documentVersionController" />
         <argument ref="studioController" />
 
+
+        <property name="mailerSenderMail" value="${dms.mail.senderemail}" />
+        <property name="mailerSender"  value="${dms.mail.sendername}" />
+
         <tx:transaction method="*" value="Required" />
     </bean>
 
