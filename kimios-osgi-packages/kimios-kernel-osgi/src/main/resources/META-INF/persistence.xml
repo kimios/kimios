@@ -71,6 +71,8 @@
         <class>org.kimios.kernel.jobs.model.ImportData</class>
         <class>org.kimios.kernel.index.query.model.DocumentIndexStatus</class>
         <class>org.kimios.kernel.share.model.MailContact</class>
+        <class>org.kimios.kernel.notification.model.Notification</class>
+        <class>org.kimios.kernel.notification.model.NotificationStatus</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
 
         <properties>

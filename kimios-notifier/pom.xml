@@ -146,6 +146,7 @@
                             org.apache.commons.dbcp,
                             org.apache.commons.dbcp.managed,
                             org.apache.commons.dbcp.datasources,
+                            org.kimios.utils.spring,
                             *;resolution:=optional
                         </Import-Package>
                     </instructions>

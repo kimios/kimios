@@ -82,6 +82,7 @@
                 <value>org.kimios.kernel.filetransfer</value>
                 <value>org.kimios.kernel.index</value>
                 <value>org.kimios.kernel.share</value>
+                <value>org.kimios.kernel.notification</value>
                 <value>org.kimios.kernel.templates</value>
             </list>
         </property>

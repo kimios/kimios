@@ -114,9 +114,6 @@
     </bean>
 
 
-
-    <bean class="org.kimios.utils.extension.ExtensionRegistryManager" factory-method="init" />
-
     <!-- Load the standard Kimios Spring Configuration files -->
     <import resource="classpath*:/META-INF/spring/ctx-kimios*.xml"/>
 

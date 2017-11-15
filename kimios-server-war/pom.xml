@@ -249,6 +249,11 @@
             </exclusions>
         </dependency>
 
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-notifier</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>cglib</groupId>
