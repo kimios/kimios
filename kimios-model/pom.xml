@@ -193,6 +193,7 @@
                                 <include>org/kimios/kernel/share/model/**</include>
                                 <include>org/kimios/kernel/jobs/model/**</include>
                                 <include>org/kimios/kernel/reporting/model/**</include>
+                                <include>org/kimios/kernel/notification/model/**</include>
                             </includes>
                         </configuration>
                     </execution>

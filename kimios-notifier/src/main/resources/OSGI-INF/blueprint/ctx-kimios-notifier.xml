@@ -64,13 +64,13 @@
     <!-- Jobs -->
     <bean id="notificationCreator" class="org.kimios.notifier.system.NotificationCreator" init-method="startJob"
           destroy-method="stopJob">
-        <property name="sessionManager" ref="sessionManager"/>
+        <property name="securityController" ref="securityController"/>
         <property name="notifierController" ref="notifierController"/>
     </bean>
 
     <bean id="notificationSender" class="org.kimios.notifier.system.NotificationSender" init-method="startJob"
           destroy-method="stopJob">
-        <property name="sessionManager" ref="sessionManager"/>
+        <property name="securityController" ref="securityController"/>
         <property name="notifierController" ref="notifierController"/>
     </bean>
 

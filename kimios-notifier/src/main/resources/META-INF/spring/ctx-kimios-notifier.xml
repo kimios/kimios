@@ -21,4 +21,39 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
+    <bean id="notificationFactory" class="org.kimios.notifier.factory.NotificationFactory" parent="hfactory" />
+
+    <bean id="notifierController"
+          class="org.kimios.notifier.controller.NotifierController">
+
+        <constructor-arg name="searchController" ref="searchController" />
+        <constructor-arg name="documentController" ref="documentController" />
+        <constructor-arg name="administrationController" ref="administrationController" />
+        <constructor-arg name="notificationFactory" ref="notificationFactory" />
+        <constructor-arg name="securityController" ref="securityController" />
+        <constructor-arg name="mailShareController" ref="mailShareController" />
+        <constructor-arg name="documentVersionController" ref="documentVersionController" />
+        <constructor-arg name="studioController" ref="studioController" />
+
+    </bean>
+
+    <!-- Jobs -->
+    <bean id="notificationCreator" class="org.kimios.notifier.system.NotificationCreator" init-method="startJob"
+          destroy-method="stopJob">
+        <property name="securityController" ref="securityController"/>
+        <property name="notifierController" ref="notifierController"/>
+    </bean>
+
+    <bean id="notificationSender" class="org.kimios.notifier.system.NotificationSender" init-method="startJob"
+          destroy-method="stopJob">
+        <property name="securityController" ref="securityController"/>
+        <property name="notifierController" ref="notifierController"/>
+    </bean>
+
+   <aop:config>
+        <aop:pointcut id="notifierTx"
+                      expression="execution(* org.kimios.notifier.controller.INotifierController.*(..))"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="notifierTx"/>
+    </aop:config>
+
 </beans>

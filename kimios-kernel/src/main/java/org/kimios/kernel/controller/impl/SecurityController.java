@@ -378,6 +378,15 @@ public class SecurityController extends AKimiosController implements ISecurityCo
         return s;
     }
 
+    /* (non-Javadoc)
+    * @see org.kimios.kernel.controller.impl.ISecurityController#startSession(java.lang.String, java.lang.String)
+    */
+    public Session startSession(String userName, String userSource)
+            throws ConfigException, DataSourceException, AccessDeniedException {
+        Session s = SessionManager.getInstance().startSession(userName, userSource);
+        return s;
+    }
+
     public void endSession(String sessionId) throws ConfigException, DataSourceException, AccessDeniedException{
         SessionManager.getInstance().removeSession(sessionId);
     }

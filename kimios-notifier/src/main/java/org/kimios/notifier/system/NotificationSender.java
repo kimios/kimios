@@ -1,10 +1,9 @@
 package org.kimios.notifier.system;
 
+import org.kimios.kernel.controller.ISecurityController;
 import org.kimios.kernel.index.controller.CustomThreadPoolExecutor;
-import org.kimios.kernel.security.ISessionManager;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.notifier.controller.INotifierController;
-import org.kimios.notifier.jobs.NotificationCreatorJob;
 import org.kimios.notifier.jobs.NotificationSenderJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +17,7 @@ public class NotificationSender implements Runnable {
 
     private volatile boolean active = true;
     private static Thread thrc;
-    private ISessionManager sessionManager;
+    private ISecurityController securityController;
     private INotifierController notifierController;
     private CustomThreadPoolExecutor customThreadPoolExecutor;
 
@@ -46,12 +45,12 @@ public class NotificationSender implements Runnable {
         this.active = false;
     }
 
-    public ISessionManager getSessionManager() {
-        return sessionManager;
+    public ISecurityController getSecurityController() {
+        return securityController;
     }
 
-    public void setSessionManager(ISessionManager sessionManager) {
-        this.sessionManager = sessionManager;
+    public void setSecurityController(ISecurityController securityController) {
+        this.securityController = securityController;
     }
 
     public INotifierController getNotifierController() {
@@ -64,7 +63,7 @@ public class NotificationSender implements Runnable {
 
     @Override
     public void run() {
-        Session session = this.sessionManager.startSession("admin", "kimios");
+        Session session = this.securityController.startSession("admin", "kimios");
         while (active) {
             try {
                 if (active) {

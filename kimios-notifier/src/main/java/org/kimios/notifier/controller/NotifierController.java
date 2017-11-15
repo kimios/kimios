@@ -2,8 +2,6 @@ package org.kimios.notifier.controller;
 
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.mail.MultiPartEmail;
 import org.kimios.kernel.controller.*;
 import org.kimios.kernel.dms.model.Document;
 import org.kimios.kernel.dms.model.DocumentType;
@@ -17,12 +15,10 @@ import org.kimios.kernel.notification.model.NotificationStatus;
 import org.kimios.kernel.security.model.DMEntitySecurity;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.share.controller.IMailShareController;
-import org.kimios.kernel.share.mail.IEmailFactory;
 import org.kimios.kernel.share.mail.MailDescriptor;
 import org.kimios.kernel.user.model.User;
 import org.kimios.kernel.ws.pojo.DMEntity;
 import org.kimios.notifier.factory.NotificationFactory;
-import org.kimios.notifier.jobs.NotificationMailRunnable;
 import org.kimios.utils.configuration.ConfigurationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,17 +28,11 @@ import java.io.File;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 @Transactional
 public class NotifierController extends AKimiosController implements INotifierController {
 
     private static Logger logger = LoggerFactory.getLogger(NotifierController.class);
-
-    private static String SEARCH_FIELD = "DEAD_LINE_DATE";
-    private static long REMAINING_DAYS_BEFORE_NOTIFICATION = 7;
 
     private String mailerSender = "Kimios";
     private String mailerSenderMail = "kimios@kimios.org";
@@ -86,8 +76,16 @@ public class NotifierController extends AKimiosController implements INotifierCo
         templateUrl = ConfigurationManager.getValue("dms.notifier.reminder.templateurl") != null ?
                 ConfigurationManager.getValue("dms.notifier.reminder.templateurl") : templateUrl;
 
+        mailerSender = ConfigurationManager.getValue("dms.mail.sendername") != null
+                && !ConfigurationManager.getValue("dms.mail.sendername").isEmpty() ?
+                ConfigurationManager.getValue("dms.mail.sendername") : mailerSender;
+
+        mailerSenderMail = ConfigurationManager.getValue("dms.mail.sendermail") != null
+                && !ConfigurationManager.getValue("dms.mail.sendermail").isEmpty() ?
+                ConfigurationManager.getValue("dms.mail.sendermail") : mailerSenderMail;
+
         try {
-            remainingDaysBeforeNotification = ConfigurationManager.getValue("dms.notifier.type.metaname") != null ?
+            remainingDaysBeforeNotification = ConfigurationManager.getValue("dms.notifier.reminderdelay") != null ?
                     Integer.parseInt(ConfigurationManager.getValue("dms.notifier.reminderdelay")) : remainingDaysBeforeNotification;
         } catch (Exception ex){
             logger.error("invalid notification delay. defaulted to 7 days");
@@ -135,7 +133,7 @@ public class NotifierController extends AKimiosController implements INotifierCo
         c.setMetaId(meta.getUid());
         c.setLevel(0);
         c.setPosition(0);
-        LocalDateTime dateTimeCriteria = LocalDateTime.now().minusDays(REMAINING_DAYS_BEFORE_NOTIFICATION);
+        LocalDateTime dateTimeCriteria = LocalDateTime.now().minusDays(remainingDaysBeforeNotification);
         c.setRangeMin(dateTimeCriteria.toString());
         logger.debug("looking for document with meta {} on date {}", meta.getName(), dateTimeCriteria);
         ArrayList<Criteria> criteriaList = new ArrayList<Criteria>();

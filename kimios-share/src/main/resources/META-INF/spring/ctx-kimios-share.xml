@@ -31,7 +31,8 @@
         <property name="mailServerPort" value="${dms.mail.port}" />
         <property name="mailAccount"  value="${dms.mail.hostuser}" />
         <property name="mailAccountPassword"  value="${dms.mail.hostpassword}" />
-        <property name="mailServerSsl"  value="${dms.mail.tlsauth}" />
+        <property name="mailServerSsl"  value="${dms.mail.ssl}" />
+        <property name="mailServerTls" value="${dms.mail.tlsauth}" />
         <property name="mailDebug" value="${dms.mail.debug}" />
         <property name="attachmentNameGenerator" ref="attachmentNameGenerator" />
     </bean>
