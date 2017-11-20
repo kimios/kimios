@@ -96,7 +96,8 @@ public class ShareControllerWeb extends Controller {
                  parameters.get("content"),
                  "",
                  "",
-                 true
+                 true,
+                 parameters.get("password")
                  );
         return;
     }

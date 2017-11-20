@@ -61,11 +61,11 @@ public class ShareServiceImpl implements ShareService {
                              Map<String, String> recipients,
                              String subject, String content,
                              String senderAddress, String senderName,
-                             Boolean defaultSender) throws DMServiceException {
+                             Boolean defaultSender, String password) throws DMServiceException {
         try {
             Session session = helper.getSession(sessionId);
             mailShareController.sendDocumentByEmail(session, documentIds, recipients, subject,
-                    content, senderAddress, senderName, defaultSender);
+                    content, senderAddress, senderName, defaultSender, password);
 
         } catch (Exception e) {
             throw helper.convertException(e);
@@ -75,7 +75,8 @@ public class ShareServiceImpl implements ShareService {
     @Override
     @WebMethod(exclude = true)
     public void shareByEmailFullContact(String sessionId, List<Long> documentIds, List<MailContact> recipients, String subject,
-                             String content, String senderAddress, String senderName, Boolean defaultSender)
+                                        String content, String senderAddress, String senderName, Boolean defaultSender,
+                                        String password)
             throws DMServiceException {
         try {
             Session session = helper.getSession(sessionId);
@@ -85,7 +86,7 @@ public class ShareServiceImpl implements ShareService {
                 recipientsData.put(mc.getEmailAddress(), mc.getFullName());
             }
             mailShareController.sendDocumentByEmail(session, documentIds, recipientsData, subject,
-                    content, senderAddress, senderName, defaultSender);
+                    content, senderAddress, senderName, defaultSender, password);
 
         } catch (Exception e) {
             throw helper.convertException(e);

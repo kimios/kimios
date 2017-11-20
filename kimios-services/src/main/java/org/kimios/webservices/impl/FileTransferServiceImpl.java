@@ -252,12 +252,12 @@ public class FileTransferServiceImpl
         }
     }
 
-    public DataTransaction createTokenDownloadTransaction(String sessionUid, long documentVersionUid)
+    public DataTransaction createTokenDownloadTransaction(String sessionUid, long documentVersionUid, String password)
             throws DMServiceException {
         try {
             Session session = getHelper().getSession(sessionUid);
             DataTransaction dtr =
-                    transferController.startDownloadTransactionToken(session, documentVersionUid).toPojo();
+                    transferController.startDownloadTransactionToken(session, documentVersionUid, password).toPojo();
             return dtr;
         } catch (Exception e) {
             throw getHelper().convertException(e);

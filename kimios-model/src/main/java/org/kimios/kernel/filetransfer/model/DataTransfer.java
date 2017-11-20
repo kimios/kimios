@@ -84,6 +84,9 @@ public class DataTransfer implements Serializable
     @Column(name = "dl_token", nullable = true)
     private String downloadToken = null;
 
+    @Column(name = "password", nullable = true)
+    private String password = null;
+
     public DataTransfer()
     {
     }
@@ -248,7 +251,8 @@ public class DataTransfer implements Serializable
 
     public DataTransaction toPojo()
     {
-        return new DataTransaction(this.uid, this.dataSize, this.isCompressed, this.hashMD5, this.hashSHA, this.downloadToken);
+        return new DataTransaction(this.uid, this.dataSize, this.isCompressed, this.hashMD5, this.hashSHA,
+                this.downloadToken, this.password);
     }
 
     public DocumentVersion getVersion()
@@ -262,6 +266,14 @@ public class DataTransfer implements Serializable
         if (version != null) {
             this.documentVersionUid = version.getUid();
         }
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
 

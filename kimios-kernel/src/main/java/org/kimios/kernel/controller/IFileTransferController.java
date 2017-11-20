@@ -107,6 +107,6 @@ public interface IFileTransferController
     public void readVersionStream(String transactionToken, OutputStream versionStream)
             throws ConfigException, AccessDeniedException, DataSourceException, IOException;
 
-    public DataTransfer startDownloadTransactionToken(Session session, long documentVersionUid)
+    public DataTransfer startDownloadTransactionToken(Session session, long documentVersionUid, String password)
             throws IOException, RepositoryException, DataSourceException, ConfigException, AccessDeniedException;
 }

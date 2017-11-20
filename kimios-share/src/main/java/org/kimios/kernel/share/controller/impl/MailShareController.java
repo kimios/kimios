@@ -148,7 +148,7 @@ public class MailShareController extends AKimiosController implements IMailShare
                                     Map<String, String> recipients,
                                     String subject, String content,
                                     String senderAddress, String senderName,
-                                    boolean defaultSender)
+                                    boolean defaultSender, String password)
         throws DmsKernelException {
 
         try {
@@ -211,8 +211,10 @@ public class MailShareController extends AKimiosController implements IMailShare
                         DocumentVersion lastVersion = dmsFactoryInstantiator.getDocumentVersionFactory()
                                 .getLastDocumentVersion(doc);
                         DataTransfer transfer = fileTransferController.startDownloadTransactionToken(session,
-                                lastVersion.getUid());
-                        items.put(ConfigurationManager.getValue(Config.PUBLIC_URL)
+                                lastVersion.getUid(), password);
+                        String publicUrl = ConfigurationManager.getValue(Config.PUBLIC_URL);
+                        publicUrl = publicUrl.endsWith("/") ? publicUrl : publicUrl + "/";
+                        items.put(publicUrl
                                 + "services/rest/filetransfer/downloadDocumentByToken?token="
                                 + transfer.getDownloadToken(),
                                 doc);

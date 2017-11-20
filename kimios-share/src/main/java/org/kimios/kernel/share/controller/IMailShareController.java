@@ -33,7 +33,7 @@ public interface IMailShareController {
                              Map<String, String> recipients,
                              String subject, String content,
                              String senderAddress, String senderName,
-                             boolean defaultSender)
+                             boolean defaultSender, String password)
         throws DmsKernelException;
 
     List<MailContact> searchContact(Session session, String searchQuery);

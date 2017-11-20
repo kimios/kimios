@@ -51,6 +51,8 @@ public class FileTransferController
 
     private static Logger logger = LoggerFactory.getLogger(FileTransferController.class);
 
+    private static String DEFAULT_PASSWORD = "pass";
+
     /**
      * Start an upload transaction for a given document (update the last version)
      */
@@ -429,7 +431,7 @@ public class FileTransferController
     /**
      * Create Token For Download Transaction
      */
-    public DataTransfer startDownloadTransactionToken(Session session, long documentVersionUid)
+    public DataTransfer startDownloadTransactionToken(Session session, long documentVersionUid, String password)
             throws IOException, RepositoryException, DataSourceException, ConfigException, AccessDeniedException {
         DocumentVersion dv =
                 dmsFactoryInstantiator.getDocumentVersionFactory().getDocumentVersion(documentVersionUid);
@@ -448,9 +450,12 @@ public class FileTransferController
         transac.setDataSize(0);
         transac.setTransferMode(DataTransfer.TOKEN);
         transac.setDownloadToken(UUID.randomUUID().toString());
+        transac.setPassword((password == null || password.isEmpty()) ? DEFAULT_PASSWORD : password);
         transferFactoryInstantiator.getDataTransferFactory().addDataTransfer(transac);
         transac.setDataSize(dv.getLength());
         transferFactoryInstantiator.getDataTransferFactory().updateDataTransfer(transac);
+
+
         return transac;
     }
 

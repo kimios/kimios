@@ -139,7 +139,8 @@ public class ShareController extends AKimiosController implements IShareControll
 
                     mailShareController.sendDocumentByEmail(session,
                             documentIds, recipients, "Kimios Internal Share",
-                            "<html><body>__DOCUMENTSLINKS__</body></html>", null, null, true);
+                            "<html><body>__DOCUMENTSLINKS__</body></html>", null, null,
+                            true, null);
                 }
 
                 return s;
