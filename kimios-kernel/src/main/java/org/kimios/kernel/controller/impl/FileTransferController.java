@@ -390,12 +390,23 @@ public class FileTransferController
         }
     }
 
-    public DocumentWrapper getDocumentVersionWrapper(String token)
+    public DocumentWrapper getDocumentVersionWrapper(String token, String password)
             throws ConfigException, AccessDeniedException, DataSourceException, IOException {
 
         DataTransfer transac = transferFactoryInstantiator.getDataTransferFactory()
                 .getUploadDataTransferByDocumentToken(token);
         if (transac != null && transac.getTransferMode() == DataTransfer.TOKEN) {
+            if (transac.getPassword() != null
+                    && !transac.getPassword().isEmpty()) {
+                if (password == null) {
+                    throw new AccessDeniedException(new DmsKernelException("password needed"));
+                } else {
+                    //TODO : compare password hashes
+                    if ( ! transac.getPassword().equals(password)) {
+                        throw new AccessDeniedException(new DmsKernelException("wrong password"));
+                    }
+                }
+            }
             DocumentVersion dv = dmsFactoryInstantiator.getDocumentVersionFactory().getDocumentVersion(
                     transac.getDocumentVersionUid());
             String filename = dv.getDocument().getName() + "." + dv.getDocument().getExtension();
@@ -405,8 +416,6 @@ public class FileTransferController
             throw new AccessDeniedException();
         }
     }
-
-
 
     @DmsEvent(eventName = {DmsEventName.DOCUMENT_VERSION_READ})
     public void readVersionStream(Session session, long transactionId, OutputStream versionStream)

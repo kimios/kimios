@@ -27,12 +27,13 @@ import org.slf4j.LoggerFactory;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
+import javax.ws.rs.core.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @WebService(targetNamespace = "http://kimios.org", serviceName = "FileTransferService", name = "FileTransferService")
 public class FileTransferServiceImpl
@@ -40,6 +41,8 @@ public class FileTransferServiceImpl
         implements FileTransferService {
 
     private static Logger logger = LoggerFactory.getLogger(FileTransferServiceImpl.class);
+
+    private static String DOWNLOAD_DOCUMENT_BY_TOKEN_AND_PASSWORD_FORM_ACTION = "downloadDocumentByTokenAndPassword";
 
     /**
      * @param sessionUid
@@ -219,9 +222,9 @@ public class FileTransferServiceImpl
     }
 
     @WebMethod(exclude = true)
-    public Response downloadDocumentByToken(final String token) throws DMServiceException {
+    public Response downloadDocumentByToken(UriInfo uriInfo,final String token, final String password) throws DMServiceException {
         try {
-            DocumentWrapper dw = transferController.getDocumentVersionWrapper(token);
+            DocumentWrapper dw = transferController.getDocumentVersionWrapper(token, password);
             StreamingOutput sOutput = new StreamingOutput() {
                 @Override
                 public void write(OutputStream output) throws IOException, WebApplicationException {
@@ -248,8 +251,57 @@ public class FileTransferServiceImpl
 
 
         } catch (Exception e) {
+            if (e.getMessage().equals("password needed")
+                    || e.getMessage().equals("wrong password")) {
+                Map<String, String> params = new HashMap<>();
+                params.put("token", token);
+                return buildRequiredPasswordResponse(uriInfo, DOWNLOAD_DOCUMENT_BY_TOKEN_AND_PASSWORD_FORM_ACTION, params);
+            }
             throw getHelper().convertException(e);
         }
+    }
+
+    @WebMethod(exclude = true)
+    public Response downloadDocumentByTokenAndPassword(UriInfo uriInfo, String token, String password) throws DMServiceException {
+
+        Response response;
+        try {
+            response = downloadDocumentByToken(uriInfo, token, password);
+        } catch (Exception e) {
+            if (e.getMessage().equals("password needed")
+                    || e.getMessage().equals("password needed")) {
+                Map<String, String> params = new HashMap<>();
+                params.put("token", token);
+                return buildRequiredPasswordResponse(uriInfo, DOWNLOAD_DOCUMENT_BY_TOKEN_AND_PASSWORD_FORM_ACTION, params);
+            }
+            throw getHelper().convertException(e);
+        }
+
+        return response;
+    }
+
+    private Response buildRequiredPasswordResponse(UriInfo uri, String methodAction, Map<String, String> hiddenParams) {
+        String uriAbsPath = uri.getAbsolutePath().toString();
+        String formAction = uriAbsPath.replaceFirst("/[^/]+$", "/" + methodAction);
+        String form = "<form method=\"POST\" action=\""
+                + formAction
+                + "\">"
+                + "<input name=\"password\" type=\"password\">"
+                + "</input>";
+
+        for (String key : hiddenParams.keySet()) {
+            form += "<input name=\"" + key + "\" type=\"hidden\""
+                    + " value=\"" + hiddenParams.get(key) + "\">";
+        }
+
+        form += "<input type=\"submit\">"
+                + "Submit password"
+                + "</input>"
+                + "</form>";
+        Response.ResponseBuilder response = Response.ok(form);
+        response.header("Content-Description", "Password required");
+        response.header("Content-Type", "text/html");
+        return response.build();
     }
 
     public DataTransaction createTokenDownloadTransaction(String sessionUid, long documentVersionUid, String password)

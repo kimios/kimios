@@ -94,7 +94,7 @@ public interface IFileTransferController
     /*
         Get document version stream for direct version read
     */
-    public DocumentWrapper getDocumentVersionWrapper( String token )
+    public DocumentWrapper getDocumentVersionWrapper( String token, String password)
             throws ConfigException, AccessDeniedException, DataSourceException, IOException;
 
     /*
