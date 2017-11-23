@@ -18,5 +18,7 @@ package org.kimios.kernel.security.pwdgen;
 public interface CredentialsGenerator
 {
     public String generatePassword(String clear);
+
+    public String generateRandomPassword(int length);
 }
 

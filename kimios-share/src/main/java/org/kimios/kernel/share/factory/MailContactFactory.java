@@ -16,6 +16,7 @@
 
 package org.kimios.kernel.share.factory;
 
+import org.hibernate.NonUniqueObjectException;
 import org.kimios.kernel.hibernate.HFactory;
 import org.kimios.kernel.share.model.MailContact;
 
@@ -32,7 +33,11 @@ public class MailContactFactory extends HFactory {
         MailContact mc  = new MailContact();
         mc.setEmailAddress(emailAddress);
         mc.setFullName(fullName);
-        getSession().saveOrUpdate(mc);
+        this.searchContact(emailAddress);
+        try {
+            getSession().saveOrUpdate(mc);
+        } catch (NonUniqueObjectException e) {
+        }
     }
 
 

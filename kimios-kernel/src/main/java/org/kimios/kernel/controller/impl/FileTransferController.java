@@ -15,22 +15,22 @@
  */
 package org.kimios.kernel.controller.impl;
 
+import org.kimios.api.events.annotations.DmsEvent;
+import org.kimios.api.events.annotations.DmsEventName;
 import org.kimios.exceptions.*;
 import org.kimios.kernel.configuration.Config;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.IFileTransferController;
-import org.kimios.kernel.dms.*;
+import org.kimios.kernel.dms.FactoryInstantiator;
 import org.kimios.kernel.dms.model.*;
-import org.kimios.api.events.annotations.DmsEvent;
-import org.kimios.api.events.annotations.DmsEventName;
 import org.kimios.kernel.filetransfer.model.DataTransfer;
 import org.kimios.kernel.filetransfer.zip.FileCompressionHelper;
 import org.kimios.kernel.repositories.impl.RepositoryManager;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.user.model.User;
-import org.kimios.utils.hash.HashCalculator;
 import org.kimios.kernel.ws.pojo.DocumentWrapper;
 import org.kimios.utils.configuration.ConfigurationManager;
+import org.kimios.utils.hash.HashCalculator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -401,8 +401,8 @@ public class FileTransferController
                 if (password == null) {
                     throw new AccessDeniedException(new DmsKernelException("password needed"));
                 } else {
-                    //TODO : compare password hashes
-                    if ( ! transac.getPassword().equals(password)) {
+                    if ( ! transac.getPassword()
+                            .equals(securityFactoryInstantiator.getCredentialsGenerator().generatePassword(password))) {
                         throw new AccessDeniedException(new DmsKernelException("wrong password"));
                     }
                 }
@@ -459,7 +459,9 @@ public class FileTransferController
         transac.setDataSize(0);
         transac.setTransferMode(DataTransfer.TOKEN);
         transac.setDownloadToken(UUID.randomUUID().toString());
-        transac.setPassword((password == null || password.isEmpty()) ? DEFAULT_PASSWORD : password);
+        if (password != null && !password.isEmpty()) {
+            transac.setPassword(password);
+        }
         transferFactoryInstantiator.getDataTransferFactory().addDataTransfer(transac);
         transac.setDataSize(dv.getLength());
         transferFactoryInstantiator.getDataTransferFactory().updateDataTransfer(transac);
