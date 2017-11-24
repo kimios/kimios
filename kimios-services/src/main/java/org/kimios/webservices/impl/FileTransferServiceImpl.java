@@ -304,12 +304,12 @@ public class FileTransferServiceImpl
         return response.build();
     }
 
-    public DataTransaction createTokenDownloadTransaction(String sessionUid, long documentVersionUid, String password)
+    public DataTransaction createTokenDownloadTransaction(String sessionUid, long documentVersionUid)
             throws DMServiceException {
         try {
             Session session = getHelper().getSession(sessionUid);
             DataTransaction dtr =
-                    transferController.startDownloadTransactionToken(session, documentVersionUid, password).toPojo();
+                    transferController.startDownloadTransactionToken(session, documentVersionUid, null).toPojo();
             return dtr;
         } catch (Exception e) {
             throw getHelper().convertException(e);

@@ -129,8 +129,7 @@ public interface FileTransferService
     @Produces(MediaType.APPLICATION_JSON)
     public DataTransaction createTokenDownloadTransaction(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
-            @QueryParam(value = "documentVersionId") @WebParam(name = "documentVersionId") long documentVersionId,
-            @QueryParam(value = "password") @WebParam(name = "password") String password)
+            @QueryParam(value = "documentVersionId") @WebParam(name = "documentVersionId") long documentVersionId)
             throws DMServiceException;
 
     @GET @ApiOperation(value ="")
