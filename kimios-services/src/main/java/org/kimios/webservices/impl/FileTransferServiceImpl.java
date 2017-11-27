@@ -15,6 +15,7 @@
  */
 package org.kimios.webservices.impl;
 
+import org.kimios.exceptions.RequiredPasswordException;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.ws.pojo.DataTransaction;
 import org.kimios.kernel.ws.pojo.DocumentWrapper;
@@ -250,13 +251,11 @@ public class FileTransferServiceImpl
             return response.build();
 
 
+        } catch (RequiredPasswordException e) {
+            Map<String, String> params = new HashMap<>();
+            params.put("token", token);
+            return buildRequiredPasswordResponse(uriInfo, DOWNLOAD_DOCUMENT_BY_TOKEN_AND_PASSWORD_FORM_ACTION, params);
         } catch (Exception e) {
-            if (e.getMessage().equals("password needed")
-                    || e.getMessage().equals("wrong password")) {
-                Map<String, String> params = new HashMap<>();
-                params.put("token", token);
-                return buildRequiredPasswordResponse(uriInfo, DOWNLOAD_DOCUMENT_BY_TOKEN_AND_PASSWORD_FORM_ACTION, params);
-            }
             throw getHelper().convertException(e);
         }
     }
@@ -267,13 +266,11 @@ public class FileTransferServiceImpl
         Response response;
         try {
             response = downloadDocumentByToken(uriInfo, token, password);
+        } catch (RequiredPasswordException e) {
+            Map<String, String> params = new HashMap<>();
+            params.put("token", token);
+            return buildRequiredPasswordResponse(uriInfo, DOWNLOAD_DOCUMENT_BY_TOKEN_AND_PASSWORD_FORM_ACTION, params);
         } catch (Exception e) {
-            if (e.getMessage().equals("password needed")
-                    || e.getMessage().equals("password needed")) {
-                Map<String, String> params = new HashMap<>();
-                params.put("token", token);
-                return buildRequiredPasswordResponse(uriInfo, DOWNLOAD_DOCUMENT_BY_TOKEN_AND_PASSWORD_FORM_ACTION, params);
-            }
             throw getHelper().convertException(e);
         }
 

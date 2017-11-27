@@ -399,11 +399,11 @@ public class FileTransferController
             if (transac.getPassword() != null
                     && !transac.getPassword().isEmpty()) {
                 if (password == null) {
-                    throw new AccessDeniedException(new DmsKernelException("password needed"));
+                    throw new RequiredPasswordException(new DmsKernelException("password needed"));
                 } else {
                     if ( ! transac.getPassword()
                             .equals(securityFactoryInstantiator.getCredentialsGenerator().generatePassword(password))) {
-                        throw new AccessDeniedException(new DmsKernelException("wrong password"));
+                        throw new RequiredPasswordException(new DmsKernelException("wrong password"));
                     }
                 }
             }

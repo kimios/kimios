@@ -138,6 +138,10 @@ public class ServiceHelper implements IServiceHelper {
             return new DMServiceException(14, "Error 14 : MetaFeed Search Exception : " + e.toString(), e);
         }
 
+        if (e instanceof RequiredPasswordException) {
+            return new DMServiceException(15, "Error 15 : Required Password Exception : " + e.toString(), e);
+        }
+
         if (e instanceof Exception) {
             return new DMServiceException(0, e.getMessage(), e);
         }
