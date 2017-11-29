@@ -18,17 +18,21 @@ package org.kimios.webservices.share.impl;
 
 import org.kimios.kernel.controller.IDocumentController;
 import org.kimios.kernel.dms.model.Document;
-import org.kimios.kernel.share.controller.IMailShareController;
 import org.kimios.kernel.security.model.Session;
+import org.kimios.kernel.share.controller.IMailShareController;
 import org.kimios.kernel.share.controller.IShareController;
+import org.kimios.kernel.share.controller.IShareTransferController;
 import org.kimios.kernel.share.model.MailContact;
 import org.kimios.kernel.ws.pojo.Share;
+import org.kimios.webservices.FileTransferService;
 import org.kimios.webservices.IServiceHelper;
 import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.share.ShareService;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -42,17 +46,25 @@ public class ShareServiceImpl implements ShareService {
 
     private IMailShareController mailShareController;
     private IShareController shareController;
+    private IShareTransferController shareTransferController;
     private IServiceHelper helper;
     private IDocumentController documentController;
+    private FileTransferService fileTransferService;
+
+    private static String DOWNLOAD_DOCUMENT_BY_TOKEN_AND_PASSWORD_FORM_ACTION = "downloadDocumentByTokenAndPassword";
 
     public ShareServiceImpl(IMailShareController mailShareController,
                             IShareController shareController,
                             IDocumentController documentController,
-                            IServiceHelper serviceHelper){
+                            IServiceHelper serviceHelper,
+                            IShareTransferController shareTransferController,
+                            FileTransferService fileTransferService){
         this.helper = serviceHelper;
         this.mailShareController = mailShareController;
         this.shareController = shareController;
         this.documentController = documentController;
+        this.shareTransferController = shareTransferController;
+        this.fileTransferService = fileTransferService;
     }
 
     @Override
@@ -197,5 +209,61 @@ public class ShareServiceImpl implements ShareService {
         } catch (Exception e) {
             throw helper.convertException(e);
         }
+    }
+
+    @WebMethod(exclude = true)
+    public Response downloadDocumentByToken(UriInfo uriInfo, final String token, final String password) throws DMServiceException {
+        try {
+            return fileTransferService.downloadDocumentByToken(uriInfo, token, password);
+        } catch (DMServiceException e) {
+            if (e.getCode() == 15) {
+                Map<String, String> params = new HashMap<>();
+                params.put("token", token);
+                return buildRequiredPasswordResponse(uriInfo, DOWNLOAD_DOCUMENT_BY_TOKEN_AND_PASSWORD_FORM_ACTION, params);
+            }
+            throw e;
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    @WebMethod(exclude = true)
+    public Response downloadDocumentByTokenAndPassword(UriInfo uriInfo, String token, String password) throws DMServiceException {
+
+        try {
+            return fileTransferService.downloadDocumentByToken(uriInfo, token, password);
+        } catch (DMServiceException e) {
+            if (e.getCode() == 15) {
+                Map<String, String> params = new HashMap<>();
+                params.put("token", token);
+                return buildRequiredPasswordResponse(uriInfo, DOWNLOAD_DOCUMENT_BY_TOKEN_AND_PASSWORD_FORM_ACTION, params);
+            }
+            throw e;
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    private Response buildRequiredPasswordResponse(UriInfo uri, String methodAction, Map<String, String> hiddenParams)
+            throws DMServiceException {
+        Response response;
+
+        try {
+            String uriAbsPath = uri.getAbsolutePath().toString();
+            String formAction = uriAbsPath.replaceFirst("/[^/]+$", "/" + methodAction);
+            String form = shareTransferController.buildAskPasswordResponseHtml(formAction, hiddenParams);
+            if (form == null) {
+                throw new DMServiceException();
+            }
+            Response.ResponseBuilder responseBuilder = Response.ok(form);
+            responseBuilder.header("Content-Description", "Password required");
+            responseBuilder.header("Content-Type", "text/html");
+
+            response = responseBuilder.build();
+        } catch (Exception e) {
+            throw helper.convertException(e);
+        }
+
+        return response;
     }
 }

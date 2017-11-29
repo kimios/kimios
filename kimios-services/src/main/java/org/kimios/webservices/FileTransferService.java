@@ -132,7 +132,8 @@ public interface FileTransferService
             @QueryParam(value = "documentVersionId") @WebParam(name = "documentVersionId") long documentVersionId)
             throws DMServiceException;
 
-    @GET @ApiOperation(value ="")
+
+     @GET @ApiOperation(value ="")
     @Path( "/downloadDocumentByToken" )
     @Produces( { MediaType.APPLICATION_OCTET_STREAM, MediaType.APPLICATION_FORM_URLENCODED } )
     public Response downloadDocumentByToken(
@@ -141,13 +142,5 @@ public interface FileTransferService
             @QueryParam(value = "password") String password
     ) throws DMServiceException;
 
-    @POST
-    @Path( "/downloadDocumentByTokenAndPassword" )
-    @Consumes( MediaType.APPLICATION_FORM_URLENCODED )
-    @Produces( { MediaType.APPLICATION_OCTET_STREAM, MediaType.APPLICATION_FORM_URLENCODED } )
-    public Response downloadDocumentByTokenAndPassword(
-            @Context UriInfo uriInfo,
-            @FormParam(value = "token") String token,
-            @FormParam(value = "password") String password
-    ) throws DMServiceException;
+
 }

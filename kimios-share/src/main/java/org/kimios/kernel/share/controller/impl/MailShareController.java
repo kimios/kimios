@@ -230,7 +230,7 @@ public class MailShareController extends AKimiosController implements IMailShare
                         String publicUrl = ConfigurationManager.getValue(Config.PUBLIC_URL);
                         publicUrl = publicUrl.endsWith("/") ? publicUrl : publicUrl + "/";
                         items.put(publicUrl
-                                + "services/rest/filetransfer/downloadDocumentByToken?token="
+                                + "services/rest/share/downloadDocumentByToken?token="
                                 + transfer.getDownloadToken(),
                                 doc);
                     }else

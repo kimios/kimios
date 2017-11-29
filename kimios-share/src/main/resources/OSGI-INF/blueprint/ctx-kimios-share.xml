@@ -111,9 +111,18 @@
         <tx:transaction method="*" value="Required"/>
     </bean>
 
+    <bean id="ShareTransferController" class="org.kimios.kernel.share.controller.impl.ShareTransferController">
+        <property name="templateProcessor"  ref="templateProcessor" />
+
+        <tx:transaction method="*" value="Required"/>
+    </bean>
+
     <service id="mShareCtrlOsgi" ref="mailShareController"
              interface="org.kimios.kernel.share.controller.IMailShareController"/>
 
     <service id="iShareCtrlOsgi" ref="shareController" interface="org.kimios.kernel.share.controller.IShareController" />
+
+    <service id="shareTransferCtrlOsgi" ref="ShareTransferController"
+             interface="org.kimios.kernel.share.controller.IShareTransferController"/>
 
 </blueprint>

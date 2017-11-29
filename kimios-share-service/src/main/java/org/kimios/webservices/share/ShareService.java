@@ -26,7 +26,10 @@ import org.kimios.webservices.exceptions.DMServiceException;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import java.util.List;
 import java.util.Map;
 
@@ -151,4 +154,24 @@ public interface ShareService {
     String loadDefaultTemplate(@ApiParam(value = "sessionId", name = "sessionId", required = true)
                                @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId)
         throws DMServiceException;
+
+    @GET @ApiOperation(value ="")
+    @Path( "/downloadDocumentByToken" )
+    @Produces( { MediaType.APPLICATION_OCTET_STREAM, MediaType.APPLICATION_FORM_URLENCODED } )
+    public Response downloadDocumentByToken(
+            @Context UriInfo uriInfo,
+            @QueryParam(value = "token") String token,
+            @QueryParam(value = "password") String password
+    ) throws DMServiceException;
+
+    @POST
+    @Path( "/downloadDocumentByTokenAndPassword" )
+    @Consumes( MediaType.APPLICATION_FORM_URLENCODED )
+    @Produces( { MediaType.APPLICATION_OCTET_STREAM, MediaType.APPLICATION_FORM_URLENCODED } )
+    public Response downloadDocumentByTokenAndPassword(
+            @Context UriInfo uriInfo,
+            @FormParam(value = "token") String token,
+            @FormParam(value = "password") String password
+    ) throws DMServiceException;
+
 }

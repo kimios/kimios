@@ -43,8 +43,6 @@ public class FileTransferServiceImpl
 
     private static Logger logger = LoggerFactory.getLogger(FileTransferServiceImpl.class);
 
-    private static String DOWNLOAD_DOCUMENT_BY_TOKEN_AND_PASSWORD_FORM_ACTION = "downloadDocumentByTokenAndPassword";
-
     /**
      * @param sessionUid
      * @param documentId
@@ -251,54 +249,9 @@ public class FileTransferServiceImpl
             return response.build();
 
 
-        } catch (RequiredPasswordException e) {
-            Map<String, String> params = new HashMap<>();
-            params.put("token", token);
-            return buildRequiredPasswordResponse(uriInfo, DOWNLOAD_DOCUMENT_BY_TOKEN_AND_PASSWORD_FORM_ACTION, params);
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }
-    }
-
-    @WebMethod(exclude = true)
-    public Response downloadDocumentByTokenAndPassword(UriInfo uriInfo, String token, String password) throws DMServiceException {
-
-        Response response;
-        try {
-            response = downloadDocumentByToken(uriInfo, token, password);
-        } catch (RequiredPasswordException e) {
-            Map<String, String> params = new HashMap<>();
-            params.put("token", token);
-            return buildRequiredPasswordResponse(uriInfo, DOWNLOAD_DOCUMENT_BY_TOKEN_AND_PASSWORD_FORM_ACTION, params);
-        } catch (Exception e) {
-            throw getHelper().convertException(e);
-        }
-
-        return response;
-    }
-
-    private Response buildRequiredPasswordResponse(UriInfo uri, String methodAction, Map<String, String> hiddenParams) {
-        String uriAbsPath = uri.getAbsolutePath().toString();
-        String formAction = uriAbsPath.replaceFirst("/[^/]+$", "/" + methodAction);
-        String form = "<form method=\"POST\" action=\""
-                + formAction
-                + "\">"
-                + "<input name=\"password\" type=\"password\">"
-                + "</input>";
-
-        for (String key : hiddenParams.keySet()) {
-            form += "<input name=\"" + key + "\" type=\"hidden\""
-                    + " value=\"" + hiddenParams.get(key) + "\">";
-        }
-
-        form += "<input type=\"submit\">"
-                + "Submit password"
-                + "</input>"
-                + "</form>";
-        Response.ResponseBuilder response = Response.ok(form);
-        response.header("Content-Description", "Password required");
-        response.header("Content-Type", "text/html");
-        return response.build();
     }
 
     public DataTransaction createTokenDownloadTransaction(String sessionUid, long documentVersionUid)

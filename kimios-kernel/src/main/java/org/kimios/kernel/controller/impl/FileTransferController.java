@@ -17,6 +17,10 @@ package org.kimios.kernel.controller.impl;
 
 import org.kimios.api.events.annotations.DmsEvent;
 import org.kimios.api.events.annotations.DmsEventName;
+import org.kimios.api.templates.ITemplate;
+import org.kimios.api.templates.ITemplateProcessor;
+import org.kimios.api.templates.ITemplateProvider;
+import org.kimios.api.templates.TemplateType;
 import org.kimios.exceptions.*;
 import org.kimios.kernel.configuration.Config;
 import org.kimios.kernel.controller.AKimiosController;
@@ -52,6 +56,10 @@ public class FileTransferController
     private static Logger logger = LoggerFactory.getLogger(FileTransferController.class);
 
     private static String DEFAULT_PASSWORD = "pass";
+
+    private ITemplateProcessor templateProcessor;
+
+    private ITemplateProvider templateProvider;
 
     /**
      * Start an upload transaction for a given document (update the last version)
@@ -482,6 +490,27 @@ public class FileTransferController
         } else {
             throw new AccessDeniedException();
         }
+    }
+
+    public ITemplateProcessor getTemplateProcessor() {
+        return templateProcessor;
+    }
+
+    public void setTemplateProcessor(ITemplateProcessor templateProcessor) {
+        this.templateProcessor = templateProcessor;
+    }
+
+    public ITemplateProvider getTemplateProvider() {
+        return templateProvider;
+    }
+
+    public void setTemplateProvider(ITemplateProvider templateProvider) {
+        this.templateProvider = templateProvider;
+    }
+
+    public String loadDefaultMailTemplate(Session session) throws Exception {
+        ITemplate mailTemplate = templateProvider.getDefaultTemplate(TemplateType.SHARE_MAIL);
+        return (mailTemplate != null) ? mailTemplate.getContent() : null;
     }
 }
 
