@@ -1,7 +1,10 @@
 package org.kimios.kernel.share.controller.impl;
 
 import org.apache.commons.io.IOUtils;
+import org.kimios.api.templates.ITemplate;
 import org.kimios.api.templates.ITemplateProcessor;
+import org.kimios.api.templates.ITemplateProvider;
+import org.kimios.api.templates.TemplateType;
 import org.kimios.kernel.share.controller.IShareTransferController;
 
 import java.io.InputStream;
@@ -13,6 +16,8 @@ public class ShareTransferController implements IShareTransferController {
 
     private ITemplateProcessor templateProcessor;
 
+    private ITemplateProvider templateProvider;
+
     public ITemplateProcessor getTemplateProcessor() {
         return templateProcessor;
     }
@@ -21,10 +26,22 @@ public class ShareTransferController implements IShareTransferController {
         this.templateProcessor = templateProcessor;
     }
 
+    public ITemplateProvider getTemplateProvider() {
+        return templateProvider;
+    }
+
+    public void setTemplateProvider(ITemplateProvider templateProvider) {
+        this.templateProvider = templateProvider;
+    }
+
     @Override
     public String buildAskPasswordResponseHtml(String formAction, Map<String, String> hiddenParams) throws Exception {
-        InputStream inputStream = ShareTransferController.class.getClassLoader().getResourceAsStream("templates/download-document-password-form.html");
-        String template = Pattern.quote(IOUtils.toString(inputStream));
+        String template = loadMailTemplate();
+        if (template == null
+                || template.isEmpty()) {
+            InputStream inputStream = ShareTransferController.class.getClassLoader().getResourceAsStream("templates/download-document-password-form.html");
+            template = Pattern.quote(IOUtils.toString(inputStream));
+        }
         Map<String, Object> items = new HashMap<String, Object>();
         items.put("formAction", formAction);
         items.put("hiddenParams", hiddenParams);
@@ -36,5 +53,10 @@ public class ShareTransferController implements IShareTransferController {
         }
 
         return html;
+    }
+
+    public String loadMailTemplate() throws Exception {
+        ITemplate mailTemplate = templateProvider.getDefaultTemplate(TemplateType.SHARE_ASK_PASSWORD);
+        return mailTemplate != null ? mailTemplate.getContent() : null;
     }
 }

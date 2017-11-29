@@ -25,5 +25,6 @@ public enum TemplateType {
     MAIL,
     SHARE_MAIL,
     CUSTOM,
-    SHARE_MAIL_PASSWORD
+    SHARE_MAIL_PASSWORD,
+    SHARE_ASK_PASSWORD
 }

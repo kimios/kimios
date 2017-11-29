@@ -113,6 +113,7 @@
 
     <bean id="ShareTransferController" class="org.kimios.kernel.share.controller.impl.ShareTransferController">
         <property name="templateProcessor"  ref="templateProcessor" />
+        <property name="templateProvider"  ref="templateProvider" />
 
         <tx:transaction method="*" value="Required"/>
     </bean>
