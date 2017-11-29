@@ -48,6 +48,7 @@ public class NotifierController extends AKimiosController implements INotifierCo
     private String metaDateName = "DeadLine";
     private String templateUrl = "classpath:/default-template.html";
     private int remainingDaysBeforeNotification = 7;
+    private String metaReminderDateName = "ReminderDate";
 
     private NotificationFactory notificationFactory;
 
@@ -84,6 +85,9 @@ public class NotifierController extends AKimiosController implements INotifierCo
                 && !ConfigurationManager.getValue("dms.mail.sendermail").isEmpty() ?
                 ConfigurationManager.getValue("dms.mail.sendermail") : mailerSenderMail;
 
+        metaReminderDateName = ConfigurationManager.getValue("dms.notifier.type.metaremindername") != null ?
+                ConfigurationManager.getValue("dms.notifier.type.metaremindername") : metaReminderDateName;
+        
         try {
             remainingDaysBeforeNotification = ConfigurationManager.getValue("dms.notifier.reminderdelay") != null ?
                     Integer.parseInt(ConfigurationManager.getValue("dms.notifier.reminderdelay")) : remainingDaysBeforeNotification;
@@ -105,15 +109,21 @@ public class NotifierController extends AKimiosController implements INotifierCo
         if (eligibleType != null) {
             List<Meta> metas = this.documentVersionController.getMetas(session, eligibleType.getUid());
 
-            Meta eligibleMeta = null;
+            Map<Meta, String> metaAndValues = new HashMap<>();
             for (Meta meta : metas) {
-                if (meta.getName().equals(metaDateName) && meta.getMetaType() == MetaType.DATE) {
-                    eligibleMeta = meta;
-                    break;
+                if (meta.getName().equals(metaDateName)
+                        && meta.getMetaType() == MetaType.DATE) {
+                    LocalDateTime dateTimeCriteria = LocalDateTime.now().minusDays(remainingDaysBeforeNotification);
+                    metaAndValues.put(meta, dateTimeCriteria.toString());
+                } else {
+                    if (meta.getName().equals(metaReminderDateName)
+                            && meta.getMetaType() == MetaType.DATE) {
+                        metaAndValues.put(meta, LocalDateTime.now().toString());
+                    }
                 }
             }
-            if (eligibleMeta != null) {
-                return this.searchController.advancedSearchDocuments(session, prepareCriteriaList(eligibleMeta), -1, -1, null, null,
+            if (metaAndValues.size() > 0) {
+                return this.searchController.advancedSearchDocuments(session, prepareCriteriaList(metaAndValues), -1, -1, null, null,
                         null, null, false);
             } else {
                 logger.warn("meta {} for notification not found", metaDateName);
@@ -125,19 +135,27 @@ public class NotifierController extends AKimiosController implements INotifierCo
         return null;
     }
 
-    public List<Criteria> prepareCriteriaList(Meta meta) {
-        //get specific metat date
-        String searchField = "MetaDataDate_" + meta.getUid();
-        Criteria c = new Criteria();
-        c.setFieldName(searchField);
-        c.setMetaId(meta.getUid());
-        c.setLevel(0);
-        c.setPosition(0);
-        LocalDateTime dateTimeCriteria = LocalDateTime.now().minusDays(remainingDaysBeforeNotification);
-        c.setRangeMin(dateTimeCriteria.toString());
-        logger.debug("looking for document with meta {} on date {}", meta.getName(), dateTimeCriteria);
+    public List<Criteria> prepareCriteriaList(Map<Meta, String> metaAndValues) {
         ArrayList<Criteria> criteriaList = new ArrayList<Criteria>();
-        criteriaList.add(c);
+        for (Meta meta: metaAndValues.keySet()) {
+            //get specific metat date
+            String searchField = "MetaDataDate_" + meta.getUid();
+            Criteria c = new Criteria();
+            c.setFieldName(searchField);
+            c.setMetaId(meta.getUid());
+            c.setLevel(0);
+            c.setPosition(0);
+            LocalDateTime dateTimeCriteria = LocalDateTime.now().minusDays(remainingDaysBeforeNotification);
+            if (metaAndValues.get(meta) != null
+                    && !metaAndValues.get(meta).isEmpty()) {
+                c.setRangeMin(metaAndValues.get(meta));
+                logger.debug("looking for document with meta {} on date {}", meta.getName(), dateTimeCriteria);
+                if ( ! criteriaList.isEmpty()) {
+                    c.setOperator("OR");
+                }
+                criteriaList.add(c);
+            }
+        }
         return criteriaList;
     }
 
