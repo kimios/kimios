@@ -1220,7 +1220,7 @@ public class SolrSearchController
                         String it = parseMetaDataCriteria(c, sdf);
                         if(it != null)
                             queries.add((c.getOperator() != null && c.getOperator().length() > 0 ?
-                                    c.getOperator() : "") + it);
+                                    c.getOperator() + " " : "") + it);
                     }
                 }
             }
