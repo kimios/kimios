@@ -33,16 +33,21 @@ import org.kimios.exceptions.DmsKernelException;
 import org.kimios.kernel.configuration.Config;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.IFileTransferController;
+import org.kimios.kernel.dms.model.DMEntity;
 import org.kimios.kernel.dms.model.Document;
 import org.kimios.kernel.dms.model.DocumentVersion;
 import org.kimios.kernel.filetransfer.model.DataTransfer;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.share.controller.IMailShareController;
 import org.kimios.kernel.share.factory.MailContactFactory;
+import org.kimios.kernel.share.factory.ShareFactory;
 import org.kimios.kernel.share.mail.EmailFactory;
 import org.kimios.kernel.share.mail.MailDescriptor;
 import org.kimios.kernel.share.mail.MailTaskRunnable;
 import org.kimios.kernel.share.model.MailContact;
+import org.kimios.kernel.share.model.Share;
+import org.kimios.kernel.share.model.ShareStatus;
+import org.kimios.kernel.share.model.ShareType;
 import org.kimios.kernel.user.FactoryInstantiator;
 import org.kimios.kernel.user.model.User;
 import org.kimios.utils.configuration.ConfigurationManager;
@@ -105,7 +110,8 @@ public class MailShareController extends AKimiosController implements IMailShare
         this.mailContactFactory = mailContactFactory;
     }
 
-    public MailShareController(){
+    public MailShareController(ShareFactory sFactory){
+        this.shareFactory = sFactory;
         scheduledExecutorService = Executors.newScheduledThreadPool(8);
     }
 
@@ -114,6 +120,8 @@ public class MailShareController extends AKimiosController implements IMailShare
     private ITemplateProcessor templateProcessor;
 
     private IFileTransferController fileTransferController;
+
+    private ShareFactory shareFactory;
 
     public ITemplateProvider getTemplateProvider() {
         return templateProvider;
@@ -137,6 +145,14 @@ public class MailShareController extends AKimiosController implements IMailShare
 
     public void setFileTransferController(IFileTransferController fileTransferController) {
         this.fileTransferController = fileTransferController;
+    }
+
+    public ShareFactory getShareFactory() {
+        return shareFactory;
+    }
+
+    public void setShareFactory(ShareFactory shareFactory) {
+        this.shareFactory = shareFactory;
     }
 
     private MultiPartEmail initShareNotificationEmail (Session session, Map<String, String> recipients,
@@ -182,7 +198,7 @@ public class MailShareController extends AKimiosController implements IMailShare
     @Override
     @DmsEvent(eventName = DmsEventName.DOCUMENT_SHARED)
     public void sendDocumentByEmail(Session session,
-                                    List<Long> documentIds,
+                                    List<Share> shares,
                                     Map<String, String> recipients,
                                     String subject, String content,
                                     String senderAddress, String senderName,
@@ -192,7 +208,7 @@ public class MailShareController extends AKimiosController implements IMailShare
         try {
             if(logger.isDebugEnabled()) {
                 logger.debug("Submitted recipients: {}", recipients);
-                logger.debug("Submitted doc ids: {}", documentIds);
+                //logger.debug("Submitted doc ids: {}", documentIds);
                 logger.debug("Submitted contents is: {}", content);
             }
             List<MultiPartEmail> emails = new ArrayList<>();
@@ -214,9 +230,9 @@ public class MailShareController extends AKimiosController implements IMailShare
                         .getUserFactory().getUser(session.getUid());
                 Map<String, Object> items = new HashMap<String, Object>();
                 //Generate Document Links
-                for(Long docId: documentIds){
+                for(Share share: shares){
                     Document doc = dmsFactoryInstantiator.getDocumentFactory()
-                            .getDocument(docId);
+                            .getDocument(share.getEntity().getUid());
                     if(getSecurityAgent().isReadable(doc, session.getUserName(), session.getUserSource(), session.getGroups())) {
                         DocumentVersion lastVersion = dmsFactoryInstantiator.getDocumentVersionFactory()
                                 .getLastDocumentVersion(doc);
@@ -226,7 +242,7 @@ public class MailShareController extends AKimiosController implements IMailShare
                             md5Pass = this.securityFactoryInstantiator.getCredentialsGenerator().generatePassword(password);
                         }
                         DataTransfer transfer = fileTransferController.startDownloadTransactionToken(session,
-                                lastVersion.getUid(), md5Pass);
+                                lastVersion.getUid(), md5Pass, share);
                         String publicUrl = ConfigurationManager.getValue(Config.PUBLIC_URL);
                         publicUrl = publicUrl.endsWith("/") ? publicUrl : publicUrl + "/";
                         items.put(publicUrl
@@ -256,9 +272,9 @@ public class MailShareController extends AKimiosController implements IMailShare
                         logger.error("max attachment size not defined as integer. will use default {}", 10);
                     }
                 }
-                for(Long documentId: documentIds){
+                for(Share share: shares){
                     Document d = dmsFactoryInstantiator.getDocumentFactory()
-                            .getDocument(documentId);
+                            .getDocument(share.getEntity().getUid());
 
                     if(getSecurityAgent().isReadable(d, session.getUserName(), session.getUserSource(), session.getGroups())){
                         DocumentVersion dv = dmsFactoryInstantiator.getDocumentVersionFactory()
@@ -290,6 +306,39 @@ public class MailShareController extends AKimiosController implements IMailShare
             } else {
                 throw new DmsKernelException(ex);
             }
+        }
+    }
+
+    public Share createShare(Session session, long entityId, Date expirationDate)
+            throws DmsKernelException {
+        try {
+            Share s = null;
+            DMEntity entity = dmsFactoryInstantiator.getDmEntityFactory().getEntity(entityId);
+            if (getSecurityAgent().isFullAccess(entity, session.getUserName(), session.getUserSource(), session.getGroups())) {
+
+                if (entity instanceof Document) {
+                    //share item
+                    s = new Share();
+                    s.setCreatorId(session.getUserName());
+                    s.setCreatorSource(session.getUserSource());
+                    s.setCreationDate(new Date());
+                    s.setUpdateDate(s.getCreationDate());
+                    s.setRead(true);
+                    s.setWrite(false);
+                    s.setFullAccess(false);
+                    s.setNotify(true);
+                    s.setShareStatus(ShareStatus.ACTIVE);
+                    s.setType(ShareType.EXTERNAL);
+                    s.setExpirationDate(expirationDate);
+
+                    s.setEntity(entity);
+
+                    s = shareFactory.saveShare(s);
+                }
+            }
+            return s;
+        } catch (Exception e) {
+            throw new DmsKernelException(e);
         }
     }
 

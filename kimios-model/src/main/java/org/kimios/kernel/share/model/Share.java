@@ -17,11 +17,12 @@
 package org.kimios.kernel.share.model;
 
 import org.kimios.kernel.dms.model.DMEntity;
-import org.kimios.kernel.dms.model.DMEntityImpl;
 import org.kimios.kernel.dms.model.Document;
+import org.kimios.kernel.filetransfer.model.DataTransfer;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Set;
 
 /**
  * Created by farf on 13/02/16.
@@ -99,6 +100,9 @@ public class Share {
     @Column(name = "share_status", nullable = false)
     private ShareStatus shareStatus;
 
+
+    @OneToMany(mappedBy="share", fetch = FetchType.EAGER)
+    private Set<DataTransfer> dataTransferSet;
 
     public Long getId() {
         return id;
@@ -252,6 +256,13 @@ public class Share {
         this.entity = entity;
     }
 
+    public Set<DataTransfer> getDataTransferSet() {
+        return dataTransferSet;
+    }
+
+    public void setDataTransferSet(Set<DataTransfer> dataTransferSet) {
+        this.dataTransferSet = dataTransferSet;
+    }
 
     @Transient
     public org.kimios.kernel.ws.pojo.Share toPojo(){

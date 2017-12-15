@@ -31,6 +31,7 @@ import org.kimios.kernel.filetransfer.model.DataTransfer;
 import org.kimios.kernel.filetransfer.zip.FileCompressionHelper;
 import org.kimios.kernel.repositories.impl.RepositoryManager;
 import org.kimios.kernel.security.model.Session;
+import org.kimios.kernel.share.model.Share;
 import org.kimios.kernel.user.model.User;
 import org.kimios.kernel.ws.pojo.DocumentWrapper;
 import org.kimios.utils.configuration.ConfigurationManager;
@@ -403,8 +404,15 @@ public class FileTransferController
 
         DataTransfer transac = transferFactoryInstantiator.getDataTransferFactory()
                 .getUploadDataTransferByDocumentToken(token);
-        if (transac != null && transac.getTransferMode() == DataTransfer.TOKEN) {
-            if (transac.getPassword() != null
+        if (transac != null) {
+            if (transac.getShare().getExpirationDate() != null
+                    && transac.getShare().getExpirationDate().before(new Date())) {
+                throw new DateExpiredException(new DmsKernelException("Share's date is expired ("
+                        + transac.getShare().getExpirationDate().toString()
+                        + ")"));
+            }
+            if (transac.getTransferMode() == DataTransfer.TOKEN
+                    && transac.getPassword() != null
                     && !transac.getPassword().isEmpty()) {
                 if (password == null) {
                     throw new RequiredPasswordException(new DmsKernelException("password needed"));
@@ -448,7 +456,8 @@ public class FileTransferController
     /**
      * Create Token For Download Transaction
      */
-    public DataTransfer startDownloadTransactionToken(Session session, long documentVersionUid, String password)
+    public DataTransfer startDownloadTransactionToken(Session session, long documentVersionUid, String password,
+                                                      Share share)
             throws IOException, RepositoryException, DataSourceException, ConfigException, AccessDeniedException {
         DocumentVersion dv =
                 dmsFactoryInstantiator.getDocumentVersionFactory().getDocumentVersion(documentVersionUid);
@@ -457,6 +466,7 @@ public class FileTransferController
             throw new AccessDeniedException();
         }
         DataTransfer transac = new DataTransfer();
+        transac.setShare(share);
         transac.setDocumentVersionUid(dv.getUid());
         transac.setIsCompressed(false);
         transac.setHashMD5(dv.getHashMD5());

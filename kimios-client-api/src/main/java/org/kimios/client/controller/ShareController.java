@@ -51,7 +51,9 @@ public class ShareController {
     public void sendDocuments(String sessionId, List<Long> documentIds,
                               Map<String, String> recipients,
                               String subject, String content,
-                              String senderAddress, String senderName, Boolean defaultSender, String password) throws Exception {
+                              String senderAddress, String senderName,
+                              Boolean defaultSender, String password,
+                              String expirationDate) throws Exception {
         try{
 
             List<MailContact> mc = new ArrayList<MailContact>();
@@ -63,7 +65,8 @@ public class ShareController {
             }
 
             client.shareByEmailFullContact(sessionId, documentIds, mc, subject,
-                    content, senderAddress, senderName, defaultSender, password );
+                    content, senderAddress, senderName, defaultSender, password,
+                    expirationDate);
         }   catch (Exception e) {
             throw new ExceptionHelper().convertException(e);
         }

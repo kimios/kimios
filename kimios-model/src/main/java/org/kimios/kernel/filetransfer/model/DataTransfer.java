@@ -18,6 +18,7 @@ package org.kimios.kernel.filetransfer.model;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.kimios.kernel.dms.model.DocumentVersion;
+import org.kimios.kernel.share.model.Share;
 import org.kimios.kernel.ws.pojo.DataTransaction;
 
 import javax.persistence.*;
@@ -57,6 +58,10 @@ public class DataTransfer implements Serializable
     @OnDelete(action = OnDeleteAction.CASCADE)
     private DocumentVersion version;
 
+    @ManyToOne
+    @JoinColumn(name="dm_entity_share_id", nullable = true)
+    private Share share;
+
     @Column(name = "document_version_id", nullable = false)
     private long documentVersionUid;
 
@@ -87,8 +92,12 @@ public class DataTransfer implements Serializable
     @Column(name = "password", nullable = true)
     private String password = null;
 
-    public DataTransfer()
-    {
+    @Column(name = "status", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private DataTransferStatus status;
+
+    public DataTransfer() {
+        this.status = DataTransferStatus.ACTIVE;
     }
 
     /**
@@ -106,7 +115,7 @@ public class DataTransfer implements Serializable
      */
     public DataTransfer(long uid, String userName, String userSource, Date lastActivityDate,
             long documentVersionUid, boolean isCompressed, String filePath, long dataSize,
-            String hashMD5, String hashSHA, int transferMode)
+            String hashMD5, String hashSHA, int transferMode, Share share, DataTransferStatus status)
     {
         this.uid = uid;
         this.userName = userName;
@@ -119,6 +128,8 @@ public class DataTransfer implements Serializable
         this.hashMD5 = hashMD5;
         this.hashSHA = hashSHA;
         this.transferMode = transferMode;
+        this.share = share;
+        this.status = status;
     }
 
     public long getUid()
@@ -274,6 +285,22 @@ public class DataTransfer implements Serializable
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public DataTransferStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(DataTransferStatus status) {
+        this.status = status;
+    }
+
+    public Share getShare() {
+        return share;
+    }
+
+    public void setShare(Share share) {
+        this.share = share;
     }
 }
 

@@ -53,7 +53,8 @@ public interface ShareService {
             @WebParam(name = "senderAddress") String senderAddress,
             @WebParam(name = "senderName") String senderName,
             @WebParam(name = "defaultSender")  Boolean defaultSender,
-            @WebParam(name = "password") String password)
+            @WebParam(name = "password") String password,
+            @WebParam(name = "expirationDate") String expirationDate)
             throws DMServiceException;
 
 
@@ -126,9 +127,12 @@ public interface ShareService {
             @ApiParam(value = "senderName")
             @QueryParam(value = "senderName") String senderName,
 
-
             @DefaultValue("false") @ApiParam(value = "Default Sender") @QueryParam(value = "defaultSender") Boolean defaultSender,
-            @ApiParam(value = "password") @QueryParam(value = "password") String password)
+            @ApiParam(value = "password") @QueryParam(value = "password") String password,
+
+            @ApiParam(value = "expirationDate")
+            @QueryParam(value = "expirationDate") String expirationDate)
+
             throws DMServiceException;
 
 

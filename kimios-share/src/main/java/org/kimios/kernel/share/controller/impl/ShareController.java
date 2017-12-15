@@ -114,7 +114,7 @@ public class ShareController extends AKimiosController implements IShareControll
 
                 s.setEntity(entity);
 
-                shareFactory.saveShare(s);
+                s = shareFactory.saveShare(s);
 
                 // set rights on entity, and force reindex !!!
                 securityController.simpleSecurityAdd(session, entity.getUid(), sharedToUserId, sharedToUserSource,
@@ -137,8 +137,10 @@ public class ShareController extends AKimiosController implements IShareControll
                     //TODO: translate Mail Subject
                     //TODO: handle external subject submission
 
+                    List<Share> shares = new ArrayList<>();
+                    shares.add(s);
                     mailShareController.sendDocumentByEmail(session,
-                            documentIds, recipients, "Kimios Internal Share",
+                            shares, recipients, "Kimios Internal Share",
                             "<html><body>__DOCUMENTSLINKS__</body></html>", null, null,
                             true, null);
                 }

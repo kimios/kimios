@@ -20,7 +20,9 @@ import org.kimios.exceptions.DmsKernelException;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.share.mail.MailDescriptor;
 import org.kimios.kernel.share.model.MailContact;
+import org.kimios.kernel.share.model.Share;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +31,7 @@ import java.util.Map;
  */
 public interface IMailShareController {
     void sendDocumentByEmail(Session session,
-                             List<Long> documentIds,
+                             List<Share> shares,
                              Map<String, String> recipients,
                              String subject, String content,
                              String senderAddress, String senderName,
@@ -41,5 +43,7 @@ public interface IMailShareController {
     String loadDefaultMailTemplate(Session session) throws Exception;
 
     void scheduleMailSend(MailDescriptor mailDescriptor) throws Exception;
+
+    Share createShare(Session session, long entityId, Date expirationDate) throws Exception;
 
 }

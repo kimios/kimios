@@ -68,15 +68,23 @@ public class ShareServiceImpl implements ShareService {
     }
 
     @Override
+    @Deprecated
     public void shareByEmail(String sessionId,
                              List<Long> documentIds,
                              Map<String, String> recipients,
                              String subject, String content,
                              String senderAddress, String senderName,
-                             Boolean defaultSender, String password) throws DMServiceException {
+                             Boolean defaultSender, String password,
+                             String expirationDate) throws DMServiceException {
         try {
             Session session = helper.getSession(sessionId);
-            mailShareController.sendDocumentByEmail(session, documentIds, recipients, subject,
+            List<org.kimios.kernel.share.model.Share> shares = new ArrayList<>();
+            for (Long docId : documentIds) {
+                Date date = new SimpleDateFormat("MM/dd/yyyy HH:mm").parse(expirationDate);
+                org.kimios.kernel.share.model.Share share = mailShareController.createShare(session, docId, date);
+                shares.add(share);
+            }
+            mailShareController.sendDocumentByEmail(session, shares, recipients, subject,
                     content, senderAddress, senderName, defaultSender, password);
 
         } catch (Exception e) {
@@ -88,7 +96,7 @@ public class ShareServiceImpl implements ShareService {
     @WebMethod(exclude = true)
     public void shareByEmailFullContact(String sessionId, List<Long> documentIds, List<MailContact> recipients, String subject,
                                         String content, String senderAddress, String senderName, Boolean defaultSender,
-                                        String password)
+                                        String password, String expirationDate)
             throws DMServiceException {
         try {
             Session session = helper.getSession(sessionId);
@@ -97,7 +105,15 @@ public class ShareServiceImpl implements ShareService {
             for(MailContact mc: recipients){
                 recipientsData.put(mc.getEmailAddress(), mc.getFullName());
             }
-            mailShareController.sendDocumentByEmail(session, documentIds, recipientsData, subject,
+
+            List<org.kimios.kernel.share.model.Share> shares = new ArrayList<>();
+            for (Long docId : documentIds) {
+                //TODO check date's format sent by other clients than included web client
+                Date date = new SimpleDateFormat("MM/dd/yyyy HH:mm").parse(expirationDate);
+                org.kimios.kernel.share.model.Share share = mailShareController.createShare(session, docId, date);
+                shares.add(share);
+            }
+            mailShareController.sendDocumentByEmail(session, shares, recipientsData, subject,
                     content, senderAddress, senderName, defaultSender, password);
 
         } catch (Exception e) {

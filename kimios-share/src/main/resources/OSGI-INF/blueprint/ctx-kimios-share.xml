@@ -82,6 +82,8 @@
         <property name="templateProcessor"  ref="templateProcessor" />
         <property name="templateProvider"  ref="templateProvider" />
 
+        <argument ref="shareFactory" />
+
         <tx:transaction method="*" value="Required"/>
     </bean>
 

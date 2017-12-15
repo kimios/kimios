@@ -259,7 +259,7 @@ public class FileTransferServiceImpl
         try {
             Session session = getHelper().getSession(sessionUid);
             DataTransaction dtr =
-                    transferController.startDownloadTransactionToken(session, documentVersionUid, null).toPojo();
+                    transferController.startDownloadTransactionToken(session, documentVersionUid, null, null).toPojo();
             return dtr;
         } catch (Exception e) {
             throw getHelper().convertException(e);

@@ -24,5 +24,7 @@
       <session-factory>
           <mapping resource="org/kimios/kernel/hibernate/mapping/authentication.hbm.xml"/>
           <mapping resource="org/kimios/kernel/hibernate/mapping/postgresql/dmpojo.hbm.xml"/>
+          <mapping class="org.kimios.kernel.filetransfer.model.DataTransfer"/>
+          <mapping class="org.kimios.kernel.share.model.Share"/>
       </session-factory>
 </hibernate-configuration>
