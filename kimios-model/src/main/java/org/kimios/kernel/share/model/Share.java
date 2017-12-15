@@ -101,7 +101,7 @@ public class Share {
     private ShareStatus shareStatus;
 
 
-    @OneToMany(mappedBy="share", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy="share", fetch = FetchType.LAZY)
     private Set<DataTransfer> dataTransferSet;
 
     public Long getId() {

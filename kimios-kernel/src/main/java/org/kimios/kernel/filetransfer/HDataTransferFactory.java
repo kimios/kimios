@@ -15,6 +15,7 @@
  */
 package org.kimios.kernel.filetransfer;
 
+import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.kimios.exceptions.DataSourceException;
@@ -106,10 +107,12 @@ public class HDataTransferFactory extends HFactory implements DataTransferFactor
             String query =
                     "from DataTransfer where downloadToken = :token and " +
                             " transferMode = :transferMode";
-            return (DataTransfer) getSession().createQuery(query)
+            DataTransfer dataTransfer = (DataTransfer) getSession().createQuery(query)
                     .setString("token", token)
                     .setInteger("transferMode", DataTransfer.TOKEN)
                     .uniqueResult();
+            Hibernate.initialize(dataTransfer.getShare());
+            return dataTransfer;
         } catch (HibernateException e) {
             boolean integrity = e instanceof ConstraintViolationException;
             throw new DataSourceException(e, e.getMessage());
