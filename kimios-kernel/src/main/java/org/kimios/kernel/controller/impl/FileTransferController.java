@@ -28,6 +28,7 @@ import org.kimios.kernel.controller.IFileTransferController;
 import org.kimios.kernel.dms.FactoryInstantiator;
 import org.kimios.kernel.dms.model.*;
 import org.kimios.kernel.filetransfer.model.DataTransfer;
+import org.kimios.kernel.filetransfer.model.DataTransferStatus;
 import org.kimios.kernel.filetransfer.zip.FileCompressionHelper;
 import org.kimios.kernel.repositories.impl.RepositoryManager;
 import org.kimios.kernel.security.model.Session;
@@ -93,6 +94,7 @@ public class FileTransferController
         transac.setDataSize(0);
         transac.setLastActivityDate(new Date());
         transac.setTransferMode(DataTransfer.UPLOAD);
+        transac.setStatus(DataTransferStatus.ACTIVE);
         FileCompressionHelper.getTempFilePath(transac);
         transferFactoryInstantiator.getDataTransferFactory().addDataTransfer(transac);
         return transac;
@@ -242,6 +244,7 @@ public class FileTransferController
         transac.setUserSource(session.getUserSource());
         transac.setDataSize(0);
         transac.setTransferMode(DataTransfer.DOWNLOAD);
+        transac.setStatus(DataTransferStatus.ACTIVE);
         transferFactoryInstantiator.getDataTransferFactory().addDataTransfer(transac);
         if (isCompressed) {
             //File Compression
@@ -404,7 +407,8 @@ public class FileTransferController
 
         DataTransfer transac = transferFactoryInstantiator.getDataTransferFactory()
                 .getUploadDataTransferByDocumentToken(token);
-        if (transac != null) {
+        if (transac != null
+                && transac.getStatus().equals(DataTransferStatus.ACTIVE)) {
             if (transac.getShare().getExpirationDate() != null
                     && transac.getShare().getExpirationDate().before(new Date())) {
                 throw new DateExpiredException(new DmsKernelException("Share's date is expired ("
@@ -480,6 +484,7 @@ public class FileTransferController
         if (password != null && !password.isEmpty()) {
             transac.setPassword(password);
         }
+        transac.setStatus(DataTransferStatus.ACTIVE);
         transferFactoryInstantiator.getDataTransferFactory().addDataTransfer(transac);
         transac.setDataSize(dv.getLength());
         transferFactoryInstantiator.getDataTransferFactory().updateDataTransfer(transac);

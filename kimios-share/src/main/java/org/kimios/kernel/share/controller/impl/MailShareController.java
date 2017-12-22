@@ -34,6 +34,7 @@ import org.kimios.kernel.configuration.Config;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.IFileTransferController;
 import org.kimios.kernel.dms.model.DMEntity;
+import org.kimios.kernel.dms.model.DMEntityImpl;
 import org.kimios.kernel.dms.model.Document;
 import org.kimios.kernel.dms.model.DocumentVersion;
 import org.kimios.kernel.filetransfer.model.DataTransfer;
@@ -331,7 +332,7 @@ public class MailShareController extends AKimiosController implements IMailShare
                     s.setType(ShareType.EXTERNAL);
                     s.setExpirationDate(expirationDate);
 
-                    s.setEntity(entity);
+                    s.setEntity((DMEntityImpl) entity);
 
                     s = shareFactory.saveShare(s);
                 }

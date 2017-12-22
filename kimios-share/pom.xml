@@ -124,6 +124,11 @@
             <version>1.8.6</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-index</artifactId>
+            <version>1.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
 

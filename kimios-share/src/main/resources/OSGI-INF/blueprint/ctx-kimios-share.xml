@@ -128,4 +128,11 @@
     <service id="shareTransferCtrlOsgi" ref="ShareTransferController"
              interface="org.kimios.kernel.share.controller.IShareTransferController"/>
 
+    <!-- Jobs -->
+    <bean id="shareCleaner" class="org.kimios.kernel.share.system.ShareCleaner" init-method="startJob"
+          destroy-method="stopJob">
+        <property name="securityController" ref="securityController"/>
+        <property name="shareController" ref="shareController"/>
+    </bean>
+
 </blueprint>

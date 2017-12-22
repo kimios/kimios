@@ -68,12 +68,15 @@ public class ShareFactory extends HFactory {
     }
 
     public List<Share> listExpiredShares(){
-        String query = "select s from Share s join s.entity as ent fetch all properties " +
-                " where s.expirationDate >=  CURRENT_TIMESTAMP()" +
-                " and (ent.trashed = false or ent.trashed is null)";
+        String query = "select s from Share s " +
+                " where s.expirationDate <=  CURRENT_TIMESTAMP()"
+                + " and s.shareStatus = :status"
+                + " and (s.entity.trashed = null or s.entity.trashed = false)";
         List<Share> items = getSession()
                 .createQuery(query)
+                .setString("status", ShareStatus.ACTIVE.toString())
                 .list();
+
         return items;
     }
 

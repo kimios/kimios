@@ -37,5 +37,5 @@ public interface IShareController {
     Share shareEntity(Session session, long dmEntityId, String sharedToUserId, String sharedToUserSource,
                       boolean read, boolean write, boolean fullAcces, Date expirationDate, boolean notify) throws Exception;
 
-
+    Integer disableExpiredShares(Session session) throws Exception;
 }

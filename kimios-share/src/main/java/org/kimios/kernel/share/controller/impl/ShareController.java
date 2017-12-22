@@ -19,8 +19,11 @@ package org.kimios.kernel.share.controller.impl;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.ISecurityController;
 import org.kimios.kernel.dms.model.DMEntity;
+import org.kimios.kernel.dms.model.DMEntityImpl;
 import org.kimios.kernel.dms.model.Document;
 import org.kimios.exceptions.AccessDeniedException;
+import org.kimios.kernel.filetransfer.model.DataTransfer;
+import org.kimios.kernel.filetransfer.model.DataTransferStatus;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.share.controller.IMailShareController;
 import org.kimios.kernel.share.controller.IShareController;
@@ -112,7 +115,7 @@ public class ShareController extends AKimiosController implements IShareControll
                 s.setType(ShareType.SYSTEM);
                 s.setExpirationDate(expirationDate);
 
-                s.setEntity(entity);
+                s.setEntity((DMEntityImpl) entity);
 
                 s = shareFactory.saveShare(s);
 
@@ -155,6 +158,19 @@ public class ShareController extends AKimiosController implements IShareControll
 
     }
 
+    public Integer disableExpiredShares(Session session) throws Exception {
+        List<Share> shares = shareFactory.listExpiredShares();
+        Integer i = 0;
+        for(Share s: shares) {
+            s.setShareStatus(ShareStatus.EXPIRED);
+            for (DataTransfer dataTransfer: s.getDataTransferSet()) {
+                dataTransfer.setStatus(DataTransferStatus.EXPIRED);
+            }
+            shareFactory.saveShare(s);
+            i++;
+        }
 
+        return i;
+    }
 
 }

@@ -58,8 +58,9 @@ public class DataTransfer implements Serializable
     @OnDelete(action = OnDeleteAction.CASCADE)
     private DocumentVersion version;
 
-    @ManyToOne
-    @JoinColumn(name="dm_entity_share_id", nullable = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="dm_entity_share_id",
+            nullable = true, insertable=true, updatable=false)
     private Share share;
 
     @Column(name = "document_version_id", nullable = false)
@@ -92,13 +93,11 @@ public class DataTransfer implements Serializable
     @Column(name = "password", nullable = true)
     private String password = null;
 
-    @Column(name = "status", nullable = false)
+    @Column(name = "status", nullable = true)
     @Enumerated(EnumType.STRING)
     private DataTransferStatus status;
 
-    public DataTransfer() {
-        this.status = DataTransferStatus.ACTIVE;
-    }
+    public DataTransfer() {}
 
     /**
      * @param uid
