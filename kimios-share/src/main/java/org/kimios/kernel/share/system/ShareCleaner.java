@@ -20,14 +20,25 @@ public class ShareCleaner implements Runnable {
     private ISecurityController securityController;
     private IShareController shareController;
     private CustomThreadPoolExecutor customThreadPoolExecutor;
+    private boolean launchShareCleaner;
 
     public void startJob() {
         this.customThreadPoolExecutor = new CustomThreadPoolExecutor(8, 8,
                 10000L, TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<Runnable>());
 
+        String threadName = "Kimios Share Cleaner";
+        String message = threadName + " is going to be launched";
+        if (!this.launchShareCleaner) {
+            message = threadName + " has NOT been launched";
+            logger.info(message);
+            // end
+            return;
+        }
+
+        logger.info(message);
         synchronized (this) {
-            thrc = new Thread(this, "Kimios Share Cleaner");
+            thrc = new Thread(this, threadName);
             thrc.start();
         }
     }
@@ -59,6 +70,14 @@ public class ShareCleaner implements Runnable {
 
     public void setSecurityController(ISecurityController securityController) {
         this.securityController = securityController;
+    }
+
+    public boolean isLaunchShareCleaner() {
+        return launchShareCleaner;
+    }
+
+    public void setLaunchShareCleaner(boolean launchShareCleaner) {
+        this.launchShareCleaner = launchShareCleaner;
     }
 
     @Override

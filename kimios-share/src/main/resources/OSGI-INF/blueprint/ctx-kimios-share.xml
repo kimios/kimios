@@ -133,6 +133,7 @@
           destroy-method="stopJob">
         <property name="securityController" ref="securityController"/>
         <property name="shareController" ref="shareController"/>
+        <property name="launchShareCleaner" value="${dms.share.launch.cleaner}" />
     </bean>
 
 </blueprint>
