@@ -53,7 +53,7 @@
         <argument ref="documentController" />
         <argument ref="serviceHelper"/>
         <argument ref="shareTransferController" />
-        <argument ref="fileTransferService" />
+        <property name="fileTransferService" ref="fileTransferService" />
     </bean>
 
     <service interface="org.kimios.webservices.share.impl.ShareServiceImpl"

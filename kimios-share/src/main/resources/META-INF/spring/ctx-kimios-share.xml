@@ -42,14 +42,15 @@
     
     <bean id="mailShareController" class="org.kimios.kernel.share.controller.impl.MailShareController"
           parent="kimiosCoreCtrl">
-        <property name="emailFactory" ref="mailFactory" />
+        <constructor-arg name="shareFactory" ref="shareFactory" />
+        <constructor-arg name="emailFactory" ref="mailFactory" />
+        <constructor-arg name="mailContactFactory" ref="mailContactFactory" />
+        <constructor-arg name="fileTransferController" ref="fileTransferController" />
+        <constructor-arg name="templateProcessor"  ref="templateProcessor" />
+        <constructor-arg name="templateProvider"  ref="templateProvider" />
+
         <property name="mailerSenderMail" value="${dms.mail.senderemail}" />
         <property name="mailerSender"  value="${dms.mail.sendername}" />
-        <property name="mailContactFactory" ref="mailContactFactory" />
-
-        <property name="fileTransferController" ref="fileTransferController" />
-        <property name="templateProcessor"  ref="templateProcessor" />
-        <property name="templateProvider"  ref="templateProvider" />
     </bean>
 
 
@@ -64,13 +65,30 @@
         <constructor-arg name="mailShareController" ref="mailShareController" />
     </bean>
 
+    <bean id="shareTransferController" class="org.kimios.kernel.share.controller.impl.ShareTransferController"
+          parent="kimiosCoreCtrl">
+        <property name="templateProcessor"  ref="templateProcessor" />
+        <property name="templateProvider"  ref="templateProvider" />
+    </bean>
+
+    <!-- Jobs -->
+    <bean id="shareCleaner" class="org.kimios.kernel.share.system.ShareCleaner" init-method="startJob"
+          destroy-method="stopJob">
+        <property name="securityController" ref="securityController"/>
+        <property name="shareController" ref="shareController"/>
+        <property name="launchShareCleaner" value="${dms.share.launch.cleaner}" />
+    </bean>
+
     <aop:config>
         <aop:pointcut id="shareTx"
                       expression="execution(* org.kimios.kernel.share.controller.IShareController.*(..))"/>
         <aop:pointcut id="mailShareTx"
                       expression="execution(* org.kimios.kernel.share.controller.IMailShareController.*(..))"/>
+        <aop:pointcut id="shareTransferTx"
+                      expression="execution(* org.kimios.kernel.share.controller.IShareTransferController.*(..))"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="shareTx"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="mailShareTx"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="shareTransferTx"/>
     </aop:config>
 
 </beans>

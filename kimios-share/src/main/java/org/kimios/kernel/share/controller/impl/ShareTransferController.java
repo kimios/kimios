@@ -5,6 +5,7 @@ import org.kimios.api.templates.ITemplate;
 import org.kimios.api.templates.ITemplateProcessor;
 import org.kimios.api.templates.ITemplateProvider;
 import org.kimios.api.templates.TemplateType;
+import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.share.controller.IShareTransferController;
 
 import java.io.InputStream;
@@ -12,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-public class ShareTransferController implements IShareTransferController {
+public class ShareTransferController extends AKimiosController implements IShareTransferController {
 
     private ITemplateProcessor templateProcessor;
 

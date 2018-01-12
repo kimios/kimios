@@ -113,7 +113,23 @@ public class MailShareController extends AKimiosController implements IMailShare
 
     public MailShareController(ShareFactory sFactory){
         this.shareFactory = sFactory;
-        scheduledExecutorService = Executors.newScheduledThreadPool(8);
+        scheduledExecutorService = createScheduledExecutorService();
+    }
+
+    public MailShareController(EmailFactory emailFactory, MailContactFactory mailContactFactory,
+                               ITemplateProvider templateProvider, ITemplateProcessor templateProcessor,
+                               IFileTransferController fileTransferController, ShareFactory shareFactory) {
+        this.scheduledExecutorService = createScheduledExecutorService();
+        this.shareFactory = shareFactory;
+        this.emailFactory = emailFactory;
+        this.mailContactFactory = mailContactFactory;
+        this.templateProvider = templateProvider;
+        this.templateProcessor = templateProcessor;
+        this.fileTransferController = fileTransferController;
+    }
+
+    private ScheduledExecutorService createScheduledExecutorService() {
+        return Executors.newScheduledThreadPool(8);
     }
 
     private ITemplateProvider templateProvider;

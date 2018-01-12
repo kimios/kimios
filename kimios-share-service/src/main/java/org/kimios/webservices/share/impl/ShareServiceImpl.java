@@ -57,13 +57,20 @@ public class ShareServiceImpl implements ShareService {
                             IShareController shareController,
                             IDocumentController documentController,
                             IServiceHelper serviceHelper,
-                            IShareTransferController shareTransferController,
-                            FileTransferService fileTransferService){
+                            IShareTransferController shareTransferController
+    ){
         this.helper = serviceHelper;
         this.mailShareController = mailShareController;
         this.shareController = shareController;
         this.documentController = documentController;
         this.shareTransferController = shareTransferController;
+    }
+
+    public FileTransferService getFileTransferService() {
+        return fileTransferService;
+    }
+
+    public void setFileTransferService(FileTransferService fileTransferService) {
         this.fileTransferService = fileTransferService;
     }
 
