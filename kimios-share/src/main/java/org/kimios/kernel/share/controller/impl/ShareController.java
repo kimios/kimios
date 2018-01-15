@@ -133,10 +133,6 @@ public class ShareController extends AKimiosController implements IShareControll
                             .getUserFactory()
                             .getUser(sharedToUserId);
 
-                    //TODO delete 2 following lines
-                    List<Long> documentIds = new ArrayList<Long>();
-                    documentIds.add(s.getEntity().getUid());
-
                     Map<String, String> recipients = new HashMap<String, String>();
                     recipients.put(recipient.getMail(), recipient.getFirstName() + " "
                         + recipient.getLastName());
