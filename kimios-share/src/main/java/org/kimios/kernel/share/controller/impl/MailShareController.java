@@ -16,7 +16,6 @@
 
 package org.kimios.kernel.share.controller.impl;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailException;
@@ -28,7 +27,6 @@ import org.kimios.api.templates.ITemplateProcessor;
 import org.kimios.api.templates.ITemplateProvider;
 import org.kimios.api.templates.TemplateType;
 import org.kimios.exceptions.AccessDeniedException;
-import org.kimios.exceptions.ConfigException;
 import org.kimios.exceptions.DmsKernelException;
 import org.kimios.kernel.configuration.Config;
 import org.kimios.kernel.controller.AKimiosController;
@@ -38,6 +36,7 @@ import org.kimios.kernel.dms.model.DMEntityImpl;
 import org.kimios.kernel.dms.model.Document;
 import org.kimios.kernel.dms.model.DocumentVersion;
 import org.kimios.kernel.filetransfer.model.DataTransfer;
+import org.kimios.kernel.filetransfer.model.DataTransferStatus;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.share.controller.IMailShareController;
 import org.kimios.kernel.share.factory.MailContactFactory;
@@ -49,19 +48,20 @@ import org.kimios.kernel.share.model.MailContact;
 import org.kimios.kernel.share.model.Share;
 import org.kimios.kernel.share.model.ShareStatus;
 import org.kimios.kernel.share.model.ShareType;
-import org.kimios.kernel.user.FactoryInstantiator;
 import org.kimios.kernel.user.model.User;
 import org.kimios.utils.configuration.ConfigurationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 
 @Transactional
@@ -172,17 +172,27 @@ public class MailShareController extends AKimiosController implements IMailShare
         this.shareFactory = shareFactory;
     }
 
-    private MultiPartEmail initShareNotificationEmail (Session session, Map<String, String> recipients,
+    private MailContact determineShareMailContact(Share share) {
+        MailContact mailContact;
+        if (share.getMailContact() != null) {
+            mailContact = share.getMailContact();
+        } else {
+            User u = authFactoryInstantiator.getAuthenticationSourceFactory().getAuthenticationSource(share.getTargetUserSource())
+                    .getUserFactory().getUser(share.getTargetUserId());
+            mailContact = new MailContact(u.getMail(), u.getFirstName() + " " + u.getLastName());
+        }
+
+        return mailContact;
+    }
+
+    private MultiPartEmail initShareNotificationEmail (Session session, Share share,
                                                        String subject,
                                                        String senderAddress, String senderName,
-                                                       boolean defaultSender) throws EmailException {
+                                                       boolean defaultSender,
+                                                       MailContact mailContact) throws EmailException {
 
         MultiPartEmail email = emailFactory.getMultipartEmailObject();
-
-        for (String emailAddress : recipients.keySet()) {
-            email.addTo(emailAddress, recipients.get(emailAddress));
-            mailContactFactory.addContact(emailAddress.toLowerCase(), recipients.get(emailAddress));
-        }
+        email.addTo(mailContact.getEmailAddress(), mailContact.getFullName());
 
         String copyToMailAddress = ConfigurationManager.getValue("dms.share.mail.copy.to");
         if (StringUtils.isNotBlank(copyToMailAddress)) {
@@ -215,22 +225,23 @@ public class MailShareController extends AKimiosController implements IMailShare
     @Override
     @DmsEvent(eventName = DmsEventName.DOCUMENT_SHARED)
     public void sendDocumentByEmail(Session session,
-                                    List<Share> shares,
-                                    Map<String, String> recipients,
+                                    Share share,
                                     String subject, String content,
                                     String senderAddress, String senderName,
                                     boolean defaultSender, String password)
         throws DmsKernelException {
 
         try {
-            if(logger.isDebugEnabled()) {
-                logger.debug("Submitted recipients: {}", recipients);
-                //logger.debug("Submitted doc ids: {}", documentIds);
-                logger.debug("Submitted contents is: {}", content);
-            }
             List<MultiPartEmail> emails = new ArrayList<>();
-            MultiPartEmail email = initShareNotificationEmail(session, recipients,
-                    subject, senderAddress, senderName, defaultSender);
+            MailContact mailContact = determineShareMailContact(share);
+            MultiPartEmail email = initShareNotificationEmail(session, share,
+                    subject, senderAddress, senderName, defaultSender, mailContact);
+            mailContactFactory.saveContact(mailContact);
+
+            if(logger.isDebugEnabled()) {
+                logger.debug("Submitted recipient: {}", mailContact.getEmailAddress());
+                logger.debug("Submitted content is: {}", content);
+            }
 
             /*
                 Build Link List only if attachment shouldn't be built inside !
@@ -241,16 +252,46 @@ public class MailShareController extends AKimiosController implements IMailShare
             if(StringUtils.isBlank(content)){
                 content = loadDefaultMailTemplate(session);
             }
-            if(content.contains("__DOCUMENTSLINKS__")){
-                User user = FactoryInstantiator.getInstance()
-                        .getAuthenticationSourceFactory().getAuthenticationSource(session.getUserSource())
-                        .getUserFactory().getUser(session.getUid());
-                Map<String, Object> items = new HashMap<String, Object>();
-                //Generate Document Links
-                for(Share share: shares){
-                    Document doc = dmsFactoryInstantiator.getDocumentFactory()
-                            .getDocument(share.getEntity().getUid());
-                    if(getSecurityAgent().isReadable(doc, session.getUserName(), session.getUserSource(), session.getGroups())) {
+            boolean forceAttachFiles = false;
+            if(!content.contains("__DOCUMENTSLINKS__")) {
+                long countSize = 0;
+                long maxAttachmentSize = 10000 * 1024;;
+                String val = ConfigurationManager.getValue("dms.share.max.attachment.size");
+                if(StringUtils.isNotBlank(val)){
+                    try{
+                        maxAttachmentSize = Long.parseLong(val);
+                    }   catch (Exception ex){
+                        logger.error("max attachment size not defined as integer. will use default {}", 10);
+                    }
+                }
+                Document d = dmsFactoryInstantiator.getDocumentFactory()
+                        .getDocument(share.getEntity().getUid());
+
+                if(getSecurityAgent().isReadable(d, session.getUserName(), session.getUserSource(), session.getGroups())){
+                    DocumentVersion dv = dmsFactoryInstantiator.getDocumentVersionFactory()
+                            .getLastDocumentVersion(d);
+                    emailFactory.addDocumentVersionAttachment(email, d, dv);
+                    logger.debug("added document to mail:  {}", d);
+                    countSize += dv.getLength();
+                    if(countSize > maxAttachmentSize){
+                        //throw new ConfigException("MaxAttachmentSizeReached");
+                        logger.error("MaxAttachmentSizeReached");
+                        forceAttachFiles = true;
+                    }
+                } else {
+                    throw new AccessDeniedException();
+                }
+            }
+            if(content.contains("__DOCUMENTSLINKS__")
+                    || forceAttachFiles) {
+                User user = authFactoryInstantiator.getAuthenticationSourceFactory().getAuthenticationSource(session.getUserSource())
+                        .getUserFactory().getUser(session.getUserName());
+
+                Document doc = dmsFactoryInstantiator.getDocumentFactory()
+                        .getDocument(share.getEntity().getUid());
+                if(getSecurityAgent().isReadable(doc, session.getUserName(), session.getUserSource(), session.getGroups())) {
+                    if (share.getType().equals(ShareType.EXTERNAL)) {
+                        Map<String, Object> items = new HashMap<String, Object>();
                         DocumentVersion lastVersion = dmsFactoryInstantiator.getDocumentVersionFactory()
                                 .getLastDocumentVersion(doc);
                         String md5Pass = "";
@@ -263,51 +304,32 @@ public class MailShareController extends AKimiosController implements IMailShare
                         String publicUrl = ConfigurationManager.getValue(Config.PUBLIC_URL);
                         publicUrl = publicUrl.endsWith("/") ? publicUrl : publicUrl + "/";
                         items.put(publicUrl
-                                + "services/rest/share/downloadDocumentByToken?token="
-                                + transfer.getDownloadToken(),
+                                        + "services/rest/share/downloadDocumentByToken?token="
+                                        + transfer.getDownloadToken(),
                                 doc);
-                    }else
-                        throw new AccessDeniedException();
-                }
-                finalContent = processShareNotify(finalContent, user, new ArrayList<User>(), items);
-                // if needed, build separate email to notify password
-                if (password != null) {
-                    finalContentPassword = processShareNotifyPassword(content, user, new ArrayList<User>(), items.values(), password);
-                    MultiPartEmail emailPassword = initShareNotificationEmail(session, recipients,
-                            subject, senderAddress, senderName, defaultSender);
-                    emailPassword.setMsg(finalContentPassword);
-                    emails.add(emailPassword);
-                }
-            } else {
-                long countSize = 0;
-                long maxAttachmentSize = 10000 * 1024;;
-                String val = ConfigurationManager.getValue("dms.share.max.attachment.size");
-                if(StringUtils.isNotBlank(val)){
-                    try{
-                        maxAttachmentSize = Long.parseLong(val);
-                    }   catch (Exception ex){
-                        logger.error("max attachment size not defined as integer. will use default {}", 10);
-                    }
-                }
-                for(Share share: shares){
-                    Document d = dmsFactoryInstantiator.getDocumentFactory()
-                            .getDocument(share.getEntity().getUid());
-
-                    if(getSecurityAgent().isReadable(d, session.getUserName(), session.getUserSource(), session.getGroups())){
-                        DocumentVersion dv = dmsFactoryInstantiator.getDocumentVersionFactory()
-                                .getLastDocumentVersion(d);
-                        emailFactory.addDocumentVersionAttachment(email, d, dv);
-                        logger.debug("added document to mail:  {}", d);
-                        countSize += dv.getLength();
-                        if(countSize > maxAttachmentSize){
-                            throw new ConfigException("MaxAttachmentSizeReached");
+                        finalContent = processShareNotify(finalContent, user, new ArrayList<User>(), items);
+                        // if needed, build separate email to notify password
+                        if (password != null) {
+                            finalContentPassword = processShareNotifyPassword(content, user, new ArrayList<User>(), items.values(), password);
+                            MultiPartEmail emailPassword = initShareNotificationEmail(session, share,
+                                    subject, senderAddress, senderName, defaultSender, mailContact);
+                            emailPassword.setMsg(finalContentPassword);
+                            emails.add(emailPassword);
                         }
                     } else {
-                        throw new AccessDeniedException();
+                        if (share.getType().equals(ShareType.SYSTEM)) {
+                            finalContent = processInternalShareNotify(
+                                    finalContent,
+                                    user.getFirstName() + " " + user.getLastName() + " (" + user.getID() + ")",
+                                    mailContact.getFullName(),
+                                    doc.getPath()
+                            );
+                        }
                     }
+                }else {
+                    throw new AccessDeniedException();
                 }
             }
-
             email.setMsg(finalContent);
             // add at pole position (to send it first)
             emails.add(0, email);
@@ -359,11 +381,69 @@ public class MailShareController extends AKimiosController implements IMailShare
         }
     }
 
+    public Share createShare(Session session, long entityId, Date expirationDate, MailContact mailContact)
+            throws DmsKernelException {
+        try {
+            mailContactFactory.saveContact(mailContact);
+            Share s = createShare(session, entityId, expirationDate);
+            s.setMailContact(mailContact);
+            s = shareFactory.saveShare(s);
+            return s;
+        } catch (Exception e) {
+            throw new DmsKernelException(e);
+        }
+    }
+
+    @Override
+    public void deactiveDataTransfer(String token) throws DmsKernelException {
+        try {
+            DataTransfer transac = transferFactoryInstantiator.getDataTransferFactory()
+                    .getUploadDataTransferByDocumentToken(token);
+            transac.getShare().setShareStatus(ShareStatus.EXPIRED);
+            transac.setStatus(DataTransferStatus.EXPIRED);
+            transferFactoryInstantiator.getDataTransferFactory().updateDataTransfer(transac);
+        } catch (Exception e) {
+            throw new DmsKernelException(e);
+        }
+    }
+
     @Override
     public List<MailContact> searchContact(Session session, String searchQuery){
         return mailContactFactory.searchContact(searchQuery);
     }
 
+    public static String inputStreamtoString(InputStream inputStream) {
+        BufferedReader reader = new BufferedReader(
+                new InputStreamReader(inputStream));
+        return reader.lines().collect(Collectors.joining(
+                System.getProperty("line.separator")));
+    }
+
+    private String processInternalShareNotify(String template, String userDoingShareName,
+                                              String recipientName,
+                                              String filePath) throws Exception {
+
+        String tplContent = null;
+
+        if(template != null){
+            tplContent = template;
+        } else {
+            ITemplate mailTemplate = templateProvider.getDefaultTemplate(TemplateType.SHARE_MAIL);
+            tplContent = mailTemplate.getContent();
+        }
+
+        //Generate final mail content
+        InputStream inputStream = MailShareController.class.getClassLoader().getResourceAsStream("templates/default-internal-share.html");
+        String forEachTemplate = inputStreamtoString(inputStream);
+        String finalContent = tplContent.replaceAll("__DOCUMENTSLINKS__", forEachTemplate);
+
+        Map<String, Object> items = new HashMap<String, Object>();
+        items.put("userDoingShareName", userDoingShareName);
+        items.put("recipientName", recipientName);
+        items.put("filePath", filePath);
+
+        return templateProcessor.processStringTemplateToString(finalContent, items);
+    }
 
     private String processShareNotify(String template, User user,
                                       List<User> recipients,
@@ -381,12 +461,10 @@ public class MailShareController extends AKimiosController implements IMailShare
 
         //Generate final mail content
         InputStream inputStream = MailShareController.class.getClassLoader().getResourceAsStream("templates/default-documents-links.html");
-        String forEachTemplate = Pattern.quote(IOUtils.toString(inputStream));
+        String forEachTemplate = inputStreamtoString(inputStream);
         String finalContent = tplContent.replaceAll("__DOCUMENTSLINKS__", forEachTemplate);
 
         Map<String, Object> items = new HashMap<String, Object>();
-        items.put("sender", user);
-        items.put("recipients", recipients);
         items.put("links", links);
 
         return templateProcessor.processStringTemplateToString(finalContent, items);
@@ -395,7 +473,6 @@ public class MailShareController extends AKimiosController implements IMailShare
     private String processShareNotifyPassword(String template, User user,
                                               List<User> recipients,
                                               Collection<Object> docs, String password) throws Exception {
-
 
         String tplContent = null;
 
@@ -408,7 +485,7 @@ public class MailShareController extends AKimiosController implements IMailShare
 
         //Generate final mail content
         InputStream inputStream = MailShareController.class.getClassLoader().getResourceAsStream("templates/default-external-share-password.html");
-        String forEachTemplate = Pattern.quote(IOUtils.toString(inputStream));
+        String forEachTemplate = inputStreamtoString(inputStream);
         String finalContent = tplContent.replaceAll("__DOCUMENTSLINKS__", forEachTemplate);
 
         Map<String, Object> items = new HashMap<String, Object>();

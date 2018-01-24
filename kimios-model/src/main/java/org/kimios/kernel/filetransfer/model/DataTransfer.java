@@ -58,9 +58,8 @@ public class DataTransfer implements Serializable
     @OnDelete(action = OnDeleteAction.CASCADE)
     private DocumentVersion version;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="dm_entity_share_id",
-            nullable = true, insertable=true, updatable=false)
+    @OneToOne
+    @JoinColumn(name="dm_entity_share_id", updatable=false)
     private Share share;
 
     @Column(name = "document_version_id", nullable = false)

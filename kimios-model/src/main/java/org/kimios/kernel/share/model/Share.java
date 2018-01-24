@@ -22,7 +22,6 @@ import org.kimios.kernel.filetransfer.model.DataTransfer;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.Set;
 
 /**
  * Created by farf on 13/02/16.
@@ -98,8 +97,12 @@ public class Share {
     @Enumerated(EnumType.STRING)
     private ShareStatus shareStatus;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "share", cascade = CascadeType.ALL)
-    private Set<DataTransfer> dataTransferSet;
+    @OneToOne(mappedBy = "share", cascade = CascadeType.ALL)
+    private DataTransfer dataTransfer;
+
+    @OneToOne
+    @JoinColumn(name = "emailAddress")
+    private MailContact mailContact;
 
     public Long getId() {
         return id;
@@ -253,12 +256,20 @@ public class Share {
         this.entity = entity;
     }
 
-    public Set<DataTransfer> getDataTransferSet() {
-        return dataTransferSet;
+    public DataTransfer getDataTransfer() {
+        return dataTransfer;
     }
 
-    public void setDataTransferSet(Set<DataTransfer> dataTransferSet) {
-        this.dataTransferSet = dataTransferSet;
+    public void setDataTransfer(DataTransfer dataTransfer) {
+        this.dataTransfer = dataTransfer;
+    }
+
+    public MailContact getMailContact() {
+        return mailContact;
+    }
+
+    public void setMailContact(MailContact mailContact) {
+        this.mailContact = mailContact;
     }
 
     @Transient

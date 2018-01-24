@@ -190,12 +190,9 @@ public class ActionLogger extends GenericEventHandler
     @DmsEvent(eventName = { DmsEventName.DOCUMENT_SHARED }, when = DmsEventOccur.AFTER)
     public void shareDocuments(Object[] paramsObj, Object returnObj, EventContext ctx)
     {
-        List<Share> shares = (List)paramsObj[1];
-        for(Share s: shares){
-            ctx.setEntity(org.kimios.kernel.dms.FactoryInstantiator.getInstance().getDocumentFactory().getDocument(s.getEntity().getUid()));
-            saveLog(new DMEntityLog<Document>(), ActionType.DOCUMENT_SHARED, ctx);
-        }
-
+        Share share = (Share) paramsObj[1];
+        ctx.setEntity(org.kimios.kernel.dms.FactoryInstantiator.getInstance().getDocumentFactory().getDocument(share.getEntity().getUid()));
+        saveLog(new DMEntityLog<Document>(), ActionType.DOCUMENT_SHARED, ctx);
     }
 
     private <T extends DMEntityImpl> void saveLog(DMEntityLog<T> log, int actionType, EventContext ctx)

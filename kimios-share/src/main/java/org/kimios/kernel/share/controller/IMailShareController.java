@@ -31,14 +31,13 @@ import java.util.Map;
  */
 public interface IMailShareController {
     void sendDocumentByEmail(Session session,
-                             List<Share> shares,
-                             Map<String, String> recipients,
+                             Share share,
                              String subject, String content,
                              String senderAddress, String senderName,
                              boolean defaultSender, String password)
         throws DmsKernelException;
 
-    List<MailContact> searchContact(Session session, String searchQuery);
+    List<org.kimios.kernel.share.model.MailContact> searchContact(Session session, String searchQuery);
 
     String loadDefaultMailTemplate(Session session) throws Exception;
 
@@ -46,4 +45,7 @@ public interface IMailShareController {
 
     Share createShare(Session session, long entityId, Date expirationDate) throws Exception;
 
+    Share createShare(Session session, long entityId, Date expirationDate, MailContact mailContact) throws Exception;
+
+    void deactiveDataTransfer(String token) throws Exception;
 }

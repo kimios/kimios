@@ -88,12 +88,12 @@ public class ShareServiceImpl implements ShareService {
             List<org.kimios.kernel.share.model.Share> shares = new ArrayList<>();
             for (Long docId : documentIds) {
                 Date date = new SimpleDateFormat("MM/dd/yyyy HH:mm").parse(expirationDate);
-                org.kimios.kernel.share.model.Share share = mailShareController.createShare(session, docId, date);
-                shares.add(share);
+                for (String email : recipients.keySet()) {
+                    org.kimios.kernel.share.model.Share share = mailShareController.createShare(session, docId, date, new MailContact(email, recipients.get(email)));
+                    mailShareController.sendDocumentByEmail(session, share, subject,
+                            content, senderAddress, senderName, defaultSender, password);
+                }
             }
-            mailShareController.sendDocumentByEmail(session, shares, recipients, subject,
-                    content, senderAddress, senderName, defaultSender, password);
-
         } catch (Exception e) {
             throw helper.convertException(e);
         }
@@ -117,11 +117,12 @@ public class ShareServiceImpl implements ShareService {
             for (Long docId : documentIds) {
                 //TODO check date's format sent by other clients than included web client
                 Date date = new SimpleDateFormat("MM/dd/yyyy HH:mm").parse(expirationDate);
-                org.kimios.kernel.share.model.Share share = mailShareController.createShare(session, docId, date);
-                shares.add(share);
+                for (MailContact mailContact : recipients) {
+                    org.kimios.kernel.share.model.Share share = mailShareController.createShare(session, docId, date, mailContact);
+                    mailShareController.sendDocumentByEmail(session, share, subject,
+                            content, senderAddress, senderName, defaultSender, password);
+                }
             }
-            mailShareController.sendDocumentByEmail(session, shares, recipientsData, subject,
-                    content, senderAddress, senderName, defaultSender, password);
 
         } catch (Exception e) {
             throw helper.convertException(e);
@@ -243,6 +244,14 @@ public class ShareServiceImpl implements ShareService {
                 Map<String, String> params = new HashMap<>();
                 params.put("token", token);
                 return buildRequiredPasswordResponse(uriInfo, DOWNLOAD_DOCUMENT_BY_TOKEN_AND_PASSWORD_FORM_ACTION, params);
+            } else {
+                if (e.getCode() == 16) {
+                    try {
+                        mailShareController.deactiveDataTransfer(token);
+                    } catch (Exception e1) {
+                        throw new DMServiceException();
+                    }
+                }
             }
             throw e;
         } catch (Exception e) {
@@ -253,18 +262,7 @@ public class ShareServiceImpl implements ShareService {
     @WebMethod(exclude = true)
     public Response downloadDocumentByTokenAndPassword(UriInfo uriInfo, String token, String password) throws DMServiceException {
 
-        try {
-            return fileTransferService.downloadDocumentByToken(uriInfo, token, password);
-        } catch (DMServiceException e) {
-            if (e.getCode() == 15) {
-                Map<String, String> params = new HashMap<>();
-                params.put("token", token);
-                return buildRequiredPasswordResponse(uriInfo, DOWNLOAD_DOCUMENT_BY_TOKEN_AND_PASSWORD_FORM_ACTION, params);
-            }
-            throw e;
-        } catch (Exception e) {
-            throw e;
-        }
+        return downloadDocumentByToken(uriInfo, token, password);
     }
 
     private Response buildRequiredPasswordResponse(UriInfo uri, String methodAction, Map<String, String> hiddenParams)

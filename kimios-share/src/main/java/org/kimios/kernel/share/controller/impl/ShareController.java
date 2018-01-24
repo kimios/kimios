@@ -16,13 +16,12 @@
 
 package org.kimios.kernel.share.controller.impl;
 
+import org.kimios.exceptions.AccessDeniedException;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.ISecurityController;
 import org.kimios.kernel.dms.model.DMEntity;
 import org.kimios.kernel.dms.model.DMEntityImpl;
 import org.kimios.kernel.dms.model.Document;
-import org.kimios.exceptions.AccessDeniedException;
-import org.kimios.kernel.filetransfer.model.DataTransfer;
 import org.kimios.kernel.filetransfer.model.DataTransferStatus;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.share.controller.IMailShareController;
@@ -34,7 +33,8 @@ import org.kimios.kernel.share.model.ShareType;
 import org.kimios.kernel.user.model.User;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by farf on 15/02/16.
@@ -133,16 +133,11 @@ public class ShareController extends AKimiosController implements IShareControll
                             .getUserFactory()
                             .getUser(sharedToUserId);
 
-                    Map<String, String> recipients = new HashMap<String, String>();
-                    recipients.put(recipient.getMail(), recipient.getFirstName() + " "
-                        + recipient.getLastName());
                     //TODO: translate Mail Subject
                     //TODO: handle external subject submission
 
-                    List<Share> shares = new ArrayList<>();
-                    shares.add(s);
                     mailShareController.sendDocumentByEmail(session,
-                            shares, recipients, "Kimios Internal Share",
+                            s,"Kimios Internal Share",
                             "<html><body>__DOCUMENTSLINKS__</body></html>", null, null,
                             true, null);
                 }
@@ -162,8 +157,8 @@ public class ShareController extends AKimiosController implements IShareControll
         Integer i = 0;
         for(Share s: shares) {
             s.setShareStatus(ShareStatus.EXPIRED);
-            for (DataTransfer dataTransfer: s.getDataTransferSet()) {
-                dataTransfer.setStatus(DataTransferStatus.EXPIRED);
+            if (s.getDataTransfer() != null) {
+                s.getDataTransfer().setStatus(DataTransferStatus.EXPIRED);
             }
             shareFactory.saveShare(s);
             i++;

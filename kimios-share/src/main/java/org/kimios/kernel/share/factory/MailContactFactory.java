@@ -40,6 +40,12 @@ public class MailContactFactory extends HFactory {
         }
     }
 
+    public void saveContact(MailContact mc){
+        try {
+            getSession().saveOrUpdate(mc);
+        } catch (NonUniqueObjectException e) {
+        }
+    }
 
     public List<MailContact> searchContact(String search) {
         String query = "from MailContact mc where lower(mc.emailAddress) like :search or lower(mc.fullName) like :search" +
