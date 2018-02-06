@@ -59,9 +59,9 @@ kimios.form.MetaFeedMultiField = Ext.extend(Ext.ux.form.LovCombo, {
         if(typeof pValue == 'string'){
             if(pValue.indexOf('[') == 0 && pValue.lastIndexOf(']') == (pValue.length -1)){
                 //eval array
-                this.passedValue = eval('(' + pValue + ')');
+                this.passedValue = eval('("' + pValue + '")');
             } else {
-                this.passedValue = eval('([' + pValue + '])')
+                this.passedValue = eval('(["' + pValue + '"])')
             }
         }
 

@@ -32,7 +32,8 @@ public class MetaListValue extends MetaValueBean<List<String>> {
     @ElementCollection(fetch = FetchType.LAZY, targetClass = String.class)
     @CollectionTable(
             name="meta_list_values",
-            joinColumns={@JoinColumn(name="meta_id"), @JoinColumn(name = "document_version_id")}
+            joinColumns={@JoinColumn(name = "document_version_id", referencedColumnName = "document_version_id"),
+                    @JoinColumn(name="meta_id", referencedColumnName = "meta_id")}
     )
     private List<String> value = new ArrayList<String>();
 
