@@ -208,8 +208,8 @@ public class AutomaticWorkflowStartRuleTest extends KernelTestAbstract {
 
         int pendingRequestAdminCount = this.workflowController.getPendingWorkflowRequests(this.adminSession).size();
         int pendingRequestUserTest1Count = this.workflowController.getPendingWorkflowRequests(this.userTest1Session).size();
-        assertTrue(pendingRequestAdminCount ==1);
-        assertTrue(pendingRequestUserTest1Count ==1);
+        assertTrue(pendingRequestAdminCount == 0);
+        assertTrue(pendingRequestUserTest1Count == 0);
     }
 
     @After
