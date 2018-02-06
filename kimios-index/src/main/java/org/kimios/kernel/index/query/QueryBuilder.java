@@ -46,9 +46,7 @@ public class QueryBuilder
          */
 
         builder.append( "+(DocumentOwner:" );
-        builder.append( session.getUserName() );
-        builder.append( "@" );
-        builder.append( session.getUserSource() );
+        builder.append( ClientUtils.escapeQueryChars(session.getUserName() + "@" + session.getUserSource() ));
         builder.append( " OR " );
         /*
             Build list of possible ACL
