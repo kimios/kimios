@@ -24,11 +24,16 @@ public class OsgiDeployment {
                 OSGiManifestBuilder builder = OSGiManifestBuilder.newInstance();
                 builder.addBundleSymbolicName(archive.getName());
                 builder.addBundleManifestVersion(2);
-                builder.addDynamicImportPackages("org.kimios.kernel.*");
-                builder.addDynamicImportPackages("org.kimios.client.*");
-                builder.addDynamicImportPackages("org.kimios.api.*");
-                builder.addImportPackages("org.osgi.util.tracker");
-                builder.addImportPackages("org.slf4j");
+                builder.addDynamicImportPackages(
+                        "org.kimios.kernel.*",
+                        "org.kimios.client.*",
+                        "org.kimios.api.*",
+                        "org.kimios.exceptions"
+                );
+                builder.addImportPackages(
+                        "org.osgi.util.tracker",
+                        "org.slf4j"
+                );
                 return builder.openStream();
             }
         });

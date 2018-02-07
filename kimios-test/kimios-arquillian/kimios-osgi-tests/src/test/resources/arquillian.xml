@@ -4,20 +4,7 @@
         http://jboss.org/schema/arquillian
         http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
 
-
-
-    <extension qualifier="cube">
-        <property name="connectionMode">${cubeConnectionMode}</property>
-    </extension>
-    <extension qualifier="docker">
-        <property name="serverVersion">${docker.version}</property>
-        <property name="serverUri">tcp://${docker.host}:${docker.port}</property>
-        <property name="tlsVerify">true</property>
-        <property name="certPath">~/.docker/machine/machines/default</property>
-        <!--<property name="machineName">default</property>-->
-        <property name="definitionFormat">CUBE</property>
-    </extension>
-    <container qualifier="karaf" default="true" >
+    <container qualifier="karaf" default="true">
         <configuration>
             <property name="jmxServiceURL">${kimios.jmxurl}</property>
             <property name="jmxUsername">${kimios.jmxuser}</property>

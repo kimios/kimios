@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -173,7 +174,14 @@ public class UserSearchTest  extends KernelTestAbstract {
         // reset
         secEntities = null;
         try {
-            secEntities = this.administrationController.searchSecurityEntities(searchText, USER_TEST_SOURCE, SecurityEntityType.USER);
+            // filtering
+            secEntities = this
+                    .administrationController
+                    .searchSecurityEntities(searchText, USER_TEST_SOURCE, SecurityEntityType.USER);
+            secEntities = secEntities.stream()
+                    .filter(s -> s instanceof User
+                            && ((User)s).getUid().startsWith("userTest"))
+                    .collect(Collectors.toList());
         } catch (Exception e) {
             System.out.println("Exception of type " + e.getClass().getName());
             System.out.println(e.getMessage());
@@ -255,7 +263,14 @@ public class UserSearchTest  extends KernelTestAbstract {
         String searchText = "John";
         List<SecurityEntity> secEntities = null;
         try {
-            secEntities = this.administrationController.searchSecurityEntities(searchText, USER_TEST_SOURCE, SecurityEntityType.GROUP);
+            secEntities = this.administrationController
+                    .searchSecurityEntities(searchText, USER_TEST_SOURCE, SecurityEntityType.GROUP)
+                    .stream()
+                    .filter(s -> (s instanceof User
+                            && ((User)s).getUid().startsWith("userTest"))
+                            || (s instanceof Group
+                            && ((Group)s).getGid().startsWith("groupTest")))
+                    .collect(Collectors.toList());
         } catch (Exception e) {
             System.out.println("Exception of type " + e.getClass().getName());
             System.out.println(e.getMessage());
@@ -280,7 +295,14 @@ public class UserSearchTest  extends KernelTestAbstract {
         // reset
         secEntities = null;
         try {
-            secEntities = this.administrationController.searchSecurityEntities(searchText, USER_TEST_SOURCE, SecurityEntityType.GROUP);
+            secEntities = this.administrationController
+                    .searchSecurityEntities(searchText, USER_TEST_SOURCE, SecurityEntityType.GROUP)
+                    .stream()
+                    .filter(s -> (s instanceof User
+                            && ((User)s).getUid().startsWith("userTest"))
+                            || (s instanceof Group
+                            && ((Group)s).getGid().startsWith("groupTest")))
+                    .collect(Collectors.toList());
         } catch (Exception e) {
             System.out.println("Exception of type " + e.getClass().getName());
             System.out.println(e.getMessage());
@@ -302,7 +324,14 @@ public class UserSearchTest  extends KernelTestAbstract {
         // reset
         secEntities = null;
         try {
-            secEntities = this.administrationController.searchSecurityEntities(searchText, USER_TEST_SOURCE, SecurityEntityType.GROUP);
+            secEntities = this.administrationController
+                    .searchSecurityEntities(searchText, USER_TEST_SOURCE, SecurityEntityType.GROUP)
+                    .stream()
+                    .filter(s -> (s instanceof User
+                            && ((User)s).getUid().startsWith("userTest"))
+                            || (s instanceof Group
+                            && ((Group)s).getGid().startsWith("groupTest")))
+                    .collect(Collectors.toList());
         } catch (Exception e) {
             System.out.println("Exception of type " + e.getClass().getName());
             System.out.println(e.getMessage());
@@ -325,7 +354,14 @@ public class UserSearchTest  extends KernelTestAbstract {
         // reset
         secEntities = null;
         try {
-            secEntities = this.administrationController.searchSecurityEntities(searchText, USER_TEST_SOURCE, SecurityEntityType.GROUP);
+            secEntities = this.administrationController
+                    .searchSecurityEntities(searchText, USER_TEST_SOURCE, SecurityEntityType.GROUP)
+                    .stream()
+                    .filter(s -> (s instanceof User
+                            && ((User)s).getUid().startsWith("userTest"))
+                            || (s instanceof Group
+                            && ((Group)s).getGid().startsWith("groupTest")))
+                    .collect(Collectors.toList());
         } catch (Exception e) {
             System.out.println("Exception of type " + e.getClass().getName());
             System.out.println(e.getMessage());
@@ -350,7 +386,14 @@ public class UserSearchTest  extends KernelTestAbstract {
         // reset
         secEntities = null;
         try {
-            secEntities = this.administrationController.searchSecurityEntities(searchText, USER_TEST_SOURCE, SecurityEntityType.GROUP);
+            secEntities = this.administrationController
+                    .searchSecurityEntities(searchText, USER_TEST_SOURCE, SecurityEntityType.GROUP)
+                    .stream()
+                    .filter(s -> (s instanceof User
+                            && ((User)s).getUid().startsWith("userTest"))
+                            || (s instanceof Group
+                            && ((Group)s).getGid().startsWith("groupTest")))
+                    .collect(Collectors.toList());
         } catch (Exception e) {
             System.out.println("Exception of type " + e.getClass().getName());
             System.out.println(e.getMessage());
@@ -447,7 +490,14 @@ public class UserSearchTest  extends KernelTestAbstract {
         // reset
         secEntities = null;
         try {
-            secEntities = this.administrationController.searchSecurityEntities(searchText, USER_TEST_SOURCE, 0);
+            secEntities = this.administrationController
+                    .searchSecurityEntities(searchText, USER_TEST_SOURCE, 0)
+                    .stream()
+                    .filter(s -> (s instanceof User
+                            && ((User)s).getUid().startsWith("userTest"))
+                            || (s instanceof Group
+                            && ((Group)s).getGid().startsWith("groupTest")))
+                    .collect(Collectors.toList());
         } catch (Exception e) {
             System.out.println("Exception of type " + e.getClass().getName());
             System.out.println(e.getMessage());
@@ -478,7 +528,14 @@ public class UserSearchTest  extends KernelTestAbstract {
         // reset
         secEntities = null;
         try {
-            secEntities = this.administrationController.searchSecurityEntities(searchText, USER_TEST_SOURCE, 0);
+            secEntities = this.administrationController
+                    .searchSecurityEntities(searchText, USER_TEST_SOURCE, 0)
+                    .stream()
+                    .filter(s -> (s instanceof User
+                            && ((User)s).getUid().startsWith("userTest"))
+                            || (s instanceof Group
+                            && ((Group)s).getGid().startsWith("groupTest")))
+                    .collect(Collectors.toList());
         } catch (Exception e) {
             System.out.println("Exception of type " + e.getClass().getName());
             System.out.println(e.getMessage());
@@ -502,7 +559,14 @@ public class UserSearchTest  extends KernelTestAbstract {
         // reset
         secEntities = null;
         try {
-            secEntities = this.administrationController.searchSecurityEntities(searchText, USER_TEST_SOURCE, 0);
+            secEntities = this.administrationController
+                    .searchSecurityEntities(searchText, USER_TEST_SOURCE, 0)
+                    .stream()
+                    .filter(s -> (s instanceof User
+                            && ((User)s).getUid().startsWith("userTest"))
+                            || (s instanceof Group
+                            && ((Group)s).getGid().startsWith("groupTest")))
+                    .collect(Collectors.toList());
         } catch (Exception e) {
             System.out.println("Exception of type " + e.getClass().getName());
             System.out.println(e.getMessage());
@@ -583,7 +647,14 @@ public class UserSearchTest  extends KernelTestAbstract {
         // reset
         secEntities = null;
         try {
-            secEntities = this.administrationController.searchSecurityEntities(searchText, null, 0);
+            secEntities = this.administrationController
+                    .searchSecurityEntities(searchText, null, 0)
+                    .stream()
+                    .filter(s -> (s instanceof User
+                            && ((User)s).getUid().startsWith("userTest"))
+                            || (s instanceof Group
+                            && ((Group)s).getGid().startsWith("groupTest")))
+                    .collect(Collectors.toList());
         } catch (Exception e) {
             System.out.println("Exception of type " + e.getClass().getName());
             System.out.println(e.getMessage());
@@ -617,7 +688,14 @@ public class UserSearchTest  extends KernelTestAbstract {
         // reset
         secEntities = null;
         try {
-            secEntities = this.administrationController.searchSecurityEntities(searchText, null, 0);
+            secEntities = this.administrationController
+                    .searchSecurityEntities(searchText, null, 0)
+                    .stream()
+                    .filter(s -> (s instanceof User
+                            && ((User)s).getUid().startsWith("userTest"))
+                            || (s instanceof Group
+                            && ((Group)s).getGid().startsWith("groupTest")))
+                    .collect(Collectors.toList());
         } catch (Exception e) {
             System.out.println("Exception of type " + e.getClass().getName());
             System.out.println(e.getMessage());
