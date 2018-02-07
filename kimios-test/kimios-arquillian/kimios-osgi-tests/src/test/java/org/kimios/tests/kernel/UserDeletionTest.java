@@ -61,14 +61,10 @@ public class UserDeletionTest extends KernelTestAbstract {
         String authenticationSourceName = USER_TEST_SOURCE;
         boolean enabled = true;
 
-        try {
-            this.userTest = this.administrationController.getUser(this.adminSession, uid, authenticationSourceName);
-        } catch (NullPointerException e) {
-        }
-        if (this.userTest == null) {
-            this.administrationController.createUser(this.adminSession, uid, firstname, lastname, phoneNumber, mail, password, authenticationSourceName, enabled);
-            this.userTest = this.administrationController.getUser(this.adminSession, uid, authenticationSourceName);
-        }
+        this.userTest = this.createUser(
+                this.administrationController, this.adminSession, uid, firstname, lastname, phoneNumber, mail,
+                password, authenticationSourceName, enabled
+        );
     }
 
     @Test

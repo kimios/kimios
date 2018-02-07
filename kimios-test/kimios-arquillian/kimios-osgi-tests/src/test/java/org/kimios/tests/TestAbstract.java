@@ -1,6 +1,9 @@
 package org.kimios.tests;
 
 import org.jboss.arquillian.test.api.ArquillianResource;
+import org.kimios.kernel.controller.IAdministrationController;
+import org.kimios.kernel.security.model.Session;
+import org.kimios.kernel.user.model.User;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 
@@ -70,5 +73,22 @@ public abstract class TestAbstract {
                 e.printStackTrace();
             }
         }
+    }
+
+    public User createUser (
+            IAdministrationController administrationController,
+            Session session, String uid, String firstname, String lastname, String phoneNumber,
+            String mail, String password, String authenticationSourceName, boolean enabled
+    ) {
+        User user = null;
+        try {
+            user = administrationController.getUser(session, uid, authenticationSourceName);
+            if (user == null) {
+                administrationController.createUser(session, uid, firstname, lastname, phoneNumber, mail, password, authenticationSourceName, enabled);
+                user = administrationController.getUser(session, uid, authenticationSourceName);
+            }
+        } catch (NullPointerException e) {
+        }
+        return user;
     }
 }
