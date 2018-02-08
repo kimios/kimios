@@ -25,15 +25,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kimios.api.events.annotations.DmsEventName;
-import org.kimios.api.events.annotations.DmsEventOccur;
 import org.kimios.client.controller.helpers.StringTools;
 import org.kimios.kernel.dms.model.Document;
 import org.kimios.kernel.dms.model.DocumentWorkflowStatusRequest;
 import org.kimios.kernel.dms.model.Folder;
 import org.kimios.kernel.dms.model.Workflow;
-import org.kimios.kernel.rules.model.EventBean;
-import org.kimios.kernel.rules.model.RuleBean;
 import org.kimios.kernel.security.model.SecurityEntityType;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.user.model.User;
@@ -48,8 +44,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Vector;
 

@@ -2,17 +2,18 @@ package org.kimios.tests.webservices;
 
 import org.kimios.kernel.controller.ISecurityController;
 import org.kimios.kernel.security.model.Session;
+import org.kimios.tests.OsgiKimiosService;
 import org.kimios.tests.TestAbstract;
 import org.kimios.webservices.SecurityService;
-
-import java.util.ArrayList;
 
 /**
  * Created by tom on 11/02/16.
  */
 public abstract class WebServicesTestAbstract extends TestAbstract {
 
+    @OsgiKimiosService
     ISecurityController securityController;
+    @OsgiKimiosService
     SecurityService securityService;
 
     Session adminSession;
@@ -31,12 +32,7 @@ public abstract class WebServicesTestAbstract extends TestAbstract {
     public static String USER_TEST_4 = "userTest4";
 
     public void init() {
-
-        ArrayList<String> controllerNames = new ArrayList<String>();
-        controllerNames.add("securityController");
-        controllerNames.add("securityService");
-
-        this.initServices(controllerNames);
+        this.initServices();
     }
 
     public void setSecurityController(ISecurityController securityController) {

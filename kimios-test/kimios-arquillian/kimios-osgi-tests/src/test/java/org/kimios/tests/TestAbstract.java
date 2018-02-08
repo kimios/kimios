@@ -10,9 +10,12 @@ import org.osgi.framework.ServiceReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * Created by tom on 11/02/16.
@@ -52,19 +55,17 @@ public abstract class TestAbstract {
         return this.context.getService(sRef);
     }
 
-    public void initServices(List<String> controllerNames) {
+    public void initServices() {
         Class<?> c =  this.getClass();
-        for (String cName : controllerNames) {
+        for (Field f : this.retrieveAllDeclaredFields()
+                .stream()
+                .filter(f -> f.isAnnotationPresent(OsgiKimiosService.class))
+                .collect(Collectors.toList())) {
             try {
-                Field f = c.getSuperclass().getDeclaredField(cName);
-//                f.set(this, this.obtainService(f.getType(), 120));
-
                 String fieldName = f.getName();
                 String methodName = "set" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
                 Method setter = c.getSuperclass().getDeclaredMethod(methodName, f.getType());
                 setter.invoke(this, this.obtainService(f.getType(), 120));
-            } catch (NoSuchFieldException e) {
-                e.printStackTrace();
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             } catch (NoSuchMethodException e) {
@@ -90,5 +91,15 @@ public abstract class TestAbstract {
         } catch (NullPointerException e) {
         }
         return user;
+    }
+
+    public List<Field> retrieveAllDeclaredFields() {
+        ArrayList<Field> list = new ArrayList<>();
+        Class<?> c =  this.getClass();
+        while (c != null) {
+            Collections.addAll(list, c.getDeclaredFields());
+            c = c.getSuperclass();
+        }
+        return list;
     }
 }

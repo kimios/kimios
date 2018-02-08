@@ -1,6 +1,7 @@
 package org.kimios.tests.kernel;
 
 import org.jboss.arquillian.test.api.ArquillianResource;
+import org.kimios.tests.OsgiKimiosService;
 import org.kimios.tests.TestAbstract;
 import org.kimios.client.controller.helpers.StringTools;
 import org.kimios.kernel.controller.*;
@@ -23,14 +24,21 @@ public abstract class KernelTestAbstract extends TestAbstract {
     @ArquillianResource
     BundleContext context;
 
-
+    @OsgiKimiosService
     protected IAdministrationController administrationController;
+    @OsgiKimiosService
     protected ISecurityController securityController;
+    @OsgiKimiosService
     protected IWorkspaceController workspaceController;
+    @OsgiKimiosService
     protected IFolderController folderController;
+    @OsgiKimiosService
     protected IDocumentController documentController;
+    @OsgiKimiosService
     protected IWorkflowController workflowController;
+    @OsgiKimiosService
     protected IStudioController studioController;
+    @OsgiKimiosService
     protected IRuleManagementController rulesController;
 
     protected Session adminSession;
@@ -94,18 +102,7 @@ public abstract class KernelTestAbstract extends TestAbstract {
     }
 
     public void init() {
-
-        ArrayList<String> controllerNames = new ArrayList<String>();
-        controllerNames.add("administrationController");
-        controllerNames.add("securityController");
-        controllerNames.add("workspaceController");
-        controllerNames.add("folderController");
-        controllerNames.add("documentController");
-        controllerNames.add("workflowController");
-        controllerNames.add("studioController");
-        controllerNames.add("rulesController");
-
-        this.initServices(controllerNames);
+        this.initServices();
     }
 
     public void removeUserPermissionsForEntity(Session session, User user, DMEntity entity) {

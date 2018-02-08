@@ -13,12 +13,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kimios.kernel.ws.pojo.SecurityEntity;
 import org.kimios.kernel.ws.pojo.User;
+import org.kimios.tests.OsgiKimiosService;
 import org.osgi.framework.BundleContext;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -37,7 +36,8 @@ public class SearchEntitiesTest extends WebServicesTestAbstract {
     public static JavaArchive createDeployment() {
         final JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "SearchEntitiesTest.jar");
         archive.addClasses(
-                SearchEntitiesTest.class
+                SearchEntitiesTest.class,
+                OsgiKimiosService.class
         );
         archive.setManifest(new Asset() {
             public InputStream openStream() {
@@ -55,14 +55,6 @@ public class SearchEntitiesTest extends WebServicesTestAbstract {
         archive.as(ZipExporter.class).exportTo(exportedFile, true);
 
         return archive;
-    }
-
-    public void init() {
-        List<String> servicesNames = new ArrayList<String>();
-        servicesNames.add("securityController");
-        servicesNames.add("securityService");
-
-        this.initServices(servicesNames);
     }
 
     @Before

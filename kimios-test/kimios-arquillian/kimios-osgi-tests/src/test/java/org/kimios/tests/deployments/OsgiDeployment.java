@@ -5,6 +5,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.Asset;
 import org.jboss.shrinkwrap.api.exporter.ZipExporter;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.kimios.tests.OsgiKimiosService;
 
 import java.io.File;
 import java.io.InputStream;
@@ -19,6 +20,7 @@ public class OsgiDeployment {
         archive.addClasses(
                 classes
         );
+        archive.addClass(OsgiKimiosService.class);
         archive.setManifest(new Asset() {
             public InputStream openStream() {
                 OSGiManifestBuilder builder = OSGiManifestBuilder.newInstance();
