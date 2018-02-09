@@ -74,7 +74,7 @@ public class AutomaticStatusWorkflowRestartTest extends KernelTestAbstract {
     public static JavaArchive createDeployment() {
 
         JavaArchive archive =
-                OsgiDeployment.createArchive( AutomaticStatusWorkflowRestartTest.class.getSimpleName() + ".jar", AutomaticStatusWorkflowRestartTest.class,
+                OsgiDeployment.createArchive( AutomaticStatusWorkflowRestartTest.class.getSimpleName() + ".jar", null, AutomaticStatusWorkflowRestartTest.class,
                 StringTools.class,
                 WorkflowStatusDefinition.class,
                         XMLDescriptionGenerators.class

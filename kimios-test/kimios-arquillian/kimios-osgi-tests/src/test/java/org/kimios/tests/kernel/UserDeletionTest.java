@@ -25,7 +25,7 @@ public class UserDeletionTest extends KernelTestAbstract {
     @Deployment(name="karaf")
     public static JavaArchive createDeployment() {
         return OsgiDeployment.createArchive("UserDeletionTest.jar",
-                UserDeletionTest.class,
+                null, UserDeletionTest.class,
                 KernelTestAbstract.class,
                 StringTools.class
         );

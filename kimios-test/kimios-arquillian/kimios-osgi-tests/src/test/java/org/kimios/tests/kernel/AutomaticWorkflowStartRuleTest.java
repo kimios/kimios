@@ -78,7 +78,7 @@ public class AutomaticWorkflowStartRuleTest extends KernelTestAbstract {
     public static JavaArchive createDeployment() {
 
         JavaArchive archive =
-                OsgiDeployment.createArchive( AutomaticWorkflowStartRuleTest.class.getSimpleName() + ".jar", AutomaticWorkflowStartRuleTest.class,
+                OsgiDeployment.createArchive( AutomaticWorkflowStartRuleTest.class.getSimpleName() + ".jar", null, AutomaticWorkflowStartRuleTest.class,
                 StringTools.class,
                 WorkflowStatusDefinition.class,
                         XMLDescriptionGenerators.class

@@ -30,7 +30,7 @@ public class AdminAccountTest extends KernelTestAbstract {
 
     @Deployment(name="karaf")
     public static JavaArchive createDeployment() {
-        return OsgiDeployment.createArchive(AdminAccountTest.class.getSimpleName() + ".jar",  AdminAccountTest.class);
+        return OsgiDeployment.createArchive(AdminAccountTest.class.getSimpleName() + ".jar", null, AdminAccountTest.class);
     }
 
     @Before

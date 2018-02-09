@@ -36,7 +36,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 
 import static org.junit.Assert.*;
@@ -67,7 +66,7 @@ public class UserDocumentWithPropertiesTest extends KernelTestAbstract {
     public static JavaArchive createDeployment() {
 
         JavaArchive archive =
-                OsgiDeployment.createArchive( UserDocumentWithPropertiesTest.class.getSimpleName() + ".jar", UserDocumentWithPropertiesTest.class,
+                OsgiDeployment.createArchive( UserDocumentWithPropertiesTest.class.getSimpleName() + ".jar", null, UserDocumentWithPropertiesTest.class,
                 StringTools.class
                 );
         archive.addAsResource("tests/launch_kimios-tests_mvn_test.sh");

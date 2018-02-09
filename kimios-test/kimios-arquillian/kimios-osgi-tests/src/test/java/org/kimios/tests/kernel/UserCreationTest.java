@@ -29,7 +29,7 @@ public class UserCreationTest extends KernelTestAbstract {
 
     @Deployment(name="karaf")
     public static JavaArchive createDeployment() {
-        return OsgiDeployment.createArchive("userCreationTest.jar", UserCreationTest.class);
+        return OsgiDeployment.createArchive("userCreationTest.jar", null, UserCreationTest.class);
     }
 
     @Before

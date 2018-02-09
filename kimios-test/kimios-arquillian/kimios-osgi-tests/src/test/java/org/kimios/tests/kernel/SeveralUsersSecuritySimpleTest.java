@@ -40,7 +40,7 @@ public class SeveralUsersSecuritySimpleTest extends KernelTestAbstract {
 
     @Deployment(name="karaf")
     public static JavaArchive createDeployment() {
-        return OsgiDeployment.createArchive(SeveralUsersSecuritySimpleTest.class.getSimpleName() + ".jar",SeveralUsersSecuritySimpleTest.class,
+        return OsgiDeployment.createArchive(SeveralUsersSecuritySimpleTest.class.getSimpleName() + ".jar", null, SeveralUsersSecuritySimpleTest.class,
                 StringTools.class);
     }
 

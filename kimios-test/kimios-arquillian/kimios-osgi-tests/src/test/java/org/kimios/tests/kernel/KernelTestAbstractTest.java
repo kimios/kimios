@@ -25,7 +25,7 @@ public class KernelTestAbstractTest extends KernelTestAbstract {
     @Deployment(name="karaf")
     public static JavaArchive createDeployment() {
         String jarName = "KernelTestAbstractTest.jar";
-        return OsgiDeployment.createArchive(jarName, KernelTestAbstractTest.class,
+        return OsgiDeployment.createArchive(jarName, null, KernelTestAbstractTest.class,
                 KernelTestAbstract.class,
                 StringTools.class);
     }

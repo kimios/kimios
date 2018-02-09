@@ -9,13 +9,14 @@ import org.kimios.tests.OsgiKimiosService;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.List;
 
 /**
  * Created by farf on 19/03/16.
  */
 public class OsgiDeployment {
 
-    public static JavaArchive createArchive(String jarName, Class ... classes){
+    public static JavaArchive createArchive(String jarName, List<String> additionalDynamicImportPackages, Class... classes){
         final JavaArchive archive = ShrinkWrap.create(JavaArchive.class, jarName);
         archive.addClasses(
                 classes
@@ -32,6 +33,10 @@ public class OsgiDeployment {
                         "org.kimios.api.*",
                         "org.kimios.exceptions"
                 );
+                // additional packages
+                if (additionalDynamicImportPackages != null) {
+                    additionalDynamicImportPackages.stream().map(p -> builder.addDynamicImportPackages(p));
+                }
                 builder.addImportPackages(
                         "org.osgi.util.tracker",
                         "org.slf4j"

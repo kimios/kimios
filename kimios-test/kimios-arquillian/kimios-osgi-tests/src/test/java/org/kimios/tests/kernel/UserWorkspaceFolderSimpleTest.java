@@ -34,7 +34,7 @@ public class UserWorkspaceFolderSimpleTest extends KernelTestAbstract {
     public static JavaArchive createDeployment() {
 
         return OsgiDeployment.createArchive("userDocumentsTest.jar",
-                UserWorkspaceFolderSimpleTest.class,
+                null, UserWorkspaceFolderSimpleTest.class,
                 KernelTestAbstract.class,
                 StringTools.class);
     }

@@ -50,7 +50,7 @@ public class UserDocumentSimpleTest extends KernelTestAbstract {
     public static JavaArchive createDeployment() {
 
         JavaArchive archive =
-                OsgiDeployment.createArchive( "UserDocumentSimpleTest.jar",UserDocumentSimpleTest.class,
+                OsgiDeployment.createArchive( "UserDocumentSimpleTest.jar", null, UserDocumentSimpleTest.class,
                 StringTools.class
                 );
         archive.addAsResource("tests/launch_kimios-tests_mvn_test.sh");
