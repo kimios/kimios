@@ -35,7 +35,7 @@ public class OsgiDeployment {
                 );
                 // additional packages
                 if (additionalDynamicImportPackages != null) {
-                    additionalDynamicImportPackages.stream().map(p -> builder.addDynamicImportPackages(p));
+                    additionalDynamicImportPackages.stream().forEach(p -> builder.addDynamicImportPackages(p));
                 }
                 builder.addImportPackages(
                         "org.osgi.util.tracker",

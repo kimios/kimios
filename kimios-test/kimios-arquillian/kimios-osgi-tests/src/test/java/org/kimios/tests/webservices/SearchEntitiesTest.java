@@ -14,10 +14,12 @@ import org.junit.runner.RunWith;
 import org.kimios.kernel.ws.pojo.SecurityEntity;
 import org.kimios.kernel.ws.pojo.User;
 import org.kimios.tests.OsgiKimiosService;
+import org.kimios.tests.deployments.OsgiDeployment;
 import org.osgi.framework.BundleContext;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -34,27 +36,10 @@ public class SearchEntitiesTest extends WebServicesTestAbstract {
 
     @Deployment(name = "karaf")
     public static JavaArchive createDeployment() {
-        final JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "SearchEntitiesTest.jar");
-        archive.addClasses(
-                SearchEntitiesTest.class,
-                OsgiKimiosService.class
-        );
-        archive.setManifest(new Asset() {
-            public InputStream openStream() {
-                OSGiManifestBuilder builder = OSGiManifestBuilder.newInstance();
-                builder.addBundleSymbolicName(archive.getName());
-                builder.addBundleManifestVersion(2);
-                builder.addDynamicImportPackages("org.kimios.webservices");
-//                builder.addDynamicImportPackages("org.kimios.webservices.*");
-                builder.addDynamicImportPackages("org.kimios.kernel.*");
-                return builder.openStream();
-            }
-        });
-
-        File exportedFile = new File("SearchEntitiesTest.jar");
-        archive.as(ZipExporter.class).exportTo(exportedFile, true);
-
-        return archive;
+        String jarName = "SearchEntitiesTest.jar";
+        ArrayList<String> additionalImportPackages = new ArrayList<>();
+        additionalImportPackages.add("org.kimios.webservices");
+        return OsgiDeployment.createArchive(jarName, additionalImportPackages, SearchEntitiesTest.class);
     }
 
     @Before
