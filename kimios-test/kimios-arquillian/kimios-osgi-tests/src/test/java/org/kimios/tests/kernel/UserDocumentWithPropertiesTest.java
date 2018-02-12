@@ -81,7 +81,7 @@ public class UserDocumentWithPropertiesTest extends KernelTestAbstract {
 
         this.init();
 
-        this.setAdminSession(this.securityController.startSession(ADMIN_LOGIN, USER_TEST_SOURCE, ADMIN_PWD));
+        this.setAdminSession(this.getSecurityController().startSession(ADMIN_LOGIN, USER_TEST_SOURCE, ADMIN_PWD));
 
         try {
             this.workspaceTest = this.workspaceController.getWorkspace(this.getAdminSession(), WORKSPACE_TEST_NAME);
@@ -103,9 +103,9 @@ public class UserDocumentWithPropertiesTest extends KernelTestAbstract {
         this.giveAccessToEntityForUser(this.getAdminSession(), this.folderTest1, this.userTest3, true, false, false);
 
         // init test users' sessions
-        this.userTest1Session = this.securityController.startSession(USER_TEST_1, USER_TEST_SOURCE, "test");
-        this.userTest2Session = this.securityController.startSession(USER_TEST_2, USER_TEST_SOURCE, "test");
-        this.userTest3Session = this.securityController.startSession(USER_TEST_3, USER_TEST_SOURCE, "test");
+        this.userTest1Session = this.getSecurityController().startSession(USER_TEST_1, USER_TEST_SOURCE, "test");
+        this.userTest2Session = this.getSecurityController().startSession(USER_TEST_2, USER_TEST_SOURCE, "test");
+        this.userTest3Session = this.getSecurityController().startSession(USER_TEST_3, USER_TEST_SOURCE, "test");
 
         // user 1 creates a subfolder
         this.userTest1FolderUid = this.folderController.createFolder(this.getAdminSession(), "User_1_Folder", this.folderTest1.getUid(), true);
@@ -145,10 +145,10 @@ public class UserDocumentWithPropertiesTest extends KernelTestAbstract {
         assertEquals("User Test 1 doc 1", userDoc1.getName());
         assertEquals(userTest1Folder.getUid(), userDoc1.getFolderUid());
 
-        assertTrue(this.securityController.canRead(this.getAdminSession(), userDoc1.getUid()));
-        assertTrue(this.securityController.canRead(this.getAdminSession(), userDoc1.getUid()));
-        assertTrue(this.securityController.canRead(this.getAdminSession(), userDoc1.getUid()));
-        assertTrue(this.securityController.canWrite(this.getAdminSession(), userDoc1.getUid()));
+        assertTrue(this.getSecurityController().canRead(this.getAdminSession(), userDoc1.getUid()));
+        assertTrue(this.getSecurityController().canRead(this.getAdminSession(), userDoc1.getUid()));
+        assertTrue(this.getSecurityController().canRead(this.getAdminSession(), userDoc1.getUid()));
+        assertTrue(this.getSecurityController().canWrite(this.getAdminSession(), userDoc1.getUid()));
 
 
     }
@@ -157,13 +157,13 @@ public class UserDocumentWithPropertiesTest extends KernelTestAbstract {
     public void tearDown() {
         // init test users' sessions
         if (this.userTest1Session != null) {
-            this.securityController.endSession(this.userTest1Session.getUid());
+            this.getSecurityController().endSession(this.userTest1Session.getUid());
         }
         if (this.userTest2Session != null) {
-            this.securityController.endSession(this.userTest2Session.getUid());
+            this.getSecurityController().endSession(this.userTest2Session.getUid());
         }
         if (this.userTest3Session != null) {
-            this.securityController.endSession(this.userTest3Session.getUid());
+            this.getSecurityController().endSession(this.userTest3Session.getUid());
         }
 
         if (this.folderTest1 != null) {

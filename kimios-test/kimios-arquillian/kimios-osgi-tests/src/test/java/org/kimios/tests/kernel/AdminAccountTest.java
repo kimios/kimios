@@ -32,7 +32,7 @@ public class AdminAccountTest extends KernelTestAbstract {
     public void setUp() {
         this.init();
 
-        this.setAdminSession(this.securityController.startSession(TestAbstract.ADMIN_LOGIN, TestAbstract.ADMIN_SOURCE, TestAbstract.ADMIN_PWD));
+        this.setAdminSession(this.getSecurityController().startSession(TestAbstract.ADMIN_LOGIN, TestAbstract.ADMIN_SOURCE, TestAbstract.ADMIN_PWD));
     }
 
     @Test
@@ -49,34 +49,34 @@ public class AdminAccountTest extends KernelTestAbstract {
 
     @Test
     public void testAdminStuff() throws Exception {
-        boolean canCreateWorkspace = this.securityController.canCreateWorkspace(this.getAdminSession());
+        boolean canCreateWorkspace = this.getSecurityController().canCreateWorkspace(this.getAdminSession());
         assertTrue(canCreateWorkspace);
 
 
 
-//        boolean canRead = this.securityController.canRead(this.adminSession, 0);
+//        boolean canRead = this.getSecurityController().canRead(this.adminSession, 0);
 //        assertTrue(canRead);
 
-        boolean hasStudioAccess = this.securityController.hasStudioAccess(this.getAdminSession());
+        boolean hasStudioAccess = this.getSecurityController().hasStudioAccess(this.getAdminSession());
         assertTrue(hasStudioAccess);
 
-        boolean hasReportingAccess = this.securityController.hasReportingAccess(this.getAdminSession());
+        boolean hasReportingAccess = this.getSecurityController().hasReportingAccess(this.getAdminSession());
         assertFalse(hasReportingAccess);
 
-        boolean isAdmin = this.securityController.isAdmin(this.getAdminSession());
+        boolean isAdmin = this.getSecurityController().isAdmin(this.getAdminSession());
         assertTrue(isAdmin);
 
-        boolean isAdmin2 = this.securityController.isAdmin(TestAbstract.ADMIN_LOGIN, TestAbstract.ADMIN_SOURCE);
+        boolean isAdmin2 = this.getSecurityController().isAdmin(TestAbstract.ADMIN_LOGIN, TestAbstract.ADMIN_SOURCE);
         assertTrue(isAdmin2);
 
-        boolean isSessionAlive = this.securityController.isSessionAlive(getAdminSession().getUid());
+        boolean isSessionAlive = this.getSecurityController().isSessionAlive(getAdminSession().getUid());
         assertTrue(isSessionAlive);
 
     }
 
     @Test
     public void testGetUsers() throws Exception {
-        List<User> users = this.securityController.getUsers(TestAbstract.ADMIN_SOURCE);
+        List<User> users = this.getSecurityController().getUsers(TestAbstract.ADMIN_SOURCE);
         assertTrue("We have users, at least one, the default user", users.size() > 0);
 
         // admin is in users list

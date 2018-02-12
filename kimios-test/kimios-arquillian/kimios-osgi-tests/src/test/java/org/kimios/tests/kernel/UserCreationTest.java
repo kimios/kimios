@@ -31,7 +31,7 @@ public class UserCreationTest extends KernelTestAbstract {
     public void setUp() {
 
        this.init();
-       this.setAdminSession(this.securityController.startSession(ADMIN_LOGIN, ADMIN_SOURCE, ADMIN_PWD));
+       this.setAdminSession(this.getSecurityController().startSession(ADMIN_LOGIN, ADMIN_SOURCE, ADMIN_PWD));
     }
 
     @Test
@@ -65,7 +65,7 @@ public class UserCreationTest extends KernelTestAbstract {
         assertEquals(user.isEnabled(), enabled);
 
         // test user connection
-        Session userTestSession = this.securityController.startSession(uid, authenticationSourceName, password);
+        Session userTestSession = this.getSecurityController().startSession(uid, authenticationSourceName, password);
         assertNotNull(userTestSession);
         assertTrue(userTestSession.getUid().length() > 0);
 
@@ -76,27 +76,27 @@ public class UserCreationTest extends KernelTestAbstract {
 
         // can create a workspace ?
         // default is no
-        boolean canCreateWorkspace = this.securityController.canCreateWorkspace(userTestSession);
+        boolean canCreateWorkspace = this.getSecurityController().canCreateWorkspace(userTestSession);
         assertFalse(canCreateWorkspace);
         // set to true
 //        this.administrationController.createRole(this.adminSession, Role.WORKSPACE, uid, ADMIN_USER_SOURCE);
         // is that true now ?
-//        canCreateWorkspace = this.securityController.canCreateWorkspace(userTestSession);
+//        canCreateWorkspace = this.getSecurityController().canCreateWorkspace(userTestSession);
 //        assertTrue(canCreateWorkspace);
 
-        boolean hasStudioAccess = this.securityController.hasStudioAccess(userTestSession);
+        boolean hasStudioAccess = this.getSecurityController().hasStudioAccess(userTestSession);
         assertFalse(hasStudioAccess);
 
-        boolean hasReportingAccess = this.securityController.hasReportingAccess(userTestSession);
+        boolean hasReportingAccess = this.getSecurityController().hasReportingAccess(userTestSession);
         assertFalse(hasReportingAccess);
 
-        boolean isAdmin = this.securityController.isAdmin(userTestSession);
+        boolean isAdmin = this.getSecurityController().isAdmin(userTestSession);
         assertFalse(isAdmin);
 
-        boolean isAdmin2 = this.securityController.isAdmin(uid, ADMIN_SOURCE);
+        boolean isAdmin2 = this.getSecurityController().isAdmin(uid, ADMIN_SOURCE);
         assertFalse(isAdmin2);
 
-        boolean isSessionAlive = this.securityController.isSessionAlive(this.getAdminSession().getUid());
+        boolean isSessionAlive = this.getSecurityController().isSessionAlive(this.getAdminSession().getUid());
         assertTrue(isSessionAlive);
 
         Vector<Role> userRoles = this.administrationController.getRoles(this.getAdminSession(), uid, ADMIN_SOURCE);
@@ -106,7 +106,7 @@ public class UserCreationTest extends KernelTestAbstract {
         this.administrationController.deleteUser(this.getAdminSession(), uid, ADMIN_SOURCE);
         User userJustDeleted = null;
         try {
-            userJustDeleted = this.securityController.getUser(uid, password);
+            userJustDeleted = this.getSecurityController().getUser(uid, password);
         } catch (NullPointerException e) {
             System.out.println("user is null because it just has been deleted");
         }

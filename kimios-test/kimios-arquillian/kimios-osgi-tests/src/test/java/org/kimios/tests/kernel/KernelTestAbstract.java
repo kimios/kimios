@@ -27,8 +27,6 @@ public abstract class KernelTestAbstract extends TestAbstract {
     @OsgiKimiosService
     protected IAdministrationController administrationController;
     @OsgiKimiosService
-    protected ISecurityController securityController;
-    @OsgiKimiosService
     protected IWorkspaceController workspaceController;
     @OsgiKimiosService
     protected IFolderController folderController;
@@ -56,10 +54,6 @@ public abstract class KernelTestAbstract extends TestAbstract {
 
     public void setAdministrationController(IAdministrationController administrationController) {
         this.administrationController = administrationController;
-    }
-
-    public void setSecurityController(ISecurityController securityController) {
-        this.securityController = securityController;
     }
 
     public void setWorkspaceController(IWorkspaceController workspaceController) {
@@ -107,7 +101,7 @@ public abstract class KernelTestAbstract extends TestAbstract {
     }
 
     public void changePermissionOnEntityForUser (Session session, User user, DMEntity entity, boolean read, boolean write, boolean full) {
-        List<DMEntitySecurity> entities = this.securityController.getDMEntitySecurityies(session, entity.getUid());
+        List<DMEntitySecurity> entities = this.getSecurityController().getDMEntitySecurityies(session, entity.getUid());
 
         String xmlStreamExistingEntitites = "";
 
@@ -141,7 +135,7 @@ public abstract class KernelTestAbstract extends TestAbstract {
         xmlStream += xmlStreamExistingEntitites;
         xmlStream += "</security-rules>";
 
-        this.securityController.updateDMEntitySecurities(session, entity.getUid(), xmlStream, false, true);
+        this.getSecurityController().updateDMEntitySecurities(session, entity.getUid(), xmlStream, false, true);
     }
 
     public static String dmEntitySecurityToXmlStream (DMEntitySecurity entSec) {
@@ -260,7 +254,7 @@ public abstract class KernelTestAbstract extends TestAbstract {
     }
 
     public void giveAccessToEntityForUser(Session session, DMEntity ent, User user, boolean read, boolean write, boolean full) {
-        List<DMEntitySecurity> entities = this.securityController.getDMEntitySecurityies(session, ent.getUid());
+        List<DMEntitySecurity> entities = this.getSecurityController().getDMEntitySecurityies(session, ent.getUid());
 
         String xmlStreamExistingEntitites = "";
         for (DMEntitySecurity entity : entities) {
@@ -289,6 +283,6 @@ public abstract class KernelTestAbstract extends TestAbstract {
                 "full=\"" + Boolean.toString(full) + "\" />\r\n";
         xmlStream += "</security-rules>";
 
-        this.securityController.updateDMEntitySecurities(session, ent.getUid(), xmlStream, false, true);
+        this.getSecurityController().updateDMEntitySecurities(session, ent.getUid(), xmlStream, false, true);
     }
 }

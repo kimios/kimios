@@ -36,7 +36,7 @@ public class UserDeletionTest extends KernelTestAbstract {
 
         this.init();
 
-        this.setAdminSession(this.securityController.startSession(ADMIN_LOGIN, USER_TEST_SOURCE, ADMIN_PWD));
+        this.setAdminSession(this.getSecurityController().startSession(ADMIN_LOGIN, USER_TEST_SOURCE, ADMIN_PWD));
 
         try {
             this.workspaceTest = this.workspaceController.getWorkspace(this.getAdminSession(), WORKSPACE_TEST_NAME);
@@ -72,23 +72,23 @@ public class UserDeletionTest extends KernelTestAbstract {
         Folder folderTest = this.folderController.getFolder(this.getAdminSession(), this.folderTest.getUid());
         // grant access to user test
         this.changePermissionOnEntityForUser(this.getAdminSession(), this.userTest, folderTest, true, true, false);
-        Session userTestSession = this.securityController.startSession(DEFAULT_USER_TEST_ID, USER_TEST_SOURCE, "test");
+        Session userTestSession = this.getSecurityController().startSession(DEFAULT_USER_TEST_ID, USER_TEST_SOURCE, "test");
         // user test can read, write and has not full access
-        assertTrue(this.securityController.canRead(userTestSession, this.folderTest.getUid()));
-        assertTrue(this.securityController.canWrite(userTestSession, this.folderTest.getUid()));
-        assertFalse(this.securityController.hasFullAccess(userTestSession, this.folderTest.getUid()));
+        assertTrue(this.getSecurityController().canRead(userTestSession, this.folderTest.getUid()));
+        assertTrue(this.getSecurityController().canWrite(userTestSession, this.folderTest.getUid()));
+        assertFalse(this.getSecurityController().hasFullAccess(userTestSession, this.folderTest.getUid()));
 
         // delete the user test
         this.administrationController.deleteUser(this.getAdminSession(), this.userTest.getUid(), this.userTest.getAuthenticationSourceName());
         // create the user test again
         this.createUsersTest();
         // restart the session
-        userTestSession = this.securityController.startSession(DEFAULT_USER_TEST_ID, USER_TEST_SOURCE, "test");
+        userTestSession = this.getSecurityController().startSession(DEFAULT_USER_TEST_ID, USER_TEST_SOURCE, "test");
         // user can't read, write and has not full access
         // because the security rules and ACLs have been removed
-        assertFalse(this.securityController.canRead(userTestSession, this.folderTest.getUid()));
-        assertFalse(this.securityController.canWrite(userTestSession, this.folderTest.getUid()));
-        assertFalse(this.securityController.hasFullAccess(userTestSession, this.folderTest.getUid()));
+        assertFalse(this.getSecurityController().canRead(userTestSession, this.folderTest.getUid()));
+        assertFalse(this.getSecurityController().canWrite(userTestSession, this.folderTest.getUid()));
+        assertFalse(this.getSecurityController().hasFullAccess(userTestSession, this.folderTest.getUid()));
     }
 
     @After

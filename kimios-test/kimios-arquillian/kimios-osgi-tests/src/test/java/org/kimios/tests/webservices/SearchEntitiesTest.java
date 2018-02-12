@@ -45,9 +45,9 @@ public class SearchEntitiesTest extends WebServicesTestAbstract {
 //        this.securityService = context.getService(sref);
 //
 //        ServiceReference<ISecurityController> srefAdminController = context.getServiceReference(ISecurityController.class);
-//        this.securityController = context.getService(srefAdminController);
+//        this.getSecurityController() = context.getService(srefAdminController);
 
-        this.setAdminSession(this.securityController.startSession("admin", "kimios", "kimios"));
+        this.setAdminSession(this.getSecurityController().startSession("admin", "kimios", "kimios"));
     }
 
     @Test

@@ -2,6 +2,7 @@ package org.kimios.tests;
 
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.kimios.kernel.controller.IAdministrationController;
+import org.kimios.kernel.controller.ISecurityController;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.user.model.User;
 import org.osgi.framework.BundleContext;
@@ -27,6 +28,9 @@ public abstract class TestAbstract {
     public static String ADMIN_SOURCE = "kimios";
 
     private Session adminSession;
+
+    @OsgiKimiosService
+    private ISecurityController securityController;
 
     @ArquillianResource
     BundleContext context;
@@ -115,5 +119,13 @@ public abstract class TestAbstract {
 
     public void setAdminSession(Session adminSession) {
         this.adminSession = adminSession;
+    }
+
+    public void setSecurityController(ISecurityController securityController) {
+        this.securityController = securityController;
+    }
+
+    public ISecurityController getSecurityController() {
+        return securityController;
     }
 }

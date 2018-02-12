@@ -38,7 +38,7 @@ public class KernelTestAbstractTest extends KernelTestAbstract {
 //        // Get the service reference
 //        ServiceReference<ISecurityController> sref = context.getServiceReference(ISecurityController.class);
 //        // Get the service
-//        this.securityController = context.getService(sref);
+//        this.getSecurityController() = context.getService(sref);
 //
 //        ServiceReference<IAdministrationController> srefAdmin = context.getServiceReference(IAdministrationController.class);
 //        this.administrationController = context.getService(srefAdmin);
@@ -47,7 +47,7 @@ public class KernelTestAbstractTest extends KernelTestAbstract {
 //        ServiceReference<IWorkspaceController> sRefWorkspace = context.getServiceReference(IWorkspaceController.class);
 //        this.workspaceController = context.getService(sRefWorkspace);
 
-        this.setAdminSession(this.securityController.startSession(TestAbstract.ADMIN_LOGIN, KernelTestAbstract.USER_TEST_SOURCE, TestAbstract.ADMIN_PWD));
+        this.setAdminSession(this.getSecurityController().startSession(TestAbstract.ADMIN_LOGIN, KernelTestAbstract.USER_TEST_SOURCE, TestAbstract.ADMIN_PWD));
 
         this.createWorkspaceTestIfNotExists();
         this.workspaceTest = this.workspaceController.getWorkspace(this.getAdminSession(), WORKSPACE_TEST_NAME);
@@ -63,10 +63,10 @@ public class KernelTestAbstractTest extends KernelTestAbstract {
 
     @Test
     public void testChangePermissionOnEntityForUser() {
-        assertTrue(this.securityController.isSessionAlive(this.getAdminSession().getUid()));
+        assertTrue(this.getSecurityController().isSessionAlive(this.getAdminSession().getUid()));
         User userTest = this.administrationController.getUser(this.getAdminSession(), DEFAULT_USER_TEST_ID, USER_TEST_SOURCE);
-        Session userTestSession = this.securityController.startSession(userTest.getUid(), USER_TEST_SOURCE, DEFAULT_USER_TEST_PASS);
-        assertFalse(this.securityController.canRead(userTestSession, this.workspaceTest.getUid()));
+        Session userTestSession = this.getSecurityController().startSession(userTest.getUid(), USER_TEST_SOURCE, DEFAULT_USER_TEST_PASS);
+        assertFalse(this.getSecurityController().canRead(userTestSession, this.workspaceTest.getUid()));
     }
 
     @Test
@@ -91,7 +91,7 @@ public class KernelTestAbstractTest extends KernelTestAbstract {
         assertEquals("mail", user.getMail());
 
         // user can connect ?
-        Session session = this.securityController.startSession("userTestFromPojo1", USER_TEST_SOURCE, "test");
+        Session session = this.getSecurityController().startSession("userTestFromPojo1", USER_TEST_SOURCE, "test");
         assertNotNull(session);
 
         // some cleaning

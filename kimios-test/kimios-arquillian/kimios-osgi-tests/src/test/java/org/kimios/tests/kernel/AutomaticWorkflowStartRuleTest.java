@@ -95,7 +95,7 @@ public class AutomaticWorkflowStartRuleTest extends KernelTestAbstract {
 
         this.init();
 
-        this.setAdminSession(this.securityController.startSession(ADMIN_LOGIN, USER_TEST_SOURCE, ADMIN_PWD));
+        this.setAdminSession(this.getSecurityController().startSession(ADMIN_LOGIN, USER_TEST_SOURCE, ADMIN_PWD));
 
         try {
             this.workspaceTest = this.workspaceController.getWorkspace(this.getAdminSession(), WORKSPACE_TEST_NAME);
@@ -113,7 +113,7 @@ public class AutomaticWorkflowStartRuleTest extends KernelTestAbstract {
         this.giveAccessToEntityForUser(this.getAdminSession(), this.folderTest1, this.userTest1, true, true, false);
 
         // init test users' sessions
-        this.userTest1Session = this.securityController.startSession(USER_TEST_1, USER_TEST_SOURCE, "test");
+        this.userTest1Session = this.getSecurityController().startSession(USER_TEST_1, USER_TEST_SOURCE, "test");
 
         // user 1 creates a subfolder
         this.userTest1FolderUid = this.folderController.createFolder(this.userTest1Session, "User_1_Folder", this.folderTest1.getUid(), true);
@@ -214,7 +214,7 @@ public class AutomaticWorkflowStartRuleTest extends KernelTestAbstract {
     public void tearDown() {
         // init test users' sessions
         if (this.userTest1Session != null) {
-            this.securityController.endSession(this.userTest1Session.getUid());
+            this.getSecurityController().endSession(this.userTest1Session.getUid());
         }
         if (this.folderTest1 != null) {
             this.folderController.deleteFolder(this.getAdminSession(), this.folderTest1.getUid());

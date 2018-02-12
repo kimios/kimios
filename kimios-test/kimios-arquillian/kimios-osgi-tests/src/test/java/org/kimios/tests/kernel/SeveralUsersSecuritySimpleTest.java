@@ -44,7 +44,7 @@ public class SeveralUsersSecuritySimpleTest extends KernelTestAbstract {
     }
 
     private void giveWorkspaceAccessToUser(Session session, Workspace workspace, User user) {
-        List<DMEntitySecurity> entities = this.securityController.getDMEntitySecurityies(session, workspace.getUid());
+        List<DMEntitySecurity> entities = this.getSecurityController().getDMEntitySecurityies(session, workspace.getUid());
 
         String xmlStreamExistingEntitites = "";
         for (DMEntitySecurity entity : entities) {
@@ -71,7 +71,7 @@ public class SeveralUsersSecuritySimpleTest extends KernelTestAbstract {
                 "full=\"" + false + "\" />\r\n";
         xmlStream += "</security-rules>";
 
-        this.securityController.updateDMEntitySecurities(session, workspace.getUid(), xmlStream, false, true);
+        this.getSecurityController().updateDMEntitySecurities(session, workspace.getUid(), xmlStream, false, true);
     }
 
     @Before
@@ -79,7 +79,7 @@ public class SeveralUsersSecuritySimpleTest extends KernelTestAbstract {
 
         this.init();
 
-        this.setAdminSession(this.securityController.startSession(ADMIN_LOGIN, USER_TEST_SOURCE, ADMIN_PWD));
+        this.setAdminSession(this.getSecurityController().startSession(ADMIN_LOGIN, USER_TEST_SOURCE, ADMIN_PWD));
 
         try {
             // get test workspace
@@ -114,9 +114,9 @@ public class SeveralUsersSecuritySimpleTest extends KernelTestAbstract {
         this.administrationController.createUser(this.getAdminSession(), uids[i], firstnames[i], lastnames[i], phoneNumber, mails[i], password, authenticationSourceName, enabled);
         this.userTest3 = this.administrationController.getUser(this.getAdminSession(), uids[i], authenticationSourceName);
 
-        this.userTestSession1 = this.securityController.startSession(this.userTest1.getUid(), this.userTest1.getAuthenticationSourceName(), USER_PASSWORD);
-        this.userTestSession2 = this.securityController.startSession(this.userTest2.getUid(), this.userTest2.getAuthenticationSourceName(), USER_PASSWORD);
-        this.userTestSession3 = this.securityController.startSession(this.userTest3.getUid(), this.userTest3.getAuthenticationSourceName(), USER_PASSWORD);
+        this.userTestSession1 = this.getSecurityController().startSession(this.userTest1.getUid(), this.userTest1.getAuthenticationSourceName(), USER_PASSWORD);
+        this.userTestSession2 = this.getSecurityController().startSession(this.userTest2.getUid(), this.userTest2.getAuthenticationSourceName(), USER_PASSWORD);
+        this.userTestSession3 = this.getSecurityController().startSession(this.userTest3.getUid(), this.userTest3.getAuthenticationSourceName(), USER_PASSWORD);
 
         i = 0;
         this.userTest1 = this.administrationController.getUser(this.getAdminSession(), uids[i], authenticationSourceName);
@@ -131,14 +131,14 @@ public class SeveralUsersSecuritySimpleTest extends KernelTestAbstract {
         List<DMEntitySecurity> emptyList = new ArrayList<DMEntitySecurity>();
 
         // remove permission on folders
-        this.securityController.updateDMEntitySecurities(this.getAdminSession(), this.totoFolder.getUid(), emptyList, true, true);
-        this.securityController.updateDMEntitySecurities(this.getAdminSession(), this.totoFolder2.getUid(), emptyList, true, true);
+        this.getSecurityController().updateDMEntitySecurities(this.getAdminSession(), this.totoFolder.getUid(), emptyList, true, true);
+        this.getSecurityController().updateDMEntitySecurities(this.getAdminSession(), this.totoFolder2.getUid(), emptyList, true, true);
         // remove folders
         this.folderController.deleteFolder(this.getAdminSession(), this.totoFolder.getUid());
         this.folderController.deleteFolder(this.getAdminSession(), this.totoFolder2.getUid());
 
         // remove permissions on workspace
-        this.securityController.updateDMEntitySecurities(this.getAdminSession(), this.workspaceTest.getUid(), emptyList, true, true);
+        this.getSecurityController().updateDMEntitySecurities(this.getAdminSession(), this.workspaceTest.getUid(), emptyList, true, true);
 
         // remove users
         this.administrationController.deleteUser(this.getAdminSession(), this.userTest1.getUid(), this.userTest1.getAuthenticationSourceName());
@@ -149,74 +149,74 @@ public class SeveralUsersSecuritySimpleTest extends KernelTestAbstract {
     @Test
     public void testGiveAccessToUsers() {
         this.giveWorkspaceAccessToUser(this.getAdminSession(), this.workspaceTest, this.userTest1);
-        List<DMEntitySecurity> securityList = this.securityController.getDMEntitySecurityies(this.userTestSession1, this.workspaceTest.getUid());
+        List<DMEntitySecurity> securityList = this.getSecurityController().getDMEntitySecurityies(this.userTestSession1, this.workspaceTest.getUid());
 
-        assertTrue(this.securityController.canRead(this.userTestSession1, this.workspaceTest.getUid()));
-        assertFalse(this.securityController.canRead(this.userTestSession2, this.workspaceTest.getUid()));
-        assertFalse(this.securityController.canRead(this.userTestSession3, this.workspaceTest.getUid()));
+        assertTrue(this.getSecurityController().canRead(this.userTestSession1, this.workspaceTest.getUid()));
+        assertFalse(this.getSecurityController().canRead(this.userTestSession2, this.workspaceTest.getUid()));
+        assertFalse(this.getSecurityController().canRead(this.userTestSession3, this.workspaceTest.getUid()));
 
-        assertTrue(this.securityController.canWrite(this.userTestSession1, this.workspaceTest.getUid()));
-        assertFalse(this.securityController.canWrite(this.userTestSession2, this.workspaceTest.getUid()));
-        assertFalse(this.securityController.canWrite(this.userTestSession3, this.workspaceTest.getUid()));
+        assertTrue(this.getSecurityController().canWrite(this.userTestSession1, this.workspaceTest.getUid()));
+        assertFalse(this.getSecurityController().canWrite(this.userTestSession2, this.workspaceTest.getUid()));
+        assertFalse(this.getSecurityController().canWrite(this.userTestSession3, this.workspaceTest.getUid()));
 
         this.giveWorkspaceAccessToUser(this.getAdminSession(), this.workspaceTest, this.userTest2);
-        securityList = this.securityController.getDMEntitySecurityies(this.userTestSession2, this.workspaceTest.getUid());
+        securityList = this.getSecurityController().getDMEntitySecurityies(this.userTestSession2, this.workspaceTest.getUid());
 
-        assertTrue(this.securityController.canRead(this.userTestSession1, this.workspaceTest.getUid()));
-        assertTrue(this.securityController.canRead(this.userTestSession2, this.workspaceTest.getUid()));
-        assertFalse(this.securityController.canRead(this.userTestSession3, this.workspaceTest.getUid()));
+        assertTrue(this.getSecurityController().canRead(this.userTestSession1, this.workspaceTest.getUid()));
+        assertTrue(this.getSecurityController().canRead(this.userTestSession2, this.workspaceTest.getUid()));
+        assertFalse(this.getSecurityController().canRead(this.userTestSession3, this.workspaceTest.getUid()));
 
-        assertTrue(this.securityController.canWrite(this.userTestSession1, this.workspaceTest.getUid()));
-        assertTrue(this.securityController.canWrite(this.userTestSession2, this.workspaceTest.getUid()));
-        assertFalse(this.securityController.canWrite(this.userTestSession3, this.workspaceTest.getUid()));
+        assertTrue(this.getSecurityController().canWrite(this.userTestSession1, this.workspaceTest.getUid()));
+        assertTrue(this.getSecurityController().canWrite(this.userTestSession2, this.workspaceTest.getUid()));
+        assertFalse(this.getSecurityController().canWrite(this.userTestSession3, this.workspaceTest.getUid()));
 
         this.giveWorkspaceAccessToUser(this.getAdminSession(), this.workspaceTest, this.userTest3);
-        securityList = this.securityController.getDMEntitySecurityies(this.userTestSession3, this.workspaceTest.getUid());
+        securityList = this.getSecurityController().getDMEntitySecurityies(this.userTestSession3, this.workspaceTest.getUid());
 
-        assertTrue(this.securityController.canRead(this.userTestSession1, this.workspaceTest.getUid()));
-        assertTrue(this.securityController.canRead(this.userTestSession2, this.workspaceTest.getUid()));
-        assertTrue(this.securityController.canRead(this.userTestSession3, this.workspaceTest.getUid()));
+        assertTrue(this.getSecurityController().canRead(this.userTestSession1, this.workspaceTest.getUid()));
+        assertTrue(this.getSecurityController().canRead(this.userTestSession2, this.workspaceTest.getUid()));
+        assertTrue(this.getSecurityController().canRead(this.userTestSession3, this.workspaceTest.getUid()));
 
-        assertTrue(this.securityController.canWrite(this.userTestSession1, this.workspaceTest.getUid()));
-        assertTrue(this.securityController.canWrite(this.userTestSession2, this.workspaceTest.getUid()));
-        assertTrue(this.securityController.canWrite(this.userTestSession3, this.workspaceTest.getUid()));
+        assertTrue(this.getSecurityController().canWrite(this.userTestSession1, this.workspaceTest.getUid()));
+        assertTrue(this.getSecurityController().canWrite(this.userTestSession2, this.workspaceTest.getUid()));
+        assertTrue(this.getSecurityController().canWrite(this.userTestSession3, this.workspaceTest.getUid()));
 
         // create folder WITH security inherited
         long folderUid = this.folderController.createFolder(this.userTestSession1, "toto's folder", workspaceTest.getUid(), true);
         this.totoFolder = this.folderController.getFolder(this.userTestSession1, folderUid);
         assertEquals(this.userTestSession1.getUserName(), this.totoFolder.getOwner());
-        assertTrue(this.securityController.canRead(this.userTestSession1, this.totoFolder.getUid()));
-        assertTrue(this.securityController.canRead(this.userTestSession2, this.totoFolder.getUid()));
-        assertTrue(this.securityController.canRead(this.userTestSession3, this.totoFolder.getUid()));
-        assertTrue(this.securityController.canWrite(this.userTestSession1, this.totoFolder.getUid()));
-        assertTrue(this.securityController.canWrite(this.userTestSession2, this.totoFolder.getUid()));
-        assertTrue(this.securityController.canWrite(this.userTestSession3, this.totoFolder.getUid()));
+        assertTrue(this.getSecurityController().canRead(this.userTestSession1, this.totoFolder.getUid()));
+        assertTrue(this.getSecurityController().canRead(this.userTestSession2, this.totoFolder.getUid()));
+        assertTrue(this.getSecurityController().canRead(this.userTestSession3, this.totoFolder.getUid()));
+        assertTrue(this.getSecurityController().canWrite(this.userTestSession1, this.totoFolder.getUid()));
+        assertTrue(this.getSecurityController().canWrite(this.userTestSession2, this.totoFolder.getUid()));
+        assertTrue(this.getSecurityController().canWrite(this.userTestSession3, this.totoFolder.getUid()));
 
         // create folder WITHOUT security inherited
         long folder2Uid = this.folderController.createFolder(this.userTestSession1, "toto's second folder", workspaceTest.getUid(), false);
         this.totoFolder2 = this.folderController.getFolder(this.userTestSession1, folder2Uid);
-        assertTrue(this.securityController.canRead(this.userTestSession1, this.totoFolder2.getUid()));
-        assertFalse(this.securityController.canRead(this.userTestSession2, this.totoFolder2.getUid()));
-        assertFalse(this.securityController.canRead(this.userTestSession3, this.totoFolder2.getUid()));
-        assertTrue(this.securityController.canWrite(this.userTestSession1, this.totoFolder2.getUid()));
-        assertFalse(this.securityController.canWrite(this.userTestSession2, this.totoFolder2.getUid()));
-        assertFalse(this.securityController.canWrite(this.userTestSession3, this.totoFolder2.getUid()));
+        assertTrue(this.getSecurityController().canRead(this.userTestSession1, this.totoFolder2.getUid()));
+        assertFalse(this.getSecurityController().canRead(this.userTestSession2, this.totoFolder2.getUid()));
+        assertFalse(this.getSecurityController().canRead(this.userTestSession3, this.totoFolder2.getUid()));
+        assertTrue(this.getSecurityController().canWrite(this.userTestSession1, this.totoFolder2.getUid()));
+        assertFalse(this.getSecurityController().canWrite(this.userTestSession2, this.totoFolder2.getUid()));
+        assertFalse(this.getSecurityController().canWrite(this.userTestSession3, this.totoFolder2.getUid()));
 
 
         // user 1 gives access to user 2 for folder
         this.giveAccessToEntityForUser(this.userTestSession1, this.totoFolder2, this.userTest2, true, false, false);
-        assertTrue(this.securityController.canRead(this.userTestSession2, this.totoFolder2.getUid()));
-        assertFalse(this.securityController.canWrite(this.userTestSession2, this.totoFolder2.getUid()));
+        assertTrue(this.getSecurityController().canRead(this.userTestSession2, this.totoFolder2.getUid()));
+        assertFalse(this.getSecurityController().canWrite(this.userTestSession2, this.totoFolder2.getUid()));
 
         // user 1 gives access to user 3 for folder
         this.giveAccessToEntityForUser(this.userTestSession1, this.totoFolder2, this.userTest3, true, true, false);
-        assertTrue(this.securityController.canRead(this.userTestSession3, this.totoFolder2.getUid()));
-        assertTrue(this.securityController.canWrite(this.userTestSession3, this.totoFolder2.getUid()));
+        assertTrue(this.getSecurityController().canRead(this.userTestSession3, this.totoFolder2.getUid()));
+        assertTrue(this.getSecurityController().canWrite(this.userTestSession3, this.totoFolder2.getUid()));
 
         // user 1 removes access to user 2 for folder
         this.giveAccessToEntityForUser(this.userTestSession1, this.totoFolder2, this.userTest2, false, false, false);
-        assertFalse(this.securityController.canRead(this.userTestSession2, this.totoFolder2.getUid()));
-        assertFalse(this.securityController.canWrite(this.userTestSession2, this.totoFolder2.getUid()));
+        assertFalse(this.getSecurityController().canRead(this.userTestSession2, this.totoFolder2.getUid()));
+        assertFalse(this.getSecurityController().canWrite(this.userTestSession2, this.totoFolder2.getUid()));
         // can user 2 get the folder ?
         // must be no
         Folder totoFolder2WithUser2 = null;
@@ -248,15 +248,15 @@ public class SeveralUsersSecuritySimpleTest extends KernelTestAbstract {
             System.out.println("Cause : " + e.getCause());
         }
         assertTrue(totoDoc1Uid > 0);
-        assertTrue(this.securityController.hasFullAccess(this.userTestSession1, totoDoc1Uid));
-        assertFalse(this.securityController.hasFullAccess(this.userTestSession2, totoDoc1Uid));
-        assertFalse(this.securityController.hasFullAccess(this.userTestSession3, totoDoc1Uid));
-        assertTrue(this.securityController.canRead(this.userTestSession1, totoDoc1Uid));
-        assertFalse(this.securityController.canRead(this.userTestSession2, totoDoc1Uid));
-        assertTrue(this.securityController.canRead(this.userTestSession3, totoDoc1Uid));
-        assertTrue(this.securityController.canWrite(this.userTestSession1, totoDoc1Uid));
-        assertFalse(this.securityController.canWrite(this.userTestSession2, totoDoc1Uid));
-        assertTrue(this.securityController.canWrite(this.userTestSession3, totoDoc1Uid));
+        assertTrue(this.getSecurityController().hasFullAccess(this.userTestSession1, totoDoc1Uid));
+        assertFalse(this.getSecurityController().hasFullAccess(this.userTestSession2, totoDoc1Uid));
+        assertFalse(this.getSecurityController().hasFullAccess(this.userTestSession3, totoDoc1Uid));
+        assertTrue(this.getSecurityController().canRead(this.userTestSession1, totoDoc1Uid));
+        assertFalse(this.getSecurityController().canRead(this.userTestSession2, totoDoc1Uid));
+        assertTrue(this.getSecurityController().canRead(this.userTestSession3, totoDoc1Uid));
+        assertTrue(this.getSecurityController().canWrite(this.userTestSession1, totoDoc1Uid));
+        assertFalse(this.getSecurityController().canWrite(this.userTestSession2, totoDoc1Uid));
+        assertTrue(this.getSecurityController().canWrite(this.userTestSession3, totoDoc1Uid));
 
         // now let's create an toher document (WITHOUT security inherited
         path = this.totoFolder2.getPath() + "/" + "totoDoc2";
@@ -269,15 +269,15 @@ public class SeveralUsersSecuritySimpleTest extends KernelTestAbstract {
             System.out.println("Cause : " + e.getCause());
         }
         assertTrue(totoDoc2Uid > 0);
-        assertTrue(this.securityController.hasFullAccess(this.userTestSession1, totoDoc2Uid));
-        assertFalse(this.securityController.hasFullAccess(this.userTestSession2, totoDoc2Uid));
-        assertFalse(this.securityController.hasFullAccess(this.userTestSession3, totoDoc2Uid));
-        assertTrue(this.securityController.canRead(this.userTestSession1, totoDoc2Uid));
-        assertFalse(this.securityController.canRead(this.userTestSession2, totoDoc2Uid));
-        assertFalse(this.securityController.canRead(this.userTestSession3, totoDoc2Uid));
-        assertTrue(this.securityController.canWrite(this.userTestSession1, totoDoc2Uid));
-        assertFalse(this.securityController.canWrite(this.userTestSession2, totoDoc2Uid));
-        assertFalse(this.securityController.canWrite(this.userTestSession3, totoDoc2Uid));
+        assertTrue(this.getSecurityController().hasFullAccess(this.userTestSession1, totoDoc2Uid));
+        assertFalse(this.getSecurityController().hasFullAccess(this.userTestSession2, totoDoc2Uid));
+        assertFalse(this.getSecurityController().hasFullAccess(this.userTestSession3, totoDoc2Uid));
+        assertTrue(this.getSecurityController().canRead(this.userTestSession1, totoDoc2Uid));
+        assertFalse(this.getSecurityController().canRead(this.userTestSession2, totoDoc2Uid));
+        assertFalse(this.getSecurityController().canRead(this.userTestSession3, totoDoc2Uid));
+        assertTrue(this.getSecurityController().canWrite(this.userTestSession1, totoDoc2Uid));
+        assertFalse(this.getSecurityController().canWrite(this.userTestSession2, totoDoc2Uid));
+        assertFalse(this.getSecurityController().canWrite(this.userTestSession3, totoDoc2Uid));
 
         Document totoDoc1 = this.documentController.getDocument(this.userTestSession1, totoDoc1Uid);
 
@@ -313,30 +313,30 @@ public class SeveralUsersSecuritySimpleTest extends KernelTestAbstract {
 
         this.giveAccessToEntityForUser(this.userTestSession1, totoDoc1, userTest2, true, false, false);
         this.giveAccessToEntityForUser(this.userTestSession1, totoDoc1, userTest3, true, false, false);
-        assertTrue(this.securityController.canRead(this.userTestSession2, totoDoc1Uid));
-        assertFalse(this.securityController.canWrite(this.userTestSession2, totoDoc1Uid));
-        assertTrue(this.securityController.canRead(this.userTestSession3, totoDoc1Uid));
-        assertFalse(this.securityController.canWrite(this.userTestSession3, totoDoc1Uid));
+        assertTrue(this.getSecurityController().canRead(this.userTestSession2, totoDoc1Uid));
+        assertFalse(this.getSecurityController().canWrite(this.userTestSession2, totoDoc1Uid));
+        assertTrue(this.getSecurityController().canRead(this.userTestSession3, totoDoc1Uid));
+        assertFalse(this.getSecurityController().canWrite(this.userTestSession3, totoDoc1Uid));
 
         this.giveAccessToEntityForUser(this.userTestSession1, totoDoc1, userTest2, true, true, true);
-        assertTrue(this.securityController.hasFullAccess(this.userTestSession2, totoDoc1Uid));
+        assertTrue(this.getSecurityController().hasFullAccess(this.userTestSession2, totoDoc1Uid));
         this.giveAccessToEntityForUser(this.userTestSession2, totoDoc1, userTest1, true, false, false);
-        assertTrue(this.securityController.canRead(this.userTestSession1, totoDoc1Uid));
-        assertTrue(this.securityController.canWrite(this.userTestSession1, totoDoc1Uid));
-        assertTrue(this.securityController.hasFullAccess(this.userTestSession1, totoDoc1Uid));
+        assertTrue(this.getSecurityController().canRead(this.userTestSession1, totoDoc1Uid));
+        assertTrue(this.getSecurityController().canWrite(this.userTestSession1, totoDoc1Uid));
+        assertTrue(this.getSecurityController().hasFullAccess(this.userTestSession1, totoDoc1Uid));
         assertEquals(totoDoc1.getOwner(), this.userTest1.getUid());
 
         this.giveAccessToEntityForUser(this.userTestSession1, totoDoc1, userTest2, true, false, false);
-        assertTrue(this.securityController.canRead(this.userTestSession2, totoDoc1Uid));
-        assertFalse(this.securityController.canWrite(this.userTestSession2, totoDoc1Uid));
-        assertFalse(this.securityController.hasFullAccess(this.userTestSession2, totoDoc1Uid));
+        assertTrue(this.getSecurityController().canRead(this.userTestSession2, totoDoc1Uid));
+        assertFalse(this.getSecurityController().canWrite(this.userTestSession2, totoDoc1Uid));
+        assertFalse(this.getSecurityController().hasFullAccess(this.userTestSession2, totoDoc1Uid));
 
         this.administrationController.changeOwnership(this.getAdminSession(), totoDoc1Uid, userTest2.getUid(), userTest2.getAuthenticationSourceName());
         totoDoc1 = this.documentController.getDocument(this.userTestSession1, totoDoc1Uid);
         assertEquals(totoDoc1.getOwner(), this.userTest2.getUid());
-        assertTrue(this.securityController.canRead(this.userTestSession2, totoDoc1Uid));
-        assertTrue(this.securityController.canWrite(this.userTestSession2, totoDoc1Uid));
-        assertTrue(this.securityController.hasFullAccess(this.userTestSession2, totoDoc1Uid));
+        assertTrue(this.getSecurityController().canRead(this.userTestSession2, totoDoc1Uid));
+        assertTrue(this.getSecurityController().canWrite(this.userTestSession2, totoDoc1Uid));
+        assertTrue(this.getSecurityController().hasFullAccess(this.userTestSession2, totoDoc1Uid));
 
     }
 }

@@ -44,7 +44,7 @@ public class UserWorkspaceFolderSimpleTest extends KernelTestAbstract {
 
         this.init();
 
-        this.setAdminSession(this.securityController.startSession(ADMIN_LOGIN, ADMIN_SOURCE, ADMIN_PWD));
+        this.setAdminSession(this.getSecurityController().startSession(ADMIN_LOGIN, ADMIN_SOURCE, ADMIN_PWD));
 
         try {
             this.workspaceTest = this.workspaceController.getWorkspace(this.getAdminSession(), WORKSPACE_TEST);
@@ -127,11 +127,11 @@ public class UserWorkspaceFolderSimpleTest extends KernelTestAbstract {
         xmlStream += "</security-rules>";
 
         // start session userTest
-        this.userTestSession = this.securityController.startSession("userTest", "kimios", "test");
+        this.userTestSession = this.getSecurityController().startSession("userTest", "kimios", "test");
 
         // give access to the workspace
-        this.securityController.updateDMEntitySecurities(this.getAdminSession(), workspaceTest.getUid(), xmlStream, false, true);
-        List<DMEntitySecurity> dmEntitySecurities = this.securityController.getDMEntitySecurityies(this.userTestSession, wUid);
+        this.getSecurityController().updateDMEntitySecurities(this.getAdminSession(), workspaceTest.getUid(), xmlStream, false, true);
+        List<DMEntitySecurity> dmEntitySecurities = this.getSecurityController().getDMEntitySecurityies(this.userTestSession, wUid);
         assertNotNull(dmEntitySecurities);
         assertTrue(dmEntitySecurities.size() > 0);
 
@@ -150,8 +150,8 @@ public class UserWorkspaceFolderSimpleTest extends KernelTestAbstract {
         // create folder with userTest session
         long folderUid = this.folderController.createFolder(this.userTestSession, "userTest folder 01", workspaceTest.getUid(), true);
         assertTrue(folderUid > 0);
-        assertTrue(this.securityController.canRead(this.userTestSession, folderUid));
-        assertTrue(this.securityController.canWrite(this.userTestSession, folderUid));
+        assertTrue(this.getSecurityController().canRead(this.userTestSession, folderUid));
+        assertTrue(this.getSecurityController().canWrite(this.userTestSession, folderUid));
 
         Folder folder = this.folderController.getFolder(this.userTestSession, folderUid);
         String folderOwner = folder.getOwner();
@@ -196,13 +196,13 @@ public class UserWorkspaceFolderSimpleTest extends KernelTestAbstract {
                 "full=\"" + false + "\" />\r\n";
         xmlStream += "</security-rules>";
 
-        this.securityController.updateDMEntitySecurities(this.getAdminSession(), workspaceTest.getUid(), xmlStream, false, true);
-        List<DMEntitySecurity> dmEntitySecurities = this.securityController.getDMEntitySecurityies(this.userTestSession, workspaceTest.getUid());
+        this.getSecurityController().updateDMEntitySecurities(this.getAdminSession(), workspaceTest.getUid(), xmlStream, false, true);
+        List<DMEntitySecurity> dmEntitySecurities = this.getSecurityController().getDMEntitySecurityies(this.userTestSession, workspaceTest.getUid());
         assertTrue(dmEntitySecurities.size() > 0);
 
 
-//        assertTrue(this.securityController.canRead(this.getAdminSession(), workspaceTest.getUid()));
-//        assertTrue(this.securityController.canWrite(this.getAdminSession(), workspaceTest.getUid()));
+//        assertTrue(this.getSecurityController().canRead(this.getAdminSession(), workspaceTest.getUid()));
+//        assertTrue(this.getSecurityController().canWrite(this.getAdminSession(), workspaceTest.getUid()));
 
     }
 
