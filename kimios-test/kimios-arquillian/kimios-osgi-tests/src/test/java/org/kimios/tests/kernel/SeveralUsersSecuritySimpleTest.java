@@ -25,7 +25,6 @@ import static org.junit.Assert.*;
 @RunWith(Arquillian.class)
 public class SeveralUsersSecuritySimpleTest extends KernelTestAbstract {
 
-    private Session adminSession;
     private User userTest1;
     private User userTest2;
     private User userTest3;
@@ -80,15 +79,15 @@ public class SeveralUsersSecuritySimpleTest extends KernelTestAbstract {
 
         this.init();
 
-        this.adminSession = this.securityController.startSession(ADMIN_LOGIN, USER_TEST_SOURCE, ADMIN_PWD);
+        this.setAdminSession(this.securityController.startSession(ADMIN_LOGIN, USER_TEST_SOURCE, ADMIN_PWD));
 
         try {
             // get test workspace
-            this.workspaceTest = this.workspaceController.getWorkspace(this.adminSession, WORKSPACE_TEST_NAME);
+            this.workspaceTest = this.workspaceController.getWorkspace(this.getAdminSession(), WORKSPACE_TEST_NAME);
         } catch (NullPointerException e) {
             // create workspace
-            this.workspaceController.createWorkspace(this.adminSession, WORKSPACE_TEST_NAME);
-            this.workspaceTest = this.workspaceController.getWorkspace(this.adminSession, WORKSPACE_TEST_NAME);
+            this.workspaceController.createWorkspace(this.getAdminSession(), WORKSPACE_TEST_NAME);
+            this.workspaceTest = this.workspaceController.getWorkspace(this.getAdminSession(), WORKSPACE_TEST_NAME);
         }
 
         // create users
@@ -104,27 +103,27 @@ public class SeveralUsersSecuritySimpleTest extends KernelTestAbstract {
 
         // user toto
         int i = 0;
-        this.administrationController.createUser(this.adminSession, uids[i], firstnames[i], lastnames[i], phoneNumber, mails[i], password, authenticationSourceName, enabled);
-        this.userTest1 = this.administrationController.getUser(this.adminSession, uids[i], authenticationSourceName);
+        this.administrationController.createUser(this.getAdminSession(), uids[i], firstnames[i], lastnames[i], phoneNumber, mails[i], password, authenticationSourceName, enabled);
+        this.userTest1 = this.administrationController.getUser(this.getAdminSession(), uids[i], authenticationSourceName);
         // user titi
         i = 1;
-        this.administrationController.createUser(this.adminSession, uids[i], firstnames[i], lastnames[i], phoneNumber, mails[i], password, authenticationSourceName, enabled);
-        this.userTest2 = this.administrationController.getUser(this.adminSession, uids[i], authenticationSourceName);
+        this.administrationController.createUser(this.getAdminSession(), uids[i], firstnames[i], lastnames[i], phoneNumber, mails[i], password, authenticationSourceName, enabled);
+        this.userTest2 = this.administrationController.getUser(this.getAdminSession(), uids[i], authenticationSourceName);
         // user tutu
         i = 2;
-        this.administrationController.createUser(this.adminSession, uids[i], firstnames[i], lastnames[i], phoneNumber, mails[i], password, authenticationSourceName, enabled);
-        this.userTest3 = this.administrationController.getUser(this.adminSession, uids[i], authenticationSourceName);
+        this.administrationController.createUser(this.getAdminSession(), uids[i], firstnames[i], lastnames[i], phoneNumber, mails[i], password, authenticationSourceName, enabled);
+        this.userTest3 = this.administrationController.getUser(this.getAdminSession(), uids[i], authenticationSourceName);
 
         this.userTestSession1 = this.securityController.startSession(this.userTest1.getUid(), this.userTest1.getAuthenticationSourceName(), USER_PASSWORD);
         this.userTestSession2 = this.securityController.startSession(this.userTest2.getUid(), this.userTest2.getAuthenticationSourceName(), USER_PASSWORD);
         this.userTestSession3 = this.securityController.startSession(this.userTest3.getUid(), this.userTest3.getAuthenticationSourceName(), USER_PASSWORD);
 
         i = 0;
-        this.userTest1 = this.administrationController.getUser(this.adminSession, uids[i], authenticationSourceName);
+        this.userTest1 = this.administrationController.getUser(this.getAdminSession(), uids[i], authenticationSourceName);
         i = 1;
-        this.userTest2 = this.administrationController.getUser(this.adminSession, uids[i], authenticationSourceName);
+        this.userTest2 = this.administrationController.getUser(this.getAdminSession(), uids[i], authenticationSourceName);
         i = 2;
-        this.userTest3 = this.administrationController.getUser(this.adminSession, uids[i], authenticationSourceName);
+        this.userTest3 = this.administrationController.getUser(this.getAdminSession(), uids[i], authenticationSourceName);
     }
 
     @After
@@ -132,24 +131,24 @@ public class SeveralUsersSecuritySimpleTest extends KernelTestAbstract {
         List<DMEntitySecurity> emptyList = new ArrayList<DMEntitySecurity>();
 
         // remove permission on folders
-        this.securityController.updateDMEntitySecurities(this.adminSession, this.totoFolder.getUid(), emptyList, true, true);
-        this.securityController.updateDMEntitySecurities(this.adminSession, this.totoFolder2.getUid(), emptyList, true, true);
+        this.securityController.updateDMEntitySecurities(this.getAdminSession(), this.totoFolder.getUid(), emptyList, true, true);
+        this.securityController.updateDMEntitySecurities(this.getAdminSession(), this.totoFolder2.getUid(), emptyList, true, true);
         // remove folders
-        this.folderController.deleteFolder(this.adminSession, this.totoFolder.getUid());
-        this.folderController.deleteFolder(this.adminSession, this.totoFolder2.getUid());
+        this.folderController.deleteFolder(this.getAdminSession(), this.totoFolder.getUid());
+        this.folderController.deleteFolder(this.getAdminSession(), this.totoFolder2.getUid());
 
         // remove permissions on workspace
-        this.securityController.updateDMEntitySecurities(this.adminSession, this.workspaceTest.getUid(), emptyList, true, true);
+        this.securityController.updateDMEntitySecurities(this.getAdminSession(), this.workspaceTest.getUid(), emptyList, true, true);
 
         // remove users
-        this.administrationController.deleteUser(this.adminSession, this.userTest1.getUid(), this.userTest1.getAuthenticationSourceName());
-        this.administrationController.deleteUser(this.adminSession, this.userTest2.getUid(), this.userTest2.getAuthenticationSourceName());
-        this.administrationController.deleteUser(this.adminSession, this.userTest3.getUid(), this.userTest3.getAuthenticationSourceName());
+        this.administrationController.deleteUser(this.getAdminSession(), this.userTest1.getUid(), this.userTest1.getAuthenticationSourceName());
+        this.administrationController.deleteUser(this.getAdminSession(), this.userTest2.getUid(), this.userTest2.getAuthenticationSourceName());
+        this.administrationController.deleteUser(this.getAdminSession(), this.userTest3.getUid(), this.userTest3.getAuthenticationSourceName());
     }
 
     @Test
     public void testGiveAccessToUsers() {
-        this.giveWorkspaceAccessToUser(this.adminSession, this.workspaceTest, this.userTest1);
+        this.giveWorkspaceAccessToUser(this.getAdminSession(), this.workspaceTest, this.userTest1);
         List<DMEntitySecurity> securityList = this.securityController.getDMEntitySecurityies(this.userTestSession1, this.workspaceTest.getUid());
 
         assertTrue(this.securityController.canRead(this.userTestSession1, this.workspaceTest.getUid()));
@@ -160,7 +159,7 @@ public class SeveralUsersSecuritySimpleTest extends KernelTestAbstract {
         assertFalse(this.securityController.canWrite(this.userTestSession2, this.workspaceTest.getUid()));
         assertFalse(this.securityController.canWrite(this.userTestSession3, this.workspaceTest.getUid()));
 
-        this.giveWorkspaceAccessToUser(this.adminSession, this.workspaceTest, this.userTest2);
+        this.giveWorkspaceAccessToUser(this.getAdminSession(), this.workspaceTest, this.userTest2);
         securityList = this.securityController.getDMEntitySecurityies(this.userTestSession2, this.workspaceTest.getUid());
 
         assertTrue(this.securityController.canRead(this.userTestSession1, this.workspaceTest.getUid()));
@@ -171,7 +170,7 @@ public class SeveralUsersSecuritySimpleTest extends KernelTestAbstract {
         assertTrue(this.securityController.canWrite(this.userTestSession2, this.workspaceTest.getUid()));
         assertFalse(this.securityController.canWrite(this.userTestSession3, this.workspaceTest.getUid()));
 
-        this.giveWorkspaceAccessToUser(this.adminSession, this.workspaceTest, this.userTest3);
+        this.giveWorkspaceAccessToUser(this.getAdminSession(), this.workspaceTest, this.userTest3);
         securityList = this.securityController.getDMEntitySecurityies(this.userTestSession3, this.workspaceTest.getUid());
 
         assertTrue(this.securityController.canRead(this.userTestSession1, this.workspaceTest.getUid()));
@@ -332,7 +331,7 @@ public class SeveralUsersSecuritySimpleTest extends KernelTestAbstract {
         assertFalse(this.securityController.canWrite(this.userTestSession2, totoDoc1Uid));
         assertFalse(this.securityController.hasFullAccess(this.userTestSession2, totoDoc1Uid));
 
-        this.administrationController.changeOwnership(this.adminSession, totoDoc1Uid, userTest2.getUid(), userTest2.getAuthenticationSourceName());
+        this.administrationController.changeOwnership(this.getAdminSession(), totoDoc1Uid, userTest2.getUid(), userTest2.getAuthenticationSourceName());
         totoDoc1 = this.documentController.getDocument(this.userTestSession1, totoDoc1Uid);
         assertEquals(totoDoc1.getOwner(), this.userTest2.getUid());
         assertTrue(this.securityController.canRead(this.userTestSession2, totoDoc1Uid));

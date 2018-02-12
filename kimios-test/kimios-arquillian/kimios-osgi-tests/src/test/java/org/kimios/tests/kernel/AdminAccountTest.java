@@ -23,8 +23,6 @@ import static org.junit.Assert.*;
 @RunWith(Arquillian.class)
 public class AdminAccountTest extends KernelTestAbstract {
 
-    private Session adminSession;
-
     @Deployment(name="karaf")
     public static JavaArchive createDeployment() {
         return OsgiDeployment.createArchive(AdminAccountTest.class.getSimpleName() + ".jar", null, AdminAccountTest.class);
@@ -34,14 +32,14 @@ public class AdminAccountTest extends KernelTestAbstract {
     public void setUp() {
         this.init();
 
-        this.adminSession =  this.securityController.startSession(TestAbstract.ADMIN_LOGIN, TestAbstract.ADMIN_SOURCE, TestAbstract.ADMIN_PWD);
+        this.setAdminSession(this.securityController.startSession(TestAbstract.ADMIN_LOGIN, TestAbstract.ADMIN_SOURCE, TestAbstract.ADMIN_PWD));
     }
 
     @Test
     public void testStartSession() throws Exception {
         try {
-            assertNotNull("Session is not null", this.adminSession);
-            assertTrue("sessionId length > 0", this.adminSession.getUid().length() > 0);
+            assertNotNull("Session is not null", this.getAdminSession());
+            assertTrue("sessionId length > 0", this.getAdminSession().getUid().length() > 0);
         } catch (DataSourceException e) {
             e.printStackTrace();
         } catch (AccessDeniedException e) {
@@ -51,7 +49,7 @@ public class AdminAccountTest extends KernelTestAbstract {
 
     @Test
     public void testAdminStuff() throws Exception {
-        boolean canCreateWorkspace = this.securityController.canCreateWorkspace(this.adminSession);
+        boolean canCreateWorkspace = this.securityController.canCreateWorkspace(this.getAdminSession());
         assertTrue(canCreateWorkspace);
 
 
@@ -59,19 +57,19 @@ public class AdminAccountTest extends KernelTestAbstract {
 //        boolean canRead = this.securityController.canRead(this.adminSession, 0);
 //        assertTrue(canRead);
 
-        boolean hasStudioAccess = this.securityController.hasStudioAccess(this.adminSession);
+        boolean hasStudioAccess = this.securityController.hasStudioAccess(this.getAdminSession());
         assertTrue(hasStudioAccess);
 
-        boolean hasReportingAccess = this.securityController.hasReportingAccess(this.adminSession);
+        boolean hasReportingAccess = this.securityController.hasReportingAccess(this.getAdminSession());
         assertFalse(hasReportingAccess);
 
-        boolean isAdmin = this.securityController.isAdmin(this.adminSession);
+        boolean isAdmin = this.securityController.isAdmin(this.getAdminSession());
         assertTrue(isAdmin);
 
         boolean isAdmin2 = this.securityController.isAdmin(TestAbstract.ADMIN_LOGIN, TestAbstract.ADMIN_SOURCE);
         assertTrue(isAdmin2);
 
-        boolean isSessionAlive = this.securityController.isSessionAlive(adminSession.getUid());
+        boolean isSessionAlive = this.securityController.isSessionAlive(getAdminSession().getUid());
         assertTrue(isSessionAlive);
 
     }

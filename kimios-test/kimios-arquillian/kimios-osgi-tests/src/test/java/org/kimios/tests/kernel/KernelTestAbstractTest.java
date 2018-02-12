@@ -47,10 +47,10 @@ public class KernelTestAbstractTest extends KernelTestAbstract {
 //        ServiceReference<IWorkspaceController> sRefWorkspace = context.getServiceReference(IWorkspaceController.class);
 //        this.workspaceController = context.getService(sRefWorkspace);
 
-        this.adminSession = this.securityController.startSession(TestAbstract.ADMIN_LOGIN, KernelTestAbstract.USER_TEST_SOURCE, TestAbstract.ADMIN_PWD);
+        this.setAdminSession(this.securityController.startSession(TestAbstract.ADMIN_LOGIN, KernelTestAbstract.USER_TEST_SOURCE, TestAbstract.ADMIN_PWD));
 
         this.createWorkspaceTestIfNotExists();
-        this.workspaceTest = this.workspaceController.getWorkspace(this.adminSession, WORKSPACE_TEST_NAME);
+        this.workspaceTest = this.workspaceController.getWorkspace(this.getAdminSession(), WORKSPACE_TEST_NAME);
 
         this.createUserTestIfNotExists(DEFAULT_USER_TEST_ID);
 
@@ -63,8 +63,8 @@ public class KernelTestAbstractTest extends KernelTestAbstract {
 
     @Test
     public void testChangePermissionOnEntityForUser() {
-        assertTrue(this.securityController.isSessionAlive(this.adminSession.getUid()));
-        User userTest = this.administrationController.getUser(this.adminSession, DEFAULT_USER_TEST_ID, USER_TEST_SOURCE);
+        assertTrue(this.securityController.isSessionAlive(this.getAdminSession().getUid()));
+        User userTest = this.administrationController.getUser(this.getAdminSession(), DEFAULT_USER_TEST_ID, USER_TEST_SOURCE);
         Session userTestSession = this.securityController.startSession(userTest.getUid(), USER_TEST_SOURCE, DEFAULT_USER_TEST_PASS);
         assertFalse(this.securityController.canRead(userTestSession, this.workspaceTest.getUid()));
     }
@@ -83,7 +83,7 @@ public class KernelTestAbstractTest extends KernelTestAbstract {
 
         this.createUserFromPojoWithPassword(user, "test");
         // user exists ?
-        User userExtracted = this.administrationController.getUser(this.adminSession, "userTestFromPojo1", USER_TEST_SOURCE);
+        User userExtracted = this.administrationController.getUser(this.getAdminSession(), "userTestFromPojo1", USER_TEST_SOURCE);
         assertNotNull(userExtracted);
         assertEquals("Johnny", user.getFirstName());
         assertEquals("Cash", user.getLastName());
@@ -95,6 +95,6 @@ public class KernelTestAbstractTest extends KernelTestAbstract {
         assertNotNull(session);
 
         // some cleaning
-        this.administrationController.deleteUser(this.adminSession, "userTestFromPojo1", USER_TEST_SOURCE);
+        this.administrationController.deleteUser(this.getAdminSession(), "userTestFromPojo1", USER_TEST_SOURCE);
     }
 }

@@ -95,22 +95,22 @@ public class AutomaticWorkflowStartRuleTest extends KernelTestAbstract {
 
         this.init();
 
-        this.adminSession = this.securityController.startSession(ADMIN_LOGIN, USER_TEST_SOURCE, ADMIN_PWD);
+        this.setAdminSession(this.securityController.startSession(ADMIN_LOGIN, USER_TEST_SOURCE, ADMIN_PWD));
 
         try {
-            this.workspaceTest = this.workspaceController.getWorkspace(this.adminSession, WORKSPACE_TEST_NAME);
+            this.workspaceTest = this.workspaceController.getWorkspace(this.getAdminSession(), WORKSPACE_TEST_NAME);
         } catch (Exception e) {
-            this.workspaceController.createWorkspace(this.adminSession, WORKSPACE_TEST_NAME);
-            this.workspaceTest = this.workspaceController.getWorkspace(this.adminSession, WORKSPACE_TEST_NAME);
+            this.workspaceController.createWorkspace(this.getAdminSession(), WORKSPACE_TEST_NAME);
+            this.workspaceTest = this.workspaceController.getWorkspace(this.getAdminSession(), WORKSPACE_TEST_NAME);
         }
 
         this.createTestUsers();
         // create folder in workspace
-        long folderUid = this.folderController.createFolder(this.adminSession, FOLDER_TEST_1, this.workspaceTest.getUid(), false);
-        this.folderTest1 = this.folderController.getFolder(this.adminSession, folderUid);
+        long folderUid = this.folderController.createFolder(this.getAdminSession(), FOLDER_TEST_1, this.workspaceTest.getUid(), false);
+        this.folderTest1 = this.folderController.getFolder(this.getAdminSession(), folderUid);
         // give access to users
-        this.userTest1 = this.administrationController.getUser(this.adminSession, USER_TEST_1, USER_TEST_SOURCE);
-        this.giveAccessToEntityForUser(this.adminSession, this.folderTest1, this.userTest1, true, true, false);
+        this.userTest1 = this.administrationController.getUser(this.getAdminSession(), USER_TEST_1, USER_TEST_SOURCE);
+        this.giveAccessToEntityForUser(this.getAdminSession(), this.folderTest1, this.userTest1, true, true, false);
 
         // init test users' sessions
         this.userTest1Session = this.securityController.startSession(USER_TEST_1, USER_TEST_SOURCE, "test");
@@ -127,8 +127,8 @@ public class AutomaticWorkflowStartRuleTest extends KernelTestAbstract {
         workflowStatusManager.setSecurityEntityType(SecurityEntityType.USER);
 
         WorkflowStatusManager workflowStatusManager2 = new WorkflowStatusManager();
-        workflowStatusManager2.setSecurityEntitySource(this.adminSession.getUserSource());
-        workflowStatusManager2.setSecurityEntityName(this.adminSession.getUserName());
+        workflowStatusManager2.setSecurityEntitySource(this.getAdminSession().getUserSource());
+        workflowStatusManager2.setSecurityEntityName(this.getAdminSession().getUserName());
         workflowStatusManager2.setSecurityEntityType(SecurityEntityType.USER);
 
         WorkflowStatusDefinition def1 = new WorkflowStatusDefinition();
@@ -139,7 +139,7 @@ public class AutomaticWorkflowStartRuleTest extends KernelTestAbstract {
         def1.setWorkflowStatusManagers(new WorkflowStatusManager[]{workflowStatusManager, workflowStatusManager2});
         defs.add(def1);
         try {
-            long workflowId = this.studioController.createWorkflow(this.adminSession, "TestWorkflow", "Workflow Test for automatic start",
+            long workflowId = this.studioController.createWorkflow(this.getAdminSession(), "TestWorkflow", "Workflow Test for automatic start",
                     XMLDescriptionGenerators.getWorkflowXMLDescriptor(-1, defs));
 
             this.workflow = this.studioController.getWorkflow(workflowId);
@@ -156,8 +156,8 @@ public class AutomaticWorkflowStartRuleTest extends KernelTestAbstract {
         ruleBean.setPath(this.folderTest1.getPath());
         ruleBean.setRecursive(true);
         ruleBean.setRuleCreationDate(new Date());
-        ruleBean.setRuleOwner(this.adminSession.getUserName());
-        ruleBean.setRuleOwnerSource(this.adminSession.getUserSource());
+        ruleBean.setRuleOwner(this.getAdminSession().getUserName());
+        ruleBean.setRuleOwnerSource(this.getAdminSession().getUserSource());
         ruleBean.setRuleUpdateDate(new Date());
         ruleBean.setEvents(new HashSet<EventBean>());
         EventBean fileUploadEvt = new EventBean();
@@ -166,7 +166,7 @@ public class AutomaticWorkflowStartRuleTest extends KernelTestAbstract {
         ruleBean.getEvents().add(fileUploadEvt);
         ruleBean.setParametersJson("{\"workflowName\":\"TestWorkflow\"}");
 
-        this.ruleId = this.rulesController.createRule(this.adminSession, ruleBean);
+        this.ruleId = this.rulesController.createRule(this.getAdminSession(), ruleBean);
         logger.info("Workflow {} and rule Id {} created", workflow, ruleId);
     }
 
@@ -204,7 +204,7 @@ public class AutomaticWorkflowStartRuleTest extends KernelTestAbstract {
         assertEquals("Workflow_Doc_Test", userDoc1.getName());
         assertEquals(userTest1Folder.getUid(), userDoc1.getFolderUid());
 
-        int pendingRequestAdminCount = this.workflowController.getPendingWorkflowRequests(this.adminSession).size();
+        int pendingRequestAdminCount = this.workflowController.getPendingWorkflowRequests(this.getAdminSession()).size();
         int pendingRequestUserTest1Count = this.workflowController.getPendingWorkflowRequests(this.userTest1Session).size();
         assertTrue(pendingRequestAdminCount == 0);
         assertTrue(pendingRequestUserTest1Count == 0);
@@ -217,10 +217,10 @@ public class AutomaticWorkflowStartRuleTest extends KernelTestAbstract {
             this.securityController.endSession(this.userTest1Session.getUid());
         }
         if (this.folderTest1 != null) {
-            this.folderController.deleteFolder(this.adminSession, this.folderTest1.getUid());
+            this.folderController.deleteFolder(this.getAdminSession(), this.folderTest1.getUid());
         }
         if(this.workflow != null){
-            this.studioController.deleteWorkflow(this.adminSession, this.workflow.getUid());
+            this.studioController.deleteWorkflow(this.getAdminSession(), this.workflow.getUid());
         }
         if(this.ruleId != null){
             //remove rule

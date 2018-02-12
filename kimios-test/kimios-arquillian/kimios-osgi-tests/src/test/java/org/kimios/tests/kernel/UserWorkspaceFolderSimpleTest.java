@@ -44,13 +44,13 @@ public class UserWorkspaceFolderSimpleTest extends KernelTestAbstract {
 
         this.init();
 
-        this.adminSession = this.securityController.startSession(ADMIN_LOGIN, ADMIN_SOURCE, ADMIN_PWD);
+        this.setAdminSession(this.securityController.startSession(ADMIN_LOGIN, ADMIN_SOURCE, ADMIN_PWD));
 
         try {
-            this.workspaceTest = this.workspaceController.getWorkspace(this.adminSession, WORKSPACE_TEST);
+            this.workspaceTest = this.workspaceController.getWorkspace(this.getAdminSession(), WORKSPACE_TEST);
         } catch (NullPointerException e) {
-            this.workspaceController.createWorkspace(this.adminSession, WORKSPACE_TEST);
-            this.workspaceTest = this.workspaceController.getWorkspace(this.adminSession, WORKSPACE_TEST);
+            this.workspaceController.createWorkspace(this.getAdminSession(), WORKSPACE_TEST);
+            this.workspaceTest = this.workspaceController.getWorkspace(this.getAdminSession(), WORKSPACE_TEST);
         }
 
         this.createUsersTest();
@@ -68,23 +68,23 @@ public class UserWorkspaceFolderSimpleTest extends KernelTestAbstract {
 
         uid = DEFAULT_USER_TEST_ID;
         try {
-            this.userTest = this.administrationController.getUser(this.adminSession, uid, authenticationSourceName);
+            this.userTest = this.administrationController.getUser(this.getAdminSession(), uid, authenticationSourceName);
         } catch (NullPointerException e) {
         }
         if (this.userTest == null) {
-            this.administrationController.createUser(this.adminSession, uid, firstname, lastname, phoneNumber, mail, password, authenticationSourceName, enabled);
-            this.userTest = this.administrationController.getUser(this.adminSession, uid, authenticationSourceName);
+            this.administrationController.createUser(this.getAdminSession(), uid, firstname, lastname, phoneNumber, mail, password, authenticationSourceName, enabled);
+            this.userTest = this.administrationController.getUser(this.getAdminSession(), uid, authenticationSourceName);
         }
 
         uid = USERID_TEST_2;
         User userTest2 = null;
         try {
-            userTest2 = this.administrationController.getUser(this.adminSession, uid, authenticationSourceName);
+            userTest2 = this.administrationController.getUser(this.getAdminSession(), uid, authenticationSourceName);
         } catch (NullPointerException e) {
         }
         if (userTest2 == null) {
-            this.administrationController.createUser(this.adminSession, uid, firstname, lastname, phoneNumber, mail, password, authenticationSourceName, enabled);
-            userTest2 = this.administrationController.getUser(this.adminSession, uid, authenticationSourceName);
+            this.administrationController.createUser(this.getAdminSession(), uid, firstname, lastname, phoneNumber, mail, password, authenticationSourceName, enabled);
+            userTest2 = this.administrationController.getUser(this.getAdminSession(), uid, authenticationSourceName);
         }
     }
 
@@ -99,7 +99,7 @@ public class UserWorkspaceFolderSimpleTest extends KernelTestAbstract {
         assertNull(workspaces);
 
         // give the access to the userTest
-        Workspace workspaceTest = this.workspaceController.getWorkspace(this.adminSession, WORKSPACE_TEST);
+        Workspace workspaceTest = this.workspaceController.getWorkspace(this.getAdminSession(), WORKSPACE_TEST);
         assertNotNull(workspaceTest);
         long wUid = workspaceTest.getUid();
         // update workspace security entities
@@ -130,7 +130,7 @@ public class UserWorkspaceFolderSimpleTest extends KernelTestAbstract {
         this.userTestSession = this.securityController.startSession("userTest", "kimios", "test");
 
         // give access to the workspace
-        this.securityController.updateDMEntitySecurities(this.adminSession, workspaceTest.getUid(), xmlStream, false, true);
+        this.securityController.updateDMEntitySecurities(this.getAdminSession(), workspaceTest.getUid(), xmlStream, false, true);
         List<DMEntitySecurity> dmEntitySecurities = this.securityController.getDMEntitySecurityies(this.userTestSession, wUid);
         assertNotNull(dmEntitySecurities);
         assertTrue(dmEntitySecurities.size() > 0);
@@ -167,10 +167,10 @@ public class UserWorkspaceFolderSimpleTest extends KernelTestAbstract {
     @Test
     public void testUserWorkspaceSecurity() {
         String uidUser = "userTest2";
-        User user = this.administrationController.getUser(this.adminSession, uidUser, ADMIN_SOURCE);
+        User user = this.administrationController.getUser(this.getAdminSession(), uidUser, ADMIN_SOURCE);
         assertNotNull(user);
 
-        Workspace workspaceTest = this.workspaceController.getWorkspace(this.adminSession, WORKSPACE_TEST);
+        Workspace workspaceTest = this.workspaceController.getWorkspace(this.getAdminSession(), WORKSPACE_TEST);
         assertNotNull(workspaceTest);
 
 //        List<DMEntitySecurity> items = new ArrayList<DMEntitySecurity>();
@@ -196,30 +196,30 @@ public class UserWorkspaceFolderSimpleTest extends KernelTestAbstract {
                 "full=\"" + false + "\" />\r\n";
         xmlStream += "</security-rules>";
 
-        this.securityController.updateDMEntitySecurities(this.adminSession, workspaceTest.getUid(), xmlStream, false, true);
+        this.securityController.updateDMEntitySecurities(this.getAdminSession(), workspaceTest.getUid(), xmlStream, false, true);
         List<DMEntitySecurity> dmEntitySecurities = this.securityController.getDMEntitySecurityies(this.userTestSession, workspaceTest.getUid());
         assertTrue(dmEntitySecurities.size() > 0);
 
 
-//        assertTrue(this.securityController.canRead(this.adminSession, workspaceTest.getUid()));
-//        assertTrue(this.securityController.canWrite(this.adminSession, workspaceTest.getUid()));
+//        assertTrue(this.securityController.canRead(this.getAdminSession(), workspaceTest.getUid()));
+//        assertTrue(this.securityController.canWrite(this.getAdminSession(), workspaceTest.getUid()));
 
     }
 
     @After
     public void tearDown() {
         // remove all permissions for user userTest on workspace if any
-        this.removeUserPermissionsForEntity(this.adminSession, this.userTest, this.workspaceTest);
+        this.removeUserPermissionsForEntity(this.getAdminSession(), this.userTest, this.workspaceTest);
 
         try {
-            this.administrationController.deleteUser(this.adminSession, this.userTest.getUid(), ADMIN_SOURCE);
+            this.administrationController.deleteUser(this.getAdminSession(), this.userTest.getUid(), ADMIN_SOURCE);
         } catch (Exception e) {
             System.out.println("Exception of type " + e.getClass().getName());
             System.out.println("Exception of type " + e.getMessage());
             System.out.println("Exception of type " + e.getCause());
         }
         try {
-            this.administrationController.deleteUser(this.adminSession, USERID_TEST_2, ADMIN_SOURCE);
+            this.administrationController.deleteUser(this.getAdminSession(), USERID_TEST_2, ADMIN_SOURCE);
         } catch (Exception e) {
             System.out.println("Exception of type " + e.getClass().getName());
             System.out.println("Exception of type " + e.getMessage());

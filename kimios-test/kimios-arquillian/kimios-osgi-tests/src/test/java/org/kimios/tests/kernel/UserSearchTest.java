@@ -52,35 +52,35 @@ public class UserSearchTest  extends KernelTestAbstract {
 
         this.init();
 
-        this.adminSession = this.securityController.startSession(ADMIN_LOGIN, USER_TEST_SOURCE, ADMIN_PWD);
+        this.setAdminSession(this.securityController.startSession(ADMIN_LOGIN, USER_TEST_SOURCE, ADMIN_PWD));
 
         // populating domain 1
         // create several users
-        this.administrationController.createUser(this.adminSession,
+        this.administrationController.createUser(this.getAdminSession(),
                 "userTest1", "John", "Smith", "07", "john.smith@teclib.com", "mailTest1", USER_TEST_SOURCE, true);
-        this.administrationController.createUser(this.adminSession,
+        this.administrationController.createUser(this.getAdminSession(),
                 "userTest2", "Johnny", "Smooth", "070707", "johnny.smooth@teclib.com", "mailTest2", USER_TEST_SOURCE, true);
-        this.administrationController.createUser(this.adminSession,
+        this.administrationController.createUser(this.getAdminSession(),
                 "userTest3", "Johnny", "Cash", "070707", "johnny@ca.sh", "mailTest3", USER_TEST_SOURCE, true);
-        this.administrationController.createUser(this.adminSession,
+        this.administrationController.createUser(this.getAdminSession(),
                 "userTest4", "James", "Brown", "070707", "james.brown@funky.man", "mailTest4", USER_TEST_SOURCE, true);
-        this.administrationController.createUser(this.adminSession,
+        this.administrationController.createUser(this.getAdminSession(),
                 "userTest5", "Henry", "II", "070707", "henryii@caramail.com", "mailTest5", USER_TEST_SOURCE, true);
 
         //create several groups
-        this.administrationController.createGroup(this.adminSession,
+        this.administrationController.createGroup(this.getAdminSession(),
                 "groupTest1", GROUP_TEST_1, USER_TEST_SOURCE);
-        this.administrationController.createGroup(this.adminSession,
+        this.administrationController.createGroup(this.getAdminSession(),
                 "groupTest2", GROUP_TEST_2, USER_TEST_SOURCE);
-        this.administrationController.createGroup(this.adminSession,
+        this.administrationController.createGroup(this.getAdminSession(),
                 "groupTest3", GROUP_TEST_3, USER_TEST_SOURCE);
-        this.administrationController.createGroup(this.adminSession,
+        this.administrationController.createGroup(this.getAdminSession(),
                 "groupTest4", GROUP_TEST_4, USER_TEST_SOURCE);
 
         // creation of second domain
         try {
             this.administrationController.createAuthenticationSource(
-                    this.adminSession, USER_TEST_SOURCE_2,
+                    this.getAdminSession(), USER_TEST_SOURCE_2,
                     "org.kimios.kernel.user.impl.HAuthenticationSource",
                     true,
                     false,
@@ -91,25 +91,25 @@ public class UserSearchTest  extends KernelTestAbstract {
         }
         // populating domain 2
         // create several users
-        this.administrationController.createUser(this.adminSession,
+        this.administrationController.createUser(this.getAdminSession(),
                 "userTest1", "Miles", "Davis", "07", "miles@teclib.com", "mailTest1", USER_TEST_SOURCE_2, true);
-        this.administrationController.createUser(this.adminSession,
+        this.administrationController.createUser(this.getAdminSession(),
                 "userTest2", "Johnny", "Hodges", "070707", "johnny.hodges@teclib.com", "mailTest2", USER_TEST_SOURCE_2, true);
-        this.administrationController.createUser(this.adminSession,
+        this.administrationController.createUser(this.getAdminSession(),
                 "userTest3", "John", "Coltrane", "070707", "john@coltra.ne", "mailTest3", USER_TEST_SOURCE_2, true);
-        this.administrationController.createUser(this.adminSession,
+        this.administrationController.createUser(this.getAdminSession(),
                 "userTest4", "James", "Hetfield", "070707", "james.hetfield@metal.lica", "mailTest4", USER_TEST_SOURCE_2, true);
-        this.administrationController.createUser(this.adminSession,
+        this.administrationController.createUser(this.getAdminSession(),
                 "userTest5", "Henry", "IV", "070707090", "henryiv@libertysurf.net", "mailTest5", USER_TEST_SOURCE_2, true);
 
         //create several groups
-        this.administrationController.createGroup(this.adminSession,
+        this.administrationController.createGroup(this.getAdminSession(),
                 "groupTest1", GROUP_TEST_2_1, USER_TEST_SOURCE_2);
-        this.administrationController.createGroup(this.adminSession,
+        this.administrationController.createGroup(this.getAdminSession(),
                 "groupTest2", GROUP_TEST_2_2, USER_TEST_SOURCE_2);
-        this.administrationController.createGroup(this.adminSession,
+        this.administrationController.createGroup(this.getAdminSession(),
                 "groupTest3", GROUP_TEST_2_3, USER_TEST_SOURCE_2);
-        this.administrationController.createGroup(this.adminSession,
+        this.administrationController.createGroup(this.getAdminSession(),
                 "groupTest4", GROUP_TEST_2_4, USER_TEST_SOURCE_2);
     }
 
@@ -798,7 +798,7 @@ public class UserSearchTest  extends KernelTestAbstract {
 
     @After
     public void tearDown() {
-        if (this.adminSession != null) {
+        if (this.getAdminSession() != null) {
             String[] usersIdsToDelete = {
                     "userTest1",
                     "userTest2",
@@ -807,8 +807,8 @@ public class UserSearchTest  extends KernelTestAbstract {
                     "userTest5"
             };
             for (String userId : usersIdsToDelete) {
-                this.administrationController.deleteUser(this.adminSession, userId, USER_TEST_SOURCE);
-                this.administrationController.deleteUser(this.adminSession, userId, USER_TEST_SOURCE_2);
+                this.administrationController.deleteUser(this.getAdminSession(), userId, USER_TEST_SOURCE);
+                this.administrationController.deleteUser(this.getAdminSession(), userId, USER_TEST_SOURCE_2);
             }
 
             String[] groupsIdsToDelete = {
@@ -818,11 +818,11 @@ public class UserSearchTest  extends KernelTestAbstract {
                     "groupTest4"
             };
             for (String groupId : groupsIdsToDelete) {
-                this.administrationController.deleteGroup(this.adminSession, groupId, USER_TEST_SOURCE);
-                this.administrationController.deleteGroup(this.adminSession, groupId, USER_TEST_SOURCE_2);
+                this.administrationController.deleteGroup(this.getAdminSession(), groupId, USER_TEST_SOURCE);
+                this.administrationController.deleteGroup(this.getAdminSession(), groupId, USER_TEST_SOURCE_2);
             }
 
-            this.administrationController.deleteAuthenticationSource(this.adminSession, USER_TEST_SOURCE_2);
+            this.administrationController.deleteAuthenticationSource(this.getAdminSession(), USER_TEST_SOURCE_2);
         }
     }
 }

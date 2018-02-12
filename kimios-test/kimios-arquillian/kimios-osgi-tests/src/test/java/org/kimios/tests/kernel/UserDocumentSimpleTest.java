@@ -65,26 +65,26 @@ public class UserDocumentSimpleTest extends KernelTestAbstract {
 
         this.init();
 
-        this.adminSession = this.securityController.startSession(ADMIN_LOGIN, USER_TEST_SOURCE, ADMIN_PWD);
+        this.setAdminSession(this.securityController.startSession(ADMIN_LOGIN, USER_TEST_SOURCE, ADMIN_PWD));
 
         try {
-            this.workspaceTest = this.workspaceController.getWorkspace(this.adminSession, WORKSPACE_TEST_NAME);
+            this.workspaceTest = this.workspaceController.getWorkspace(this.getAdminSession(), WORKSPACE_TEST_NAME);
         } catch (Exception e) {
-            this.workspaceController.createWorkspace(this.adminSession, WORKSPACE_TEST_NAME);
-            this.workspaceTest = this.workspaceController.getWorkspace(this.adminSession, WORKSPACE_TEST_NAME);
+            this.workspaceController.createWorkspace(this.getAdminSession(), WORKSPACE_TEST_NAME);
+            this.workspaceTest = this.workspaceController.getWorkspace(this.getAdminSession(), WORKSPACE_TEST_NAME);
         }
 
         this.createTestUsers();
         // create folder in workspace
-        long folderUid = this.folderController.createFolder(this.adminSession, FOLDER_TEST_1, this.workspaceTest.getUid(), false);
-        this.folderTest1 = this.folderController.getFolder(this.adminSession, folderUid);
+        long folderUid = this.folderController.createFolder(this.getAdminSession(), FOLDER_TEST_1, this.workspaceTest.getUid(), false);
+        this.folderTest1 = this.folderController.getFolder(this.getAdminSession(), folderUid);
         // give access to users
-        this.userTest1 = this.administrationController.getUser(this.adminSession, USER_TEST_1, USER_TEST_SOURCE);
-        this.userTest2 = this.administrationController.getUser(this.adminSession, USER_TEST_2, USER_TEST_SOURCE);
-        this.userTest3 = this.administrationController.getUser(this.adminSession, USER_TEST_3, USER_TEST_SOURCE);
-        this.giveAccessToEntityForUser(this.adminSession, this.folderTest1, this.userTest1, true, true, false);
-        this.giveAccessToEntityForUser(this.adminSession, this.folderTest1, this.userTest2, true, false, false);
-        this.giveAccessToEntityForUser(this.adminSession, this.folderTest1, this.userTest3, true, false, false);
+        this.userTest1 = this.administrationController.getUser(this.getAdminSession(), USER_TEST_1, USER_TEST_SOURCE);
+        this.userTest2 = this.administrationController.getUser(this.getAdminSession(), USER_TEST_2, USER_TEST_SOURCE);
+        this.userTest3 = this.administrationController.getUser(this.getAdminSession(), USER_TEST_3, USER_TEST_SOURCE);
+        this.giveAccessToEntityForUser(this.getAdminSession(), this.folderTest1, this.userTest1, true, true, false);
+        this.giveAccessToEntityForUser(this.getAdminSession(), this.folderTest1, this.userTest2, true, false, false);
+        this.giveAccessToEntityForUser(this.getAdminSession(), this.folderTest1, this.userTest3, true, false, false);
 
         // init test users' sessions
         this.userTest1Session = this.securityController.startSession(USER_TEST_1, USER_TEST_SOURCE, "test");
@@ -258,7 +258,7 @@ public class UserDocumentSimpleTest extends KernelTestAbstract {
         }
 
         if (this.folderTest1 != null) {
-            this.folderController.deleteFolder(this.adminSession, this.folderTest1.getUid());
+            this.folderController.deleteFolder(this.getAdminSession(), this.folderTest1.getUid());
         }
         this.deleteTestUsers();
     }

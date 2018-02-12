@@ -47,7 +47,7 @@ public class SearchEntitiesTest extends WebServicesTestAbstract {
 //        ServiceReference<ISecurityController> srefAdminController = context.getServiceReference(ISecurityController.class);
 //        this.securityController = context.getService(srefAdminController);
 
-        this.adminSession = this.securityController.startSession("admin", "kimios", "kimios");
+        this.setAdminSession(this.securityController.startSession("admin", "kimios", "kimios"));
     }
 
     @Test
@@ -56,7 +56,7 @@ public class SearchEntitiesTest extends WebServicesTestAbstract {
 
         SecurityEntity[] secEntities = null;
         try {
-            secEntities = this.securityService.searchSecurityEntities(this.adminSession.getUid(), "admin", "", 0);
+            secEntities = this.securityService.searchSecurityEntities(this.getAdminSession().getUid(), "admin", "", 0);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -68,7 +68,7 @@ public class SearchEntitiesTest extends WebServicesTestAbstract {
     public void testGetUser() {
         User userGot = null;
         try {
-            userGot = this.securityService.getUser(this.adminSession.getUid());
+            userGot = this.securityService.getUser(this.getAdminSession().getUid());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -79,7 +79,7 @@ public class SearchEntitiesTest extends WebServicesTestAbstract {
     public void testGetUsers() {
         User[] usersGot = null;
         try {
-            usersGot = this.securityService.getUsers(this.adminSession.getUid(), "kimios");
+            usersGot = this.securityService.getUsers(this.getAdminSession().getUid(), "kimios");
         } catch (Exception e) {
             e.printStackTrace();
         }

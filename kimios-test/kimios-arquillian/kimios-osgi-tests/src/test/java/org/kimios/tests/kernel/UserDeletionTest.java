@@ -36,19 +36,19 @@ public class UserDeletionTest extends KernelTestAbstract {
 
         this.init();
 
-        this.adminSession = this.securityController.startSession(ADMIN_LOGIN, USER_TEST_SOURCE, ADMIN_PWD);
+        this.setAdminSession(this.securityController.startSession(ADMIN_LOGIN, USER_TEST_SOURCE, ADMIN_PWD));
 
         try {
-            this.workspaceTest = this.workspaceController.getWorkspace(this.adminSession, WORKSPACE_TEST_NAME);
+            this.workspaceTest = this.workspaceController.getWorkspace(this.getAdminSession(), WORKSPACE_TEST_NAME);
         } catch (Exception e) {
-            this.workspaceController.createWorkspace(this.adminSession, WORKSPACE_TEST_NAME);
-            this.workspaceTest = this.workspaceController.getWorkspace(this.adminSession, WORKSPACE_TEST_NAME);
+            this.workspaceController.createWorkspace(this.getAdminSession(), WORKSPACE_TEST_NAME);
+            this.workspaceTest = this.workspaceController.getWorkspace(this.getAdminSession(), WORKSPACE_TEST_NAME);
         }
 
         this.createUsersTest();
 
-        long folderUid = this.folderController.createFolder(this.adminSession, "Awesome Test's folder", this.workspaceTest.getUid(), false);
-        this.folderTest = this.folderController.getFolder(this.adminSession, folderUid);
+        long folderUid = this.folderController.createFolder(this.getAdminSession(), "Awesome Test's folder", this.workspaceTest.getUid(), false);
+        this.folderTest = this.folderController.getFolder(this.getAdminSession(), folderUid);
     }
 
     private void createUsersTest() {
@@ -62,16 +62,16 @@ public class UserDeletionTest extends KernelTestAbstract {
         boolean enabled = true;
 
         this.userTest = this.createUser(
-                this.administrationController, this.adminSession, uid, firstname, lastname, phoneNumber, mail,
+                this.administrationController, this.getAdminSession(), uid, firstname, lastname, phoneNumber, mail,
                 password, authenticationSourceName, enabled
         );
     }
 
     @Test
     public void testUserDeletion() {
-        Folder folderTest = this.folderController.getFolder(this.adminSession, this.folderTest.getUid());
+        Folder folderTest = this.folderController.getFolder(this.getAdminSession(), this.folderTest.getUid());
         // grant access to user test
-        this.changePermissionOnEntityForUser(this.adminSession, this.userTest, folderTest, true, true, false);
+        this.changePermissionOnEntityForUser(this.getAdminSession(), this.userTest, folderTest, true, true, false);
         Session userTestSession = this.securityController.startSession(DEFAULT_USER_TEST_ID, USER_TEST_SOURCE, "test");
         // user test can read, write and has not full access
         assertTrue(this.securityController.canRead(userTestSession, this.folderTest.getUid()));
@@ -79,7 +79,7 @@ public class UserDeletionTest extends KernelTestAbstract {
         assertFalse(this.securityController.hasFullAccess(userTestSession, this.folderTest.getUid()));
 
         // delete the user test
-        this.administrationController.deleteUser(this.adminSession, this.userTest.getUid(), this.userTest.getAuthenticationSourceName());
+        this.administrationController.deleteUser(this.getAdminSession(), this.userTest.getUid(), this.userTest.getAuthenticationSourceName());
         // create the user test again
         this.createUsersTest();
         // restart the session
@@ -95,8 +95,8 @@ public class UserDeletionTest extends KernelTestAbstract {
     public void tearDown() {
 
         try {
-            this.folderController.deleteFolder(this.adminSession, this.folderTest.getUid());
-            this.administrationController.deleteUser(this.adminSession, this.userTest.getUid(), USER_TEST_SOURCE);
+            this.folderController.deleteFolder(this.getAdminSession(), this.folderTest.getUid());
+            this.administrationController.deleteUser(this.getAdminSession(), this.userTest.getUid(), USER_TEST_SOURCE);
         } catch (Exception e) {
             System.out.println("Exception of type " + e.getClass().getName());
             System.out.println("Exception of type " + e.getMessage());

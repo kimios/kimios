@@ -26,6 +26,8 @@ public abstract class TestAbstract {
     public static String ADMIN_PWD = "kimios";
     public static String ADMIN_SOURCE = "kimios";
 
+    private Session adminSession;
+
     @ArquillianResource
     BundleContext context;
 
@@ -105,5 +107,13 @@ public abstract class TestAbstract {
             c = c.getSuperclass();
         }
         return list;
+    }
+
+    public Session getAdminSession() {
+        return adminSession;
+    }
+
+    public void setAdminSession(Session adminSession) {
+        this.adminSession = adminSession;
     }
 }

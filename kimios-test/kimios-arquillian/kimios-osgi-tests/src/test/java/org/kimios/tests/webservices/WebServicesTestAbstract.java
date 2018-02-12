@@ -16,8 +16,6 @@ public abstract class WebServicesTestAbstract extends TestAbstract {
     @OsgiKimiosService
     SecurityService securityService;
 
-    Session adminSession;
-
     public void init() {
         this.initServices();
     }
