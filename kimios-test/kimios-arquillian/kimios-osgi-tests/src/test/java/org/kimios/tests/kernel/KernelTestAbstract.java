@@ -44,8 +44,6 @@ public abstract class KernelTestAbstract extends TestAbstract {
     protected Session adminSession;
     protected Workspace workspaceTest;
 
-    public static String ADMIN_LOGIN = "admin";
-    public static String ADMIN_PWD = "kimios";
     public static String USER_TEST_SOURCE = "kimios";
     public static String USER_TEST_SOURCE_2 = "kimios2";
     public static String DEFAULT_USER_TEST_ID = "userTest";

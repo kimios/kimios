@@ -30,10 +30,6 @@ public class SearchEntitiesTest extends WebServicesTestAbstract {
     @ArquillianResource
     BundleContext context;
 
-    private static String ADMIN_LOGIN = "admin";
-    private static String ADMIN_PWD= "kimios";
-    private static String ADMIN_USER_SOURCE = "kimios";
-
     @Deployment(name = "karaf")
     public static JavaArchive createDeployment() {
         String jarName = "SearchEntitiesTest.jar";

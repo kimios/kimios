@@ -11,6 +11,7 @@ import org.kimios.exceptions.AccessDeniedException;
 import org.kimios.exceptions.DataSourceException;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.user.model.User;
+import org.kimios.tests.TestAbstract;
 import org.kimios.tests.deployments.OsgiDeployment;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -24,10 +25,6 @@ public class AdminAccountTest extends KernelTestAbstract {
 
     private Session adminSession;
 
-    private static String ADMIN_LOGIN = "admin";
-    private static String ADMIN_PWD= "kimios";
-    private static String ADMIN_USER_SOURCE = "kimios";
-
     @Deployment(name="karaf")
     public static JavaArchive createDeployment() {
         return OsgiDeployment.createArchive(AdminAccountTest.class.getSimpleName() + ".jar", null, AdminAccountTest.class);
@@ -37,7 +34,7 @@ public class AdminAccountTest extends KernelTestAbstract {
     public void setUp() {
         this.init();
 
-        this.adminSession =  this.securityController.startSession(ADMIN_LOGIN, ADMIN_USER_SOURCE, ADMIN_PWD);
+        this.adminSession =  this.securityController.startSession(TestAbstract.ADMIN_LOGIN, TestAbstract.ADMIN_SOURCE, TestAbstract.ADMIN_PWD);
     }
 
     @Test
@@ -71,7 +68,7 @@ public class AdminAccountTest extends KernelTestAbstract {
         boolean isAdmin = this.securityController.isAdmin(this.adminSession);
         assertTrue(isAdmin);
 
-        boolean isAdmin2 = this.securityController.isAdmin(ADMIN_LOGIN, ADMIN_USER_SOURCE);
+        boolean isAdmin2 = this.securityController.isAdmin(TestAbstract.ADMIN_LOGIN, TestAbstract.ADMIN_SOURCE);
         assertTrue(isAdmin2);
 
         boolean isSessionAlive = this.securityController.isSessionAlive(adminSession.getUid());
@@ -81,13 +78,13 @@ public class AdminAccountTest extends KernelTestAbstract {
 
     @Test
     public void testGetUsers() throws Exception {
-        List<User> users = this.securityController.getUsers(ADMIN_USER_SOURCE);
+        List<User> users = this.securityController.getUsers(TestAbstract.ADMIN_SOURCE);
         assertTrue("We have users, at least one, the default user", users.size() > 0);
 
         // admin is in users list
         boolean adminExists = false;
         for (User user : users) {
-            if (user.getUid().equals(ADMIN_LOGIN)) {
+            if (user.getUid().equals(TestAbstract.ADMIN_LOGIN)) {
                 adminExists = true;
                 continue;
             }

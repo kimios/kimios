@@ -25,9 +25,8 @@ public class UserWorkspaceFolderSimpleTest extends KernelTestAbstract {
 
     private User userTest;
     private Session userTestSession;
-    private static String ADMIN_USER_SOURCE = "kimios";
-    private static String WORKSPACE_TEST = "workspaceTest";
 
+    private static String WORKSPACE_TEST = "workspaceTest";
     private static String USERID_TEST_2 = "userTest2";
 
     @Deployment(name="karaf")
@@ -45,7 +44,7 @@ public class UserWorkspaceFolderSimpleTest extends KernelTestAbstract {
 
         this.init();
 
-        this.adminSession = this.securityController.startSession(ADMIN_LOGIN, ADMIN_USER_SOURCE, ADMIN_PWD);
+        this.adminSession = this.securityController.startSession(ADMIN_LOGIN, ADMIN_SOURCE, ADMIN_PWD);
 
         try {
             this.workspaceTest = this.workspaceController.getWorkspace(this.adminSession, WORKSPACE_TEST);
@@ -64,7 +63,7 @@ public class UserWorkspaceFolderSimpleTest extends KernelTestAbstract {
         String phoneNumber = "06060606060";
         String mail = "mail";
         String password = "test";
-        String authenticationSourceName = ADMIN_USER_SOURCE;
+        String authenticationSourceName = ADMIN_SOURCE;
         boolean enabled = true;
 
         uid = DEFAULT_USER_TEST_ID;
@@ -168,7 +167,7 @@ public class UserWorkspaceFolderSimpleTest extends KernelTestAbstract {
     @Test
     public void testUserWorkspaceSecurity() {
         String uidUser = "userTest2";
-        User user = this.administrationController.getUser(this.adminSession, uidUser, ADMIN_USER_SOURCE);
+        User user = this.administrationController.getUser(this.adminSession, uidUser, ADMIN_SOURCE);
         assertNotNull(user);
 
         Workspace workspaceTest = this.workspaceController.getWorkspace(this.adminSession, WORKSPACE_TEST);
@@ -213,14 +212,14 @@ public class UserWorkspaceFolderSimpleTest extends KernelTestAbstract {
         this.removeUserPermissionsForEntity(this.adminSession, this.userTest, this.workspaceTest);
 
         try {
-            this.administrationController.deleteUser(this.adminSession, this.userTest.getUid(), ADMIN_USER_SOURCE);
+            this.administrationController.deleteUser(this.adminSession, this.userTest.getUid(), ADMIN_SOURCE);
         } catch (Exception e) {
             System.out.println("Exception of type " + e.getClass().getName());
             System.out.println("Exception of type " + e.getMessage());
             System.out.println("Exception of type " + e.getCause());
         }
         try {
-            this.administrationController.deleteUser(this.adminSession, USERID_TEST_2, ADMIN_USER_SOURCE);
+            this.administrationController.deleteUser(this.adminSession, USERID_TEST_2, ADMIN_SOURCE);
         } catch (Exception e) {
             System.out.println("Exception of type " + e.getClass().getName());
             System.out.println("Exception of type " + e.getMessage());

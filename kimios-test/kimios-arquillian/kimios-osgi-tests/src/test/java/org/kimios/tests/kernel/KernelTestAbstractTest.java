@@ -10,6 +10,7 @@ import org.junit.runner.RunWith;
 import org.kimios.client.controller.helpers.StringTools;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.user.model.User;
+import org.kimios.tests.TestAbstract;
 import org.kimios.tests.deployments.OsgiDeployment;
 
 import java.util.Date;
@@ -46,7 +47,7 @@ public class KernelTestAbstractTest extends KernelTestAbstract {
 //        ServiceReference<IWorkspaceController> sRefWorkspace = context.getServiceReference(IWorkspaceController.class);
 //        this.workspaceController = context.getService(sRefWorkspace);
 
-        this.adminSession = this.securityController.startSession(KernelTestAbstract.ADMIN_LOGIN, KernelTestAbstract.USER_TEST_SOURCE, KernelTestAbstract.ADMIN_PWD);
+        this.adminSession = this.securityController.startSession(TestAbstract.ADMIN_LOGIN, KernelTestAbstract.USER_TEST_SOURCE, TestAbstract.ADMIN_PWD);
 
         this.createWorkspaceTestIfNotExists();
         this.workspaceTest = this.workspaceController.getWorkspace(this.adminSession, WORKSPACE_TEST_NAME);

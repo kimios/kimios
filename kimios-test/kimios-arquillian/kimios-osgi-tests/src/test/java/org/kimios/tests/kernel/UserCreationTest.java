@@ -22,9 +22,6 @@ public class UserCreationTest extends KernelTestAbstract {
 
     private Session adminSession;
 
-    private static String ADMIN_LOGIN = "admin";
-    private static String ADMIN_PWD = "kimios";
-    private static String ADMIN_USER_SOURCE = "kimios";
     private static String USER_NAME_TEST = "userTest";
 
     @Deployment(name="karaf")
@@ -36,7 +33,7 @@ public class UserCreationTest extends KernelTestAbstract {
     public void setUp() {
 
        this.init();
-       this.adminSession = this.securityController.startSession(ADMIN_LOGIN, ADMIN_USER_SOURCE, ADMIN_PWD);
+       this.adminSession = this.securityController.startSession(ADMIN_LOGIN, ADMIN_SOURCE, ADMIN_PWD);
     }
 
     @Test
@@ -47,17 +44,17 @@ public class UserCreationTest extends KernelTestAbstract {
         String phoneNumber = "06060606060";
         String mail = "mail";
         String password = "test";
-        String authenticationSourceName = ADMIN_USER_SOURCE;
+        String authenticationSourceName = ADMIN_SOURCE;
         boolean enabled = true;
 
         User user = null;
         try {
-            user = this.administrationController.getUser(this.adminSession, uid, ADMIN_USER_SOURCE);
+            user = this.administrationController.getUser(this.adminSession, uid, ADMIN_SOURCE);
         } catch (Exception e) {
         }
         if (user == null) {
             this.administrationController.createUser(this.adminSession, uid, firstname, lastname, phoneNumber, mail, password, authenticationSourceName, enabled);
-            user = this.administrationController.getUser(this.adminSession, uid, ADMIN_USER_SOURCE);
+            user = this.administrationController.getUser(this.adminSession, uid, ADMIN_SOURCE);
         }
 
         assertNotNull(user);
@@ -98,17 +95,17 @@ public class UserCreationTest extends KernelTestAbstract {
         boolean isAdmin = this.securityController.isAdmin(userTestSession);
         assertFalse(isAdmin);
 
-        boolean isAdmin2 = this.securityController.isAdmin(uid, ADMIN_USER_SOURCE);
+        boolean isAdmin2 = this.securityController.isAdmin(uid, ADMIN_SOURCE);
         assertFalse(isAdmin2);
 
         boolean isSessionAlive = this.securityController.isSessionAlive(adminSession.getUid());
         assertTrue(isSessionAlive);
 
-        Vector<Role> userRoles = this.administrationController.getRoles(this.adminSession, uid, ADMIN_USER_SOURCE);
+        Vector<Role> userRoles = this.administrationController.getRoles(this.adminSession, uid, ADMIN_SOURCE);
         assertEquals(0, userRoles.size());
 
         //TODO : when a user is removed, remove also the user's roles assignments
-        this.administrationController.deleteUser(this.adminSession, uid, ADMIN_USER_SOURCE);
+        this.administrationController.deleteUser(this.adminSession, uid, ADMIN_SOURCE);
         User userJustDeleted = null;
         try {
             userJustDeleted = this.securityController.getUser(uid, password);

@@ -18,19 +18,6 @@ public abstract class WebServicesTestAbstract extends TestAbstract {
 
     Session adminSession;
 
-    public static String ADMIN_LOGIN = "admin";
-    public static String ADMIN_PWD = "kimios";
-    public static String USER_TEST_SOURCE = "kimios";
-    public static String USER_TEST_SOURCE_2 = "kimios2";
-    public static String DEFAULT_USER_TEST_ID = "userTest";
-    public static String DEFAULT_USER_TEST_PASS = "test";
-    public static String WORKSPACE_TEST_NAME = "workspaceTest";
-
-    public static String USER_TEST_1 = "userTest1";
-    public static String USER_TEST_2 = "userTest2";
-    public static String USER_TEST_3 = "userTest3";
-    public static String USER_TEST_4 = "userTest4";
-
     public void init() {
         this.initServices();
     }

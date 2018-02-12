@@ -22,6 +22,10 @@ import java.util.stream.Collectors;
  */
 public abstract class TestAbstract {
 
+    public static String ADMIN_LOGIN = "admin";
+    public static String ADMIN_PWD = "kimios";
+    public static String ADMIN_SOURCE = "kimios";
+
     @ArquillianResource
     BundleContext context;
 
