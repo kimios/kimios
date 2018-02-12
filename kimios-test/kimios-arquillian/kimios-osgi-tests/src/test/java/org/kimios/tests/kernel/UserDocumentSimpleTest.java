@@ -15,6 +15,7 @@ import org.kimios.kernel.dms.model.Folder;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.user.model.User;
 import org.kimios.tests.deployments.OsgiDeployment;
+import org.kimios.tests.utils.dataset.Users;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +66,7 @@ public class UserDocumentSimpleTest extends KernelTestAbstract {
 
         this.init();
 
-        this.setAdminSession(this.getSecurityController().startSession(ADMIN_LOGIN, USER_TEST_SOURCE, ADMIN_PWD));
+        this.setAdminSession(this.getSecurityController().startSession(ADMIN_LOGIN, Users.USER_TEST_SOURCE, ADMIN_PWD));
 
         try {
             this.workspaceTest = this.workspaceController.getWorkspace(this.getAdminSession(), WORKSPACE_TEST_NAME);
@@ -74,22 +75,22 @@ public class UserDocumentSimpleTest extends KernelTestAbstract {
             this.workspaceTest = this.workspaceController.getWorkspace(this.getAdminSession(), WORKSPACE_TEST_NAME);
         }
 
-        this.createTestUsers();
+        Users.createTestUsers(this.administrationController, this.getAdminSession());
         // create folder in workspace
         long folderUid = this.folderController.createFolder(this.getAdminSession(), FOLDER_TEST_1, this.workspaceTest.getUid(), false);
         this.folderTest1 = this.folderController.getFolder(this.getAdminSession(), folderUid);
         // give access to users
-        this.userTest1 = this.administrationController.getUser(this.getAdminSession(), USER_TEST_1, USER_TEST_SOURCE);
-        this.userTest2 = this.administrationController.getUser(this.getAdminSession(), USER_TEST_2, USER_TEST_SOURCE);
-        this.userTest3 = this.administrationController.getUser(this.getAdminSession(), USER_TEST_3, USER_TEST_SOURCE);
+        this.userTest1 = this.administrationController.getUser(this.getAdminSession(), Users.USER_TEST_1, Users.USER_TEST_SOURCE);
+        this.userTest2 = this.administrationController.getUser(this.getAdminSession(), Users.USER_TEST_2, Users.USER_TEST_SOURCE);
+        this.userTest3 = this.administrationController.getUser(this.getAdminSession(), Users.USER_TEST_3, Users.USER_TEST_SOURCE);
         this.giveAccessToEntityForUser(this.getAdminSession(), this.folderTest1, this.userTest1, true, true, false);
         this.giveAccessToEntityForUser(this.getAdminSession(), this.folderTest1, this.userTest2, true, false, false);
         this.giveAccessToEntityForUser(this.getAdminSession(), this.folderTest1, this.userTest3, true, false, false);
 
         // init test users' sessions
-        this.userTest1Session = this.getSecurityController().startSession(USER_TEST_1, USER_TEST_SOURCE, "test");
-        this.userTest2Session = this.getSecurityController().startSession(USER_TEST_2, USER_TEST_SOURCE, "test");
-        this.userTest3Session = this.getSecurityController().startSession(USER_TEST_3, USER_TEST_SOURCE, "test");
+        this.userTest1Session = this.getSecurityController().startSession(Users.USER_TEST_1, Users.USER_TEST_SOURCE, "test");
+        this.userTest2Session = this.getSecurityController().startSession(Users.USER_TEST_2, Users.USER_TEST_SOURCE, "test");
+        this.userTest3Session = this.getSecurityController().startSession(Users.USER_TEST_3, Users.USER_TEST_SOURCE, "test");
 
         // user 1 creates a subfolder
         this.userTest1FolderUid = this.folderController.createFolder(this.userTest1Session, "User_1_Folder", this.folderTest1.getUid(), true);
@@ -260,6 +261,6 @@ public class UserDocumentSimpleTest extends KernelTestAbstract {
         if (this.folderTest1 != null) {
             this.folderController.deleteFolder(this.getAdminSession(), this.folderTest1.getUid());
         }
-        this.deleteTestUsers();
+        Users.deleteTestUsers(this.administrationController, this.getAdminSession());
     }
 }

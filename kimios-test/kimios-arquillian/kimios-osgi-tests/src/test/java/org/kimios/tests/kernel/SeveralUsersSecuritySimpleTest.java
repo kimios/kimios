@@ -15,6 +15,7 @@ import org.kimios.kernel.security.model.DMEntitySecurity;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.user.model.User;
 import org.kimios.tests.deployments.OsgiDeployment;
+import org.kimios.tests.utils.dataset.Users;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,7 +80,7 @@ public class SeveralUsersSecuritySimpleTest extends KernelTestAbstract {
 
         this.init();
 
-        this.setAdminSession(this.getSecurityController().startSession(ADMIN_LOGIN, USER_TEST_SOURCE, ADMIN_PWD));
+        this.setAdminSession(this.getSecurityController().startSession(ADMIN_LOGIN, Users.USER_TEST_SOURCE, ADMIN_PWD));
 
         try {
             // get test workspace
@@ -98,7 +99,7 @@ public class SeveralUsersSecuritySimpleTest extends KernelTestAbstract {
         String phoneNumber = "06060606060";
         String[] mails = {"toto@teclib.mail", "titi@teclib.mail", "tutu@teclib.mail"};
         String password = USER_PASSWORD;
-        String authenticationSourceName = USER_TEST_SOURCE;
+        String authenticationSourceName = Users.USER_TEST_SOURCE;
         boolean enabled = true;
 
         // user toto

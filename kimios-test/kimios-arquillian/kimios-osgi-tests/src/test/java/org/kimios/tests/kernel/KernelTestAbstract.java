@@ -10,10 +10,9 @@ import org.kimios.kernel.dms.model.Workspace;
 import org.kimios.kernel.security.model.DMEntitySecurity;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.user.model.User;
+import org.kimios.tests.utils.dataset.Users;
 import org.osgi.framework.BundleContext;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -41,15 +40,11 @@ public abstract class KernelTestAbstract extends TestAbstract {
 
     protected Workspace workspaceTest;
 
-    public static String USER_TEST_SOURCE = "kimios";
     public static String USER_TEST_SOURCE_2 = "kimios2";
     public static String DEFAULT_USER_TEST_ID = "userTest";
     public static String DEFAULT_USER_TEST_PASS = "test";
     public static String WORKSPACE_TEST_NAME = "workspaceTest";
 
-    public static String USER_TEST_1 = "userTest1";
-    public static String USER_TEST_2 = "userTest2";
-    public static String USER_TEST_3 = "userTest3";
     public static String USER_TEST_4 = "userTest4";
 
     public void setAdministrationController(IAdministrationController administrationController) {
@@ -165,7 +160,7 @@ public abstract class KernelTestAbstract extends TestAbstract {
     public void createUserTestIfNotExists(String userId) {
         User userTest = null;
         try {
-            userTest = this.administrationController.getUser(this.getAdminSession(), userId, USER_TEST_SOURCE);
+            userTest = this.administrationController.getUser(this.getAdminSession(), userId, Users.USER_TEST_SOURCE);
         } catch (Exception e) {
 
         }
@@ -180,7 +175,7 @@ public abstract class KernelTestAbstract extends TestAbstract {
         String phoneNumber = "06060606060";
         String mail = "mail";
         String password = "test";
-        String authenticationSourceName = USER_TEST_SOURCE;
+        String authenticationSourceName = Users.USER_TEST_SOURCE;
         boolean enabled = true;
 
         this.administrationController.createUser(this.getAdminSession(), uid, firstname, lastname, phoneNumber, mail, password, authenticationSourceName, enabled);
@@ -192,56 +187,20 @@ public abstract class KernelTestAbstract extends TestAbstract {
         String phoneNumber = "06060606060";
         String mail = "usertest2@mail.com";
         String password = "test";
-        String authenticationSourceName = USER_TEST_SOURCE;
+        String authenticationSourceName = Users.USER_TEST_SOURCE;
         boolean enabled = true;
 
         this.administrationController.createUser(this.getAdminSession(), uid, firstname, lastname, phoneNumber, mail, password, authenticationSourceName, enabled);
     }
 
-    public void createTestUsers() {
-
-        org.kimios.kernel.ws.pojo.User user = new org.kimios.kernel.ws.pojo.User(
-                USER_TEST_1,
-                "Test",
-                "User 1",
-                "06060606060",
-                USER_TEST_SOURCE,
-                new Date(),
-                "mail"
-        );
-        this.createUserFromPojoWithPassword(user, "test");
-
-        user = new org.kimios.kernel.ws.pojo.User(
-                USER_TEST_2,
-                "Test",
-                "User 2",
-                "06060606060",
-                USER_TEST_SOURCE,
-                new Date(),
-                "usertest2@mail.com"
-        );
-        this.createUserFromPojoWithPassword(user, "test");
-
-        user = new org.kimios.kernel.ws.pojo.User(
-                USER_TEST_3,
-                "Test",
-                "User 3",
-                "06060606060",
-                USER_TEST_SOURCE,
-                new Date(),
-                "usertest3@coolmail.com"
-        );
-        this.createUserFromPojoWithPassword(user, "test");
-    }
-
     public void deleteTestUsers() {
         String[] userNames = {
-                USER_TEST_1,
-                USER_TEST_2,
-                USER_TEST_3
+                Users.USER_TEST_1,
+                Users.USER_TEST_2,
+                Users.USER_TEST_3
         };
         for (String userName : userNames) {
-            this.administrationController.deleteUser(this.getAdminSession(), userName, USER_TEST_SOURCE);
+            this.administrationController.deleteUser(this.getAdminSession(), userName, Users.USER_TEST_SOURCE);
         }
     }
 
@@ -250,7 +209,7 @@ public abstract class KernelTestAbstract extends TestAbstract {
     }
 
     public void deleteUserTest() {
-        this.administrationController.deleteUser(this.getAdminSession(), DEFAULT_USER_TEST_ID, USER_TEST_SOURCE);
+        this.administrationController.deleteUser(this.getAdminSession(), DEFAULT_USER_TEST_ID, Users.USER_TEST_SOURCE);
     }
 
     public void giveAccessToEntityForUser(Session session, DMEntity ent, User user, boolean read, boolean write, boolean full) {

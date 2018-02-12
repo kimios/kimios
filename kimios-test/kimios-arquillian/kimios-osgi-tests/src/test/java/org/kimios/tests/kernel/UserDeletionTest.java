@@ -12,6 +12,7 @@ import org.kimios.kernel.dms.model.Folder;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.user.model.User;
 import org.kimios.tests.deployments.OsgiDeployment;
+import org.kimios.tests.utils.dataset.Users;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -36,7 +37,7 @@ public class UserDeletionTest extends KernelTestAbstract {
 
         this.init();
 
-        this.setAdminSession(this.getSecurityController().startSession(ADMIN_LOGIN, USER_TEST_SOURCE, ADMIN_PWD));
+        this.setAdminSession(this.getSecurityController().startSession(ADMIN_LOGIN, Users.USER_TEST_SOURCE, ADMIN_PWD));
 
         try {
             this.workspaceTest = this.workspaceController.getWorkspace(this.getAdminSession(), WORKSPACE_TEST_NAME);
@@ -58,7 +59,7 @@ public class UserDeletionTest extends KernelTestAbstract {
         String phoneNumber = "06060606060";
         String mail = "mail";
         String password = "test";
-        String authenticationSourceName = USER_TEST_SOURCE;
+        String authenticationSourceName = Users.USER_TEST_SOURCE;
         boolean enabled = true;
 
         this.userTest = this.createUser(
@@ -72,7 +73,7 @@ public class UserDeletionTest extends KernelTestAbstract {
         Folder folderTest = this.folderController.getFolder(this.getAdminSession(), this.folderTest.getUid());
         // grant access to user test
         this.changePermissionOnEntityForUser(this.getAdminSession(), this.userTest, folderTest, true, true, false);
-        Session userTestSession = this.getSecurityController().startSession(DEFAULT_USER_TEST_ID, USER_TEST_SOURCE, "test");
+        Session userTestSession = this.getSecurityController().startSession(DEFAULT_USER_TEST_ID, Users.USER_TEST_SOURCE, "test");
         // user test can read, write and has not full access
         assertTrue(this.getSecurityController().canRead(userTestSession, this.folderTest.getUid()));
         assertTrue(this.getSecurityController().canWrite(userTestSession, this.folderTest.getUid()));
@@ -83,7 +84,7 @@ public class UserDeletionTest extends KernelTestAbstract {
         // create the user test again
         this.createUsersTest();
         // restart the session
-        userTestSession = this.getSecurityController().startSession(DEFAULT_USER_TEST_ID, USER_TEST_SOURCE, "test");
+        userTestSession = this.getSecurityController().startSession(DEFAULT_USER_TEST_ID, Users.USER_TEST_SOURCE, "test");
         // user can't read, write and has not full access
         // because the security rules and ACLs have been removed
         assertFalse(this.getSecurityController().canRead(userTestSession, this.folderTest.getUid()));
@@ -96,7 +97,7 @@ public class UserDeletionTest extends KernelTestAbstract {
 
         try {
             this.folderController.deleteFolder(this.getAdminSession(), this.folderTest.getUid());
-            this.administrationController.deleteUser(this.getAdminSession(), this.userTest.getUid(), USER_TEST_SOURCE);
+            this.administrationController.deleteUser(this.getAdminSession(), this.userTest.getUid(), Users.USER_TEST_SOURCE);
         } catch (Exception e) {
             System.out.println("Exception of type " + e.getClass().getName());
             System.out.println("Exception of type " + e.getMessage());
