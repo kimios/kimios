@@ -74,7 +74,7 @@ public abstract class TestAbstract {
             try {
                 String fieldName = f.getName();
                 String methodName = "set" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
-                Method setter = c.getSuperclass().getDeclaredMethod(methodName, f.getType());
+                Method setter = c.getMethod(methodName, f.getType());
                 setter.invoke(this, this.obtainService(f.getType(), 120));
             } catch (IllegalAccessException e) {
                 e.printStackTrace();

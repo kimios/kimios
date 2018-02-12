@@ -12,16 +12,10 @@ import org.kimios.webservices.SecurityService;
 public abstract class WebServicesTestAbstract extends TestAbstract {
 
     @OsgiKimiosService
-    ISecurityController securityController;
-    @OsgiKimiosService
     SecurityService securityService;
 
     public void init() {
         this.initServices();
-    }
-
-    public void setSecurityController(ISecurityController securityController) {
-        this.securityController = securityController;
     }
 
     public void setSecurityService(SecurityService securityService) {
