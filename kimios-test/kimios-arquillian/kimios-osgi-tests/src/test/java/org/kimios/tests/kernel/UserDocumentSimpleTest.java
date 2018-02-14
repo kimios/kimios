@@ -50,15 +50,12 @@ public class UserDocumentSimpleTest extends KernelTestAbstract {
     @Deployment(name="karaf")
     public static JavaArchive createDeployment() {
 
-        JavaArchive archive =
-                OsgiDeployment.createArchive( "UserDocumentSimpleTest.jar", null, UserDocumentSimpleTest.class,
+        return OsgiDeployment.createArchive(
+                "UserDocumentSimpleTest.jar",
+                null,
+                UserDocumentSimpleTest.class,
                 StringTools.class
-                );
-        archive.addAsResource("tests/launch_kimios-tests_mvn_test.sh");
-        archive.addAsResource("tests/testDoc.txt");
-        File exportedFile = new File("UserDocumentSimpleTest.jar");
-        archive.as(ZipExporter.class).exportTo(exportedFile, true);
-        return archive;
+        );
     }
 
     @Before
@@ -120,7 +117,6 @@ public class UserDocumentSimpleTest extends KernelTestAbstract {
         long docUid = -1;
         try {
             InputStream docStream = this.getClass().getClassLoader().getResourceAsStream("tests/launch_kimios-tests_mvn_test.sh");
-//            InputStream docStream = new FileInputStream(new File("/home/tom/IdeaProjects/kimios-tests/launch_kimios-tests_mvn_test.sh"));
             docUid = this.documentController.createDocumentWithProperties(
                     this.userTest1Session,
                     "User Test 1 doc 1",

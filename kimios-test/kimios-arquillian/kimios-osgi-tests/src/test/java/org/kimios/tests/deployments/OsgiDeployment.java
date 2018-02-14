@@ -5,11 +5,13 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.Asset;
 import org.jboss.shrinkwrap.api.exporter.ZipExporter;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.kimios.client.controller.helpers.StringTools;
 import org.kimios.tests.OsgiKimiosService;
 import org.kimios.tests.utils.dataset.Users;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -24,7 +26,8 @@ public class OsgiDeployment {
         );
         archive.addClasses(
                 OsgiKimiosService.class,
-                Users.class
+                Users.class,
+                StringTools.class
         );
         archive.setManifest(new Asset() {
             public InputStream openStream() {
@@ -48,7 +51,13 @@ public class OsgiDeployment {
                 return builder.openStream();
             }
         });
-
+        String[] resources = {
+                "tests/launch_kimios-tests_mvn_test.sh",
+                "tests/testDoc.txt",
+                "tests/testDoc2.txt",
+                "tests/testDoc3.txt"
+        };
+        Arrays.asList(resources).forEach(v -> archive.addAsResource(v));
         File exportedFile = new File(jarName);
         archive.as(ZipExporter.class).exportTo(exportedFile, true);
 

@@ -66,15 +66,12 @@ public class UserDocumentWithPropertiesTest extends KernelTestAbstract {
     @Deployment(name="karaf")
     public static JavaArchive createDeployment() {
 
-        JavaArchive archive =
-                OsgiDeployment.createArchive( UserDocumentWithPropertiesTest.class.getSimpleName() + ".jar", null, UserDocumentWithPropertiesTest.class,
+        return OsgiDeployment.createArchive(
+                UserDocumentWithPropertiesTest.class.getSimpleName() + ".jar",
+                null,
+                UserDocumentWithPropertiesTest.class,
                 StringTools.class
-                );
-        archive.addAsResource("tests/launch_kimios-tests_mvn_test.sh");
-        archive.addAsResource("tests/testDoc.txt");
-        File exportedFile = new File(UserDocumentWithPropertiesTest.class.getSimpleName() + ".jar");
-        archive.as(ZipExporter.class).exportTo(exportedFile, true);
-        return archive;
+        );
     }
 
     @Before

@@ -74,17 +74,11 @@ public class AutomaticStatusWorkflowRestartTest extends KernelTestAbstract {
     @Deployment(name="karaf")
     public static JavaArchive createDeployment() {
 
-        JavaArchive archive =
-                OsgiDeployment.createArchive( AutomaticStatusWorkflowRestartTest.class.getSimpleName() + ".jar", null, AutomaticStatusWorkflowRestartTest.class,
+        return OsgiDeployment.createArchive( AutomaticStatusWorkflowRestartTest.class.getSimpleName() + ".jar", null, AutomaticStatusWorkflowRestartTest.class,
                 StringTools.class,
                 WorkflowStatusDefinition.class,
-                        XMLDescriptionGenerators.class
-                );
-        archive.addAsResource("tests/launch_kimios-tests_mvn_test.sh");
-        archive.addAsResource("tests/testDoc.txt");
-        File exportedFile = new File(AutomaticStatusWorkflowRestartTest.class.getSimpleName() + ".jar");
-        archive.as(ZipExporter.class).exportTo(exportedFile, true);
-        return archive;
+                XMLDescriptionGenerators.class
+        );
     }
 
     @Before
