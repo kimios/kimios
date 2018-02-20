@@ -38,4 +38,6 @@ public interface IShareController {
                       boolean read, boolean write, boolean fullAcces, Date expirationDate, boolean notify) throws Exception;
 
     Integer disableExpiredShares(Session session) throws Exception;
+
+    public Share disableShare(Session session, long shareId) throws Exception;
 }

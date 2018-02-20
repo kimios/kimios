@@ -57,6 +57,7 @@ public class ShareTest extends TestAbstract {
     private final String folderTestName = "folderShareTest";
     private Folder folderTest;
     private Share shareTest;
+    private List<Share> shares = new ArrayList<>();
 
     private HashMap<String, Session> sessions = new HashMap<>();
 
@@ -263,11 +264,47 @@ public class ShareTest extends TestAbstract {
         }
         assertEquals(0, entitiesSharedByMe.size());
         assertFalse(this.getSecurityController().canRead(this.sessions.get(Users.USER_TEST_2), shareTestDoc1Uid));
+
+        try {
+            // users have not shared anything yet
+            assertEquals(0, this.getShareController().listEntitiesSharedByMe(this.sessions.get(Users.USER_TEST_1)).size());
+            assertEquals(0, this.getShareController().listEntitiesSharedByMe(this.sessions.get(Users.USER_TEST_2)).size());
+            assertEquals(0, this.getShareController().listEntitiesSharedByMe(this.sessions.get(Users.USER_TEST_3)).size());
+
+            assertEquals(0, this.getShareController().listEntitiesSharedWithMe(this.sessions.get(Users.USER_TEST_1)).size());
+            assertEquals(0, this.getShareController().listEntitiesSharedWithMe(this.sessions.get(Users.USER_TEST_2)).size());
+            assertEquals(0, this.getShareController().listEntitiesSharedWithMe(this.sessions.get(Users.USER_TEST_3)).size());
+
+            Share share = this.getShareController().shareEntity(this.sessions.get(Users.USER_TEST_1), shareTestDoc1Uid, Users.USER_TEST_2, Users.USER_TEST_SOURCE,
+                    true, false, false, date, false);
+            this.shares.add(share);
+            assertTrue(this.getSecurityController().canRead(this.sessions.get(Users.USER_TEST_2), shareTestDoc1Uid));
+            assertFalse(this.getSecurityController().canRead(this.sessions.get(Users.USER_TEST_3), shareTestDoc1Uid));
+
+            this.shareController.disableShare(this.sessions.get(Users.USER_TEST_1), shareTest.getId());
+            assertFalse(this.getSecurityController().canRead(this.sessions.get(Users.USER_TEST_2), shareTestDoc1Uid));
+            assertFalse(this.getSecurityController().canRead(this.sessions.get(Users.USER_TEST_3), shareTestDoc1Uid));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
     }
+
+
 
     @After
     public void tearDown() {
+        // remove shares
         // end test users' sessions
+        this.shares.forEach(s -> {
+            try {
+                this.shareController.removeShare(this.getAdminSession(), s.getId());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
         this.sessions.forEach((k, v) -> this.getSecurityController().endSession(v.getUid()));
         this.getFolderController().deleteFolder(this.getAdminSession(), this.folderTest.getUid());
         this.getWorkspaceController().deleteWorkspace(this.getAdminSession(), this.workspaceTest.getUid());

@@ -159,6 +159,9 @@ public class ShareController extends AKimiosController implements IShareControll
         Integer i = 0;
         for(Share s: shares) {
             s.setShareStatus(ShareStatus.EXPIRED);
+            //remove ACL created for this share
+            this.securityFactoryInstantiator.getDMEntitySecurityFactory().deleteAclsForShare(s.getId());
+            //deactive data transfer
             if (s.getDataTransfer() != null) {
                 s.getDataTransfer().setStatus(DataTransferStatus.EXPIRED);
             }
@@ -167,5 +170,20 @@ public class ShareController extends AKimiosController implements IShareControll
         }
 
         return i;
+    }
+
+    public Share disableShare(Session session, long shareId) throws Exception {
+        Share share = shareFactory.findById(shareId);
+
+        share.setShareStatus(ShareStatus.DISABLED);
+        //remove ACL created for this share
+        this.securityFactoryInstantiator.getDMEntitySecurityFactory().deleteAclsForShare(shareId);
+        //deactive data transfer
+        if (share.getDataTransfer() != null) {
+            share.getDataTransfer().setStatus(DataTransferStatus.EXPIRED);
+        }
+        shareFactory.saveShare(share);
+
+        return share;
     }
 }
