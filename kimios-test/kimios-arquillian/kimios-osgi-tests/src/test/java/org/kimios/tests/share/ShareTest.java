@@ -147,8 +147,16 @@ public class ShareTest extends TestAbstract {
         } catch (Exception e) {
 
         }
-        assertFalse(folderUid == -1);
-        this.folderTest = this.folderController.getFolder(this.getAdminSession(), folderUid);
+        if (folderUid == -1) {
+            this.folderTest = this.getFolderController().getFolder(
+                    this.getAdminSession(),
+                    this.folderTestName,
+                    this.workspaceTest.getUid(),
+                    this.workspaceTest.getType()
+            );
+        } else {
+            this.folderTest = this.folderController.getFolder(this.getAdminSession(), folderUid);
+        }
         if (this.folderTest == null) {
             fail(this.folderTestName + " folder does not exist");
         }
@@ -157,16 +165,15 @@ public class ShareTest extends TestAbstract {
                 Users.USER_TEST_2,
                 Users.USER_TEST_3
         };
-        Arrays.asList(usersTest).forEach(uid ->
-                Users.giveAccessToEntityForUser(
-                        this.getAdminSession(),
-                        this.getSecurityController(),
-                        this.folderTest,
-                        this.getAdministrationController().getUser(this.getAdminSession(), uid, Users.USER_TEST_SOURCE),
-                        true,
-                        true,
-                        false
-                )
+
+        Users.giveAccessToEntityForUser(
+                this.getAdminSession(),
+                this.getSecurityController(),
+                this.folderTest,
+                this.getAdministrationController().getUser(this.getAdminSession(), Users.USER_TEST_1, Users.USER_TEST_SOURCE),
+                true,
+                true,
+                false
         );
 
         // start connections
@@ -183,11 +190,12 @@ public class ShareTest extends TestAbstract {
         Session user1Session = sessions.get(Users.USER_TEST_1);
         String path = this.workspaceTest.getPath() + "/" + "shareTestDoc1";
         long shareTestDoc1Uid = -1;
+        String docName = "Test doc 2";
         try {
             InputStream docStream = this.getClass().getClassLoader().getResourceAsStream("tests/testDoc2.txt");
             shareTestDoc1Uid = this.documentController.createDocumentWithProperties(
                     sessions.get(Users.USER_TEST_1),
-                    "Test doc 2",
+                    docName,
                     "txt",
                     "text/plain",
                     this.folderTest.getUid(),
@@ -204,6 +212,9 @@ public class ShareTest extends TestAbstract {
             System.out.println("Exception of type : " + e.getClass().getName());
             System.out.println("Message : " + e.getMessage());
             System.out.println("Cause : " + e.getCause());
+
+            shareTestDoc1Uid = this.documentController.getDocument(this.getAdminSession(), docName,
+                    "txt", this.folderTest.getUid()).getUid();
         }
         Document doc = this.getDocumentController().getDocument(sessions.get(Users.USER_TEST_1), shareTestDoc1Uid);
         assertNotNull(doc);
@@ -234,6 +245,9 @@ public class ShareTest extends TestAbstract {
             fail("entitiesSharedByMe should not be null");
         }
         assertEquals(1, entitiesSharedByMe.size());
+
+        assertTrue(this.getSecurityController().canRead(this.sessions.get(Users.USER_TEST_2), shareTestDoc1Uid));
+
         try {
             this.getShareController().removeShare(user1Session, shareTest.getId());
         } catch (Exception e) {
@@ -248,6 +262,7 @@ public class ShareTest extends TestAbstract {
             fail("entitiesSharedByMe should not be null");
         }
         assertEquals(0, entitiesSharedByMe.size());
+        assertFalse(this.getSecurityController().canRead(this.sessions.get(Users.USER_TEST_2), shareTestDoc1Uid));
     }
 
     @After

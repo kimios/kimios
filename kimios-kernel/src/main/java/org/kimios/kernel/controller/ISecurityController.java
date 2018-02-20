@@ -23,6 +23,7 @@ import org.kimios.exceptions.DataSourceException;
 import org.kimios.exceptions.XMLException;
 import org.kimios.kernel.security.model.DMEntitySecurity;
 import org.kimios.kernel.security.model.Session;
+import org.kimios.kernel.share.model.Share;
 import org.kimios.kernel.user.model.AuthenticationSource;
 import org.kimios.kernel.user.model.Group;
 import org.kimios.kernel.user.model.User;
@@ -44,7 +45,7 @@ public interface ISecurityController
      */
     @DmsEvent(eventName = { DmsEventName.ENTITY_ACL_UPDATE })
     public void simpleSecurityAdd(Session session, long dmEntityUid, String securityEntityId, String securityEntitySource,
-                                      boolean read, boolean write, boolean fullAccess)
+                                  boolean read, boolean write, boolean fullAccess, Share s)
             throws AccessDeniedException, ConfigException, DataSourceException;
 
 

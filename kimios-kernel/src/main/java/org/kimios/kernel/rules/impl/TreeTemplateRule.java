@@ -107,7 +107,7 @@ public class TreeTemplateRule extends RuleImpl {
                                     sec.isFullAccess(),
                                     f);
                             org.kimios.kernel.security.FactoryInstantiator.getInstance()
-                                    .getDMEntitySecurityFactory().saveDMEntitySecurity(des);
+                                    .getDMEntitySecurityFactory().saveDMEntitySecurity(des, null);
                         }
                     }
 

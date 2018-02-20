@@ -19,9 +19,11 @@ package org.kimios.kernel.share.model;
 import org.kimios.kernel.dms.model.DMEntityImpl;
 import org.kimios.kernel.dms.model.Document;
 import org.kimios.kernel.filetransfer.model.DataTransfer;
+import org.kimios.kernel.security.model.DMSecurityRule;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Set;
 
 /**
  * Created by farf on 13/02/16.
@@ -103,6 +105,9 @@ public class Share {
     @OneToOne
     @JoinColumn(name = "emailAddress")
     private MailContact mailContact;
+
+    @OneToMany(mappedBy = "share", cascade = CascadeType.ALL)
+    private Set<DMSecurityRule> securityRuleSet;
 
     public Long getId() {
         return id;
@@ -270,6 +275,14 @@ public class Share {
 
     public void setMailContact(MailContact mailContact) {
         this.mailContact = mailContact;
+    }
+
+    public Set<DMSecurityRule> getSecurityRuleSet() {
+        return securityRuleSet;
+    }
+
+    public void setSecurityRuleSet(Set<DMSecurityRule> securityRuleSet) {
+        this.securityRuleSet = securityRuleSet;
     }
 
     @Transient

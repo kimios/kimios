@@ -59,7 +59,7 @@ public class ACLUpdater implements IACLUpdater {
 
         for (DMEntitySecurity acl : securityItems) {
             acl.setDmEntity(entity);
-            listAclToIndex.addAll(fact.saveDMEntitySecurity(acl));
+            listAclToIndex.addAll(fact.saveDMEntitySecurity(acl, null));
             log.debug("added acl {} for {}", (acl.getType() == 1 ? "user " : "group ") + acl.getName() + "@" + acl.getSource(), entity.getPath());
         }
 
@@ -79,7 +79,7 @@ public class ACLUpdater implements IACLUpdater {
                 DMEntitySecurity nSec =
                         new DMEntitySecurity(it.getUid(), it.getType(), sec.getName(), sec.getSource(), sec.getType(),
                                 sec.isRead(), sec.isWrite(), sec.isFullAccess(), it);
-                listAclToIndex.addAll(fact.saveDMEntitySecurity(nSec));
+                listAclToIndex.addAll(fact.saveDMEntitySecurity(nSec, null));
                 log.debug("added acl {} for {}", (nSec.getType() == 1 ? "user " : "group ") + nSec.getName() + "@" + nSec.getSource(), it.getPath());
             }
         }

@@ -31,7 +31,6 @@ import org.kimios.kernel.dms.model.Meta;
 import org.kimios.kernel.dms.model.MetaValue;
 import org.kimios.kernel.dms.model.SymbolicLink;
 import org.kimios.kernel.dms.model.WorkflowStatus;
-import org.kimios.kernel.dms.utils.PathElement;
 import org.kimios.kernel.dms.utils.PathUtils;
 import org.kimios.kernel.dms.*;
 import org.kimios.kernel.dms.FactoryInstantiator;
@@ -207,7 +206,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                             .getType(), v.elementAt(i).isRead(), v.elementAt(i).isWrite(),
                             v.elementAt(i).isFullAccess(), d);
 
-                    dsf.saveDMEntitySecurity(des);
+                    dsf.saveDMEntitySecurity(des, null);
                 }
             }
             return d.getUid();
@@ -298,7 +297,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                                 .getType(), v.elementAt(i).isRead(), v.elementAt(i).isWrite(),
                                 v.elementAt(i).isFullAccess(), d);
 
-                        dsf.saveDMEntitySecurity(des);
+                        dsf.saveDMEntitySecurity(des, null);
                     }
                 }
                 documentId = d.getUid();
@@ -1457,7 +1456,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                     aclCopy.setRead(acl.isRead());
                     aclCopy.setFullName(acl.getFullName());
 
-                    dsf.saveDMEntitySecurity(aclCopy);
+                    dsf.saveDMEntitySecurity(aclCopy, null);
                 }
 
                 DocumentVersion dv = dmsFactoryInstantiator.getDocumentVersionFactory().getLastDocumentVersion(document);

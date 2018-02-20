@@ -15,6 +15,7 @@
  */
 package org.kimios.kernel.security.model;
 
+import org.kimios.kernel.share.model.Share;
 import org.kimios.utils.hash.HashCalculator;
 
 import javax.persistence.*;
@@ -35,24 +36,35 @@ public class DMSecurityRule implements Serializable
     public static short NOACCESS = 8;
 
     public static DMSecurityRule getInstance(String securityEntityUid, String securityEntitySource,
-            int securityEntityType,
-            short securityRule)
+                                             int securityEntityType,
+                                             short securityRule)
     {
         try {
-            DMSecurityRule rule = new DMSecurityRule();
-            rule.setRights(securityRule);
-            rule.setSecurityEntitySource(securityEntitySource);
-            rule.setSecurityEntityType(securityEntityType);
-            rule.setSecurityEntityUid(securityEntityUid);
+            DMSecurityRule rule = new DMSecurityRule(
+                    securityEntityUid, securityEntitySource, securityEntityType, securityRule);
+            rule.setRuleHash(rule.generateRuleHash(false));
+            rule.setRuleHashShare(rule.getRuleHash());
+            return rule;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
-            String md5hash = new HashCalculator("MD5").hashToString(
-                    (securityEntityUid + securityEntitySource + Integer.toString(securityEntityType) +
-                            Short.toString(securityRule)).getBytes("UTF-8")).replaceAll(" ", "");
-
-            String sha1Hash = new HashCalculator("SHA-1").hashToString(
-                    (securityEntityUid + securityEntitySource + Integer.toString(securityEntityType) +
-                            Short.toString(securityRule)).getBytes("UTF-8")).replaceAll(" ", "");
-            rule.setRuleHash(md5hash + ":" + sha1Hash);
+    public static DMSecurityRule getInstance(String securityEntityUid, String securityEntitySource,
+            int securityEntityType,
+            short securityRule,
+            Share share)
+    {
+        try {
+            DMSecurityRule rule = new DMSecurityRule(
+                    securityEntityUid, securityEntitySource, securityEntityType, securityRule, share);
+            rule.setRuleHash(rule.generateRuleHash(false));
+            rule.setRuleHashShare(
+                    rule.getShare() != null ?
+                            rule.generateRuleHash(true) :
+                            rule.getRuleHash()
+            );
             return rule;
         } catch (Exception e) {
             e.printStackTrace();
@@ -64,8 +76,49 @@ public class DMSecurityRule implements Serializable
     {
     }
 
+    public DMSecurityRule(String securityEntityUid, String securityEntitySource, int securityEntityType, short rights) {
+        this.securityEntityUid = securityEntityUid;
+        this.securityEntitySource = securityEntitySource;
+        this.securityEntityType = securityEntityType;
+        this.rights = rights;
+    }
+
+    public DMSecurityRule(String securityEntityUid, String securityEntitySource, int securityEntityType, short rights, Share share) {
+        this.securityEntityUid = securityEntityUid;
+        this.securityEntitySource = securityEntitySource;
+        this.securityEntityType = securityEntityType;
+        this.rights = rights;
+        this.share = share;
+    }
+
+    public String generateRuleHash (boolean withShare) {
+        String propsAggregatedStr = securityEntityUid
+                + securityEntitySource
+                + Integer.toString(securityEntityType)
+                + Short.toString(rights);
+        propsAggregatedStr += (withShare && this.getShare() != null) ?
+                share.getId() :
+                "";
+        String ruleHash = null;
+        try {
+            byte[] propsAggregated = (propsAggregatedStr).getBytes("UTF-8");
+
+            String md5hash = new HashCalculator("MD5").hashToString(propsAggregated).replaceAll(" ", "");
+
+            String sha1Hash = new HashCalculator("SHA-1").hashToString(propsAggregated).replaceAll(" ", "");
+            ruleHash = md5hash + ":" + sha1Hash;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return ruleHash;
+    }
+
     @Id @Column(name = "rule_hash")
     private String ruleHash;
+
+    @Column(name = "rule_hash_share")
+    private String ruleHashShare;
 
     @Column(name = "security_entity_id")
     private String securityEntityUid;
@@ -79,6 +132,10 @@ public class DMSecurityRule implements Serializable
     @Column(name = "rights", nullable = false)
     private short rights;
 
+    @JoinColumn(name = "dm_entity_share_id")
+    @ManyToOne
+    private Share share;
+
     public String getRuleHash()
     {
         return ruleHash;
@@ -87,6 +144,14 @@ public class DMSecurityRule implements Serializable
     public void setRuleHash(String ruleHash)
     {
         this.ruleHash = ruleHash;
+    }
+
+    public String getRuleHashShare() {
+        return ruleHashShare;
+    }
+
+    public void setRuleHashShare(String ruleHashShare) {
+        this.ruleHashShare = ruleHashShare;
     }
 
     public String getSecurityEntityUid()
@@ -129,6 +194,14 @@ public class DMSecurityRule implements Serializable
         this.rights = rights;
     }
 
+    public Share getShare() {
+        return share;
+    }
+
+    public void setShare(Share share) {
+        this.share = share;
+    }
+
     public static boolean securityRuleEquals(DMSecurityRule rule1, DMSecurityRule rule2){
 
         if (rule1 == rule2) return true;
@@ -136,6 +209,12 @@ public class DMSecurityRule implements Serializable
         if (rule1.securityEntityType != rule2.securityEntityType) return false;
         if (rule1.rights != rule2.rights) return false;
         if (!rule1.securityEntityUid.equals(rule2.securityEntityUid)) return false;
+
+        if (rule1.getShare() == null && rule2.getShare() != null) return false;
+        if (rule1.getShare() != null && rule2.getShare() == null) return false;
+        if (rule1.getShare() != null && rule2.getShare() != null
+                && rule1.getShare().getId() != rule2.getShare().getId()) return false;
+
         return rule1.securityEntitySource.equals(rule2.securityEntitySource);
     }
 

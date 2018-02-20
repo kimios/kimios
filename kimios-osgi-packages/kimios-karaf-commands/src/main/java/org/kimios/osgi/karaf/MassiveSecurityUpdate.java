@@ -119,7 +119,7 @@ public class MassiveSecurityUpdate extends KimiosCommand {
 
                 for (DMEntitySecurity sec : securities) {
                     org.kimios.kernel.security.FactoryInstantiator.getInstance().getDMEntitySecurityFactory()
-                            .createSecurityEntityRules(sec.getName(), sec.getSource(), sec.getType());
+                            .createSecurityEntityRules(sec.getName(), sec.getSource(), sec.getType(), null);
                 }
 
 

@@ -78,6 +78,8 @@ public class ShareController extends AKimiosController implements IShareControll
                 && share.getCreatorSource().equals(session.getUserSource())) ||
                 getSecurityAgent().isAdmin(session.getUserName(), session.getUserSource()))
                 ){
+            //remove ACL created by this share
+            this.securityFactoryInstantiator.getDMEntitySecurityFactory().deleteAclsForShare(shareId);
             //remove share
             shareFactory.removeShare(share);
         } else
@@ -121,7 +123,7 @@ public class ShareController extends AKimiosController implements IShareControll
 
                 // set rights on entity, and force reindex !!!
                 securityController.simpleSecurityAdd(session, entity.getUid(), sharedToUserId, sharedToUserSource,
-                        read, write, fullAcces);
+                        read, write, fullAcces, s);
 
                 //if notify : should add message on queue, to send on transaction commit !
                 if(notify){
@@ -166,5 +168,4 @@ public class ShareController extends AKimiosController implements IShareControll
 
         return i;
     }
-
 }
