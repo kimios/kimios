@@ -145,7 +145,7 @@ public interface IDocumentController {
      * Remove a document
      */
     @DmsEvent(eventName = {DmsEventName.DOCUMENT_DELETE})
-    public void deleteDocument(Session s, long uid)
+    public void deleteDocument(Session s, long uid, boolean force)
             throws CheckoutViolationException, AccessDeniedException,
             ConfigException, DataSourceException;
 

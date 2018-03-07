@@ -46,7 +46,8 @@ public class OsgiDeployment {
                 }
                 builder.addImportPackages(
                         "org.osgi.util.tracker",
-                        "org.slf4j"
+                        "org.slf4j",
+                        "org.junit.rules"
                 );
                 return builder.openStream();
             }

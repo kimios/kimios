@@ -8,6 +8,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kimios.exceptions.AccessDeniedException;
+import org.kimios.exceptions.DeleteDocumentWithActiveShareException;
 import org.kimios.kernel.controller.IAdministrationController;
 import org.kimios.kernel.controller.IDocumentController;
 import org.kimios.kernel.controller.IFolderController;
@@ -58,6 +60,7 @@ public class ShareTest extends TestAbstract {
     private Folder folderTest;
     private Share shareTest;
     private List<Share> shares = new ArrayList<>();
+    private Map<String, ArrayList<Long>> sharedDocuments = new HashMap<>();
 
     private HashMap<String, Session> sessions = new HashMap<>();
 
@@ -120,7 +123,11 @@ public class ShareTest extends TestAbstract {
     @Deployment(name="karaf")
     public static JavaArchive createDeployment() {
         String jarName = ShareTest.class.getSimpleName() + ".jar";
-        return OsgiDeployment.createArchive(jarName, null, ShareTest.class);
+        return OsgiDeployment.createArchive(
+                jarName,
+                null,
+                ShareTest.class
+        );
     }
 
     @Before
@@ -181,6 +188,36 @@ public class ShareTest extends TestAbstract {
         Arrays.asList(usersTest).forEach(uid ->
                 sessions.put(uid, this.getSecurityController().startSession(uid, Users.USER_TEST_SOURCE))
         );
+
+        // user test 1 creates a document
+        long shareTestDoc = -1;
+        String docName = "Test doc created by user" + Users.USER_TEST_1;
+        try {
+            InputStream docStream = this.getClass().getClassLoader().getResourceAsStream("tests/testDoc2.txt");
+            shareTestDoc = this.documentController.createDocumentWithProperties(
+                    sessions.get(Users.USER_TEST_1),
+                    docName,
+                    "txt",
+                    "text/plain",
+                    this.folderTest.getUid(),
+                    false,
+                    "<security-rules dmEntityId=\"-1\" dmEntityTye=\"3\"></security-rules>",
+                    false,
+                    -1,
+                    "<?xml version=\"1.0\" encoding=\"UTF-8\"?><document-meta></document-meta>",
+                    docStream,
+                    "",
+                    ""
+            );
+        } catch (Exception e) {
+            System.out.println("Exception of type : " + e.getClass().getName());
+            System.out.println("Message : " + e.getMessage());
+            System.out.println("Cause : " + e.getCause());
+            fail("Test can be done. User 1 can't create a document.");
+        }
+        ArrayList<Long> ids = new ArrayList<>();
+        ids.add(shareTestDoc);
+        this.sharedDocuments.put(Users.USER_TEST_1, ids);
     }
 
     @Test
@@ -292,7 +329,48 @@ public class ShareTest extends TestAbstract {
 
     }
 
+    @Test
+    public void testDeleteSharedDocument() {
+        Calendar cal = GregorianCalendar.getInstance();
+        cal.add(Calendar.DATE, 7);
+        Date date = cal.getTime();
+        Share share;
+        try {
+            share = this.getShareController().shareEntity(
+                    sessions.get(Users.USER_TEST_1),
+                    this.sharedDocuments.get(Users.USER_TEST_1).get(0),
+                    Users.USER_TEST_3, Users.USER_TEST_SOURCE,
+                    true, false, false, date, false);
+            this.shares.add(share);
+        } catch (Exception e) {
+            System.out.println("Exception of type : " + e.getClass().getName());
+            System.out.println("Message : " + e.getMessage());
+            System.out.println("Cause : " + e.getCause());
+            fail("Exception while sharing entity");
+        }
+        try {
+            this.documentController.deleteDocument(sessions.get(Users.USER_TEST_1), this.sharedDocuments.get(Users.USER_TEST_1).get(0), false);
+            fail();
+        } catch (Exception e) {
+            assertTrue(e instanceof DeleteDocumentWithActiveShareException);
+            assertEquals(e.getMessage(), "Trying to delete a document with active shares");
+        }
 
+        try {
+            this.documentController.deleteDocument(sessions.get(Users.USER_TEST_1), this.sharedDocuments.get(Users.USER_TEST_1).get(0), true);
+        } catch (Exception e) {
+
+        }
+
+        try {
+            // should raise exception because document does not exist any more (just been deleted)
+            Document document = this.documentController.getDocument(sessions.get(Users.USER_TEST_1), this.sharedDocuments.get(Users.USER_TEST_1).get(0));
+            fail();
+        } catch (Exception e) {
+            assertTrue(e instanceof AccessDeniedException);
+        }
+
+    }
 
     @After
     public void tearDown() {
@@ -301,6 +379,16 @@ public class ShareTest extends TestAbstract {
         this.shares.forEach(s -> {
             try {
                 this.shareController.removeShare(this.getAdminSession(), s.getId());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        // delete documents
+        this.sharedDocuments.forEach((k, v) -> {
+            try {
+                v.forEach(id -> {
+                    this.documentController.deleteDocument(this.sessions.get(k), id, false);
+                });
             } catch (Exception e) {
                 e.printStackTrace();
             }

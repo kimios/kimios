@@ -15,11 +15,14 @@
  */
 package org.kimios.kernel.dms.model;
 
+import org.kimios.kernel.share.model.Share;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 @Entity
 @Table(name = "dm_entity")
@@ -52,6 +55,8 @@ public class DMEntityImpl implements DMEntity, Serializable
     protected String addOnDatas;
 
     protected Boolean trashed = false;
+
+    private Set<Share> shareSet;
 
     public DMEntityImpl()
     {
@@ -193,6 +198,15 @@ public class DMEntityImpl implements DMEntity, Serializable
 
     public void setAddOnDatas(String addOnDatas) {
         this.addOnDatas = addOnDatas;
+    }
+
+    @OneToMany(mappedBy = "entity", cascade = CascadeType.ALL)
+    public Set<Share> getShareSet() {
+        return shareSet;
+    }
+
+    public void setShareSet(Set<Share> shareSet) {
+        this.shareSet = shareSet;
     }
 
     public int compareTo(DMEntity o)

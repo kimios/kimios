@@ -146,6 +146,10 @@ public class ServiceHelper implements IServiceHelper {
             return new DMServiceException(16, "Error 16 : Date Expired Exception : " + e.toString(), e);
         }
 
+        if (e instanceof DeleteDocumentWithActiveShareException) {
+            return new DMServiceException(17, "Error 17 : " + e.toString(), e);
+        }
+
         if (e instanceof Exception) {
             return new DMServiceException(0, e.getMessage(), e);
         }

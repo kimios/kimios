@@ -15,10 +15,7 @@
  */
 package org.kimios.kernel.dms.hibernate;
 
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.ObjectNotFoundException;
-import org.hibernate.Query;
+import org.hibernate.*;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
@@ -55,6 +52,20 @@ public class HDocumentFactory extends HFactory implements DocumentFactory
     {
         try {
             Document d = (Document) getSession().get(Document.class, new Long(uid));
+            return d;
+        } catch (ObjectNotFoundException e) {
+            return null;
+        } catch (HibernateException e) {
+            throw new DataSourceException(e, e.getMessage());
+        }
+    }
+
+    public Document getDocumentWithActiveShares(long uid) throws ConfigException,
+            DataSourceException
+    {
+        try {
+            Document d = (Document) getSession().get(Document.class, new Long(uid));
+            Hibernate.initialize(d.getShareSet());
             return d;
         } catch (ObjectNotFoundException e) {
             return null;

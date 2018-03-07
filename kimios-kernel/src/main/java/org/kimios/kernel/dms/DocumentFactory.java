@@ -27,6 +27,8 @@ public interface DocumentFactory
 {
     public Document getDocument(long uid) throws ConfigException, DataSourceException;
 
+    public Document getDocumentWithActiveShares(long uid) throws ConfigException, DataSourceException;
+
     public Document getDocument(String name, String extension, Folder f) throws ConfigException, DataSourceException;
 
     public List<Document> getDocuments() throws ConfigException, DataSourceException;

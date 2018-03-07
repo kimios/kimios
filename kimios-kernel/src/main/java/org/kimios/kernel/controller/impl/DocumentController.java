@@ -48,6 +48,7 @@ import org.kimios.kernel.security.*;
 import org.kimios.kernel.security.model.DMEntitySecurity;
 import org.kimios.kernel.security.model.SecurityEntityType;
 import org.kimios.kernel.security.model.Session;
+import org.kimios.kernel.share.model.Share;
 import org.kimios.kernel.user.model.User;
 import org.kimios.utils.hash.HashCalculator;
 import org.kimios.utils.configuration.ConfigurationManager;
@@ -906,7 +907,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     * @see org.kimios.kernel.controller.impl.IDocumentController#deleteDocument(org.kimios.kernel.security.Session, long)
     */
     @DmsEvent(eventName = {DmsEventName.DOCUMENT_DELETE})
-    public void deleteDocument(Session s, long uid)
+    public void deleteDocument(Session s, long uid, boolean force)
             throws CheckoutViolationException, AccessDeniedException, ConfigException, DataSourceException {
         Document d = dmsFactoryInstantiator.getDocumentFactory().getDocument(uid);
         Lock lock = d.getCheckoutLock();
@@ -917,6 +918,10 @@ public class DocumentController extends AKimiosController implements IDocumentCo
         }
         if (getSecurityAgent().isWritable(d, s.getUserName(), s.getUserSource(), s.getGroups()) &&
                 getSecurityAgent().isWritable(d.getFolder(), s.getUserName(), s.getUserSource(), s.getGroups())) {
+            Set<Share> shareSet = dmsFactoryInstantiator.getDocumentFactory().getDocument(uid).getShareSet();
+            if (!force && shareSet != null && !shareSet.isEmpty()) {
+                throw new DeleteDocumentWithActiveShareException();
+            }
             dmsFactoryInstantiator.getDocumentFactory().deleteDocument(d);
         } else {
             throw new AccessDeniedException();
