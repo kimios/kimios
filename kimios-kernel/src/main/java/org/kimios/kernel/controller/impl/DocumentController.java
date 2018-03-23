@@ -49,6 +49,7 @@ import org.kimios.kernel.security.model.DMEntitySecurity;
 import org.kimios.kernel.security.model.SecurityEntityType;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.share.model.Share;
+import org.kimios.kernel.share.model.ShareStatus;
 import org.kimios.kernel.user.model.User;
 import org.kimios.utils.hash.HashCalculator;
 import org.kimios.utils.configuration.ConfigurationManager;
@@ -143,6 +144,19 @@ public class DocumentController extends AKimiosController implements IDocumentCo
             throw new AccessDeniedException();
         }
 
+        return d;
+    }
+
+    /**
+     * Get a document from its uid with its shareSet (active shares only) loaded
+     */
+    public Document getDocumentWithShares(Session session, long uid)
+            throws DataSourceException, ConfigException, AccessDeniedException {
+        Document d = dmsFactoryInstantiator.getDocumentFactory().getDocumentWithActiveShares(uid);
+        if (d == null ||
+                !getSecurityAgent().isReadable(d, session.getUserName(), session.getUserSource(), session.getGroups())) {
+            throw new AccessDeniedException();
+        }
         return d;
     }
 
@@ -908,7 +922,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     */
     @DmsEvent(eventName = {DmsEventName.DOCUMENT_DELETE})
     public void deleteDocument(Session s, long uid, boolean force)
-            throws CheckoutViolationException, AccessDeniedException, ConfigException, DataSourceException {
+            throws CheckoutViolationException, AccessDeniedException, ConfigException, DataSourceException, DeleteDocumentWithActiveShareException, DocumentDeletedWithActiveShareException {
         Document d = dmsFactoryInstantiator.getDocumentFactory().getDocument(uid);
         Lock lock = d.getCheckoutLock();
         if (lock != null) {
@@ -918,7 +932,13 @@ public class DocumentController extends AKimiosController implements IDocumentCo
         }
         if (getSecurityAgent().isWritable(d, s.getUserName(), s.getUserSource(), s.getGroups()) &&
                 getSecurityAgent().isWritable(d.getFolder(), s.getUserName(), s.getUserSource(), s.getGroups())) {
-            Set<Share> shareSet = dmsFactoryInstantiator.getDocumentFactory().getDocument(uid).getShareSet();
+            Set<Share> shareSet = new HashSet<>();
+            dmsFactoryInstantiator.getDocumentFactory().getDocument(uid).getShareSet().forEach(share -> {
+                if (share.getExpirationDate().after(new Date())
+                    && share.getShareStatus().equals(ShareStatus.ACTIVE)) {
+                    shareSet.add(share);
+                }
+            });
             if (!force && shareSet != null && !shareSet.isEmpty()) {
                 throw new DeleteDocumentWithActiveShareException();
             }

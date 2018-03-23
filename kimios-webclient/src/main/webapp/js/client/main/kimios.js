@@ -153,7 +153,9 @@ kimios = {
 
         var sHandler = function (resp, opt) {
             kimios.unmask();
-            if (resp.responseText == '' || resp.responseText == '{"success":true}') {
+            if (resp.responseText == ''
+                || resp.responseText == '{"success":true}'
+                || Ext.util.JSON.decode(resp.responseText).success == true) {
                 if (successHandler != null)
                     successHandler(resp);
             } else {

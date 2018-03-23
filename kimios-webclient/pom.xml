@@ -28,6 +28,13 @@
 
     <packaging>war</packaging>
     <dependencies>
+
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>javax.json</artifactId>
+            <version>1.0.4</version>
+        </dependency>
+
         <dependency>
             <groupId>org.kimios</groupId>
             <artifactId>kimios-client-api</artifactId>

@@ -17,15 +17,15 @@ package org.kimios.webservices.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.kimios.kernel.dms.model.DMEntityAttribute;
+import org.kimios.exceptions.DocumentDeletedWithActiveShareException;
 import org.kimios.kernel.dms.MetaProcessor;
-import org.kimios.kernel.dms.model.Document;
+import org.kimios.kernel.dms.model.DMEntityAttribute;
 import org.kimios.kernel.dms.model.MetaValue;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.ws.pojo.DMEntity;
 import org.kimios.webservices.CoreService;
-import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.ExtensionService;
+import org.kimios.webservices.exceptions.DMServiceException;
 
 import javax.jws.WebService;
 import java.util.ArrayList;
@@ -91,10 +91,17 @@ public class ExtensionServiceImpl extends CoreService implements ExtensionServic
     }
 
     @Override
-    public void trashEntity(String sessionId, long dmEntityId) throws DMServiceException {
+    public void trashEntity(String sessionId, long dmEntityId, boolean force) throws DMServiceException {
         try {
             Session session = getHelper().getSession(sessionId);
-            extensionController.trashEntity(session, dmEntityId);
+            org.kimios.kernel.dms.model.Document document = documentController.getDocumentWithShares(session, dmEntityId);
+            extensionController.trashEntity(session, dmEntityId, force);
+            if (document != null
+                    && document.getShareSet() != null
+                    && document.getShareSet().size() > 0) {
+                // throw exception to send a warning
+                throw new DocumentDeletedWithActiveShareException();
+            }
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }

@@ -19,6 +19,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.kimios.exceptions.DocumentDeletedWithActiveShareException;
 import org.kimios.kernel.configuration.Config;
 import org.kimios.kernel.dms.model.Bookmark;
 import org.kimios.kernel.dms.model.MetaValue;
@@ -299,11 +300,17 @@ public class DocumentServiceImpl extends CoreService implements DocumentService,
      * @param documentId
      * @throws DMServiceException
      */
-    public void deleteDocument(String sessionId, long documentId) throws DMServiceException {
+    public void deleteDocument(String sessionId, long documentId, boolean force) throws DMServiceException {
 
         try {
             Session session = getHelper().getSession(sessionId);
-            documentController.deleteDocument(session, documentId, false);
+            org.kimios.kernel.dms.model.Document document = documentController.getDocumentWithShares(session, documentId);
+            documentController.deleteDocument(session, documentId, force);
+            if (document.getShareSet() != null
+                    && document.getShareSet().size() > 0) {
+                // throw exception to send a warning
+                throw new DocumentDeletedWithActiveShareException();
+            }
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }

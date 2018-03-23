@@ -34,7 +34,6 @@ import org.kimios.webservices.DocumentService;
 import javax.activation.DataHandler;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.wsdl.Input;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
@@ -63,7 +62,7 @@ public class DocumentController {
      * Get a document from its uid
      */
     public Document getDocument(String sessionId, long documentId)
-            throws Exception, DMSException, ConfigException, AccessDeniedException {
+            throws Exception {
         try {
             return client.getDocument(sessionId, documentId);
         } catch (Exception e) {
@@ -212,10 +211,10 @@ public class DocumentController {
     /**
      * Remove a document
      */
-    public void deleteDocument(String sessionId, long documentId)
-            throws Exception, DMSException, ConfigException, AccessDeniedException {
+    public void deleteDocument(String sessionId, long documentId, boolean force)
+            throws Exception {
         try {
-            client.deleteDocument(sessionId, documentId);
+            client.deleteDocument(sessionId, documentId, force);
         } catch (Exception e) {
             throw new ExceptionHelper().convertException(e);
         }

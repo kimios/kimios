@@ -27,6 +27,8 @@ import org.kimios.kernel.dms.FactoryInstantiator;
 import org.kimios.kernel.dms.model.Folder;
 import org.kimios.exceptions.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
+import org.kimios.kernel.share.model.Share;
+import org.kimios.kernel.share.model.ShareStatus;
 import org.kimios.utils.configuration.ConfigurationManager;
 
 import java.util.*;
@@ -64,8 +66,18 @@ public class HDocumentFactory extends HFactory implements DocumentFactory
             DataSourceException
     {
         try {
-            Document d = (Document) getSession().get(Document.class, new Long(uid));
-            Hibernate.initialize(d.getShareSet());
+            Document d = getDocument(uid);
+            if (d != null) {
+                Hibernate.initialize(d.getShareSet());
+                Set<Share> shareSet = new HashSet<>();
+                d.getShareSet().forEach(s -> {
+                    if (s.getExpirationDate().after(new Date())
+                            && s.getShareStatus().equals(ShareStatus.ACTIVE)) {
+                        shareSet.add(s);
+                    }
+                });
+                d.setShareSet(shareSet);
+            }
             return d;
         } catch (ObjectNotFoundException e) {
             return null;

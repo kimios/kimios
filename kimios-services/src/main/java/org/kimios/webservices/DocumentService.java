@@ -163,7 +163,8 @@ public interface DocumentService {
     @Path("/deleteDocument")
     @Produces("application/json")
     public void deleteDocument(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
-                               @QueryParam(value = "documentId") @WebParam(name = "documentId") long documentId) throws DMServiceException;
+                               @QueryParam(value = "documentId") @WebParam(name = "documentId") long documentId,
+                               @QueryParam(value = "force") @WebParam(name = "force") @DefaultValue(value = "false") boolean force) throws DMServiceException;
 
     @GET @ApiOperation(value ="")
     @Path("/getRelatedDocuments")

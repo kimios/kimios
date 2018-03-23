@@ -48,7 +48,7 @@ public interface IExtensionController
 
 
     @DmsEvent(eventName = {DmsEventName.DOCUMENT_TRASH})
-    public void trashEntity(Session session, long dmEntityId)
+    public void trashEntity(Session session, long dmEntityId, boolean force)
             throws ConfigException, DataSourceException, AccessDeniedException;
 
     public List<DMEntity> viewTrash(Session session, Integer start, Integer count)

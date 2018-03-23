@@ -9,7 +9,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kimios.exceptions.AccessDeniedException;
-import org.kimios.exceptions.DeleteDocumentWithActiveShareException;
 import org.kimios.kernel.controller.IAdministrationController;
 import org.kimios.kernel.controller.IDocumentController;
 import org.kimios.kernel.controller.IFolderController;
@@ -26,6 +25,9 @@ import org.kimios.tests.OsgiKimiosService;
 import org.kimios.tests.TestAbstract;
 import org.kimios.tests.deployments.OsgiDeployment;
 import org.kimios.tests.utils.dataset.Users;
+import org.kimios.webservices.DocumentService;
+import org.kimios.webservices.ExtensionService;
+import org.kimios.webservices.exceptions.DMServiceException;
 import org.osgi.framework.BundleContext;
 
 import java.io.InputStream;
@@ -53,6 +55,10 @@ public class ShareTest extends TestAbstract {
     protected IDocumentController documentController;
     @OsgiKimiosService
     protected IFolderController folderController;
+    @OsgiKimiosService
+    protected DocumentService documentService;
+    @OsgiKimiosService
+    protected ExtensionService extensionService;
 
     private final String workspaceTestName = "workspaceShareTest";
     private Workspace workspaceTest;
@@ -120,12 +126,31 @@ public class ShareTest extends TestAbstract {
         this.folderController = folderController;
     }
 
+    public DocumentService getDocumentService() {
+        return documentService;
+    }
+
+    public void setDocumentService(DocumentService documentService) {
+        this.documentService = documentService;
+    }
+
+    public ExtensionService getExtensionService() {
+        return extensionService;
+    }
+
+    public void setExtensionService(ExtensionService extensionService) {
+        this.extensionService = extensionService;
+    }
+
     @Deployment(name="karaf")
     public static JavaArchive createDeployment() {
         String jarName = ShareTest.class.getSimpleName() + ".jar";
+        List<String> additionalPackages = new ArrayList<>();
+        additionalPackages.add("org.kimios.webservices");
+        additionalPackages.add("org.kimios.webservices.exceptions");
         return OsgiDeployment.createArchive(
                 jarName,
-                null,
+                additionalPackages,
                 ShareTest.class
         );
     }
@@ -340,7 +365,24 @@ public class ShareTest extends TestAbstract {
                     sessions.get(Users.USER_TEST_1),
                     this.sharedDocuments.get(Users.USER_TEST_1).get(0),
                     Users.USER_TEST_3, Users.USER_TEST_SOURCE,
-                    true, false, false, date, false);
+                    true, false, false, date, false
+            );
+            this.shares.add(share);
+
+            GregorianCalendar.getInstance();
+            cal.add(Calendar.DATE, -10);
+            date = cal.getTime();
+            share = this.getShareController().shareEntity(
+                    sessions.get(Users.USER_TEST_1),
+                    this.sharedDocuments.get(Users.USER_TEST_1).get(0),
+                    Users.USER_TEST_3,
+                    Users.USER_TEST_SOURCE,
+                    true,
+                    false,
+                    false,
+                    date,
+                    false
+            );
             this.shares.add(share);
         } catch (Exception e) {
             System.out.println("Exception of type : " + e.getClass().getName());
@@ -349,25 +391,125 @@ public class ShareTest extends TestAbstract {
             fail("Exception while sharing entity");
         }
         try {
-            this.documentController.deleteDocument(sessions.get(Users.USER_TEST_1), this.sharedDocuments.get(Users.USER_TEST_1).get(0), false);
-            fail();
+            Document document = this.documentController.getDocumentWithShares(
+                    sessions.get(Users.USER_TEST_1),
+                    this.sharedDocuments.get(Users.USER_TEST_1).get(0)
+            );
+            assertNotNull(document.getShareSet());
+            assertTrue(document.getShareSet().size() == 1);
         } catch (Exception e) {
-            assertTrue(e instanceof DeleteDocumentWithActiveShareException);
-            assertEquals(e.getMessage(), "Trying to delete a document with active shares");
+
         }
 
         try {
-            this.documentController.deleteDocument(sessions.get(Users.USER_TEST_1), this.sharedDocuments.get(Users.USER_TEST_1).get(0), true);
+            this.documentService.deleteDocument(sessions.get(Users.USER_TEST_1).getUid(), this.sharedDocuments.get(Users.USER_TEST_1).get(0), false);
+            fail();
         } catch (Exception e) {
+            assertTrue(e instanceof DMServiceException);
+            assertTrue(((DMServiceException) e).getCode() == 17);
+        }
 
+        try {
+            this.documentService.deleteDocument(sessions.get(Users.USER_TEST_1).getUid(), this.sharedDocuments.get(Users.USER_TEST_1).get(0), true);
+            fail();
+        } catch (Exception e) {
+            assertTrue(e instanceof DMServiceException);
+            assertTrue(((DMServiceException) e).getCode() == 18);
         }
 
         try {
             // should raise exception because document does not exist any more (just been deleted)
             Document document = this.documentController.getDocument(sessions.get(Users.USER_TEST_1), this.sharedDocuments.get(Users.USER_TEST_1).get(0));
+            assertNull(document);
             fail();
         } catch (Exception e) {
             assertTrue(e instanceof AccessDeniedException);
+        }
+
+    }
+
+    @Test
+    public void testTrashSharedDocument() {
+        Calendar cal = GregorianCalendar.getInstance();
+        cal.add(Calendar.DATE, 7);
+        Date date = cal.getTime();
+        Share share;
+        try {
+            share = this.getShareController().shareEntity(
+                    sessions.get(Users.USER_TEST_1),
+                    this.sharedDocuments.get(Users.USER_TEST_1).get(0),
+                    Users.USER_TEST_3, Users.USER_TEST_SOURCE,
+                    true, false, false, date, false);
+            this.shares.add(share);
+
+            GregorianCalendar.getInstance();
+            cal.add(Calendar.DATE, -10);
+            date = cal.getTime();
+            share = this.getShareController().shareEntity(
+                    sessions.get(Users.USER_TEST_1),
+                    this.sharedDocuments.get(Users.USER_TEST_1).get(0),
+                    Users.USER_TEST_3,
+                    Users.USER_TEST_SOURCE,
+                    true,
+                    false,
+                    false,
+                    date,
+                    false
+            );
+            this.shares.add(share);
+
+            GregorianCalendar.getInstance();
+            cal.add(Calendar.DATE, +20);
+            date = cal.getTime();
+            share = this.getShareController().shareEntity(
+                    sessions.get(Users.USER_TEST_1),
+                    this.sharedDocuments.get(Users.USER_TEST_1).get(0),
+                    Users.USER_TEST_3,
+                    Users.USER_TEST_SOURCE,
+                    true,
+                    false,
+                    false,
+                    date,
+                    false
+            );
+            this.shares.add(share);
+        } catch (Exception e) {
+            System.out.println("Exception of type : " + e.getClass().getName());
+            System.out.println("Message : " + e.getMessage());
+            System.out.println("Cause : " + e.getCause());
+            fail("Exception while sharing entity");
+        }
+        try {
+            Document document = this.documentController.getDocumentWithShares(
+                    sessions.get(Users.USER_TEST_1),
+                    this.sharedDocuments.get(Users.USER_TEST_1).get(0)
+            );
+            assertNotNull(document.getShareSet());
+            assertTrue(document.getShareSet().size() == 2);
+        } catch (Exception e) {
+
+        }
+
+        try {
+            this.extensionService.trashEntity(sessions.get(Users.USER_TEST_1).getUid(), this.sharedDocuments.get(Users.USER_TEST_1).get(0), false);
+            fail();
+        } catch (Exception e) {
+            assertTrue(e instanceof DMServiceException);
+            assertTrue(((DMServiceException) e).getCode() == 17);
+        }
+
+        try {
+            this.extensionService.trashEntity(sessions.get(Users.USER_TEST_1).getUid(), this.sharedDocuments.get(Users.USER_TEST_1).get(0), true);
+            fail();
+        } catch (Exception e) {
+            assertTrue(e instanceof DMServiceException);
+            assertTrue(((DMServiceException) e).getCode() == 18);
+        }
+
+        try {
+            Document document = this.documentController.getDocument(sessions.get(Users.USER_TEST_1), this.sharedDocuments.get(Users.USER_TEST_1).get(0));
+            assertTrue(document.getTrashed());
+        } catch (Exception e) {
         }
 
     }

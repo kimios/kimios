@@ -150,6 +150,10 @@ public class ServiceHelper implements IServiceHelper {
             return new DMServiceException(17, "Error 17 : " + e.toString(), e);
         }
 
+        if (e instanceof DocumentDeletedWithActiveShareException) {
+            return new DMServiceException(18, "Error 18 : " + e.toString(), e);
+        }
+
         if (e instanceof Exception) {
             return new DMServiceException(0, e.getMessage(), e);
         }
