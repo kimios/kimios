@@ -939,7 +939,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                     shareSet.add(share);
                 }
             });
-            if (!force && shareSet != null && !shareSet.isEmpty()) {
+            if (!force && !shareSet.isEmpty()) {
                 throw new DeleteDocumentWithActiveShareException();
             }
             dmsFactoryInstantiator.getDocumentFactory().deleteDocument(d);

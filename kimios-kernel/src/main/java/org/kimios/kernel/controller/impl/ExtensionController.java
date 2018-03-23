@@ -31,6 +31,7 @@ import org.kimios.kernel.security.model.Role;
 import org.kimios.kernel.security.SecurityAgent;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.share.model.Share;
+import org.kimios.kernel.share.model.ShareStatus;
 import org.kimios.kernel.user.model.AuthenticationSource;
 import org.kimios.kernel.user.model.User;
 import org.kimios.kernel.user.impl.HAuthenticationSource;
@@ -42,10 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Transactional
 public class ExtensionController extends AKimiosController implements IExtensionController {
@@ -190,8 +188,14 @@ public class ExtensionController extends AKimiosController implements IExtension
         if (getSecurityAgent().isWritable(d, session.getUserName(), session.getUserSource(), session.getGroups())){
         {
             if (d instanceof Document) {
-                Set<Share> shareSet = dmsFactoryInstantiator.getDocumentFactory().getDocument(d.getUid()).getShareSet();
-                if (!force && shareSet != null && !shareSet.isEmpty()) {
+                Set<Share> shareSet = new HashSet<>();
+                dmsFactoryInstantiator.getDocumentFactory().getDocument(d.getUid()).getShareSet().forEach(share -> {
+                    if (share.getExpirationDate().after(new Date())
+                            && share.getShareStatus().equals(ShareStatus.ACTIVE)) {
+                        shareSet.add(share);
+                    }
+                });
+                if (!force && !shareSet.isEmpty()) {
                     throw new DeleteDocumentWithActiveShareException();
                 }
             }
