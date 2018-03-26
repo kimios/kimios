@@ -157,7 +157,7 @@ kimios.properties.VersionsPanel = Ext.extend(Ext.Panel, {
     
     this.grid.on('rowdblclick', function(grid, rowIndex, ev) {
       var selectedRecord = grid.getStore().getAt(rowIndex);
-      window.location.href = kimios.util.getDocumentVersionLink(selectedRecord.data.uid, selectedRecord.data.documentUid);
+      window.location.href = kimios.util.getDocumentVersionLink(selectedRecord.data.documentUid, selectedRecord.data.uid);
     }, this);
     
     this.grid.on('containercontextmenu', function(grid, e){

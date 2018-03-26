@@ -191,7 +191,7 @@ public class MainController extends HttpServlet {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             e.printStackTrace(pw);
-            json = "{success:false,exception:\"" + StringEscapeUtils.escapeJava(e.getMessage()) + "\",trace:\"" + StringEscapeUtils.escapeJava(sw.toString()) + "\"}";
+            json = "{\"success\":\"false\",\"exception\":\"" + StringEscapeUtils.escapeJava(e.getMessage()) + "\",\"trace\":\"" + StringEscapeUtils.escapeJava(sw.toString()) + "\"}";
             response.getWriter().write(json);
         }
     }
