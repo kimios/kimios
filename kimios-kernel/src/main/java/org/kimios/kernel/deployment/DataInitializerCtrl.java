@@ -15,6 +15,7 @@
  */
 package org.kimios.kernel.deployment;
 
+import org.apache.commons.lang.StringUtils;
 import org.kimios.kernel.security.model.Role;
 import org.kimios.kernel.user.model.AuthenticationSource;
 import org.kimios.kernel.user.FactoryInstantiator;
@@ -24,15 +25,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Calendar;
 import java.util.List;
 
-/***
- *
- *
- *
- */
 
 public class DataInitializerCtrl implements IDataInitializerCtrl {
+
+    public static final String KIMIOS_DEFAULT_DOMAIN = "KIMIOS_DEFAULT_DOMAIN";
+    public static final String KIMIOS_ADMIN_PASSWORD = "KIMIOS_ADMIN_PASSWORD";
+    public static final String KIMIOS_ADMIN_USERID = "KIMIOS_ADMIN_USERID";
+    public static final String KIMIOS_ADMIN_FIRSTNAME = "KIMIOS_ADMIN_FIRSTNAME";
+    public static final String KIMIOS_ADMIN_LASTNAME = "KIMIOS_ADMIN_LASTNAME";
+    public static final String KIMIOS_ADMIN_EMAIL = "KIMIOS_ADMIN_EMAIL";
+
     private static Logger log = LoggerFactory.getLogger(DataInitializerCtrl.class);
 
     private FactoryInstantiator userFactoryInstantiator;
@@ -94,24 +99,47 @@ public class DataInitializerCtrl implements IDataInitializerCtrl {
                             .saveAuthenticationSource(s);
                 }
             }
-            /*
-            Should fix meta feed
-             */
         }
-
-        /*
-            Fix new data
-         */
-
-
         log.info("Database Initialized.");
     }
 
     private void createMinimalSettings() throws Exception
     {
 
+
+        /** Generate Password if necessary */
+        String defaultDomain =
+                StringUtils.isEmpty(System.getenv(KIMIOS_DEFAULT_DOMAIN)) ?
+                        (StringUtils.isEmpty(System.getProperty("kimios.default.domain")) ? "kimios" : System.getProperty("kimios.default.domain")) :
+                        System.getenv(KIMIOS_DEFAULT_DOMAIN);
+        String adminPassword =
+                StringUtils.isEmpty(System.getenv(KIMIOS_ADMIN_PASSWORD)) ?
+                        (StringUtils.isEmpty(System.getProperty("kimios.admin.password")) ?
+                                "kimios" + Calendar.getInstance().get(Calendar.YEAR) : System.getProperty("kimios.admin.password")) :
+                        System.getenv(KIMIOS_ADMIN_PASSWORD);
+        String adminLogin =
+                StringUtils.isEmpty(System.getenv(KIMIOS_ADMIN_USERID)) ?
+                        (StringUtils.isEmpty(System.getProperty("kimios.admin.userid")) ? "admin" : System.getProperty("kimios.admin.userid")) :
+                        System.getenv(KIMIOS_ADMIN_USERID);
+
+        String adminFirstName =
+                StringUtils.isEmpty(System.getenv(KIMIOS_ADMIN_FIRSTNAME)) ?
+                        (StringUtils.isEmpty(System.getProperty("kimios.admin.firstname")) ? "Kimios" : System.getProperty("kimios.admin.firstname")) :
+                        System.getenv(KIMIOS_ADMIN_FIRSTNAME);
+
+        String adminLastName =
+                StringUtils.isEmpty(System.getenv(KIMIOS_ADMIN_LASTNAME)) ?
+                        (StringUtils.isEmpty(System.getProperty("kimios.admin.lastname")) ? "Administrator" : System.getProperty("kimios.admin.lastname")) :
+                        System.getenv(KIMIOS_ADMIN_LASTNAME);
+
+        String adminEmail=
+                StringUtils.isEmpty(System.getenv(KIMIOS_ADMIN_EMAIL)) ?
+                        (StringUtils.isEmpty(System.getProperty("kimios.admin.email")) ? "default@kimios-instance.org" : System.getProperty("kimios.admin.email")) :
+                        System.getenv(KIMIOS_ADMIN_EMAIL);
+
+
         AuthenticationSource authenticationSource = new HAuthenticationSource();
-        authenticationSource.setName("kimios");
+        authenticationSource.setName(defaultDomain);
         authenticationSource.setEnableSSOCheck(false);
         authenticationSource.setEnableAuthByEmail(false);
         userFactoryInstantiator.getAuthenticationSourceFactory()
@@ -129,22 +157,22 @@ public class DataInitializerCtrl implements IDataInitializerCtrl {
             //throw new Exception("Kimios Init Process Error. Unable to create minmal Data");
             authenticationSource = backupSource;
         }
-        createAdminUser(authenticationSource);
+        createAdminUser(authenticationSource, adminLogin, adminPassword, adminFirstName, adminLastName, adminEmail);
     }
 
-    private void createAdminUser(AuthenticationSource authenticationSource) throws Exception
+    private void createAdminUser(AuthenticationSource authenticationSource, String login, String password, String firstname, String lastname, String email) throws Exception
     {
 
         User adminUser = new User();
         adminUser.setAuthenticationSourceName(authenticationSource.getName());
-        adminUser.setMail("kimios@kimios.org");
-        adminUser.setName("Kimios Administrator");
-        adminUser.setFirstName("Kimios");
-        adminUser.setLastName("Administrator");
-        adminUser.setUid("admin");
-        adminUser.setPassword("kimios");
+        adminUser.setMail(email);
+        adminUser.setName(firstname.trim() + " " + lastname.trim());
+        adminUser.setFirstName(firstname);
+        adminUser.setLastName(lastname);
+        adminUser.setUid(login);
+        adminUser.setPassword(password);
 
-        authenticationSource.getUserFactory().saveUser(adminUser, "kimios");
+        authenticationSource.getUserFactory().saveUser(adminUser, password);
 
 
         Role adminRole = new Role();
