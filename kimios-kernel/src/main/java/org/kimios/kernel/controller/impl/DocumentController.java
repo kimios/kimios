@@ -31,7 +31,6 @@ import org.kimios.kernel.dms.model.Meta;
 import org.kimios.kernel.dms.model.MetaValue;
 import org.kimios.kernel.dms.model.SymbolicLink;
 import org.kimios.kernel.dms.model.WorkflowStatus;
-import org.kimios.kernel.dms.utils.PathElement;
 import org.kimios.kernel.dms.utils.PathUtils;
 import org.kimios.kernel.dms.*;
 import org.kimios.kernel.dms.FactoryInstantiator;
@@ -49,6 +48,8 @@ import org.kimios.kernel.security.*;
 import org.kimios.kernel.security.model.DMEntitySecurity;
 import org.kimios.kernel.security.model.SecurityEntityType;
 import org.kimios.kernel.security.model.Session;
+import org.kimios.kernel.share.model.Share;
+import org.kimios.kernel.share.model.ShareStatus;
 import org.kimios.kernel.user.model.User;
 import org.kimios.utils.hash.HashCalculator;
 import org.kimios.utils.configuration.ConfigurationManager;
@@ -147,6 +148,19 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     }
 
     /**
+     * Get a document from its uid with its shareSet (active shares only) loaded
+     */
+    public Document getDocumentWithShares(Session session, long uid)
+            throws DataSourceException, ConfigException, AccessDeniedException {
+        Document d = dmsFactoryInstantiator.getDocumentFactory().getDocumentWithActiveShares(uid);
+        if (d == null ||
+                !getSecurityAgent().isReadable(d, session.getUserName(), session.getUserSource(), session.getGroups())) {
+            throw new AccessDeniedException();
+        }
+        return d;
+    }
+
+    /**
      * @param session
      * @return
      * @throws ConfigException
@@ -207,7 +221,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                             .getType(), v.elementAt(i).isRead(), v.elementAt(i).isWrite(),
                             v.elementAt(i).isFullAccess(), d);
 
-                    dsf.saveDMEntitySecurity(des);
+                    dsf.saveDMEntitySecurity(des, null);
                 }
             }
             return d.getUid();
@@ -298,7 +312,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                                 .getType(), v.elementAt(i).isRead(), v.elementAt(i).isWrite(),
                                 v.elementAt(i).isFullAccess(), d);
 
-                        dsf.saveDMEntitySecurity(des);
+                        dsf.saveDMEntitySecurity(des, null);
                     }
                 }
                 documentId = d.getUid();
@@ -907,8 +921,8 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     * @see org.kimios.kernel.controller.impl.IDocumentController#deleteDocument(org.kimios.kernel.security.Session, long)
     */
     @DmsEvent(eventName = {DmsEventName.DOCUMENT_DELETE})
-    public void deleteDocument(Session s, long uid)
-            throws CheckoutViolationException, AccessDeniedException, ConfigException, DataSourceException {
+    public void deleteDocument(Session s, long uid, boolean force)
+            throws CheckoutViolationException, AccessDeniedException, ConfigException, DataSourceException, DeleteDocumentWithActiveShareException, DocumentDeletedWithActiveShareException {
         Document d = dmsFactoryInstantiator.getDocumentFactory().getDocument(uid);
         Lock lock = d.getCheckoutLock();
         if (lock != null) {
@@ -918,6 +932,16 @@ public class DocumentController extends AKimiosController implements IDocumentCo
         }
         if (getSecurityAgent().isWritable(d, s.getUserName(), s.getUserSource(), s.getGroups()) &&
                 getSecurityAgent().isWritable(d.getFolder(), s.getUserName(), s.getUserSource(), s.getGroups())) {
+            Set<Share> shareSet = new HashSet<>();
+            dmsFactoryInstantiator.getDocumentFactory().getDocument(uid).getShareSet().forEach(share -> {
+                if (share.getExpirationDate().after(new Date())
+                    && share.getShareStatus().equals(ShareStatus.ACTIVE)) {
+                    shareSet.add(share);
+                }
+            });
+            if (!force && !shareSet.isEmpty()) {
+                throw new DeleteDocumentWithActiveShareException();
+            }
             dmsFactoryInstantiator.getDocumentFactory().deleteDocument(d);
         } else {
             throw new AccessDeniedException();
@@ -1457,7 +1481,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                     aclCopy.setRead(acl.isRead());
                     aclCopy.setFullName(acl.getFullName());
 
-                    dsf.saveDMEntitySecurity(aclCopy);
+                    dsf.saveDMEntitySecurity(aclCopy, null);
                 }
 
                 DocumentVersion dv = dmsFactoryInstantiator.getDocumentVersionFactory().getLastDocumentVersion(document);

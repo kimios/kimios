@@ -23,13 +23,13 @@ import org.kimios.kernel.share.model.MailContact;
 import org.kimios.kernel.ws.pojo.Share;
 import org.kimios.webservices.exceptions.DMServiceException;
 
-import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Date;
+import javax.ws.rs.core.UriInfo;
 import java.util.List;
 import java.util.Map;
 
@@ -52,7 +52,9 @@ public interface ShareService {
             @WebParam(name = "content") String content,
             @WebParam(name = "senderAddress") String senderAddress,
             @WebParam(name = "senderName") String senderName,
-            @WebParam(name = "defaultSender")  Boolean defaultSender)
+            @WebParam(name = "defaultSender")  Boolean defaultSender,
+            @WebParam(name = "password") String password,
+            @WebParam(name = "expirationDate") String expirationDate)
             throws DMServiceException;
 
 
@@ -111,22 +113,26 @@ public interface ShareService {
 
 
             @ApiParam(value = "recipients")
-            List<MailContact> recipients,
+                    List<MailContact> recipients,
 
             @ApiParam(value = "subject")
-            @QueryParam(value = "subject")  String subject,
+            @QueryParam(value = "subject") String subject,
 
             @ApiParam(value = "content")
-            @QueryParam(value = "content")  String content,
+            @QueryParam(value = "content") String content,
 
             @ApiParam(value = "senderAddress")
-            @QueryParam(value = "senderAddress")  String senderAddress,
+            @QueryParam(value = "senderAddress") String senderAddress,
 
             @ApiParam(value = "senderName")
             @QueryParam(value = "senderName") String senderName,
 
+            @DefaultValue("false") @ApiParam(value = "Default Sender") @QueryParam(value = "defaultSender") Boolean defaultSender,
+            @ApiParam(value = "password") @QueryParam(value = "password") String password,
 
-            @DefaultValue("false") @ApiParam(value = "Default Sender")  @QueryParam(value = "defaultSender")  Boolean defaultSender)
+            @ApiParam(value = "expirationDate")
+            @QueryParam(value = "expirationDate") String expirationDate)
+
             throws DMServiceException;
 
 
@@ -152,4 +158,24 @@ public interface ShareService {
     String loadDefaultTemplate(@ApiParam(value = "sessionId", name = "sessionId", required = true)
                                @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId)
         throws DMServiceException;
+
+    @GET @ApiOperation(value ="")
+    @Path( "/downloadDocumentByToken" )
+    @Produces( { MediaType.APPLICATION_OCTET_STREAM, MediaType.APPLICATION_FORM_URLENCODED } )
+    public Response downloadDocumentByToken(
+            @Context UriInfo uriInfo,
+            @QueryParam(value = "token") String token,
+            @QueryParam(value = "password") String password
+    ) throws DMServiceException;
+
+    @POST
+    @Path( "/downloadDocumentByTokenAndPassword" )
+    @Consumes( MediaType.APPLICATION_FORM_URLENCODED )
+    @Produces( { MediaType.APPLICATION_OCTET_STREAM, MediaType.APPLICATION_FORM_URLENCODED } )
+    public Response downloadDocumentByTokenAndPassword(
+            @Context UriInfo uriInfo,
+            @FormParam(value = "token") String token,
+            @FormParam(value = "password") String password
+    ) throws DMServiceException;
+
 }

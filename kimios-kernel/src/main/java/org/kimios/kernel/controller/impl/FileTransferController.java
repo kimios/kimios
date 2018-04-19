@@ -15,22 +15,28 @@
  */
 package org.kimios.kernel.controller.impl;
 
+import org.kimios.api.events.annotations.DmsEvent;
+import org.kimios.api.events.annotations.DmsEventName;
+import org.kimios.api.templates.ITemplate;
+import org.kimios.api.templates.ITemplateProcessor;
+import org.kimios.api.templates.ITemplateProvider;
+import org.kimios.api.templates.TemplateType;
 import org.kimios.exceptions.*;
 import org.kimios.kernel.configuration.Config;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.IFileTransferController;
-import org.kimios.kernel.dms.*;
+import org.kimios.kernel.dms.FactoryInstantiator;
 import org.kimios.kernel.dms.model.*;
-import org.kimios.api.events.annotations.DmsEvent;
-import org.kimios.api.events.annotations.DmsEventName;
 import org.kimios.kernel.filetransfer.model.DataTransfer;
+import org.kimios.kernel.filetransfer.model.DataTransferStatus;
 import org.kimios.kernel.filetransfer.zip.FileCompressionHelper;
 import org.kimios.kernel.repositories.impl.RepositoryManager;
 import org.kimios.kernel.security.model.Session;
+import org.kimios.kernel.share.model.Share;
 import org.kimios.kernel.user.model.User;
-import org.kimios.utils.hash.HashCalculator;
 import org.kimios.kernel.ws.pojo.DocumentWrapper;
 import org.kimios.utils.configuration.ConfigurationManager;
+import org.kimios.utils.hash.HashCalculator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,6 +56,12 @@ public class FileTransferController
 
 
     private static Logger logger = LoggerFactory.getLogger(FileTransferController.class);
+
+    private static String DEFAULT_PASSWORD = "pass";
+
+    private ITemplateProcessor templateProcessor;
+
+    private ITemplateProvider templateProvider;
 
     /**
      * Start an upload transaction for a given document (update the last version)
@@ -82,6 +94,7 @@ public class FileTransferController
         transac.setDataSize(0);
         transac.setLastActivityDate(new Date());
         transac.setTransferMode(DataTransfer.UPLOAD);
+        transac.setStatus(DataTransferStatus.ACTIVE);
         FileCompressionHelper.getTempFilePath(transac);
         transferFactoryInstantiator.getDataTransferFactory().addDataTransfer(transac);
         return transac;
@@ -231,6 +244,7 @@ public class FileTransferController
         transac.setUserSource(session.getUserSource());
         transac.setDataSize(0);
         transac.setTransferMode(DataTransfer.DOWNLOAD);
+        transac.setStatus(DataTransferStatus.ACTIVE);
         transferFactoryInstantiator.getDataTransferFactory().addDataTransfer(transac);
         if (isCompressed) {
             //File Compression
@@ -388,12 +402,31 @@ public class FileTransferController
         }
     }
 
-    public DocumentWrapper getDocumentVersionWrapper(String token)
+    public DocumentWrapper getDocumentVersionWrapper(String token, String password)
             throws ConfigException, AccessDeniedException, DataSourceException, IOException {
 
         DataTransfer transac = transferFactoryInstantiator.getDataTransferFactory()
                 .getUploadDataTransferByDocumentToken(token);
-        if (transac != null && transac.getTransferMode() == DataTransfer.TOKEN) {
+        if (transac != null
+                && transac.getStatus().equals(DataTransferStatus.ACTIVE)) {
+            if (transac.getShare().getExpirationDate() != null
+                    && transac.getShare().getExpirationDate().before(new Date())) {
+                throw new DateExpiredException(new DmsKernelException("Share's date is expired ("
+                        + transac.getShare().getExpirationDate().toString()
+                        + ")"));
+            }
+            if (transac.getTransferMode() == DataTransfer.TOKEN
+                    && transac.getPassword() != null
+                    && !transac.getPassword().isEmpty()) {
+                if (password == null) {
+                    throw new RequiredPasswordException(new DmsKernelException("password needed"));
+                } else {
+                    if ( ! transac.getPassword()
+                            .equals(securityFactoryInstantiator.getCredentialsGenerator().generatePassword(password))) {
+                        throw new RequiredPasswordException(new DmsKernelException("wrong password"));
+                    }
+                }
+            }
             DocumentVersion dv = dmsFactoryInstantiator.getDocumentVersionFactory().getDocumentVersion(
                     transac.getDocumentVersionUid());
             String filename = dv.getDocument().getName() + "." + dv.getDocument().getExtension();
@@ -403,8 +436,6 @@ public class FileTransferController
             throw new AccessDeniedException();
         }
     }
-
-
 
     @DmsEvent(eventName = {DmsEventName.DOCUMENT_VERSION_READ})
     public void readVersionStream(Session session, long transactionId, OutputStream versionStream)
@@ -429,7 +460,8 @@ public class FileTransferController
     /**
      * Create Token For Download Transaction
      */
-    public DataTransfer startDownloadTransactionToken(Session session, long documentVersionUid)
+    public DataTransfer startDownloadTransactionToken(Session session, long documentVersionUid, String password,
+                                                      Share share)
             throws IOException, RepositoryException, DataSourceException, ConfigException, AccessDeniedException {
         DocumentVersion dv =
                 dmsFactoryInstantiator.getDocumentVersionFactory().getDocumentVersion(documentVersionUid);
@@ -438,6 +470,7 @@ public class FileTransferController
             throw new AccessDeniedException();
         }
         DataTransfer transac = new DataTransfer();
+        transac.setShare(share);
         transac.setDocumentVersionUid(dv.getUid());
         transac.setIsCompressed(false);
         transac.setHashMD5(dv.getHashMD5());
@@ -448,9 +481,15 @@ public class FileTransferController
         transac.setDataSize(0);
         transac.setTransferMode(DataTransfer.TOKEN);
         transac.setDownloadToken(UUID.randomUUID().toString());
+        if (password != null && !password.isEmpty()) {
+            transac.setPassword(password);
+        }
+        transac.setStatus(DataTransferStatus.ACTIVE);
         transferFactoryInstantiator.getDataTransferFactory().addDataTransfer(transac);
         transac.setDataSize(dv.getLength());
         transferFactoryInstantiator.getDataTransferFactory().updateDataTransfer(transac);
+
+
         return transac;
     }
 
@@ -466,6 +505,27 @@ public class FileTransferController
         } else {
             throw new AccessDeniedException();
         }
+    }
+
+    public ITemplateProcessor getTemplateProcessor() {
+        return templateProcessor;
+    }
+
+    public void setTemplateProcessor(ITemplateProcessor templateProcessor) {
+        this.templateProcessor = templateProcessor;
+    }
+
+    public ITemplateProvider getTemplateProvider() {
+        return templateProvider;
+    }
+
+    public void setTemplateProvider(ITemplateProvider templateProvider) {
+        this.templateProvider = templateProvider;
+    }
+
+    public String loadDefaultMailTemplate(Session session) throws Exception {
+        ITemplate mailTemplate = templateProvider.getDefaultTemplate(TemplateType.SHARE_MAIL);
+        return (mailTemplate != null) ? mailTemplate.getContent() : null;
     }
 }
 

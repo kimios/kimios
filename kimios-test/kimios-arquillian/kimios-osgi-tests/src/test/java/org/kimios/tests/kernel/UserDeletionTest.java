@@ -12,6 +12,7 @@ import org.kimios.kernel.dms.model.Folder;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.user.model.User;
 import org.kimios.tests.deployments.OsgiDeployment;
+import org.kimios.tests.utils.dataset.Users;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -25,7 +26,7 @@ public class UserDeletionTest extends KernelTestAbstract {
     @Deployment(name="karaf")
     public static JavaArchive createDeployment() {
         return OsgiDeployment.createArchive("UserDeletionTest.jar",
-                UserDeletionTest.class,
+                null, UserDeletionTest.class,
                 KernelTestAbstract.class,
                 StringTools.class
         );
@@ -36,19 +37,19 @@ public class UserDeletionTest extends KernelTestAbstract {
 
         this.init();
 
-        this.adminSession = this.securityController.startSession(ADMIN_LOGIN, USER_TEST_SOURCE, ADMIN_PWD);
+        this.setAdminSession(this.getSecurityController().startSession(ADMIN_LOGIN, Users.USER_TEST_SOURCE, ADMIN_PWD));
 
         try {
-            this.workspaceTest = this.workspaceController.getWorkspace(this.adminSession, WORKSPACE_TEST_NAME);
+            this.workspaceTest = this.workspaceController.getWorkspace(this.getAdminSession(), WORKSPACE_TEST_NAME);
         } catch (Exception e) {
-            this.workspaceController.createWorkspace(this.adminSession, WORKSPACE_TEST_NAME);
-            this.workspaceTest = this.workspaceController.getWorkspace(this.adminSession, WORKSPACE_TEST_NAME);
+            this.workspaceController.createWorkspace(this.getAdminSession(), WORKSPACE_TEST_NAME);
+            this.workspaceTest = this.workspaceController.getWorkspace(this.getAdminSession(), WORKSPACE_TEST_NAME);
         }
 
         this.createUsersTest();
 
-        long folderUid = this.folderController.createFolder(this.adminSession, "Awesome Test's folder", this.workspaceTest.getUid(), false);
-        this.folderTest = this.folderController.getFolder(this.adminSession, folderUid);
+        long folderUid = this.folderController.createFolder(this.getAdminSession(), "Awesome Test's folder", this.workspaceTest.getUid(), false);
+        this.folderTest = this.folderController.getFolder(this.getAdminSession(), folderUid);
     }
 
     private void createUsersTest() {
@@ -58,49 +59,45 @@ public class UserDeletionTest extends KernelTestAbstract {
         String phoneNumber = "06060606060";
         String mail = "mail";
         String password = "test";
-        String authenticationSourceName = USER_TEST_SOURCE;
+        String authenticationSourceName = Users.USER_TEST_SOURCE;
         boolean enabled = true;
 
-        try {
-            this.userTest = this.administrationController.getUser(this.adminSession, uid, authenticationSourceName);
-        } catch (NullPointerException e) {
-        }
-        if (this.userTest == null) {
-            this.administrationController.createUser(this.adminSession, uid, firstname, lastname, phoneNumber, mail, password, authenticationSourceName, enabled);
-            this.userTest = this.administrationController.getUser(this.adminSession, uid, authenticationSourceName);
-        }
+        this.userTest = this.createUser(
+                this.administrationController, this.getAdminSession(), uid, firstname, lastname, phoneNumber, mail,
+                password, authenticationSourceName, enabled
+        );
     }
 
     @Test
     public void testUserDeletion() {
-        Folder folderTest = this.folderController.getFolder(this.adminSession, this.folderTest.getUid());
+        Folder folderTest = this.folderController.getFolder(this.getAdminSession(), this.folderTest.getUid());
         // grant access to user test
-        this.changePermissionOnEntityForUser(this.adminSession, this.userTest, folderTest, true, true, false);
-        Session userTestSession = this.securityController.startSession(DEFAULT_USER_TEST_ID, USER_TEST_SOURCE, "test");
+        this.changePermissionOnEntityForUser(this.getAdminSession(), this.userTest, folderTest, true, true, false);
+        Session userTestSession = this.getSecurityController().startSession(DEFAULT_USER_TEST_ID, Users.USER_TEST_SOURCE, "test");
         // user test can read, write and has not full access
-        assertTrue(this.securityController.canRead(userTestSession, this.folderTest.getUid()));
-        assertTrue(this.securityController.canWrite(userTestSession, this.folderTest.getUid()));
-        assertFalse(this.securityController.hasFullAccess(userTestSession, this.folderTest.getUid()));
+        assertTrue(this.getSecurityController().canRead(userTestSession, this.folderTest.getUid()));
+        assertTrue(this.getSecurityController().canWrite(userTestSession, this.folderTest.getUid()));
+        assertFalse(this.getSecurityController().hasFullAccess(userTestSession, this.folderTest.getUid()));
 
         // delete the user test
-        this.administrationController.deleteUser(this.adminSession, this.userTest.getUid(), this.userTest.getAuthenticationSourceName());
+        this.administrationController.deleteUser(this.getAdminSession(), this.userTest.getUid(), this.userTest.getAuthenticationSourceName());
         // create the user test again
         this.createUsersTest();
         // restart the session
-        userTestSession = this.securityController.startSession(DEFAULT_USER_TEST_ID, USER_TEST_SOURCE, "test");
+        userTestSession = this.getSecurityController().startSession(DEFAULT_USER_TEST_ID, Users.USER_TEST_SOURCE, "test");
         // user can't read, write and has not full access
         // because the security rules and ACLs have been removed
-        assertFalse(this.securityController.canRead(userTestSession, this.folderTest.getUid()));
-        assertFalse(this.securityController.canWrite(userTestSession, this.folderTest.getUid()));
-        assertFalse(this.securityController.hasFullAccess(userTestSession, this.folderTest.getUid()));
+        assertFalse(this.getSecurityController().canRead(userTestSession, this.folderTest.getUid()));
+        assertFalse(this.getSecurityController().canWrite(userTestSession, this.folderTest.getUid()));
+        assertFalse(this.getSecurityController().hasFullAccess(userTestSession, this.folderTest.getUid()));
     }
 
     @After
     public void tearDown() {
 
         try {
-            this.folderController.deleteFolder(this.adminSession, this.folderTest.getUid());
-            this.administrationController.deleteUser(this.adminSession, this.userTest.getUid(), USER_TEST_SOURCE);
+            this.folderController.deleteFolder(this.getAdminSession(), this.folderTest.getUid());
+            this.administrationController.deleteUser(this.getAdminSession(), this.userTest.getUid(), Users.USER_TEST_SOURCE);
         } catch (Exception e) {
             System.out.println("Exception of type " + e.getClass().getName());
             System.out.println("Exception of type " + e.getMessage());

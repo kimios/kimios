@@ -22,10 +22,7 @@ import org.kimios.webservices.exceptions.DMServiceException;
 
 import javax.jws.WebParam;
 import javax.jws.WebService;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import java.util.List;
 
 /**
@@ -87,7 +84,8 @@ public interface ExtensionService
     @Produces("application/json")
     public void trashEntity(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
-            @QueryParam(value = "dmEntityId") @WebParam(name = "dmEntityId") long dmEntityId)
+            @QueryParam(value = "dmEntityId") @WebParam(name = "dmEntityId") long dmEntityId,
+            @QueryParam(value = "force") @WebParam(name = "force") @DefaultValue(value = "false") boolean force)
             throws DMServiceException;
 
     @GET

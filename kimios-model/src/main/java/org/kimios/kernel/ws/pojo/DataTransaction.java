@@ -29,12 +29,14 @@ public class DataTransaction
 
     private String downloadToken;
 
+    private String password;
+
     public DataTransaction()
     {
     }
 
     public DataTransaction(long uid, long size, boolean isCompressed, String hashMD5, String hashSHA,
-                           String downloadToken)
+                           String downloadToken, String pass)
     {
         this.uid = uid;
         this.size = size;
@@ -42,6 +44,7 @@ public class DataTransaction
         this.hashMD5 = hashMD5;
         this.hashSHA = hashSHA;
         this.downloadToken = downloadToken;
+        this.password = pass;
     }
 
     public long getUid()
@@ -100,6 +103,14 @@ public class DataTransaction
 
     public void setDownloadToken(String downloadToken) {
         this.downloadToken = downloadToken;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
 

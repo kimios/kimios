@@ -16,12 +16,14 @@
 
 package org.kimios.kernel.share.model;
 
-import org.kimios.kernel.dms.model.DMEntity;
 import org.kimios.kernel.dms.model.DMEntityImpl;
 import org.kimios.kernel.dms.model.Document;
+import org.kimios.kernel.filetransfer.model.DataTransfer;
+import org.kimios.kernel.security.model.DMSecurityRule;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Set;
 
 /**
  * Created by farf on 13/02/16.
@@ -37,9 +39,9 @@ public class Share {
     @GeneratedValue(generator =  "seq", strategy = GenerationType.AUTO)
     private Long id;
 
-    @ManyToOne(targetEntity = Document .class)
+    @ManyToOne(targetEntity = Document.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "dm_entity_id", nullable = false)
-    private DMEntity entity;
+    private DMEntityImpl entity;
 
     @Column(name =  "creation_date", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -49,13 +51,11 @@ public class Share {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updateDate = new Date();
 
-
     @Column(name = "creator_id", nullable = false)
     private String creatorId;
 
     @Column(name = "creator_source", nullable = false)
     private String creatorSource;
-
 
     @Column(name = "validator_id", nullable = true)
     private String validatorId;
@@ -68,7 +68,6 @@ public class Share {
 
     @Column(name = "share_user_source", nullable = true)
     private String targetUserSource;
-
 
     @Column(name = "share_type")
     @Enumerated(EnumType.STRING)
@@ -86,7 +85,6 @@ public class Share {
     @Column(name = "share_is_fullaccess", nullable = false)
     private boolean fullAccess = false;
 
-
     @Column(name = "share_download_token", nullable = true)
     private String downloadToken;
 
@@ -94,11 +92,22 @@ public class Share {
     private int downloadCount = 0;
 
     @Column(name = "expiration_date", nullable = true)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date expirationDate;
 
     @Column(name = "share_status", nullable = false)
+    @Enumerated(EnumType.STRING)
     private ShareStatus shareStatus;
 
+    @OneToOne(mappedBy = "share", cascade = CascadeType.ALL)
+    private DataTransfer dataTransfer;
+
+    @OneToOne
+    @JoinColumn(name = "emailAddress")
+    private MailContact mailContact;
+
+    @OneToMany(mappedBy = "share", cascade = CascadeType.ALL)
+    private Set<DMSecurityRule> securityRuleSet;
 
     public Long getId() {
         return id;
@@ -244,14 +253,37 @@ public class Share {
         this.shareStatus = shareStatus;
     }
 
-    public DMEntity getEntity() {
+    public DMEntityImpl getEntity() {
         return entity;
     }
 
-    public void setEntity(DMEntity entity) {
+    public void setEntity(DMEntityImpl entity) {
         this.entity = entity;
     }
 
+    public DataTransfer getDataTransfer() {
+        return dataTransfer;
+    }
+
+    public void setDataTransfer(DataTransfer dataTransfer) {
+        this.dataTransfer = dataTransfer;
+    }
+
+    public MailContact getMailContact() {
+        return mailContact;
+    }
+
+    public void setMailContact(MailContact mailContact) {
+        this.mailContact = mailContact;
+    }
+
+    public Set<DMSecurityRule> getSecurityRuleSet() {
+        return securityRuleSet;
+    }
+
+    public void setSecurityRuleSet(Set<DMSecurityRule> securityRuleSet) {
+        this.securityRuleSet = securityRuleSet;
+    }
 
     @Transient
     public org.kimios.kernel.ws.pojo.Share toPojo(){

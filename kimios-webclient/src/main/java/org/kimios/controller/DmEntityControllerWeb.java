@@ -27,7 +27,11 @@ import org.kimios.client.controller.FolderController;
 import org.kimios.client.controller.SearchController;
 import org.kimios.client.controller.WorkspaceController;
 import org.kimios.client.controller.helpers.XMLGenerators;
+import org.kimios.client.exception.DeleteDocumentWithActiveShareException;
 import org.kimios.core.configuration.Config;
+import org.kimios.core.exceptions.DeletingDocumentsWithActiveShareException;
+import org.kimios.core.exceptions.DocumentDeletedWithActiveShareException;
+import org.kimios.core.exceptions.DocumentsDeletedWithActiveShareException;
 import org.kimios.core.wrappers.DMEntity;
 import org.kimios.kernel.ws.pojo.*;
 import org.kimios.utils.configuration.ConfigurationManager;
@@ -35,19 +39,19 @@ import org.kimios.utils.configuration.ConfigurationManager;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Fabien Alin
  */
 public class DmEntityControllerWeb extends Controller
 {
+    private boolean forceDeletion;
+
     public DmEntityControllerWeb(Map<String, String> parameters)
     {
         super(parameters);
+        forceDeletion = Boolean.valueOf(parameters.get("force"));
     }
 
     public String execute() throws Exception
@@ -137,7 +141,7 @@ public class DmEntityControllerWeb extends Controller
             case 1:
                 if(ConfigurationManager.getValue(Config.TRASH_FEATURE_ENABLED) != null
                         && ConfigurationManager.getValue(Config.TRASH_FEATURE_ENABLED).toLowerCase().equals("true")) {
-                    extensionController.addEntityToTrash(sessionUid, dmEntityUid);
+                    extensionController.addEntityToTrash(sessionUid, dmEntityUid, false);
                 } else {
                     workspaceController.deleteWorkspace(sessionUid, dmEntityUid);
                 }
@@ -145,19 +149,16 @@ public class DmEntityControllerWeb extends Controller
             case 2:
                 if(ConfigurationManager.getValue(Config.TRASH_FEATURE_ENABLED) != null
                         && ConfigurationManager.getValue(Config.TRASH_FEATURE_ENABLED).toLowerCase().equals("true")) {
-                    extensionController.addEntityToTrash(sessionUid, dmEntityUid);
+                    extensionController.addEntityToTrash(sessionUid, dmEntityUid, false);
                 } else {
                     folderController.deleteFolder(sessionUid, dmEntityUid);
                 }
                 break;
             case 3:
-                //mode to trash
-                if(ConfigurationManager.getValue(Config.TRASH_FEATURE_ENABLED) != null
-                        && ConfigurationManager.getValue(Config.TRASH_FEATURE_ENABLED).toLowerCase().equals("true")){
-                    extensionController.addEntityToTrash(sessionUid, dmEntityUid);
-                }else {
-                    documentController.deleteDocument(sessionUid, dmEntityUid);
-                }
+                //mode to trash ?
+                boolean toTrash = (ConfigurationManager.getValue(Config.TRASH_FEATURE_ENABLED) != null
+                        && ConfigurationManager.getValue(Config.TRASH_FEATURE_ENABLED).equals("true"));
+                this.deleteDocument(dmEntityUid, toTrash);
                 break;
             case 7:
                 long parentId = Long.parseLong(parameters.get("parentId"));
@@ -309,6 +310,8 @@ public class DmEntityControllerWeb extends Controller
     {
         List<Map<String, Object>> dmEntities = (ArrayList<Map<String, Object>>) new JSONDeserializer()
                 .deserialize(parameters.get("dmEntityPojosJson"));
+        List<Map<String, Object>> undeletedEntities = new ArrayList<>();
+        Map<Long, String> deletedWithWarningEntities = new HashMap<>();
         for (Map<String, Object> dmEntity : dmEntities) {
             long dmEntityUid = Long.parseLong(String.valueOf(dmEntity.get("uid")));
             int dmEntityType = Integer.parseInt(String.valueOf(dmEntity.get("type")));
@@ -317,28 +320,54 @@ public class DmEntityControllerWeb extends Controller
                 case 1:
                     if(ConfigurationManager.getValue(Config.TRASH_FEATURE_ENABLED) != null
                             && ConfigurationManager.getValue(Config.TRASH_FEATURE_ENABLED).equals("true")) {
-                        extensionController.addEntityToTrash(sessionUid, dmEntityUid);
+                        extensionController.addEntityToTrash(sessionUid, dmEntityUid, false);
                     } else
                         workspaceController.deleteWorkspace(sessionUid, dmEntityUid);
                     break;
                 case 2:
                     if(ConfigurationManager.getValue(Config.TRASH_FEATURE_ENABLED) != null
                             && ConfigurationManager.getValue(Config.TRASH_FEATURE_ENABLED).equals("true")) {
-                        extensionController.addEntityToTrash(sessionUid, dmEntityUid);
+                        extensionController.addEntityToTrash(sessionUid, dmEntityUid, false);
                     } else {
                         folderController.deleteFolder(sessionUid, dmEntityUid);
                     }
                     break;
                 case 3:
-                    if(ConfigurationManager.getValue(Config.TRASH_FEATURE_ENABLED) != null
-                            && ConfigurationManager.getValue(Config.TRASH_FEATURE_ENABLED).equals("true")){
-                        extensionController.addEntityToTrash(sessionUid, dmEntityUid);
-                    }else {
-                        documentController.deleteDocument(sessionUid, dmEntityUid);
+                    // mode to trash ?
+                    boolean toTrash = (ConfigurationManager.getValue(Config.TRASH_FEATURE_ENABLED) != null
+                            && ConfigurationManager.getValue(Config.TRASH_FEATURE_ENABLED).equals("true"));
+                    try {
+                        this.deleteDocument(dmEntityUid, toTrash);
+                    } catch (DeletingDocumentsWithActiveShareException e) {
+                        undeletedEntities.add(dmEntity);
+                    } catch (DocumentDeletedWithActiveShareException e) {
+                        deletedWithWarningEntities.put(e.getDmEntityId(), e.getDmEntityPath());
                     }
-                    break;
+                break;
             }
         }
+        if (undeletedEntities.size() > 0) {
+            throw new DeletingDocumentsWithActiveShareException(createPathList(undeletedEntities));
+        }
+        if (deletedWithWarningEntities.size() > 0) {
+            throw new DocumentsDeletedWithActiveShareException(deletedWithWarningEntities);
+        }
+    }
+
+    private Map<Long, String> createPathList (List<Map<String, Object>> dmEntities) throws Exception {
+        Map<Long, String> paths = new HashMap<>();
+        try {
+            dmEntities.forEach(map -> {
+                try {
+                    Document document = documentController.getDocument(sessionUid, Long.parseLong(String.valueOf(map.get("uid"))));
+                    paths.put(document.getUid(), document.getPath());
+                } catch (Exception e) {
+                }
+            });
+        } catch (Exception ee) {
+            throw ee;
+        }
+        return paths;
     }
 
     private void permanentDocumentDelete() throws Exception {
@@ -353,10 +382,47 @@ public class DmEntityControllerWeb extends Controller
                     folderController.deleteFolder(sessionUid, dmEntityUid);
                     break;
             case 3:
-                    documentController.deleteDocument(sessionUid, dmEntityUid);
+                    this.deleteDocument(dmEntityUid, false);
                 break;
         }
 
+    }
+
+    private void deleteDocument(long dmEntityUid, boolean toTrash) throws Exception {
+        String path = "";
+        try {
+            Document document = documentController.getDocument(sessionUid, dmEntityUid);
+            path = document.getPath();
+            if (toTrash) {
+                extensionController.addEntityToTrash(sessionUid, dmEntityUid, forceDeletion);
+            } else {
+                documentController.deleteDocument(sessionUid, dmEntityUid, forceDeletion);
+            }
+        } catch (DeleteDocumentWithActiveShareException e) {
+            boolean askConfirmationIfShared =
+                    ConfigurationManager.getValue(Config.ASK_CONFIRMATION_ON_DELETING_SHARED_DOCUMENT) != null ?
+                            Boolean.valueOf(ConfigurationManager.getValue(Config.ASK_CONFIRMATION_ON_DELETING_SHARED_DOCUMENT)) :
+                            true;
+            if (askConfirmationIfShared) {
+                Document d = documentController.getDocument(sessionUid, dmEntityUid);
+                Map<Long, String> paths = new HashMap<>();
+                paths.put(dmEntityUid, d.getPath());
+                throw new DeletingDocumentsWithActiveShareException(paths);
+            } else {
+                try {
+                    // force deletion
+                    if (toTrash) {
+                        extensionController.addEntityToTrash(sessionUid, dmEntityUid, true);
+                    } else {
+                        documentController.deleteDocument(sessionUid, dmEntityUid, true);
+                    }
+                } catch (org.kimios.client.exception.DocumentDeletedWithActiveShareException ee) {
+                    throw new DocumentDeletedWithActiveShareException(dmEntityUid, path);
+                }
+            }
+        } catch (org.kimios.client.exception.DocumentDeletedWithActiveShareException ee) {
+            throw new DocumentDeletedWithActiveShareException(dmEntityUid, path);
+        }
     }
 
     private void updateEntities() throws Exception

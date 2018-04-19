@@ -20,6 +20,7 @@ import org.kimios.api.events.annotations.DmsEvent;
 import org.kimios.api.events.annotations.DmsEventName;
 import org.kimios.kernel.filetransfer.model.DataTransfer;
 import org.kimios.kernel.security.model.Session;
+import org.kimios.kernel.share.model.Share;
 import org.kimios.kernel.ws.pojo.DocumentWrapper;
 
 import java.io.FileNotFoundException;
@@ -94,7 +95,7 @@ public interface IFileTransferController
     /*
         Get document version stream for direct version read
     */
-    public DocumentWrapper getDocumentVersionWrapper( String token )
+    public DocumentWrapper getDocumentVersionWrapper( String token, String password)
             throws ConfigException, AccessDeniedException, DataSourceException, IOException;
 
     /*
@@ -107,6 +108,7 @@ public interface IFileTransferController
     public void readVersionStream(String transactionToken, OutputStream versionStream)
             throws ConfigException, AccessDeniedException, DataSourceException, IOException;
 
-    public DataTransfer startDownloadTransactionToken(Session session, long documentVersionUid)
+    public DataTransfer startDownloadTransactionToken(Session session, long documentVersionUid, String password,
+                                                      Share share)
             throws IOException, RepositoryException, DataSourceException, ConfigException, AccessDeniedException;
 }

@@ -31,6 +31,7 @@ import org.kimios.kernel.jobs.model.TaskDurationType;
 import org.kimios.kernel.jobs.security.ACLUpdateJob;
 import org.kimios.kernel.security.*;
 import org.kimios.kernel.security.model.*;
+import org.kimios.kernel.share.model.Share;
 import org.kimios.kernel.user.model.AuthenticationSource;
 import org.kimios.kernel.user.model.Group;
 import org.kimios.kernel.user.model.User;
@@ -110,7 +111,7 @@ public class SecurityController extends AKimiosController implements ISecurityCo
 
     @DmsEvent(eventName = { DmsEventName.ENTITY_ACL_UPDATE })
     public void simpleSecurityAdd(Session session, long dmEntityUid, String securityEntityId, String securityEntitySource,
-                                  boolean read, boolean write, boolean fullAccess)
+                                  boolean read, boolean write, boolean fullAccess, Share s)
             throws AccessDeniedException, ConfigException, DataSourceException {
 
         DMEntity entity = this.getDMEntity(dmEntityUid);
@@ -130,7 +131,7 @@ public class SecurityController extends AKimiosController implements ISecurityCo
             security.setType(SecurityEntityType.USER);
 
 
-           FactoryInstantiator.getInstance().getDMEntitySecurityFactory().saveDMEntitySecurity(security);
+           FactoryInstantiator.getInstance().getDMEntitySecurityFactory().saveDMEntitySecurity(security, s);
            List<DMEntityACL> acls = FactoryInstantiator.getInstance().getDMEntitySecurityFactory().getDMEntityACL(entity);
            EventContext.addParameter("acls", acls);
         } else
@@ -200,7 +201,7 @@ public class SecurityController extends AKimiosController implements ISecurityCo
                         fact.cleanACL(entity);
                         List<DMEntityACL> nAcls = new ArrayList<DMEntityACL>();
                         for (DMEntitySecurity acl : submittedSecurities) {
-                            nAcls.addAll(fact.saveDMEntitySecurity(acl));
+                            nAcls.addAll(fact.saveDMEntitySecurity(acl, null));
                         }
                         //set acl in the context for event handler
                         EventContext.addParameter("acls", nAcls);
@@ -281,7 +282,7 @@ public class SecurityController extends AKimiosController implements ISecurityCo
                     fact.cleanACL(entity);
                     List<DMEntityACL> nAcls = new ArrayList<DMEntityACL>();
                     for (DMEntitySecurity acl : submittedSecurities) {
-                        nAcls.addAll(fact.saveDMEntitySecurity(acl));
+                        nAcls.addAll(fact.saveDMEntitySecurity(acl, null));
                     }
                     //set acl in the context for event handler
                     EventContext.addParameter("acls", nAcls);

@@ -16,11 +16,13 @@
 
 package org.kimios.kernel.share.controller.impl;
 
+import org.kimios.exceptions.AccessDeniedException;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.ISecurityController;
 import org.kimios.kernel.dms.model.DMEntity;
+import org.kimios.kernel.dms.model.DMEntityImpl;
 import org.kimios.kernel.dms.model.Document;
-import org.kimios.exceptions.AccessDeniedException;
+import org.kimios.kernel.filetransfer.model.DataTransferStatus;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.share.controller.IMailShareController;
 import org.kimios.kernel.share.controller.IShareController;
@@ -31,7 +33,8 @@ import org.kimios.kernel.share.model.ShareType;
 import org.kimios.kernel.user.model.User;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by farf on 15/02/16.
@@ -75,6 +78,8 @@ public class ShareController extends AKimiosController implements IShareControll
                 && share.getCreatorSource().equals(session.getUserSource())) ||
                 getSecurityAgent().isAdmin(session.getUserName(), session.getUserSource()))
                 ){
+            //remove ACL created by this share
+            this.securityFactoryInstantiator.getDMEntitySecurityFactory().deleteAclsForShare(shareId);
             //remove share
             shareFactory.removeShare(share);
         } else
@@ -112,13 +117,13 @@ public class ShareController extends AKimiosController implements IShareControll
                 s.setType(ShareType.SYSTEM);
                 s.setExpirationDate(expirationDate);
 
-                s.setEntity(entity);
+                s.setEntity((DMEntityImpl) entity);
 
-                shareFactory.saveShare(s);
+                s = shareFactory.saveShare(s);
 
                 // set rights on entity, and force reindex !!!
                 securityController.simpleSecurityAdd(session, entity.getUid(), sharedToUserId, sharedToUserSource,
-                        read, write, fullAcces);
+                        read, write, fullAcces, s);
 
                 //if notify : should add message on queue, to send on transaction commit !
                 if(notify){
@@ -129,17 +134,14 @@ public class ShareController extends AKimiosController implements IShareControll
                             .getAuthenticationSource(sharedToUserSource)
                             .getUserFactory()
                             .getUser(sharedToUserId);
-                    List<Long> documentIds = new ArrayList<Long>();
-                    documentIds.add(s.getEntity().getUid());
-                    Map<String, String> recipients = new HashMap<String, String>();
-                    recipients.put(recipient.getMail(), recipient.getFirstName() + " "
-                        + recipient.getLastName());
+
                     //TODO: translate Mail Subject
                     //TODO: handle external subject submission
 
                     mailShareController.sendDocumentByEmail(session,
-                            documentIds, recipients, "Kimios Internal Share",
-                            "<html><body>__DOCUMENTSLINKS__</body></html>", null, null, true);
+                            s,"Kimios Internal Share",
+                            "<html><body>__DOCUMENTSLINKS__</body></html>", null, null,
+                            true, null);
                 }
 
                 return s;
@@ -152,6 +154,36 @@ public class ShareController extends AKimiosController implements IShareControll
 
     }
 
+    public Integer disableExpiredShares(Session session) throws Exception {
+        List<Share> shares = shareFactory.listExpiredShares();
+        Integer i = 0;
+        for(Share s: shares) {
+            s.setShareStatus(ShareStatus.EXPIRED);
+            //remove ACL created for this share
+            this.securityFactoryInstantiator.getDMEntitySecurityFactory().deleteAclsForShare(s.getId());
+            //deactive data transfer
+            if (s.getDataTransfer() != null) {
+                s.getDataTransfer().setStatus(DataTransferStatus.EXPIRED);
+            }
+            shareFactory.saveShare(s);
+            i++;
+        }
 
+        return i;
+    }
 
+    public Share disableShare(Session session, long shareId) throws Exception {
+        Share share = shareFactory.findById(shareId);
+
+        share.setShareStatus(ShareStatus.DISABLED);
+        //remove ACL created for this share
+        this.securityFactoryInstantiator.getDMEntitySecurityFactory().deleteAclsForShare(shareId);
+        //deactive data transfer
+        if (share.getDataTransfer() != null) {
+            share.getDataTransfer().setStatus(DataTransferStatus.EXPIRED);
+        }
+        shareFactory.saveShare(share);
+
+        return share;
+    }
 }

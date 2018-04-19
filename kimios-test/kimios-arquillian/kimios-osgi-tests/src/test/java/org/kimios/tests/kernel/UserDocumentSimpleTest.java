@@ -15,6 +15,7 @@ import org.kimios.kernel.dms.model.Folder;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.user.model.User;
 import org.kimios.tests.deployments.OsgiDeployment;
+import org.kimios.tests.utils.dataset.Users;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,15 +50,12 @@ public class UserDocumentSimpleTest extends KernelTestAbstract {
     @Deployment(name="karaf")
     public static JavaArchive createDeployment() {
 
-        JavaArchive archive =
-                OsgiDeployment.createArchive( "UserDocumentSimpleTest.jar",UserDocumentSimpleTest.class,
+        return OsgiDeployment.createArchive(
+                "UserDocumentSimpleTest.jar",
+                null,
+                UserDocumentSimpleTest.class,
                 StringTools.class
-                );
-        archive.addAsResource("tests/launch_kimios-tests_mvn_test.sh");
-        archive.addAsResource("tests/testDoc.txt");
-        File exportedFile = new File("UserDocumentSimpleTest.jar");
-        archive.as(ZipExporter.class).exportTo(exportedFile, true);
-        return archive;
+        );
     }
 
     @Before
@@ -65,31 +63,31 @@ public class UserDocumentSimpleTest extends KernelTestAbstract {
 
         this.init();
 
-        this.adminSession = this.securityController.startSession(ADMIN_LOGIN, USER_TEST_SOURCE, ADMIN_PWD);
+        this.setAdminSession(this.getSecurityController().startSession(ADMIN_LOGIN, Users.USER_TEST_SOURCE, ADMIN_PWD));
 
         try {
-            this.workspaceTest = this.workspaceController.getWorkspace(this.adminSession, WORKSPACE_TEST_NAME);
+            this.workspaceTest = this.workspaceController.getWorkspace(this.getAdminSession(), WORKSPACE_TEST_NAME);
         } catch (Exception e) {
-            this.workspaceController.createWorkspace(this.adminSession, WORKSPACE_TEST_NAME);
-            this.workspaceTest = this.workspaceController.getWorkspace(this.adminSession, WORKSPACE_TEST_NAME);
+            this.workspaceController.createWorkspace(this.getAdminSession(), WORKSPACE_TEST_NAME);
+            this.workspaceTest = this.workspaceController.getWorkspace(this.getAdminSession(), WORKSPACE_TEST_NAME);
         }
 
-        this.createTestUsers();
+        Users.createTestUsers(this.administrationController, this.getAdminSession());
         // create folder in workspace
-        long folderUid = this.folderController.createFolder(this.adminSession, FOLDER_TEST_1, this.workspaceTest.getUid(), false);
-        this.folderTest1 = this.folderController.getFolder(this.adminSession, folderUid);
+        long folderUid = this.folderController.createFolder(this.getAdminSession(), FOLDER_TEST_1, this.workspaceTest.getUid(), false);
+        this.folderTest1 = this.folderController.getFolder(this.getAdminSession(), folderUid);
         // give access to users
-        this.userTest1 = this.administrationController.getUser(this.adminSession, USER_TEST_1, USER_TEST_SOURCE);
-        this.userTest2 = this.administrationController.getUser(this.adminSession, USER_TEST_2, USER_TEST_SOURCE);
-        this.userTest3 = this.administrationController.getUser(this.adminSession, USER_TEST_3, USER_TEST_SOURCE);
-        this.giveAccessToEntityForUser(this.adminSession, this.folderTest1, this.userTest1, true, true, false);
-        this.giveAccessToEntityForUser(this.adminSession, this.folderTest1, this.userTest2, true, false, false);
-        this.giveAccessToEntityForUser(this.adminSession, this.folderTest1, this.userTest3, true, false, false);
+        this.userTest1 = this.administrationController.getUser(this.getAdminSession(), Users.USER_TEST_1, Users.USER_TEST_SOURCE);
+        this.userTest2 = this.administrationController.getUser(this.getAdminSession(), Users.USER_TEST_2, Users.USER_TEST_SOURCE);
+        this.userTest3 = this.administrationController.getUser(this.getAdminSession(), Users.USER_TEST_3, Users.USER_TEST_SOURCE);
+        this.giveAccessToEntityForUser(this.getAdminSession(), this.folderTest1, this.userTest1, true, true, false);
+        this.giveAccessToEntityForUser(this.getAdminSession(), this.folderTest1, this.userTest2, true, false, false);
+        this.giveAccessToEntityForUser(this.getAdminSession(), this.folderTest1, this.userTest3, true, false, false);
 
         // init test users' sessions
-        this.userTest1Session = this.securityController.startSession(USER_TEST_1, USER_TEST_SOURCE, "test");
-        this.userTest2Session = this.securityController.startSession(USER_TEST_2, USER_TEST_SOURCE, "test");
-        this.userTest3Session = this.securityController.startSession(USER_TEST_3, USER_TEST_SOURCE, "test");
+        this.userTest1Session = this.getSecurityController().startSession(Users.USER_TEST_1, Users.USER_TEST_SOURCE, "test");
+        this.userTest2Session = this.getSecurityController().startSession(Users.USER_TEST_2, Users.USER_TEST_SOURCE, "test");
+        this.userTest3Session = this.getSecurityController().startSession(Users.USER_TEST_3, Users.USER_TEST_SOURCE, "test");
 
         // user 1 creates a subfolder
         this.userTest1FolderUid = this.folderController.createFolder(this.userTest1Session, "User_1_Folder", this.folderTest1.getUid(), true);
@@ -99,27 +97,26 @@ public class UserDocumentSimpleTest extends KernelTestAbstract {
     @Test
     public void testDocumentSimple() {
         // test users accesses
-        assertTrue(this.securityController.canRead(this.userTest1Session, this.folderTest1.getUid()));
-        assertTrue(this.securityController.canRead(this.userTest2Session, this.folderTest1.getUid()));
-        assertTrue(this.securityController.canRead(this.userTest3Session, this.folderTest1.getUid()));
-        assertTrue(this.securityController.canWrite(this.userTest1Session, this.folderTest1.getUid()));
-        assertFalse(this.securityController.canWrite(this.userTest2Session, this.folderTest1.getUid()));
-        assertFalse(this.securityController.canWrite(this.userTest3Session, this.folderTest1.getUid()));
+        assertTrue(this.getSecurityController().canRead(this.userTest1Session, this.folderTest1.getUid()));
+        assertTrue(this.getSecurityController().canRead(this.userTest2Session, this.folderTest1.getUid()));
+        assertTrue(this.getSecurityController().canRead(this.userTest3Session, this.folderTest1.getUid()));
+        assertTrue(this.getSecurityController().canWrite(this.userTest1Session, this.folderTest1.getUid()));
+        assertFalse(this.getSecurityController().canWrite(this.userTest2Session, this.folderTest1.getUid()));
+        assertFalse(this.getSecurityController().canWrite(this.userTest3Session, this.folderTest1.getUid()));
 
         Folder userTest1Folder = this.folderController.getFolder(this.userTest1Session, userTest1FolderUid);
 
-        assertTrue(this.securityController.canRead(this.userTest1Session, userTest1FolderUid));
-        assertTrue(this.securityController.canRead(this.userTest2Session, userTest1FolderUid));
-        assertTrue(this.securityController.canRead(this.userTest3Session, userTest1FolderUid));
-        assertTrue(this.securityController.canWrite(this.userTest1Session, userTest1FolderUid));
-        assertFalse(this.securityController.canWrite(this.userTest2Session, userTest1FolderUid));
-        assertFalse(this.securityController.canWrite(this.userTest3Session, userTest1FolderUid));
+        assertTrue(this.getSecurityController().canRead(this.userTest1Session, userTest1FolderUid));
+        assertTrue(this.getSecurityController().canRead(this.userTest2Session, userTest1FolderUid));
+        assertTrue(this.getSecurityController().canRead(this.userTest3Session, userTest1FolderUid));
+        assertTrue(this.getSecurityController().canWrite(this.userTest1Session, userTest1FolderUid));
+        assertFalse(this.getSecurityController().canWrite(this.userTest2Session, userTest1FolderUid));
+        assertFalse(this.getSecurityController().canWrite(this.userTest3Session, userTest1FolderUid));
 
         // user 1 import a document in the DMS
         long docUid = -1;
         try {
             InputStream docStream = this.getClass().getClassLoader().getResourceAsStream("tests/launch_kimios-tests_mvn_test.sh");
-//            InputStream docStream = new FileInputStream(new File("/home/tom/IdeaProjects/kimios-tests/launch_kimios-tests_mvn_test.sh"));
             docUid = this.documentController.createDocumentWithProperties(
                     this.userTest1Session,
                     "User Test 1 doc 1",
@@ -150,12 +147,12 @@ public class UserDocumentSimpleTest extends KernelTestAbstract {
         assertEquals("User Test 1 doc 1", userDoc1.getName());
         assertEquals(userTest1Folder.getUid(), userDoc1.getFolderUid());
 
-        assertTrue(this.securityController.canRead(this.userTest1Session, userDoc1.getUid()));
-        assertTrue(this.securityController.canRead(this.userTest2Session, userDoc1.getUid()));
-        assertTrue(this.securityController.canRead(this.userTest3Session, userDoc1.getUid()));
-        assertTrue(this.securityController.canWrite(this.userTest1Session, userDoc1.getUid()));
-        assertFalse(this.securityController.canWrite(this.userTest2Session, userDoc1.getUid()));
-        assertFalse(this.securityController.canWrite(this.userTest3Session, userDoc1.getUid()));
+        assertTrue(this.getSecurityController().canRead(this.userTest1Session, userDoc1.getUid()));
+        assertTrue(this.getSecurityController().canRead(this.userTest2Session, userDoc1.getUid()));
+        assertTrue(this.getSecurityController().canRead(this.userTest3Session, userDoc1.getUid()));
+        assertTrue(this.getSecurityController().canWrite(this.userTest1Session, userDoc1.getUid()));
+        assertFalse(this.getSecurityController().canWrite(this.userTest2Session, userDoc1.getUid()));
+        assertFalse(this.getSecurityController().canWrite(this.userTest3Session, userDoc1.getUid()));
 
 
         // user 1 import a document in the DMS
@@ -189,12 +186,12 @@ public class UserDocumentSimpleTest extends KernelTestAbstract {
         assertEquals("User Test 1 doc 1", userDoc1.getName());
         assertEquals(userTest1Folder.getUid(), userDoc1.getFolderUid());
 
-        assertTrue(this.securityController.canRead(this.userTest1Session, userDoc1.getUid()));
-        assertTrue(this.securityController.canRead(this.userTest2Session, userDoc1.getUid()));
-        assertTrue(this.securityController.canRead(this.userTest3Session, userDoc1.getUid()));
-        assertTrue(this.securityController.canWrite(this.userTest1Session, userDoc1.getUid()));
-        assertFalse(this.securityController.canWrite(this.userTest2Session, userDoc1.getUid()));
-        assertFalse(this.securityController.canWrite(this.userTest3Session, userDoc1.getUid()));
+        assertTrue(this.getSecurityController().canRead(this.userTest1Session, userDoc1.getUid()));
+        assertTrue(this.getSecurityController().canRead(this.userTest2Session, userDoc1.getUid()));
+        assertTrue(this.getSecurityController().canRead(this.userTest3Session, userDoc1.getUid()));
+        assertTrue(this.getSecurityController().canWrite(this.userTest1Session, userDoc1.getUid()));
+        assertFalse(this.getSecurityController().canWrite(this.userTest2Session, userDoc1.getUid()));
+        assertFalse(this.getSecurityController().canWrite(this.userTest3Session, userDoc1.getUid()));
 
     }
 
@@ -235,12 +232,12 @@ public class UserDocumentSimpleTest extends KernelTestAbstract {
 //        assertEquals("User Test 1 doc 2", userDoc2.getName());
 //        assertEquals(userTest1Folder.getUid(), userDoc2.getFolderUid());
 //
-//        assertTrue(this.securityController.canRead(this.userTest1Session, userDoc2.getUid()));
-//        assertFalse(this.securityController.canRead(this.userTest2Session, userDoc2.getUid()));
-//        assertFalse(this.securityController.canRead(this.userTest3Session, userDoc2.getUid()));
-//        assertTrue(this.securityController.canWrite(this.userTest1Session, userDoc2.getUid()));
-//        assertFalse(this.securityController.canWrite(this.userTest2Session, userDoc2.getUid()));
-//        assertFalse(this.securityController.canWrite(this.userTest3Session, userDoc2.getUid()));
+//        assertTrue(this.getSecurityController().canRead(this.userTest1Session, userDoc2.getUid()));
+//        assertFalse(this.getSecurityController().canRead(this.userTest2Session, userDoc2.getUid()));
+//        assertFalse(this.getSecurityController().canRead(this.userTest3Session, userDoc2.getUid()));
+//        assertTrue(this.getSecurityController().canWrite(this.userTest1Session, userDoc2.getUid()));
+//        assertFalse(this.getSecurityController().canWrite(this.userTest2Session, userDoc2.getUid()));
+//        assertFalse(this.getSecurityController().canWrite(this.userTest3Session, userDoc2.getUid()));
 //
 //    }
 
@@ -248,18 +245,18 @@ public class UserDocumentSimpleTest extends KernelTestAbstract {
     public void tearDown() {
         // init test users' sessions
         if (this.userTest1Session != null) {
-            this.securityController.endSession(this.userTest1Session.getUid());
+            this.getSecurityController().endSession(this.userTest1Session.getUid());
         }
         if (this.userTest2Session != null) {
-            this.securityController.endSession(this.userTest2Session.getUid());
+            this.getSecurityController().endSession(this.userTest2Session.getUid());
         }
         if (this.userTest3Session != null) {
-            this.securityController.endSession(this.userTest3Session.getUid());
+            this.getSecurityController().endSession(this.userTest3Session.getUid());
         }
 
         if (this.folderTest1 != null) {
-            this.folderController.deleteFolder(this.adminSession, this.folderTest1.getUid());
+            this.folderController.deleteFolder(this.getAdminSession(), this.folderTest1.getUid());
         }
-        this.deleteTestUsers();
+        Users.deleteTestUsers(this.administrationController, this.getAdminSession());
     }
 }

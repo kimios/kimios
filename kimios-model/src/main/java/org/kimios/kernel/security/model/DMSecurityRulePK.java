@@ -25,6 +25,8 @@ public class DMSecurityRulePK implements Serializable
 
     private String ruleHash;
 
+    private String ruleHashShare;
+
     private String securityEntityUid;
 
     private String securityEntitySource;
@@ -39,6 +41,14 @@ public class DMSecurityRulePK implements Serializable
     public void setRuleHash(String ruleHash)
     {
         this.ruleHash = ruleHash;
+    }
+
+    public String getRuleHashShare() {
+        return ruleHashShare;
+    }
+
+    public void setRuleHashShare(String ruleHashShare) {
+        this.ruleHashShare = ruleHashShare;
     }
 
     public String getSecurityEntityUid()
@@ -100,7 +110,8 @@ public class DMSecurityRulePK implements Serializable
             return false;
         }
 
-        return true;
+        return (ruleHashShare == null && that.ruleHashShare == null)
+                || (ruleHashShare != null && that.ruleHashShare != null && ruleHashShare.equals(that.ruleHashShare));
     }
 
     @Override

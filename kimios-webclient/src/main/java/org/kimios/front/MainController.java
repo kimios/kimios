@@ -24,16 +24,24 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.kimios.controller.*;
 import org.kimios.core.ParametersExtractor;
+import org.kimios.core.exceptions.DeletingDocumentsWithActiveShareException;
+import org.kimios.core.exceptions.DocumentDeletedWithActiveShareException;
+import org.kimios.core.exceptions.DocumentsDeletedWithActiveShareException;
 import org.kimios.utils.configuration.ConfigurationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonObjectBuilder;
+import javax.json.JsonValue;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -186,6 +194,41 @@ public class MainController extends HttpServlet {
                         response.getWriter().write(json);
                 }
             }
+        } catch (DocumentDeletedWithActiveShareException e) {
+            log.error("webclient exception raised", e);
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            Map<Long, String> map = new HashMap<>();
+            map.put(e.getDmEntityId(), e.getDmEntityPath());
+            response.getWriter().write(buildExceptionJsonString(
+                    JsonValue.TRUE,
+                    e.getMessage(),
+                    e.getClass().getName(),
+                    map
+            ));
+        } catch (DocumentsDeletedWithActiveShareException e) {
+            log.error("webclient exception raised", e);
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            response.getWriter().write(buildExceptionJsonString(
+                    JsonValue.TRUE,
+                    e.getMessage(),
+                    e.getClass().getName(),
+                    e.getEntityPathList()
+            ));
+        } catch (DeletingDocumentsWithActiveShareException e) {
+            log.error("webclient exception raised", e);
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            response.getWriter().write(buildExceptionJsonString(
+                    JsonValue.FALSE,
+                    e.getMessage(),
+                    e.getClass().getName(),
+                    e.getEntityPathList()
+            ));
         } catch (Exception e) {
             log.error("webclient error report", e);
             StringWriter sw = new StringWriter();
@@ -194,6 +237,27 @@ public class MainController extends HttpServlet {
             json = "{\"success\":\"false\",\"exception\":\"" + StringEscapeUtils.escapeJava(e.getMessage()) + "\",\"trace\":\"" + StringEscapeUtils.escapeJava(sw.toString()) + "\"}";
             response.getWriter().write(json);
         }
+    }
+
+    private String buildExceptionJsonString(JsonValue success, String exceptionMessage, String exceptionType, Map<Long, String> paths) {
+        JsonObjectBuilder job = Json.createObjectBuilder()
+                .add("success", success)
+                .add("exception", exceptionMessage)
+                .add("exceptionType", exceptionType);
+        if (paths != null
+                && !paths.isEmpty()) {
+            JsonArrayBuilder jab = Json.createArrayBuilder();
+            paths.forEach((uid, path) ->
+                    jab.add(
+                            Json.createObjectBuilder()
+                                    .add("uid", uid)
+                                    .add("path", path)
+                                    .add("type", 3)
+                    )
+            );
+            job.add("documents", jab);
+        }
+        return job.build().toString();
     }
 }
 

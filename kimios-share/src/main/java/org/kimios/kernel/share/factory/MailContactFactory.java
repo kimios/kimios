@@ -16,6 +16,7 @@
 
 package org.kimios.kernel.share.factory;
 
+import org.hibernate.NonUniqueObjectException;
 import org.kimios.kernel.hibernate.HFactory;
 import org.kimios.kernel.share.model.MailContact;
 
@@ -32,9 +33,19 @@ public class MailContactFactory extends HFactory {
         MailContact mc  = new MailContact();
         mc.setEmailAddress(emailAddress);
         mc.setFullName(fullName);
-        getSession().saveOrUpdate(mc);
+        this.searchContact(emailAddress);
+        try {
+            getSession().saveOrUpdate(mc);
+        } catch (NonUniqueObjectException e) {
+        }
     }
 
+    public void saveContact(MailContact mc){
+        try {
+            getSession().saveOrUpdate(mc);
+        } catch (NonUniqueObjectException e) {
+        }
+    }
 
     public List<MailContact> searchContact(String search) {
         String query = "from MailContact mc where lower(mc.emailAddress) like :search or lower(mc.fullName) like :search" +

@@ -77,17 +77,17 @@ public class ShareControllerWeb extends Controller {
     }
     
      private void shareDocuments() throws Exception {
-        String[] documentIds = parameters.get("documentIds").split(",");
+         String[] documentIds = parameters.get("documentIds").split(",");
          String[] recipients = parameters.get("recipients").split(",");
 
-        List<Long> items = new ArrayList<Long>();
+         List<Long> items = new ArrayList<Long>();
          for(String u: documentIds)
-            items.add(Long.parseLong(u));
+             items.add(Long.parseLong(u));
 
-        Map<String, String> contacts = new HashMap<String, String>();
-        for(String c: recipients){
+         Map<String, String> contacts = new HashMap<String, String>();
+         for(String c: recipients){
              contacts.put(c, c);
-        }
+         }
 
          shareController.sendDocuments(sessionUid,
                  items,
@@ -96,9 +96,11 @@ public class ShareControllerWeb extends Controller {
                  parameters.get("content"),
                  "",
                  "",
-                 true
-                 );
-        return;
+                 true,
+                 parameters.get("password"),
+                 parameters.get("shareExpirationDate") + " " + parameters.get("shareExpirationTime")
+         );
+         return;
     }
 
 

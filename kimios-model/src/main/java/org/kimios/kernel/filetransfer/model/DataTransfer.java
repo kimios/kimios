@@ -18,6 +18,7 @@ package org.kimios.kernel.filetransfer.model;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.kimios.kernel.dms.model.DocumentVersion;
+import org.kimios.kernel.share.model.Share;
 import org.kimios.kernel.ws.pojo.DataTransaction;
 
 import javax.persistence.*;
@@ -57,6 +58,10 @@ public class DataTransfer implements Serializable
     @OnDelete(action = OnDeleteAction.CASCADE)
     private DocumentVersion version;
 
+    @OneToOne
+    @JoinColumn(name="dm_entity_share_id", updatable=false)
+    private Share share;
+
     @Column(name = "document_version_id", nullable = false)
     private long documentVersionUid;
 
@@ -84,9 +89,14 @@ public class DataTransfer implements Serializable
     @Column(name = "dl_token", nullable = true)
     private String downloadToken = null;
 
-    public DataTransfer()
-    {
-    }
+    @Column(name = "password", nullable = true)
+    private String password = null;
+
+    @Column(name = "status", nullable = true)
+    @Enumerated(EnumType.STRING)
+    private DataTransferStatus status;
+
+    public DataTransfer() {}
 
     /**
      * @param uid
@@ -103,7 +113,7 @@ public class DataTransfer implements Serializable
      */
     public DataTransfer(long uid, String userName, String userSource, Date lastActivityDate,
             long documentVersionUid, boolean isCompressed, String filePath, long dataSize,
-            String hashMD5, String hashSHA, int transferMode)
+            String hashMD5, String hashSHA, int transferMode, Share share, DataTransferStatus status)
     {
         this.uid = uid;
         this.userName = userName;
@@ -116,6 +126,8 @@ public class DataTransfer implements Serializable
         this.hashMD5 = hashMD5;
         this.hashSHA = hashSHA;
         this.transferMode = transferMode;
+        this.share = share;
+        this.status = status;
     }
 
     public long getUid()
@@ -248,7 +260,8 @@ public class DataTransfer implements Serializable
 
     public DataTransaction toPojo()
     {
-        return new DataTransaction(this.uid, this.dataSize, this.isCompressed, this.hashMD5, this.hashSHA, this.downloadToken);
+        return new DataTransaction(this.uid, this.dataSize, this.isCompressed, this.hashMD5, this.hashSHA,
+                this.downloadToken, this.password);
     }
 
     public DocumentVersion getVersion()
@@ -262,6 +275,30 @@ public class DataTransfer implements Serializable
         if (version != null) {
             this.documentVersionUid = version.getUid();
         }
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public DataTransferStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(DataTransferStatus status) {
+        this.status = status;
+    }
+
+    public Share getShare() {
+        return share;
+    }
+
+    public void setShare(Share share) {
+        this.share = share;
     }
 }
 

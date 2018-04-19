@@ -18,17 +18,21 @@ package org.kimios.webservices.share.impl;
 
 import org.kimios.kernel.controller.IDocumentController;
 import org.kimios.kernel.dms.model.Document;
-import org.kimios.kernel.share.controller.IMailShareController;
 import org.kimios.kernel.security.model.Session;
+import org.kimios.kernel.share.controller.IMailShareController;
 import org.kimios.kernel.share.controller.IShareController;
+import org.kimios.kernel.share.controller.IShareTransferController;
 import org.kimios.kernel.share.model.MailContact;
 import org.kimios.kernel.ws.pojo.Share;
+import org.kimios.webservices.FileTransferService;
 import org.kimios.webservices.IServiceHelper;
 import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.share.ShareService;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -42,31 +46,54 @@ public class ShareServiceImpl implements ShareService {
 
     private IMailShareController mailShareController;
     private IShareController shareController;
+    private IShareTransferController shareTransferController;
     private IServiceHelper helper;
     private IDocumentController documentController;
+    private FileTransferService fileTransferService;
+
+    private static String DOWNLOAD_DOCUMENT_BY_TOKEN_AND_PASSWORD_FORM_ACTION = "downloadDocumentByTokenAndPassword";
 
     public ShareServiceImpl(IMailShareController mailShareController,
                             IShareController shareController,
                             IDocumentController documentController,
-                            IServiceHelper serviceHelper){
+                            IServiceHelper serviceHelper,
+                            IShareTransferController shareTransferController
+    ){
         this.helper = serviceHelper;
         this.mailShareController = mailShareController;
         this.shareController = shareController;
         this.documentController = documentController;
+        this.shareTransferController = shareTransferController;
+    }
+
+    public FileTransferService getFileTransferService() {
+        return fileTransferService;
+    }
+
+    public void setFileTransferService(FileTransferService fileTransferService) {
+        this.fileTransferService = fileTransferService;
     }
 
     @Override
+    @Deprecated
     public void shareByEmail(String sessionId,
                              List<Long> documentIds,
                              Map<String, String> recipients,
                              String subject, String content,
                              String senderAddress, String senderName,
-                             Boolean defaultSender) throws DMServiceException {
+                             Boolean defaultSender, String password,
+                             String expirationDate) throws DMServiceException {
         try {
             Session session = helper.getSession(sessionId);
-            mailShareController.sendDocumentByEmail(session, documentIds, recipients, subject,
-                    content, senderAddress, senderName, defaultSender);
-
+            List<org.kimios.kernel.share.model.Share> shares = new ArrayList<>();
+            for (Long docId : documentIds) {
+                Date date = new SimpleDateFormat("MM/dd/yyyy HH:mm").parse(expirationDate);
+                for (String email : recipients.keySet()) {
+                    org.kimios.kernel.share.model.Share share = mailShareController.createShare(session, docId, date, new MailContact(email, recipients.get(email)));
+                    mailShareController.sendDocumentByEmail(session, share, subject,
+                            content, senderAddress, senderName, defaultSender, password);
+                }
+            }
         } catch (Exception e) {
             throw helper.convertException(e);
         }
@@ -75,7 +102,8 @@ public class ShareServiceImpl implements ShareService {
     @Override
     @WebMethod(exclude = true)
     public void shareByEmailFullContact(String sessionId, List<Long> documentIds, List<MailContact> recipients, String subject,
-                             String content, String senderAddress, String senderName, Boolean defaultSender)
+                                        String content, String senderAddress, String senderName, Boolean defaultSender,
+                                        String password, String expirationDate)
             throws DMServiceException {
         try {
             Session session = helper.getSession(sessionId);
@@ -84,8 +112,17 @@ public class ShareServiceImpl implements ShareService {
             for(MailContact mc: recipients){
                 recipientsData.put(mc.getEmailAddress(), mc.getFullName());
             }
-            mailShareController.sendDocumentByEmail(session, documentIds, recipientsData, subject,
-                    content, senderAddress, senderName, defaultSender);
+
+            List<org.kimios.kernel.share.model.Share> shares = new ArrayList<>();
+            for (Long docId : documentIds) {
+                //TODO check date's format sent by other clients than included web client
+                Date date = new SimpleDateFormat("MM/dd/yyyy HH:mm").parse(expirationDate);
+                for (MailContact mailContact : recipients) {
+                    org.kimios.kernel.share.model.Share share = mailShareController.createShare(session, docId, date, mailContact);
+                    mailShareController.sendDocumentByEmail(session, share, subject,
+                            content, senderAddress, senderName, defaultSender, password);
+                }
+            }
 
         } catch (Exception e) {
             throw helper.convertException(e);
@@ -196,5 +233,58 @@ public class ShareServiceImpl implements ShareService {
         } catch (Exception e) {
             throw helper.convertException(e);
         }
+    }
+
+    @WebMethod(exclude = true)
+    public Response downloadDocumentByToken(UriInfo uriInfo, final String token, final String password) throws DMServiceException {
+        try {
+            return fileTransferService.downloadDocumentByToken(uriInfo, token, password);
+        } catch (DMServiceException e) {
+            if (e.getCode() == 15) {
+                Map<String, String> params = new HashMap<>();
+                params.put("token", token);
+                return buildRequiredPasswordResponse(uriInfo, DOWNLOAD_DOCUMENT_BY_TOKEN_AND_PASSWORD_FORM_ACTION, params);
+            } else {
+                if (e.getCode() == 16) {
+                    try {
+                        mailShareController.deactiveDataTransfer(token);
+                    } catch (Exception e1) {
+                        throw new DMServiceException();
+                    }
+                }
+            }
+            throw e;
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    @WebMethod(exclude = true)
+    public Response downloadDocumentByTokenAndPassword(UriInfo uriInfo, String token, String password) throws DMServiceException {
+
+        return downloadDocumentByToken(uriInfo, token, password);
+    }
+
+    private Response buildRequiredPasswordResponse(UriInfo uri, String methodAction, Map<String, String> hiddenParams)
+            throws DMServiceException {
+        Response response;
+
+        try {
+            String uriAbsPath = uri.getAbsolutePath().toString();
+            String formAction = uriAbsPath.replaceFirst("/[^/]+$", "/" + methodAction);
+            String form = shareTransferController.buildAskPasswordResponseHtml(formAction, hiddenParams);
+            if (form == null) {
+                throw new DMServiceException();
+            }
+            Response.ResponseBuilder responseBuilder = Response.ok(form);
+            responseBuilder.header("Content-Description", "Password required");
+            responseBuilder.header("Content-Type", "text/html");
+
+            response = responseBuilder.build();
+        } catch (Exception e) {
+            throw helper.convertException(e);
+        }
+
+        return response;
     }
 }

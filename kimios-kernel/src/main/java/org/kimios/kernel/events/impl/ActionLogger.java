@@ -24,6 +24,7 @@ import org.kimios.api.events.annotations.DmsEventOccur;
 import org.kimios.kernel.log.ActionType;
 import org.kimios.kernel.log.model.DMEntityLog;
 import org.kimios.kernel.log.FactoryInstantiator;
+import org.kimios.kernel.share.model.Share;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -189,12 +190,9 @@ public class ActionLogger extends GenericEventHandler
     @DmsEvent(eventName = { DmsEventName.DOCUMENT_SHARED }, when = DmsEventOccur.AFTER)
     public void shareDocuments(Object[] paramsObj, Object returnObj, EventContext ctx)
     {
-        List<Long> docIds = (List)paramsObj[1];
-        for(Long id: docIds){
-            ctx.setEntity(org.kimios.kernel.dms.FactoryInstantiator.getInstance().getDocumentFactory().getDocument(id));
-            saveLog(new DMEntityLog<Document>(), ActionType.DOCUMENT_SHARED, ctx);
-        }
-
+        Share share = (Share) paramsObj[1];
+        ctx.setEntity(org.kimios.kernel.dms.FactoryInstantiator.getInstance().getDocumentFactory().getDocument(share.getEntity().getUid()));
+        saveLog(new DMEntityLog<Document>(), ActionType.DOCUMENT_SHARED, ctx);
     }
 
     private <T extends DMEntityImpl> void saveLog(DMEntityLog<T> log, int actionType, EventContext ctx)

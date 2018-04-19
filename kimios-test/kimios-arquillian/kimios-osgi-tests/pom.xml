@@ -13,15 +13,11 @@
 
 
     <properties>
-        <kimios.jmxurl>service:jmx:rmi://192.168.99.100:44444/jndi/rmi://192.168.99.100:1099/karaf-root</kimios.jmxurl>
+        <kimios.jmxurl>service:jmx:rmi://127.0.0.1:44444/jndi/rmi://127.0.0.1:1099/karaf-root</kimios.jmxurl>
         <kimios.jmxuser>karaf</kimios.jmxuser>
         <kimios.jmxpassword>karaf</kimios.jmxpassword>
-        <docker.host>192.168.99.100</docker.host>
-        <docker.version>1.22</docker.version>
-        <docker.port>2376</docker.port>
         <osgi.version>4.3.1</osgi.version>
-        <jmxhostname>192.168.99.100</jmxhostname>
-        <cubeConnectionMode>STARTANDSTOP</cubeConnectionMode>
+        <jmxhostname>127.0.0.1</jmxhostname>
     </properties>
 
     <dependencies>
@@ -52,21 +48,14 @@
 
         <dependency>
             <groupId>org.kimios</groupId>
-            <artifactId>kimios-karaf-distribution</artifactId>
+            <artifactId>kimios-kernel</artifactId>
             <version>1.1-SNAPSHOT</version>
-            <type>tar.gz</type>
-        </dependency>
-
-        <dependency>
-            <groupId>org.arquillian.cube</groupId>
-            <artifactId>arquillian-cube-docker</artifactId>
-            <version>1.0.0.Alpha10</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.kimios</groupId>
-            <artifactId>kimios-kernel</artifactId>
+            <artifactId>kimios-exceptions</artifactId>
             <version>1.1-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
@@ -76,6 +65,11 @@
             <artifactId>kimios-interfaces</artifactId>
             <version>1.1-SNAPSHOT</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-share</artifactId>
+            <version>1.1-SNAPSHOT</version>
         </dependency>
 
     </dependencies>
@@ -88,49 +82,14 @@
                 <filtering>true</filtering>
             </testResource>
         </testResources>
-
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
+                <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <argLine>-Xms800m -Xmx800m -XX:MaxPermSize=500m</argLine>
-		    <systemPropertyVariables>
-                        <kimios.karaf.jmx>${kimios.jmxurl}</kimios.karaf.jmx>
-                        <kimios.karaf.jmxuser>${kimios.jmxuser}</kimios.karaf.jmxuser>
-                        <kimios.karaf.jmxpassword>${kimios.jmxpassword}</kimios.karaf.jmxpassword>
-                    </systemPropertyVariables>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <configuration>
-                    <excludeTransitive>true</excludeTransitive>
-                    <includeTypes>tar.gz,war</includeTypes>
-                    <artifactItems>
-                        <artifactItem>
-                            <groupId>org.kimios</groupId>
-                            <artifactId>kimios-karaf-distribution</artifactId>
-                            <version>${project.version}</version>
-                            <type>tar.gz</type>
-                            <overWrite>true</overWrite>
-                            <outputDirectory>${project.build.testOutputDirectory}/karaf_docker</outputDirectory>
-                        </artifactItem>
-                    </artifactItems>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>cpbinaries</id>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <phase>compile</phase>
-                        <configuration>
-                            <overWriteIfNewer>true</overWriteIfNewer>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

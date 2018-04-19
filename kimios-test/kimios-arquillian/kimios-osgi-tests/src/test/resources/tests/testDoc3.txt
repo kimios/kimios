@@ -1,0 +1,5 @@
+Ceci est un fichier destiné à tester la création de document dans Kimios
+---
+This is a file used to test the document creation in Kimios
+
+test 3

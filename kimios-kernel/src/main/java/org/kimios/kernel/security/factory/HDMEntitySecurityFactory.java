@@ -27,6 +27,7 @@ import org.kimios.exceptions.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
 import org.kimios.kernel.security.DMEntitySecurityFactory;
 import org.kimios.kernel.security.model.*;
+import org.kimios.kernel.share.model.Share;
 import org.kimios.kernel.user.FactoryInstantiator;
 import org.kimios.kernel.user.model.AuthenticationSource;
 import org.slf4j.Logger;
@@ -200,19 +201,19 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
         rules = new HashMap<String, DMSecurityRule>();
     }
 
-    public void createSecurityEntityRules(String secEntityName, String secEntitySource, int secEntityType)
+    public void createSecurityEntityRules(String secEntityName, String secEntitySource, int secEntityType, Share share)
             throws ConfigException, DataSourceException {
         try {
 
             List<DMSecurityRule> rulesItems = new ArrayList<DMSecurityRule>();
             DMSecurityRule read =
-                    DMSecurityRule.getInstance(secEntityName, secEntitySource, secEntityType, DMSecurityRule.READRULE);
+                    DMSecurityRule.getInstance(secEntityName, secEntitySource, secEntityType, DMSecurityRule.READRULE, share);
             DMSecurityRule write =
-                    DMSecurityRule.getInstance(secEntityName, secEntitySource, secEntityType, DMSecurityRule.WRITERULE);
+                    DMSecurityRule.getInstance(secEntityName, secEntitySource, secEntityType, DMSecurityRule.WRITERULE, share);
             DMSecurityRule full =
-                    DMSecurityRule.getInstance(secEntityName, secEntitySource, secEntityType, DMSecurityRule.FULLRULE);
+                    DMSecurityRule.getInstance(secEntityName, secEntitySource, secEntityType, DMSecurityRule.FULLRULE, share);
             DMSecurityRule access =
-                    DMSecurityRule.getInstance(secEntityName, secEntitySource, secEntityType, DMSecurityRule.NOACCESS);
+                    DMSecurityRule.getInstance(secEntityName, secEntitySource, secEntityType, DMSecurityRule.NOACCESS, share);
 
 
             rulesItems.add(read);
@@ -273,6 +274,19 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
             String deleteAclsQuery = "delete from DMEntityACL acl where acl.ruleHash = :ruleHash";
 
             getSession().createQuery(deleteAclsQuery).setString("ruleHash", ruleHash).executeUpdate();
+            getSession().flush();
+        } catch (HibernateException ex) {
+            throw new DataSourceException(ex);
+        }
+    }
+
+    public void deleteAclsForShare (long shareId)
+            throws ConfigException, DataSourceException {
+        try {
+            String deleteAclsQuery = "delete from DMEntityACL acl where acl.ruleHash in "
+            + "(select rule.ruleHash from DMSecurityRule rule where rule.share.id = :shareId)";
+
+            getSession().createQuery(deleteAclsQuery).setLong("shareId", shareId).executeUpdate();
             getSession().flush();
         } catch (HibernateException ex) {
             throw new DataSourceException(ex);
@@ -533,7 +547,7 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
     }
 
 
-    public List<DMEntityACL> saveDMEntitySecurity(DMEntitySecurity des)
+    public List<DMEntityACL> saveDMEntitySecurity(DMEntitySecurity des, Share share)
             throws ConfigException, DataSourceException {
 
         List<DMEntityACL> ret = new ArrayList<DMEntityACL>();
@@ -543,12 +557,12 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
         DMEntityACL noAcl = new DMEntityACL(des.getDmEntity());
 
         try {
-            createSecurityEntityRules(des.getName(), des.getSource(), des.getType());
+            createSecurityEntityRules(des.getName(), des.getSource(), des.getType(), share);
 
             if (des.isRead()) {
 
                 DMSecurityRule dr = DMSecurityRule
-                        .getInstance(des.getName(), des.getSource(), des.getType(), DMSecurityRule.READRULE);
+                        .getInstance(des.getName(), des.getSource(), des.getType(), DMSecurityRule.READRULE, share);
                 readAcl.setRuleHash(dr.getRuleHash());
                 try {
                     getSession().saveOrUpdate(readAcl);
@@ -561,7 +575,7 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
             }
             if (des.isWrite()) {
                 writeAcl.setRuleHash(DMSecurityRule
-                        .getInstance(des.getName(), des.getSource(), des.getType(), DMSecurityRule.WRITERULE)
+                        .getInstance(des.getName(), des.getSource(), des.getType(), DMSecurityRule.WRITERULE, share)
                         .getRuleHash());
                 try {
                     getSession().saveOrUpdate(writeAcl);
@@ -574,7 +588,7 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
             }
             if (des.isFullAccess()) {
                 fullAcl.setRuleHash(DMSecurityRule
-                        .getInstance(des.getName(), des.getSource(), des.getType(), DMSecurityRule.FULLRULE)
+                        .getInstance(des.getName(), des.getSource(), des.getType(), DMSecurityRule.FULLRULE, share)
                         .getRuleHash());
                 try {
                     getSession().saveOrUpdate(fullAcl);
@@ -618,7 +632,7 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
         List<DMEntityACL> ret = new ArrayList<DMEntityACL>();
         for (DMEntitySecurity des : securities) {
             //create rules if it doesn't exists
-            createSecurityEntityRules(des.getName(), des.getSource(), des.getType());
+            createSecurityEntityRules(des.getName(), des.getSource(), des.getType(), null);
             DMEntityACL readAcl = new DMEntityACL(des.getDmEntity());
             DMEntityACL writeAcl = new DMEntityACL(des.getDmEntity());
             DMEntityACL fullAcl = new DMEntityACL(des.getDmEntity());
@@ -726,7 +740,7 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
             throws ConfigException, DataSourceException {
 
         try {
-            createSecurityEntityRules(des.getName(), des.getSource(), des.getType());
+            createSecurityEntityRules(des.getName(), des.getSource(), des.getType(), null);
 
             if (des.isRead()) {
                 DMDefaultSecurityRule dr = DMDefaultSecurityRule

@@ -211,11 +211,28 @@ kimios.request = {
         }
 
 
-        var deleteEntity = function () {
+        var deleteEntity = function (force) {
+            if (force != null) {
+                data.force = force;
+            }
             kimios.ajaxRequest('DmsEntity', data,
-                function () {
+                function (response) {
                     if (handle == null) {
-                        kimios.Info.msg(kimios.lang('Entity'), kimios.lang('Delete') + ' ' + kimios.lang('Completed'));
+                        var message = kimios.lang('Delete') + ' ' + kimios.lang('Completed');
+                        if (response.responseText != null
+                            && response.responseText.length > 0
+                            && Ext.util.JSON.decode(response.responseText).exceptionType != null
+                            && Ext.util.JSON.decode(response.responseText).exceptionType.endsWith("\.DocumentDeletedWithActiveShareException")
+                            && Ext.util.JSON.decode(response.responseText).documents != null
+                            && Ext.util.JSON.decode(response.responseText).documents.length > 0) {
+                            message = kimios.lang('Delete') + ' ' + kimios.lang('CompletedWithWarning');
+                            Ext.util.JSON.decode(response.responseText).documents.forEach( function(elem) {
+                                if (elem.path != null) {
+                                    message += "<br/>- " + elem.path;
+                                }
+                            });
+                        }
+                        kimios.Info.msg(kimios.lang('Entity'), message);
                         if (type == 1 || type == 2) {
                             var gridTabPanel = kimios.explorer.getMainPanel();
                             for (var i = 0; i < gridTabPanel.items.length; i++) {
@@ -232,7 +249,36 @@ kimios.request = {
                         handle();
                     }
                     kimios.explorer.getViewport().refreshGrids();
-                });
+                },
+                function (responseText) {
+                    if (responseText.exceptionType != null
+                        && responseText.exceptionType.endsWith("\.DeletingDocumentsWithActiveShareException")) {
+                        var messageConfirm = kimios.lang('ConfirmDeleteSharedDoc');
+                        if (responseText.documents != null
+                            && responseText.documents.length > 0) {
+                            responseText.documents.forEach( function(elem) {
+                                if (elem.path != null) {
+                                    messageConfirm += "<br/> - " + elem.path;
+                                }
+                            });
+                        }
+                        Ext.MessageBox.confirm(
+                            kimios.lang('Delete'),
+                            messageConfirm,
+                            function (btn) {
+                                if (btn == 'yes') {
+                                    deleteEntity(true);
+                                }
+                            }
+                        );
+                    } else {
+                        kimios.MessageBox.exception({
+                            exception: responseText.exception,
+                            stackTrace: responseText.trace
+                        });
+                    }
+                }
+            );
         };
         Ext.MessageBox.confirm(
             kimios.lang('Delete'),
@@ -246,15 +292,62 @@ kimios.request = {
     },
 
     deleteDMEntities: function (dmEntityPojos) {
-        var deleteDMEntities = function () {
+        var deleteDMEntities = function (force) {
+            if (force == null) {
+                force = false;
+            }
             kimios.ajaxRequest('DmsEntity', {
                     action: 'deleteEntities',
-                    dmEntityPojosJson: Ext.util.JSON.encode(dmEntityPojos)
+                    dmEntityPojosJson: Ext.util.JSON.encode(dmEntityPojos),
+                    force: force
                 },
-                function () {
-                    kimios.Info.msg(kimios.lang('Entities'), kimios.lang('Delete') + ' ' + kimios.lang('Completed'));
+                function (response) {
+                    var message = kimios.lang('Delete') + ' ' + kimios.lang('Completed');
+                    if (response.responseText != null
+                        && response.responseText.length > 0
+                        && Ext.util.JSON.decode(response.responseText).exceptionType != null
+                        && Ext.util.JSON.decode(response.responseText).exceptionType.endsWith("\.DocumentsDeletedWithActiveShareException")
+                        && Ext.util.JSON.decode(response.responseText).documents != null
+                        && Ext.util.JSON.decode(response.responseText).documents.length > 0) {
+                        message = kimios.lang('Delete') + ' ' + kimios.lang('CompletedWithWarning');
+                        Ext.util.JSON.decode(response.responseText).documents.forEach( function(elem) {
+                            if (elem.path != null) {
+                                message += "<br/>- " + elem.path;
+                            }
+                        });
+                    }
+                    kimios.Info.msg(kimios.lang('Entities'), message);
                     kimios.explorer.getViewport().refreshGrids();
                     kimios.explorer.getTreePanel().refresh();
+                },
+                function (responseText) {
+                    if (responseText.exceptionType != null
+                        && responseText.exceptionType.endsWith("\.DeletingDocumentsWithActiveShareException")) {
+                        var messageConfirm = kimios.lang('ConfirmDeleteSharedDoc');
+                        if (responseText.documents != null
+                            && responseText.documents.length > 0) {
+                            responseText.documents.forEach( function(elem) {
+                                if (elem.path != null) {
+                                    messageConfirm += "<br/>- " + elem.path;
+                                }
+                            });
+                        }
+                        Ext.MessageBox.confirm(
+                            kimios.lang('Delete'),
+                            messageConfirm,
+                            function (btn) {
+                                if (btn == 'yes') {
+                                    dmEntityPojos = responseText.documents;
+                                    deleteDMEntities(true);
+                                }
+                            }
+                        );
+                    } else {
+                        kimios.MessageBox.exception({
+                            exception: responseText.exception,
+                            stackTrace: responseText.trace
+                        });
+                    }
                 });
         };
 

@@ -20,17 +20,11 @@ import org.kimios.kernel.dms.DocumentFactory;
 import org.kimios.kernel.dms.FolderFactory;
 import org.kimios.kernel.dms.IDmsFactoryInstantiator;
 import org.kimios.kernel.dms.WorkspaceFactory;
-import org.kimios.kernel.dms.model.DMEntity;
-import org.kimios.kernel.dms.model.Document;
-import org.kimios.kernel.dms.model.Folder;
-import org.kimios.kernel.dms.model.Workspace;
 import org.kimios.kernel.hibernate.HFactory;
-import org.kimios.kernel.share.model.MailContact;
 import org.kimios.kernel.share.model.Share;
 import org.kimios.kernel.share.model.ShareStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.security.provider.SHA;
 
 import java.util.List;
 
@@ -74,12 +68,15 @@ public class ShareFactory extends HFactory {
     }
 
     public List<Share> listExpiredShares(){
-        String query = "select s from Share s join s.entity as ent fetch all properties " +
-                " where s.expirationDate >=  CURRENT_TIMESTAMP()" +
-                " and (ent.trashed = false or ent.trashed is null)";
+        String query = "select s from Share s " +
+                " where s.expirationDate <=  CURRENT_TIMESTAMP()"
+                + " and s.shareStatus = :status"
+                + " and (s.entity.trashed = null or s.entity.trashed = false)";
         List<Share> items = getSession()
                 .createQuery(query)
+                .setString("status", ShareStatus.ACTIVE.toString())
                 .list();
+
         return items;
     }
 

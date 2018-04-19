@@ -41,12 +41,19 @@
     <reference id="serviceHelper"
                interface="org.kimios.webservices.IServiceHelper"/>
 
+    <reference id="shareTransferController"
+               interface="org.kimios.kernel.share.controller.IShareTransferController" />
+
+    <reference id="fileTransferService"
+               interface="org.kimios.webservices.FileTransferService" />
 
     <bean id="shareServiceBean" class="org.kimios.webservices.share.impl.ShareServiceImpl">
         <argument ref="mailShareController"/>
         <argument ref="shareController" />
         <argument ref="documentController" />
         <argument ref="serviceHelper"/>
+        <argument ref="shareTransferController" />
+        <property name="fileTransferService" ref="fileTransferService" />
     </bean>
 
     <service interface="org.kimios.webservices.share.impl.ShareServiceImpl"

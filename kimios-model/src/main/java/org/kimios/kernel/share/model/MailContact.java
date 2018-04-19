@@ -16,11 +16,7 @@
 
 package org.kimios.kernel.share.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
+import javax.persistence.*;
 
 @Entity
 @Table(name = "mail_contact")
@@ -33,6 +29,14 @@ public class MailContact {
 
     @Column(name = "full_name", nullable = true)
     private String fullName;
+
+    public MailContact() {
+    }
+
+    public MailContact(String emailAddress, String fullName) {
+        this.emailAddress = emailAddress;
+        this.fullName = fullName;
+    }
 
     public String getEmailAddress() {
         return emailAddress;
@@ -50,5 +54,7 @@ public class MailContact {
         this.fullName = fullName;
     }
 
-
+    public org.kimios.kernel.ws.pojo.MailContact toPojo() {
+        return new org.kimios.kernel.ws.pojo.MailContact(getEmailAddress(), getFullName());
+    }
 }

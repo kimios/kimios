@@ -20,6 +20,7 @@ import org.kimios.kernel.dms.model.DMEntity;
 import org.kimios.exceptions.DataSourceException;
 import org.kimios.kernel.security.model.DMEntityACL;
 import org.kimios.kernel.security.model.DMEntitySecurity;
+import org.kimios.kernel.share.model.Share;
 
 import java.util.List;
 import java.util.Vector;
@@ -30,7 +31,7 @@ public interface DMEntitySecurityFactory {
 
     public List<DMEntityACL> getDMEntityACL(DMEntity e) throws ConfigException, DataSourceException;
 
-    public List<DMEntityACL> saveDMEntitySecurity(DMEntitySecurity des) throws ConfigException, DataSourceException;
+    public List<DMEntityACL> saveDMEntitySecurity(DMEntitySecurity des, Share share) throws ConfigException, DataSourceException;
 
     public void updateDMEntitySecurity(DMEntitySecurity des) throws ConfigException, DataSourceException;
 
@@ -63,8 +64,10 @@ public interface DMEntitySecurityFactory {
     public List<DMEntitySecurity> generateDMEntitySecuritiesFromAcls(List<DMEntityACL> acls, DMEntity entity)
             throws ConfigException, DataSourceException;
 
-    public void createSecurityEntityRules(String secEntityName, String secEntitySource, int secEntityType);
+    public void createSecurityEntityRules(String secEntityName, String secEntitySource, int secEntityType, Share share);
 
     public void deleteSecurityEntityRules(String secEntityName, String secEntitySource, int secEntityType);
+
+    public void deleteAclsForShare (long shareId) throws ConfigException, DataSourceException;
 }
 

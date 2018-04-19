@@ -15,6 +15,7 @@
  */
 package org.kimios.webservices.impl;
 
+import org.kimios.exceptions.RequiredPasswordException;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.ws.pojo.DataTransaction;
 import org.kimios.kernel.ws.pojo.DocumentWrapper;
@@ -27,12 +28,13 @@ import org.slf4j.LoggerFactory;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
+import javax.ws.rs.core.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @WebService(targetNamespace = "http://kimios.org", serviceName = "FileTransferService", name = "FileTransferService")
 public class FileTransferServiceImpl
@@ -219,9 +221,9 @@ public class FileTransferServiceImpl
     }
 
     @WebMethod(exclude = true)
-    public Response downloadDocumentByToken(final String token) throws DMServiceException {
+    public Response downloadDocumentByToken(UriInfo uriInfo,final String token, final String password) throws DMServiceException {
         try {
-            DocumentWrapper dw = transferController.getDocumentVersionWrapper(token);
+            DocumentWrapper dw = transferController.getDocumentVersionWrapper(token, password);
             StreamingOutput sOutput = new StreamingOutput() {
                 @Override
                 public void write(OutputStream output) throws IOException, WebApplicationException {
@@ -257,7 +259,7 @@ public class FileTransferServiceImpl
         try {
             Session session = getHelper().getSession(sessionUid);
             DataTransaction dtr =
-                    transferController.startDownloadTransactionToken(session, documentVersionUid).toPojo();
+                    transferController.startDownloadTransactionToken(session, documentVersionUid, null, null).toPojo();
             return dtr;
         } catch (Exception e) {
             throw getHelper().convertException(e);

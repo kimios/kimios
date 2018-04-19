@@ -155,7 +155,7 @@ public class FolderController extends AKimiosController implements IFolderContro
                             v.elementAt(i).isWrite(),
                             v.elementAt(i).isFullAccess(),
                             f);
-                    securityFactoryInstantiator.getDMEntitySecurityFactory().saveDMEntitySecurity(des);
+                    securityFactoryInstantiator.getDMEntitySecurityFactory().saveDMEntitySecurity(des, null);
                 }
             }
             EventContext.get().setEntity(f);
@@ -213,7 +213,7 @@ public class FolderController extends AKimiosController implements IFolderContro
                         v.elementAt(i).isWrite(),
                         v.elementAt(i).isFullAccess(),
                         f);
-                securityFactoryInstantiator.getDMEntitySecurityFactory().saveDMEntitySecurity(des);
+                securityFactoryInstantiator.getDMEntitySecurityFactory().saveDMEntitySecurity(des, null);
             }
 
             //define metadata

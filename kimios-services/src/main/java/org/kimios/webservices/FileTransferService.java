@@ -25,8 +25,7 @@ import org.kimios.webservices.exceptions.DMServiceException;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.core.*;
 import java.io.InputStream;
 import java.util.List;
 
@@ -136,9 +135,12 @@ public interface FileTransferService
 
      @GET @ApiOperation(value ="")
     @Path( "/downloadDocumentByToken" )
-    @Produces( MediaType.APPLICATION_OCTET_STREAM )
-    public Response downloadDocumentByToken( @QueryParam("token") String token)
-            throws DMServiceException;
+    @Produces( { MediaType.APPLICATION_OCTET_STREAM, MediaType.APPLICATION_FORM_URLENCODED } )
+    public Response downloadDocumentByToken(
+            @Context UriInfo uriInfo,
+            @QueryParam(value = "token") String token,
+            @QueryParam(value = "password") String password
+    ) throws DMServiceException;
 
 
 }

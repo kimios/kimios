@@ -11,6 +11,7 @@ import org.kimios.exceptions.AccessDeniedException;
 import org.kimios.exceptions.DataSourceException;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.user.model.User;
+import org.kimios.tests.TestAbstract;
 import org.kimios.tests.deployments.OsgiDeployment;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -22,29 +23,23 @@ import static org.junit.Assert.*;
 @RunWith(Arquillian.class)
 public class AdminAccountTest extends KernelTestAbstract {
 
-    private Session adminSession;
-
-    private static String ADMIN_LOGIN = "admin";
-    private static String ADMIN_PWD= "kimios";
-    private static String ADMIN_USER_SOURCE = "kimios";
-
     @Deployment(name="karaf")
     public static JavaArchive createDeployment() {
-        return OsgiDeployment.createArchive(AdminAccountTest.class.getSimpleName() + ".jar",  AdminAccountTest.class);
+        return OsgiDeployment.createArchive(AdminAccountTest.class.getSimpleName() + ".jar", null, AdminAccountTest.class);
     }
 
     @Before
     public void setUp() {
         this.init();
 
-        this.adminSession =  this.securityController.startSession(ADMIN_LOGIN, ADMIN_USER_SOURCE, ADMIN_PWD);
+        this.setAdminSession(this.getSecurityController().startSession(TestAbstract.ADMIN_LOGIN, TestAbstract.ADMIN_SOURCE, TestAbstract.ADMIN_PWD));
     }
 
     @Test
     public void testStartSession() throws Exception {
         try {
-            assertNotNull("Session is not null", this.adminSession);
-            assertTrue("sessionId length > 0", this.adminSession.getUid().length() > 0);
+            assertNotNull("Session is not null", this.getAdminSession());
+            assertTrue("sessionId length > 0", this.getAdminSession().getUid().length() > 0);
         } catch (DataSourceException e) {
             e.printStackTrace();
         } catch (AccessDeniedException e) {
@@ -54,40 +49,40 @@ public class AdminAccountTest extends KernelTestAbstract {
 
     @Test
     public void testAdminStuff() throws Exception {
-        boolean canCreateWorkspace = this.securityController.canCreateWorkspace(this.adminSession);
+        boolean canCreateWorkspace = this.getSecurityController().canCreateWorkspace(this.getAdminSession());
         assertTrue(canCreateWorkspace);
 
 
 
-//        boolean canRead = this.securityController.canRead(this.adminSession, 0);
+//        boolean canRead = this.getSecurityController().canRead(this.adminSession, 0);
 //        assertTrue(canRead);
 
-        boolean hasStudioAccess = this.securityController.hasStudioAccess(this.adminSession);
+        boolean hasStudioAccess = this.getSecurityController().hasStudioAccess(this.getAdminSession());
         assertTrue(hasStudioAccess);
 
-        boolean hasReportingAccess = this.securityController.hasReportingAccess(this.adminSession);
+        boolean hasReportingAccess = this.getSecurityController().hasReportingAccess(this.getAdminSession());
         assertFalse(hasReportingAccess);
 
-        boolean isAdmin = this.securityController.isAdmin(this.adminSession);
+        boolean isAdmin = this.getSecurityController().isAdmin(this.getAdminSession());
         assertTrue(isAdmin);
 
-        boolean isAdmin2 = this.securityController.isAdmin(ADMIN_LOGIN, ADMIN_USER_SOURCE);
+        boolean isAdmin2 = this.getSecurityController().isAdmin(TestAbstract.ADMIN_LOGIN, TestAbstract.ADMIN_SOURCE);
         assertTrue(isAdmin2);
 
-        boolean isSessionAlive = this.securityController.isSessionAlive(adminSession.getUid());
+        boolean isSessionAlive = this.getSecurityController().isSessionAlive(getAdminSession().getUid());
         assertTrue(isSessionAlive);
 
     }
 
     @Test
     public void testGetUsers() throws Exception {
-        List<User> users = this.securityController.getUsers(ADMIN_USER_SOURCE);
+        List<User> users = this.getSecurityController().getUsers(TestAbstract.ADMIN_SOURCE);
         assertTrue("We have users, at least one, the default user", users.size() > 0);
 
         // admin is in users list
         boolean adminExists = false;
         for (User user : users) {
-            if (user.getUid().equals(ADMIN_LOGIN)) {
+            if (user.getUid().equals(TestAbstract.ADMIN_LOGIN)) {
                 adminExists = true;
                 continue;
             }

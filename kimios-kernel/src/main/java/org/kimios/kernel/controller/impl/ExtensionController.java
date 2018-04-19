@@ -15,7 +15,7 @@
  */
 package org.kimios.kernel.controller.impl;
 
-import org.kimios.exceptions.ConfigException;
+import org.kimios.exceptions.*;
 import org.kimios.kernel.configuration.Config;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.IExtensionController;
@@ -25,15 +25,13 @@ import org.kimios.kernel.dms.model.*;
 import org.kimios.kernel.events.model.EventContext;
 import org.kimios.api.events.annotations.DmsEvent;
 import org.kimios.api.events.annotations.DmsEventName;
-import org.kimios.exceptions.AccessDeniedException;
-import org.kimios.exceptions.CheckoutViolationException;
-import org.kimios.exceptions.DataSourceException;
-import org.kimios.exceptions.DmsKernelException;
 import org.kimios.kernel.mail.MailTemplate;
 import org.kimios.kernel.mail.Mailer;
 import org.kimios.kernel.security.model.Role;
 import org.kimios.kernel.security.SecurityAgent;
 import org.kimios.kernel.security.model.Session;
+import org.kimios.kernel.share.model.Share;
+import org.kimios.kernel.share.model.ShareStatus;
 import org.kimios.kernel.user.model.AuthenticationSource;
 import org.kimios.kernel.user.model.User;
 import org.kimios.kernel.user.impl.HAuthenticationSource;
@@ -45,9 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Transactional
 public class ExtensionController extends AKimiosController implements IExtensionController {
@@ -160,8 +156,8 @@ public class ExtensionController extends AKimiosController implements IExtension
 
     @Override
     @DmsEvent(eventName = {DmsEventName.DOCUMENT_TRASH})
-    public void trashEntity(Session session, long dmEntityId)
-            throws ConfigException, DataSourceException, AccessDeniedException {
+    public void trashEntity(Session session, long dmEntityId, boolean force)
+            throws ConfigException, DataSourceException, AccessDeniedException, DeleteDocumentWithActiveShareException {
 
 
         DMEntity d = dmsFactoryInstantiator.getDmEntityFactory().getEntity(dmEntityId);
@@ -191,6 +187,18 @@ public class ExtensionController extends AKimiosController implements IExtension
 
         if (getSecurityAgent().isWritable(d, session.getUserName(), session.getUserSource(), session.getGroups())){
         {
+            if (d instanceof Document) {
+                Set<Share> shareSet = new HashSet<>();
+                dmsFactoryInstantiator.getDocumentFactory().getDocument(d.getUid()).getShareSet().forEach(share -> {
+                    if (share.getExpirationDate().after(new Date())
+                            && share.getShareStatus().equals(ShareStatus.ACTIVE)) {
+                        shareSet.add(share);
+                    }
+                });
+                if (!force && !shareSet.isEmpty()) {
+                    throw new DeleteDocumentWithActiveShareException();
+                }
+            }
             dmsFactoryInstantiator.getDmEntityFactory().trash((DMEntityImpl)d);
         }
         } else {

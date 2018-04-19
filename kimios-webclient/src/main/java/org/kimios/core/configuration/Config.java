@@ -40,4 +40,6 @@ public class Config
     public static String BONITA_ENABLED = "bonita.enabled";
 
     public static String TRASH_FEATURE_ENABLED = "dms.enable.trash";
+
+    public static String ASK_CONFIRMATION_ON_DELETING_SHARED_DOCUMENT = "dms.document.shared.deletion.confirmation.ask";
 }

@@ -52,6 +52,17 @@ public interface IDocumentController {
             DataSourceException, AccessDeniedException;
 
     /**
+     * @param session
+     * @param uid
+     * @return
+     * @throws ConfigException
+     * @throws DataSourceException
+     * @throws AccessDeniedException
+     */
+    public Document getDocumentWithShares(Session session, long uid)
+            throws ConfigException, DataSourceException, AccessDeniedException;
+
+    /**
      * Get children documents from a parent folder
      */
     public List<Document> getDocuments(Session session, long folderUid)
@@ -145,9 +156,11 @@ public interface IDocumentController {
      * Remove a document
      */
     @DmsEvent(eventName = {DmsEventName.DOCUMENT_DELETE})
-    public void deleteDocument(Session s, long uid)
+    public void deleteDocument(Session s, long uid, boolean force)
             throws CheckoutViolationException, AccessDeniedException,
-            ConfigException, DataSourceException;
+            ConfigException, DataSourceException,
+            DeleteDocumentWithActiveShareException,
+            DocumentDeletedWithActiveShareException;
 
     /**
      * Check out the document

@@ -1,6 +1,7 @@
 package org.kimios.tests.kernel;
 
 import org.jboss.arquillian.test.api.ArquillianResource;
+import org.kimios.tests.OsgiKimiosService;
 import org.kimios.tests.TestAbstract;
 import org.kimios.client.controller.helpers.StringTools;
 import org.kimios.kernel.controller.*;
@@ -9,10 +10,9 @@ import org.kimios.kernel.dms.model.Workspace;
 import org.kimios.kernel.security.model.DMEntitySecurity;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.user.model.User;
+import org.kimios.tests.utils.dataset.Users;
 import org.osgi.framework.BundleContext;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -23,38 +23,32 @@ public abstract class KernelTestAbstract extends TestAbstract {
     @ArquillianResource
     BundleContext context;
 
-
+    @OsgiKimiosService
     protected IAdministrationController administrationController;
-    protected ISecurityController securityController;
+    @OsgiKimiosService
     protected IWorkspaceController workspaceController;
+    @OsgiKimiosService
     protected IFolderController folderController;
+    @OsgiKimiosService
     protected IDocumentController documentController;
+    @OsgiKimiosService
     protected IWorkflowController workflowController;
+    @OsgiKimiosService
     protected IStudioController studioController;
+    @OsgiKimiosService
     protected IRuleManagementController rulesController;
 
-    protected Session adminSession;
     protected Workspace workspaceTest;
 
-    public static String ADMIN_LOGIN = "admin";
-    public static String ADMIN_PWD = "kimios";
-    public static String USER_TEST_SOURCE = "kimios";
     public static String USER_TEST_SOURCE_2 = "kimios2";
     public static String DEFAULT_USER_TEST_ID = "userTest";
     public static String DEFAULT_USER_TEST_PASS = "test";
     public static String WORKSPACE_TEST_NAME = "workspaceTest";
 
-    public static String USER_TEST_1 = "userTest1";
-    public static String USER_TEST_2 = "userTest2";
-    public static String USER_TEST_3 = "userTest3";
     public static String USER_TEST_4 = "userTest4";
 
     public void setAdministrationController(IAdministrationController administrationController) {
         this.administrationController = administrationController;
-    }
-
-    public void setSecurityController(ISecurityController securityController) {
-        this.securityController = securityController;
     }
 
     public void setWorkspaceController(IWorkspaceController workspaceController) {
@@ -94,18 +88,7 @@ public abstract class KernelTestAbstract extends TestAbstract {
     }
 
     public void init() {
-
-        ArrayList<String> controllerNames = new ArrayList<String>();
-        controllerNames.add("administrationController");
-        controllerNames.add("securityController");
-        controllerNames.add("workspaceController");
-        controllerNames.add("folderController");
-        controllerNames.add("documentController");
-        controllerNames.add("workflowController");
-        controllerNames.add("studioController");
-        controllerNames.add("rulesController");
-
-        this.initServices(controllerNames);
+        this.initServices();
     }
 
     public void removeUserPermissionsForEntity(Session session, User user, DMEntity entity) {
@@ -113,7 +96,7 @@ public abstract class KernelTestAbstract extends TestAbstract {
     }
 
     public void changePermissionOnEntityForUser (Session session, User user, DMEntity entity, boolean read, boolean write, boolean full) {
-        List<DMEntitySecurity> entities = this.securityController.getDMEntitySecurityies(session, entity.getUid());
+        List<DMEntitySecurity> entities = this.getSecurityController().getDMEntitySecurityies(session, entity.getUid());
 
         String xmlStreamExistingEntitites = "";
 
@@ -147,7 +130,7 @@ public abstract class KernelTestAbstract extends TestAbstract {
         xmlStream += xmlStreamExistingEntitites;
         xmlStream += "</security-rules>";
 
-        this.securityController.updateDMEntitySecurities(session, entity.getUid(), xmlStream, false, true);
+        this.getSecurityController().updateDMEntitySecurities(session, entity.getUid(), xmlStream, false, true);
     }
 
     public static String dmEntitySecurityToXmlStream (DMEntitySecurity entSec) {
@@ -165,19 +148,19 @@ public abstract class KernelTestAbstract extends TestAbstract {
     public void createWorkspaceTestIfNotExists() {
         Workspace workspaceTest = null;
         try {
-            workspaceTest = this.workspaceController.getWorkspace(this.adminSession, WORKSPACE_TEST_NAME);
+            workspaceTest = this.workspaceController.getWorkspace(this.getAdminSession(), WORKSPACE_TEST_NAME);
         } catch (Exception e) {
         }
         if (workspaceTest == null) {
             // creation
-            this.workspaceController.createWorkspace(this.adminSession, WORKSPACE_TEST_NAME);
+            this.workspaceController.createWorkspace(this.getAdminSession(), WORKSPACE_TEST_NAME);
         }
     }
 
     public void createUserTestIfNotExists(String userId) {
         User userTest = null;
         try {
-            userTest = this.administrationController.getUser(this.adminSession, userId, USER_TEST_SOURCE);
+            userTest = this.administrationController.getUser(this.getAdminSession(), userId, Users.USER_TEST_SOURCE);
         } catch (Exception e) {
 
         }
@@ -192,10 +175,10 @@ public abstract class KernelTestAbstract extends TestAbstract {
         String phoneNumber = "06060606060";
         String mail = "mail";
         String password = "test";
-        String authenticationSourceName = USER_TEST_SOURCE;
+        String authenticationSourceName = Users.USER_TEST_SOURCE;
         boolean enabled = true;
 
-        this.administrationController.createUser(this.adminSession, uid, firstname, lastname, phoneNumber, mail, password, authenticationSourceName, enabled);
+        this.administrationController.createUser(this.getAdminSession(), uid, firstname, lastname, phoneNumber, mail, password, authenticationSourceName, enabled);
     }
 
     public void createDefaultUserTest2(String uid) {
@@ -204,69 +187,33 @@ public abstract class KernelTestAbstract extends TestAbstract {
         String phoneNumber = "06060606060";
         String mail = "usertest2@mail.com";
         String password = "test";
-        String authenticationSourceName = USER_TEST_SOURCE;
+        String authenticationSourceName = Users.USER_TEST_SOURCE;
         boolean enabled = true;
 
-        this.administrationController.createUser(this.adminSession, uid, firstname, lastname, phoneNumber, mail, password, authenticationSourceName, enabled);
-    }
-
-    public void createTestUsers() {
-
-        org.kimios.kernel.ws.pojo.User user = new org.kimios.kernel.ws.pojo.User(
-                USER_TEST_1,
-                "Test",
-                "User 1",
-                "06060606060",
-                USER_TEST_SOURCE,
-                new Date(),
-                "mail"
-        );
-        this.createUserFromPojoWithPassword(user, "test");
-
-        user = new org.kimios.kernel.ws.pojo.User(
-                USER_TEST_2,
-                "Test",
-                "User 2",
-                "06060606060",
-                USER_TEST_SOURCE,
-                new Date(),
-                "usertest2@mail.com"
-        );
-        this.createUserFromPojoWithPassword(user, "test");
-
-        user = new org.kimios.kernel.ws.pojo.User(
-                USER_TEST_3,
-                "Test",
-                "User 3",
-                "06060606060",
-                USER_TEST_SOURCE,
-                new Date(),
-                "usertest3@coolmail.com"
-        );
-        this.createUserFromPojoWithPassword(user, "test");
+        this.administrationController.createUser(this.getAdminSession(), uid, firstname, lastname, phoneNumber, mail, password, authenticationSourceName, enabled);
     }
 
     public void deleteTestUsers() {
         String[] userNames = {
-                USER_TEST_1,
-                USER_TEST_2,
-                USER_TEST_3
+                Users.USER_TEST_1,
+                Users.USER_TEST_2,
+                Users.USER_TEST_3
         };
         for (String userName : userNames) {
-            this.administrationController.deleteUser(this.adminSession, userName, USER_TEST_SOURCE);
+            this.administrationController.deleteUser(this.getAdminSession(), userName, Users.USER_TEST_SOURCE);
         }
     }
 
     public void createUserFromPojoWithPassword(org.kimios.kernel.ws.pojo.User user, String password) {
-        this.administrationController.createUser(this.adminSession, user.getUid(), user.getFirstName(), user.getLastName(), user.getPhoneNumber(), user.getMail(), password, user.getSource(), true);
+        this.administrationController.createUser(this.getAdminSession(), user.getUid(), user.getFirstName(), user.getLastName(), user.getPhoneNumber(), user.getMail(), password, user.getSource(), true);
     }
 
     public void deleteUserTest() {
-        this.administrationController.deleteUser(this.adminSession, DEFAULT_USER_TEST_ID, USER_TEST_SOURCE);
+        this.administrationController.deleteUser(this.getAdminSession(), DEFAULT_USER_TEST_ID, Users.USER_TEST_SOURCE);
     }
 
     public void giveAccessToEntityForUser(Session session, DMEntity ent, User user, boolean read, boolean write, boolean full) {
-        List<DMEntitySecurity> entities = this.securityController.getDMEntitySecurityies(session, ent.getUid());
+        List<DMEntitySecurity> entities = this.getSecurityController().getDMEntitySecurityies(session, ent.getUid());
 
         String xmlStreamExistingEntitites = "";
         for (DMEntitySecurity entity : entities) {
@@ -295,6 +242,6 @@ public abstract class KernelTestAbstract extends TestAbstract {
                 "full=\"" + Boolean.toString(full) + "\" />\r\n";
         xmlStream += "</security-rules>";
 
-        this.securityController.updateDMEntitySecurities(session, ent.getUid(), xmlStream, false, true);
+        this.getSecurityController().updateDMEntitySecurities(session, ent.getUid(), xmlStream, false, true);
     }
 }

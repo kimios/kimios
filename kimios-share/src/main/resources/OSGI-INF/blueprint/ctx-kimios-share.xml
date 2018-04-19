@@ -82,6 +82,8 @@
         <property name="templateProcessor"  ref="templateProcessor" />
         <property name="templateProvider"  ref="templateProvider" />
 
+        <argument ref="shareFactory" />
+
         <tx:transaction method="*" value="Required"/>
     </bean>
 
@@ -111,9 +113,27 @@
         <tx:transaction method="*" value="Required"/>
     </bean>
 
+    <bean id="ShareTransferController" class="org.kimios.kernel.share.controller.impl.ShareTransferController">
+        <property name="templateProcessor"  ref="templateProcessor" />
+        <property name="templateProvider"  ref="templateProvider" />
+
+        <tx:transaction method="*" value="Required"/>
+    </bean>
+
     <service id="mShareCtrlOsgi" ref="mailShareController"
              interface="org.kimios.kernel.share.controller.IMailShareController"/>
 
     <service id="iShareCtrlOsgi" ref="shareController" interface="org.kimios.kernel.share.controller.IShareController" />
+
+    <service id="shareTransferCtrlOsgi" ref="ShareTransferController"
+             interface="org.kimios.kernel.share.controller.IShareTransferController"/>
+
+    <!-- Jobs -->
+    <bean id="shareCleaner" class="org.kimios.kernel.share.system.ShareCleaner" init-method="startJob"
+          destroy-method="stopJob">
+        <property name="securityController" ref="securityController"/>
+        <property name="shareController" ref="shareController"/>
+        <property name="launchShareCleaner" value="${dms.share.launch.cleaner}" />
+    </bean>
 
 </blueprint>

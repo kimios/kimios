@@ -17,12 +17,9 @@ package org.kimios.webservices.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.annotations.ApiOperation;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.ProducerTemplate;
-import org.apache.camel.component.file.FileConsumer;
-import org.apache.camel.component.file.FileEndpoint;
+import org.kimios.exceptions.DocumentDeletedWithActiveShareException;
 import org.kimios.kernel.configuration.Config;
 import org.kimios.kernel.dms.model.Bookmark;
 import org.kimios.kernel.dms.model.MetaValue;
@@ -36,11 +33,7 @@ import org.kimios.webservices.CoreService;
 import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.DocumentService;
 
-import javax.jws.WebParam;
 import javax.jws.WebService;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Response;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -307,11 +300,17 @@ public class DocumentServiceImpl extends CoreService implements DocumentService,
      * @param documentId
      * @throws DMServiceException
      */
-    public void deleteDocument(String sessionId, long documentId) throws DMServiceException {
+    public void deleteDocument(String sessionId, long documentId, boolean force) throws DMServiceException {
 
         try {
             Session session = getHelper().getSession(sessionId);
-            documentController.deleteDocument(session, documentId);
+            org.kimios.kernel.dms.model.Document document = documentController.getDocumentWithShares(session, documentId);
+            documentController.deleteDocument(session, documentId, force);
+            if (document.getShareSet() != null
+                    && document.getShareSet().size() > 0) {
+                // throw exception to send a warning
+                throw new DocumentDeletedWithActiveShareException();
+            }
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }

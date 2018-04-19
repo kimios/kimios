@@ -138,6 +138,22 @@ public class ServiceHelper implements IServiceHelper {
             return new DMServiceException(14, "Error 14 : MetaFeed Search Exception : " + e.toString(), e);
         }
 
+        if (e instanceof RequiredPasswordException) {
+            return new DMServiceException(15, "Error 15 : Required Password Exception : " + e.toString(), e);
+        }
+
+        if (e instanceof DateExpiredException) {
+            return new DMServiceException(16, "Error 16 : Date Expired Exception : " + e.toString(), e);
+        }
+
+        if (e instanceof DeleteDocumentWithActiveShareException) {
+            return new DMServiceException(17, "Error 17 : " + e.toString(), e);
+        }
+
+        if (e instanceof DocumentDeletedWithActiveShareException) {
+            return new DMServiceException(18, "Error 18 : " + e.toString(), e);
+        }
+
         if (e instanceof Exception) {
             return new DMServiceException(0, e.getMessage(), e);
         }

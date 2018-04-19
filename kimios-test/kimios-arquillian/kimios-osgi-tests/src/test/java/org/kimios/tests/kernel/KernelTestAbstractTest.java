@@ -10,7 +10,9 @@ import org.junit.runner.RunWith;
 import org.kimios.client.controller.helpers.StringTools;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.user.model.User;
+import org.kimios.tests.TestAbstract;
 import org.kimios.tests.deployments.OsgiDeployment;
+import org.kimios.tests.utils.dataset.Users;
 
 import java.util.Date;
 
@@ -25,7 +27,7 @@ public class KernelTestAbstractTest extends KernelTestAbstract {
     @Deployment(name="karaf")
     public static JavaArchive createDeployment() {
         String jarName = "KernelTestAbstractTest.jar";
-        return OsgiDeployment.createArchive(jarName, KernelTestAbstractTest.class,
+        return OsgiDeployment.createArchive(jarName, null, KernelTestAbstractTest.class,
                 KernelTestAbstract.class,
                 StringTools.class);
     }
@@ -37,7 +39,7 @@ public class KernelTestAbstractTest extends KernelTestAbstract {
 //        // Get the service reference
 //        ServiceReference<ISecurityController> sref = context.getServiceReference(ISecurityController.class);
 //        // Get the service
-//        this.securityController = context.getService(sref);
+//        this.getSecurityController() = context.getService(sref);
 //
 //        ServiceReference<IAdministrationController> srefAdmin = context.getServiceReference(IAdministrationController.class);
 //        this.administrationController = context.getService(srefAdmin);
@@ -46,10 +48,10 @@ public class KernelTestAbstractTest extends KernelTestAbstract {
 //        ServiceReference<IWorkspaceController> sRefWorkspace = context.getServiceReference(IWorkspaceController.class);
 //        this.workspaceController = context.getService(sRefWorkspace);
 
-        this.adminSession = this.securityController.startSession(KernelTestAbstract.ADMIN_LOGIN, KernelTestAbstract.USER_TEST_SOURCE, KernelTestAbstract.ADMIN_PWD);
+        this.setAdminSession(this.getSecurityController().startSession(TestAbstract.ADMIN_LOGIN, Users.USER_TEST_SOURCE, TestAbstract.ADMIN_PWD));
 
         this.createWorkspaceTestIfNotExists();
-        this.workspaceTest = this.workspaceController.getWorkspace(this.adminSession, WORKSPACE_TEST_NAME);
+        this.workspaceTest = this.workspaceController.getWorkspace(this.getAdminSession(), WORKSPACE_TEST_NAME);
 
         this.createUserTestIfNotExists(DEFAULT_USER_TEST_ID);
 
@@ -62,10 +64,10 @@ public class KernelTestAbstractTest extends KernelTestAbstract {
 
     @Test
     public void testChangePermissionOnEntityForUser() {
-        assertTrue(this.securityController.isSessionAlive(this.adminSession.getUid()));
-        User userTest = this.administrationController.getUser(this.adminSession, DEFAULT_USER_TEST_ID, USER_TEST_SOURCE);
-        Session userTestSession = this.securityController.startSession(userTest.getUid(), USER_TEST_SOURCE, DEFAULT_USER_TEST_PASS);
-        assertFalse(this.securityController.canRead(userTestSession, this.workspaceTest.getUid()));
+        assertTrue(this.getSecurityController().isSessionAlive(this.getAdminSession().getUid()));
+        User userTest = this.administrationController.getUser(this.getAdminSession(), DEFAULT_USER_TEST_ID, Users.USER_TEST_SOURCE);
+        Session userTestSession = this.getSecurityController().startSession(userTest.getUid(), Users.USER_TEST_SOURCE, DEFAULT_USER_TEST_PASS);
+        assertFalse(this.getSecurityController().canRead(userTestSession, this.workspaceTest.getUid()));
     }
 
     @Test
@@ -75,14 +77,14 @@ public class KernelTestAbstractTest extends KernelTestAbstract {
                 "Johnny",
                 "Cash",
                 "06060606060",
-                USER_TEST_SOURCE,
+                Users.USER_TEST_SOURCE,
                 new Date(),
                 "mail"
         );
 
         this.createUserFromPojoWithPassword(user, "test");
         // user exists ?
-        User userExtracted = this.administrationController.getUser(this.adminSession, "userTestFromPojo1", USER_TEST_SOURCE);
+        User userExtracted = this.administrationController.getUser(this.getAdminSession(), "userTestFromPojo1", Users.USER_TEST_SOURCE);
         assertNotNull(userExtracted);
         assertEquals("Johnny", user.getFirstName());
         assertEquals("Cash", user.getLastName());
@@ -90,10 +92,10 @@ public class KernelTestAbstractTest extends KernelTestAbstract {
         assertEquals("mail", user.getMail());
 
         // user can connect ?
-        Session session = this.securityController.startSession("userTestFromPojo1", USER_TEST_SOURCE, "test");
+        Session session = this.getSecurityController().startSession("userTestFromPojo1", Users.USER_TEST_SOURCE, "test");
         assertNotNull(session);
 
         // some cleaning
-        this.administrationController.deleteUser(this.adminSession, "userTestFromPojo1", USER_TEST_SOURCE);
+        this.administrationController.deleteUser(this.getAdminSession(), "userTestFromPojo1", Users.USER_TEST_SOURCE);
     }
 }

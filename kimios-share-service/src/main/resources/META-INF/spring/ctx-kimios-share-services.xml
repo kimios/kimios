@@ -38,6 +38,8 @@
         <constructor-arg name="shareController" ref="shareController" />
         <constructor-arg name="documentController" ref="documentController" />
         <constructor-arg name="serviceHelper" ref="serviceHelper"/>
+        <constructor-arg name="shareTransferController" ref="shareTransferController" />
+        <property name="fileTransferService" ref="fileTransferServiceBean" />
     </bean>
 
     <!-- Service endpoint -->

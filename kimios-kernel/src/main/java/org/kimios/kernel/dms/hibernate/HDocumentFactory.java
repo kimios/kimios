@@ -15,10 +15,7 @@
  */
 package org.kimios.kernel.dms.hibernate;
 
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.ObjectNotFoundException;
-import org.hibernate.Query;
+import org.hibernate.*;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
@@ -30,6 +27,8 @@ import org.kimios.kernel.dms.FactoryInstantiator;
 import org.kimios.kernel.dms.model.Folder;
 import org.kimios.exceptions.DataSourceException;
 import org.kimios.kernel.hibernate.HFactory;
+import org.kimios.kernel.share.model.Share;
+import org.kimios.kernel.share.model.ShareStatus;
 import org.kimios.utils.configuration.ConfigurationManager;
 
 import java.util.*;
@@ -55,6 +54,30 @@ public class HDocumentFactory extends HFactory implements DocumentFactory
     {
         try {
             Document d = (Document) getSession().get(Document.class, new Long(uid));
+            return d;
+        } catch (ObjectNotFoundException e) {
+            return null;
+        } catch (HibernateException e) {
+            throw new DataSourceException(e, e.getMessage());
+        }
+    }
+
+    public Document getDocumentWithActiveShares(long uid) throws ConfigException,
+            DataSourceException
+    {
+        try {
+            Document d = getDocument(uid);
+            if (d != null) {
+                Hibernate.initialize(d.getShareSet());
+                Set<Share> shareSet = new HashSet<>();
+                d.getShareSet().forEach(s -> {
+                    if (s.getExpirationDate().after(new Date())
+                            && s.getShareStatus().equals(ShareStatus.ACTIVE)) {
+                        shareSet.add(s);
+                    }
+                });
+                d.setShareSet(shareSet);
+            }
             return d;
         } catch (ObjectNotFoundException e) {
             return null;
