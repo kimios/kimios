@@ -120,6 +120,13 @@
         </dependency>
         <dependency>
             <groupId>org.kimios</groupId>
+            <artifactId>kimios-telemetry</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+            <classifier>osgi</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
             <artifactId>kimios-convert</artifactId>
             <version>${project.version}</version>
             <type>jar</type>

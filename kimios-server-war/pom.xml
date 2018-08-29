@@ -256,6 +256,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-telemetry</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>cglib</groupId>
             <artifactId>cglib</artifactId>
             <version>2.2</version>
