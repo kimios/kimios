@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 import java.util.function.Consumer;
 
-//@Transactional
+
 public class TelemetryController extends AKimiosController implements ITelemetryController {
 
     private static Logger logger = LoggerFactory.getLogger(TelemetryController.class);

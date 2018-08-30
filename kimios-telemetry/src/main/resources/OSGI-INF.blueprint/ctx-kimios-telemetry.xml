@@ -43,7 +43,6 @@
         <property name="telemetryController" ref="telemetryController"/>
         <property name="securityController" ref="securityController"/>
     </bean>
-
     <service id="telemetryCtrlOsgi" ref="telemetryController"
              interface="org.kimios.telemetry.controller.ITelemetryController" />
 

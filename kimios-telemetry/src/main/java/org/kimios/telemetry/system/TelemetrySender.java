@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.*;
 
-public class TelemetrySender {
+public class TelemetrySender implements Runnable {
 
     private static Logger logger = LoggerFactory.getLogger(TelemetrySender.class);
 
@@ -26,8 +26,10 @@ public class TelemetrySender {
         return securityController;
     }
 
-    public void setSecurityController(ISecurityController securityController) {
+    public void setSecurityController(ISecurityController securityController,
+                                      ITelemetryController telemetryController) {
         this.securityController = securityController;
+        this.telemetryController = telemetryController;
     }
 
     public ITelemetryController getTelemetryController() {
@@ -39,19 +41,18 @@ public class TelemetrySender {
     }
 
     public void startJob() {
-        Session session = this.securityController.startSession("admin", "kimios");
-        TelemetrySenderJob job = new TelemetrySenderJob(this.telemetryController, session);
+        //Session session = this.securityController.startSession("admin", "kimios");
+        //TelemetrySenderJob job = new TelemetrySenderJob(this.telemetryController, session);
 
         this.customScheduledThreadPoolExecutor = new CustomScheduledThreadPoolExecutor(1);
-        this.customScheduledThreadPoolExecutor.submit(job);
+        //this.customScheduledThreadPoolExecutor.submit(job);
 
-        /*synchronized (this) {
+        synchronized (this) {
             thrc = new Thread(this, "Kimios Telemetry Sender");
             thrc.start();
-        }*/
+        }
     }
 
-/*
     public void stopJob() {
         try {
             this.stop();
@@ -61,12 +62,11 @@ public class TelemetrySender {
         logger.info("Telemetry Sender stopped");
     }
 
-    //public void stop() {
+    public void stop() {
         this.active = false;
     }
-*/
 
-    /*@Override
+    @Override
     public void run() {
         Session session = this.securityController.startSession("admin", "kimios");
         //while (active) {
@@ -83,5 +83,5 @@ public class TelemetrySender {
                 logger.info("Thread interrupted " + e.getMessage());
             }
         //}
-    }*/
+    }
 }
