@@ -21,8 +21,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
-    <bean id="notificationFactory" class="org.kimios.telemetry.factory.NotificationFactory" parent="hfactory" />
-
     <bean id="telemetryController"
           class="org.kimios.telemetry.controller.TelemetryController">
 
@@ -38,13 +36,7 @@
     </bean>
 
     <!-- Jobs -->
-    <bean id="notificationCreator" class="org.kimios.telemetry.system.TelemetryCreator" init-method="startJob"
-          destroy-method="stopJob">
-        <property name="securityController" ref="securityController"/>
-        <property name="telemetryController" ref="telemetryController"/>
-    </bean>
-
-    <bean id="notificationSender" class="org.kimios.telemetry.system.TelemetrySender" init-method="startJob"
+    <bean id="telemetrySender" class="org.kimios.telemetry.system.TelemetrySender" init-method="startJob"
           destroy-method="stopJob">
         <property name="securityController" ref="securityController"/>
         <property name="telemetryController" ref="telemetryController"/>

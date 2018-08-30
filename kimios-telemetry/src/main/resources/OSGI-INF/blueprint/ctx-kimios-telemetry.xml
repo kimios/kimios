@@ -25,50 +25,19 @@
                              activation="eager">
     </cm:property-placeholder>
 
-    <reference id="sessionManager" interface="org.kimios.kernel.security.ISessionManager" />
-    <reference id="searchController" interface="org.kimios.kernel.index.controller.ISearchController" />
-    <reference id="documentController" interface="org.kimios.kernel.controller.IDocumentController" />
-    <reference id="documentVersionController" interface="org.kimios.kernel.controller.IDocumentVersionController" />
-    <reference id="administrationController" interface="org.kimios.kernel.controller.IAdministrationController" />
-    <reference id="studioController" interface="org.kimios.kernel.controller.IStudioController" />
     <reference id="securityController" interface="org.kimios.kernel.controller.ISecurityController" />
 
-    <reference id="dbFactoryProvider"
-               interface="org.kimios.kernel.hibernate.IDBFactory"/>
-
-    <reference id="mailShareController" interface="org.kimios.kernel.share.controller.IMailShareController" />
-
-    <bean id="notificationFactory" class="org.kimios.telemetry.factory.NotificationFactory">
-        <property name="provider" ref="dbFactoryProvider"></property>
-    </bean>
+    <reference id="systemService" interface="org.apache.karaf.system.SystemService" />
 
     <bean id="telemetryController"
           class="org.kimios.telemetry.controller.TelemetryController">
 
-        <argument ref="searchController" />
-        <argument ref="documentController" />
-        <argument ref="administrationController" />
-        <argument ref="notificationFactory" />
-        <argument ref="securityController" />
-        <argument ref="mailShareController" />
-        <argument ref="documentVersionController" />
-        <argument ref="studioController" />
-
-
-        <property name="mailerSenderMail" value="${dms.mail.senderemail}" />
-        <property name="mailerSender"  value="${dms.mail.sendername}" />
-
-        <tx:transaction method="*" value="Required" />
+        <!--<argument ref="securityController" />-->
+        <argument ref="systemService" />
     </bean>
 
     <!-- Jobs -->
-    <bean id="notificationCreator" class="org.kimios.telemetry.system.TelemetryCreator" init-method="startJob"
-          destroy-method="stopJob">
-        <property name="securityController" ref="securityController"/>
-        <property name="telemetryController" ref="telemetryController"/>
-    </bean>
-
-    <bean id="notificationSender" class="org.kimios.telemetry.system.TelemetrySender" init-method="startJob"
+    <bean id="telemetrySender" class="org.kimios.telemetry.system.TelemetrySender" init-method="startJob"
           destroy-method="stopJob">
         <property name="securityController" ref="securityController"/>
         <property name="telemetryController" ref="telemetryController"/>

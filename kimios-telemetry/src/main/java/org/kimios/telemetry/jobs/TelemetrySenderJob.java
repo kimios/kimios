@@ -26,7 +26,7 @@ public class TelemetrySenderJob extends JobImpl<Integer> implements Runnable {
     public void run() {
         log.debug("Starting one job sending notifications");
         try {
-            this.telemetryController.sendNotifications(this.getUserSession());
+            this.telemetryController.sendToTelemetryPHP(this.getUserSession());
         } catch (Exception e) {
             log.error(e.getMessage());
         }
