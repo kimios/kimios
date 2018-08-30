@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!--
   ~ Kimios - Document Management System Software
   ~ Copyright (C) 2008-2015  DevLib'
@@ -20,21 +21,36 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
+    <bean id="notificationFactory" class="org.kimios.telemetry.factory.NotificationFactory" parent="hfactory" />
+
     <bean id="telemetryController"
           class="org.kimios.telemetry.controller.TelemetryController">
 
-        <property name="systemService" ref="systemService"/>
+        <constructor-arg name="searchController" ref="searchController" />
+        <constructor-arg name="documentController" ref="documentController" />
+        <constructor-arg name="administrationController" ref="administrationController" />
+        <constructor-arg name="notificationFactory" ref="notificationFactory" />
+        <constructor-arg name="securityController" ref="securityController" />
+        <constructor-arg name="mailShareController" ref="mailShareController" />
+        <constructor-arg name="documentVersionController" ref="documentVersionController" />
+        <constructor-arg name="studioController" ref="studioController" />
 
     </bean>
 
     <!-- Jobs -->
-    <bean id="telemetrySender" class="org.kimios.telemetry.system.TelemetrySender" init-method="startJob">
-          <!--destroy-method="stopJob">-->
-        <property name="telemetryController" ref="telemetryController"/>
+    <bean id="notificationCreator" class="org.kimios.telemetry.system.TelemetryCreator" init-method="startJob"
+          destroy-method="stopJob">
         <property name="securityController" ref="securityController"/>
+        <property name="telemetryController" ref="telemetryController"/>
     </bean>
 
-    <aop:config>
+    <bean id="notificationSender" class="org.kimios.telemetry.system.TelemetrySender" init-method="startJob"
+          destroy-method="stopJob">
+        <property name="securityController" ref="securityController"/>
+        <property name="telemetryController" ref="telemetryController"/>
+    </bean>
+
+   <aop:config>
         <aop:pointcut id="telemetryTx"
                       expression="execution(* org.kimios.telemetry.controller.ITelemetryController.*(..))"/>
         <aop:advisor advice-ref="txAdvice" pointcut-ref="telemetryTx"/>
