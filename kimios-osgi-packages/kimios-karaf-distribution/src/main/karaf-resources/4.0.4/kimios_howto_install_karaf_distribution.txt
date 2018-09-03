@@ -1,0 +1,65 @@
+Kimios - Document Management System Software
+Copyright (C) 2018  TecLib'
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 2 of the
+License, or (at your option) any later version.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+------------------------------------------------------------------------
+
+HowTo Kimios Bundle installation
+
+Kimios bundle is a ready-to-launch Kimios application launched within a Apache Tomcat instance.
+
+Requirements:
+1) Java 8
+To check which java version is installed, go to the shell and type:
+java -version
+If necessary, you can download Java 8 from java.com.
+2) A running object-relational database system instance from this list: PostgreSQL, MySQL, Oracle, MS SQL Server.
+We advise you to use PostgreSQL database system.
+The data schema will be created only if it does not exist yet. 
+
+Installation:
+1) Unarchive the file (.tar.gz or .zip) at the location you want to install Kimios
+2) Go in the directory (name starting with 'kimios-karaf-distribution-').
+3) You have now to configure a few things before launching Kimios Karaf distribution.
+You have to edit a file, according to your operating system:
+  - Windows: bin\setenv.bat
+  - Linux: bin/setenv
+
+You must set these variables
+  - KIMIOS_JDBC_URL: database instance
+  - KIMIOS_JDBC_USER: database user
+  - KIMIOS_JDBC_PASSWORD: database password
+  - KIMIOS_REPO_PATH: repository path (for files put in Kimios)
+  - KIMIOS_REPO_TMP_PATH: temporary repository path
+  
+For the 2 following variables, please use just one of them.
+If you want Kimios to internally manage Solr instance, use this variable:
+  - KIMIOS_SOLR_HOME: embedded Solr repository path
+If you want to manage your own Solr instance, use this:
+  - KIMIOS_SOLR_SERVER_URL: external Solr url
+
+4) First launch
+Go in shell and type, according to your operating system:
+  - Windows: bin\karaf.bat
+  - Linux: bin/karaf
+
+5) Configuration
+During first launch, Kimios will create configuration files:
+  - for Kimios server: etc/org.kimios.server.app.cfg
+  - for Kimios Web Client: etc/org.kimios.client.app.cfg
+
+To change configuration, you can modify these files and restart Kimios by going to the console. Type 'shutdown' and confirm by 'yes'.
+
+
+An issue? Contact us at https://gitlab.com/kimios/kimios/issues
+
+Thank you for installing Kimios !
