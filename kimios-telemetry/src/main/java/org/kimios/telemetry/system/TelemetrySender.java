@@ -1,7 +1,6 @@
 package org.kimios.telemetry.system;
 
 import org.kimios.kernel.controller.ISecurityController;
-import org.kimios.kernel.index.controller.CustomThreadPoolExecutor;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.telemetry.controller.CustomScheduledThreadPoolExecutor;
 import org.kimios.telemetry.controller.ITelemetryController;
@@ -9,7 +8,6 @@ import org.kimios.telemetry.jobs.TelemetrySenderJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 public class TelemetrySender implements Runnable {

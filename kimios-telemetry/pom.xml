@@ -140,6 +140,7 @@
                             org.apache.karaf.system,
                             org.slf4j.impl;resolution:=optional,
                             org.kimios.utils.osgi,
+                            org.kimios.kernel.security,
                             org.w3c.dom,
                             org.w3c.dom.xpath,
                             org.w3c.dom.views,

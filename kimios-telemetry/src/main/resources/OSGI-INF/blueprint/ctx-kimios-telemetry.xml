@@ -26,14 +26,15 @@
     </cm:property-placeholder>
 
     <reference id="securityController" interface="org.kimios.kernel.controller.ISecurityController" />
-
     <reference id="systemService" interface="org.apache.karaf.system.SystemService" />
+    <reference interface="javax.sql.DataSource" id="databaseConnection"/>
 
     <bean id="telemetryController"
           class="org.kimios.telemetry.controller.TelemetryController">
 
-        <!--<argument ref="securityController" />-->
         <argument ref="systemService" />
+        <argument ref="databaseConnection" />
+
     </bean>
 
     <!-- Jobs -->
