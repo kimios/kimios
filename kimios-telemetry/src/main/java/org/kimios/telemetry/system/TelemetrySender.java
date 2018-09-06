@@ -64,10 +64,8 @@ public class TelemetrySender implements Runnable {
         //while (active) {
             try {
                 if (active) {
-                    logger.info("send telemetry data now");
                     TelemetrySenderJob job = new TelemetrySenderJob(this.telemetryController, session);
                     this.customScheduledThreadPoolExecutor.scheduleAtFixedRate(job, 0, 1, TimeUnit.MINUTES);
-                    logger.info("just sent telemetry data");
                 }
 //                Thread.sleep(5000);
             } catch (Exception e) {
