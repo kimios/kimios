@@ -130,6 +130,21 @@ public class HDocumentFactory extends HFactory implements DocumentFactory
         }
     }
 
+    public int getDocumentsNumber() throws ConfigException,
+            DataSourceException
+    {
+        try {
+            Criteria c = getSession().createCriteria(Document.class);
+            int nb = c.list().size();
+
+            return nb;
+        } catch (ObjectNotFoundException e) {
+            return -1;
+        } catch (HibernateException e) {
+            throw new DataSourceException(e, e.getMessage());
+        }
+    }
+
     public List<Document> getLockedDocuments(String owner, String ownerSource) throws ConfigException,
         DataSourceException
     {

@@ -33,6 +33,8 @@ public interface DocumentFactory
 
     public List<Document> getDocuments() throws ConfigException, DataSourceException;
 
+    public int getDocumentsNumber() throws ConfigException, DataSourceException;
+
     public List<Document> getDocuments(Folder f) throws ConfigException, DataSourceException;
 
     public void saveDocument(Document d) throws ConfigException, DataSourceException;

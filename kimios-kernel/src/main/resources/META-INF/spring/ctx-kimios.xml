@@ -48,7 +48,7 @@
             a ConfigurableJtaPlatform instance
         -->
         <property name="jtaTransactionManager" ref="transactionManager" />
-        <property name="dataSource">
+        <property name="databaseConnection">
             <ref bean="kimiosDataSource"/>
         </property>
         <property name="hibernateProperties">

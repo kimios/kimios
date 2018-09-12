@@ -223,6 +223,13 @@ public interface IAdministrationController
             String authenticationSourceName) throws ConfigException,
             DataSourceException, AccessDeniedException;
 
+    /**
+     * Get users from an authentication source
+     */
+    public Vector<User> getUsers(Session session,
+                                 String authenticationSourceName) throws ConfigException,
+            DataSourceException, AccessDeniedException;
+
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IAdministrationController#getGroup(org.kimios.kernel.security.Session, java.lang.String, java.lang.String)
     */

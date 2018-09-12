@@ -24,15 +24,11 @@
     <bean id="telemetryController"
           class="org.kimios.telemetry.controller.TelemetryController">
 
-        <constructor-arg name="searchController" ref="searchController" />
-        <constructor-arg name="documentController" ref="documentController" />
-        <constructor-arg name="administrationController" ref="administrationController" />
-        <constructor-arg name="notificationFactory" ref="notificationFactory" />
-        <constructor-arg name="securityController" ref="securityController" />
-        <constructor-arg name="mailShareController" ref="mailShareController" />
-        <constructor-arg name="documentVersionController" ref="documentVersionController" />
-        <constructor-arg name="studioController" ref="studioController" />
-
+        <!--<constructor-arg ref="systemService" name="systemService" />-->
+        <constructor-arg ref="kimiosDataSource" name="databaseConnection" />
+        <constructor-arg ref="securityController" name="securityController" />
+        <constructor-arg ref="administrationController" name="administrationController" />
+        <constructor-arg ref="documentController" name="documentController" />
     </bean>
 
     <!-- Jobs -->

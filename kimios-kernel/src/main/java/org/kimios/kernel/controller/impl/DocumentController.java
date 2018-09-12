@@ -174,6 +174,18 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     }
 
     /**
+     * @param session
+     * @return
+     * @throws ConfigException
+     * @throws DataSourceException
+     * @throws AccessDeniedException
+     */
+    public int getDocumentsNumber(Session session)
+            throws ConfigException, DataSourceException, AccessDeniedException {
+        return dmsFactoryInstantiator.getDocumentFactory().getDocumentsNumber();
+    }
+
+    /**
      * Get children documents from a parent folder
      */
     public List<Document> getDocuments(Session session, long folderUid)

@@ -28,12 +28,17 @@
     <reference id="securityController" interface="org.kimios.kernel.controller.ISecurityController" />
     <reference id="systemService" interface="org.apache.karaf.system.SystemService" />
     <reference interface="javax.sql.DataSource" id="databaseConnection"/>
+    <reference id="administrationController" interface="org.kimios.kernel.controller.IAdministrationController" />
+    <reference id="documentController" interface="org.kimios.kernel.controller.IDocumentController" />
 
     <bean id="telemetryController"
           class="org.kimios.telemetry.controller.TelemetryController">
 
         <argument ref="systemService" />
         <argument ref="databaseConnection" />
+        <argument ref="securityController" />
+        <argument ref="administrationController" />
+        <argument ref="documentController" />
 
     </bean>
 

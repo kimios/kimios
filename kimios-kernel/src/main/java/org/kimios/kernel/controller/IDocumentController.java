@@ -53,6 +53,16 @@ public interface IDocumentController {
 
     /**
      * @param session
+     * @return
+     * @throws ConfigException
+     * @throws DataSourceException
+     * @throws AccessDeniedException
+     */
+    public int getDocumentsNumber(Session session) throws ConfigException,
+            DataSourceException, AccessDeniedException;
+
+    /**
+     * @param session
      * @param uid
      * @return
      * @throws ConfigException

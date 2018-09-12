@@ -9,25 +9,50 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.karaf.system.SystemService;
 import org.kimios.kernel.controller.AKimiosController;
+import org.kimios.kernel.controller.IAdministrationController;
+import org.kimios.kernel.controller.IDocumentController;
+import org.kimios.kernel.controller.ISecurityController;
 import org.kimios.kernel.security.model.Session;
+import org.kimios.kernel.user.model.AuthenticationSource;
 import org.kimios.utils.configuration.ConfigurationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.json.*;
+import javax.management.*;
 import javax.sql.DataSource;
+import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.lang.management.OperatingSystemMXBean;
+import java.lang.management.RuntimeMXBean;
 import java.net.MalformedURLException;
 import java.sql.DatabaseMetaData;
 
-import java.util.HashMap;
+import java.util.*;
 
 public class TelemetryController extends AKimiosController implements ITelemetryController {
+
+    public enum ContainerType {
+        SPRING("spring"), OSGI("osgi");
+
+        private final String value;
+
+        ContainerType(String type) {
+            this.value = type;
+        }
+    }
 
     private static Logger logger = LoggerFactory.getLogger(TelemetryController.class);
 
     private SystemService systemService;
-    private DataSource dataSource;
+    private DataSource databaseConnection;
+    private ISecurityController securityController;
+    private IAdministrationController administrationController;
+    private IDocumentController documentController;
+
     private String serverURL;
+
+    private MBeanServerConnection mBeanServerConnection;
 
     public SystemService getSystemService() {
         return systemService;
@@ -37,12 +62,36 @@ public class TelemetryController extends AKimiosController implements ITelemetry
         this.systemService = systemService;
     }
 
-    public DataSource getDataSource() {
-        return dataSource;
+    public DataSource getDatabaseConnection() {
+        return databaseConnection;
     }
 
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
+    public void setDatabaseConnection(DataSource databaseConnection) {
+        this.databaseConnection = databaseConnection;
+    }
+
+    public ISecurityController getSecurityController() {
+        return securityController;
+    }
+
+    public void setSecurityController(ISecurityController securityController) {
+        this.securityController = securityController;
+    }
+
+    public IAdministrationController getAdministrationController() {
+        return administrationController;
+    }
+
+    public void setAdministrationController(IAdministrationController administrationController) {
+        this.administrationController = administrationController;
+    }
+
+    public IDocumentController getDocumentController() {
+        return documentController;
+    }
+
+    public void setDocumentController(IDocumentController documentController) {
+        this.documentController = documentController;
     }
 
     public String getServerURL() {
@@ -53,25 +102,103 @@ public class TelemetryController extends AKimiosController implements ITelemetry
         this.serverURL = serverURL;
     }
 
+    public MBeanServerConnection getMBeanServerConnection() {
+        return mBeanServerConnection;
+    }
+
+    public void setMBeanServerConnection(MBeanServerConnection mBeanServerConnection) {
+        this.mBeanServerConnection = mBeanServerConnection;
+    }
+
     public TelemetryController(){}
 
     public TelemetryController(
             SystemService systemService,
-            DataSource dataSource
-
+            DataSource databaseConnection,
+            ISecurityController securityController,
+            IAdministrationController administrationController,
+            IDocumentController documentController
     ){
+        this(
+                databaseConnection,
+                securityController,
+                administrationController,
+                documentController
+        );
         this.systemService = systemService;
-        this.dataSource = dataSource;
+    }
+
+    public TelemetryController(
+            DataSource databaseConnection,
+            ISecurityController securityController,
+            IAdministrationController administrationController,
+            IDocumentController documentController) {
+        this.databaseConnection = databaseConnection;
+        this.securityController = securityController;
+        this.administrationController = administrationController;
+        this.documentController = documentController;
 
         this.serverURL = ConfigurationManager.getValue("dms.telemetry.server.url") != null ?
                 ConfigurationManager.getValue("dms.telemetry.server.url") : "";
+
+        this.setMBeanServerConnection(ManagementFactory.getPlatformMBeanServer());
+
+        ArrayList<MBeanServer> mBeanServers = MBeanServerFactory.findMBeanServer(null);
+        mBeanServers.size();
+
+        MBeanServerConnection mbsc = ManagementFactory.getPlatformMBeanServer();
+
+        try {
+            Set<ObjectName> objectNames = mbsc.queryNames(null, null);
+            OperatingSystemMXBean osMBean = ManagementFactory.newPlatformMXBeanProxy(
+                    mbsc, ManagementFactory.OPERATING_SYSTEM_MXBEAN_NAME, OperatingSystemMXBean.class);
+
+            RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
+            runtimeMXBean.getName();
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public ContainerType retrieveContainerType() throws IOException {
+        ContainerType containerType = null;
+        try {
+            if (this.getMBeanServerConnection().queryNames(new ObjectName("osgi.core:type=framework,*"),null )
+                    .size() == 1) {
+                containerType = ContainerType.OSGI;
+            } else {
+                containerType = ContainerType.SPRING;
+            }
+        } catch (MalformedObjectNameException e) {
+            e.printStackTrace();
+        }
+
+        return containerType;
+    }
+
+    public HashMap<String, String> retrieveOsgiContainerInfo() throws Exception {
+        HashMap<String, String> data = new HashMap<>();
+        ObjectName karafObjectName = new ObjectName("org.apache.karaf:type=system,name=root");
+        if (this.getMBeanServerConnection().queryNames(karafObjectName, null).size() == 1) {
+            data = this.retrieveKarafInstanceNameAndVersion();
+        }
+
+        return data;
     }
 
     public HashMap<String, String> retrieveKarafInstanceNameAndVersion() throws Exception {
         HashMap<String, String> data = new HashMap<>();
-        data.put("karafName", this.systemService.getName());
-        data.put("karafVersion" , this.systemService.getVersion());
-        data.put("karafFramework", this.systemService.getFramework().name());
+        data.put("containerName", this.systemService.getName() + " (" + this.systemService.getFramework().name() + ")");
+        data.put("containerVersion" , this.systemService.getVersion());
+
+        return data;
+    }
+
+    public HashMap<String, String> retrieveServerInstanceNameAndVersion() throws Exception {
+        HashMap<String, String> data = new HashMap<>();
+
 
         return data;
     }
@@ -108,7 +235,7 @@ public class TelemetryController extends AKimiosController implements ITelemetry
     }
 
     public HashMap<String, String> retrieveDatabaseInfo() throws Exception {
-        DatabaseMetaData metaData = this.dataSource.getConnection().getMetaData();
+        DatabaseMetaData metaData = this.databaseConnection.getConnection().getMetaData();
 
         HashMap<String, String> data = new HashMap<>();
         data.put("databaseProductName", metaData.getDatabaseProductName());
@@ -117,10 +244,61 @@ public class TelemetryController extends AKimiosController implements ITelemetry
         return data;
     }
 
+    public HashMap<String, String> retrieveKimiosInfo(Session session) throws Exception {
+        HashMap<String, String> data = new HashMap<>();
+
+        data.put("kimiosVersion", ConfigurationManager.getValue("kimios.version") != null ?
+                ConfigurationManager.getValue("kimios.version") : "UNKNOWN");
+
+        data.put("kimiosNbUsers", Integer.toString(retrieveKimiosNbUsers(session)));
+        data.put("kimiosNbDocs", Integer.toString(retrieveKimiosNbDocs(session)));
+        data.put("kimiosDistribution", ConfigurationManager.getValue("kimios.distribution") != null ?
+                ConfigurationManager.getValue("kimios.distribution") : "UNKNOWN");
+
+        return data;
+    }
+
+    private int retrieveKimiosNbUsers(Session session) {
+        List<AuthenticationSource> authenticationSourceList = this.securityController.getAuthenticationSources();
+        int nbUsers = -1;
+        try {
+            for (AuthenticationSource s : authenticationSourceList) {
+                nbUsers += this.administrationController.getUsers(session, s.getName()).size();
+            }
+        } catch (Exception e) {
+            logger.error("Exception raised: " + e.getMessage());
+        }
+
+        return nbUsers;
+    }
+
+    private int retrieveKimiosNbDocs(Session session) {
+
+        int nbDocs = -1;
+        try {
+            nbDocs = this.documentController.getDocumentsNumber(session);
+        } catch (Exception e) {
+            logger.error("Exception raised (" + e.getClass().getName() + "): " + e.getMessage());
+        }
+
+        return nbDocs;
+    }
+
     public void sendToTelemetryPHP(Session session) throws Exception {
-        HashMap<String, String> data = this.retrieveKarafInstanceNameAndVersion();
+        ContainerType containerType = this.retrieveContainerType();
+        HashMap<String, String> data = new HashMap<>();
+        switch (containerType) {
+            case OSGI:
+                data.putAll(this.retrieveOsgiContainerInfo());
+                break;
+            case SPRING:
+                data.putAll(this.retrieveServerInstanceNameAndVersion());
+                break;
+        }
+
         data.putAll(this.retrieveJavaInfo());
         data.putAll(this.retrieveDatabaseInfo());
+        data.putAll(this.retrieveKimiosInfo(session));
 
         try {
             JsonObject dataJson = hashMapToTelemetryPhpJson(data);
@@ -178,11 +356,11 @@ public class TelemetryController extends AKimiosController implements ITelemetry
                                                     .add("upload_max_filesize", "-1"))
                                             .add("version", data.get("java.version")))
                                     .add("web_server", Json.createObjectBuilder()
-                                            .add("engine", "Apache Karaf")
-                                            .add("version", data.get("karafVersion"))))
+                                            .add("engine", data.get("containerName"))
+                                            .add("version", data.get("containerVersion"))))
                             .add("kimios", Json.createObjectBuilder()
                                     .add("default_language", "en_GB")
-                                    .add("install_mode", "Karaf Distribution")
+                                    .add("install_mode", data.get("kimiosDistribution"))
                                     .add("plugins", Json.createArrayBuilder())
                                     .add("usage", Json.createObjectBuilder()
                                             .add("avg_changes", "")
