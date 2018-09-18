@@ -163,6 +163,7 @@ public class ExtensionController extends AKimiosController implements IExtension
         DMEntity d = dmsFactoryInstantiator.getDmEntityFactory().getEntity(dmEntityId);
 
         if(d instanceof Document){
+            //check for lock and shares
             Lock lock = ((Document) d).getCheckoutLock();
             if (lock != null) {
                 if (!session.getUserName().equals(lock.getUser())) {

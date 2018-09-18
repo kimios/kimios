@@ -94,14 +94,7 @@ public class ExtensionServiceImpl extends CoreService implements ExtensionServic
     public void trashEntity(String sessionId, long dmEntityId, boolean force) throws DMServiceException {
         try {
             Session session = getHelper().getSession(sessionId);
-            org.kimios.kernel.dms.model.Document document = documentController.getDocumentWithShares(session, dmEntityId);
             extensionController.trashEntity(session, dmEntityId, force);
-            if (document != null
-                    && document.getShareSet() != null
-                    && document.getShareSet().size() > 0) {
-                // throw exception to send a warning
-                throw new DocumentDeletedWithActiveShareException();
-            }
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }
