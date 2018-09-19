@@ -115,7 +115,8 @@ kimios.util.DocumentViewer = Ext.extend(Ext.Panel, {
         html += '<img class="kimios-pdf-image" alt="'+kimios.lang('Wait')+' ('+config.links[i].num+'/'+config.links.length+')" src="'+getBackEndUrl('DocumentVersion') + '&action=getTemporaryFile&uid='+config.pojo.uid+'&path='+config.links[i].path+'"><br />';
       }*/
         for (var i=0; i<config.links.length; i++){
-            var href=  getBackEndUrl('DocumentVersion') + '&action=getTemporaryFile&uid='+config.pojo.uid+'&path='+config.links[i].path;
+            var finalPath = config.links[i].path.replace(/\\/g, '/');
+            var href=  getBackEndUrl('DocumentVersion') + '&action=getTemporaryFile&uid='+config.pojo.uid+'&path='+finalPath;
             var width = '100%';
             var height = '100%';
             var type = 'application/pdf';
