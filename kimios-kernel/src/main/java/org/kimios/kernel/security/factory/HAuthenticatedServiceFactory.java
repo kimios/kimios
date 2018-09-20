@@ -20,7 +20,7 @@ import org.kimios.kernel.security.model.AuthenticatedService;
 import org.kimios.kernel.security.AuthenticatedServiceFactory;
 
 /**
- * @author Fabien Alin (Farf) <fabien.alin@gmail.com>
+ * @author Fabien Alin (Farf) <a href="mailto:fabien.alin@gmail.com">fabien.alin@gmail.com</a>
  */
 public class HAuthenticatedServiceFactory extends HFactory implements AuthenticatedServiceFactory
 {

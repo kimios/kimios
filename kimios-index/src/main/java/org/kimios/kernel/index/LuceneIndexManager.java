@@ -21,7 +21,7 @@ import org.kimios.exceptions.IndexException;
 import java.util.List;
 
 /**
- * @author Farf <fabien.alin@gmail.com>
+ * @author Farf <a href="mailto:fabien.alin@gmail.com">fabien.alin@gmail.com</a>
  */
 public interface LuceneIndexManager extends AbstractIndexManager
 {

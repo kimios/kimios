@@ -29,7 +29,7 @@ import java.util.*;
  * Represents a DMS user object.
  *
  * @author Louis Sicard
- * @author Fabien Alin (farf)  <fabien.alin@gmail.com>
+ * @author Fabien Alin (farf)  <a href="mailto:fabien.alin@gmail.com">fabien.alin@gmail.com</a>
  */
 @Entity
 @Table(name = "users")

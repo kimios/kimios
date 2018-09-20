@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * @author Fabien Alin (Farf) <fabien.alin@gmail.com>
+ * @author Fabien Alin (Farf) <a href="mailto:fabien.alin@gmail.com">fabien.alin@gmail.com</a>
  *
  *         Refactor Hold Configuration manager.
  *

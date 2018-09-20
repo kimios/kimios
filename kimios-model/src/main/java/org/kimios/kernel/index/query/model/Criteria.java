@@ -19,7 +19,7 @@ package org.kimios.kernel.index.query.model;
 import java.util.List;
 
 /**
- * @author Fabien Alin <fabien.alin@gmail.com>
+ * @author Fabien Alin <a href="mailto:fabien.alin@gmail.com">fabien.alin@gmail.com</a>
  * @version 1.0
  */
 public class Criteria

@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * @author Fabien Alin <fabien.alin@gmail.com>
+ * @author Fabien Alin <a href="mailto:fabien.alin@gmail.com">fabien.alin@gmail.com</a>
  *
  *         Class Handling Icon Css Class generation
  */

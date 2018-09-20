@@ -18,7 +18,7 @@ package org.kimios.kernel.repositories.model;
 import javax.persistence.*;
 
 /**
- * @author Fabien Alin (Farf) <fabien.alin@gmail.com>
+ * @author Fabien Alin (Farf) <a href="mailto:fabien.alin@gmail.com">fabien.alin@gmail.com</a>
  */
 @Entity
 @Table(name = "repositories")
