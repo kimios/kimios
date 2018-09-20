@@ -28,12 +28,18 @@
         <connection>scm:git:ssh://git@github.com/kimios/kimios.git</connection>
         <developerConnection>scm:git:ssh://git@ggithub.com/kimios/kimios.git</developerConnection>
     </scm>-->
-    <!-- internal Git Connexion -->
+    <!-- GitLab Software Configuration Management -->
+    <scm>
+        <url>https://github.com/kimios/kimios</url>
+        <connection>scm:git:ssh://git@gitlab.com/kimios/kimios.git</connection>
+        <developerConnection>scm:git:ssh://git@gitlab.com/kimios/kimios.git</developerConnection>
+    </scm>
+    <!-- internal Git Connexion 
     <scm>
         <url>https://gitlab.devlib.infra/org-kimios/kimios</url>
         <connection>scm:git:ssh://git@gitlab.devlib.infra/org-kimios/kimios.git</connection>
         <developerConnection>scm:git:ssh://git@gitlab.devlib.infra/org-kimios/kimios.git</developerConnection>
-    </scm>
+    </scm>-->
     <developers>
         <developer>
             <id>farf</id>
