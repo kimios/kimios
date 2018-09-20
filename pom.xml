@@ -226,11 +226,11 @@
             <distributionManagement>
                 <snapshotRepository>
                     <id>kimios-private</id>
-                    <url>http://repositories.k.devlib.fr/repository/kimios-private</url>
+                    <url>https://repository.kimios.com/repository/kimios-private</url>
                 </snapshotRepository>
                 <repository>
                     <id>kimios-releases</id>
-                    <url>http://repositories.k.devlib.fr/repository/kimios-private</url>
+                    <url>https://repository.kimios.com/repository/kimios-private</url>
                 </repository>
             </distributionManagement>
         </profile>
