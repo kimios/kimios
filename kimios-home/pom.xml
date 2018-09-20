@@ -188,58 +188,6 @@
                         </execution>
                     </executions>
                 </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <version>1.3</version>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <phase>generate-sources</phase>
-                                <configuration>
-                                    <tasks>
-                                        <echo
-                                                file="${project.basedir}/template/server/conf/kimios.properties"
-                                                append="true"
-                                                message="kimios.version=${project.parent.version}${line.separator}"
-                                        />
-                                        <echo
-                                                file="${project.basedir}/template/server/conf/kimios.properties"
-                                                append="true"
-                                                message="maven.build.number=${buildNumber}${line.separator}"
-                                        />
-                                        <echo
-                                                file="${project.basedir}/template/server/conf/kimios.properties"
-                                                append="true"
-                                                message="maven.project.version=${project.parent.version}${line.separator}"
-                                        />
-                                        <echo
-                                                file="${project.basedir}/template/server/conf/kimios.properties"
-                                                append="true"
-                                                message="java.vm.version=${java.vm.version}${line.separator}"
-                                        />
-                                        <echo
-                                                file="${project.basedir}/template/server/conf/kimios.properties"
-                                                append="true"
-                                                message="java.version=${java.version}${line.separator}"
-                                        />
-                                        <echo
-                                                file="${project.basedir}/template/server/conf/kimios.properties"
-                                                append="true"
-                                                message="maven.build.timestamp=${maven.build.timestamp}${line.separator}"
-                                        />
-                                        <echo
-                                                file="${project.basedir}/template/server/conf/kimios.properties"
-                                                append="true"
-                                                message="kimios.distribution=WAR"
-                                        />
-                                    </tasks>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
                 </plugins>
             </build>
         </profile>

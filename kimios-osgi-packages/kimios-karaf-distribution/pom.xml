@@ -198,53 +198,6 @@
                 </executions>
             </plugin>-->
 
-            <plugin>
-                <groupId>com.google.code.maven-replacer-plugin</groupId>
-                <artifactId>replacer</artifactId>
-                <version>1.5.3</version>
-                <executions>
-                    <execution>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>replace</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <file>${project.basedir}/target/assembly/etc/org.kimios.version.properties</file>
-                    <replacements>
-                        <replacement>
-                            <token>kimios.version=</token>
-                            <value>kimios.version=${project.parent.version}</value>
-                        </replacement>
-                        <replacement>
-                            <token>maven.build.number=</token>
-                            <value>maven.build.number=${buildNumber}</value>
-                        </replacement>
-                        <replacement>
-                            <token>maven.project.version=</token>
-                            <value>maven.project.version=${project.parent.version}</value>
-                        </replacement>
-                        <replacement>
-                            <token>java.vm.version=</token>
-                            <value>java.vm.version=${java.vm.version}</value>
-                        </replacement>
-                        <replacement>
-                            <token>java.version=</token>
-                            <value>java.version=${java.version}</value>
-                        </replacement>
-                        <replacement>
-                            <token>maven.build.timestamp=</token>
-                            <value>maven.build.timestamp=${maven.build.timestamp}</value>
-                        </replacement>
-                        <replacement>
-                            <token>kimios.distribution=</token>
-                            <value>kimios.distribution=Karaf Distribution</value>
-                        </replacement>
-                    </replacements>
-                </configuration>
-            </plugin>
-
             <!-- karaf-maven-plugin will call both install-kar and instance-create-archive goals -->
             <plugin>
                 <groupId>org.apache.karaf.tooling</groupId>

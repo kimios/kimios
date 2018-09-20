@@ -31,10 +31,15 @@
     <reference id="administrationController" interface="org.kimios.kernel.controller.IAdministrationController" />
     <reference id="documentController" interface="org.kimios.kernel.controller.IDocumentController" />
 
+    <bean id="kimiosSystemService"
+          class="org.kimios.telemetry.system.service.impl.KarafSystemService">
+        <argument ref="systemService" />
+    </bean>
+
     <bean id="telemetryController"
           class="org.kimios.telemetry.controller.TelemetryController">
 
-        <argument ref="systemService" />
+        <argument ref="kimiosSystemService" />
         <argument ref="databaseConnection" />
         <argument ref="securityController" />
         <argument ref="administrationController" />

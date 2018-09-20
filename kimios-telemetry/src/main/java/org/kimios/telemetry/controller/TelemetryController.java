@@ -7,28 +7,30 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.karaf.system.SystemService;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.IAdministrationController;
 import org.kimios.kernel.controller.IDocumentController;
 import org.kimios.kernel.controller.ISecurityController;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.user.model.AuthenticationSource;
+import org.kimios.telemetry.system.service.KimiosSystemService;
 import org.kimios.utils.configuration.ConfigurationManager;
+import org.kimios.utils.version.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.json.*;
-import javax.management.*;
+import javax.management.MBeanServerConnection;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
-import java.lang.management.OperatingSystemMXBean;
-import java.lang.management.RuntimeMXBean;
 import java.net.MalformedURLException;
 import java.sql.DatabaseMetaData;
+import java.util.HashMap;
+import java.util.List;
 
-import java.util.*;
 
 public class TelemetryController extends AKimiosController implements ITelemetryController {
 
@@ -44,7 +46,7 @@ public class TelemetryController extends AKimiosController implements ITelemetry
 
     private static Logger logger = LoggerFactory.getLogger(TelemetryController.class);
 
-    private SystemService systemService;
+    private KimiosSystemService kimiosSystemService;
     private DataSource databaseConnection;
     private ISecurityController securityController;
     private IAdministrationController administrationController;
@@ -54,12 +56,12 @@ public class TelemetryController extends AKimiosController implements ITelemetry
 
     private MBeanServerConnection mBeanServerConnection;
 
-    public SystemService getSystemService() {
-        return systemService;
+    public KimiosSystemService getKimiosSystemService() {
+        return kimiosSystemService;
     }
 
-    public void setSystemService(SystemService systemService) {
-        this.systemService = systemService;
+    public void setKimiosSystemService(KimiosSystemService systemService) {
+        this.kimiosSystemService = systemService;
     }
 
     public DataSource getDatabaseConnection() {
@@ -110,69 +112,43 @@ public class TelemetryController extends AKimiosController implements ITelemetry
         this.mBeanServerConnection = mBeanServerConnection;
     }
 
-    public TelemetryController(){}
+    public TelemetryController(){
+        this.serverURL = ConfigurationManager.getValue("dms.telemetry.server.url") != null ?
+                ConfigurationManager.getValue("dms.telemetry.server.url") : "";
+
+        this.setMBeanServerConnection(ManagementFactory.getPlatformMBeanServer());
+    }
 
     public TelemetryController(
-            SystemService systemService,
+            KimiosSystemService systemService,
             DataSource databaseConnection,
             ISecurityController securityController,
             IAdministrationController administrationController,
             IDocumentController documentController
     ){
-        this(
-                databaseConnection,
-                securityController,
-                administrationController,
-                documentController
-        );
-        this.systemService = systemService;
-    }
+        this();
 
-    public TelemetryController(
-            DataSource databaseConnection,
-            ISecurityController securityController,
-            IAdministrationController administrationController,
-            IDocumentController documentController) {
+        this.kimiosSystemService = systemService;
         this.databaseConnection = databaseConnection;
         this.securityController = securityController;
         this.administrationController = administrationController;
         this.documentController = documentController;
-
-        this.serverURL = ConfigurationManager.getValue("dms.telemetry.server.url") != null ?
-                ConfigurationManager.getValue("dms.telemetry.server.url") : "";
-
-        this.setMBeanServerConnection(ManagementFactory.getPlatformMBeanServer());
-
-        ArrayList<MBeanServer> mBeanServers = MBeanServerFactory.findMBeanServer(null);
-        mBeanServers.size();
-
-        MBeanServerConnection mbsc = ManagementFactory.getPlatformMBeanServer();
-
-        try {
-            Set<ObjectName> objectNames = mbsc.queryNames(null, null);
-            OperatingSystemMXBean osMBean = ManagementFactory.newPlatformMXBeanProxy(
-                    mbsc, ManagementFactory.OPERATING_SYSTEM_MXBEAN_NAME, OperatingSystemMXBean.class);
-
-            RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
-            runtimeMXBean.getName();
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public ContainerType retrieveContainerType() throws IOException {
         ContainerType containerType = null;
         try {
-            if (this.getMBeanServerConnection().queryNames(new ObjectName("osgi.core:type=framework,*"),null )
-                    .size() == 1) {
+            if (this.getMBeanServerConnection() != null
+                    && this.getMBeanServerConnection().queryNames(new ObjectName("osgi.core:type=framework,*"),null) != null
+                    && this.getMBeanServerConnection().queryNames(new ObjectName("osgi.core:type=framework,*"),null).size() == 1) {
                 containerType = ContainerType.OSGI;
             } else {
                 containerType = ContainerType.SPRING;
             }
         } catch (MalformedObjectNameException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
+        } catch (Exception e) {
+            logger.error(e.getMessage());
         }
 
         return containerType;
@@ -182,23 +158,16 @@ public class TelemetryController extends AKimiosController implements ITelemetry
         HashMap<String, String> data = new HashMap<>();
         ObjectName karafObjectName = new ObjectName("org.apache.karaf:type=system,name=root");
         if (this.getMBeanServerConnection().queryNames(karafObjectName, null).size() == 1) {
-            data = this.retrieveKarafInstanceNameAndVersion();
+            data = this.retrieveInstanceNameAndVersion();
         }
 
         return data;
     }
 
-    public HashMap<String, String> retrieveKarafInstanceNameAndVersion() throws Exception {
+    public HashMap<String, String> retrieveInstanceNameAndVersion() throws Exception {
         HashMap<String, String> data = new HashMap<>();
-        data.put("containerName", this.systemService.getName() + " (" + this.systemService.getFramework().name() + ")");
-        data.put("containerVersion" , this.systemService.getVersion());
-
-        return data;
-    }
-
-    public HashMap<String, String> retrieveServerInstanceNameAndVersion() throws Exception {
-        HashMap<String, String> data = new HashMap<>();
-
+        data.put("containerName", this.kimiosSystemService.getName() + " (" + this.kimiosSystemService.getFrameworkName() + ")");
+        data.put("containerVersion" , this.kimiosSystemService.getVersion());
 
         return data;
     }
@@ -247,13 +216,11 @@ public class TelemetryController extends AKimiosController implements ITelemetry
     public HashMap<String, String> retrieveKimiosInfo(Session session) throws Exception {
         HashMap<String, String> data = new HashMap<>();
 
-        data.put("kimiosVersion", ConfigurationManager.getValue("kimios.version") != null ?
-                ConfigurationManager.getValue("kimios.version") : "UNKNOWN");
+        data.put("kimiosVersion", Version.KIMIOS_VERSION);
 
         data.put("kimiosNbUsers", Integer.toString(retrieveKimiosNbUsers(session)));
         data.put("kimiosNbDocs", Integer.toString(retrieveKimiosNbDocs(session)));
-        data.put("kimiosDistribution", ConfigurationManager.getValue("kimios.distribution") != null ?
-                ConfigurationManager.getValue("kimios.distribution") : "UNKNOWN");
+        data.put("kimiosDistribution", this.kimiosSystemService.getKimiosDistribution());
 
         return data;
     }
@@ -285,17 +252,9 @@ public class TelemetryController extends AKimiosController implements ITelemetry
     }
 
     public void sendToTelemetryPHP(Session session) throws Exception {
-        ContainerType containerType = this.retrieveContainerType();
-        HashMap<String, String> data = new HashMap<>();
-        switch (containerType) {
-            case OSGI:
-                data.putAll(this.retrieveOsgiContainerInfo());
-                break;
-            case SPRING:
-                data.putAll(this.retrieveServerInstanceNameAndVersion());
-                break;
-        }
 
+        HashMap<String, String> data = new HashMap<>();
+        data.putAll(this.retrieveInstanceNameAndVersion());
         data.putAll(this.retrieveJavaInfo());
         data.putAll(this.retrieveDatabaseInfo());
         data.putAll(this.retrieveKimiosInfo(session));
@@ -356,8 +315,8 @@ public class TelemetryController extends AKimiosController implements ITelemetry
                                                     .add("upload_max_filesize", "-1"))
                                             .add("version", data.get("java.version")))
                                     .add("web_server", Json.createObjectBuilder()
-                                            .add("engine", data.get("containerName"))
-                                            .add("version", data.get("containerVersion"))))
+                                            .add("engine", data.get("containerName") != null ? data.get("containerName") : "UNKNOWN")
+                                            .add("version", data.get("containerVersion") != null ? data.get("containerVersion") : "UNKNOWN")))
                             .add("kimios", Json.createObjectBuilder()
                                     .add("default_language", "en_GB")
                                     .add("install_mode", data.get("kimiosDistribution"))
@@ -376,7 +335,7 @@ public class TelemetryController extends AKimiosController implements ITelemetry
                                             .add("mailcollector_enabled", JsonValue.FALSE)
                                             .add("notifications_modes", Json.createArrayBuilder()))
                                     .add("uuid", "GENERATED_BAD_UUID")
-                                    .add("version", "VERSION")
+                                    .add("version", data.get("kimiosVersion"))
                             )
 
                     );

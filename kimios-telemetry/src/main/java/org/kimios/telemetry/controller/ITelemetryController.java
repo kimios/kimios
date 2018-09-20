@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 public interface ITelemetryController {
 
-    HashMap<String, String> retrieveKarafInstanceNameAndVersion() throws Exception;
+    HashMap<String, String> retrieveInstanceNameAndVersion() throws Exception;
 
     void sendToTelemetryPHP(Session session) throws Exception;
 }

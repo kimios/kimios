@@ -32,8 +32,10 @@ public class TelemetrySender implements Runnable {
     public void stopJob() {
         try {
             this.stop();
+            this.customScheduledThreadPoolExecutor.shutdown();
             thrc.join();
         } catch (Exception e) {
+            logger.error("Exception raised while shuting down the job: " + e.getMessage());
         }
         logger.info("Notification Sender stopped");
     }

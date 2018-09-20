@@ -21,14 +21,20 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
+    <bean id="kimiosSystemService"
+          name="kimiosSystemService"
+          class="org.kimios.telemetry.system.service.impl.SpringModeSystemService">
+
+    </bean>
+
     <bean id="telemetryController"
           class="org.kimios.telemetry.controller.TelemetryController">
 
-        <!--<constructor-arg ref="systemService" name="systemService" />-->
-        <constructor-arg ref="kimiosDataSource" name="databaseConnection" />
-        <constructor-arg ref="securityController" name="securityController" />
-        <constructor-arg ref="administrationController" name="administrationController" />
-        <constructor-arg ref="documentController" name="documentController" />
+        <property ref="kimiosSystemService" name="kimiosSystemService" />
+        <property ref="kimiosDataSource" name="databaseConnection" />
+        <property ref="securityController" name="securityController" />
+        <property ref="administrationController" name="administrationController" />
+        <property ref="documentController" name="documentController" />
     </bean>
 
     <!-- Jobs -->
@@ -37,11 +43,5 @@
         <property name="securityController" ref="securityController"/>
         <property name="telemetryController" ref="telemetryController"/>
     </bean>
-
-   <aop:config>
-        <aop:pointcut id="telemetryTx"
-                      expression="execution(* org.kimios.telemetry.controller.ITelemetryController.*(..))"/>
-        <aop:advisor advice-ref="txAdvice" pointcut-ref="telemetryTx"/>
-    </aop:config>
 
 </beans>
