@@ -61,7 +61,7 @@ public class HashCalculator
     public static final String MD5 = "MD5";
 
     /**
-     * Creates a Hasher with a default algorithm. {@link org.umh.security.Hasher#SHA256}.
+     * Creates a Hasher with a default algorithm
      */
     public HashCalculator()
     {
