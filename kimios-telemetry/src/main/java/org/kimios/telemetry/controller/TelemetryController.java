@@ -362,7 +362,7 @@ public class TelemetryController extends AKimiosController implements ITelemetry
                                             .add("ldap_enabled", JsonValue.FALSE)
                                             .add("mailcollector_enabled", JsonValue.FALSE)
                                             .add("notifications_modes", Json.createArrayBuilder()))
-                                    .add("uuid", "GENERATED_BAD_UUID")
+                                    .add("uuid", this.getUuid())
                                     .add("version", data.get("kimiosVersion"))
                             )
 
