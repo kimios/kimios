@@ -14,7 +14,6 @@ public class TelemetrySender implements Runnable {
 
     private static Logger logger = LoggerFactory.getLogger(TelemetrySender.class);
 
-    private volatile boolean active = true;
     private static Thread thrc;
     private ISecurityController securityController;
     private ITelemetryController telemetryController;
@@ -31,17 +30,12 @@ public class TelemetrySender implements Runnable {
 
     public void stopJob() {
         try {
-            this.stop();
             this.customScheduledThreadPoolExecutor.shutdown();
             thrc.join();
         } catch (Exception e) {
-            logger.error("Exception raised while shuting down the job: " + e.getMessage());
+            logger.error("Exception raised while shutting down the job: " + e.getMessage());
         }
         logger.info("Notification Sender stopped");
-    }
-
-    public void stop() {
-        this.active = false;
     }
 
     public ISecurityController getSecurityController() {
@@ -51,7 +45,6 @@ public class TelemetrySender implements Runnable {
     public void setSecurityController(ISecurityController securityController) {
         this.securityController = securityController;
     }
-
     public ITelemetryController getTelemetryController() {
         return telemetryController;
     }
@@ -62,18 +55,16 @@ public class TelemetrySender implements Runnable {
 
     @Override
     public void run() {
-        Session session = this.securityController.startSession("admin", "kimios");
-        //while (active) {
+        if (this.telemetryController.getUuid() != null) {
             try {
-                if (active) {
-                    TelemetrySenderJob job = new TelemetrySenderJob(this.telemetryController, session);
-                    this.customScheduledThreadPoolExecutor.scheduleAtFixedRate(job, 0, 1, TimeUnit.MINUTES);
-                }
-//                Thread.sleep(5000);
+                Session session = this.securityController.startSession("admin", "kimios");
+                TelemetrySenderJob job = new TelemetrySenderJob(this.telemetryController, session);
+                this.customScheduledThreadPoolExecutor.scheduleAtFixedRate(job, 0, 1, TimeUnit.MINUTES);
             } catch (Exception e) {
-                this.stop();
                 logger.info("Thread interrupted " + e.getMessage());
+                this.stopJob();
             }
-        //}
+        }
+
     }
 }

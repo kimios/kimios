@@ -9,5 +9,7 @@ public interface ITelemetryController {
     HashMap<String, String> retrieveInstanceNameAndVersion() throws Exception;
 
     void sendToTelemetryPHP(Session session) throws Exception;
+
+    String getUuid();
 }
 

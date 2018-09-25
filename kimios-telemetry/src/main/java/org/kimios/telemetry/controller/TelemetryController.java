@@ -24,12 +24,19 @@ import javax.management.MBeanServerConnection;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.sql.DataSource;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.DatabaseMetaData;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 
 public class TelemetryController extends AKimiosController implements ITelemetryController {
@@ -53,8 +60,9 @@ public class TelemetryController extends AKimiosController implements ITelemetry
     private IDocumentController documentController;
 
     private String serverURL;
-
     private MBeanServerConnection mBeanServerConnection;
+    private String uuid;
+    private String uuidFile = "uuid";
 
     public KimiosSystemService getKimiosSystemService() {
         return kimiosSystemService;
@@ -112,11 +120,31 @@ public class TelemetryController extends AKimiosController implements ITelemetry
         this.mBeanServerConnection = mBeanServerConnection;
     }
 
+    private void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    public String getUuid() {
+        return this.uuid;
+    }
+
     public TelemetryController(){
         this.serverURL = ConfigurationManager.getValue("dms.telemetry.server.url") != null ?
                 ConfigurationManager.getValue("dms.telemetry.server.url") : "";
 
         this.setMBeanServerConnection(ManagementFactory.getPlatformMBeanServer());
+
+        String uuid = this.retrieveUuid();
+        if (uuid == null) {
+            try {
+                this.generateAndSaveUuid();
+                uuid = this.retrieveUuid();
+            } catch (IOException e) {
+                logger.error("can't create uuid file");
+                logger.error(e.getMessage());
+            }
+        }
+        this.setUuid(uuid);
     }
 
     public TelemetryController(
@@ -345,6 +373,35 @@ public class TelemetryController extends AKimiosController implements ITelemetry
         }
 
         return object;
+    }
+
+    public void generateAndSaveUuid() throws IOException {
+        String uuidStr = UUID.randomUUID().toString();
+
+        FileWriter fw = new FileWriter(uuidFile);
+        fw.write(uuidStr);
+        fw.flush();
+
+    }
+
+    public String retrieveUuid() {
+        String uuid = null;
+        try {
+            FileReader fr = new FileReader(uuidFile);
+            fr.read();
+            Optional<String> opt = Files.lines(Paths.get(uuidFile)).findFirst();
+            if (opt.isPresent()) {
+                uuid = opt.get();
+            }
+        } catch (FileNotFoundException e) {
+            logger.error("can't find the file to get UUID");
+            logger.error(e.getMessage());
+        } catch (IOException e) {
+            logger.error("can't read the file to get UUID");
+            logger.error(e.getMessage());
+        }
+
+        return uuid;
     }
 }
 
