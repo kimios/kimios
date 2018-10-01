@@ -246,8 +246,11 @@ public class TelemetryController extends AKimiosController implements ITelemetry
 
         data.put("kimiosVersion", Version.KIMIOS_VERSION);
 
-        data.put("kimiosNbUsers", Integer.toString(retrieveKimiosNbUsers(session)));
-        data.put("kimiosNbDocs", Integer.toString(retrieveKimiosNbDocs(session)));
+        int nbUsers = retrieveKimiosNbUsers(session);
+        int nbDocs = retrieveKimiosNbDocs(session);
+        data.put("kimiosNbUsers", Integer.toString(nbUsers));
+        data.put("kimiosNbDocs", Integer.toString(nbDocs));
+        data.put("kimiosNbDocsPerUser", Integer.toString(this.calculateKimiosNbDocsPerUser(nbUsers, nbDocs)));
         data.put("kimiosDistribution", this.kimiosSystemService.getKimiosDistribution());
 
         return data;
@@ -277,6 +280,10 @@ public class TelemetryController extends AKimiosController implements ITelemetry
         }
 
         return nbDocs;
+    }
+
+    private int calculateKimiosNbDocsPerUser(int nbUsers, int nbDocs) {
+        return nbUsers == 0 ? 0 : nbDocs / nbUsers;
     }
 
     public void sendToTelemetryPHP(Session session) throws Exception {
@@ -350,7 +357,10 @@ public class TelemetryController extends AKimiosController implements ITelemetry
                                     .add("install_mode", data.get("kimiosDistribution"))
                                     .add("plugins", Json.createArrayBuilder())
                                     .add("usage", Json.createObjectBuilder()
-                                            .add("avg_changes", "")
+                                            .add("num_users", data.get("kimiosNbUsers"))
+                                            .add("num_documents", data.get("kimiosNbDocs"))
+                                            .add("num_documents_per_user", data.get("kimiosNbDocsPerUser"))
+/*                                            .add("avg_changes", "")
                                             .add("avg_computers", "")
                                             .add("avg_entities", "")
                                             .add("avg_groups", "")
@@ -361,11 +371,10 @@ public class TelemetryController extends AKimiosController implements ITelemetry
                                             .add("avg_users", "")
                                             .add("ldap_enabled", JsonValue.FALSE)
                                             .add("mailcollector_enabled", JsonValue.FALSE)
-                                            .add("notifications_modes", Json.createArrayBuilder()))
+                                            .add("notifications_modes", Json.createArrayBuilder())*/
+                                    )
                                     .add("uuid", this.getUuid())
-                                    .add("version", data.get("kimiosVersion"))
-                            )
-
+                                    .add("version", data.get("kimiosVersion")))
                     );
             object = objectBuilder.build();
         } catch (Exception e) {
