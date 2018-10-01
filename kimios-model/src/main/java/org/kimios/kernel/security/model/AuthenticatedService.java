@@ -21,7 +21,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
- * @author Fabien Alin (Farf) <fabien.alin@gmail.com>
+ * @author Fabien Alin (Farf) <a href="mailto:fabien.alin@gmail.com">fabien.alin@gmail.com</a>
  */
 @Entity
 @Table(name = "authenticated_services")

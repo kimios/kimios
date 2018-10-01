@@ -27,7 +27,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 /**
- * @author Fabien ALIN <fabien.alin@gmail.com>
+ * @author Fabien ALIN <a href="mailto:fabien.alin@gmail.com">fabien.alin@gmail.com</a>
  */
 public class FacetQueryBuilder
 {

@@ -28,7 +28,7 @@ import java.util.Iterator;
 
 /**
  *
- *  @author Fabien Alin <fabien.alin@gmail.com>
+ *  @author Fabien Alin <a href="mailto:fabien.alin@gmail.com">fabien.alin@gmail.com</a>
  */
 public class BundleUrlType implements Vfs.UrlType
 {

@@ -28,12 +28,18 @@
         <connection>scm:git:ssh://git@github.com/kimios/kimios.git</connection>
         <developerConnection>scm:git:ssh://git@ggithub.com/kimios/kimios.git</developerConnection>
     </scm>-->
-    <!-- internal Git Connexion -->
+    <!-- GitLab Software Configuration Management -->
+    <scm>
+        <url>https://github.com/kimios/kimios</url>
+        <connection>scm:git:ssh://git@gitlab.com/kimios/kimios.git</connection>
+        <developerConnection>scm:git:ssh://git@gitlab.com/kimios/kimios.git</developerConnection>
+    </scm>
+    <!-- internal Git Connexion 
     <scm>
         <url>https://gitlab.devlib.infra/org-kimios/kimios</url>
         <connection>scm:git:ssh://git@gitlab.devlib.infra/org-kimios/kimios.git</connection>
         <developerConnection>scm:git:ssh://git@gitlab.devlib.infra/org-kimios/kimios.git</developerConnection>
-    </scm>
+    </scm>-->
     <developers>
         <developer>
             <id>farf</id>
@@ -220,11 +226,11 @@
             <distributionManagement>
                 <snapshotRepository>
                     <id>kimios-private</id>
-                    <url>http://repositories.k.devlib.fr/repository/kimios-private</url>
+                    <url>https://repository.kimios.com/repository/kimios-private</url>
                 </snapshotRepository>
                 <repository>
                     <id>kimios-releases</id>
-                    <url>http://repositories.k.devlib.fr/repository/kimios-private</url>
+                    <url>https://repository.kimios.com/repository/kimios-private</url>
                 </repository>
             </distributionManagement>
         </profile>
@@ -285,10 +291,11 @@
                             </execution>
                         </executions>
                     </plugin>
-                    <plugin>
+                    <!--<plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
                         <configuration>
+			    <additionalparam>-Xdoclint:none</additionalparam>
                             <force>true</force>
                             <failOnError>false</failOnError>
                         </configuration>
@@ -300,7 +307,7 @@
                                 </goals>
                             </execution>
                         </executions>
-                    </plugin>
+                    </plugin>-->
                 </plugins>
             </build>
         </profile>

@@ -17,7 +17,7 @@
 package org.kimios.core.configuration;
 
 /**
- * @author Fabien Alin (Farf) <fabien.alin@gmail.com>
+ * @author Fabien Alin (Farf) <a href="mailto:fabien.alin@gmail.com">fabien.alin@gmail.com</a>
  *
  * Util Class. Reference Kimios Properties Name, for code usage
  */

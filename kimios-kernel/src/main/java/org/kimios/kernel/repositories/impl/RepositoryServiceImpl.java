@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * @author Fabien Alin (Farf) <fabien.alin@gmail.com>
+ * @author Fabien Alin (Farf) <a href="mailto:fabien.alin@gmail.com">fabien.alin@gmail.com</a>
  */
 @Transactional
 public class RepositoryServiceImpl implements RepositoryService

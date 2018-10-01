@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import javax.ws.rs.core.Response;
 
 /**
- *      @author Fabien ALIN <fabien.alin@gmail.com>
+ *      @author Fabien ALIN <a href="mailto:fabien.alin@gmail.com">fabien.alin@gmail.com</a>
  *
  *      Produces JSON Content on Exception in the REST API
  *

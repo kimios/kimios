@@ -18,7 +18,7 @@ package org.kimios.kernel.user.model;
 import java.io.Serializable;
 
 /**
- * @author Fabien Alin (farf)  <fabien.alin@gmail.com>
+ * @author Fabien Alin (farf)  <a href="mailto:fabien.alin@gmail.com">fabien.alin@gmail.com</a>
  */
 public class UserPK implements Serializable
 {

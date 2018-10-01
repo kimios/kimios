@@ -23,7 +23,7 @@ import java.util.Map;
 /**
  *
  *
- * @author Fabien Alin <fabien.alin@gmail.com>
+ * @author Fabien Alin <a href="mailto:fabien.alin@gmail.com">fabien.alin@gmail.com</a>
  *
  *
  *

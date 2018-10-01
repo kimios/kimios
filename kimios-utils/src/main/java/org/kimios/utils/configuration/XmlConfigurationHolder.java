@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- *  @author Fabien Alin (Farf) <fabien.alin@gmail.com>
+ *  @author Fabien Alin (Farf) <a href="mailto:fabien.alin@gmail.com">fabien.alin@gmail.com</a>
  *
  *      Configuration Holder Based on Hold Xml Format. Will be deprecated in the next release
  *
