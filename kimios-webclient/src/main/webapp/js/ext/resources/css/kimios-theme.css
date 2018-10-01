@@ -1455,9 +1455,9 @@ a.x-menu-item {
 
 #login-area .x-panel-header {
     color: #ffffff;
-    background-color: #6CCA18;
+    background-color: #74cb54;
     /*background-color: #fff;*/
-    border-bottom: 1px solid #6CCA18;
+    border-bottom: 1px solid #74cb54;
 }
 
 .x-panel-body {
@@ -1854,7 +1854,7 @@ body.x-body-masked .x-window-plain .x-window-mc {
     margin-right: auto;
     margin-top: 150px;
     width: 300px;
-    border: 1px solid #6CCA18;
+    border: 1px solid #74cb54;
     padding: 0 0 3px 0;
 
     -webkit-border-bottom-left-radius: 10px;
