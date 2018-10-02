@@ -43,14 +43,14 @@ rem SET KARAF_DATA rem Karaf data folder
 rem SET KARAF_BASE rem Karaf base folder
 rem SET KARAF_ETC  rem Karaf etc  folder
 
-SET KIMIOS_JDBC_DRIVER=
-SET KIMIOS_JDBC_URL=
-SET KIMIOS_JDBC_USER=
-SET KIMIOS_JDBC_PASSWORD=
-SET KIMIOS_REPO_PATH=
-SET KIMIOS_REPO_TMP_PATH=
-SET KIMIOS_SOLR_HOME=
-SET KIMIOS_SOLR_SERVER_URL=
+rem SET KIMIOS_JDBC_DRIVER=
+rem SET KIMIOS_JDBC_URL=
+rem SET KIMIOS_JDBC_USER=
+rem SET KIMIOS_JDBC_PASSWORD=
+rem SET KIMIOS_REPO_PATH=
+rem SET KIMIOS_REPO_TMP_PATH=
+rem SET KIMIOS_SOLR_HOME=
+rem SET KIMIOS_SOLR_SERVER_URL=
 
 SET KARAF_OPTS=-Dkimios.db.url="%KIMIOS_JDBC_URL%" -Dkimios.db.user="%KIMIOS_JDBC_USER%" -Dkimios.db.password="%KIMIOS_JDBC_PASSWORD%" -Dkimios.repo.default.path="%KIMIOS_REPO_PATH%" -Dkimios.repo.tmp.path="%KIMIOS_REPO_TMP_PATH%" -Dkimios.index.solr.home="%KIMIOS_SOLR_HOME%" -Dkimios.index.solr.server.url="%KIMIOS_SOLR_SERVER_URL%" -Djavax.xml.transform.TransformerFactory="org.apache.xalan.processor.TransformerFactoryImpl"
 rem SET KARAF_DEBUG rem Enable debug mode
