@@ -21,7 +21,7 @@ public class KarafSystemService implements KimiosSystemService {
 
     @Override
     public String getName() {
-        return this.getSystemService().getName();
+        return "Apache Karaf";
     }
 
     @Override
