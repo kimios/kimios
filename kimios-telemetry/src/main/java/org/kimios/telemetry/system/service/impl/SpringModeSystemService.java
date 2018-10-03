@@ -39,6 +39,7 @@ public class SpringModeSystemService implements KimiosSystemService {
             name = this.getMBeanServerConnection()
                     .getAttribute(new ObjectName(CATALINA_SERVER_MBEAN_NAME), "serverInfo")
                     .toString();
+            name = name.replaceFirst("/.*$", "");
         } catch (Exception e) {
             logger.error("Error while getting server name from MBean");
             logger.error(e.getMessage());
@@ -67,7 +68,7 @@ public class SpringModeSystemService implements KimiosSystemService {
 
     @Override
     public String getFrameworkName() {
-        return "Spring " + SpringVersion.getVersion();
+        return "Spring";
     }
 
     @Override
