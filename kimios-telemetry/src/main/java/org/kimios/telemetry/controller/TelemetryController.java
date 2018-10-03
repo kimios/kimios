@@ -133,18 +133,24 @@ public class TelemetryController extends AKimiosController implements ITelemetry
                 ConfigurationManager.getValue("dms.telemetry.server.url") : "";
 
         this.setMBeanServerConnection(ManagementFactory.getPlatformMBeanServer());
-
-        String uuid = this.retrieveUuid();
-        if (uuid == null) {
-            try {
-                this.generateAndSaveUuid();
-                uuid = this.retrieveUuid();
-            } catch (IOException e) {
-                logger.error("can't create uuid file");
-                logger.error(e.getMessage());
-            }
+        String retrievedUuid = null;
+        try {
+            retrievedUuid = this.retrieveUuid();
+        } catch (IOException e) {
+            logger.warn("error while retrieving uuid…");
+            logger.warn(e.getMessage());
         }
-        this.setUuid(uuid);
+        try {
+            if (retrievedUuid == null) {
+                this.generateAndSaveUuid();
+                retrievedUuid = this.retrieveUuid();
+            }
+            this.setUuid(retrievedUuid);
+        } catch (IOException e) {
+            logger.error("problem while generating and retrieving uuid…");
+            logger.error(e.getMessage());
+        }
+
     }
 
     public TelemetryController(
@@ -393,21 +399,14 @@ public class TelemetryController extends AKimiosController implements ITelemetry
 
     }
 
-    public String retrieveUuid() {
+    public String retrieveUuid() throws IOException {
         String uuid = null;
-        try {
-            FileReader fr = new FileReader(uuidFile);
-            fr.read();
-            Optional<String> opt = Files.lines(Paths.get(uuidFile)).findFirst();
-            if (opt.isPresent()) {
-                uuid = opt.get();
-            }
-        } catch (FileNotFoundException e) {
-            logger.error("can't find the file to get UUID");
-            logger.error(e.getMessage());
-        } catch (IOException e) {
-            logger.error("can't read the file to get UUID");
-            logger.error(e.getMessage());
+
+        FileReader fr = new FileReader(uuidFile);
+        fr.read();
+        Optional<String> opt = Files.lines(Paths.get(uuidFile)).findFirst();
+        if (opt.isPresent()) {
+            uuid = opt.get();
         }
 
         return uuid;
