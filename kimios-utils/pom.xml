@@ -149,37 +149,51 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.3</version>
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
+                <artifactId>replacer</artifactId>
+                <version>1.5.3</version>
                 <executions>
                     <execution>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
                         <phase>generate-sources</phase>
-                        <configuration>
-                            <tasks>
-                                <property name="src.dir" value="${project.build.directory}/generated-sources/java" />
-                                <property name="package.dir" value="org/kimios/utils/version" />
-                                <property name="package.name" value="org.kimios.utils.version" />
-                                <property name="buildtime" value="${maven.build.timestamp}" />
-                                <property name="buildnumber" value="${buildNumber}" />
-                                <property name="mavenversion" value="${project.version}" />
-                                <mkdir dir="${src.dir}"/>
-                                <mkdir dir="${src.dir}/${package.dir}"/>
-                                <echo file="${src.dir}/${package.dir}/Version.java" message="package ${package.name};${line.separator}" />
-                                <echo file="${src.dir}/${package.dir}/Version.java" append="true" message="public final class Version {${line.separator}" />
-                                <echo file="${src.dir}/${package.dir}/Version.java" append="true"
-                                      message=" public static String MAVEN_PROJECT_VERSION=&quot;${mavenversion}&quot;;${line.separator}" />
-                                <echo file="${src.dir}/${package.dir}/Version.java" append="true"
-                                      message=" public static String BUILD_NUMBER=&quot;${buildnumber}&quot;;${line.separator}" />
-                                <echo file="${src.dir}/${package.dir}/Version.java" append="true" message="}${line.separator}" />
-                                <echo message="BUILD ${buildtime}" />
-                            </tasks>
-                        </configuration>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <outputFile>${project.basedir}/src/main/java/org/kimios/utils/version/Version.java</outputFile>
+                    <file>${project.basedir}/src/template/Version.java</file>
+                    <replacements>
+                        <replacement>
+                            <token>%KIMIOS_VERSION%</token>
+                            <value>${project.parent.version}</value>
+                        </replacement>
+                        <replacement>
+                            <token>%MAVEN_BUILD_NUMBER%</token>
+                            <value>${buildNumber}</value>
+                        </replacement>
+                        <replacement>
+                            <token>%MAVEN_PROJECT_VERSION%</token>
+                            <value>${project.parent.version}</value>
+                        </replacement>
+                        <replacement>
+                            <token>%JAVA_VM_VERSION%</token>
+                            <value>${java.vm.version}</value>
+                        </replacement>
+                        <replacement>
+                            <token>%JAVA_VERSION%</token>
+                            <value>${java.version}</value>
+                        </replacement>
+                        <replacement>
+                            <token>%MAVEN_BUILD_TIMESTAMP%</token>
+                            <value>${maven.build.timestamp}</value>
+                        </replacement>
+                        <!--<replacement>
+                            <token>%KIMIOS_DISTRIBUTION%</token>
+                            <value>WAR</value>
+                        </replacement>-->
+                    </replacements>
+                </configuration>
             </plugin>
         </plugins>
     </build>

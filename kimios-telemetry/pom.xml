@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Kimios - Document Management System Software
+  ~ Copyright (C) 2008-2015  DevLib'
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 2 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ aong with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>kimios</artifactId>
+        <groupId>org.kimios</groupId>
+        <version>1.1-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>kimios-telemetry</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+            <version>${spring.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.5</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <version>${osgi.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-kernel</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-model</artifactId>
+            <version>1.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-index</artifactId>
+            <version>1.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.enterprise</artifactId>
+            <version>4.2.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-utils</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-interfaces</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-share</artifactId>
+            <version>1.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-home</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.karaf.system</groupId>
+            <artifactId>org.apache.karaf.system.core</artifactId>
+            <version>4.0.4</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>javax.json</artifactId>
+            <version>1.0.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.6</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>${spring.version}</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
+
+    </dependencies>
+
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>2.4.0</version>
+                <executions>
+                    <execution>
+                        <id>bundle-manifest</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>bundle</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>biz.aQute.bnd</groupId>
+                        <artifactId>bndlib</artifactId>
+                        <version>2.4.0</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <classifier>osgi</classifier>
+                    <supportedProjectTypes>
+                        <supportedProjectType>jar</supportedProjectType>
+                    </supportedProjectTypes>
+                    <excludeDependencies>
+                        quartz,xerces,xercesImpl,dom4j,commons-codec,commons-collections,commons-lang,javassist,xml-apis,stax-api,commons-logging,slf4j-api,log4j,solr*,lucene*,commons-email,httpclient
+                    </excludeDependencies>
+                    <instructions>
+                        <Bundle-SymbolicName>kimios-telemetry</Bundle-SymbolicName>
+                        <Bundle-Name>${project.name}</Bundle-Name>
+                        <Export-Package>
+                            org.kimios.telemetry.controller,org.kimios.telemetry.system,org.kimios.telemetry.jobs
+                        </Export-Package>
+                        <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>
+                        <Embed-Transitive>false</Embed-Transitive>
+                        <Include-Resource>{maven-resources}</Include-Resource>
+                        <Import-Package>
+                            org.apache.karaf.system,
+                            org.slf4j.impl;resolution:=optional,
+                            org.kimios.utils.osgi,
+                            org.kimios.kernel.security,
+                            org.w3c.dom,
+                            org.w3c.dom.xpath,
+                            org.w3c.dom.views,
+                            org.w3c.dom.traversal,
+                            org.w3c.dom.stylesheets,
+                            org.w3c.dom.ranges,
+                            javax.xml.parsers,
+                            org.apache.commons.logging,
+                            org.apache.commons.io,
+                            org.apache.commons.io.comparator,
+                            org.apache.commons.io.filefilter,
+                            org.apache.commons.io.output,
+                            org.apache.commons.io.monitor,
+                            org.apache.commons.io.input,
+                            org.apache.http,
+                            org.apache.http.client,
+                            org.apache.http.client.methods,
+                            org.apache.http.entity,
+                            org.apache.http.impl.client,
+                            javassist.util.proxy,
+                            javax.transaction,
+                            javax.sql,
+                            org.apache.commons.dbcp,
+                            org.apache.commons.dbcp.managed,
+                            org.apache.commons.dbcp.datasources,
+                            org.kimios.utils.spring,
+                            *;resolution:=optional
+                        </Import-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+
+</project>

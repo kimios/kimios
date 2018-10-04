@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Kimios - Document Management System Software
+  ~ Copyright (C) 2008-2015  DevLib'
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 2 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ aong with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
+           xmlns:tx="http://aries.apache.org/xmlns/transactions/v1.0.0"
+           xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0
+        http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd" default-activation="eager">
+
+    <cm:property-placeholder id="kimiosServerCfg" persistent-id="org.kimios.server.app" update-strategy="none"
+                             activation="eager">
+    </cm:property-placeholder>
+
+    <reference id="securityController" interface="org.kimios.kernel.controller.ISecurityController" />
+    <reference id="systemService" interface="org.apache.karaf.system.SystemService" />
+    <reference interface="javax.sql.DataSource" id="databaseConnection"/>
+    <reference id="administrationController" interface="org.kimios.kernel.controller.IAdministrationController" />
+    <reference id="documentController" interface="org.kimios.kernel.controller.IDocumentController" />
+
+    <bean id="kimiosSystemService"
+          class="org.kimios.telemetry.system.service.impl.KarafSystemService">
+        <argument ref="systemService" />
+    </bean>
+
+    <bean id="telemetryController"
+          class="org.kimios.telemetry.controller.TelemetryController">
+
+        <argument ref="kimiosSystemService" />
+        <argument ref="databaseConnection" />
+        <argument ref="securityController" />
+        <argument ref="administrationController" />
+        <argument ref="documentController" />
+
+    </bean>
+
+    <!-- Jobs -->
+    <bean id="telemetrySender" class="org.kimios.telemetry.system.TelemetrySender" init-method="startJob"
+          destroy-method="stopJob">
+        <property name="securityController" ref="securityController"/>
+        <property name="telemetryController" ref="telemetryController"/>
+    </bean>
+
+    <service id="telemetryCtrlOsgi" ref="telemetryController"
+             interface="org.kimios.telemetry.controller.ITelemetryController" />
+
+</blueprint>

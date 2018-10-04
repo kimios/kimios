@@ -577,6 +577,22 @@ public class AdministrationController extends AKimiosController implements IAdmi
                         group);
     }
 
+    /**
+     * Get users from an authentication source
+     */
+    public Vector<User> getUsers(Session session,
+                                 String authenticationSourceName) throws ConfigException,
+            DataSourceException, AccessDeniedException {
+        if (securityFactoryInstantiator.getRoleFactory().getRole(Role.ADMIN,
+                session.getUserName(), session.getUserSource()) == null)
+        {
+            throw new AccessDeniedException();
+        }
+        return authFactoryInstantiator
+                .getAuthenticationSourceFactory().getAuthenticationSource(
+                        authenticationSourceName).getUserFactory().getUsers();
+    }
+
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IAdministrationController#getGroup(org.kimios.kernel.security.Session, java.lang.String, java.lang.String)
     */
