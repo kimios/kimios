@@ -70,7 +70,7 @@
         <bundle>mvn:org.kimios/kimios-solr/${project.version}</bundle>
     </feature>
     <feature version="${project.version}" name="kimios-core-settings">
-        <configfile finalname="/etc/org.kimios.server.app.cfg">mvn:org.kimios/kimios-karaf-features/${project.version}/properties/kimios-server-cfg</configfile>
+        <configfile finalname="${karaf.etc}/org.kimios.server.app.cfg">mvn:org.kimios/kimios-karaf-features/${project.version}/properties/kimios-server-cfg</configfile>
     </feature>
     <feature version="${project.version}" name="kimios-model" >
         <requirement prerequisite="true">kimios-dep</requirement>
@@ -123,7 +123,7 @@
     <feature version="${project.version}" name="kimios-web-standard">
         <requirement>editor</requirement>
         <feature>kimios-services</feature>
-        <configfile finalname="/etc/org.kimios.client.app.cfg">mvn:org.kimios/kimios-karaf-features/${project.version}/properties/kimios-client-cfg</configfile>
+        <configfile finalname="${karaf.etc}/org.kimios.client.app.cfg">mvn:org.kimios/kimios-karaf-features/${project.version}/properties/kimios-client-cfg</configfile>
         <bundle>mvn:org.kimios/kimios-webclient/${project.version}/war/osgi</bundle>
     </feature>
 </features>
