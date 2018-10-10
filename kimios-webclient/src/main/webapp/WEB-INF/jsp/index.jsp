@@ -107,7 +107,7 @@
     <span style="font-family: arial; font-size: 10px;">Powered by</span><br />
     <img style="padding:3px; height: 30px" src="images/teclib_logo_white_back.png"><br />
     <span style="font-family: arial; font-size: 8px;">v<%=Version.MAVEN_PROJECT_VERSION%></span><br />
-    <span style="font-family: arial; font-size: 10px; color: white">(build <%=Version.BUILD_NUMBER%>)</span>
+    <span style="font-family: arial; font-size: 10px; color: white">(build <%=Version.MAVEN_BUILD_NUMBER%>)</span>
 </div>
 </body>
 </html>
