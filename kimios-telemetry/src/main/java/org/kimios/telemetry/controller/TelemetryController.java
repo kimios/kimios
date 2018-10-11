@@ -132,6 +132,9 @@ public class TelemetryController extends AKimiosController implements ITelemetry
         this.serverURL = ConfigurationManager.getValue("dms.telemetry.server.url") != null ?
                 ConfigurationManager.getValue("dms.telemetry.server.url") : "";
 
+
+        logger.info("telemetry url: {}", serverURL);
+
         this.setMBeanServerConnection(ManagementFactory.getPlatformMBeanServer());
         String retrievedUuid = null;
         try {
