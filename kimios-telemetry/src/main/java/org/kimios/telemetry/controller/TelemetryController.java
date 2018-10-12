@@ -7,6 +7,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
+import org.kimios.kernel.configuration.Config;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.IAdministrationController;
 import org.kimios.kernel.controller.IDocumentController;
@@ -63,6 +65,7 @@ public class TelemetryController extends AKimiosController implements ITelemetry
     private MBeanServerConnection mBeanServerConnection;
     private String uuid;
     private String uuidFile = "uuid";
+    private String uuidFilePath;
 
     public KimiosSystemService getKimiosSystemService() {
         return kimiosSystemService;
@@ -128,11 +131,21 @@ public class TelemetryController extends AKimiosController implements ITelemetry
         return this.uuid;
     }
 
+    public String getUuidFilePath() {
+        return uuidFilePath;
+    }
+
+    private void setUuidFilePath(String uuidFilePath) {
+        this.uuidFilePath = uuidFilePath;
+    }
+
     public TelemetryController(){
         this.serverURL = ConfigurationManager.getValue("dms.telemetry.server.url") != null ?
                 ConfigurationManager.getValue("dms.telemetry.server.url") : "";
 
         this.setMBeanServerConnection(ManagementFactory.getPlatformMBeanServer());
+
+        this.setUuidFilePath(this.computeUuidFileFullPath(this.uuidFile));
         String retrievedUuid = null;
         try {
             retrievedUuid = this.retrieveUuid();
@@ -150,7 +163,6 @@ public class TelemetryController extends AKimiosController implements ITelemetry
             logger.error("problem while generating and retrieving uuid…");
             logger.error(e.getMessage());
         }
-
     }
 
     public TelemetryController(
@@ -319,7 +331,8 @@ public class TelemetryController extends AKimiosController implements ITelemetry
             HttpResponse httpResponse = httpClient.execute(postRequest);
             if (httpResponse.getStatusLine().getStatusCode() != 200) {
                 throw new RuntimeException("Failed : HTTP error code : "
-                        + httpResponse.getStatusLine().getStatusCode());
+                        + httpResponse.getStatusLine().getStatusCode()
+                        + EntityUtils.toString(httpResponse.getEntity()));
             }
         } catch (MalformedURLException e) {
             throw e;
@@ -393,18 +406,29 @@ public class TelemetryController extends AKimiosController implements ITelemetry
     public void generateAndSaveUuid() throws IOException {
         String uuidStr = UUID.randomUUID().toString();
 
-        FileWriter fw = new FileWriter(uuidFile);
+        FileWriter fw = new FileWriter(this.uuidFilePath);
         fw.write(uuidStr);
         fw.flush();
 
     }
 
+    public String computeUuidFileFullPath(String uuidFileName) {
+        String fullPath = ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH);
+        String fileSeparator = System.getProperty("file.separator");
+        if (! fullPath.endsWith(fileSeparator)) {
+            fullPath += fileSeparator;
+        }
+        fullPath += uuidFileName;
+
+        return fullPath;
+    }
+
     public String retrieveUuid() throws IOException {
         String uuid = null;
 
-        FileReader fr = new FileReader(uuidFile);
+        FileReader fr = new FileReader(this.uuidFilePath);
         fr.read();
-        Optional<String> opt = Files.lines(Paths.get(uuidFile)).findFirst();
+        Optional<String> opt = Files.lines(Paths.get(this.uuidFilePath)).findFirst();
         if (opt.isPresent()) {
             uuid = opt.get();
         }
