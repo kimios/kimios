@@ -61,7 +61,8 @@
                 async: true,
                 success: function (json) {
                     if (json.success == false) {
-                        bootbox.alert('<span style="color: red; font-weight: bolder;">Database connection error</span></br><br/>' + json.message + '</br><br/><pre style="font-size: .8em;">' + json.stacktrace + '</pre>');
+                        bootbox.alert('<span style="color: red; font-weight: bolder;">Database connection error</span></br><br/>' + json.message + '</br><br/>' +
+                            '<div style="max-height: 350px; overflow: scroll"><pre style="font-size: .8em;">' + json.stacktrace + '</pre></div>');
                     } else {
                         bootbox.alert('<span style="color: green; font-weight: bolder;">Database connection success</span><br/><br/>You are now ready to install Kimios.');
                     }
@@ -95,7 +96,8 @@
                 success: function (json) {
 
                     if (json.success == false) {
-                        bootbox.alert('<span style="color: red; font-weight: bolder;">DMS installation error</span><br/><br/>' + json.message + '</br><br/><pre style="font-size: .8em;">' + json.stacktrace + '</pre>');
+                        bootbox.alert('<span style="color: red; font-weight: bolder;">DMS installation error</span><br/><br/>' + json.message + '</br><br/>' +
+                            '<div style="max-height: 350px; overflow: scroll"><pre style="font-size: .8em;">' + json.stacktrace + '</pre></div>');
                     } else {
                         document.getElementById('loader').style.display = 'none';
                         Array.from(document.getElementsByClassName('installation_success')).forEach(function (elem) {
