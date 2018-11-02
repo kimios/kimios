@@ -66,6 +66,33 @@ kimios.menu.ToolsMenu = Ext.extend(Ext.Button, {
             }
         });
 
+        this.aboutItem = new Ext.menu.Item({
+            text: kimios.lang('AboutKimios'),
+            iconCls: 'about',
+            handler: function () {
+                var window = new Ext.Window({
+                    modal: true,
+                    title: kimios.lang('About'),
+                    iconCls: 'about',
+                    closable: true,
+                    maximizable: true,
+                    width: 300,
+                    height: 200,
+                    plain: true,
+                    layout: 'fit'
+                });
+                var aboutPanel = new Ext.Panel({
+                    border: false,
+                    region: 'center',
+                    layout: 'fit',
+                    margins: '3 3 3 0',
+                    bodyStyle: 'background-color: transparent;'
+                });
+                window.add(aboutPanel);
+                window.show();
+            }
+        });
+
         if (rights.isAdmin == true) {
             this.menu.add(this.adminItem);
             simpleUser = false;
@@ -82,6 +109,7 @@ kimios.menu.ToolsMenu = Ext.extend(Ext.Button, {
             this.menu.add(this.reportingItem);
             simpleUser = false;
         }
+        this.menu.add(this.aboutItem);
         this.simpleUser = simpleUser;
     },
 

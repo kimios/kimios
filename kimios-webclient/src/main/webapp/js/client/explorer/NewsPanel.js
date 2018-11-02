@@ -17,8 +17,8 @@
 kimios.explorer.NewsPanel = Ext.extend(Ext.Panel, {
 
     constructor: function (config) {
-        var newsUrl = 'http://localhost:8181/cxf/rest/article/getLastArticle';
         this.closable = true;
+        var newsUrl = 'http://newsreader.kimios.com/cxf/rest/article/getLastArticle';
         this.title = kimios.lang('Loading');
         this.iconCls = 'loading';
         this.border = false;

@@ -25,17 +25,22 @@ public class RegistrationData {
     private String lastname;
     private String email;
     private String company;
+    private String number;
     private String city;
     private String state;
     private String zipCode;
     private String occupation;
     private String comment;
+    private String shareStats;
+    private String telemetryUuid;
+
     private Map<String, String> additionalDatas = new HashMap<>();
 
     public RegistrationData() {
     }
 
-    public RegistrationData(String firstname, String lastname, String email, String company, String city, String state, String zipCode, String occupation, String comment, Map<String, String> additionalDatas) {
+    public RegistrationData(String firstname, String lastname, String email, String company, String city, String state, String zipCode,
+                            String occupation, String comment, String shareStats,  Map<String, String> additionalDatas) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
@@ -46,6 +51,7 @@ public class RegistrationData {
         this.occupation = occupation;
         this.comment = comment;
         this.additionalDatas = additionalDatas;
+        this.shareStats = shareStats;
     }
 
     public String getFirstname() {
@@ -128,6 +134,22 @@ public class RegistrationData {
         this.additionalDatas = additionalDatas;
     }
 
+    public String getNumber() {
+        return number;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
+    }
+
+    public String getShareStats() {
+        return shareStats;
+    }
+
+    public void setShareStats(String shareStats) {
+        this.shareStats = shareStats;
+    }
+
     @Override
     public String toString() {
         return "RegistrationData{" +
@@ -135,12 +157,24 @@ public class RegistrationData {
                 ", lastname='" + lastname + '\'' +
                 ", email='" + email + '\'' +
                 ", company='" + company + '\'' +
+                ", number='" + number + '\'' +
                 ", city='" + city + '\'' +
                 ", state='" + state + '\'' +
                 ", zipCode='" + zipCode + '\'' +
                 ", occupation='" + occupation + '\'' +
                 ", comment='" + comment + '\'' +
+                ", shareStats='" + shareStats + '\'' +
+                ", telemetryUuid='" + telemetryUuid + '\'' +
                 ", additionalDatas=" + additionalDatas +
                 '}';
     }
+
+    public String getTelemetryUuid() {
+        return telemetryUuid;
+    }
+
+    public void setTelemetryUuid(String telemetryUuid) {
+        this.telemetryUuid = telemetryUuid;
+    }
+
 }

@@ -77,9 +77,17 @@
         <servlet-class>org.kimios.controller.ConverterServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>Registration</servlet-name>
+        <servlet-class>org.kimios.controller.RegistrationServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>__admininternal</servlet-name>
         <jsp-file>/index.jsp</jsp-file>
     </servlet>
+    <servlet-mapping>
+        <servlet-name>Registration</servlet-name>
+        <url-pattern>/register</url-pattern>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>__admininternal</servlet-name>
         <url-pattern>/__admininternal</url-pattern>

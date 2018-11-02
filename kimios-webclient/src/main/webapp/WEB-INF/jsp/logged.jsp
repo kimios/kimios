@@ -76,7 +76,6 @@
         var currentSource = '<%=u.getSource().replaceAll("'", "\\\\'")%>';
         var currentMail = '<%=(u.getMail() != null ? u.getMail().replaceAll("'", "\\\\'") : "")%>';
     </script>
-    <script type="text/javascript" src="<%=request.getContextPath()%>/js/run_prettify.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/RowExpander.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/ColumnTree.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/ux/StatusBar.js"></script>
@@ -207,6 +206,7 @@
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/reporting/generic-report.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/i18n/Internationalization.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/clipboard.min.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/explorer/NewsPanel.js"></script>
     <script type="text/javascript" src="<%=request.getContextPath()%>/js/client/main/run.js"></script>
     <script type="text/javascript">
         var defaultTheme = 'green-6CCA18';
