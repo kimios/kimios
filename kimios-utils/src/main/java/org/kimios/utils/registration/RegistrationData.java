@@ -26,6 +26,7 @@ public class RegistrationData {
     private String email;
     private String company;
     private String number;
+    private String address;
     private String city;
     private String state;
     private String zipCode;
@@ -148,6 +149,14 @@ public class RegistrationData {
 
     public void setShareStats(String shareStats) {
         this.shareStats = shareStats;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     @Override
