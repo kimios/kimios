@@ -52,6 +52,14 @@ public class Registration {
                     new InputStreamReader((response.getEntity().getContent())));
 
 
+            String e = null;
+            String fullResp = "";
+            while((e = br.readLine()) != null){
+                fullResp += e;
+            }
+
+            logger.info("returned reg data {}", fullResp);
+
             httpClient.getConnectionManager().shutdown();
 
 

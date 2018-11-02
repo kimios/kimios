@@ -98,29 +98,16 @@ public class RegistrationServlet extends HttpServlet {
 
                     ObjectMapper mapper = new ObjectMapper();
                     RegistrationData data = mapper.readValue(request.getParameter("content"), RegistrationData.class);
-
-
                     logger.info("registration data {}", data);
-
-                    //load telemetry uuid file
-
-
-
-
-
                     Registration.sendRegistrationRequest(data);
-
-
-
                     return createFile(file);  // true if file created, else false.
 
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                    return false;
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (Exception ex){
+                    logger.error("reg error: ", ex);
                     return false;
                 }
+
+
 
             } else {
                 System.err.println("Cannot register: the named file " + REGISTRED_INSTANCE_FILE_NAME + " already exists!");
