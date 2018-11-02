@@ -18,9 +18,11 @@ package org.kimios.utils.registration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +39,7 @@ public class Registration {
     public static void sendRegistrationRequest(RegistrationData data) throws Exception {
         String rebuiltUrl = SERVICE_URL;
         try {
-            DefaultHttpClient httpClient = new DefaultHttpClient();
+            HttpClient httpClient = HttpClientBuilder.create().build();
             HttpPost postRequest = new HttpPost(rebuiltUrl);
             StringEntity input = new StringEntity(new ObjectMapper().writeValueAsString(data));
             input.setContentType("application/json");
