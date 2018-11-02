@@ -1,0 +1,1 @@
+<%@ page contentType="application/json" language="java" %>{"success":<%=request.getAttribute("success")%>,"message":<%=(request.getAttribute("message")!=null?"\""+((String)request.getAttribute("message")).replaceAll("\"", "'")+"\"":null)%>,"stacktrace":<%=(request.getAttribute("stacktrace")!=null?"\""+((String)request.getAttribute("stacktrace")).replace("\"","'")+"\"":null)%>}

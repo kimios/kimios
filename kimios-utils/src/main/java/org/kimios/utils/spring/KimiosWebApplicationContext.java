@@ -16,6 +16,8 @@
 
 package org.kimios.utils.spring;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.web.context.support.XmlWebApplicationContext;
@@ -26,8 +28,9 @@ public class KimiosWebApplicationContext extends XmlWebApplicationContext {
 
 
 
-    public static String KIMIOS_HOME = "kimios.home";
+    private static Logger logger = LoggerFactory.getLogger(KimiosWebApplicationContext.class);
 
+    public static String KIMIOS_HOME = "kimios.home";
 
     private static String KIMIOS_APP_ATTRIBUTE_NAME = "kimios.app.name";
 
@@ -35,22 +38,22 @@ public class KimiosWebApplicationContext extends XmlWebApplicationContext {
     protected String[] getDefaultConfigLocations() {
         String kimiosHomeDirectory = System.getProperty(KimiosWebApplicationContext.KIMIOS_HOME);
         if (kimiosHomeDirectory != null) {
-
             /*
                 Load servlet context attribute (for client or server)
              */
-
             String kimiosAppConfDirectory = this.getServletContext().getInitParameter(KIMIOS_APP_ATTRIBUTE_NAME);
-
-
             File kimiosHome = new File(kimiosHomeDirectory + "/" + kimiosAppConfDirectory);
             if (kimiosHome.exists() && kimiosHome.isDirectory()) {
                 /*
                     Start Spring loading
                  */
                 File springConf = new File(kimiosHome, "conf");
-                if (springConf.exists()) {
+
+                if (springConf.exists() && new File(springConf, "ctx-kimios.xml").exists()) {
+                    logger.info("starting Kimios DMS with settings directory {}", kimiosHomeDirectory + "/conf");
                     return new String[]{kimiosHome.getAbsolutePath() + "/conf/ctx-kimios.xml"};
+                } else {
+                    logger.error("{} not found. kimios won't start", kimiosHomeDirectory + "/conf/ctx-kimios.xml");
                 }
             }
         }

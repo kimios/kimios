@@ -1,7 +1,13 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="org.kimios.deployer.core.InstallProcessor" %>
+<%@ page import="org.kimios.deployer.web.DeploymentManager" %>
+<%@ page import="org.kimios.deployer.web.WebDeployerViewGenerator" %>
+<%@ page import="java.util.Map" %>
+<%@ page import="java.util.HashMap" %>
 <%--
   ~ Kimios - Document Management System Software
-  ~ Copyright (C) 2008-2015  DevLib'
+  ~ Copyright (C) 2008-2012  DevLib'
+  ~
   ~ This program is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU Affero General Public License as
   ~ published by the Free Software Foundation, either version 2 of the
@@ -12,11 +18,10 @@
   ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   ~ GNU Affero General Public License for more details.
   ~ You should have received a copy of the GNU Affero General Public License
-  ~ aong with this program.  If not, see <http://www.gnu.org/licenses/>.
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   --%>
 
 <html>
-
 <head>
     <title>Kimios - Open Source Document Management System</title>
     <link rel="shortcut icon" type="image/png" href="<%=request.getContextPath()%>/images/kimios-favico.ico"/>
@@ -62,21 +67,20 @@
             }
             http.send(null);
         }
-        //        var applyStyle = function () {
-        //            var iframe = document.getElementById('iframe');
-        //            var doc = iframe.contentWindow || iframe.contentDocument;
-        //            if (doc.document) {
-        //                doc = doc.document;
-        //            }
-        //            doc.body.style.fontSize = "12px";
-        //            doc.body.style.fontFamily = "Verdana, Tahoma, Arial";
-        //
-        //        }
     </script>
 </head>
 
-<body onload="loadServicesList()">
 
+<body>
+<h2>Kimios - Open Source Document Management System</h2>
+<script type="text/javascript">
+    window.location = '<%=request.getContextPath()%>/?installer=1';
+</script>
+</body>
+<%
+}  else {
+%>
+<body onload="loadServicesList()">
 <div align="center">
 
     <img alt="Kimios - Open Source Document Management System"
@@ -85,6 +89,9 @@
 </div>
 
 <div id="servicesList"></div>
-
 </body>
+<%
+    }
+%>
+
 </html>
