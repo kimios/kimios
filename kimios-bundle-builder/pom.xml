@@ -19,6 +19,22 @@
         <kimios.bundle.dirname>kimios</kimios.bundle.dirname>
     </properties>
 
+
+    <dependencies>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-server-war</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-webclient</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+    </dependencies>
+
     <build>
         <plugins>
             <plugin>

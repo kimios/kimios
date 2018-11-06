@@ -17,3 +17,4 @@ gradle/*
 generated/
 hs_err_pid*
 kimios-test/**/*.jar
+kimios-bundle-builder/apache-tomcat*.zip
