@@ -61,7 +61,7 @@
                                 <artifactItem>
                                     <groupId>org.kimios</groupId>
                                     <artifactId>kimios-webclient</artifactId>
-                                    <version>${kimios.version}</version>
+                                    <version>${project.version}</version>
                                     <type>war</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${project.build.directory}/${kimios.bundle.dirname}/webapps
@@ -71,7 +71,7 @@
                                 <artifactItem>
                                     <groupId>org.kimios</groupId>
                                     <artifactId>kimios-server-war</artifactId>
-                                    <version>${kimios.version}</version>
+                                    <version>${project.version}</version>
                                     <type>war</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${project.build.directory}/${kimios.bundle.dirname}/webapps
@@ -92,7 +92,7 @@
                                 <artifactItem>
                                     <groupId>org.kimios</groupId>
                                     <artifactId>kimios-home</artifactId>
-                                    <version>${kimios.version}</version>
+                                    <version>${project.version}</version>
                                     <type>jar</type>
                                     <overWrite>true</overWrite>
                                     <outputDirectory>${project.build.directory}/${kimios.bundle.dirname}/kimios_home
@@ -142,7 +142,7 @@
                             <goal>single</goal>
                         </goals>
                         <configuration>
-                            <finalName>kimios-bundle-${kimios.version}</finalName>
+                            <finalName>kimios-bundle-${project.version}</finalName>
                         </configuration>
                     </execution>
                 </executions>
@@ -162,13 +162,13 @@
                             <artifacts>
                                 <artifact>
                                     <file>
-                                        ${project.build.directory}/kimios-bundle-${kimios.version}.tar.gz
+                                        ${project.build.directory}/kimios-bundle-${project.version}.tar.gz
                                     </file>
                                     <type>tar.gz</type>
                                 </artifact>
                                 <artifact>
                                     <file>
-                                        ${project.build.directory}/kimios-bundle-${kimios.version}.zip
+                                        ${project.build.directory}/kimios-bundle-${project.version}.zip
                                     </file>
                                     <type>zip</type>
                                 </artifact>
