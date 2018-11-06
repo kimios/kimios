@@ -1,0 +1,2 @@
+@echo off
+set CATALINA_PID="%KIMIOS_PID_FILE%"

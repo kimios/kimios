@@ -147,6 +147,7 @@
         <module>kimios-ldap-connector</module>
         <module>kimios-notifier</module>
         <module>kimios-telemetry</module>
+        <module>kimios-bundle-builder</module>
     </modules>
     <packaging>pom</packaging>
 

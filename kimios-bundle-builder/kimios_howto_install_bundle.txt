@@ -1,0 +1,44 @@
+Kimios - Document Management System Software
+Copyright (C) 2018  TecLib'
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 2 of the
+License, or (at your option) any later version.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+------------------------------------------------------------------------
+
+HowTo Kimios Bundle installation
+
+Kimios bundle is a ready-to-launch Kimios application launched within a Apache Tomcat instance.
+
+Requirements:
+1) Java 8
+To check which java version is installed, go to the shell and type:
+java -version
+If necessary, you can download Java 8 from java.com.
+2) A running object-relational database system instance from this list: PostgreSQL, MySQL, Oracle, MS SQL Server.
+We advise you to use PostgreSQL database system.
+
+Installation:
+1) Unarchive the file (.tar.gz or .zip) at the location you want to install Kimios
+2) Go in the directory (name starting with 'kimios-bundle-')
+3) Ensure environment variable is not set or is set to be this current directory path.
+For Bash shell on Linux, to be sure, go to the shell and type:
+export CATALINA_HOME=$PWD
+4) To launch Kimios bundle, go to the shell and type:
+  - for Windows: kimios.bat start
+  - for Linux: ./kimios.sh start
+5) Open a web browser and go to this location:
+http://localhost:9999/kimios
+6) Fill all the required information.
+Note that the 2 directories at the end must not exist or be empty.
+
+At the end of the installation, you will be redirected to the regular Kimios login page.
+
+Thank you for installing Kimios !

@@ -1,0 +1,2 @@
+#!/bin/sh
+CATALINA_PID=$KIMIOS_PID_FILE
