@@ -15,6 +15,8 @@ cp ./scripts/kimios.* $TARGET_DIR/$BUNDLE_DIR/
 cp ./scripts/setenv.* $TARGET_DIR/$BUNDLE_DIR/bin/
 cp kimios_howto_install_bundle.txt $TARGET_DIR/$BUNDLE_DIR
 
+rm -Rf $TARGET_DIR/$BUNDLE_DIR/webapps/*
+
 chmod +x $TARGET_DIR/$BUNDLE_DIR/bin/*.sh
 chmod +x $TARGET_DIR/$BUNDLE_DIR/*.sh
 
