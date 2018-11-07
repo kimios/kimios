@@ -50,9 +50,8 @@ public class KimiosWebApplicationContext extends XmlWebApplicationContext {
             /*
                 Start Spring loading
              */
-            File springConf = new File(kimiosHome, "conf");
             String configLocation = kimiosHome.getAbsolutePath() + "/conf/ctx-kimios.xml";;
-            if (! new File(springConf, "ctx-kimios.xml").exists()) {
+            if (! new File(configLocation).exists()) {
                 try {
                     // Looking for Spring conf in kimios-home module jar resources
                     Enumeration<URL> urls = getClass().getClassLoader().getResources(kimiosAppConfDirectory + "/conf/ctx-kimios.xml");
