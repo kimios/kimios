@@ -24,6 +24,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -112,6 +113,15 @@ public class InstallerServlet extends HttpServlet {
                     proc.createPath("kimios-tmp");
 
                     mParam.put("dms.repository.tmp.path", "kimios-tmp");
+
+                    // if Kimios Home does not exist, let's create it
+                    File kimiosServerConfFile = new File(proc.getKimiosHome() + "/server/conf");
+                    if (! kimiosServerConfFile.exists()) {
+                        if (! kimiosServerConfFile.mkdirs()) {
+                            throw new Exception("Kimios Home server conf directory does not exist and cannot be created");
+                        }
+                    }
+
                     proc.generateServerPropertiesFile(mParam,
                             proc.getKimiosHome() + "/server/conf/kimios.properties");
                     proc.loadSpringContext(this.getServletConfig().getServletContext());

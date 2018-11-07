@@ -23,10 +23,13 @@ import org.springframework.core.io.Resource;
 import org.springframework.web.context.support.XmlWebApplicationContext;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Enumeration;
 
 public class KimiosWebApplicationContext extends XmlWebApplicationContext {
-
-
 
     private static Logger logger = LoggerFactory.getLogger(KimiosWebApplicationContext.class);
 
@@ -43,19 +46,33 @@ public class KimiosWebApplicationContext extends XmlWebApplicationContext {
              */
             String kimiosAppConfDirectory = this.getServletContext().getInitParameter(KIMIOS_APP_ATTRIBUTE_NAME);
             File kimiosHome = new File(kimiosHomeDirectory + "/" + kimiosAppConfDirectory);
-            if (kimiosHome.exists() && kimiosHome.isDirectory()) {
-                /*
-                    Start Spring loading
-                 */
-                File springConf = new File(kimiosHome, "conf");
 
-                if (springConf.exists() && new File(springConf, "ctx-kimios.xml").exists()) {
-                    logger.info("starting Kimios DMS with settings directory {}", kimiosHomeDirectory + "/conf");
-                    return new String[]{kimiosHome.getAbsolutePath() + "/conf/ctx-kimios.xml"};
-                } else {
-                    logger.error("{} not found. kimios won't start", kimiosHomeDirectory + "/conf/ctx-kimios.xml");
+            /*
+                Start Spring loading
+             */
+            File springConf = new File(kimiosHome, "conf");
+            String configLocation = kimiosHome.getAbsolutePath() + "/conf/ctx-kimios.xml";;
+            if (! new File(springConf, "ctx-kimios.xml").exists()) {
+                try {
+                    // Looking for Spring conf in kimios-home module jar resources
+                    Enumeration<URL> urls = getClass().getClassLoader().getResources(kimiosAppConfDirectory + "/conf/ctx-kimios.xml");
+                    while (urls.hasMoreElements()) {
+                        URL url = urls.nextElement();
+                        String path = url.getPath();
+                        if (path.matches("^.*kimios-home.*\\.jar.*$")) {
+                            // copy content into file
+                            Files.copy(url.openStream(), Paths.get(configLocation));
+                            break;
+                        }
+                    }
+                } catch (IOException e) {
+                    logger.error(e.getMessage());
+                    throw new RuntimeException("Spring conf 'ctx-kimios.xml' have not been found");
                 }
             }
+            logger.info("starting Kimios DMS with settings directory {}", kimiosHomeDirectory + "/conf");
+            return new String[]{configLocation};
+
         }
         throw new RuntimeException("Kimios Home Not found. Please check kimios.home value, and target directory");
     }
