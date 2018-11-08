@@ -126,10 +126,10 @@ public class InstallerServlet extends HttpServlet {
                             proc.getKimiosHome() + "/server/conf/kimios.properties");
                     proc.loadSpringContext(this.getServletConfig().getServletContext());
                     //global restart after first init
-                    proc.reloadConfiguration(
+                    /*proc.reloadConfiguration(
                             this.getServletConfig().getServletContext().getRealPath("/WEB-INF/web.xml")
-                    );
-
+                    );*/
+                    proc.tomcatRestart();
                     request.setAttribute("success", true);
                 } catch (Exception e) {
                     e.printStackTrace();

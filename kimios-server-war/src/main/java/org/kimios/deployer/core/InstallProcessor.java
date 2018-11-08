@@ -28,6 +28,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import javax.servlet.ServletContext;
 import java.io.File;
+import java.io.IOException;
 import java.io.Writer;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -217,6 +218,35 @@ public class InstallProcessor {
         ctx.removeAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
         SpringWebContextLauncher.launchApp(ctx, DeploymentManager.getContextLoader());
         DeploymentManager.endInstall(DeploymentManager.getContextLoader(), ctx);
+    }
+
+
+    public void tomcatRestart() throws Exception {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String tomcatBase = System.getProperty("catalina.base");
+                    Thread.sleep(3000); // wait for response return
+                    String path = tomcatBase + "/kimios-restart";
+                    String osType = System.getProperty("os.name").toLowerCase();
+                    if(osType.indexOf("win") >= 0){
+                        path += ".bat";
+                    } else {
+                        path += ".sh";
+                    }
+                    Runtime rn = Runtime.getRuntime();
+                    Process proc = rn.exec(path);
+                    proc.waitFor();
+                    System.exit(0);
+                } catch (IOException e) {
+                    log.error("IO exception: " + e);
+                } catch (InterruptedException e) {
+                    log.error("InterruptedException: " + e);
+                }
+            }
+        }).start();
     }
 
     public void reloadConfiguration(String path) throws Exception {
