@@ -73,9 +73,14 @@
 
 <body>
 <h2>Kimios - Open Source Document Management System</h2>
+<%
+
+    if (!DeploymentManager.isKimiosDeployed(this.getServletConfig().getServletContext())) {
+%>
 <script type="text/javascript">
-    window.location = '<%=request.getContextPath()%>/installer/?installer=1';
+    window.location = '<%=request.getContextPath()%>/installer?installer=1';
 </script>
+<%}%>
 </body>
 <body onload="loadServicesList()">
 <div align="center">

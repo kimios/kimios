@@ -422,10 +422,6 @@
             <version>${slfj.version}</version>
         </dependency>
 
-
-
-
-
         <!--dummy dependencies for weave -->
         <dependency>
             <groupId>org.osgi</groupId>
