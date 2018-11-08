@@ -34,6 +34,9 @@ public class NotificationCreator implements Runnable {
 
     public void stopJob() {
         try {
+            if(this.customThreadPoolExecutor != null){
+                this.customThreadPoolExecutor.shutdown();
+            }
             this.stop();
             thrc.join();
         } catch (Exception e) {
