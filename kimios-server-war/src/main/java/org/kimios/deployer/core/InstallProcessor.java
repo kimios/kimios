@@ -24,6 +24,7 @@ import org.kimios.kernel.dms.hibernate.HDMEntityFactory;
 import org.kimios.utils.spring.SpringWebContextLauncher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.context.WebApplicationContext;
 
 import javax.servlet.ServletContext;
 import java.io.File;
@@ -213,6 +214,7 @@ public class InstallProcessor {
     }
 
     public void loadSpringContext(ServletContext ctx) {
+        ctx.removeAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
         SpringWebContextLauncher.launchApp(ctx, DeploymentManager.getContextLoader());
         DeploymentManager.endInstall(DeploymentManager.getContextLoader(), ctx);
     }
