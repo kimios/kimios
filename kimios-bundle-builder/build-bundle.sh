@@ -1,5 +1,5 @@
 #!/bin/sh
-
+## create tomcat distribution
 echo "Building bundle from repository binaries for $TOMCAT_DIR"
 rm -Rf "$TARGET_DIR/$BUNDLE_DIR"
 mkdir -p "$TARGET_DIR/"
