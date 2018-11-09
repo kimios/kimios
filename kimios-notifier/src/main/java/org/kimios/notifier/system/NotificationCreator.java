@@ -1,17 +1,20 @@
 package org.kimios.notifier.system;
 
+import org.apache.commons.lang.StringUtils;
 import org.kimios.kernel.controller.ISecurityController;
+import org.kimios.kernel.deployment.DataInitializerCtrl;
 import org.kimios.kernel.index.controller.CustomThreadPoolExecutor;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.notifier.controller.INotifierController;
 import org.kimios.notifier.jobs.NotificationCreatorJob;
+import org.kimios.utils.system.CustomScheduledThreadPoolExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-public class NotificationCreator implements Runnable {
+public class NotificationCreator {
 
     private static Logger logger = LoggerFactory.getLogger(NotificationCreator.class);
 
@@ -19,34 +22,39 @@ public class NotificationCreator implements Runnable {
     private static Thread thrc;
     private ISecurityController securityController;
     private INotifierController notifierController;
-    private CustomThreadPoolExecutor customThreadPoolExecutor;
+    private CustomScheduledThreadPoolExecutor customScheduledThreadPoolExecutor;
 
     public void startJob() {
-        this.customThreadPoolExecutor = new CustomThreadPoolExecutor(8, 8,
-                10000L, TimeUnit.MILLISECONDS,
-                new LinkedBlockingQueue<Runnable>());
+        this.customScheduledThreadPoolExecutor = new CustomScheduledThreadPoolExecutor(1);
 
-        synchronized (this) {
-            thrc = new Thread(this, "Kimios Notification Creator");
-            thrc.start();
-        }
+        String defaultDomain =
+                StringUtils.isEmpty(System.getenv(DataInitializerCtrl.KIMIOS_DEFAULT_DOMAIN)) ?
+                        (StringUtils.isEmpty(System.getProperty("kimios.default.domain")) ? "kimios" : System.getProperty("kimios.default.domain")) :
+                        System.getenv(DataInitializerCtrl.KIMIOS_DEFAULT_DOMAIN);
+
+        String adminLogin =
+                StringUtils.isEmpty(System.getenv(DataInitializerCtrl.KIMIOS_ADMIN_USERID)) ?
+                        (StringUtils.isEmpty(System.getProperty("kimios.admin.userid")) ? "admin" : System.getProperty("kimios.admin.userid")) :
+                        System.getenv(DataInitializerCtrl.KIMIOS_ADMIN_USERID);
+
+        Session session = this.securityController.startSession(adminLogin, defaultDomain);
+        NotificationCreatorJob job = new NotificationCreatorJob(notifierController, session);
+        this.customScheduledThreadPoolExecutor.scheduleAtFixedRate(job, 0, 1, TimeUnit.MINUTES);
+
     }
 
     public void stopJob() {
         try {
-            if(this.customThreadPoolExecutor != null){
-                this.customThreadPoolExecutor.shutdown();
+            if(this.customScheduledThreadPoolExecutor != null){
+                this.customScheduledThreadPoolExecutor.shutdownNow();
+                this.customScheduledThreadPoolExecutor.awaitTermination(5, TimeUnit.SECONDS);
             }
-            this.stop();
-            thrc.join();
         } catch (Exception e) {
+            logger.error(e.getMessage());
         }
         logger.info("Notification Creator stopped");
     }
 
-    public void stop() {
-        this.active = false;
-    }
 
     public INotifierController getNotifierController() {
         return notifierController;
@@ -62,24 +70,5 @@ public class NotificationCreator implements Runnable {
 
     public void setSecurityController(ISecurityController securityController) {
         this.securityController = securityController;
-    }
-
-    @Override
-    public void run() {
-        Session session = this.securityController.startSession("admin", "kimios");
-        while (active) {
-            try {
-                if (active) {
-                    logger.info("createNotifications now");
-                    NotificationCreatorJob job = new NotificationCreatorJob(notifierController, session);
-                    Integer i = customThreadPoolExecutor.submit(job).get();
-                    logger.info("created " + i + " notification(s)");
-                }
-                Thread.sleep(5000);
-            } catch (Exception e) {
-                this.stop();
-                logger.info("Thread interrupted " + e.getMessage());
-            }
-        }
     }
 }

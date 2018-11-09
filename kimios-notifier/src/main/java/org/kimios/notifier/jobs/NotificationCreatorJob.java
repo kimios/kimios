@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
 
-public class NotificationCreatorJob extends JobImpl<Integer> {
+public class NotificationCreatorJob extends JobImpl<Integer> implements Runnable {
 
     private static Logger log = LoggerFactory.getLogger(NotificationCreatorJob.class);
 
@@ -26,5 +26,16 @@ public class NotificationCreatorJob extends JobImpl<Integer> {
     public Integer execute() throws Exception {
         log.debug("Starting creating notifications");
         return this.notifierController.createNotifications(getUserSession());
+    }
+
+    @Override
+    public void run() {
+        log.debug("Starting creating notifications");
+        try {
+            Integer i = this.notifierController.createNotifications(getUserSession());
+            log.info("created " + i + " notification(s)");
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
     }
 }
