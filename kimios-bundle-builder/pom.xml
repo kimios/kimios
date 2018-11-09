@@ -159,6 +159,7 @@
                         </goals>
                         <configuration>
                             <finalName>kimios-bundle-${project.version}</finalName>
+                            <appendAssemblyId>false</appendAssemblyId>
                         </configuration>
                     </execution>
                 </executions>
@@ -177,15 +178,11 @@
                         <configuration>
                             <artifacts>
                                 <artifact>
-                                    <file>
-                                        ${project.build.directory}/kimios-bundle-${project.version}.tar.gz
-                                    </file>
+                                    <file>${project.build.directory}/kimios-bundle-${project.version}.tar.gz</file>
                                     <type>tar.gz</type>
                                 </artifact>
                                 <artifact>
-                                    <file>
-                                        ${project.build.directory}/kimios-bundle-${project.version}.zip
-                                    </file>
+                                    <file>${project.build.directory}/kimios-bundle-${project.version}.zip</file>
                                     <type>zip</type>
                                 </artifact>
                             </artifacts>
@@ -200,7 +197,5 @@
                 </configuration>
             </plugin>
         </plugins>
-
     </build>
-
 </project>
