@@ -14,7 +14,7 @@ mv $TARGET_DIR/$TOMCAT_NAME $TARGET_DIR/$BUNDLE_DIR
 
 ls ./scripts/kimios.*
 cp ./tomcat-conf/server.xml $TARGET_DIR/$BUNDLE_DIR/conf/
-cp ./scripts/kimios.* $TARGET_DIR/$BUNDLE_DIR/
+cp ./scripts/kimios*.* $TARGET_DIR/$BUNDLE_DIR/
 cp ./scripts/setenv.* $TARGET_DIR/$BUNDLE_DIR/bin/
 cp kimios_howto_install_bundle.txt $TARGET_DIR/$BUNDLE_DIR
 
