@@ -18,9 +18,7 @@ package org.kimios.deployer.core;
 
 import org.apache.commons.io.IOUtils;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintStream;
+import java.io.*;
 import java.lang.management.ManagementFactory;
 import java.util.List;
 
@@ -50,7 +48,7 @@ public class Restarter {
                 cmd.append("-jar " + new File(mainCommand[0]).getPath());
             } else {
                 // else it's a .class, add the classpath and mainClass
-                cmd.append("-cp \"" + System.getProperty("java.class.path") + "\" " + mainCommand[0]);
+                cmd.append("-cp " + System.getProperty("java.class.path") + " " + mainCommand[0]);
             }
             // finally add program arguments
             for (int i = 1; i < mainCommand.length; i++) {
@@ -65,7 +63,7 @@ public class Restarter {
                     try {
                         System.out.println("running " + cmd.toString());
                         Process p = Runtime.getRuntime().exec(cmd.toString());
-
+                        showProcOutput(p);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -81,5 +79,24 @@ public class Restarter {
             // something went wrong
             throw new IOException("Error while trying to restart the application", e);
         }
+    }
+
+
+    private static void showProcOutput(Process proc) throws IOException {
+        BufferedReader stdInput = new BufferedReader(new
+                InputStreamReader(proc.getInputStream()));
+
+        BufferedReader stdError = new BufferedReader(new
+                InputStreamReader(proc.getErrorStream()));
+
+        System.out.println("Here is the standard output of the command:\n");
+        String s = null;
+        while ((s = stdInput.readLine()) != null) {
+            System.out.println(s);
+        }
+
+        System.out.println("Here is the standard error of the command (if any):\n");
+        while ((s = stdError.readLine()) != null) System.out.println(s);
+
     }
 }
