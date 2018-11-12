@@ -222,31 +222,7 @@ public class InstallProcessor {
 
 
     public void tomcatRestart() throws Exception {
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    String tomcatBase = System.getProperty("catalina.base");
-                    Thread.sleep(3000); // wait for response return
-                    String path = tomcatBase + "/kimios-restart";
-                    String osType = System.getProperty("os.name").toLowerCase();
-                    if(osType.indexOf("win") >= 0){
-                        path += ".bat";
-                    } else {
-                        path += ".sh";
-                    }
-                    Runtime rn = Runtime.getRuntime();
-                    Process proc = rn.exec(path);
-                    proc.waitFor();
-                    System.exit(0);
-                } catch (IOException e) {
-                    log.error("IO exception: " + e);
-                } catch (InterruptedException e) {
-                    log.error("InterruptedException: " + e);
-                }
-            }
-        }).start();
+        Restarter.restartApplication(null);
     }
 
     public void reloadConfiguration(String path) throws Exception {
