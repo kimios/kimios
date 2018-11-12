@@ -12,11 +12,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
 
-public class TelemetrySender implements Runnable {
+public class TelemetrySender {
 
     private static Logger logger = LoggerFactory.getLogger(TelemetrySender.class);
 
-    private static Thread thrc;
     private ISecurityController securityController;
     private ITelemetryController telemetryController;
     private CustomScheduledThreadPoolExecutor customScheduledThreadPoolExecutor;
@@ -24,20 +23,32 @@ public class TelemetrySender implements Runnable {
     public void startJob() {
         this.customScheduledThreadPoolExecutor = new CustomScheduledThreadPoolExecutor(1);
 
-        synchronized (this) {
-            thrc = new Thread(this, "Kimios Telemetry Sender");
-            thrc.start();
-        }
+        String defaultDomain =
+                StringUtils.isEmpty(System.getenv(DataInitializerCtrl.KIMIOS_DEFAULT_DOMAIN)) ?
+                        (StringUtils.isEmpty(System.getProperty("kimios.default.domain")) ? "kimios" : System.getProperty("kimios.default.domain")) :
+                        System.getenv(DataInitializerCtrl.KIMIOS_DEFAULT_DOMAIN);
+
+        String adminLogin =
+                StringUtils.isEmpty(System.getenv(DataInitializerCtrl.KIMIOS_ADMIN_USERID)) ?
+                        (StringUtils.isEmpty(System.getProperty("kimios.admin.userid")) ? "admin" : System.getProperty("kimios.admin.userid")) :
+                        System.getenv(DataInitializerCtrl.KIMIOS_ADMIN_USERID);
+
+        Session session = this.securityController.startSession(adminLogin, defaultDomain);
+        TelemetrySenderJob job = new TelemetrySenderJob(this.telemetryController, session);
+        this.customScheduledThreadPoolExecutor.scheduleAtFixedRate(job, 0, 1, TimeUnit.MINUTES);
     }
 
     public void stopJob() {
+        logger.info("Telemetry Sender stopping…");
         try {
-            this.customScheduledThreadPoolExecutor.shutdown();
-            thrc.join();
+            if(this.customScheduledThreadPoolExecutor != null){
+                this.customScheduledThreadPoolExecutor.shutdownNow();
+                this.customScheduledThreadPoolExecutor.awaitTermination(5, TimeUnit.SECONDS);
+            }
         } catch (Exception e) {
-            logger.error("Exception raised while shutting down the job: " + e.getMessage());
+            logger.error(e.getMessage());
         }
-        logger.info("Notification Sender stopped");
+        logger.info("Telemetry Sender stopped");
     }
 
     public ISecurityController getSecurityController() {
@@ -53,31 +64,5 @@ public class TelemetrySender implements Runnable {
 
     public void setTelemetryController(ITelemetryController telemetryController) {
         this.telemetryController = telemetryController;
-    }
-
-    @Override
-    public void run() {
-        if (this.telemetryController.getUuid() != null) {
-            try {
-
-                String defaultDomain =
-                        StringUtils.isEmpty(System.getenv(DataInitializerCtrl.KIMIOS_DEFAULT_DOMAIN)) ?
-                                (StringUtils.isEmpty(System.getProperty("kimios.default.domain")) ? "kimios" : System.getProperty("kimios.default.domain")) :
-                                System.getenv(DataInitializerCtrl.KIMIOS_DEFAULT_DOMAIN);
-
-                String adminLogin =
-                        StringUtils.isEmpty(System.getenv(DataInitializerCtrl.KIMIOS_ADMIN_USERID)) ?
-                                (StringUtils.isEmpty(System.getProperty("kimios.admin.userid")) ? "admin" : System.getProperty("kimios.admin.userid")) :
-                                System.getenv(DataInitializerCtrl.KIMIOS_ADMIN_USERID);
-
-                Session session = this.securityController.startSession(adminLogin, defaultDomain);
-                TelemetrySenderJob job = new TelemetrySenderJob(this.telemetryController, session);
-                this.customScheduledThreadPoolExecutor.scheduleAtFixedRate(job, 0, 1, TimeUnit.MINUTES);
-            } catch (Exception e) {
-                logger.info("Thread interrupted " + e.getMessage());
-                this.stopJob();
-            }
-        }
-
     }
 }

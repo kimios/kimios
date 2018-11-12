@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
 
-public class NotificationSenderJob extends JobImpl<Integer> {
+public class NotificationSenderJob extends JobImpl<Integer> implements Runnable {
 
     private static Logger log = LoggerFactory.getLogger(NotificationSenderJob.class);
 
@@ -31,5 +31,16 @@ public class NotificationSenderJob extends JobImpl<Integer> {
             log.error(e.getMessage());
         }
         return 1;
+    }
+
+    @Override
+    public void run() {
+        try {
+            log.info("sendNotifications now");
+            this.execute();
+            log.info("just sent notification(s)");
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
     }
 }

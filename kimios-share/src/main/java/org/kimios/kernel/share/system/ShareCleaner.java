@@ -1,59 +1,67 @@
 package org.kimios.kernel.share.system;
 
+import org.apache.commons.lang.StringUtils;
 import org.kimios.kernel.controller.ISecurityController;
-import org.kimios.kernel.index.controller.CustomThreadPoolExecutor;
+import org.kimios.kernel.deployment.DataInitializerCtrl;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.share.controller.IShareController;
 import org.kimios.kernel.share.jobs.ShareCleanerJob;
+import org.kimios.utils.system.CustomScheduledThreadPoolExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-public class ShareCleaner implements Runnable {
+public class ShareCleaner {
 
     private static Logger logger = LoggerFactory.getLogger(ShareCleaner.class);
 
-    private volatile boolean active = true;
-    private static Thread thrc;
     private ISecurityController securityController;
     private IShareController shareController;
-    private CustomThreadPoolExecutor customThreadPoolExecutor;
+    private CustomScheduledThreadPoolExecutor customScheduledThreadPoolExecutor;
     private boolean launchShareCleaner;
 
     public void startJob() {
-        this.customThreadPoolExecutor = new CustomThreadPoolExecutor(8, 8,
-                10000L, TimeUnit.MILLISECONDS,
-                new LinkedBlockingQueue<Runnable>());
-
-        String threadName = "Kimios Share Cleaner";
-        String message = threadName + " is going to be launched";
+        String message = "Share Cleaner ";
         if (!this.launchShareCleaner) {
-            message = threadName + " has NOT been launched";
+            message += " has NOT been launched (according to the configuration)";
             logger.info(message);
             // end
             return;
         }
 
+        message += " is going to be launched";
         logger.info(message);
-        synchronized (this) {
-            thrc = new Thread(this, threadName);
-            thrc.start();
-        }
+
+        String defaultDomain =
+                StringUtils.isEmpty(System.getenv(DataInitializerCtrl.KIMIOS_DEFAULT_DOMAIN)) ?
+                        (StringUtils.isEmpty(System.getProperty("kimios.default.domain")) ? "kimios" : System.getProperty("kimios.default.domain")) :
+                        System.getenv(DataInitializerCtrl.KIMIOS_DEFAULT_DOMAIN);
+
+        String adminLogin =
+                StringUtils.isEmpty(System.getenv(DataInitializerCtrl.KIMIOS_ADMIN_USERID)) ?
+                        (StringUtils.isEmpty(System.getProperty("kimios.admin.userid")) ? "admin" : System.getProperty("kimios.admin.userid")) :
+                        System.getenv(DataInitializerCtrl.KIMIOS_ADMIN_USERID);
+
+        Session session = this.securityController.startSession(adminLogin, defaultDomain);
+        this.customScheduledThreadPoolExecutor = new CustomScheduledThreadPoolExecutor(8);
+        ShareCleanerJob job = new ShareCleanerJob(shareController, session);
+        this.customScheduledThreadPoolExecutor.scheduleAtFixedRate(job, 0, 5, TimeUnit.SECONDS);
+
+        logger.info("Share Cleaner started");
     }
 
     public void stopJob() {
+        logger.info("Kimios Share Cleaner stopping…");
         try {
-            this.stop();
-            thrc.join();
+            if(this.customScheduledThreadPoolExecutor != null){
+                this.customScheduledThreadPoolExecutor.shutdownNow();
+                this.customScheduledThreadPoolExecutor.awaitTermination(5, TimeUnit.SECONDS);
+            }
         } catch (Exception e) {
+            logger.error(e.getMessage());
         }
         logger.info("Kimios Share Cleaner stopped");
-    }
-
-    public void stop() {
-        this.active = false;
     }
 
     public IShareController getShareController() {
@@ -78,24 +86,5 @@ public class ShareCleaner implements Runnable {
 
     public void setLaunchShareCleaner(boolean launchShareCleaner) {
         this.launchShareCleaner = launchShareCleaner;
-    }
-
-    @Override
-    public void run() {
-        Session session = this.securityController.startSession("admin", "kimios");
-        while (active) {
-            try {
-                if (active) {
-                    logger.info("clean shares now");
-                    ShareCleanerJob job = new ShareCleanerJob(shareController, session);
-                    Integer i = customThreadPoolExecutor.submit(job).get();
-                    logger.info("cleaned " + i + " shares");
-                }
-                Thread.sleep(5000);
-            } catch (Exception e) {
-                this.stop();
-                logger.info("Thread interrupted " + e.getMessage());
-            }
-        }
     }
 }
