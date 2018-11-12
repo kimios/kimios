@@ -27,7 +27,7 @@ import java.util.UUID;
 /**
  * Created by farf on 29/04/16.
  */
-public class ShareCleanerJob extends JobImpl<Integer> {
+public class ShareCleanerJob extends JobImpl<Integer> implements Runnable {
 
 
     private static Logger logger = LoggerFactory.getLogger(ShareCleanerJob.class);
@@ -45,5 +45,15 @@ public class ShareCleanerJob extends JobImpl<Integer> {
     public Integer execute() throws Exception {
         logger.debug("Starting cleaning expired shares (and their data transfers)");
         return this.shareController.disableExpiredShares(getUserSession());
+    }
+
+    @Override
+    public void run() {
+        try {
+            logger.debug("Starting cleaning expired shares (and their data transfers)");
+            this.shareController.disableExpiredShares(getUserSession());
+        }catch (Exception ex){
+            logger.error("error while cleaning shares: ", ex);
+        }
     }
 }

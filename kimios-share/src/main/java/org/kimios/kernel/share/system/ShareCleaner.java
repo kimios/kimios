@@ -1,17 +1,18 @@
 package org.kimios.kernel.share.system;
 
+import org.apache.commons.lang.StringUtils;
 import org.kimios.kernel.controller.ISecurityController;
-import org.kimios.kernel.index.controller.CustomThreadPoolExecutor;
+import org.kimios.kernel.deployment.DataInitializerCtrl;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.share.controller.IShareController;
 import org.kimios.kernel.share.jobs.ShareCleanerJob;
+import org.kimios.utils.system.CustomScheduledThreadPoolExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-public class ShareCleaner implements Runnable {
+public class ShareCleaner {
 
     private static Logger logger = LoggerFactory.getLogger(ShareCleaner.class);
 
@@ -19,13 +20,11 @@ public class ShareCleaner implements Runnable {
     private static Thread thrc;
     private ISecurityController securityController;
     private IShareController shareController;
-    private CustomThreadPoolExecutor customThreadPoolExecutor;
+    private CustomScheduledThreadPoolExecutor customScheduledThreadPoolExecutor;
     private boolean launchShareCleaner;
 
     public void startJob() {
-        this.customThreadPoolExecutor = new CustomThreadPoolExecutor(8, 8,
-                10000L, TimeUnit.MILLISECONDS,
-                new LinkedBlockingQueue<Runnable>());
+        this.customScheduledThreadPoolExecutor = new CustomScheduledThreadPoolExecutor(1);
 
         String threadName = "Kimios Share Cleaner";
         String message = threadName + " is going to be launched";
@@ -35,18 +34,28 @@ public class ShareCleaner implements Runnable {
             // end
             return;
         }
-
         logger.info(message);
-        synchronized (this) {
-            thrc = new Thread(this, threadName);
-            thrc.start();
-        }
+        String defaultDomain =
+                StringUtils.isEmpty(System.getenv(DataInitializerCtrl.KIMIOS_DEFAULT_DOMAIN)) ?
+                        (StringUtils.isEmpty(System.getProperty("kimios.default.domain")) ? "kimios" : System.getProperty("kimios.default.domain")) :
+                        System.getenv(DataInitializerCtrl.KIMIOS_DEFAULT_DOMAIN);
+
+        String adminLogin =
+                StringUtils.isEmpty(System.getenv(DataInitializerCtrl.KIMIOS_ADMIN_USERID)) ?
+                        (StringUtils.isEmpty(System.getProperty("kimios.admin.userid")) ? "admin" : System.getProperty("kimios.admin.userid")) :
+                        System.getenv(DataInitializerCtrl.KIMIOS_ADMIN_USERID);
+        Session session = this.securityController.startSession(adminLogin, defaultDomain);
+        ShareCleanerJob job = new ShareCleanerJob(shareController, session);
+        customScheduledThreadPoolExecutor.scheduleAtFixedRate(job, 0, 1, TimeUnit.MINUTES);
+
     }
 
     public void stopJob() {
         try {
-            this.stop();
-            thrc.join();
+            if(this.customScheduledThreadPoolExecutor != null){
+                this.customScheduledThreadPoolExecutor.shutdownNow();
+                this.customScheduledThreadPoolExecutor.awaitTermination(5, TimeUnit.SECONDS);
+            }
         } catch (Exception e) {
         }
         logger.info("Kimios Share Cleaner stopped");
@@ -80,22 +89,4 @@ public class ShareCleaner implements Runnable {
         this.launchShareCleaner = launchShareCleaner;
     }
 
-    @Override
-    public void run() {
-        Session session = this.securityController.startSession("admin", "kimios");
-        while (active) {
-            try {
-                if (active) {
-                    logger.info("clean shares now");
-                    ShareCleanerJob job = new ShareCleanerJob(shareController, session);
-                    Integer i = customThreadPoolExecutor.submit(job).get();
-                    logger.info("cleaned " + i + " shares");
-                }
-                Thread.sleep(5000);
-            } catch (Exception e) {
-                this.stop();
-                logger.info("Thread interrupted " + e.getMessage());
-            }
-        }
-    }
 }

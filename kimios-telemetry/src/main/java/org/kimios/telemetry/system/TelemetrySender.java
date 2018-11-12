@@ -12,11 +12,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
 
-public class TelemetrySender implements Runnable {
+public class TelemetrySender {
 
     private static Logger logger = LoggerFactory.getLogger(TelemetrySender.class);
 
-    private static Thread thrc;
     private ISecurityController securityController;
     private ITelemetryController telemetryController;
     private CustomScheduledThreadPoolExecutor customScheduledThreadPoolExecutor;
@@ -24,39 +23,6 @@ public class TelemetrySender implements Runnable {
     public void startJob() {
         this.customScheduledThreadPoolExecutor = new CustomScheduledThreadPoolExecutor(1);
 
-        synchronized (this) {
-            thrc = new Thread(this, "Kimios Telemetry Sender");
-            thrc.start();
-        }
-    }
-
-    public void stopJob() {
-        try {
-            this.customScheduledThreadPoolExecutor.shutdown();
-            thrc.join();
-        } catch (Exception e) {
-            logger.error("Exception raised while shutting down the job: " + e.getMessage());
-        }
-        logger.info("Notification Sender stopped");
-    }
-
-    public ISecurityController getSecurityController() {
-        return securityController;
-    }
-
-    public void setSecurityController(ISecurityController securityController) {
-        this.securityController = securityController;
-    }
-    public ITelemetryController getTelemetryController() {
-        return telemetryController;
-    }
-
-    public void setTelemetryController(ITelemetryController telemetryController) {
-        this.telemetryController = telemetryController;
-    }
-
-    @Override
-    public void run() {
         if (this.telemetryController.getUuid() != null) {
             try {
 
@@ -77,7 +43,33 @@ public class TelemetrySender implements Runnable {
                 logger.info("Thread interrupted " + e.getMessage());
                 this.stopJob();
             }
+        } else {
+            logger.warn("telemetry uuid isn't available. statistics upload disabled");
         }
+    }
 
+    public void stopJob() {
+        try {
+            this.customScheduledThreadPoolExecutor.shutdownNow();
+            this.customScheduledThreadPoolExecutor.awaitTermination(5, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            logger.error("Exception raised while shutting down the job: " + e.getMessage());
+        }
+        logger.info("Notification Sender stopped");
+    }
+
+    public ISecurityController getSecurityController() {
+        return securityController;
+    }
+
+    public void setSecurityController(ISecurityController securityController) {
+        this.securityController = securityController;
+    }
+    public ITelemetryController getTelemetryController() {
+        return telemetryController;
+    }
+
+    public void setTelemetryController(ITelemetryController telemetryController) {
+        this.telemetryController = telemetryController;
     }
 }
