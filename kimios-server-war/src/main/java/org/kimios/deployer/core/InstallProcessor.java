@@ -27,9 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.servlet.ServletContext;
-import java.io.File;
-import java.io.IOException;
-import java.io.Writer;
+import java.io.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -222,6 +220,27 @@ public class InstallProcessor {
 
 
     public void tomcatRestart() throws Exception {
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                try {
+                    String tomcatBase = System.getProperty("catalina.base");
+                    String path = tomcatBase + "/kimios-restart";
+                    String osType = System.getProperty("os.name").toLowerCase();
+                    if(osType.indexOf("win") >= 0){
+                        path += ".bat";
+                    } else {
+                        path += ".sh";
+                    }
+                    Runtime rn = Runtime.getRuntime();
+                    Process proc = rn.exec(path);
+                    System.out.println("running " + path);
+                    showProcOutput(proc);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
         Restarter.restartApplication(null);
     }
 
@@ -260,5 +279,23 @@ public class InstallProcessor {
         //copy file
         FileUtils.copyFile(new File(kimiosPropFile), new File(kimiosHomeFile, "kimios.properties"));
         log.info("Copy of " + kimiosPropFile + " to " + kimiosHomeFile.getAbsolutePath() + " done.");
+    }
+
+    private static void showProcOutput(Process proc) throws IOException {
+        BufferedReader stdInput = new BufferedReader(new
+                InputStreamReader(proc.getInputStream()));
+
+        BufferedReader stdError = new BufferedReader(new
+                InputStreamReader(proc.getErrorStream()));
+
+        System.out.println("Here is the standard output of the command:\n");
+        String s = null;
+        while ((s = stdInput.readLine()) != null) {
+            System.out.println(s);
+        }
+
+        System.out.println("Here is the standard error of the command (if any):\n");
+        while ((s = stdError.readLine()) != null) System.out.println(s);
+
     }
 }
