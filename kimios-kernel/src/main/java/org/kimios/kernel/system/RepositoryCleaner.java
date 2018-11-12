@@ -52,7 +52,7 @@ public class RepositoryCleaner implements Runnable
         try {
 
             log.info("Repo Cleaner (I am " + this + ". Thread " + thrc + "(" + Thread.currentThread().getId() +" ) ");
-            while (!this.stop) {
+            while (Thread.currentThread().isInterrupted()) {
                 List<DocumentVersion> versions = versionController.getOprhansDocumentVersion();
                 for (DocumentVersion v: versions) {
                     try {
@@ -70,9 +70,12 @@ public class RepositoryCleaner implements Runnable
                         e.printStackTrace();
                     }
                 }
+                if(Thread.currentThread().isInterrupted())
+                    break;
                 try {
                     Thread.sleep(5000);
-                } catch (Exception e) {
+                } catch (InterruptedException ex) {
+                    break;
                 }
             }
         } catch (ConfigException ce) {
@@ -85,11 +88,12 @@ public class RepositoryCleaner implements Runnable
             e.printStackTrace();
             this.stop();
         }
+        log.info("Kimios Repository Cleaner - ended job");
     }
 
     public void stop()
     {
-        this.stop = true;
+        Thread.currentThread().interrupt();
     }
 
     public void startJob()
@@ -105,13 +109,7 @@ public class RepositoryCleaner implements Runnable
     public void stopJob()
     {
         log.info("Kimios Repository Cleaner - Closing ...");
-        try {
-            this.stop();
-            thrc.join();
-        } catch (Exception e) {
-
-        }
-        log.info("Kimios Repository Cleaner - Closed");
+        this.stop();
     }
 }
 
