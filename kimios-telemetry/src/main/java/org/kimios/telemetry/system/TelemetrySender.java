@@ -49,13 +49,16 @@ public class TelemetrySender {
     }
 
     public void stopJob() {
+        logger.info("Telemetry Sender stopping…");
         try {
-            this.customScheduledThreadPoolExecutor.shutdownNow();
-            this.customScheduledThreadPoolExecutor.awaitTermination(5, TimeUnit.SECONDS);
+            if(this.customScheduledThreadPoolExecutor != null){
+                this.customScheduledThreadPoolExecutor.shutdownNow();
+                this.customScheduledThreadPoolExecutor.awaitTermination(5, TimeUnit.SECONDS);
+            }
         } catch (Exception e) {
-            logger.error("Exception raised while shutting down the job: " + e.getMessage());
+            logger.error(e.getMessage());
         }
-        logger.info("Notification Sender stopped");
+        logger.info("Telemetry Sender stopped");
     }
 
     public ISecurityController getSecurityController() {

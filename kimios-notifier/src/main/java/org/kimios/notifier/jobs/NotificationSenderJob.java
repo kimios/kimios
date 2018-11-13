@@ -35,9 +35,10 @@ public class NotificationSenderJob extends JobImpl<Integer> implements Runnable 
 
     @Override
     public void run() {
-        log.debug("Starting sending notifications");
         try {
-            this.notifierController.sendNotifications(this.getUserSession());
+            log.info("sendNotifications now");
+            this.execute();
+            log.info("just sent notification(s)");
         } catch (Exception e) {
             log.error(e.getMessage());
         }

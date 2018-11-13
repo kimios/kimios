@@ -3,7 +3,6 @@ package org.kimios.notifier.system;
 import org.apache.commons.lang.StringUtils;
 import org.kimios.kernel.controller.ISecurityController;
 import org.kimios.kernel.deployment.DataInitializerCtrl;
-import org.kimios.kernel.index.controller.CustomThreadPoolExecutor;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.notifier.controller.INotifierController;
 import org.kimios.notifier.jobs.NotificationCreatorJob;

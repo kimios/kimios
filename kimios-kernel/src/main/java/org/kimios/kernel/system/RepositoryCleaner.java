@@ -15,101 +15,50 @@
  */
 package org.kimios.kernel.system;
 
-import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.configuration.Config;
 import org.kimios.kernel.controller.IDocumentVersionController;
-import org.kimios.kernel.dms.model.DocumentVersion;
-import org.kimios.exceptions.DataSourceException;
-import org.kimios.utils.configuration.ConfigurationManager;
+import org.kimios.kernel.jobs.RepositoryCleanerJob;
+import org.kimios.utils.system.CustomScheduledThreadPoolExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.util.List;
+import java.util.concurrent.TimeUnit;
 
-public class RepositoryCleaner implements Runnable
-{
-    private boolean stop = false;
+public class RepositoryCleaner {
 
     private static Logger log = LoggerFactory.getLogger(RepositoryCleaner.class);
 
-    private static Thread thrc;
-
     private IDocumentVersionController versionController;
+    private CustomScheduledThreadPoolExecutor customScheduledThreadPoolExecutor;
 
-    public IDocumentVersionController getVersionController()
-    {
+    public IDocumentVersionController getVersionController() {
         return versionController;
     }
 
-    public void setVersionController(IDocumentVersionController versionController)
-    {
+    public void setVersionController(IDocumentVersionController versionController) {
         this.versionController = versionController;
     }
 
-    public void run()
-    {
+    public void startJob() {
+        log.info("Kimios Repository Cleaner - Starting…");
+
+        this.customScheduledThreadPoolExecutor = new CustomScheduledThreadPoolExecutor(1);
+        RepositoryCleanerJob job = new RepositoryCleanerJob(versionController);
+        this.customScheduledThreadPoolExecutor.scheduleAtFixedRate(job, 0, 5, TimeUnit.SECONDS);
+
+        log.info("Kimios Repository Cleaner - Started");
+    }
+
+    public void stopJob() {
+        log.info("Kimios Repository Cleaner - closing ...");
         try {
-
-            log.info("Repo Cleaner (I am " + this + ". Thread " + thrc + "(" + Thread.currentThread().getId() +" ) ");
-            while (Thread.currentThread().isInterrupted()) {
-                List<DocumentVersion> versions = versionController.getOprhansDocumentVersion();
-                for (DocumentVersion v: versions) {
-                    try {
-                        if(log.isDebugEnabled()){
-                            log.debug("removing version #" + v.getUid() + " -> " + v.getStoragePath());
-                        }
-                        new File(ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH) +
-                                v.getStoragePath()).delete();
-                        versionController.deleteDocumentVersion(v.getUid());
-                    } catch (ConfigException e) {
-                        e.printStackTrace();
-                    } catch (DataSourceException e) {
-                        e.printStackTrace();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-                if(Thread.currentThread().isInterrupted())
-                    break;
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException ex) {
-                    break;
-                }
+            if(this.customScheduledThreadPoolExecutor != null){
+                this.customScheduledThreadPoolExecutor.shutdownNow();
+                this.customScheduledThreadPoolExecutor.awaitTermination(5, TimeUnit.SECONDS);
             }
-        } catch (ConfigException ce) {
-            ce.printStackTrace();
-            this.stop();
-        } catch (DataSourceException dbe) {
-            dbe.printStackTrace();
-            this.stop();
         } catch (Exception e) {
-            e.printStackTrace();
-            this.stop();
+            log.error(e.getMessage());
         }
-        log.info("Kimios Repository Cleaner - ended job");
-    }
-
-    public void stop()
-    {
-        Thread.currentThread().interrupt();
-    }
-
-    public void startJob()
-    {
-        log.info("Kimios Repository Cleaner - Starting job.");
-        synchronized (this) {
-            thrc = new Thread(this, "Kimios Repository Cleaner");
-            thrc.start();
-        }
-        log.info("Kimios Repository Cleaner - Started job.");
-    }
-
-    public void stopJob()
-    {
-        log.info("Kimios Repository Cleaner - Closing ...");
-        this.stop();
+        log.info("Kimios Repository Cleaner - closed");
     }
 }
 

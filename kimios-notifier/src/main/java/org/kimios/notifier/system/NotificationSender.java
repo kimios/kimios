@@ -3,7 +3,6 @@ package org.kimios.notifier.system;
 import org.apache.commons.lang.StringUtils;
 import org.kimios.kernel.controller.ISecurityController;
 import org.kimios.kernel.deployment.DataInitializerCtrl;
-import org.kimios.kernel.index.controller.CustomThreadPoolExecutor;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.notifier.controller.INotifierController;
 import org.kimios.notifier.jobs.NotificationSenderJob;
@@ -11,10 +10,9 @@ import org.kimios.utils.system.CustomScheduledThreadPoolExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-public class NotificationSender  {
+public class NotificationSender {
 
     private static Logger logger = LoggerFactory.getLogger(NotificationSender.class);
 
@@ -35,21 +33,24 @@ public class NotificationSender  {
                 StringUtils.isEmpty(System.getenv(DataInitializerCtrl.KIMIOS_ADMIN_USERID)) ?
                         (StringUtils.isEmpty(System.getProperty("kimios.admin.userid")) ? "admin" : System.getProperty("kimios.admin.userid")) :
                         System.getenv(DataInitializerCtrl.KIMIOS_ADMIN_USERID);
+
         Session session = this.securityController.startSession(adminLogin, defaultDomain);
         NotificationSenderJob job = new NotificationSenderJob(notifierController, session);
         this.customScheduledThreadPoolExecutor.scheduleAtFixedRate(job, 0, 1, TimeUnit.MINUTES);
+        logger.debug("Starting sending notifications");
     }
 
-    public void stopJob()  throws Exception {
-        if(this.customScheduledThreadPoolExecutor != null){
-            this.customScheduledThreadPoolExecutor.shutdownNow();
-            this.customScheduledThreadPoolExecutor.awaitTermination(5, TimeUnit.SECONDS);
+    public void stopJob() {
+        logger.info("Notification Sender stopping…");
+        try {
+            if(this.customScheduledThreadPoolExecutor != null){
+                this.customScheduledThreadPoolExecutor.shutdownNow();
+                this.customScheduledThreadPoolExecutor.awaitTermination(5, TimeUnit.SECONDS);
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage());
         }
         logger.info("Notification Sender stopped");
-    }
-
-    public void stop() {
-        this.active = false;
     }
 
     public ISecurityController getSecurityController() {

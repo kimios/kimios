@@ -16,25 +16,23 @@ public class ShareCleaner {
 
     private static Logger logger = LoggerFactory.getLogger(ShareCleaner.class);
 
-    private volatile boolean active = true;
-    private static Thread thrc;
     private ISecurityController securityController;
     private IShareController shareController;
     private CustomScheduledThreadPoolExecutor customScheduledThreadPoolExecutor;
     private boolean launchShareCleaner;
 
     public void startJob() {
-        this.customScheduledThreadPoolExecutor = new CustomScheduledThreadPoolExecutor(1);
-
-        String threadName = "Kimios Share Cleaner";
-        String message = threadName + " is going to be launched";
+        String message = "Share Cleaner ";
         if (!this.launchShareCleaner) {
-            message = threadName + " has NOT been launched";
+            message += " has NOT been launched (according to the configuration)";
             logger.info(message);
             // end
             return;
         }
+
+        message += " is going to be launched";
         logger.info(message);
+
         String defaultDomain =
                 StringUtils.isEmpty(System.getenv(DataInitializerCtrl.KIMIOS_DEFAULT_DOMAIN)) ?
                         (StringUtils.isEmpty(System.getProperty("kimios.default.domain")) ? "kimios" : System.getProperty("kimios.default.domain")) :
@@ -44,25 +42,26 @@ public class ShareCleaner {
                 StringUtils.isEmpty(System.getenv(DataInitializerCtrl.KIMIOS_ADMIN_USERID)) ?
                         (StringUtils.isEmpty(System.getProperty("kimios.admin.userid")) ? "admin" : System.getProperty("kimios.admin.userid")) :
                         System.getenv(DataInitializerCtrl.KIMIOS_ADMIN_USERID);
-        Session session = this.securityController.startSession(adminLogin, defaultDomain);
-        ShareCleanerJob job = new ShareCleanerJob(shareController, session);
-        customScheduledThreadPoolExecutor.scheduleAtFixedRate(job, 0, 1, TimeUnit.MINUTES);
 
+        Session session = this.securityController.startSession(adminLogin, defaultDomain);
+        this.customScheduledThreadPoolExecutor = new CustomScheduledThreadPoolExecutor(8);
+        ShareCleanerJob job = new ShareCleanerJob(shareController, session);
+        this.customScheduledThreadPoolExecutor.scheduleAtFixedRate(job, 0, 1, TimeUnit.MINUTES);
+
+        logger.info("Share Cleaner started");
     }
 
     public void stopJob() {
+        logger.info("Kimios Share Cleaner stopping…");
         try {
             if(this.customScheduledThreadPoolExecutor != null){
                 this.customScheduledThreadPoolExecutor.shutdownNow();
                 this.customScheduledThreadPoolExecutor.awaitTermination(5, TimeUnit.SECONDS);
             }
         } catch (Exception e) {
+            logger.error(e.getMessage());
         }
         logger.info("Kimios Share Cleaner stopped");
-    }
-
-    public void stop() {
-        this.active = false;
     }
 
     public IShareController getShareController() {
@@ -88,5 +87,4 @@ public class ShareCleaner {
     public void setLaunchShareCleaner(boolean launchShareCleaner) {
         this.launchShareCleaner = launchShareCleaner;
     }
-
 }

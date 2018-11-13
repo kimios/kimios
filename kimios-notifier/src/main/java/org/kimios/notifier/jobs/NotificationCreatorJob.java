@@ -30,8 +30,8 @@ public class NotificationCreatorJob extends JobImpl<Integer> implements Runnable
 
     @Override
     public void run() {
-        log.debug("Starting creating notifications");
         try {
+            log.info("creating notification(s)");
             Integer i = this.notifierController.createNotifications(getUserSession());
             log.info("created " + i + " notification(s)");
         } catch (Exception e) {
