@@ -57,4 +57,14 @@ public class ShareCleanerJob extends JobImpl<Integer> implements Runnable {
             logger.error(e.getMessage());
         }
     }
+
+    @Override
+    public void run() {
+        try {
+            logger.debug("Starting cleaning expired shares (and their data transfers)");
+            this.shareController.disableExpiredShares(getUserSession());
+        }catch (Exception ex){
+            logger.error("error while cleaning shares: ", ex);
+        }
+    }
 }
