@@ -17,7 +17,6 @@ public class NotificationSender {
     private static Logger logger = LoggerFactory.getLogger(NotificationSender.class);
 
     private volatile boolean active = true;
-    private static Thread thrc;
     private ISecurityController securityController;
     private INotifierController notifierController;
     private CustomScheduledThreadPoolExecutor customScheduledThreadPoolExecutor;
@@ -37,7 +36,7 @@ public class NotificationSender {
 
         Session session = this.securityController.startSession(adminLogin, defaultDomain);
         NotificationSenderJob job = new NotificationSenderJob(notifierController, session);
-        this.customScheduledThreadPoolExecutor.scheduleAtFixedRate(job, 0, 5, TimeUnit.SECONDS);
+        this.customScheduledThreadPoolExecutor.scheduleAtFixedRate(job, 0, 1, TimeUnit.MINUTES);
         logger.debug("Starting sending notifications");
     }
 

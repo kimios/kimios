@@ -23,19 +23,29 @@ public class TelemetrySender {
     public void startJob() {
         this.customScheduledThreadPoolExecutor = new CustomScheduledThreadPoolExecutor(1);
 
-        String defaultDomain =
-                StringUtils.isEmpty(System.getenv(DataInitializerCtrl.KIMIOS_DEFAULT_DOMAIN)) ?
-                        (StringUtils.isEmpty(System.getProperty("kimios.default.domain")) ? "kimios" : System.getProperty("kimios.default.domain")) :
-                        System.getenv(DataInitializerCtrl.KIMIOS_DEFAULT_DOMAIN);
+        if (this.telemetryController.getUuid() != null) {
+            try {
 
-        String adminLogin =
-                StringUtils.isEmpty(System.getenv(DataInitializerCtrl.KIMIOS_ADMIN_USERID)) ?
-                        (StringUtils.isEmpty(System.getProperty("kimios.admin.userid")) ? "admin" : System.getProperty("kimios.admin.userid")) :
-                        System.getenv(DataInitializerCtrl.KIMIOS_ADMIN_USERID);
+                String defaultDomain =
+                        StringUtils.isEmpty(System.getenv(DataInitializerCtrl.KIMIOS_DEFAULT_DOMAIN)) ?
+                                (StringUtils.isEmpty(System.getProperty("kimios.default.domain")) ? "kimios" : System.getProperty("kimios.default.domain")) :
+                                System.getenv(DataInitializerCtrl.KIMIOS_DEFAULT_DOMAIN);
 
-        Session session = this.securityController.startSession(adminLogin, defaultDomain);
-        TelemetrySenderJob job = new TelemetrySenderJob(this.telemetryController, session);
-        this.customScheduledThreadPoolExecutor.scheduleAtFixedRate(job, 0, 1, TimeUnit.MINUTES);
+                String adminLogin =
+                        StringUtils.isEmpty(System.getenv(DataInitializerCtrl.KIMIOS_ADMIN_USERID)) ?
+                                (StringUtils.isEmpty(System.getProperty("kimios.admin.userid")) ? "admin" : System.getProperty("kimios.admin.userid")) :
+                                System.getenv(DataInitializerCtrl.KIMIOS_ADMIN_USERID);
+
+                Session session = this.securityController.startSession(adminLogin, defaultDomain);
+                TelemetrySenderJob job = new TelemetrySenderJob(this.telemetryController, session);
+                this.customScheduledThreadPoolExecutor.scheduleAtFixedRate(job, 0, 1, TimeUnit.MINUTES);
+            } catch (Exception e) {
+                logger.info("Thread interrupted " + e.getMessage());
+                this.stopJob();
+            }
+        } else {
+            logger.warn("telemetry uuid isn't available. statistics upload disabled");
+        }
     }
 
     public void stopJob() {

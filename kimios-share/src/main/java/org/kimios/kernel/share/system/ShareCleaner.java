@@ -46,7 +46,7 @@ public class ShareCleaner {
         Session session = this.securityController.startSession(adminLogin, defaultDomain);
         this.customScheduledThreadPoolExecutor = new CustomScheduledThreadPoolExecutor(8);
         ShareCleanerJob job = new ShareCleanerJob(shareController, session);
-        this.customScheduledThreadPoolExecutor.scheduleAtFixedRate(job, 0, 5, TimeUnit.SECONDS);
+        this.customScheduledThreadPoolExecutor.scheduleAtFixedRate(job, 0, 1, TimeUnit.MINUTES);
 
         logger.info("Share Cleaner started");
     }
