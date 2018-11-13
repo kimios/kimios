@@ -30,7 +30,6 @@
             throw new java.lang.Exception("sessionUid == null");
         u = securityController.getUser(sessionUid);
     } catch (Exception e) {
-        e.printStackTrace();
         response.sendRedirect(request.getContextPath() + "/");
         return;
     }
