@@ -47,7 +47,6 @@ public class RepositoryCleanerJob extends JobImpl<Integer> implements Runnable {
             versionController.deleteDocumentVersion(v.getUid());
             deleted++;
         }
-        logger.info("Kimios Repository Cleaner Job - finished");
         return deleted;
     }
 }
