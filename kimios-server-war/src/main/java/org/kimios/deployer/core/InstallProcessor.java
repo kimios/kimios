@@ -220,7 +220,7 @@ public class InstallProcessor {
 
 
     public void tomcatRestart() throws Exception {
-        Runtime.getRuntime().addShutdownHook(new Thread() {
+        /*Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
                 try {
@@ -240,7 +240,7 @@ public class InstallProcessor {
                     e.printStackTrace();
                 }
             }
-        });
+        });*/
         Restarter.restartApplication(null);
     }
 
