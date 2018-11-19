@@ -129,8 +129,9 @@ public class InstallerServlet extends HttpServlet {
                     /*proc.reloadConfiguration(
                             this.getServletConfig().getServletContext().getRealPath("/WEB-INF/web.xml")
                     );*/
-                    proc.tomcatRestart();
                     request.setAttribute("success", true);
+
+                    //proc.tomcatRestart();
                 } catch (Exception e) {
                     e.printStackTrace();
                     request.setAttribute("success", false);
