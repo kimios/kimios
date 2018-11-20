@@ -52,4 +52,10 @@ public interface InformationService
     @Path("/getServerName")
     @Produces("application/json")
     public String getServerName() throws DMServiceException;
+
+
+    @GET @ApiOperation(value="")
+    @Path("/getTelemetryUUID")
+    @Produces("application/json")
+    public String getTelemetryUUID() throws DMServiceException;
 }

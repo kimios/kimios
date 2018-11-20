@@ -98,7 +98,18 @@ public class RegistrationServlet extends HttpServlet {
 
                     ObjectMapper mapper = new ObjectMapper();
                     RegistrationData data = mapper.readValue(request.getParameter("content"), RegistrationData.class);
+
+                    //get uuid
+
+                    try {
+                        String uuid = Controller.getServerInformationController().getTelemetryUUID();
+                        logger.info("server telemetry uuid {}", uuid);
+                        data.setTelemetryUuid(uuid);
+                    } catch (Exception ex){
+                        logger.error("error while getting uuid", ex);
+                    }
                     logger.info("registration data {}", data);
+
                     Registration.sendRegistrationRequest(data);
                     return createFile(file);  // true if file created, else false.
 

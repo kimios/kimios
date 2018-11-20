@@ -55,5 +55,15 @@ public class InformationServiceImpl extends CoreService implements InformationSe
             throw getHelper().convertException(e);
         }
     }
+
+    @Override
+    public String getTelemetryUUID() throws DMServiceException {
+
+        try {
+            return informationController.getTelemetryUUID();
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
 }
 

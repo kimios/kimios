@@ -23,14 +23,25 @@ import org.kimios.exceptions.AccessDeniedException;
 import org.kimios.exceptions.DataSourceException;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.utils.configuration.ConfigurationManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Date;
+import java.util.Optional;
 
 @Transactional
 public class ServerInformationController extends AKimiosController implements IServerInformationController
 {
+
+    private static Logger logger = LoggerFactory.getLogger(ServerInformationController.class);
+
     private static String SERVER_VERSION = "Kimios 1.1";
+
 
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.IServerInformationController#getServerVersion()
@@ -54,6 +65,44 @@ public class ServerInformationController extends AKimiosController implements IS
     public String getServerName() throws ConfigException
     {
         return ConfigurationManager.getValue(Config.SERVER_NAME);
+    }
+
+
+    @Override
+    public String getTelemetryUUID() throws ConfigException {
+        try {
+            return retrieveUuid();
+        }catch (Exception ex){
+            throw new ConfigException(ex);
+        }
+    }
+
+
+
+    private String computeUuidFileFullPath(String uuidFileName) {
+        String fullPath = ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH);
+        String fileSeparator = System.getProperty("file.separator");
+        if (! fullPath.endsWith(fileSeparator)) {
+            fullPath += fileSeparator;
+        }
+        fullPath += uuidFileName;
+
+        return fullPath;
+    }
+
+    private String retrieveUuid() throws IOException {
+        String uuid = null;
+
+        String uuidPath = this.computeUuidFileFullPath("uuid");
+
+        FileReader fr = new FileReader(uuidPath);
+        fr.read();
+        Optional<String> opt = Files.lines(Paths.get(uuidPath)).findFirst();
+        if (opt.isPresent()) {
+            uuid = opt.get();
+        }
+
+        return uuid;
     }
 }
 

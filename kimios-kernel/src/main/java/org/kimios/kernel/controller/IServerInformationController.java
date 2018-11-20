@@ -30,4 +30,6 @@ public interface IServerInformationController
             throws DataSourceException, ConfigException, AccessDeniedException;
 
     public String getServerName() throws ConfigException;
+
+    public String getTelemetryUUID() throws ConfigException;
 }

@@ -56,6 +56,20 @@ public class ServerInformationController
         }
     }
 
+
+    public String getTelemetryUUID()
+            throws Exception
+    {
+        try
+        {
+            return client.getTelemetryUUID();
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
+        }
+    }
+
     /**
      * Return the server online time
      */
