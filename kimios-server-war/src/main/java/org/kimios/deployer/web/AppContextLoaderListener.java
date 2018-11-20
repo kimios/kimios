@@ -15,14 +15,26 @@
  */
 package org.kimios.deployer.web;
 
+import org.apache.catalina.Service;
+import org.apache.catalina.connector.Connector;
+import org.apache.coyote.ProtocolHandler;
+import org.apache.coyote.http11.Http11AprProtocol;
+import org.apache.coyote.http11.Http11NioProtocol;
 import org.kimios.utils.spring.SpringWebContextLauncher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.ContextLoader;
 
+import javax.management.MBeanServer;
+import javax.management.MBeanServerFactory;
+import javax.management.ObjectName;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import java.net.URL;
+import org.apache.catalina.Server;
+
+import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Custom Context Loader Listener
@@ -51,8 +63,55 @@ public class AppContextLoaderListener extends ContextLoader implements ServletCo
             /*
                 Load installer context
              */
-            String installerUrl = "";
-            log.info("Kimios isn't deployed. please go to {}", installerUrl);
+            List<String> urls = generateTomcatServerUrl();
+            if(urls.size() > 0){
+                log.info("Kimios isn't deployed. please go to one of: {}", urls);
+            }
+
+        }
+    }
+
+    private List<String> generateTomcatServerUrl() {
+        try {
+
+
+            MBeanServer mBeanServer = MBeanServerFactory.findMBeanServer(null).get(0);
+            ObjectName name = new ObjectName("Catalina", "type", "Server");
+            Server server = (Server) mBeanServer.getAttribute(name, "managedResource");
+
+
+            List<Integer> ports = new ArrayList<Integer>();
+            List<Integer> sslPorts = new ArrayList<Integer>();
+            Service[] services = server.findServices();
+            for (Service service : services) {
+                for (Connector connector : service.findConnectors()) {
+                    ProtocolHandler protocolHandler = connector.getProtocolHandler();
+                    if (protocolHandler instanceof Http11AprProtocol
+                            || protocolHandler instanceof Http11AprProtocol
+                            || protocolHandler instanceof Http11NioProtocol) {
+
+                        if(protocolHandler.findSslHostConfigs() != null && protocolHandler.findSslHostConfigs().length > 0){
+                            sslPorts.add(connector.getPort());
+                        } else {
+                            ports.add(connector.getPort());
+                        }
+                    }
+                }
+            }
+
+            String host = InetAddress.getLocalHost().getHostAddress();
+            List<String> items = new ArrayList<String>();
+            if(ports.size() == 1)
+                items.add("http://" + host + ":" + ports.get(0));
+
+            if(sslPorts.size() == 1)
+                items.add("https://" + host + ":" + sslPorts.get(0));
+
+
+            return items;
+        }catch (Exception ex){
+            log.error("unable to get tomcat informations", ex);
+            return new ArrayList<String>();
         }
     }
 

@@ -497,6 +497,13 @@
             <version>${ldaptive.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-catalina</artifactId>
+            <version>8.5.34</version>
+            <scope>provided</scope>
+        </dependency>
+
 
     </dependencies>
     <build>
