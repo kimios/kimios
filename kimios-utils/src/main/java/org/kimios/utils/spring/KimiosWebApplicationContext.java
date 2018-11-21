@@ -50,13 +50,14 @@ public class KimiosWebApplicationContext extends XmlWebApplicationContext {
             /*
                 Start Spring loading
              */
-            String configLocation = kimiosHome.getAbsolutePath() + "/conf/ctx-kimios.xml";
-            if (! new File(configLocation).exists()) {
+            String springConfigLocation = kimiosHome.getAbsolutePath() + "/conf/ctx-kimios.xml";
+            String kimiosConfigLocation = kimiosHome.getAbsolutePath() + "/conf/kimios.properties";
+            if (! new File(springConfigLocation).exists() || ! new File(kimiosConfigLocation).exists()) {
                 logger.info("kimios Spring configuration isn't available");
                 return new String[]{};
             } else {
                 logger.info("starting Kimios DMS with settings directory {}", kimiosHomeDirectory + "/conf");
-                return new String[]{configLocation};
+                return new String[]{springConfigLocation};
             }
 
 

@@ -19,7 +19,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.web.context.ContextLoader;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.servlet.ServletContext;
 import java.util.Enumeration;
@@ -42,8 +44,16 @@ public class SpringWebContextLauncher
         if (instance == null) {
             instance = new SpringWebContextLauncher();
         }
+        
+        ConfigurableApplicationContext springContext =
+                (ConfigurableApplicationContext) WebApplicationContextUtils.getWebApplicationContext(ctx);
 
-        return loader.initWebApplicationContext(ctx);
+        if(springContext == null){
+            return loader.initWebApplicationContext(ctx);
+        } else {
+            springContext.refresh();
+            return springContext;
+        }
     }
 
     synchronized public static void shutdownApp(ServletContext servletContext, ContextLoader contextLoader)
