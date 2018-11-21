@@ -23,11 +23,16 @@ import org.kimios.exceptions.AccessDeniedException;
 import org.kimios.exceptions.DataSourceException;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.utils.configuration.ConfigurationManager;
+import org.kimios.utils.registration.Registration;
+import org.kimios.utils.registration.RegistrationData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.ServletContext;
+import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -103,6 +108,39 @@ public class ServerInformationController extends AKimiosController implements IS
         }
 
         return uuid;
+    }
+
+    @Override
+    public void register(RegistrationData data) throws ConfigException {
+        try {
+            Registration.sendRegistrationRequest(data);
+            String fullPath = ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH);
+            String fileSeparator = System.getProperty("file.separator");
+            if (! fullPath.endsWith(fileSeparator)) {
+                fullPath += fileSeparator;
+            }
+            fullPath += "registered_instance";
+            try {
+                FileWriter writer = new FileWriter(new File(fullPath));
+                writer.write(new Date().toString());
+                writer.close();
+            } catch (IOException e) {
+            }
+        }catch (Exception ex){
+            logger.error("error during instance registration: {}", data, ex);
+        }
+    }
+
+    @Override
+    public boolean isRegistered() throws ConfigException {
+        String fullPath = ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH);
+        String fileSeparator = System.getProperty("file.separator");
+        if (! fullPath.endsWith(fileSeparator)) {
+            fullPath += fileSeparator;
+        }
+        fullPath += "registered_instance";
+
+        return new File(fullPath).exists();
     }
 }
 

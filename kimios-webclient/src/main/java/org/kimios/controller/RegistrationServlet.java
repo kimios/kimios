@@ -20,13 +20,9 @@ import java.net.MalformedURLException;
 import java.util.Date;
 
 public class RegistrationServlet extends HttpServlet {
-    //registration.
-    private static final String SERVICE_URL = "http://registration.kimios.com/cxf/rest/registration/registerUser";
-    private static final String REGISTRED_INSTANCE_FILE_NAME = "REGISTRED_INSTANCE";
 
     private HttpServletRequest request;
     private HttpServletResponse response;
-
 
     private static Logger logger = LoggerFactory.getLogger(RegistrationServlet.class);
 
@@ -53,8 +49,6 @@ public class RegistrationServlet extends HttpServlet {
             result = check();
         } else if ("register".equals(request.getParameter("action"))) {
             result = register();
-        } else if ("unregister".equals(request.getParameter("action"))) {
-            result = unregister();
         }
 
         response.setContentType("application/json");
@@ -66,24 +60,13 @@ public class RegistrationServlet extends HttpServlet {
      * Return true if exists, else false.
      */
     private boolean check() {
-        return getFile().exists();
-    }
-
-    /**
-     * Unregister LOCALLY
-     */
-    private boolean unregister() {
-        return getFile().delete();
-    }
-
-    private String streamToString(InputStream in) throws IOException {
-        StringBuffer out = new StringBuffer();
-        byte[] b = new byte[4096];
-        for (int i; (i = in.read(b)) != -1; ) {
-            out.append(new String(b, 0, i));
+        try {
+            return Controller.getServerInformationController().isRegistered();
+        } catch (Exception ex) {
+            return true;
         }
-        return out.toString();
     }
+
 
     /**
      * Try to register current instance.
@@ -91,59 +74,31 @@ public class RegistrationServlet extends HttpServlet {
      */
     private boolean register() {
         try {
-            File file = getFile();
-            if (!file.exists()) {
-                String rebuiltUrl = SERVICE_URL;
+            try {
+
+                ObjectMapper mapper = new ObjectMapper();
+                RegistrationData data = mapper.readValue(request.getParameter("content"), RegistrationData.class);
+
+                //get uuid
+
                 try {
-
-                    ObjectMapper mapper = new ObjectMapper();
-                    RegistrationData data = mapper.readValue(request.getParameter("content"), RegistrationData.class);
-
-                    //get uuid
-
-                    try {
-                        String uuid = Controller.getServerInformationController().getTelemetryUUID();
-                        logger.info("server telemetry uuid {}", uuid);
-                        data.setTelemetryUuid(uuid);
-                    } catch (Exception ex){
-                        logger.error("error while getting uuid", ex);
-                    }
-                    logger.info("registration data {}", data);
-
-                    Registration.sendRegistrationRequest(data);
-                    return createFile(file);  // true if file created, else false.
-
-                } catch (Exception ex){
-                    logger.error("reg error: ", ex);
-                    return false;
+                    String uuid = Controller.getServerInformationController().getTelemetryUUID();
+                    logger.info("server telemetry uuid {}", uuid);
+                    data.setTelemetryUuid(uuid);
+                } catch (Exception ex) {
+                    logger.error("error while getting uuid", ex);
                 }
+                logger.info("registration data {}", data);
 
-
-
-            } else {
-                System.err.println("Cannot register: the named file " + REGISTRED_INSTANCE_FILE_NAME + " already exists!");
+                Controller.getServerInformationController().register(data);
+                return true;
+            } catch (Exception ex) {
+                logger.error("reg error: ", ex);
                 return false;
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    private File getFile() {
-        ServletContext context = this.getServletContext();
-        String realPath = context.getRealPath("/WEB-INF");
-        return new File(realPath + "/" + REGISTRED_INSTANCE_FILE_NAME);
-    }
-
-    private boolean createFile(File file) {
-        try {
-            FileWriter writer = new FileWriter(file);
-            writer.write(new Date().toString());
-            writer.close();
-            return true;
-        } catch (IOException e) {
+            logger.error("error while registering instance", e);
             return false;
         }
     }

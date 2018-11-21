@@ -16,11 +16,14 @@
 package org.kimios.webservices.impl;
 
 import org.kimios.kernel.security.model.Session;
+import org.kimios.utils.registration.RegistrationData;
 import org.kimios.webservices.CoreService;
 import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.InformationService;
 
 import javax.jws.WebService;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Date;
 
 @WebService(targetNamespace = "http://kimios.org", serviceName = "InformationService", name = "InformationService")
@@ -61,6 +64,24 @@ public class InformationServiceImpl extends CoreService implements InformationSe
 
         try {
             return informationController.getTelemetryUUID();
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
+
+    @Override
+    public void register(RegistrationData data) throws DMServiceException {
+        try {
+            informationController.register(data);
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
+
+    @Override
+    public boolean isRegistered() throws DMServiceException {
+        try {
+            return informationController.isRegistered();
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }

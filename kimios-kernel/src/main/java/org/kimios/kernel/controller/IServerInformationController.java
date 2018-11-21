@@ -19,6 +19,7 @@ import org.kimios.exceptions.ConfigException;
 import org.kimios.exceptions.AccessDeniedException;
 import org.kimios.exceptions.DataSourceException;
 import org.kimios.kernel.security.model.Session;
+import org.kimios.utils.registration.RegistrationData;
 
 import java.util.Date;
 
@@ -32,4 +33,8 @@ public interface IServerInformationController
     public String getServerName() throws ConfigException;
 
     public String getTelemetryUUID() throws ConfigException;
+
+    public void register(RegistrationData data) throws ConfigException;
+
+    public boolean isRegistered() throws ConfigException;
 }

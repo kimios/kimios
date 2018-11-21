@@ -18,6 +18,7 @@ package org.kimios.webservices;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
+import org.kimios.utils.registration.RegistrationData;
 import org.kimios.webservices.exceptions.DMServiceException;
 
 import javax.jws.WebParam;
@@ -58,4 +59,14 @@ public interface InformationService
     @Path("/getTelemetryUUID")
     @Produces("application/json")
     public String getTelemetryUUID() throws DMServiceException;
+
+    @GET @ApiOperation(value="")
+    @Path("/register")
+    @Produces("application/json")
+    public void register(RegistrationData data) throws DMServiceException;
+
+    @GET @ApiOperation(value="")
+    @Path("/is-registered")
+    @Produces("application/json")
+    public boolean isRegistered() throws DMServiceException;
 }

@@ -16,6 +16,7 @@
 package org.kimios.client.controller;
 
 import org.kimios.client.exception.ExceptionHelper;
+import org.kimios.utils.registration.RegistrationData;
 import org.kimios.webservices.InformationService;
 
 import java.util.Date;
@@ -63,6 +64,30 @@ public class ServerInformationController
         try
         {
             return client.getTelemetryUUID();
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
+        }
+    }
+
+    public boolean isRegistered()
+            throws Exception
+    {
+        try
+        {
+            return client.isRegistered();
+        }
+        catch ( Exception e )
+        {
+            throw new ExceptionHelper().convertException( e );
+        }
+    }
+
+    public void register(RegistrationData data) throws Exception {
+        try
+        {
+            client.register(data);
         }
         catch ( Exception e )
         {

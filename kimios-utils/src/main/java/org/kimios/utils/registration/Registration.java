@@ -38,36 +38,30 @@ public class Registration {
 
     public static void sendRegistrationRequest(RegistrationData data) throws Exception {
         String rebuiltUrl = SERVICE_URL;
-        try {
-            HttpClient httpClient = HttpClientBuilder.create().build();
-            HttpPost postRequest = new HttpPost(rebuiltUrl);
-            StringEntity input = new StringEntity(new ObjectMapper().writeValueAsString(data));
-            input.setContentType("application/json");
-            postRequest.setEntity(input);
-            HttpResponse response = httpClient.execute(postRequest);
-            if (response.getStatusLine().getStatusCode() != 201 && response.getStatusLine().getStatusCode() != 200) {
-                throw new RuntimeException("Failed : HTTP error code : "
-                        + response.getStatusLine().getStatusCode());
-            }
-
-            BufferedReader br = new BufferedReader(
-                    new InputStreamReader((response.getEntity().getContent())));
-
-
-            String e = null;
-            String fullResp = "";
-            while((e = br.readLine()) != null){
-                fullResp += e;
-            }
-
-            logger.info("returned reg data {}", fullResp);
-
-            httpClient.getConnectionManager().shutdown();
-
-
-        }catch (Exception ex){
-            logger.error("error while registering instance from {}", data, ex);
+        HttpClient httpClient = HttpClientBuilder.create().build();
+        HttpPost postRequest = new HttpPost(rebuiltUrl);
+        StringEntity input = new StringEntity(new ObjectMapper().writeValueAsString(data));
+        input.setContentType("application/json");
+        postRequest.setEntity(input);
+        HttpResponse response = httpClient.execute(postRequest);
+        if (response.getStatusLine().getStatusCode() != 201 && response.getStatusLine().getStatusCode() != 200) {
+            throw new RuntimeException("Failed : HTTP error code : "
+                    + response.getStatusLine().getStatusCode());
         }
+
+        BufferedReader br = new BufferedReader(
+                new InputStreamReader((response.getEntity().getContent())));
+
+
+        String e = null;
+        String fullResp = "";
+        while ((e = br.readLine()) != null) {
+            fullResp += e;
+        }
+
+        logger.info("returned reg data {}", fullResp);
+
+        httpClient.getConnectionManager().shutdown();
     }
 
 }
