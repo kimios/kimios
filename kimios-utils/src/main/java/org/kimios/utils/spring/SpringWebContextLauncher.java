@@ -44,7 +44,7 @@ public class SpringWebContextLauncher
         if (instance == null) {
             instance = new SpringWebContextLauncher();
         }
-        
+
         ConfigurableApplicationContext springContext =
                 (ConfigurableApplicationContext) WebApplicationContextUtils.getWebApplicationContext(ctx);
 

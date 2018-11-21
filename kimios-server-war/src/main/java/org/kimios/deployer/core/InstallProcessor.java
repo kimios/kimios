@@ -15,7 +15,6 @@
  */
 package org.kimios.deployer.core;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.output.FileWriterWithEncoding;
 import org.apache.commons.lang.StringUtils;
 import org.kimios.deployer.web.DeploymentManager;
@@ -25,11 +24,11 @@ import org.kimios.utils.spring.KimiosWebApplicationContext;
 import org.kimios.utils.spring.SpringWebContextLauncher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.context.WebApplicationContext;
 
 import javax.servlet.ServletContext;
 import java.io.*;
 import java.net.URL;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Connection;
@@ -225,62 +224,24 @@ public class InstallProcessor {
                 String path = url.getPath();
                 if (path.matches("^.*kimios-home.*\\.jar.*$")) {
                     // copy content into file
-                    Files.copy(url.openStream(), Paths.get(configLocation));
+                    try {
+                        Files.copy(url.openStream(), Paths.get(configLocation));
+                    } catch (FileAlreadyExistsException ex){
+                        log.warn("ctx-kimios.xml file already exists");
+                    }
                     break;
                 }
             }
         } catch (IOException e) {
-            log.error("error while genreeatin conf", e);
-            throw new RuntimeException("Spring conf 'ctx-kimios.xml' have not been found");
+            log.error("error while generating conf", e);
+            throw new RuntimeException("error while handling ctx-kimios.xml...");
         }
     }
 
     public void loadSpringContext(ServletContext ctx) {
-        //ctx.removeAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
         SpringWebContextLauncher.launchApp(ctx, DeploymentManager.getContextLoader());
         DeploymentManager.endInstall(DeploymentManager.getContextLoader(), ctx);
     }
-
-
-    public void tomcatRestart() throws Exception {
-        /*Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                try {
-                    String tomcatBase = System.getProperty("catalina.base");
-                    String path = tomcatBase + "/kimios-restart";
-                    String osType = System.getProperty("os.name").toLowerCase();
-                    if(osType.indexOf("win") >= 0){
-                        path += ".bat";
-                    } else {
-                        path += ".sh";
-                    }
-                    Runtime rn = Runtime.getRuntime();
-                    Process proc = rn.exec(path);
-                    System.out.println("running " + path);
-                    showProcOutput(proc);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });*/
-        Restarter.restartApplication(null);
-    }
-
-    public void reloadConfiguration(String path) throws Exception {
-
-        try {
-            log.info("Reload server configuration...");
-            new File(path).setLastModified(System.currentTimeMillis());
-            log.info("Reload server configuration... OK!");
-
-        } catch (Exception e) {
-            log.error("Reload server configuration... ERROR: " + e.getMessage());
-            e.printStackTrace();
-            throw e;
-        }
-    }
-
 
     public String getKimiosHome() throws Exception {
         String kimiosHome = System.getProperty("kimios.home");
@@ -288,37 +249,5 @@ public class InstallProcessor {
             return kimiosHome;
         } else
             throw new Exception("kimios.home Environment variable isn't available");
-    }
-
-
-    public void copyGeneratedConfiguration(String kimiosApp, String kimiosPropFile) throws Exception {
-        String kimiosHome = "";
-        File kimiosHomeFile = new File(kimiosHome + "/" + kimiosApp + "/conf");
-        boolean createdDir = false;
-        if(!kimiosHomeFile.exists())
-            createdDir = kimiosHomeFile.mkdirs();
-        else
-            createdDir = true;
-        //copy file
-        FileUtils.copyFile(new File(kimiosPropFile), new File(kimiosHomeFile, "kimios.properties"));
-        log.info("Copy of " + kimiosPropFile + " to " + kimiosHomeFile.getAbsolutePath() + " done.");
-    }
-
-    private static void showProcOutput(Process proc) throws IOException {
-        BufferedReader stdInput = new BufferedReader(new
-                InputStreamReader(proc.getInputStream()));
-
-        BufferedReader stdError = new BufferedReader(new
-                InputStreamReader(proc.getErrorStream()));
-
-        System.out.println("Here is the standard output of the command:\n");
-        String s = null;
-        while ((s = stdInput.readLine()) != null) {
-            System.out.println(s);
-        }
-
-        System.out.println("Here is the standard error of the command (if any):\n");
-        while ((s = stdError.readLine()) != null) System.out.println(s);
-
     }
 }
