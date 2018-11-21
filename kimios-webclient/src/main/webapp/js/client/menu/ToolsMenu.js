@@ -86,7 +86,8 @@ kimios.menu.ToolsMenu = Ext.extend(Ext.Button, {
                     region: 'center',
                     layout: 'fit',
                     margins: '3 3 3 0',
-                    bodyStyle: 'background-color: transparent;'
+                    bodyStyle: 'background-color: transparent;',
+                    html:'<img src="' + srcContextPath + '/images/logo_kimios_grey.png" >'
                 });
                 window.add(aboutPanel);
                 window.show();
