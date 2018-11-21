@@ -23,10 +23,7 @@ import org.kimios.webservices.exceptions.DMServiceException;
 
 import javax.jws.WebParam;
 import javax.jws.WebService;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import java.util.Date;
 
 /**
@@ -62,6 +59,7 @@ public interface InformationService
 
     @GET @ApiOperation(value="")
     @Path("/register")
+    @Consumes("application/json")
     @Produces("application/json")
     public void register(RegistrationData data) throws DMServiceException;
 
