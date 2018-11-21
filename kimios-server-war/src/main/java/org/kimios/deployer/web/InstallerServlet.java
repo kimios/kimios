@@ -123,7 +123,7 @@ public class InstallerServlet extends HttpServlet {
                     }
 
                     proc.generateServerPropertiesFile(mParam,
-                            proc.getKimiosHome() + "/server/conf/kimios.properties");
+                            proc.getKimiosHome() + "/server/conf/kimios.properties", this.getServletContext());
                     proc.loadSpringContext(this.getServletConfig().getServletContext());
                     //global restart after first init
                     /*proc.reloadConfiguration(

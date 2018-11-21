@@ -52,22 +52,13 @@ public class AppContextLoaderListener extends ContextLoader implements ServletCo
         */
         this.contextLoader = this;
         DeploymentManager.init(this, event.getServletContext());
-        if (DeploymentManager.isKimiosDeployed( event.getServletContext() )) {
-            /*
-               Launch app
-             */
-            log.info("starting Kimios Spring Context");
-            SpringWebContextLauncher.launchApp(event.getServletContext(), this.contextLoader);
-            log.info("Kimios started");
-        } else {
-            /*
-                Load installer context
-             */
-            List<String> urls = generateTomcatServerUrl();
+        SpringWebContextLauncher.launchApp(event.getServletContext(), this.contextLoader);
+        List<String> urls = generateTomcatServerUrl();
+
+        if (!DeploymentManager.isKimiosDeployed( event.getServletContext() )) {
             if(urls.size() > 0){
                 log.info("Kimios isn't deployed. please go to one of: {}", urls);
             }
-
         }
     }
 

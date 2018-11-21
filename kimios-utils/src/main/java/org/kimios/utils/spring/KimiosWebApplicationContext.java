@@ -35,7 +35,7 @@ public class KimiosWebApplicationContext extends XmlWebApplicationContext {
 
     public static String KIMIOS_HOME = "kimios.home";
 
-    private static String KIMIOS_APP_ATTRIBUTE_NAME = "kimios.app.name";
+    public static String KIMIOS_APP_ATTRIBUTE_NAME = "kimios.app.name";
 
     @Override
     protected String[] getDefaultConfigLocations() {
@@ -50,27 +50,15 @@ public class KimiosWebApplicationContext extends XmlWebApplicationContext {
             /*
                 Start Spring loading
              */
-            String configLocation = kimiosHome.getAbsolutePath() + "/conf/ctx-kimios.xml";;
+            String configLocation = kimiosHome.getAbsolutePath() + "/conf/ctx-kimios.xml";
             if (! new File(configLocation).exists()) {
-                try {
-                    // Looking for Spring conf in kimios-home module jar resources
-                    Enumeration<URL> urls = getClass().getClassLoader().getResources(kimiosAppConfDirectory + "/conf/ctx-kimios.xml");
-                    while (urls.hasMoreElements()) {
-                        URL url = urls.nextElement();
-                        String path = url.getPath();
-                        if (path.matches("^.*kimios-home.*\\.jar.*$")) {
-                            // copy content into file
-                            Files.copy(url.openStream(), Paths.get(configLocation));
-                            break;
-                        }
-                    }
-                } catch (IOException e) {
-                    logger.error(e.getMessage());
-                    throw new RuntimeException("Spring conf 'ctx-kimios.xml' have not been found");
-                }
+                logger.info("kimios Spring configuration isn't available");
+                return new String[]{};
+            } else {
+                logger.info("starting Kimios DMS with settings directory {}", kimiosHomeDirectory + "/conf");
+                return new String[]{configLocation};
             }
-            logger.info("starting Kimios DMS with settings directory {}", kimiosHomeDirectory + "/conf");
-            return new String[]{configLocation};
+
 
         }
         throw new RuntimeException("Kimios Home Not found. Please check kimios.home value, and target directory");
