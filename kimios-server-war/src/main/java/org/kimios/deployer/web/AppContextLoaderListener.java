@@ -93,10 +93,10 @@ public class AppContextLoaderListener extends ContextLoader implements ServletCo
             String host = InetAddress.getLocalHost().getHostAddress();
             List<String> items = new ArrayList<String>();
             if(ports.size() == 1)
-                items.add("http://" + host + ":" + ports.get(0));
+                items.add("http://" + host + ":" + ports.get(0) + "/kimios");
 
             if(sslPorts.size() == 1)
-                items.add("https://" + host + ":" + sslPorts.get(0));
+                items.add("https://" + host + ":" + sslPorts.get(0) + "/kimios");
 
 
             return items;
