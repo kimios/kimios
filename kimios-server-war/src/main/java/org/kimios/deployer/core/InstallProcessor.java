@@ -219,7 +219,7 @@ public class InstallProcessor {
             String kimiosHomeDirectory = System.getProperty(KimiosWebApplicationContext.KIMIOS_HOME);
             File kimiosHome = new File(kimiosHomeDirectory + "/" + kimiosAppConfDirectory);
             String configLocation = kimiosHome.getAbsolutePath() + "/conf/ctx-kimios.xml";
-            Enumeration<URL> urls = getClass().getClassLoader().getResources(kimiosAppConfDirectory + "/conf/ctx-kimios.xml");
+            Enumeration<URL> urls = KimiosWebApplicationContext.class.getClassLoader().getResources(kimiosAppConfDirectory + "/conf/ctx-kimios.xml");
             while (urls.hasMoreElements()) {
                 URL url = urls.nextElement();
                 String path = url.getPath();
@@ -230,7 +230,7 @@ public class InstallProcessor {
                 }
             }
         } catch (IOException e) {
-            log.error(e.getMessage());
+            log.error("error while genreeatin conf", e);
             throw new RuntimeException("Spring conf 'ctx-kimios.xml' have not been found");
         }
     }
