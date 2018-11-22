@@ -87,7 +87,14 @@ kimios.menu.ToolsMenu = Ext.extend(Ext.Button, {
                     layout: 'fit',
                     margins: '3 3 3 0',
                     bodyStyle: 'background-color: transparent;',
-                    html:'<img src="' + srcContextPath + '/images/logo_kimios_grey.png" >'
+                    html:'' +
+                        '<div id="powered" style="text-align: center; margin-top: 64px;">' +
+                        '    <img src="' + srcContextPath + '/images/logo_kimios_grey.png" style="width: 100px;" />' +
+                        '    <span style="font-family: arial; font-size: 10px;">Powered by</span><br />' +
+                        '    <img style="padding:3px; height: 30px" src="images/teclib_logo_white_back.png"><br />' +
+                        '    <span style="font-family: arial; font-size: 8px;">Version: '+ mavenProjectVersion + '</span><br />' +
+                        '    <span style="font-family: arial; font-size: 10px; color: white">Build: ' + mavenBuildNumber + '</span>' +
+                        '</div>'
                 });
                 window.add(aboutPanel);
                 window.show();

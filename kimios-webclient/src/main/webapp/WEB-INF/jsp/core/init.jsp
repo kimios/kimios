@@ -1,6 +1,7 @@
 <%@ page import="java.util.Properties" %>
 <%@ page import="java.io.FileInputStream" %>
 <%@ page import="org.kimios.utils.configuration.ConfigurationManager" %>
+<%@ page import="org.kimios.utils.version.Version" %>
 <%@page contentType="text/html" %>
 <%@page pageEncoding="UTF-8" %>
 <%--
@@ -30,6 +31,10 @@
     var fullServerUrl = '<%=fullServerUrl%>';
     Ext.BLANK_IMAGE_URL = '<%=request.getContextPath()%>/css/ext/images/default/s.gif';
     var contextPath = '<%=request.getContextPath()%>/Main';
+    var mavenBuildNumber = '<%=Version.MAVEN_BUILD_NUMBER%>';
+    var kimiosDistrib = '<%=Version.KIMIOS_DISTRIBUTION%>';
+    var kimiosVersion = '<%=Version.KIMIOS_VERSION%>';
+    var mavenProjectVersion = '<%=Version.MAVEN_PROJECT_VERSION%>';
     var appNameCtx = '<%=request.getContextPath().length() > 1 ? request.getContextPath().substring(1) : ""%>';
     function getLoginUrl() {
         return contextPath + '?servlet=Security&action=login';
