@@ -72,7 +72,7 @@ kimios.menu.ToolsMenu = Ext.extend(Ext.Button, {
             handler: function () {
                 var window = new Ext.Window({
                     modal: true,
-                    title: kimios.lang('About'),
+                    title: kimios.lang('AboutKimios'),
                     iconCls: 'about',
                     closable: true,
                     maximizable: true,
