@@ -34,7 +34,7 @@ public class Registration {
 
     private static Logger logger = LoggerFactory.getLogger(Registration.class);
 
-    private static final String SERVICE_URL = "http://registration.kimios.com/cxf/rest/registration/registerUser";
+    private static final String SERVICE_URL = "http://registration.kimios.com/services/registration/registerUser";
 
     public static void sendRegistrationRequest(RegistrationData data) throws Exception {
         String rebuiltUrl = SERVICE_URL;
