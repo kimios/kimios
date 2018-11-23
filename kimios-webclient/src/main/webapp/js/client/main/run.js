@@ -49,7 +49,7 @@ Ext.onReady(function () {
                                     title: 'Registration',
                                     layout: 'fit',
                                     width: 500,
-                                    height: 300,
+                                    height: 200,
                                     modal: true,
                                     items: [
                                         new kimios.FormPanel({
@@ -77,10 +77,11 @@ Ext.onReady(function () {
                                                     ]
                                                 },
                                                 {
-                                                    title: kimios.lang('Address'),
+                                                    title: kimios.lang('More'),
                                                     xtype: 'fieldset',
                                                     checkboxToggle: true,
                                                     collapsed: true,
+                                                    previousHeight: 0,
                                                     items: [
                                                         {
                                                             xtype: 'textfield',
@@ -145,7 +146,26 @@ Ext.onReady(function () {
                                                             anchor: '100%',
                                                             height: 40
                                                         }
-                                                    ]
+                                                    ],
+                                                    listeners: {
+                                                        scope: this,
+                                                        beforeexpand: function (panel) {
+                                                            panel.previousHeight = panel.getHeight();
+                                                        },
+                                                        expand: function (panel) {
+                                                            Ext.getCmp('registrationWindowId').setHeight(Ext.getCmp('registrationWindowId').getHeight()
+                                                                + panel.getHeight()
+                                                                - panel.previousHeight);
+                                                        },
+                                                        beforecollapse: function (panel) {
+                                                            panel.previousHeight = panel.getHeight();
+                                                        },
+                                                        collapse: function (panel) {
+                                                            Ext.getCmp('registrationWindowId').setHeight(Ext.getCmp('registrationWindowId').getHeight()
+                                                                + panel.getHeight()
+                                                                - panel.previousHeight);
+                                                        },
+                                                    }
                                                 }
                                             ],
                                             buttons: [
