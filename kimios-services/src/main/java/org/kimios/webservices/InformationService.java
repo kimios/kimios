@@ -24,6 +24,7 @@ import org.kimios.webservices.exceptions.DMServiceException;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import java.util.Date;
 
 /**
@@ -57,10 +58,10 @@ public interface InformationService
     @Produces("application/json")
     public String getTelemetryUUID() throws DMServiceException;
 
-    @GET @ApiOperation(value="")
+    @POST @ApiOperation(value="")
     @Path("/register")
-    @Consumes("application/json")
-    @Produces("application/json")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public void register(RegistrationData data) throws DMServiceException;
 
     @GET @ApiOperation(value="")
