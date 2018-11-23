@@ -47,9 +47,9 @@ Ext.onReady(function () {
                                 new Ext.Window({
                                     id: 'registrationWindowId',
                                     title: 'Registration',
-                                    layout: 'fit',
+                                    //layout: 'fit',
                                     width: 500,
-                                    height: 200,
+                                    height: 230,
                                     modal: true,
                                     items: [
                                         new kimios.FormPanel({
