@@ -163,7 +163,7 @@
     <jaxrs:client threadSafe="true" id="informationService" serviceClass="org.kimios.webservices.InformationService"
                   address="${server.url}${service.context}/rest/">
         <jaxrs:providers>
-            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
+            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider" />
             <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
         </jaxrs:providers>
         <jaxrs:headers>
