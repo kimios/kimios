@@ -67,6 +67,13 @@
          <property name="eventHandlerManager" ref="eventHandlerManager" />
      </bean>
 
+    <reference id="systemService" interface="org.apache.karaf.system.SystemService" />
+    <bean id="kimiosSystemService"
+          class="org.kimios.kernel.system.service.impl.KarafSystemService">
+        <argument ref="systemService" />
+    </bean>
+    <service id="kimiosSystemServiceOsgi" ref="kimiosSystemService"
+             interface="org.kimios.kernel.system.service.KimiosSystemService" />
 
     <service id="eventHandlerRegistry" ref="eventHandlerManager"
              interface="org.kimios.kernel.events.IEventHandlerManager"/>

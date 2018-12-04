@@ -1,4 +1,4 @@
-package org.kimios.telemetry.system.service;
+package org.kimios.kernel.system.service;
 
 import javax.management.*;
 import java.io.IOException;
