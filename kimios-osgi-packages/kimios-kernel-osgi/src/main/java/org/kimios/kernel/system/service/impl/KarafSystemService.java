@@ -1,7 +1,7 @@
-package org.kimios.telemetry.system.service.impl;
+package org.kimios.kernel.system.service.impl;
 
 import org.apache.karaf.system.SystemService;
-import org.kimios.telemetry.system.service.KimiosSystemService;
+import org.kimios.kernel.system.service.KimiosSystemService;
 
 public class KarafSystemService implements KimiosSystemService {
 
