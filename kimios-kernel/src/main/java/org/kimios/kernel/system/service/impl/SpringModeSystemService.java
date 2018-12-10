@@ -1,9 +1,8 @@
-package org.kimios.telemetry.system.service.impl;
+package org.kimios.kernel.system.service.impl;
 
-import org.kimios.telemetry.system.service.KimiosSystemService;
+import org.kimios.kernel.system.service.KimiosSystemService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.SpringVersion;
 
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;

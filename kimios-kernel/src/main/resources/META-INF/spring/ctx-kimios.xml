@@ -118,6 +118,12 @@
         <property name="eventHandlerManager" ref="eventHandlerManager" />
     </bean>
 
+    <bean id="kimiosSystemService"
+          name="kimiosSystemService"
+          class="org.kimios.kernel.system.service.impl.SpringModeSystemService">
+
+    </bean>
+
 
     <aop:aspectj-autoproxy />
     <aop:config>
