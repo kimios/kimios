@@ -86,7 +86,7 @@
 <div align="center">
 
     <img alt="Kimios - Open Source Document Management System"
-         src="images/logo.png" style="margin: 10px 0 20px 0; height: 40px;border:none;"/>
+         src="images/logo_kimios_grey.png" style="margin: 10px 0 20px 0; height: 40px;border:none;"/>
 
 </div>
 

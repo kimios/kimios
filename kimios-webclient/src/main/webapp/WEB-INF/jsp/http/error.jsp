@@ -6,7 +6,7 @@
 <body>
 
 <div style="text-align: center; margin-top: 64px;">
-    <img src="images/logo.png" style="border: 0; width: 128px;"/>
+    <img src="images/logo_kimios_grey.png" style="border: 0; width: 128px;"/>
 </div>
 
 <p style="color: #333333; font-family: arial; font-size: 12px; text-align: center;">encountered an error.<br/>Please

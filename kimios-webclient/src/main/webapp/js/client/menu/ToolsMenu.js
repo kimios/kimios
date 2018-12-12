@@ -77,7 +77,7 @@ kimios.menu.ToolsMenu = Ext.extend(Ext.Button, {
                     closable: true,
                     maximizable: true,
                     width: 300,
-                    height: 200,
+                    //height: 250,
                     plain: true,
                     layout: 'fit'
                 });
@@ -86,14 +86,16 @@ kimios.menu.ToolsMenu = Ext.extend(Ext.Button, {
                     region: 'center',
                     layout: 'fit',
                     margins: '3 3 3 0',
-                    bodyStyle: 'background-color: transparent;',
+                    bodyStyle: 'background-color: white; text-align: center;',
+                    width: 210,
+                    height: 235,
                     html:'' +
-                        '<div id="powered" style="text-align: center; margin-top: 64px;">' +
+                        '<div id="powered" style="margin-top: 20px; margin-bottom: 20px; background-color: white;">' +
                         '    <img src="' + srcContextPath + '/images/logo_kimios_grey.png" style="width: 100px;" />' +
-                        '    <span style="font-family: arial; font-size: 10px;">Powered by</span><br />' +
-                        '    <img style="padding:3px; height: 30px" src="images/teclib_logo_white_back.png"><br />' +
-                        '    <span style="font-family: arial; font-size: 8px;">Version: '+ mavenProjectVersion + '</span><br />' +
-                        '    <span style="font-family: arial; font-size: 10px; color: white">Build: ' + mavenBuildNumber + '</span>' +
+                        '    <div style="text-align: center; margin-top: 20px;"><span style="font-family: arial; font-size: 10px;">powered by</span></div>' +
+                        '    <img style="padding:3px; height: 30px" src="images/teclib_logo_white_back.png">' +
+                        '    <div style="text-align: center; margin-top: 20px;"><span style="font-family: arial; font-size: 10px;">Version: '+ mavenProjectVersion + '</span></div>' +
+                        '    <div style="text-align: center;"><span style="font-family: arial; font-size: 9px; ">Build: ' + mavenBuildNumber + '</span></div>' +
                         '</div>'
                 });
                 window.add(aboutPanel);

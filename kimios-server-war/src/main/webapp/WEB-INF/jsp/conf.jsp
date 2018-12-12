@@ -149,7 +149,7 @@
 
     <div class="row">
         <div class="offset-2 col-3">
-            <img style="height: 100px; width: auto" src="<%=request.getContextPath()%>/images/logo.png"
+            <img style="height: 100px; width: auto" src="<%=request.getContextPath()%>/images/logo_kimios_grey.png"
                  alt="Kimios Setup">
         </div>
         <div class="col-3 offset-1">
