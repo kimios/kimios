@@ -101,7 +101,7 @@
     </style>
 </head>
 <body style="background-color: white">
-<div align="center"><br/><br/><img src="images/logo.png" class="logo-login-page"/></div>
+<div align="center"><br/><br/><img src="images/logo_kimios_grey.png" class="logo-login-page"/></div>
 <div id="login-area"></div>
 <div id="powered" style="text-align: center; margin-top: 64px;">
     <span style="font-family: arial; font-size: 10px;">Powered by</span><br />

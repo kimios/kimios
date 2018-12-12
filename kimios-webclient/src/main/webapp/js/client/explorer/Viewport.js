@@ -340,7 +340,7 @@ kimios.explorer.Viewport = Ext.extend(Ext.Viewport, {
                             tbar: new Ext.Toolbar({
                                 style: 'background-image: url(); background-color:#fff;padding:8px;',
                                 height: this.topContainer.height + 1, // ie fix
-                                items: ['<img style="padding:3px; height: 40px" src="' + srcContextPath + '/images/logo.png" border="0" align="absmiddle" alt="kimios" />']
+                                items: ['<img style="padding:3px; height: 40px" src="' + srcContextPath + '/images/logo_kimios_grey.png" border="0" align="absmiddle" alt="kimios" />']
                             })
                         }),
                         new Ext.Panel({

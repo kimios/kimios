@@ -32,8 +32,9 @@ public class RegistrationData {
     private String zipCode;
     private String occupation;
     private String comment;
-    private String shareStats;
     private String telemetryUuid;
+    private Boolean acceptReferenceShare;
+    private Boolean acceptNewsletter;
 
     private Map<String, String> additionalDatas = new HashMap<>();
 
@@ -41,7 +42,8 @@ public class RegistrationData {
     }
 
     public RegistrationData(String firstname, String lastname, String email, String company, String city, String state, String zipCode,
-                            String occupation, String comment, String shareStats,  Map<String, String> additionalDatas) {
+                            String occupation, String comment, String shareStats,  Map<String, String> additionalDatas,
+                            Boolean acceptNewsletter, Boolean acceptReferenceShare) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
@@ -52,7 +54,8 @@ public class RegistrationData {
         this.occupation = occupation;
         this.comment = comment;
         this.additionalDatas = additionalDatas;
-        this.shareStats = shareStats;
+        this.acceptNewsletter = acceptNewsletter;
+        this.acceptReferenceShare = acceptReferenceShare;
     }
 
     public String getFirstname() {
@@ -143,14 +146,6 @@ public class RegistrationData {
         this.number = number;
     }
 
-    public String getShareStats() {
-        return shareStats;
-    }
-
-    public void setShareStats(String shareStats) {
-        this.shareStats = shareStats;
-    }
-
     public String getAddress() {
         return address;
     }
@@ -165,6 +160,8 @@ public class RegistrationData {
                 "firstname='" + firstname + '\'' +
                 ", lastname='" + lastname + '\'' +
                 ", email='" + email + '\'' +
+                ", acceptReferenceShare='" + (acceptReferenceShare ? "yes" : "no") + '\'' +
+                ", acceptNewsletter='" + (acceptNewsletter ? "yes" : "no") + '\'' +
                 ", company='" + company + '\'' +
                 ", number='" + number + '\'' +
                 ", city='" + city + '\'' +
@@ -172,7 +169,6 @@ public class RegistrationData {
                 ", zipCode='" + zipCode + '\'' +
                 ", occupation='" + occupation + '\'' +
                 ", comment='" + comment + '\'' +
-                ", shareStats='" + shareStats + '\'' +
                 ", telemetryUuid='" + telemetryUuid + '\'' +
                 ", additionalDatas=" + additionalDatas +
                 '}';
@@ -186,4 +182,19 @@ public class RegistrationData {
         this.telemetryUuid = telemetryUuid;
     }
 
+    public Boolean getAcceptReferenceShare() {
+        return acceptReferenceShare;
+    }
+
+    public void setAcceptReferenceShare(Boolean acceptReferenceShare) {
+        this.acceptReferenceShare = acceptReferenceShare;
+    }
+
+    public Boolean getAcceptNewsletter() {
+        return acceptNewsletter;
+    }
+
+    public void setAcceptNewsletter(Boolean acceptNewsletter) {
+        this.acceptNewsletter = acceptNewsletter;
+    }
 }
