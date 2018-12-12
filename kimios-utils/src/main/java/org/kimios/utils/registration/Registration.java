@@ -21,8 +21,8 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +46,8 @@ public class Registration {
         HttpResponse response = httpClient.execute(postRequest);
         if (response.getStatusLine().getStatusCode() != 201 && response.getStatusLine().getStatusCode() != 200) {
             throw new RuntimeException("Failed : HTTP error code : "
-                    + response.getStatusLine().getStatusCode());
+                    + response.getStatusLine().getStatusCode()
+                    + EntityUtils.toString(response.getEntity()));
         }
 
         BufferedReader br = new BufferedReader(
