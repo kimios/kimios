@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.kimios</groupId>
     <artifactId>kimios</artifactId>
-    <version>1.1</version>
+    <version>1.2-SNAPSHOT</version>
 
     <!-- GitHub Software Configuration Management
     <scm>
@@ -32,7 +32,7 @@
         <url>https://github.com/kimios/kimios</url>
         <connection>scm:git:ssh://git@gitlab.com/kimios/kimios.git</connection>
         <developerConnection>scm:git:ssh://git@gitlab.com/kimios/kimios.git</developerConnection>
-      <tag>v1.1</tag>
+      <tag>HEAD</tag>
   </scm>
     <!-- internal Git Connexion 
     <scm>

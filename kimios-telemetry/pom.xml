@@ -19,7 +19,7 @@
     <parent>
         <artifactId>kimios</artifactId>
         <groupId>org.kimios</groupId>
-        <version>1.1</version>
+        <version>1.2-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -53,7 +53,7 @@
         <dependency>
             <groupId>org.kimios</groupId>
             <artifactId>kimios-model</artifactId>
-            <version>1.1</version>
+            <version>1.2-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
