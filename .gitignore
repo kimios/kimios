@@ -19,3 +19,4 @@ hs_err_pid*
 kimios-test/**/*.jar
 kimios-bundle-builder/apache-tomcat*.zip
 kimios-utils/src/main/java/org/kimios/utils/version/Version.java
+.credentials
