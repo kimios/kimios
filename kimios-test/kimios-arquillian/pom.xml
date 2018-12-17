@@ -5,12 +5,12 @@
   <parent>
     <groupId>org.kimios</groupId>
     <artifactId>kimios-test</artifactId>
-    <version>1.2-SNAPSHOT</version>
+    <version>1.2</version>
   </parent>
 
   <groupId>org.kimios</groupId>
   <artifactId>kimios-tests</artifactId>
-  <version>1.2-SNAPSHOT</version>
+  <version>1.2</version>
   <modules>
     <module>kimios-osgi-tests</module>
     <!--<module>kimios-tomcat-tests</module>-->
@@ -72,25 +72,25 @@
     <dependency>
       <groupId>org.kimios</groupId>
       <artifactId>kimios-kernel-osgi</artifactId>
-      <version>1.2-SNAPSHOT</version>
+      <version>1.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.kimios</groupId>
       <artifactId>kimios-model</artifactId>
-      <version>1.2-SNAPSHOT</version>
+      <version>1.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.kimios</groupId>
       <artifactId>kimios-exceptions</artifactId>
-      <version>1.2-SNAPSHOT</version>
+      <version>1.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.kimios</groupId>
       <artifactId>kimios-client-api</artifactId>
-      <version>1.2-SNAPSHOT</version>
+      <version>1.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
