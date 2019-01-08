@@ -27,7 +27,12 @@
 
     <artifactId>kimios-aspose-converters</artifactId>
 
-
+    <properties>
+        <aspose-slides.version>16.11.0</aspose-slides.version>
+        <aspose-cells.version>16.11.0</aspose-cells.version>
+        <aspose-words.version>16.11.0</aspose-words.version>
+        <aspose-email.version>16.11.0</aspose-email.version>
+    </properties>
     <repositories>
         <repository>
             <id>aspose</id>
