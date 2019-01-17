@@ -50,13 +50,13 @@ import static org.junit.Assert.*;
 /**
  * Created by tom on 29/02/16.
  */
-@RunWith(Arquillian.class)
+//@RunWith(Arquillian.class)
 public class AsposeDocConverterTest extends KernelTestAbstract {
 
 
     private static Logger logger = LoggerFactory.getLogger(AsposeDocConverterTest.class);
 
-    @ArquillianResource
+    /*@ArquillianResource
     BundleContext context;
 
     private static String FOLDER_TEST_1 = "ASPOSE_TEST";
@@ -149,7 +149,7 @@ public class AsposeDocConverterTest extends KernelTestAbstract {
         }
         /*if (this.folderTest1 != null) {
             this.folderController.deleteFolder(this.adminSession, this.folderTest1.getUid());
-        }*/
+        }
         this.deleteTestUsers();
-    }
+    }*/
 }
