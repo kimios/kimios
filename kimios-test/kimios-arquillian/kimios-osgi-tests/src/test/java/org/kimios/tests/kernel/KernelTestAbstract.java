@@ -1,11 +1,8 @@
 package org.kimios.tests.kernel;
 
 import org.jboss.arquillian.test.api.ArquillianResource;
-<<<<<<< HEAD
 import org.kimios.tests.OsgiKimiosService;
-=======
 import org.kimios.converter.controller.IConverterController;
->>>>>>> [kimios-convert kimios-webclient] Enhance ASPOSE Vendors Converters Support. Test added
 import org.kimios.tests.TestAbstract;
 import org.kimios.client.controller.helpers.StringTools;
 import org.kimios.kernel.controller.*;

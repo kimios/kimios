@@ -53,11 +53,11 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by tom on 29/02/16.
  */
-@RunWith(Arquillian.class)
+//@RunWith(Arquillian.class)
 public class AsposeOdpConverterTest extends KernelTestAbstract {
 
 
-    private static Logger logger = LoggerFactory.getLogger(AsposeOdpConverterTest.class);
+    /*private static Logger logger = LoggerFactory.getLogger(AsposeOdpConverterTest.class);
 
     @ArquillianResource
     BundleContext context;
@@ -148,7 +148,7 @@ public class AsposeOdpConverterTest extends KernelTestAbstract {
         }
         /*if (this.folderTest1 != null) {
             this.folderController.deleteFolder(this.adminSession, this.folderTest1.getUid());
-        }*/
+        }
         this.deleteTestUsers();
-    }
+    }*/
 }

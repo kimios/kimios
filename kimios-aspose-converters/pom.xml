@@ -35,7 +35,15 @@
     </properties>
 
 
-
+    <repositories>
+        <repository>
+            <id>kimios-private</id>
+            <url>https://repository.kimios.com/repository/kimios-private</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+    </repositories>
 
     <dependencies>
         <dependency>
