@@ -41,10 +41,10 @@ public class ConverterServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String serverUrl = ConfigurationManager.getValue(Config.DM_SERVER_URL);
+        String serverUrl =ConfigurationManager.getValue("client",Config.DM_SERVER_URL);
         //Count documentIds
         int countDoc = StringUtils.countMatches(req.getQueryString(), "documentId");
-        String serviceContext = ConfigurationManager.getValue(Config.DM_SERVICE_CONTEXT) + (countDoc == 1 ? SERVICE_URL_SINGLE : SERVICE_URL);
+        String serviceContext =ConfigurationManager.getValue("client",Config.DM_SERVICE_CONTEXT) + (countDoc == 1 ? SERVICE_URL_SINGLE : SERVICE_URL);
         String query = req.getQueryString();
 
         boolean inline = req.getParameter("inline") != null && req.getParameter("inline").equals("true");

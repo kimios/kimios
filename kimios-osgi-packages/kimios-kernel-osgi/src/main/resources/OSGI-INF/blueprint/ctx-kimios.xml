@@ -32,6 +32,7 @@
     </bean>
 
     <bean id="configurationManagerHolder" class="org.kimios.utils.configuration.ConfigurationManagerBuilder">
+        <argument value="server" />
         <property name="holder" ref="propertyConfigurer"/>
     </bean>
 

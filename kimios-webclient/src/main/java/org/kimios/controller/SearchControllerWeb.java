@@ -139,7 +139,7 @@ public class SearchControllerWeb
 
             String fileName = "Kimios_Export_"
                     + new SimpleDateFormat("yyyy_MM_dd_HH_mm").format(new Date()) + ".csv";
-            IOUtils.copyLarge(io, new FileOutputStream(ConfigurationManager.getValue("temp.directory") + "/" + fileName));
+            IOUtils.copyLarge(io, new FileOutputStream(ConfigurationManager.getValue("client","temp.directory") + "/" + fileName));
             String fullResp =
                     "[{\"fileExport\":\"" + fileName + "\"}]";
 
@@ -339,7 +339,7 @@ public class SearchControllerWeb
 
                 String fileName = "Kimios_Export_"
                         + new SimpleDateFormat("yyyy_MM_dd_HH_mm").format(new Date()) + ".csv";
-                IOUtils.copyLarge(io, new FileOutputStream(ConfigurationManager.getValue("temp.directory") + "/" + fileName));
+                IOUtils.copyLarge(io, new FileOutputStream(ConfigurationManager.getValue("client","temp.directory") + "/" + fileName));
                 String fullResp =
                         "[{\"fileExport\":\"" + fileName + "\"}]";
 

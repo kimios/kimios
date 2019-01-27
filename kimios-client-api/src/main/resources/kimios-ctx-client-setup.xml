@@ -30,10 +30,18 @@
         </property>
     </bean>
 
-
-    <bean id="configurationManager" class="org.kimios.utils.configuration.ConfigurationManager">
+    <bean id="configurationManagerBuilder"
+          class="org.kimios.utils.configuration.ConfigurationManagerBuilder">
+        <constructor-arg value="client" />
         <property name="holder" ref="propertyConfiguer" />
     </bean>
+
+    <bean id="configurationManager"
+          class="org.kimios.utils.configuration.ConfigurationManager"
+          factory-bean="configurationManagerBuilder"
+          factory-method="createInstance">
+    </bean>
+
 
 
 </beans>

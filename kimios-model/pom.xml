@@ -222,7 +222,7 @@
                         <Bundle-SymbolicName>kimios-model</Bundle-SymbolicName>
                         <Bundle-Name>${project.name}</Bundle-Name>
                         <Export-Package>
-                            org.kimios.*,org.kimios.kernel.configuration.*
+                            org.kimios.*,org.kimios.utils.*,org.kimios.kernel.configuration.*
                         </Export-Package>
                         <Meta-Persistence>META-INF/persistence.xml</Meta-Persistence>
                         <Kimios-Extension>org.kimios.api.MetaFeed</Kimios-Extension>

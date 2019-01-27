@@ -127,7 +127,7 @@ public class DocumentVersionActionHandler extends Controller
             Document doc = documentController.getDocument(sessionUid, Long.parseLong(parameters.get("uid")));
             DocumentVersion dv = documentVersionController.getLastDocumenVersion(sessionUid, doc.getUid());
             String prefix =
-                    ConfigurationManager.getValue(Config.DM_TMP_FILES_PATH) + "/pdf_" + parameters.get("uid") + "_"
+                   ConfigurationManager.getValue("client",Config.DM_TMP_FILES_PATH) + "/pdf_" + parameters.get("uid") + "_"
                             + dv.getUid() + "_" + dv.getHashMd5() + "_" + dv.getHashSha();
             pdfPath = prefix + ".pdf";
             pdfFile = new File(pdfPath);
@@ -172,8 +172,8 @@ public class DocumentVersionActionHandler extends Controller
             } else
                 resp.setContentType("image/png");
             resp.setContentLength(length);
-            String temporaryFilesPath = ConfigurationManager.getValue(Config.DM_TMP_FILES_PATH);
-            int transferChunkSize = Integer.parseInt(ConfigurationManager.getValue(Config.DM_CHUNK_SIZE));
+            String temporaryFilesPath =ConfigurationManager.getValue("client",Config.DM_TMP_FILES_PATH);
+            int transferChunkSize = Integer.parseInt(ConfigurationManager.getValue("client", Config.DM_CHUNK_SIZE));
             fileTransferController.downloadTemporaryFile(sessionUid,
                     imgPath, resp.getOutputStream(), length);
             resp.getOutputStream().flush();
@@ -206,8 +206,8 @@ public class DocumentVersionActionHandler extends Controller
             } else
                 resp.setContentType("application/octet-stream");
             resp.setContentLength(length);
-            String temporaryFilesPath = ConfigurationManager.getValue(Config.DM_TMP_FILES_PATH);
-            int transferChunkSize = Integer.parseInt(ConfigurationManager.getValue(Config.DM_CHUNK_SIZE));
+            String temporaryFilesPath =ConfigurationManager.getValue("client",Config.DM_TMP_FILES_PATH);
+            int transferChunkSize = Integer.parseInt(ConfigurationManager.getValue("client", Config.DM_CHUNK_SIZE));
             fileTransferController.downloadTemporaryFile(sessionUid,
                     imgPath, resp.getOutputStream(), length);
             resp.getOutputStream().flush();

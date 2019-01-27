@@ -30,10 +30,10 @@
     request.getSession(false).invalidate();
 
     //check CAS !
-    if(ConfigurationManager.getValue("sso.cas.enabled") != null &&
-            ConfigurationManager.getValue("sso.cas.enabled").equals("true")){
+    if(ConfigurationManager.getValue("client", "sso.cas.enabled") != null &&
+            ConfigurationManager.getValue("client", "sso.cas.enabled").equals("true")){
         // logout
-        String casLogoutUrl = ConfigurationManager.getValue("sso.cas.url") + "/logout";
+        String casLogoutUrl = ConfigurationManager.getValue("client", "sso.cas.url") + "/logout";
         response.sendRedirect(casLogoutUrl);
     } else {
         response.sendRedirect(request.getContextPath() + "/");

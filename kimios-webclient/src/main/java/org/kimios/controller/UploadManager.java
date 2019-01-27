@@ -105,7 +105,7 @@ public class UploadManager extends Controller {
     private String startUploadFile(HttpServletRequest req) throws Exception {
 
         DiskFileItemFactory fp = new DiskFileItemFactory();
-        fp.setRepository(new File(ConfigurationManager.getValue(Config.DM_TMP_FILES_PATH)));
+        fp.setRepository(new File(ConfigurationManager.getValue("client", Config.DM_TMP_FILES_PATH)));
         ServletFileUpload sfu = new ServletFileUpload(fp);
         QProgressListener pp = new QProgressListener(uploads);
         sfu.setProgressListener(pp);
@@ -168,7 +168,7 @@ public class UploadManager extends Controller {
 
                 mimeType = st.getContentType();
                 extension = st.getName().substring(st.getName().lastIndexOf('.') + 1);
-                int transferChunkSize = Integer.parseInt(ConfigurationManager.getValue(Config.DM_CHUNK_SIZE));
+                int transferChunkSize = Integer.parseInt(ConfigurationManager.getValue("client", Config.DM_CHUNK_SIZE));
 
                 if (action.equalsIgnoreCase("AddDocumentWithProperties")) {
 

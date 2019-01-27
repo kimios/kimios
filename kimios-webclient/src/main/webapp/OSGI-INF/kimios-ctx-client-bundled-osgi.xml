@@ -33,12 +33,14 @@
 
 
     <bean id="configurationManagerHolder" class="org.kimios.utils.configuration.ConfigurationManagerBuilder">
+        <argument value="client" />
         <property name="holder" ref="propertyConfigurer" />
     </bean>
 
     <bean id="configurationManager" class="org.kimios.utils.configuration.ConfigurationManager"
           factory-ref="configurationManagerHolder"
-          factory-method="createInstance" depends-on="kimiosClientCfg">
+          factory-method="createInstance"
+          depends-on="kimiosClientCfg">
     </bean>
 
     <!--

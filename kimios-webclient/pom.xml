@@ -296,6 +296,10 @@
                             com.fasterxml.jackson.annotation,
                             com.fasterxml.jackson.databind.annotation,
                             com.fasterxml.jackson.core.base,
+                            org.kimios.utils.configuration,
+                            org.kimios.utils.spring,
+                            org.kimios.utils.registration,
+                            org.kimios.utils.version,
                             org.w3c.dom,
                             org.w3c.dom.xpath,
                             org.w3c.dom.views,
@@ -320,7 +324,7 @@
                         </goals>
                         <phase>package</phase>
                         <configuration>
-                            <webXml>src/standard/web.xml</webXml>
+                            <webXml>src/client-profile/standard/web.xml</webXml>
                             <!--
                                       Exclude JCL and LOG4J since all logging should go through SLF4J.
                                       Note that we're excluding log4j-<version>.jar but keeping
@@ -350,13 +354,14 @@
                         <configuration>
                             <classifier>osgi</classifier>
                             <webappDirectory>${project.build.directory}/${project.build.finalName}-osgi</webappDirectory>
-                            <webXml>src/osgi/WEB-INF/web.xml</webXml>
+                            <webXml>src/client-profile/osgi/WEB-INF/web.xml</webXml>
                             <packagingExcludes>
                                 WEB-INF/lib/commons-logging-*.jar,
                                 WEB-INF/lib/cxf-*.jar,
                                 WEB-INF/lib/slf4j*.jar,
                                 WEB-INF/lib/logback*.jar,
                                 WEB-INF/lib/aspectj*.jar,
+                                WEB-INF/lib/kimios-utils*.jar,
                                 %regex[WEB-INF/lib/log4j-(?!over-slf4j).*.jar]
                             </packagingExcludes>
 
