@@ -21,7 +21,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ApplicationContext;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 public class ConfigurationManager  {
@@ -30,43 +32,60 @@ public class ConfigurationManager  {
 
     private ConfigurationHolder holder;
 
-    public ConfigurationHolder getHolder() {
-        return holder;
+    private static Map<String, ConfigurationManager> instances;
+
+    static {
+        synchronized (ConfigurationManager.class){
+            instances = new HashMap<>();
+        }
     }
 
-    public void setHolder(ConfigurationHolder holder) {
+    protected ConfigurationManager(String context, ConfigurationHolder holder){
+        if(context == null ||context.trim().length() == 0){
+            context = "server";
+        }
+        log.info("creating with context {}", context);
         this.holder = holder;
+        synchronized (this){
+            instances.put(context, this);
+        }
     }
 
-    private static ConfigurationManager instance;
-
-    protected ConfigurationManager() {
-        instance = this;
-        log.info("Creating Kimios Configuration Manager");
+    public static String getValue(String key) throws ConfigException{
+        return getValue("server", key);
     }
 
-    public static String getValue(String key) throws ConfigException {
-
-        if (instance.holder.exists(key)) {
-            return instance.holder.getStringValue(key);
+    public static String getValue(String context, String key) throws ConfigException {
+        if (instances.get(context).holder != null && instances.get(context).holder.exists(key)) {
+            return instances.get(context).holder.getStringValue(key);
         } else {
-            log.warn("[Kimios Configuration] Key " + key + " cannot be found in global configuration");
+            log.warn("[Kimios Configuration] Key {} cannot be found in context {} configuration", key, context);
             return null;
         }
     }
 
     public static List<String> getListValue(String key) throws ConfigException {
-        log.info("Instance " + instance + ". " + (instance != null ? instance.holder : " No instance"));
-        if (instance != null && instance.holder != null && instance.holder.exists(key)) {
-            return instance.holder.getValues(key);
+        return getListValue("server", key);
+    }
+
+    public static List<String> getListValue(String context, String key) throws ConfigException {
+        ConfigurationHolder cHolder = instances.get(context) != null ? instances.get(context).holder : null;
+        if (cHolder != null && cHolder.exists(key)) {
+            return cHolder.getValues(key);
         } else {
-            log.warn("[Kimios  Configuration Key " + key + " cannot be found in global configuration");
+            log.warn("[Kimios Configuration] Key {} cannot be found in context {} configuration", key, context);
             return null;
         }
     }
 
+
+
     public static Properties allValues() {
-        return instance.holder.getAllProperties();
+        return allValues("server");
+    }
+
+    public static Properties allValues(String context) {
+        return instances.get(context).holder.getAllProperties();
     }
 }
 

@@ -84,12 +84,12 @@ public class CustomCasAuthenticationFilter extends AbstractCasFilter {
     private boolean casAuthEnabled = false;
 
     public void init() {
-        if (ConfigurationManager.getValue("sso.cas.enabled") != null
-                && ConfigurationManager.getValue("sso.cas.enabled").equals("true")) {
+        if (ConfigurationManager.getValue("client","sso.cas.enabled") != null
+                && ConfigurationManager.getValue("client","sso.cas.enabled").equals("true")) {
 
             casAuthEnabled = true;
-            String kimiosServiceUrl = ConfigurationManager.getValue("sso.cas.service.name");
-            String casUrl = ConfigurationManager.getValue("sso.cas.url");
+            String kimiosServiceUrl = ConfigurationManager.getValue("client","sso.cas.service.name");
+            String casUrl = ConfigurationManager.getValue("client","sso.cas.url");
             setService(kimiosServiceUrl);
             setCasServerLoginUrl(casUrl);
         }

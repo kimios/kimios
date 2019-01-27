@@ -54,7 +54,7 @@
     <%
 
         //load prop from context
-        Properties properties = ConfigurationManager.allValues();
+        Properties properties = ConfigurationManager.allValues("client");
         for(String p: properties.stringPropertyNames()){
             String pName = p.replaceAll("\\.", "");
             %>

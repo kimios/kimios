@@ -129,7 +129,7 @@ public class CoreListener implements ServletContextListener {
                 event.getServletContext().setAttribute("kimiosAppCtxBeanProvider", appContextProvider);
                 Controller.init(appContextProvider);
                 new FileCleaner().cleanTemporaryFiles(new File(
-                        ConfigurationManager.getValue(Config.DM_TMP_FILES_PATH).toString()));
+                       ConfigurationManager.getValue("client",Config.DM_TMP_FILES_PATH).toString()));
             } else {
                 log.error("Kimios Web Client Setting not found. Application unavailable");
             }

@@ -173,9 +173,9 @@ public class MainController extends HttpServlet {
                 response.setContentType("text/csv");
                 String fileName = request.getParameter("__f");
                 response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
-                response.setHeader("Content-Length", String.valueOf(new File(ConfigurationManager.getValue("temp.directory") + "/" +
+                response.setHeader("Content-Length", String.valueOf(new File(ConfigurationManager.getValue("client","temp.directory") + "/" +
                         fileName).length()));
-                IOUtils.copyLarge(new FileInputStream(ConfigurationManager.getValue("temp.directory") + "/" +
+                IOUtils.copyLarge(new FileInputStream(ConfigurationManager.getValue("client","temp.directory") + "/" +
                     fileName), response.getOutputStream());
                 response.flushBuffer();
                 return;

@@ -49,7 +49,7 @@ public class PdfToImage
             int num = pdffile.getNumPages();
 
             for (int i = 1; i <= num; i++) {
-                String path = ConfigurationManager.getValue(Config.DM_TMP_FILES_PATH)
+                String path =ConfigurationManager.getValue("client",Config.DM_TMP_FILES_PATH)
                         + "/pdf_" + uid + "_" + versionUid + "_" + hashMd5 + "_" + hashSha + "_" + i + ".png";
                 if (!new File(path).exists()) {
                     PDFPage page = pdffile.getPage(i);

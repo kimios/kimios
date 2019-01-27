@@ -40,7 +40,9 @@ public class Registration {
         String rebuiltUrl = SERVICE_URL;
         HttpClient httpClient = HttpClientBuilder.create().build();
         HttpPost postRequest = new HttpPost(rebuiltUrl);
-        StringEntity input = new StringEntity(new ObjectMapper().writeValueAsString(data));
+        String registrationRequest = new ObjectMapper().writeValueAsString(data);
+        StringEntity input = new StringEntity(registrationRequest, "UTF-8");
+        logger.debug("sending registration request {}", registrationRequest);
         input.setContentType("application/json");
         postRequest.setEntity(input);
         HttpResponse response = httpClient.execute(postRequest);
@@ -60,7 +62,7 @@ public class Registration {
             fullResp += e;
         }
 
-        logger.info("returned reg data {}", fullResp);
+        logger.debug("returned reg data {}", fullResp);
 
         httpClient.getConnectionManager().shutdown();
     }

@@ -47,7 +47,7 @@ public class OsgiCoreListener implements ServletContextListener {
             InternationalizationManager.getInstance("EN");
             CoreInitializer.contextInitialized(event.getServletContext().getRealPath("/"));
             new FileCleaner().cleanTemporaryFiles(new File(
-                    ConfigurationManager.getValue(Config.DM_TMP_FILES_PATH).toString()));
+                   ConfigurationManager.getValue("client",Config.DM_TMP_FILES_PATH).toString()));
         } catch (Exception ex) {
             log.error("error while checking osgi mode, fallback to default", ex);
         }

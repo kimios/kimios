@@ -38,14 +38,18 @@ public class ConfigurationManagerBuilder {
         this.holder = holder;
     }
 
+    private String contextName;
+
+    public ConfigurationManagerBuilder(String context){
+        this.contextName = context;
+    }
+
     public synchronized ConfigurationManager createInstance() {
-        ConfigurationManager cfg = new ConfigurationManager();
-        cfg.setHolder(holder);
-        log.debug("While building Configuration Manager: " + getHolder() + " ==> " + holder);
+        ConfigurationManager cfg = new ConfigurationManager(contextName, holder);
+        log.debug("While building Configuration Manager: " + contextName + " => " + getHolder() + " ==> " + holder);
         /*
             Set properties as system properties to handle custom SolR properties
          */
-
         Properties properties = holder.getAllProperties();
         log.debug("loaded properties: {} (keyset: {})", properties.size(), properties.keySet().size());
         for (Object o : properties.keySet()) {
