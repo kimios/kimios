@@ -35,25 +35,25 @@
         <dependency>
             <groupId>org.kimios</groupId>
             <artifactId>kimios-interfaces</artifactId>
-            <version>1.3-SNAPSHOT</version>
+            <version>1.2.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.kimios</groupId>
             <artifactId>kimios-utils</artifactId>
-            <version>1.3-SNAPSHOT</version>
+            <version>1.2.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.kimios</groupId>
             <artifactId>kimios-model</artifactId>
-            <version>1.3-SNAPSHOT</version>
+            <version>1.2.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.kimios</groupId>
             <artifactId>kimios-kernel</artifactId>
-            <version>1.3-SNAPSHOT</version>
+            <version>1.2.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

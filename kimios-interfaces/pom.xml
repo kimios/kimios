@@ -29,7 +29,7 @@
         <dependency>
             <groupId>org.kimios</groupId>
             <artifactId>kimios-exceptions</artifactId>
-            <version>1.3-SNAPSHOT</version>
+            <version>1.2.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
