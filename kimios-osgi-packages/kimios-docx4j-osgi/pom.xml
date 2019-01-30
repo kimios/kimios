@@ -19,11 +19,11 @@
     <parent>
         <artifactId>kimios-osgi-packages</artifactId>
         <groupId>org.kimios</groupId>
-        <version>1.2.1-SNAPSHOT</version>
+        <version>1.2.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>kimios-docx4j-osgi</artifactId>
-    <version>1.2.1-SNAPSHOT</version>
+    <version>1.2.1</version>
     <packaging>bundle</packaging>
 
     <dependencies>
