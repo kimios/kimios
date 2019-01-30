@@ -240,7 +240,7 @@
                     <url>https://repository.kimios.com/repository/kimios-private</url>
                 </snapshotRepository>
                 <repository>
-                    <id>kimios-releases</id>
+                    <id>kimios-private</id>
                     <url>https://repository.kimios.com/repository/kimios-private</url>
                 </repository>
             </distributionManagement>
