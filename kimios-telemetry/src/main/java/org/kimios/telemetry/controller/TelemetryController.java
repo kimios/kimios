@@ -33,6 +33,7 @@ import java.lang.management.ManagementFactory;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.util.HashMap;
 import java.util.List;
@@ -252,11 +253,29 @@ public class TelemetryController extends AKimiosController implements ITelemetry
     }
 
     public HashMap<String, String> retrieveDatabaseInfo() throws Exception {
-        DatabaseMetaData metaData = this.databaseConnection.getConnection().getMetaData();
+        DatabaseMetaData metaData = null;
+        Connection cnx = null;
 
+        try {
+            cnx = this.databaseConnection.getConnection();
+            metaData = cnx.getMetaData();
+        }
+        catch (Exception ex){
+            logger.error("error while loading database metadata", ex);
+        }
+        finally {
+            if(cnx != null){
+                cnx.close();
+            }
+        }
         HashMap<String, String> data = new HashMap<>();
-        data.put("databaseProductName", metaData.getDatabaseProductName());
-        data.put("databaseProductVersion", metaData.getDatabaseProductVersion());
+
+        if(metaData != null) {
+            data.put("databaseProductName", metaData.getDatabaseProductName());
+            data.put("databaseProductVersion", metaData.getDatabaseProductVersion());
+        } else {
+            logger.warn("unable to get database medata");
+        }
 
         return data;
     }
