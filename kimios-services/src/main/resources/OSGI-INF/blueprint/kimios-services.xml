@@ -725,6 +725,11 @@
             <bean id="exceptionMapper" class="org.kimios.services.utils.JaxRSExceptionMapper"/>
             <bean id="corsFilter" class="org.apache.cxf.rs.security.cors.CrossOriginResourceSharingFilter" />
         </jaxrs:providers>
+        <jaxrs:features>
+            <bean id="swagger2Feature" class="org.apache.cxf.jaxrs.swagger.Swagger2Feature">
+                <property name="basePath" value="/services/rest/"/>
+            </bean>
+        </jaxrs:features>
         <jaxrs:serviceBeans>
             <ref component-id="securityServiceBean"/>
             <ref component-id="workspaceServiceBean"/>
