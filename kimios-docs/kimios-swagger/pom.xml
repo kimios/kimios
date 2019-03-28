@@ -43,9 +43,32 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core</artifactId>
+            <version>${camel.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.kimios</groupId>
             <artifactId>kimios-services</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-model</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-interfaces</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-model</artifactId>
+            <version>${project.version}</version>
+            <classifier>pojos</classifier>
         </dependency>
         <dependency>
             <groupId>org.kimios</groupId>
@@ -80,6 +103,11 @@
         </dependency>
         <dependency>
             <groupId>org.kimios</groupId>
+            <artifactId>kimios-utils</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
             <artifactId>kimios-convert-service</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -92,11 +120,11 @@
 
 
     <build>
-        <!--<plugins>
+        <plugins>
             <plugin>
                 <groupId>com.github.kongchen</groupId>
                 <artifactId>swagger-maven-plugin</artifactId>
-                <version>3.1.4</version>
+                <version>3.1.8</version>
                 <configuration>
                     <apiSources>
                         <apiSource>
@@ -125,9 +153,18 @@
                             <locations>
                                 <location>org.kimios.webservices</location>
                             </locations>
-                            <swaggerDirectory>generated/apidocs</swaggerDirectory>
+                            <operationIdFormat>{{methodName}}</operationIdFormat>
+                            <swaggerDirectory>${project.basedir}/generated/apidocs</swaggerDirectory>
+                            <outputPath>${project.basedir}/generated/document.html</outputPath>
+                            <swaggerDirectory>${project.basedir}/generated/swagger-ui</swaggerDirectory>
                             <basePath>/rest/</basePath>
                             <attachSwaggerArtifact>true</attachSwaggerArtifact>
+                            <outputFormats>json,yaml</outputFormats>
+                            <typesToSkip>
+                                <typeToSkip>org.apache.camel.CamelContext</typeToSkip>
+                                <typeToSkip>org.apache.camel.CamelContextAware</typeToSkip>
+                                <typeToSkip>org.kimios.services.utils.Tool</typeToSkip>
+                            </typesToSkip>
                         </apiSource>
                     </apiSources>
                 </configuration>
@@ -140,7 +177,7 @@
                     </execution>
                 </executions>
             </plugin>
-        </plugins>-->
+        </plugins>
     </build>
 
 

@@ -206,6 +206,7 @@
                             com.fasterxml.jackson.core.type,
                             com.fasterxml.jackson.annotation,
                             com.fasterxml.jackson.jaxrs.json,
+                            org.kimios.services.utils,
                             org.kimios.kernel.*,
                             org.kimios.api.*,
                             org.kimios.kernel.ws.pojo,

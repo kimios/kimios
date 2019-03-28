@@ -36,7 +36,7 @@
     <reference id="kimiosCamelContext" interface="org.apache.camel.CamelContext" filter="(camel.context.name=kimios)" />
 
 
-    <bean id="kimiosBusManager" class="org.kimios.webservices.utils.KimiosBusServiceManager" />
+    <bean id="kimiosBusManager" class="org.kimios.services.utils.KimiosBusServiceManager" />
     <bean id="loggingFeature" class="org.apache.cxf.feature.LoggingFeature" />
     <cxf:bus id="kimios-bus">
         <cxf:features>
@@ -90,7 +90,7 @@
 
     <!-- Service beans -->
 
-    <bean id="serviceHelper" class="org.kimios.webservices.ServiceHelper">
+    <bean id="serviceHelper" class="org.kimios.services.utils.ServiceHelper">
         <property name="sessionManager" ref="sessionManager"/>
     </bean>
 
@@ -124,7 +124,7 @@
 
 
 
-    <bean id="securityServiceBean" class="org.kimios.webservices.impl.SecurityServiceImpl">
+    <bean id="securityServiceBean" class="org.kimios.services.impl.SecurityServiceImpl">
         <property name="helper" ref="serviceHelper"/>
         <property name="securityController" ref="securityController"/>
         <property name="documentController" ref="documentController"/>
@@ -147,7 +147,7 @@
     </bean>
 
 
-    <bean id="administrationServiceBean" class="org.kimios.webservices.impl.AdministrationServiceImpl">
+    <bean id="administrationServiceBean" class="org.kimios.services.impl.AdministrationServiceImpl">
         <argument ref="kimiosBusManager" />
 
         <property name="helper" ref="serviceHelper"/>
@@ -171,7 +171,7 @@
     </bean>
     <!-- Service endpoint -->
     <jaxws:endpoint id="administrationServiceWs"
-                    implementorClass="org.kimios.webservices.impl.AdministrationServiceImpl"
+                    implementorClass="org.kimios.services.impl.AdministrationServiceImpl"
                     implementor="#administrationServiceBean"
                     address="/AdministrationService"
                     endpointName="AdministrationService"
@@ -185,7 +185,7 @@
     </jaxws:endpoint>
 
     <jaxws:endpoint id="studioServiceWs"
-                    implementorClass="org.kimios.webservices.impl.StudioServiceImpl"
+                    implementorClass="org.kimios.services.impl.StudioServiceImpl"
                     implementor="#studioServiceBean"
                     address="/StudioService"
                     endpointName="StudioService"
@@ -200,7 +200,7 @@
     </jaxws:endpoint>
 
     <jaxws:endpoint id="documentServiceWs"
-                    implementorClass="org.kimios.webservices.impl.DocumentServiceImpl"
+                    implementorClass="org.kimios.services.impl.DocumentServiceImpl"
                     implementor="#documentServiceBean"
                     address="/DocumentService"
                     endpointName="DocumentService"
@@ -215,7 +215,7 @@
     </jaxws:endpoint>
 
     <jaxws:endpoint id="documentVersionServiceWs"
-                    implementorClass="org.kimios.webservices.impl.DocumentVersionServiceImpl"
+                    implementorClass="org.kimios.services.impl.DocumentVersionServiceImpl"
                     implementor="#documentVersionServiceBean"
                     address="/DocumentVersionService"
                     endpointName="DocumentVersionService"
@@ -229,7 +229,7 @@
     </jaxws:endpoint>
 
     <jaxws:endpoint id="folderServiceWs"
-                    implementorClass="org.kimios.webservices.impl.FolderServiceImpl"
+                    implementorClass="org.kimios.services.impl.FolderServiceImpl"
                     implementor="#folderServiceBean"
                     address="/FolderService"
                     endpointName="FolderService"
@@ -243,7 +243,7 @@
     </jaxws:endpoint>
 
     <jaxws:endpoint id="workspaceServiceWs"
-                    implementorClass="org.kimios.webservices.impl.WorkspaceServiceImpl"
+                    implementorClass="org.kimios.services.impl.WorkspaceServiceImpl"
                     implementor="#workspaceServiceBean"
                     address="/WorkspaceService"
                     endpointName="WorkspaceService"
@@ -257,7 +257,7 @@
     </jaxws:endpoint>
 
     <jaxws:endpoint id="searchServiceWs"
-                    implementorClass="org.kimios.webservices.impl.SearchServiceImpl"
+                    implementorClass="org.kimios.services.impl.SearchServiceImpl"
                     implementor="#searchServiceBean"
                     address="/SearchService"
                     endpointName="SearchService"
@@ -271,7 +271,7 @@
     </jaxws:endpoint>
 
     <jaxws:endpoint id="notificationServiceWs"
-                    implementorClass="org.kimios.webservices.impl.NotificationServiceImpl"
+                    implementorClass="org.kimios.services.impl.NotificationServiceImpl"
                     implementor="#notificationServiceBean"
                     address="/NotificationService"
                     endpointName="NotificationService"
@@ -285,7 +285,7 @@
     </jaxws:endpoint>
 
     <jaxws:endpoint id="logServiceWs"
-                    implementorClass="org.kimios.webservices.impl.LogServiceImpl"
+                    implementorClass="org.kimios.services.impl.LogServiceImpl"
                     implementor="#logServiceBean"
                     address="/LogService"
                     endpointName="LogService"
@@ -299,7 +299,7 @@
     </jaxws:endpoint>
 
     <jaxws:endpoint id="informationServiceWs"
-                    implementorClass="org.kimios.webservices.impl.InformationServiceImpl"
+                    implementorClass="org.kimios.services.impl.InformationServiceImpl"
                     implementor="#informationServiceBean"
                     address="/InformationService"
                     endpointName="InformationService"
@@ -313,7 +313,7 @@
     </jaxws:endpoint>
 
     <jaxws:endpoint id="extensionServiceWs"
-                    implementorClass="org.kimios.webservices.impl.ExtensionServiceImpl"
+                    implementorClass="org.kimios.services.impl.ExtensionServiceImpl"
                     implementor="#extensionServiceBean"
                     address="/ExtensionService"
                     endpointName="ExtensionService"
@@ -327,7 +327,7 @@
     </jaxws:endpoint>
 
     <jaxws:endpoint id="ruleServiceWs"
-                    implementorClass="org.kimios.webservices.impl.RuleServiceImpl"
+                    implementorClass="org.kimios.services.impl.RuleServiceImpl"
                     implementor="#ruleServiceBean"
                     address="/RuleService"
                     endpointName="RuleService"
@@ -341,7 +341,7 @@
     </jaxws:endpoint>
 
     <jaxws:endpoint id="reportingServiceWs"
-                    implementorClass="org.kimios.webservices.impl.ReportingServiceImpl"
+                    implementorClass="org.kimios.services.impl.ReportingServiceImpl"
                     implementor="#reportingServiceBean"
                     address="/ReportingService"
                     endpointName="ReportingService"
@@ -355,7 +355,7 @@
     </jaxws:endpoint>
 
     <jaxws:endpoint id="fileTransferServiceWs"
-                    implementorClass="org.kimios.webservices.impl.FileTransferServiceImpl"
+                    implementorClass="org.kimios.services.impl.FileTransferServiceImpl"
                     implementor="#fileTransferServiceBean"
                     address="/FileTransferService"
                     endpointName="FileTransferService"
@@ -370,7 +370,7 @@
 
     <!-- Service endpoint -->
     <jaxws:endpoint id="securityServiceWs"
-                    implementorClass="org.kimios.webservices.impl.SecurityServiceImpl"
+                    implementorClass="org.kimios.services.impl.SecurityServiceImpl"
                     implementor="#securityServiceBean"
                     address="/SecurityService"
                     endpointName="SecurityService"
@@ -385,7 +385,7 @@
     </jaxws:endpoint>
 
 
-    <bean id="studioServiceBean" class="org.kimios.webservices.impl.StudioServiceImpl">
+    <bean id="studioServiceBean" class="org.kimios.services.impl.StudioServiceImpl">
         <property name="helper" ref="serviceHelper"/>
         <property name="securityController" ref="securityController"/>
         <property name="documentController" ref="documentController"/>
@@ -406,7 +406,7 @@
         <property name="converterController" ref="converterController"/>
     </bean>
 
-    <bean id="documentServiceBean" class="org.kimios.webservices.impl.DocumentServiceImpl" > <property name="helper" ref="serviceHelper"/>
+    <bean id="documentServiceBean" class="org.kimios.services.impl.DocumentServiceImpl" > <property name="helper" ref="serviceHelper"/>
         <property name="securityController" ref="securityController"/>
         <property name="documentController" ref="documentController"/>
         <property name="documentVersionController" ref="documentVersionController"/>
@@ -427,7 +427,7 @@
         <property name="camelContext" ref="kimiosCamelContext" />
     </bean>
 
-    <bean id="documentVersionServiceBean" class="org.kimios.webservices.impl.DocumentVersionServiceImpl">
+    <bean id="documentVersionServiceBean" class="org.kimios.services.impl.DocumentVersionServiceImpl">
         <property name="helper" ref="serviceHelper"/>
         <property name="securityController" ref="securityController"/>
         <property name="documentController" ref="documentController"/>
@@ -448,7 +448,7 @@
         <property name="converterController" ref="converterController"/>
     </bean>
 
-    <bean id="folderServiceBean" class="org.kimios.webservices.impl.FolderServiceImpl">
+    <bean id="folderServiceBean" class="org.kimios.services.impl.FolderServiceImpl">
         <property name="helper" ref="serviceHelper"/>
         <property name="securityController" ref="securityController"/>
         <property name="documentController" ref="documentController"/>
@@ -469,7 +469,7 @@
         <property name="converterController" ref="converterController"/>
     </bean>
 
-    <bean id="workspaceServiceBean" class="org.kimios.webservices.impl.WorkspaceServiceImpl">
+    <bean id="workspaceServiceBean" class="org.kimios.services.impl.WorkspaceServiceImpl">
         <property name="helper" ref="serviceHelper"/>
         <property name="securityController" ref="securityController"/>
         <property name="documentController" ref="documentController"/>
@@ -490,7 +490,7 @@
         <property name="converterController" ref="converterController"/>
     </bean>
 
-    <bean id="searchServiceBean" class="org.kimios.webservices.impl.SearchServiceImpl" >
+    <bean id="searchServiceBean" class="org.kimios.services.impl.SearchServiceImpl" >
         <property name="helper" ref="serviceHelper"/>
         <property name="securityController" ref="securityController"/>
         <property name="documentController" ref="documentController"/>
@@ -512,7 +512,7 @@
         <property name="camelContext" ref="kimiosCamelContext" />
     </bean>
 
-    <bean id="notificationServiceBean" class="org.kimios.webservices.impl.NotificationServiceImpl">
+    <bean id="notificationServiceBean" class="org.kimios.services.impl.NotificationServiceImpl">
         <property name="helper" ref="serviceHelper"/>
         <property name="securityController" ref="securityController"/>
         <property name="documentController" ref="documentController"/>
@@ -533,7 +533,7 @@
         <property name="converterController" ref="converterController"/>
     </bean>
 
-    <bean id="logServiceBean" class="org.kimios.webservices.impl.LogServiceImpl">
+    <bean id="logServiceBean" class="org.kimios.services.impl.LogServiceImpl">
         <property name="helper" ref="serviceHelper"/>
         <property name="securityController" ref="securityController"/>
         <property name="documentController" ref="documentController"/>
@@ -554,7 +554,7 @@
         <property name="converterController" ref="converterController"/>
     </bean>
 
-    <bean id="informationServiceBean" class="org.kimios.webservices.impl.InformationServiceImpl">
+    <bean id="informationServiceBean" class="org.kimios.services.impl.InformationServiceImpl">
         <property name="helper" ref="serviceHelper"/>
         <property name="securityController" ref="securityController"/>
         <property name="documentController" ref="documentController"/>
@@ -575,7 +575,7 @@
         <property name="converterController" ref="converterController"/>
     </bean>
 
-    <bean id="extensionServiceBean" class="org.kimios.webservices.impl.ExtensionServiceImpl">
+    <bean id="extensionServiceBean" class="org.kimios.services.impl.ExtensionServiceImpl">
         <property name="helper" ref="serviceHelper"/>
         <property name="securityController" ref="securityController"/>
         <property name="documentController" ref="documentController"/>
@@ -596,7 +596,7 @@
         <property name="converterController" ref="converterController"/>
     </bean>
 
-    <bean id="ruleServiceBean" class="org.kimios.webservices.impl.RuleServiceImpl">
+    <bean id="ruleServiceBean" class="org.kimios.services.impl.RuleServiceImpl">
         <property name="helper" ref="serviceHelper"/>
         <property name="securityController" ref="securityController"/>
         <property name="documentController" ref="documentController"/>
@@ -617,7 +617,7 @@
         <property name="converterController" ref="converterController"/>
     </bean>
 
-    <bean id="reportingServiceBean" class="org.kimios.webservices.impl.ReportingServiceImpl" >
+    <bean id="reportingServiceBean" class="org.kimios.services.impl.ReportingServiceImpl" >
         <property name="helper" ref="serviceHelper"/>
         <property name="securityController" ref="securityController"/>
         <property name="documentController" ref="documentController"/>
@@ -638,7 +638,7 @@
         <property name="converterController" ref="converterController"/>
     </bean>
 
-    <bean id="fileTransferServiceBean" class="org.kimios.webservices.impl.FileTransferServiceImpl">
+    <bean id="fileTransferServiceBean" class="org.kimios.services.impl.FileTransferServiceImpl">
         <property name="helper" ref="serviceHelper"/>
         <property name="securityController" ref="securityController"/>
         <property name="documentController" ref="documentController"/>
@@ -666,8 +666,8 @@
                   address="/rest/">
         <jaxrs:providers>
             <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
-            <bean class="org.kimios.webservices.DateParamConverter"/>
-            <bean id="exceptionMapper" class="org.kimios.webservices.JaxRSExceptionMapper"/>
+            <bean class="org.kimios.services.utils.DateParamConverter"/>
+            <bean id="exceptionMapper" class="org.kimios.services.utils.JaxRSExceptionMapper"/>
             <bean id="corsFilter" class="org.apache.cxf.rs.security.cors.CrossOriginResourceSharingFilter" />
         </jaxrs:providers>
         <jaxrs:serviceBeans>
@@ -715,8 +715,8 @@
                   address="/rest/">
         <jaxrs:providers>
             <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
-            <bean class="org.kimios.webservices.DateParamConverter"/>
-            <bean id="exceptionMapper" class="org.kimios.webservices.JaxRSExceptionMapper"/>
+            <bean class="org.kimios.services.utils.DateParamConverter"/>
+            <bean id="exceptionMapper" class="org.kimios.services.utils.JaxRSExceptionMapper"/>
             <bean id="corsFilter" class="org.apache.cxf.rs.security.cors.CrossOriginResourceSharingFilter" />
         </jaxrs:providers>
         <jaxrs:serviceBeans>

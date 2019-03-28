@@ -13,17 +13,14 @@
  * You should have received a copy of the GNU Affero General Public License
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kimios.webservices.impl;
+package org.kimios.services.impl;
 
 import org.kimios.kernel.security.model.Session;
 import org.kimios.utils.registration.RegistrationData;
-import org.kimios.webservices.CoreService;
 import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.InformationService;
 
 import javax.jws.WebService;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Date;
 
 @WebService(targetNamespace = "http://kimios.org", serviceName = "InformationService", name = "InformationService")

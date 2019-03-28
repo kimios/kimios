@@ -14,11 +14,10 @@
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.kimios.webservices.utils;
+package org.kimios.services.utils;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.feature.AbstractFeature;
-import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.interceptor.InterceptorProvider;
 import org.apache.cxf.interceptor.LoggingInInterceptor;

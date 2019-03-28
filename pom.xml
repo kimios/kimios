@@ -157,7 +157,6 @@
         <module>kimios-aspose-converters</module>
     </modules>
     <packaging>pom</packaging>
-
     <build>
         <pluginManagement>
             <plugins>

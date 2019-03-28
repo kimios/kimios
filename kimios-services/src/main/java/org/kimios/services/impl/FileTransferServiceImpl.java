@@ -13,13 +13,11 @@
  * You should have received a copy of the GNU Affero General Public License
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kimios.webservices.impl;
+package org.kimios.services.impl;
 
-import org.kimios.exceptions.RequiredPasswordException;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.ws.pojo.DataTransaction;
 import org.kimios.kernel.ws.pojo.DocumentWrapper;
-import org.kimios.webservices.CoreService;
 import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.FileTransferService;
 import org.slf4j.Logger;
@@ -32,9 +30,7 @@ import javax.ws.rs.core.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @WebService(targetNamespace = "http://kimios.org", serviceName = "FileTransferService", name = "FileTransferService")
 public class FileTransferServiceImpl

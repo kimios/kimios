@@ -14,7 +14,7 @@
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.kimios.webservices;
+package org.kimios.services.utils;
 
 import org.kimios.webservices.exceptions.DMServiceException;
 import org.slf4j.Logger;

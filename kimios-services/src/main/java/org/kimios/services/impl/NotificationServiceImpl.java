@@ -13,13 +13,12 @@
  * You should have received a copy of the GNU Affero General Public License
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kimios.webservices.impl;
+package org.kimios.services.impl;
 
 import org.kimios.kernel.dms.model.DocumentWorkflowStatus;
 import org.kimios.kernel.dms.model.DocumentWorkflowStatusRequest;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.ws.pojo.WorkflowStatus;
-import org.kimios.webservices.CoreService;
 import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.NotificationService;
 

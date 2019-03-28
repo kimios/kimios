@@ -199,7 +199,7 @@
                             org.kimios.exceptions,
                             org.kimios.webservices,
                             org.kimios.webservices.exceptions,
-                            org.kimios.webservices.utils,
+                            org.kimios.services.utils,
                             org.kimios.kernel.bonita.webservices.pojo,
                             org.kimios.kernel.*,
                             org.kimios.kernel.ws.pojo,

@@ -39,10 +39,10 @@
 
     <!-- Service beans -->
 
-    <bean id="serviceHelper" class="org.kimios.webservices.ServiceHelper">
+    <bean id="serviceHelper" class="org.kimios.services.utils.ServiceHelper">
         <property name="sessionManager" ref="sessionManager"/>
     </bean>
-    <bean id="kimiosCoreService" class="org.kimios.webservices.CoreService" abstract="true" lazy-init="true">
+    <bean id="kimiosCoreService" class="org.kimios.services.impl.CoreService" abstract="true" lazy-init="true">
         <property name="helper" ref="serviceHelper"/>
         <property name="securityController" ref="securityController"/>
         <property name="documentController" ref="documentController"/>
@@ -95,12 +95,12 @@
 
 
     <bean id="securityServiceBean"
-          class="org.kimios.webservices.impl.SecurityServiceImpl"
+          class="org.kimios.services.impl.SecurityServiceImpl"
           parent="kimiosCoreService"
             />
     <!-- Service endpoint -->
     <jaxws:endpoint id="securityServiceWs"
-                    implementorClass="org.kimios.webservices.impl.SecurityServiceImpl"
+                    implementorClass="org.kimios.services.impl.SecurityServiceImpl"
                     implementor="#securityServiceBean"
                     address="/SecurityService"
                     endpointName="SecurityService"
@@ -115,14 +115,14 @@
     </jaxws:endpoint>
 
 
-    <bean id="administrationServiceBean" class="org.kimios.webservices.impl.AdministrationServiceImpl"
+    <bean id="administrationServiceBean" class="org.kimios.services.impl.AdministrationServiceImpl"
           parent="kimiosCoreService">
         <!--<constructor-arg ref="kimiosBusManager" />-->
         <property name="kimiosBusServiceManager" ref="kimiosBusManager" />
     </bean>
     <!-- Service endpoint -->
     <jaxws:endpoint id="administrationServiceWs"
-                    implementorClass="org.kimios.webservices.impl.AdministrationServiceImpl"
+                    implementorClass="org.kimios.services.impl.AdministrationServiceImpl"
                     implementor="#administrationServiceBean"
                     address="/AdministrationService"
                     endpointName="AdministrationService"
@@ -135,10 +135,10 @@
         </jaxws:serviceFactory>
     </jaxws:endpoint>
 
-    <bean id="studioServiceBean" class="org.kimios.webservices.impl.StudioServiceImpl" parent="kimiosCoreService"/>
+    <bean id="studioServiceBean" class="org.kimios.services.impl.StudioServiceImpl" parent="kimiosCoreService"/>
     <!-- Service endpoint -->
     <jaxws:endpoint id="studioServiceWs"
-                    implementorClass="org.kimios.webservices.impl.StudioServiceImpl"
+                    implementorClass="org.kimios.services.impl.StudioServiceImpl"
                     implementor="#studioServiceBean"
                     address="/StudioService"
                     endpointName="StudioService"
@@ -152,10 +152,10 @@
         </jaxws:serviceFactory>
     </jaxws:endpoint>
 
-    <bean id="documentServiceBean" class="org.kimios.webservices.impl.DocumentServiceImpl" parent="kimiosCoreService"/>
+    <bean id="documentServiceBean" class="org.kimios.services.impl.DocumentServiceImpl" parent="kimiosCoreService"/>
     <!-- Service endpoint -->
     <jaxws:endpoint id="documentServiceWs"
-                    implementorClass="org.kimios.webservices.impl.DocumentServiceImpl"
+                    implementorClass="org.kimios.services.impl.DocumentServiceImpl"
                     implementor="#documentServiceBean"
                     address="/DocumentService"
 
@@ -171,11 +171,11 @@
     </jaxws:endpoint>
 
 
-    <bean id="documentVersionServiceBean" class="org.kimios.webservices.impl.DocumentVersionServiceImpl"
+    <bean id="documentVersionServiceBean" class="org.kimios.services.impl.DocumentVersionServiceImpl"
           parent="kimiosCoreService"/>
     <!-- Service endpoint -->
     <jaxws:endpoint id="documentVersionServiceWs"
-                    implementorClass="org.kimios.webservices.impl.DocumentVersionServiceImpl"
+                    implementorClass="org.kimios.services.impl.DocumentVersionServiceImpl"
                     implementor="#documentVersionServiceBean"
                     address="/DocumentVersionService"
                     endpointName="DocumentVersionService"
@@ -188,10 +188,10 @@
         </jaxws:serviceFactory>
     </jaxws:endpoint>
 
-    <bean id="folderServiceBean" class="org.kimios.webservices.impl.FolderServiceImpl" parent="kimiosCoreService"/>
+    <bean id="folderServiceBean" class="org.kimios.services.impl.FolderServiceImpl" parent="kimiosCoreService"/>
     <!-- Service endpoint -->
     <jaxws:endpoint id="folderServiceWs"
-                    implementorClass="org.kimios.webservices.impl.FolderServiceImpl"
+                    implementorClass="org.kimios.services.impl.FolderServiceImpl"
                     implementor="#folderServiceBean"
                     address="/FolderService"
                     endpointName="FolderService"
@@ -205,11 +205,11 @@
     </jaxws:endpoint>
 
 
-    <bean id="workspaceServiceBean" class="org.kimios.webservices.impl.WorkspaceServiceImpl"
+    <bean id="workspaceServiceBean" class="org.kimios.services.impl.WorkspaceServiceImpl"
           parent="kimiosCoreService"/>
     <!-- Service endpoint -->
     <jaxws:endpoint id="workspaceServiceWs"
-                    implementorClass="org.kimios.webservices.impl.WorkspaceServiceImpl"
+                    implementorClass="org.kimios.services.impl.WorkspaceServiceImpl"
                     implementor="#workspaceServiceBean"
                     address="/WorkspaceService"
                     endpointName="WorkspaceService"
@@ -222,10 +222,10 @@
         </jaxws:serviceFactory>
     </jaxws:endpoint>
 
-    <bean id="searchServiceBean" class="org.kimios.webservices.impl.SearchServiceImpl" parent="kimiosCoreService"/>
+    <bean id="searchServiceBean" class="org.kimios.services.impl.SearchServiceImpl" parent="kimiosCoreService"/>
     <!-- Service endpoint -->
     <jaxws:endpoint id="searchServiceWs"
-                    implementorClass="org.kimios.webservices.impl.SearchServiceImpl"
+                    implementorClass="org.kimios.services.impl.SearchServiceImpl"
                     implementor="#searchServiceBean"
                     address="/SearchService"
                     endpointName="SearchService"
@@ -238,11 +238,11 @@
         </jaxws:serviceFactory>
     </jaxws:endpoint>
 
-    <bean id="notificationServiceBean" class="org.kimios.webservices.impl.NotificationServiceImpl"
+    <bean id="notificationServiceBean" class="org.kimios.services.impl.NotificationServiceImpl"
           parent="kimiosCoreService"/>
     <!-- Service endpoint -->
     <jaxws:endpoint id="notificationServiceWs"
-                    implementorClass="org.kimios.webservices.impl.NotificationServiceImpl"
+                    implementorClass="org.kimios.services.impl.NotificationServiceImpl"
                     implementor="#notificationServiceBean"
                     address="/NotificationService"
                     endpointName="NotificationService"
@@ -255,10 +255,10 @@
         </jaxws:serviceFactory>
     </jaxws:endpoint>
 
-    <bean id="logServiceBean" class="org.kimios.webservices.impl.LogServiceImpl" parent="kimiosCoreService"/>
+    <bean id="logServiceBean" class="org.kimios.services.impl.LogServiceImpl" parent="kimiosCoreService"/>
     <!-- Service endpoint -->
     <jaxws:endpoint id="logServiceWs"
-                    implementorClass="org.kimios.webservices.impl.LogServiceImpl"
+                    implementorClass="org.kimios.services.impl.LogServiceImpl"
                     implementor="#logServiceBean"
                     address="/LogService"
                     endpointName="LogService"
@@ -271,11 +271,11 @@
         </jaxws:serviceFactory>
     </jaxws:endpoint>
 
-    <bean id="informationServiceBean" class="org.kimios.webservices.impl.InformationServiceImpl"
+    <bean id="informationServiceBean" class="org.kimios.services.impl.InformationServiceImpl"
           parent="kimiosCoreService"/>
     <!-- Service endpoint -->
     <jaxws:endpoint id="informationServiceWs"
-                    implementorClass="org.kimios.webservices.impl.InformationServiceImpl"
+                    implementorClass="org.kimios.services.impl.InformationServiceImpl"
                     implementor="#informationServiceBean"
                     address="/InformationService"
                     endpointName="InformationService"
@@ -288,11 +288,11 @@
         </jaxws:serviceFactory>
     </jaxws:endpoint>
 
-    <bean id="extensionServiceBean" class="org.kimios.webservices.impl.ExtensionServiceImpl"
+    <bean id="extensionServiceBean" class="org.kimios.services.impl.ExtensionServiceImpl"
           parent="kimiosCoreService"/>
     <!-- Service endpoint -->
     <jaxws:endpoint id="extensionServiceWs"
-                    implementorClass="org.kimios.webservices.impl.ExtensionServiceImpl"
+                    implementorClass="org.kimios.services.impl.ExtensionServiceImpl"
                     implementor="#extensionServiceBean"
                     address="/ExtensionService"
                     endpointName="ExtensionService"
@@ -305,10 +305,10 @@
         </jaxws:serviceFactory>
     </jaxws:endpoint>
 
-    <bean id="ruleServiceBean" class="org.kimios.webservices.impl.RuleServiceImpl" parent="kimiosCoreService"/>
+    <bean id="ruleServiceBean" class="org.kimios.services.impl.RuleServiceImpl" parent="kimiosCoreService"/>
     <!-- Service endpoint -->
     <jaxws:endpoint id="ruleServiceWs"
-                    implementorClass="org.kimios.webservices.impl.RuleServiceImpl"
+                    implementorClass="org.kimios.services.impl.RuleServiceImpl"
                     implementor="#ruleServiceBean"
                     address="/RuleService"
                     endpointName="RuleService"
@@ -322,11 +322,11 @@
     </jaxws:endpoint>
 
 
-    <bean id="reportingServiceBean" class="org.kimios.webservices.impl.ReportingServiceImpl"
+    <bean id="reportingServiceBean" class="org.kimios.services.impl.ReportingServiceImpl"
           parent="kimiosCoreService"/>
     <!-- Service endpoint -->
     <jaxws:endpoint id="reportingServiceWs"
-                    implementorClass="org.kimios.webservices.impl.ReportingServiceImpl"
+                    implementorClass="org.kimios.services.impl.ReportingServiceImpl"
                     implementor="#reportingServiceBean"
                     address="/ReportingService"
                     endpointName="ReportingService"
@@ -339,11 +339,11 @@
         </jaxws:serviceFactory>
     </jaxws:endpoint>
 
-    <bean id="fileTransferServiceBean" class="org.kimios.webservices.impl.FileTransferServiceImpl"
+    <bean id="fileTransferServiceBean" class="org.kimios.services.impl.FileTransferServiceImpl"
           parent="kimiosCoreService"/>
     <!-- Service endpoint -->
     <jaxws:endpoint id="fileTransferServiceWs"
-                    implementorClass="org.kimios.webservices.impl.FileTransferServiceImpl"
+                    implementorClass="org.kimios.services.impl.FileTransferServiceImpl"
                     implementor="#fileTransferServiceBean"
                     address="/FileTransferService"
                     endpointName="FileTransferService"

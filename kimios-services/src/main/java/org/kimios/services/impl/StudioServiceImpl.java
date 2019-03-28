@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kimios.webservices.impl;
+package org.kimios.services.impl;
 
 
 import org.kimios.kernel.dms.model.MetaFeedImpl;
@@ -23,7 +23,6 @@ import org.kimios.kernel.ws.pojo.MetaFeed;
 import org.kimios.kernel.ws.pojo.Workflow;
 import org.kimios.kernel.ws.pojo.WorkflowStatus;
 import org.kimios.kernel.ws.pojo.WorkflowStatusManager;
-import org.kimios.webservices.CoreService;
 import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.StudioService;
 

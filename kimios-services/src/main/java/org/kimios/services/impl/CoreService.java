@@ -13,12 +13,13 @@
  * You should have received a copy of the GNU Affero General Public License
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kimios.webservices;
+package org.kimios.services.impl;
 
 import org.kimios.kernel.controller.*;
 import org.kimios.converter.controller.IConverterController;
 import org.kimios.kernel.index.controller.ISearchController;
 import org.kimios.kernel.index.controller.ISearchManagementController;
+import org.kimios.webservices.IServiceHelper;
 
 public abstract class CoreService
 {

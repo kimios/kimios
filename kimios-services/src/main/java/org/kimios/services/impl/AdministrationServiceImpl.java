@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kimios.webservices.impl;
+package org.kimios.services.impl;
 
 import org.kimios.kernel.ws.pojo.AuthenticationSource;
 import org.kimios.kernel.ws.pojo.Document;
@@ -22,9 +22,8 @@ import org.kimios.kernel.ws.pojo.Session;
 import org.kimios.kernel.ws.pojo.User;
 import org.kimios.utils.logging.LoggerManager;
 import org.kimios.webservices.AdministrationService;
-import org.kimios.webservices.CoreService;
 import org.kimios.webservices.exceptions.DMServiceException;
-import org.kimios.webservices.utils.KimiosBusServiceManager;
+import org.kimios.services.utils.KimiosBusServiceManager;
 
 import javax.jws.WebService;
 import java.util.HashMap;

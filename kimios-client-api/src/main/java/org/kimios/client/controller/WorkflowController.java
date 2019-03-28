@@ -22,7 +22,7 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import org.kimios.client.exception.*;
 import org.kimios.kernel.ws.pojo.DocumentWorkflowStatusRequest;
 import org.kimios.kernel.ws.pojo.WorkflowStatus;
-import org.kimios.webservices.DateParamConverter;
+import org.kimios.services.utils.DateParamConverter;
 import org.kimios.webservices.NotificationService;
 
 import java.net.URI;

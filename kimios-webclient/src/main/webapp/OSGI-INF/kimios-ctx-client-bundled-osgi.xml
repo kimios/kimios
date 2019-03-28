@@ -148,7 +148,7 @@
         <jaxrs:providers>
             <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
             <bean class="org.kimios.client.controller.JaxRSResponseExceptionMapper"/>
-            <bean class="org.kimios.webservices.DateParamConverter"/>
+            <bean class="org.kimios.services.utils.DateParamConverter"/>
         </jaxrs:providers>
         <jaxrs:headers>
             <entry key="Accept" value="application/json"/>

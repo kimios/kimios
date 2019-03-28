@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * aong with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.kimios.webservices;
+package org.kimios.services.impl;
 
 public class ClientInformationUtil
 {

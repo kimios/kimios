@@ -215,8 +215,8 @@
                     <instructions>
                         <Bundle-SymbolicName>kimios-services</Bundle-SymbolicName>
                         <Include-Resource>{maven-resources}</Include-Resource>
-                        <Private-Package>org.kimios.webservices.impl,org.kimios.kernel.ws.pojo</Private-Package>
-                        <Export-Package>org.kimios.custom,org.kimios.webservices,org.kimios.webservices.utils,org.kimios.webservices.exceptions</Export-Package>
+                        <Private-Package>org.kimios.services.impl,org.kimios.kernel.ws.pojo</Private-Package>
+                        <Export-Package>org.kimios.custom,org.kimios.webservices,org.kimios.services.utils,org.kimios.webservices.exceptions</Export-Package>
                         <Import-Package>
                             com.fasterxml.jackson.databind,
                             com.fasterxml.jackson.core.type,
@@ -327,6 +327,7 @@
                             <includes>
                                 <include>org/kimios/webservices/*</include>
                                 <include>org/kimios/webservices/exceptions/*</include>
+                                <include>org/kimios/services/utils/*</include>
                             </includes>
                             <excludes>
                                 <exclude>org/kimios/webservices/ClientInformationUtil</exclude>

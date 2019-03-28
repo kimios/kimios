@@ -26,7 +26,7 @@
         http://cxf.apache.org/schemas/jaxrs.xsd"
        default-autowire="byName">
 
-    <bean id="kimiosBusManager" class="org.kimios.webservices.utils.KimiosBusServiceManager" />
+    <bean id="kimiosBusManager" class="org.kimios.services.utils.KimiosBusServiceManager" />
     <bean id="loggingFeature" class="org.apache.cxf.feature.LoggingFeature" />
     <cxf:bus id="kimios-bus">
         <cxf:features>
@@ -40,8 +40,8 @@
         <property name="providers">
             <list>
                 <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
-                <bean class="org.kimios.webservices.DateParamConverter"/>
-                <bean id="exceptionMapper" class="org.kimios.webservices.JaxRSExceptionMapper"/>
+                <bean class="org.kimios.services.utils.DateParamConverter"/>
+                <bean id="exceptionMapper" class="org.kimios.services.utils.JaxRSExceptionMapper"/>
             </list>
         </property>
         <property name="serviceBeans">
@@ -76,8 +76,8 @@
                   name="kimios-rest">
         <jaxrs:providers>
             <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
-            <bean class="org.kimios.webservices.DateParamConverter"/>
-            <bean id="exceptionMapper" class="org.kimios.webservices.JaxRSExceptionMapper"/>
+            <bean class="org.kimios.services.utils.DateParamConverter"/>
+            <bean id="exceptionMapper" class="org.kimios.services.utils.JaxRSExceptionMapper"/>
             <bean id="corsFilter" class="org.apache.cxf.rs.security.cors.CrossOriginResourceSharingFilter" />
         </jaxrs:providers>
         <jaxrs:serviceBeans>

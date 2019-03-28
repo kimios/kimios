@@ -18,7 +18,7 @@ package org.kimios.client.controller;
 
 import org.apache.cxf.jaxrs.client.ResponseExceptionMapper;
 import org.kimios.webservices.exceptions.DMServiceException;
-import org.kimios.webservices.ExceptionMessageWrapper;
+import org.kimios.services.utils.ExceptionMessageWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

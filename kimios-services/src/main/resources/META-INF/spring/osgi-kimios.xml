@@ -24,7 +24,7 @@
                http://www.springframework.org/schema/osgi/spring-osgi.xsd">
 
 
-    <osgi:service interface="org.kimios.webservices.ServiceHelper" ref="serviceHelper" />
+    <osgi:service interface="org.kimios.services.utils.ServiceHelper" ref="serviceHelper" />
 
 
     <osgi:reference id="sessionManager"
