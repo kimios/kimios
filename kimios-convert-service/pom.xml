@@ -224,7 +224,8 @@
                             org.kimios.utils.spring,
                             org.apache.commons.io,
                             org.kimios.utils.configuration,
-                            io.swagger.annotations
+                            io.swagger.annotations,
+                            *;resolution:=optional
                         </Import-Package>
                     </instructions>
                 </configuration>
