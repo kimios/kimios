@@ -19,6 +19,7 @@ import org.kimios.kernel.controller.*;
 import org.kimios.converter.controller.IConverterController;
 import org.kimios.kernel.index.controller.ISearchController;
 import org.kimios.kernel.index.controller.ISearchManagementController;
+import org.kimios.services.utils.CamelTool;
 import org.kimios.webservices.IServiceHelper;
 
 public abstract class CoreService
@@ -34,6 +35,8 @@ public abstract class CoreService
     {
         this.helper = helper;
     }
+
+    protected CamelTool camelTool;
 
     protected ISecurityController securityController;
 
@@ -240,6 +243,14 @@ public abstract class CoreService
     public void setSearchManagementController( ISearchManagementController searchManagementController )
     {
         this.searchManagementController = searchManagementController;
+    }
+
+    public CamelTool getCamelTool() {
+        return camelTool;
+    }
+
+    public void setCamelTool(CamelTool camelTool) {
+        this.camelTool = camelTool;
     }
 }
 

@@ -12,7 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-public class Tool implements CamelContextAware {
+public class CamelTool implements CamelContextAware {
 
 
     private CamelContext camelContext;

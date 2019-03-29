@@ -27,7 +27,7 @@ import org.kimios.kernel.ws.pojo.Document;
 import org.kimios.kernel.ws.pojo.WorkflowStatus;
 import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.DocumentService;
-import org.kimios.services.utils.Tool;
+import org.kimios.services.utils.CamelTool;
 
 import javax.jws.WebService;
 import java.io.InputStream;
@@ -35,6 +35,8 @@ import java.util.*;
 
 @WebService(targetNamespace = "http://kimios.org", serviceName = "DocumentService", name = "DocumentService")
 public class DocumentServiceImpl extends CoreService implements DocumentService {
+
+
     /**
      * @param sessionId
      * @param documentId
@@ -677,7 +679,7 @@ public class DocumentServiceImpl extends CoreService implements DocumentService 
         try {
             Session session = getHelper().getSession(sessionId);
             List<Document> documents = documentController.getDocumentsPojos(session, folderId);
-            return new Tool().generateCsv(documents);
+            return camelTool.generateCsv(documents);
 
         } catch (Exception e) {
             throw getHelper().convertException(e);

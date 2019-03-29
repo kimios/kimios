@@ -22,7 +22,7 @@ import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.ws.pojo.Document;
 import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.SearchService;
-import org.kimios.services.utils.Tool;
+import org.kimios.services.utils.CamelTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -250,7 +250,7 @@ public class SearchServiceImpl
             Session s = getHelper().getSession(sessionId);
             SearchResponse searchResponse = searchController.advancedSearchDocuments( s, criterias, start, pageSize, sortField, sortDir,
                     virtualPath, requestId, false );
-            return new Tool().generateCsv( searchResponse.getRows());
+            return new CamelTool().generateCsv( searchResponse.getRows());
 
         }
         catch ( Exception e )
@@ -268,7 +268,7 @@ public class SearchServiceImpl
             Session s = getHelper().getSession(sessionId);
             SearchResponse searchResponse =
                     searchController.quickSearchPojos(s, query, dmEntityUid, start, pageSize, sortField, sortDir);
-            return new Tool().generateCsv( searchResponse.getRows());
+            return camelTool.generateCsv( searchResponse.getRows());
 
         }
         catch ( Exception e )

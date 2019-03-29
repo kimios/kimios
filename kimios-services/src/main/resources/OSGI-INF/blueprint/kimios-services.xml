@@ -33,7 +33,9 @@
     <service id="serviceHelperOsgi" ref="serviceHelper"
              interface="org.kimios.webservices.IServiceHelper"/>
 
-    <reference id="kimiosCamelContext" interface="org.apache.camel.CamelContext" filter="(camel.context.name=kimios)" />
+    <reference id="kimiosCamelContext"
+               interface="org.apache.camel.CamelContext"
+               filter="(camel.context.name=kimios)" />
 
 
     <bean id="kimiosBusManager" class="org.kimios.services.utils.KimiosBusServiceManager" />
@@ -92,6 +94,10 @@
 
     <bean id="serviceHelper" class="org.kimios.services.utils.ServiceHelper">
         <property name="sessionManager" ref="sessionManager"/>
+    </bean>
+
+    <bean id="camelTool" class="org.kimios.services.utils.CamelTool">
+        <property name="camelContext" ref="kimiosCamelContext" />
     </bean>
 
    <bean id="jaxws-and-aegis-service-factory" class="org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean"
@@ -424,7 +430,7 @@
         <property name="ruleController" ref="rulesController"/>
         <property name="extensionController" ref="extensionController"/>
         <property name="converterController" ref="converterController"/>
-        <property name="camelContext" ref="kimiosCamelContext" />
+        <property name="camelTool" ref="camelTool" />
     </bean>
 
     <bean id="documentVersionServiceBean" class="org.kimios.services.impl.DocumentVersionServiceImpl">
@@ -509,7 +515,7 @@
         <property name="ruleController" ref="rulesController"/>
         <property name="extensionController" ref="extensionController"/>
         <property name="converterController" ref="converterController"/>
-        <property name="camelContext" ref="kimiosCamelContext" />
+        <property name="camelTool" ref="camelTool" />
     </bean>
 
     <bean id="notificationServiceBean" class="org.kimios.services.impl.NotificationServiceImpl">

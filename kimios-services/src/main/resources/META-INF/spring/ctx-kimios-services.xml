@@ -39,6 +39,9 @@
 
     <!-- Service beans -->
 
+
+    <bean id="camelTool" class="org.kimios.services.utils.CamelTool" />
+
     <bean id="serviceHelper" class="org.kimios.services.utils.ServiceHelper">
         <property name="sessionManager" ref="sessionManager"/>
     </bean>
@@ -61,6 +64,7 @@
         <property name="ruleController" ref="rulesController"/>
         <property name="extensionController" ref="extensionController"/>
         <property name="converterController" ref="converterController"/>
+        <property name="camelTool" ref="camelTool" />
     </bean>
 
     <!-- Aegis data binding -->

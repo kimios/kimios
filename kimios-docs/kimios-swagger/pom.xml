@@ -163,7 +163,7 @@
                             <typesToSkip>
                                 <typeToSkip>org.apache.camel.CamelContext</typeToSkip>
                                 <typeToSkip>org.apache.camel.CamelContextAware</typeToSkip>
-                                <typeToSkip>org.kimios.services.utils.Tool</typeToSkip>
+                                <typeToSkip>org.kimios.services.utils.CamelTool</typeToSkip>
                             </typesToSkip>
                         </apiSource>
                     </apiSources>
