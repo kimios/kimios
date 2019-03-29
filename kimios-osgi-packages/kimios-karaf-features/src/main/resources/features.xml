@@ -44,6 +44,7 @@
         <feature>cxf-frontend-javascript</feature>
         <feature>cxf-xjc-runtime</feature>
 	    <feature>cxf-rs-security-cors</feature>
+	    <feature>cxf-rs-description-swagger2</feature>
         <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.quartz/1.8.6_1</bundle>
         <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.aopalliance/1.0_6</bundle>
         <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xalan/2.7.2_3</bundle>

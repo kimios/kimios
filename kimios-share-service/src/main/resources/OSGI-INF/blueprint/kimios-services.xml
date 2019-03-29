@@ -118,6 +118,11 @@
         <jaxrs:extensionMappings>
             <entry key="json" value="application/json"/>
         </jaxrs:extensionMappings>
+        <jaxrs:features>
+            <bean id="swagger2Feature" class="org.apache.cxf.jaxrs.swagger.Swagger2Feature">
+                <property name="basePath" value="/services/rest/share/"/>
+            </bean>
+        </jaxrs:features>
     </jaxrs:server>
 
 </blueprint>
