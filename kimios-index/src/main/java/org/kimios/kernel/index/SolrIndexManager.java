@@ -66,6 +66,8 @@ public class SolrIndexManager
 
     private org.kimios.kernel.index.query.factory.DocumentFactory solrDocumentFactory;
 
+    private static String TAG_FACET_PATTERN = "metadata.*_tag_";
+
     public DocumentFactory getSolrDocumentFactory() {
         return solrDocumentFactory;
     }
@@ -660,6 +662,32 @@ public class SolrIndexManager
                 }
             }
             searchResponse.setFacetsData(facetsData);
+
+            HashMap<String, List> tagsFacetsData = new HashMap();
+            if (rsp.getFacetFields() != null) {
+                rsp.getFacetFields().stream()
+                        .filter(
+                                facet -> facet.getName().matches(TAG_FACET_PATTERN)
+                        )
+                        .forEach(
+                                facet -> {
+                                    if (log.isDebugEnabled())
+                                        log.debug("Returned TAG Facet " + facet.getName() + " --> " + facet.getValueCount());
+                                    tagsFacetsData.put(facet.getName(), new ArrayList());
+                                    List<FacetField.Count> items = facet.getValues();
+                                    if (items != null) {
+                                        items.stream().forEach(
+                                                fc ->
+                                                        tagsFacetsData
+                                                                .get(facet.getName())
+                                                                .add(new Object[]{fc.getName(), fc.getCount()})
+                                        );
+                                    }
+                                }
+                        );
+            }
+            searchResponse.setTagsfacetsData(tagsFacetsData);
+
             return searchResponse;
         } catch (Exception ex) {
             throw new IndexException(ex, ex.getMessage());
