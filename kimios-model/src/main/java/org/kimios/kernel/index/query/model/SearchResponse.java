@@ -57,7 +57,7 @@ public class SearchResponse
 
     private HashMap facetsData;
 
-    private HashMap tagsfacetsData;
+    private HashMap allfacetsData;
 
     public Map getFacetsData()
     {
@@ -69,12 +69,12 @@ public class SearchResponse
         this.facetsData = facetsData;
     }
 
-    public HashMap getTagsfacetsData() {
-        return tagsfacetsData;
+    public HashMap getAllfacetsData() {
+        return allfacetsData;
     }
 
-    public void setTagsfacetsData(HashMap tagsfacetsData) {
-        this.tagsfacetsData = tagsfacetsData;
+    public void setAllfacetsData(HashMap allfacetsData) {
+        this.allfacetsData = allfacetsData;
     }
 
     public boolean isFacetResponse()
