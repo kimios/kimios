@@ -159,6 +159,21 @@ public interface DocumentService {
                                @QueryParam(value = "mimeType") @WebParam(name = "mimeType") String mimeType,
                                @QueryParam(value = "folderId") @WebParam(name = "folderId") long folderUid) throws DMServiceException;
 
+    @POST @ApiOperation(value ="")
+    @Path("/updateDocumentTag")
+    @Produces("application/json")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public void updateDocumentTag(
+            @ApiParam(name = "sessionId", required = true)
+            @Multipart(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+            @ApiParam(name = "documentId", required = true)
+            @Multipart(value = "documentId") @WebParam(name = "documentId") long documentId,
+            @ApiParam(name = "tagId", required = true)
+            @Multipart(value = "tagId") @WebParam(name = "tagId") long tagId,
+            @ApiParam(name = "action", required = true)
+            @Multipart(value = "action") @WebParam(name = "action") boolean action
+    ) throws DMServiceException;
+
     @GET @ApiOperation(value ="")
     @Path("/deleteDocument")
     @Produces("application/json")

@@ -15,10 +15,10 @@
  */
 package org.kimios.kernel.controller;
 
-import org.kimios.exceptions.*;
-import org.kimios.kernel.dms.model.*;
 import org.kimios.api.events.annotations.DmsEvent;
 import org.kimios.api.events.annotations.DmsEventName;
+import org.kimios.exceptions.*;
+import org.kimios.kernel.dms.model.*;
 import org.kimios.kernel.log.model.DMEntityLog;
 import org.kimios.kernel.security.model.DMEntitySecurity;
 import org.kimios.kernel.security.model.Session;
@@ -333,4 +333,8 @@ public interface IDocumentController {
             throws ConfigException, DataSourceException;
 
     public List<Bookmark> getBookmarksInPath(Session session, String path) throws DataSourceException, ConfigException;
+
+    @DmsEvent(eventName = {DmsEventName.DOCUMENT_UPDATE})
+    void updateDocumentTag(Session session, long documentId, long tagUid, boolean action)
+            throws AccessDeniedException, ConfigException, DataSourceException;
 }

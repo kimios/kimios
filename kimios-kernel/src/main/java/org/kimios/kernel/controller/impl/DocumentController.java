@@ -1579,12 +1579,35 @@ public class DocumentController extends AKimiosController implements IDocumentCo
         return vBookmarks;
     }
 
-
-
     private org.kimios.kernel.ws.pojo.Document buidDocumentPojoFromDocument(Document document)
             throws ConfigException, DataSourceException {
         return FactoryInstantiator.getInstance()
                 .getDocumentFactory()
                 .getDocumentPojoFromId(document.getUid());
+    }
+
+    @DmsEvent(eventName = {DmsEventName.DOCUMENT_UPDATE})
+    public void updateDocumentTag(Session session, long documentId, long tagUid, boolean action)
+            throws AccessDeniedException, ConfigException, DataSourceException {
+        Document doc = dmsFactoryInstantiator.getDocumentFactory().getDocument(documentId);
+        // check access
+        if (doc == null
+                || !(getSecurityAgent().isWritable(doc, session.getUserName(), session.getUserSource(), session.getGroups()))) {
+            throw new AccessDeniedException();
+        }
+
+        DocumentVersion dv = dmsFactoryInstantiator.getDocumentVersionFactory().getLastDocumentVersion(doc);
+        List<MetaValue> vMetas = dmsFactoryInstantiator.getMetaValueFactory().getMetaValues(dv);
+        MetaValueFactory mvf = dmsFactoryInstantiator.getMetaValueFactory();
+        vMetas.stream()
+                .filter(
+                        metaValue -> metaValue.getMetaUid() == tagUid
+                )
+                .forEach(
+                        metaValue -> {
+                            metaValue.setValue(action ? String.valueOf(metaValue.getMetaUid()) : "");
+                            mvf.saveMetaValue(metaValue);
+                        }
+                );
     }
 }

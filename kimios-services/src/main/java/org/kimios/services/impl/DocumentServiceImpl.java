@@ -21,17 +21,17 @@ import org.kimios.exceptions.DocumentDeletedWithActiveShareException;
 import org.kimios.kernel.dms.model.Bookmark;
 import org.kimios.kernel.dms.model.MetaValue;
 import org.kimios.kernel.dms.model.SymbolicLink;
-import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.security.model.DMEntitySecurity;
+import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.ws.pojo.Document;
 import org.kimios.kernel.ws.pojo.WorkflowStatus;
-import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.DocumentService;
-import org.kimios.services.utils.CamelTool;
+import org.kimios.webservices.exceptions.DMServiceException;
 
 import javax.jws.WebService;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @WebService(targetNamespace = "http://kimios.org", serviceName = "DocumentService", name = "DocumentService")
 public class DocumentServiceImpl extends CoreService implements DocumentService {
@@ -286,6 +286,15 @@ public class DocumentServiceImpl extends CoreService implements DocumentService 
         try {
             Session session = getHelper().getSession(sessionId);
             documentController.updateDocument(session, documentId, folderId, name, extension, mimeType);
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
+
+    public void updateDocumentTag(String sessionId, long documentId, long tagUid, boolean action) throws DMServiceException {
+        try {
+            Session session = getHelper().getSession(sessionId);
+            documentController.updateDocumentTag(session, documentId, tagUid, action);
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }
