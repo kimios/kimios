@@ -1597,17 +1597,25 @@ public class DocumentController extends AKimiosController implements IDocumentCo
         }
 
         DocumentVersion dv = dmsFactoryInstantiator.getDocumentVersionFactory().getLastDocumentVersion(doc);
-        List<MetaValue> vMetas = dmsFactoryInstantiator.getMetaValueFactory().getMetaValues(dv);
         MetaValueFactory mvf = dmsFactoryInstantiator.getMetaValueFactory();
-        vMetas.stream()
+        DocumentType docType = dmsFactoryInstantiator.getDocumentTypeFactory()
+                .getDocumentType(dv.getDocumentType().getUid());
+        List<Meta> metas = dmsFactoryInstantiator.getMetaFactory().getMetas(docType);
+        Optional<Meta> opt = metas.stream()
                 .filter(
-                        metaValue -> metaValue.getMetaUid() == tagUid
+                        meta -> meta.getUid() == tagUid
                 )
-                .forEach(
-                        metaValue -> {
-                            metaValue.setValue(action ? String.valueOf(metaValue.getMetaUid()) : "");
-                            mvf.saveMetaValue(metaValue);
-                        }
-                );
+                .findFirst();
+        if (opt.isPresent()) {
+            MetaValue mv = mvf.getMetaValue(dv, opt.get());
+            String newValue = (action) ? String.valueOf(tagUid) : "";
+            if (mv != null) {
+                mv.setValue(newValue);
+                mvf.updateMetaValue(mv);
+            } else {
+                MetaStringValue metaValue = new MetaStringValue(dv, opt.get(), String.valueOf(tagUid));
+                mvf.saveMetaValue(metaValue);
+            }
+        }
     }
 }

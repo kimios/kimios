@@ -53,6 +53,12 @@ public interface IStudioController
             ConfigException, DataSourceException, XMLException, XSDException;
 
     /**
+     * Update existing document type
+     */
+    public void createMeta(Session session, Meta meta)
+            throws ConfigException, DataSourceException;
+
+    /**
      * Remove document type
      */
     public void deleteDocumentType(Session session, long uid)

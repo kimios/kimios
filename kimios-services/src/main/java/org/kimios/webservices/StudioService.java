@@ -17,6 +17,8 @@ package org.kimios.webservices;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.kimios.kernel.ws.pojo.*;
 import org.kimios.webservices.exceptions.DMServiceException;
@@ -24,6 +26,7 @@ import org.kimios.webservices.exceptions.DMServiceException;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 
 /**
  * Created by IntelliJ IDEA. User: farf Date: 4/1/12 Time: 5:07 PM To change this template use File | Settings | File
@@ -235,5 +238,19 @@ public interface StudioService
     @Produces("application/json")
     public void deleteWorkflowStatus(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "workflowStatusId") @WebParam(name = "workflowStatusId") long workflowStatusId)
+            throws DMServiceException;
+
+    @POST @ApiOperation(value="")
+    @Path("/createTag")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces("application/json")
+    public void createTag(
+            @ApiParam(name = "sessionId", required = true)
+            @Multipart(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+            @ApiParam(name = "tagName", required = true)
+            @Multipart(value = "tagName") @WebParam(name = "tagName") String tagName,
+            @ApiParam(name = "docTypeId", required = true)
+            @Multipart(value = "docTypeId") @WebParam(name = "docTypeId") long docTypeId
+    )
             throws DMServiceException;
 }

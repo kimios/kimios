@@ -16,6 +16,7 @@
 package org.kimios.services.impl;
 
 
+import org.kimios.kernel.dms.model.Meta;
 import org.kimios.kernel.dms.model.MetaFeedImpl;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.ws.pojo.DocumentType;
@@ -452,6 +453,19 @@ public class StudioServiceImpl extends CoreService implements StudioService {
 
             Session session = getHelper().getSession(sessionId);
             studioController.deleteWorkflowStatus(session, workflowStatusId);
+
+        } catch (Exception e) {
+
+            throw getHelper().convertException(e);
+        }
+    }
+
+    @Override
+    public void createTag(String sessionId, String tagName, long docTypeId) throws DMServiceException {
+        try {
+            Session session = getHelper().getSession(sessionId);
+            Meta meta = new Meta(-1, tagName, docTypeId, null, 1);
+            studioController.createMeta(session, meta);
 
         } catch (Exception e) {
 

@@ -163,6 +163,18 @@ public class StudioController extends AKimiosController implements IStudioContro
     }
 
     /**
+     * Create a meta on an existing document type
+     *
+     * @param session
+     * @param meta
+     * @throws ConfigException
+     * @throws DataSourceException
+     */
+    public void createMeta(Session session, Meta meta) throws ConfigException, DataSourceException {
+        dmsFactoryInstantiator.getMetaFactory().saveMeta(meta);
+    }
+
+    /**
      * Convenience method to detect type inheritance
      */
     private boolean isChild(DocumentType t1, DocumentType t2) throws ConfigException, DataSourceException
