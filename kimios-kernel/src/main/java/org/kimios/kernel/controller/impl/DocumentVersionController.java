@@ -384,6 +384,8 @@ public class DocumentVersionController extends AKimiosController implements IDoc
 
             EventContext.addParameter("version", dv);
             EventContext.addParameter("documentTypeSet", newDt);
+            EventContext eventContext = EventContext.get();
+            eventContext.setEntity(d);
         } else {
             throw new AccessDeniedException();
         }
