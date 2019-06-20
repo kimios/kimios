@@ -717,23 +717,15 @@ public class DocumentController extends AKimiosController implements IDocumentCo
             Long documentId = null;
             //path contains only documentName
             if (!path.contains("/")) {
-                DocumentType documentType = null;
-                if(documentTypeId > -1){
-                    documentType = dmsFactoryInstantiator.getDocumentTypeFactory().getDocumentType(documentTypeId);
-                }
-                PathTemplate pathTemplate = dmsFactoryInstantiator.getPathTemplateFactory().getDefaultPathTemplate();
-                if (pathTemplate == null) {
-                    log.error("default path template not available. can't evaluate path. please contact your administrator");
-                    pathTemplate = documentType != null ? MetaPathHandler.defaultPathModel() : MetaPathHandler.defaultUserPathModel();
-
-                }
-                log.debug("loaded path template #{} - {}", pathTemplate.getId(), pathTemplate.getTemplateName());
-                path = new MetaPathHandler().path(new Date(), s, pathTemplate.getPathElements(), documentType, metaValues,
-                        path.substring(path.lastIndexOf("\\."))) + "/" + path;
-                log.info("generated path: {}", path);
+                path = this.computePath(s, path, documentTypeId, metaValues);
             }
             documentId = generateEntitiesFromPath(s, path, isSecurityInherited);
             Document document = dmsFactoryInstantiator.getDocumentFactory().getDocument(documentId);
+            if (!getSecurityAgent().isWritable(document, s.getUserName(), s.getUserSource(),
+                    s.getGroups())) {
+                throw new AccessDeniedException();
+            }
+
             log.info("Adding document " + document + " to event context");
             log.info("EventContext info " + EventContext.get().getEntity() + " " + EventContext.get().getEntity());
             EventContext.addParameter("document", document);
@@ -742,130 +734,22 @@ public class DocumentController extends AKimiosController implements IDocumentCo
             vrsCtrl.createDocumentVersion(s, documentId);
             DataTransfer dt = ftCtrl.startUploadTransaction(s, documentId, false);
             DataTransfer transac = transferFactoryInstantiator.getDataTransferFactory().getDataTransfer(dt.getUid());
+
+            this.writeFile(
+                    new File(
+                            ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH)
+                                    + transac.getFilePath()
+                    ),
+                    documentStream
+            );
+
             DocumentVersion dv =
                     dmsFactoryInstantiator.getDocumentVersionFactory().getDocumentVersion(transac.getDocumentVersionUid());
-
-
-            if (!getSecurityAgent().isWritable(document, s.getUserName(), s.getUserSource(),
-                    s.getGroups())) {
-                throw new AccessDeniedException();
-            }
-            OutputStream out = new FileOutputStream(
-                    new File(ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH) + transac.getFilePath()), true);
-
-            byte[] b = new byte[2048];
-            int readBytes;
-            while ((readBytes = documentStream.read(b, 0, b.length)) > -1) {
-                out.write(b, 0, readBytes);
-            }
-            out.flush();
-            out.close();
-
-
-            User u = authFactoryInstantiator.getAuthenticationSourceFactory().getAuthenticationSource(
-                    s.getUserSource()).getUserFactory().getUser(s.getUserName());
-            if (!getSecurityAgent().isWritable(document, s.getUserName(), s.getUserSource(), s.getGroups())) {
-                throw new AccessDeniedException();
-            }
-
-            if (StringUtils.isNotBlank(hashMd5) && StringUtils.isNotBlank(hashSha1)) {
-                //Return inpustream on file transmitted
-                InputStream in = FileCompressionHelper.getTransactionFile(transac);
-
-               /* Hash Calculation */
-                String recHashMD5 = "";
-                String recHashSHA1 = "";
-                try {
-                    HashCalculator hc = new HashCalculator("MD5");
-                    recHashMD5 = (hc.hashToString(in).replaceAll(" ", ""));
-                    in = FileCompressionHelper.getTransactionFile(transac);
-                    hc.setAlgorithm("SHA-1");
-                    recHashSHA1 = (hc.hashToString(in).replaceAll(" ", ""));
-
-                } catch (NoSuchAlgorithmException nsae) {
-
-                    hashMd5 = ("error: No algorithm defined");
-                    hashSha1 = ("error: No algorithm defined");
-                }
-
-                if (!(hashMd5.equalsIgnoreCase(recHashMD5) && hashSha1.equalsIgnoreCase(recHashSHA1))) {
-                    new File(
-                            ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH) + transac.getFilePath()).delete();
-                    throw new TransferIntegrityException();
-                }
-
-                in = FileCompressionHelper.getTransactionFile(transac);
-                Vector<DocumentVersion> twoLast =
-                        dmsFactoryInstantiator.getDocumentVersionFactory().getTwoLastDocumentVersion(document);
-                DocumentVersion jBefore = null;
-                for (DocumentVersion h : twoLast) {
-                    jBefore = (h.getUid() != dv.getUid() ? h : null);
-                }
-                if (twoLast.contains(dv) && twoLast.size() > 1 && jBefore != null) {
-
-                    if (jBefore.getStoragePath().equalsIgnoreCase(dv.getStoragePath())) {
-                        //Same path: check the hash
-                        if (!hashMd5.equalsIgnoreCase(jBefore.getHashMD5()) && !hashSha1.equalsIgnoreCase(
-                                jBefore.getHashSHA1())) {
-                            Date newDate = new Date();
-                            dv.setStoragePath(
-                                    new SimpleDateFormat("/yyyy/MM/dd/HH/mm/").format(newDate) + dv.getDocumentUid() + "_" +
-                                            newDate.getTime() + ".bin");
-                            // storing data
-                            dv.setHashMD5(hashMd5);
-                            dv.setHashSHA1(hashSha1);
-                            dv.setLastUpdateAuthor(s.getUserName());
-                            dv.setLastUpdateAuthorSource(s.getUserSource());
-                            RepositoryManager.writeVersion(dv, in);
-                            FactoryInstantiator.getInstance().getDocumentVersionFactory().updateDocumentVersion(dv);
-                        } else {
-                            //nothing: same file
-                        }
-                    } else {
-                        //not the same path :
-                        //Update:
-
-                        if (!hashMd5.equalsIgnoreCase(dv.getHashMD5()) && !hashSha1.equalsIgnoreCase(dv.getHashSHA1())) {
-                            dv.setHashMD5(hashMd5);
-                            dv.setHashSHA1(hashSha1);
-                            dv.setLastUpdateAuthor(s.getUserName());
-                            dv.setLastUpdateAuthorSource(s.getUserSource());
-                            RepositoryManager.writeVersion(dv, in);
-                            FactoryInstantiator.getInstance().getDocumentVersionFactory().updateDocumentVersion(dv);
-                        } else {
-                        }
-                    }
-                } else {
-                    if (twoLast.size() == 1 && twoLast.contains(dv)) {
-                        dv.setHashMD5(hashMd5);
-                        dv.setHashSHA1(hashSha1);
-                        dv.setLastUpdateAuthor(s.getUserName());
-                        dv.setLastUpdateAuthorSource(s.getUserSource());
-                        RepositoryManager.writeVersion(dv, in);
-                        FactoryInstantiator.getInstance().getDocumentVersionFactory().updateDocumentVersion(dv);
-                    }
-                }
-
-            } else {
-                //simple add :
-                //Return inpustream on file transmitted
-                InputStream in = FileCompressionHelper.getTransactionFile(transac);
-                /* Hash Calculation */
-                HashCalculator hc = new HashCalculator("MD5");
-                String recHashMD5 = (hc.hashToString(in).replaceAll(" ", ""));
-                in = FileCompressionHelper.getTransactionFile(transac);
-                hc.setAlgorithm("SHA-1");
-                String recHashSHA1 = (hc.hashToString(in).replaceAll(" ", ""));
-                in = FileCompressionHelper.getTransactionFile(transac);
-                dv.setHashMD5(recHashMD5);
-                dv.setHashSHA1(recHashSHA1);
-                dv.setLastUpdateAuthor(s.getUserName());
-                dv.setLastUpdateAuthorSource(s.getUserSource());
-                RepositoryManager.writeVersion(dv, in);
-                FactoryInstantiator.getInstance().getDocumentVersionFactory().updateDocumentVersion(dv);
-	        }
+            this.updateDocumentVersion(s, dv, hashMd5, hashSha1, transac, document);
             new File(ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH) + transac.getFilePath()).delete();
             if (transac.isHasBeenCheckedOutOnStart()) {
+                User u = authFactoryInstantiator.getAuthenticationSourceFactory().getAuthenticationSource(
+                        s.getUserSource()).getUserFactory().getUser(s.getUserName());
                 dmsFactoryInstantiator.getLockFactory().checkin(document, u);
             }
             transferFactoryInstantiator.getDataTransferFactory().removeDataTransfer(transac);
@@ -887,6 +771,142 @@ public class DocumentController extends AKimiosController implements IDocumentCo
         }
     }
 
+    private void updateDocumentVersion(
+            Session s,
+            DocumentVersion dv,
+            String hashMd5,
+            String hashSha1,
+            DataTransfer transac,
+            Document document
+    ) throws IOException, NoSuchAlgorithmException {
+        if (StringUtils.isNotBlank(hashMd5) && StringUtils.isNotBlank(hashSha1)) {
+            //Return inpustream on file transmitted
+            InputStream in = FileCompressionHelper.getTransactionFile(transac);
+
+            /* Hash Calculation */
+            String recHashMD5 = "";
+            String recHashSHA1 = "";
+            try {
+                HashCalculator hc = new HashCalculator("MD5");
+                recHashMD5 = (hc.hashToString(in).replaceAll(" ", ""));
+                in = FileCompressionHelper.getTransactionFile(transac);
+                hc.setAlgorithm("SHA-1");
+                recHashSHA1 = (hc.hashToString(in).replaceAll(" ", ""));
+
+            } catch (NoSuchAlgorithmException nsae) {
+
+                hashMd5 = ("error: No algorithm defined");
+                hashSha1 = ("error: No algorithm defined");
+            }
+
+            if (!(hashMd5.equalsIgnoreCase(recHashMD5) && hashSha1.equalsIgnoreCase(recHashSHA1))) {
+                new File(
+                        ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH) + transac.getFilePath()).delete();
+                throw new TransferIntegrityException();
+            }
+
+            in = FileCompressionHelper.getTransactionFile(transac);
+            Vector<DocumentVersion> twoLast =
+                    dmsFactoryInstantiator.getDocumentVersionFactory().getTwoLastDocumentVersion(document);
+            DocumentVersion jBefore = null;
+            for (DocumentVersion h : twoLast) {
+                jBefore = (h.getUid() != dv.getUid() ? h : null);
+            }
+            if (twoLast.contains(dv) && twoLast.size() > 1 && jBefore != null) {
+
+                if (jBefore.getStoragePath().equalsIgnoreCase(dv.getStoragePath())) {
+                    //Same path: check the hash
+                    if (!hashMd5.equalsIgnoreCase(jBefore.getHashMD5()) && !hashSha1.equalsIgnoreCase(
+                            jBefore.getHashSHA1())) {
+                        Date newDate = new Date();
+                        dv.setStoragePath(
+                                new SimpleDateFormat("/yyyy/MM/dd/HH/mm/").format(newDate) + dv.getDocumentUid() + "_" +
+                                        newDate.getTime() + ".bin");
+                        // storing data
+                        dv.setHashMD5(hashMd5);
+                        dv.setHashSHA1(hashSha1);
+                        dv.setLastUpdateAuthor(s.getUserName());
+                        dv.setLastUpdateAuthorSource(s.getUserSource());
+                        RepositoryManager.writeVersion(dv, in);
+                        FactoryInstantiator.getInstance().getDocumentVersionFactory().updateDocumentVersion(dv);
+                    } else {
+                        //nothing: same file
+                    }
+                } else {
+                    //not the same path :
+                    //Update:
+
+                    if (!hashMd5.equalsIgnoreCase(dv.getHashMD5()) && !hashSha1.equalsIgnoreCase(dv.getHashSHA1())) {
+                        dv.setHashMD5(hashMd5);
+                        dv.setHashSHA1(hashSha1);
+                        dv.setLastUpdateAuthor(s.getUserName());
+                        dv.setLastUpdateAuthorSource(s.getUserSource());
+                        RepositoryManager.writeVersion(dv, in);
+                        FactoryInstantiator.getInstance().getDocumentVersionFactory().updateDocumentVersion(dv);
+                    } else {
+                    }
+                }
+            } else {
+                if (twoLast.size() == 1 && twoLast.contains(dv)) {
+                    dv.setHashMD5(hashMd5);
+                    dv.setHashSHA1(hashSha1);
+                    dv.setLastUpdateAuthor(s.getUserName());
+                    dv.setLastUpdateAuthorSource(s.getUserSource());
+                    RepositoryManager.writeVersion(dv, in);
+                    FactoryInstantiator.getInstance().getDocumentVersionFactory().updateDocumentVersion(dv);
+                }
+            }
+
+        } else {
+            //simple add :
+            //Return inpustream on file transmitted
+            InputStream in = FileCompressionHelper.getTransactionFile(transac);
+            /* Hash Calculation */
+            HashCalculator hc = new HashCalculator("MD5");
+            String recHashMD5 = (hc.hashToString(in).replaceAll(" ", ""));
+            in = FileCompressionHelper.getTransactionFile(transac);
+            hc.setAlgorithm("SHA-1");
+            String recHashSHA1 = (hc.hashToString(in).replaceAll(" ", ""));
+            in = FileCompressionHelper.getTransactionFile(transac);
+            dv.setHashMD5(recHashMD5);
+            dv.setHashSHA1(recHashSHA1);
+            dv.setLastUpdateAuthor(s.getUserName());
+            dv.setLastUpdateAuthorSource(s.getUserSource());
+            RepositoryManager.writeVersion(dv, in);
+            FactoryInstantiator.getInstance().getDocumentVersionFactory().updateDocumentVersion(dv);
+        }
+    }
+
+    private String computePath(Session s, String path, long documentTypeId, List<MetaValue> metaValues) {
+        DocumentType documentType = null;
+        if(documentTypeId > -1){
+            documentType = dmsFactoryInstantiator.getDocumentTypeFactory().getDocumentType(documentTypeId);
+        }
+        PathTemplate pathTemplate = dmsFactoryInstantiator.getPathTemplateFactory().getDefaultPathTemplate();
+        if (pathTemplate == null) {
+            log.error("default path template not available. can't evaluate path. please contact your administrator");
+            pathTemplate = documentType != null ? MetaPathHandler.defaultPathModel() : MetaPathHandler.defaultUserPathModel();
+
+        }
+        log.debug("loaded path template #{} - {}", pathTemplate.getId(), pathTemplate.getTemplateName());
+        path = new MetaPathHandler().path(new Date(), s, pathTemplate.getPathElements(), documentType, metaValues,
+                path.substring(path.lastIndexOf("\\."))) + "/" + path;
+        log.info("generated path: {}", path);
+
+        return path;
+    }
+
+    private void writeFile(File file, InputStream documentStream) throws IOException {
+        OutputStream out = new FileOutputStream(file, true);
+
+        byte[] b = new byte[2048];
+        int readBytes;
+        while ((readBytes = documentStream.read(b, 0, b.length)) > -1) {
+            out.write(b, 0, readBytes);
+        }
+        out.flush();
+        out.close();
+    }
 
     private DMEntity getDmEntity(String path) {
         try {
