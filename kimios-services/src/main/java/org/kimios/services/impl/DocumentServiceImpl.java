@@ -271,6 +271,16 @@ public class DocumentServiceImpl extends CoreService implements DocumentService 
         }
     }
 
+    @Override
+    public void uploadNewDocumentVersion(String sessionId, long documentId, InputStream documentStream, String hashMd5, String hashSha1) throws DMServiceException {
+        try {
+            Session session = getHelper().getSession(sessionId);
+            documentController.uploadNewDocumentVersion(session, documentId, documentStream, hashMd5, hashSha1);
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
+
     /**
      * @param sessionId
      * @param documentId
@@ -694,8 +704,6 @@ public class DocumentServiceImpl extends CoreService implements DocumentService 
             throw getHelper().convertException(e);
         }
     }
-
-
 
 }
 

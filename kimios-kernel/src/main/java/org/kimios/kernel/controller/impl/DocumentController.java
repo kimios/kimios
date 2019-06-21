@@ -771,6 +771,55 @@ public class DocumentController extends AKimiosController implements IDocumentCo
         }
     }
 
+    @DmsEvent(eventName = {DmsEventName.FILE_UPLOAD})
+    public void uploadNewDocumentVersion(
+            Session s, long documentId, InputStream documentStream, String hashMd5, String hashSha1)
+    throws ConfigException, DmsKernelException {
+
+        try {
+            EventContext initialContext = EventContext.get();
+            EventContext.clear();
+
+            Document document = dmsFactoryInstantiator.getDocumentFactory().getDocument(documentId);
+            if (!getSecurityAgent().isWritable(document, s.getUserName(), s.getUserSource(),
+                    s.getGroups())) {
+                throw new AccessDeniedException();
+            }
+            vrsCtrl.createDocumentVersionFromLatest(s, documentId);
+            DataTransfer dt = null;
+
+            dt = ftCtrl.startUploadTransaction(s, documentId, false);
+
+            DataTransfer transac = transferFactoryInstantiator.getDataTransferFactory().getDataTransfer(dt.getUid());
+
+            this.writeFile(
+                    new File(
+                            ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH)
+                                    + transac.getFilePath()
+                    ),
+                    documentStream
+            );
+
+            DocumentVersion dv =
+                    dmsFactoryInstantiator.getDocumentVersionFactory().getDocumentVersion(transac.getDocumentVersionUid());
+            this.updateDocumentVersion(s, dv, hashMd5, hashSha1, transac, document);
+            if (transac.isHasBeenCheckedOutOnStart()) {
+                User u = authFactoryInstantiator.getAuthenticationSourceFactory().getAuthenticationSource(
+                        s.getUserSource()).getUserFactory().getUser(s.getUserName());
+                dmsFactoryInstantiator.getLockFactory().checkin(document, u);
+            }
+            transferFactoryInstantiator.getDataTransferFactory().removeDataTransfer(transac);
+
+            initialContext.setEntity(document);
+        } catch (IOException e) {
+            throw new AccessDeniedException();
+        } catch (NoSuchAlgorithmException e) {
+            throw new ConfigException(e);
+        } catch (Exception e){
+            throw new DmsKernelException(e);
+        }
+    }
+
     private void updateDocumentVersion(
             Session s,
             DocumentVersion dv,
@@ -779,22 +828,19 @@ public class DocumentController extends AKimiosController implements IDocumentCo
             DataTransfer transac,
             Document document
     ) throws IOException, NoSuchAlgorithmException {
+        /* Hash Calculation */
+        String recHashMD5 = "";
+        String recHashSHA1 = "";
+        boolean initHashes = false;
+        try {
+            recHashMD5 = this.computeHash(FileCompressionHelper.getTransactionFile(transac), "MD5");
+            recHashSHA1 = this.computeHash(FileCompressionHelper.getTransactionFile(transac), "SHA-1");
+        } catch (NoSuchAlgorithmException nsae) {
+            initHashes = true;
+        }
         if (StringUtils.isNotBlank(hashMd5) && StringUtils.isNotBlank(hashSha1)) {
-            //Return inpustream on file transmitted
-            InputStream in = FileCompressionHelper.getTransactionFile(transac);
 
-            /* Hash Calculation */
-            String recHashMD5 = "";
-            String recHashSHA1 = "";
-            try {
-                HashCalculator hc = new HashCalculator("MD5");
-                recHashMD5 = (hc.hashToString(in).replaceAll(" ", ""));
-                in = FileCompressionHelper.getTransactionFile(transac);
-                hc.setAlgorithm("SHA-1");
-                recHashSHA1 = (hc.hashToString(in).replaceAll(" ", ""));
-
-            } catch (NoSuchAlgorithmException nsae) {
-
+            if (initHashes) {
                 hashMd5 = ("error: No algorithm defined");
                 hashSha1 = ("error: No algorithm defined");
             }
@@ -805,76 +851,50 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                 throw new TransferIntegrityException();
             }
 
-            in = FileCompressionHelper.getTransactionFile(transac);
             Vector<DocumentVersion> twoLast =
                     dmsFactoryInstantiator.getDocumentVersionFactory().getTwoLastDocumentVersion(document);
-            DocumentVersion jBefore = null;
-            for (DocumentVersion h : twoLast) {
-                jBefore = (h.getUid() != dv.getUid() ? h : null);
-            }
+            Optional<DocumentVersion> oDv = twoLast.stream().filter(h -> h.getUid() != dv.getUid()).findFirst();
+            DocumentVersion jBefore = oDv.isPresent() ? oDv.get() : null;
+
             if (twoLast.contains(dv) && twoLast.size() > 1 && jBefore != null) {
+                dv.setHashMD5(hashMd5);
+                dv.setHashSHA1(hashSha1);
+                dv.setLastUpdateAuthor(s.getUserName());
+                dv.setLastUpdateAuthorSource(s.getUserSource());
+                RepositoryManager.writeVersion(dv, FileCompressionHelper.getTransactionFile(transac));
 
                 if (jBefore.getStoragePath().equalsIgnoreCase(dv.getStoragePath())) {
-                    //Same path: check the hash
                     if (!hashMd5.equalsIgnoreCase(jBefore.getHashMD5()) && !hashSha1.equalsIgnoreCase(
                             jBefore.getHashSHA1())) {
                         Date newDate = new Date();
                         dv.setStoragePath(
                                 new SimpleDateFormat("/yyyy/MM/dd/HH/mm/").format(newDate) + dv.getDocumentUid() + "_" +
                                         newDate.getTime() + ".bin");
-                        // storing data
-                        dv.setHashMD5(hashMd5);
-                        dv.setHashSHA1(hashSha1);
-                        dv.setLastUpdateAuthor(s.getUserName());
-                        dv.setLastUpdateAuthorSource(s.getUserSource());
-                        RepositoryManager.writeVersion(dv, in);
-                        FactoryInstantiator.getInstance().getDocumentVersionFactory().updateDocumentVersion(dv);
                     } else {
-                        //nothing: same file
+                        if (!hashMd5.equalsIgnoreCase(dv.getHashMD5()) && !hashSha1.equalsIgnoreCase(dv.getHashSHA1())) {
+                            FactoryInstantiator.getInstance().getDocumentVersionFactory().updateDocumentVersion(dv);
+                        }
                     }
                 } else {
-                    //not the same path :
-                    //Update:
-
-                    if (!hashMd5.equalsIgnoreCase(dv.getHashMD5()) && !hashSha1.equalsIgnoreCase(dv.getHashSHA1())) {
-                        dv.setHashMD5(hashMd5);
-                        dv.setHashSHA1(hashSha1);
-                        dv.setLastUpdateAuthor(s.getUserName());
-                        dv.setLastUpdateAuthorSource(s.getUserSource());
-                        RepositoryManager.writeVersion(dv, in);
+                    if (twoLast.size() == 1 && twoLast.contains(dv)) {
                         FactoryInstantiator.getInstance().getDocumentVersionFactory().updateDocumentVersion(dv);
-                    } else {
                     }
                 }
-            } else {
-                if (twoLast.size() == 1 && twoLast.contains(dv)) {
-                    dv.setHashMD5(hashMd5);
-                    dv.setHashSHA1(hashSha1);
-                    dv.setLastUpdateAuthor(s.getUserName());
-                    dv.setLastUpdateAuthorSource(s.getUserSource());
-                    RepositoryManager.writeVersion(dv, in);
-                    FactoryInstantiator.getInstance().getDocumentVersionFactory().updateDocumentVersion(dv);
-                }
             }
-
         } else {
             //simple add :
-            //Return inpustream on file transmitted
-            InputStream in = FileCompressionHelper.getTransactionFile(transac);
-            /* Hash Calculation */
-            HashCalculator hc = new HashCalculator("MD5");
-            String recHashMD5 = (hc.hashToString(in).replaceAll(" ", ""));
-            in = FileCompressionHelper.getTransactionFile(transac);
-            hc.setAlgorithm("SHA-1");
-            String recHashSHA1 = (hc.hashToString(in).replaceAll(" ", ""));
-            in = FileCompressionHelper.getTransactionFile(transac);
             dv.setHashMD5(recHashMD5);
             dv.setHashSHA1(recHashSHA1);
             dv.setLastUpdateAuthor(s.getUserName());
             dv.setLastUpdateAuthorSource(s.getUserSource());
-            RepositoryManager.writeVersion(dv, in);
+            RepositoryManager.writeVersion(dv, FileCompressionHelper.getTransactionFile(transac));
             FactoryInstantiator.getInstance().getDocumentVersionFactory().updateDocumentVersion(dv);
         }
+    }
+
+    private String computeHash(InputStream in, String algorithm) throws NoSuchAlgorithmException, IOException {
+        HashCalculator hc = new HashCalculator(algorithm);
+        return hc.hashToString(in).replaceAll(" ", "");
     }
 
     private String computePath(Session s, String path, long documentTypeId, List<MetaValue> metaValues) {

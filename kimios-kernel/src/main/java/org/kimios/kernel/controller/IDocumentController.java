@@ -153,6 +153,11 @@ public interface IDocumentController {
                                              String hashMd5,
                                              String hashSha1) throws IOException;
 
+    @DmsEvent(eventName = {DmsEventName.FILE_UPLOAD})
+    public void uploadNewDocumentVersion(
+            Session s, long documentId, InputStream documentStream, String hashMd5, String hashSha1
+    ) throws ConfigException, DmsKernelException;
+
     /**
      * Update a document (for move, rename, extension and mime type change)
      */

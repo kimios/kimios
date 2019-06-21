@@ -103,8 +103,6 @@ public interface DocumentService {
             @Multipart(value = "md5") String hashMd5,
             @Multipart(value = "sha1") String hashSha1) throws DMServiceException;
 
-
-
     @POST @ApiOperation(value ="")
     @Path("/createDocumentFromFullPathWithProperties")
     @Produces("application/json")
@@ -147,7 +145,20 @@ public interface DocumentService {
             @ApiParam(name = "sha1")
             @DefaultValue(value = "") @Multipart(value = "sha1", required = false) String hashSha1) throws DMServiceException;
 
-
+    @POST @ApiOperation(value ="")
+    @Path("/uploadNewDocumentVersion")
+    @Produces("application/json")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public void uploadNewDocumentVersion(
+            @ApiParam(name = "sessionId", required = true)
+            @Multipart(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+            @ApiParam(name = "documentId", required = true)
+            @Multipart(value = "documentId") @WebParam(name = "documentId") long documentId,
+            @ApiParam(name = "document", required = true)
+            @Multipart(value = "document") @WebParam(name = "document") InputStream documentStream,
+            @Multipart(value = "md5") String hashMd5,
+            @Multipart(value = "sha1") String hashSha1
+    ) throws DMServiceException;
 
     @GET @ApiOperation(value ="")
     @Path("/updateDocument")
