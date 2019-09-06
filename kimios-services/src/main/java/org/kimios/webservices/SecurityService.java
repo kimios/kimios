@@ -60,7 +60,7 @@ public interface SecurityService
     @Produces("application/json")
     @Consumes("application/json")
     @WebMethod(operationName = "updateSecurities")
-    public TaskInfo updateDMEntitySecurities(@WebParam(name = "updateSecurityCommand") UpdateSecurityCommand securityCommand)
+    public TaskInfo updateDMEntitySecurities(@ApiParam(name = "updateSecurityCommand") @WebParam(name = "updateSecurityCommand") UpdateSecurityCommand securityCommand)
             throws DMServiceException;
 
     @GET @ApiOperation(value ="")
