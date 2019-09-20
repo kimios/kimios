@@ -142,5 +142,11 @@ public interface FileTransferService
             @QueryParam(value = "password") String password
     ) throws DMServiceException;
 
-
+    @GET @ApiOperation(value ="")
+    @Path( "/downloadDocumentVersionPreview" )
+    @Produces( value = {MediaType.APPLICATION_OCTET_STREAM, MediaType.APPLICATION_JSON} )
+    public Response downloadDocumentVersionPreview( @QueryParam("sessionId") String sessionId,
+                                             @QueryParam("transactionId") long transactionId,
+                                             @DefaultValue("true") @QueryParam("inline") Boolean inline)
+            throws DMServiceException;
 }

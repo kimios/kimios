@@ -132,6 +132,13 @@
         </dependency>
         <dependency>
             <groupId>org.kimios</groupId>
+            <artifactId>kimios-convert-jodconverter</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+            <classifier>osgi</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
             <artifactId>kimios-bonita</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
@@ -186,6 +193,7 @@
             <classifier>osgi</classifier>
             <type>war</type>
         </dependency>
+
     </dependencies>
 
     <build>

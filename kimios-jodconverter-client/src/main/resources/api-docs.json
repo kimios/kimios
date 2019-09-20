@@ -1,0 +1,147 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "JODConverter REST API for Online conversion. JODConverter automates conversions between office document formats using LibreOffice or Apache OpenOffice.",
+    "version": "0.1",
+    "title": "JODConverter REST API",
+    "termsOfService": "Terms of service",
+    "contact": {
+      "name": "John Doe",
+      "url": "www.jodconverter.org",
+      "email": "johndoe@company.com"
+    },
+    "license": {
+      "name": "Apache License Version 2.0",
+      "url": "https://www.apache.org/licenses/LICENSE-2.0"
+    }
+  },
+  "host": "localhost:8080",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "converter-controller",
+      "description": "Converter Controller"
+    }
+  ],
+  "paths": {
+    "/lool/convert-to": {
+      "post": {
+        "tags": [
+          "converter-controller"
+        ],
+        "summary": "Convert the incoming document to the specified format (provided as request param) and returns the converted document.",
+        "operationId": "convertToUsingParamUsingPOST",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/octet-stream"
+        ],
+        "parameters": [
+          {
+            "name": "data",
+            "in": "formData",
+            "description": "The input document to convert.",
+            "required": true,
+            "type": "file"
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "description": "The document format to convert the input document to.",
+            "required": true,
+            "type": "string",
+            "allowEmptyValue": false
+          },
+          {
+            "name": "parameters",
+            "in": "query",
+            "description": "The custom options to apply to the conversion.",
+            "required": false,
+            "items": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            "allowEmptyValue": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Document converted successfully.",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "400": {
+            "description": "The input document or output format is missing."
+          },
+          "500": {
+            "description": "An unexpected error occured."
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/lool/convert-to/{format}": {
+      "post": {
+        "tags": [
+          "converter-controller"
+        ],
+        "summary": "Convert the incoming document to the specified format (provided as path param) and returns the converted document.",
+        "operationId": "convertToUsingPathUsingPOST",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/octet-stream"
+        ],
+        "parameters": [
+          {
+            "name": "data",
+            "in": "formData",
+            "description": "The input document to convert.",
+            "required": true,
+            "type": "file"
+          },
+          {
+            "name": "format",
+            "in": "path",
+            "description": "The document format to convert the input document to.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "parameters",
+            "in": "query",
+            "description": "The custom options to apply to the conversion.",
+            "required": false,
+            "items": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            "allowEmptyValue": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Document converted successfully.",
+            "schema": {
+              "type": "object"
+            }
+          },
+          "400": {
+            "description": "The input document or output format is missing."
+          },
+          "500": {
+            "description": "An unexpected error occured."
+          }
+        },
+        "deprecated": false
+      }
+    }
+  }
+}

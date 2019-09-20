@@ -153,6 +153,8 @@
         <module>kimios-ldap-connector</module>
         <module>kimios-notifier</module>
         <module>kimios-telemetry</module>
+        <module>kimios-convert-jodconverter</module>
+        <module>kimios-jodconverter-client</module>
         <module>kimios-bundle-builder</module>
         <module>kimios-aspose-converters</module>
     </modules>

@@ -72,6 +72,7 @@ export KARAF_OPTS="-Dkimios.db.url=$KIMIOS_JDBC_URL \
 -Dkimios.repo.tmp.path=$KIMIOS_REPO_TMP_PATH \
 -Dkimios.index.solr.home=$KIMIOS_SOLR_HOME \
 -Dkimios.index.solr.server.url=$KIMIOS_SOLR_SERVER_URL \
+-Djodconverter.url=$JODCONVERTER_URL \
 -Djavax.xml.transform.TransformerFactory=org.apache.xalan.processor.TransformerFactoryImpl"
 # export KARAF_DEBUG # Enable debug mode
 # export KARAF_REDIRECT # Enable/set the std/err redirection when using bin/start

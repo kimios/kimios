@@ -261,5 +261,10 @@ public class FileTransferServiceImpl
             throw getHelper().convertException(e);
         }
     }
+
+    @Override
+    public Response downloadDocumentVersionPreview(String sessionId, long transactionId, Boolean inline) throws DMServiceException {
+        return null;
+    }
 }
 
