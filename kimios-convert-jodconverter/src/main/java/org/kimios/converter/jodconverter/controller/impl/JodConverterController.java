@@ -14,20 +14,25 @@ import java.io.*;
 
 public class JodConverterController extends AKimiosController implements IJodConverterController {
 
-    private static String KEY_CONFIG_JOD_CONVERTER_URL = "jodconverter.url";
+    private static String KEY_CONFIG_JOD_CONVERTER_URL = "converter.jodconverter.url=";
     private static String OUT_FORMAT = "pdf";
+
+    public String getJodConverterUrl() {
+        return jodConverterUrl;
+    }
+
+    public void setJodConverterUrl(String jodConverterUrl) {
+        this.jodConverterUrl = jodConverterUrl;
+    }
+
+    private String jodConverterUrl;
 
     private ConverterControllerApi controllerApi;
 
     public JodConverterController() {
 
-        if (ConfigurationManager.getValue(KEY_CONFIG_JOD_CONVERTER_URL) == null
-                || ConfigurationManager.getValue(KEY_CONFIG_JOD_CONVERTER_URL).isEmpty()) {
-            return;
-        }
-
         ApiClient apiClient = new ApiClient();
-        apiClient.setBasePath(ConfigurationManager.getValue(KEY_CONFIG_JOD_CONVERTER_URL));
+        apiClient.setBasePath(this.getJodConverterUrl());
         controllerApi = new ConverterControllerApi(apiClient);
     }
 
