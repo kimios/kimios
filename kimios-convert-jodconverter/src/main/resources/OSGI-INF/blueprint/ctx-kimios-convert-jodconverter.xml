@@ -24,10 +24,9 @@
                              activation="eager">
     </cm:property-placeholder>
 
-    <bean id="kimiosJodConverterController" class="KimiosJodConverterController">
+    <bean id="jodConverterController" class="org.kimios.converter.jodconverter.controller.impl.JodConverterController">
     </bean>
 
-    <service interface="org.kimios.converter.jodconverter.controller.IKimiosJodConverterController"
-             ref="kimiosJodConverterController" />
+    <service interface="org.kimios.converter.jodconverter.controller.IJodConverterController" ref="jodConverterController" />
 
 </blueprint>

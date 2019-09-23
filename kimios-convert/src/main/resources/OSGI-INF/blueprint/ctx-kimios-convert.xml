@@ -40,6 +40,7 @@
     <reference id="transferFactoryInstantiator" interface="org.kimios.kernel.filetransfer.IFileTransferFactoryInstantiator"/>
     <reference id="aclUpdater" interface="org.kimios.kernel.jobs.security.IACLUpdater"/>
     <reference id="extensionRegistryManager" interface="org.kimios.utils.extension.IExtensionRegistryManager"/>
+    <reference id="jodConverterController" interface="org.kimios.converter.jodconverter.controller.IJodConverterController"/>
 
     <bean id="converterFactory" class="org.kimios.converter.ConverterFactory">
         <argument ref="extensionRegistryManager" />
@@ -56,6 +57,7 @@
         <property name="aclUpdater" ref="aclUpdater"/>
         <property name="extensionRegistryManager" ref="extensionRegistryManager" />
         <property name="converterFactory" ref="converterFactory" />
+        <property name="jodConverterController" ref="jodConverterController" />
 
         <tx:transaction method="*" value="Required"/>
     </bean>

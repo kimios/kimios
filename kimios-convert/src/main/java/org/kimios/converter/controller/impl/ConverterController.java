@@ -19,10 +19,14 @@ package org.kimios.converter.controller.impl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.kimios.api.Converter;
 import org.kimios.api.InputSource;
 import org.kimios.converter.ConverterCacheHandler;
 import org.kimios.converter.ConverterDescriptor;
+import org.kimios.converter.impl.FileNameGenerator;
+import org.kimios.converter.jodconverter.controller.IJodConverterController;
+import org.kimios.kernel.configuration.Config;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.converter.controller.IConverterController;
 import org.kimios.converter.ConverterFactory;
@@ -38,8 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -51,8 +54,15 @@ public class ConverterController extends AKimiosController implements IConverter
 
     private static Logger log = LoggerFactory.getLogger(ConverterController.class);
 
+    private final String temporaryRepository;
 
     private ConverterFactory converterFactory;
+
+    private IJodConverterController jodConverterController;
+
+    public ConverterController() {
+        temporaryRepository = ConfigurationManager.getValue(Config.DEFAULT_TEMPORARY_PATH);
+    }
 
     public ConverterFactory getConverterFactory() {
         return converterFactory;
@@ -77,25 +87,33 @@ public class ConverterController extends AKimiosController implements IConverter
                     log.debug("input source already exists in cache, returning it");
                 return ConverterCacheHandler.load(version.getUid());
             }
-            // Build InputSource
-            if(log.isDebugEnabled())
-                log.debug("building inputSource for {}",version.getDocument().getName());
 
-            InputSource source = InputSourceFactory.getInputSource(version, UUID.randomUUID().toString());
-            // Get converter
-            if(log.isDebugEnabled())
-                log.debug("converter implementation: " + converterImpl);
-            Converter converter = converterFactory.getConverter(converterImpl, outputFormat);
-            retainedMimeType = converter.converterTargetMimeType();
-            if(retainedMimeType == null){
-                log.warn("{} not available for converter {}", retainedMimeType, converterImpl);
-                throw new ConverterException("MimeTypeNotFound");
+            InputSource inputSource = null;
+            if (outputFormat.equalsIgnoreCase("pdf")) {
+                // try to use JodConverter
+                inputSource = this.convertWithJodConverter(version);
             }
-            if(log.isDebugEnabled()){
-                log.debug("converter will output");
+            if (inputSource == null) {
+                // Build InputSource
+                if (log.isDebugEnabled())
+                    log.debug("building inputSource for {}", version.getDocument().getName());
+                InputSource source = InputSourceFactory.getInputSource(version, UUID.randomUUID().toString());
+                // Get converter
+                if (log.isDebugEnabled())
+                    log.debug("converter implementation: " + converterImpl);
+                Converter converter = converterFactory.getConverter(converterImpl, outputFormat);
+                retainedMimeType = converter.converterTargetMimeType();
+                if (retainedMimeType == null) {
+                    log.warn("{} not available for converter {}", retainedMimeType, converterImpl);
+                    throw new ConverterException("MimeTypeNotFound");
+                }
+                if (log.isDebugEnabled()) {
+                    log.debug("converter will output");
+                }
+                // Convert and return the result source
+                inputSource = converter.convertInputSource(source);
             }
-            // Convert and return the result source
-            InputSource inputSource = converter.convertInputSource(source);
+
             ConverterCacheHandler.cachePreviewData(documentVersionId, inputSource);
             return inputSource;
         } catch (Exception e) {
@@ -116,6 +134,32 @@ public class ConverterController extends AKimiosController implements IConverter
             }
             throw new ConverterException(e);
         }
+    }
+
+    private InputSource convertWithJodConverter(DocumentVersion version) throws IOException {
+        // Copy given resource to temporary repository
+        String sourcePath = this.temporaryRepository + "/" + version.getDocument().getName() + "_" +
+                FileNameGenerator.generate() + "." + version.getDocument().getType();
+        IOUtils.copyLarge(new FileInputStream(version.getStoragePath()), new FileOutputStream(sourcePath));
+
+        String fileName = FileNameGenerator.generate();
+        // Convert file located to sourcePath into HTML web content
+        String targetPath = temporaryRepository + "/" +
+                fileName + "_dir/" + fileName + "." + "pdf";
+
+        File fileResult = this.jodConverterController.convertFile(new File(sourcePath), targetPath);
+
+        InputSource result = null;
+        if (fileResult != null) {
+
+            result = InputSourceFactory.getInputSource(targetPath, fileName);
+            result.setHumanName(version.getDocument().getName() + "_" + version.getDocument().getType() + "." + "pdf");
+
+            result.setPublicUrl(targetPath);
+            result.setMimeType("application/pdf");
+        }
+
+        return result;
     }
 
     public InputSource convertDocumentVersions(Session session, List<Long> documentVersionIds,
@@ -142,7 +186,6 @@ public class ConverterController extends AKimiosController implements IConverter
 
             // Get converter
             log.debug("Getting Converter implementation: " + converterImpl);
-
             Converter converter = converterFactory.getConverter(converterImpl, outputFormat);
 
             // Convert and return the result source

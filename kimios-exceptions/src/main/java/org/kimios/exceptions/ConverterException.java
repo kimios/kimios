@@ -16,8 +16,6 @@
 
 package org.kimios.exceptions;
 
-import org.kimios.exceptions.DmsKernelException;
-
 public class ConverterException extends DmsKernelException {
     public ConverterException(String s) {
         super(s);
