@@ -1,20 +1,23 @@
-package org.kimios.converter.jodconverter.controller.impl;
+package org.kimios.jod.controller.impl;
 
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.Response;
-import org.kimios.converter.jodconverter.controller.IJodConverterController;
+import org.kimios.jod.controller.IJodConverterController;
 import org.kimios.exceptions.ConverterException;
 import org.kimios.jodconverter.ApiClient;
 import org.kimios.jodconverter.ApiException;
 import org.kimios.jodconverter.handler.ConverterControllerApi;
 import org.kimios.kernel.controller.AKimiosController;
-import org.kimios.utils.configuration.ConfigurationManager;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
+@Transactional
 public class JodConverterController extends AKimiosController implements IJodConverterController {
 
-    private static String KEY_CONFIG_JOD_CONVERTER_URL = "converter.jodconverter.url=";
     private static String OUT_FORMAT = "pdf";
 
     public String getJodConverterUrl() {

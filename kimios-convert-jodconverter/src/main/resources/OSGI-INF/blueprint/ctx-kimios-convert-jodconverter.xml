@@ -17,6 +17,7 @@
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
+           xmlns:tx="http://aries.apache.org/xmlns/transactions/v1.0.0"
            xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0
         http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd" default-activation="eager">
 
@@ -24,10 +25,30 @@
                              activation="eager">
     </cm:property-placeholder>
 
-    <bean id="jodConverterController" class="org.kimios.converter.jodconverter.controller.impl.JodConverterController">
+    <reference id="securityAgent" interface="org.kimios.kernel.security.ISecurityAgent" />
+    <reference id="dmsFactoryInstantiator" interface="org.kimios.kernel.dms.IDmsFactoryInstantiator" />
+    <reference id="securityFactoryInstantiator" interface="org.kimios.kernel.security.ISecurityFactoryInstantiator"/>
+    <reference id="authFactoryInstantiator" interface="org.kimios.kernel.user.IAuthenticationFactoryInstantiator"/>
+    <reference id="logFactoryInstantiator" interface="org.kimios.kernel.log.ILogFactoryInstantiator"/>
+    <reference id="reportFactoryInstantiator" interface="org.kimios.kernel.reporting.factory.IReportFactoryInstantiator"/>
+    <reference id="transferFactoryInstantiator" interface="org.kimios.kernel.filetransfer.IFileTransferFactoryInstantiator"/>
+    <reference id="aclUpdater" interface="org.kimios.kernel.jobs.security.IACLUpdater"/>
+
+
+    <bean id="jodConverterController" class="org.kimios.jod.controller.impl.JodConverterController">
+        <property name="dmsFactoryInstantiator" ref="dmsFactoryInstantiator"></property>
+        <property name="securityFactoryInstantiator" ref="securityFactoryInstantiator"></property>
+        <property name="authFactoryInstantiator" ref="authFactoryInstantiator"></property>
+        <property name="logFactoryInstantiator" ref="logFactoryInstantiator"></property>
+        <property name="reportFactoryInstantiator" ref="reportFactoryInstantiator"></property>
+        <property name="transferFactoryInstantiator" ref="transferFactoryInstantiator"></property>
+        <property name="securityAgent" ref="securityAgent"/>
+        <property name="aclUpdater" ref="aclUpdater"/>
         <property name="jodConverterUrl" value="${converter.jodconverter.url}" />
+
+        <tx:transaction method="*" value="Required"/>
     </bean>
 
-    <service interface="org.kimios.converter.jodconverter.controller.IJodConverterController" ref="jodConverterController" />
+    <service interface="org.kimios.jod.controller.IJodConverterController" ref="jodConverterController" />
 
 </blueprint>

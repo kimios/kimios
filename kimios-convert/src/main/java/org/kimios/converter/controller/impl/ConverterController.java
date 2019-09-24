@@ -25,7 +25,7 @@ import org.kimios.api.InputSource;
 import org.kimios.converter.ConverterCacheHandler;
 import org.kimios.converter.ConverterDescriptor;
 import org.kimios.converter.impl.FileNameGenerator;
-import org.kimios.converter.jodconverter.controller.IJodConverterController;
+import org.kimios.jod.controller.IJodConverterController;
 import org.kimios.kernel.configuration.Config;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.converter.controller.IConverterController;
@@ -60,8 +60,9 @@ public class ConverterController extends AKimiosController implements IConverter
 
     private IJodConverterController jodConverterController;
 
-    public ConverterController() {
+    public ConverterController(IJodConverterController jodConverterController) {
         temporaryRepository = ConfigurationManager.getValue(Config.DEFAULT_TEMPORARY_PATH);
+        this.jodConverterController = jodConverterController;
     }
 
     public ConverterFactory getConverterFactory() {

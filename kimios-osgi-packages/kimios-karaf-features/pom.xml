@@ -193,7 +193,6 @@
             <classifier>osgi</classifier>
             <type>war</type>
         </dependency>
-
     </dependencies>
 
     <build>
