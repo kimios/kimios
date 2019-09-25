@@ -44,7 +44,8 @@
         <property name="transferFactoryInstantiator" ref="transferFactoryInstantiator"></property>
         <property name="securityAgent" ref="securityAgent"/>
         <property name="aclUpdater" ref="aclUpdater"/>
-        <property name="jodConverterUrl" value="${converter.jodconverter.url}" />
+
+        <argument value="${converter.jodconverter.url}" />
 
         <tx:transaction method="*" value="Required"/>
     </bean>

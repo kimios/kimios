@@ -90,15 +90,16 @@ public class ConverterController extends AKimiosController implements IConverter
             }
 
             InputSource inputSource = null;
+            // Build InputSource
+            if (log.isDebugEnabled())
+                log.debug("building inputSource for {}", version.getDocument().getName());
+            InputSource source = InputSourceFactory.getInputSource(version, UUID.randomUUID().toString());
+
             if (outputFormat.equalsIgnoreCase("pdf")) {
                 // try to use JodConverter
-                inputSource = this.convertWithJodConverter(version);
+                inputSource = this.convertWithJodConverter(source);
             }
             if (inputSource == null) {
-                // Build InputSource
-                if (log.isDebugEnabled())
-                    log.debug("building inputSource for {}", version.getDocument().getName());
-                InputSource source = InputSourceFactory.getInputSource(version, UUID.randomUUID().toString());
                 // Get converter
                 if (log.isDebugEnabled())
                     log.debug("converter implementation: " + converterImpl);
@@ -137,11 +138,12 @@ public class ConverterController extends AKimiosController implements IConverter
         }
     }
 
-    private InputSource convertWithJodConverter(DocumentVersion version) throws IOException {
+    private InputSource convertWithJodConverter(InputSource source) throws IOException {
         // Copy given resource to temporary repository
-        String sourcePath = this.temporaryRepository + "/" + version.getDocument().getName() + "_" +
-                FileNameGenerator.generate() + "." + version.getDocument().getType();
-        IOUtils.copyLarge(new FileInputStream(version.getStoragePath()), new FileOutputStream(sourcePath));
+        String sourcePath = sourcePath = temporaryRepository + "/" + source.getName() + "_" +
+                FileNameGenerator.generate() + "." + source.getType();
+        IOUtils.copyLarge(source.getInputStream(), new FileOutputStream(sourcePath));
+
 
         String fileName = FileNameGenerator.generate();
         // Convert file located to sourcePath into HTML web content
@@ -154,7 +156,7 @@ public class ConverterController extends AKimiosController implements IConverter
         if (fileResult != null) {
 
             result = InputSourceFactory.getInputSource(targetPath, fileName);
-            result.setHumanName(version.getDocument().getName() + "_" + version.getDocument().getType() + "." + "pdf");
+            result.setHumanName(source.getName() + "_" + source.getType() + "." + "pdf");
 
             result.setPublicUrl(targetPath);
             result.setMimeType("application/pdf");

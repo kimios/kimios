@@ -22,15 +22,14 @@ import org.kimios.converter.controller.IConverterController;
 import org.kimios.kernel.configuration.Config;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.utils.configuration.ConfigurationManager;
+import org.kimios.webservices.IServiceHelper;
 import org.kimios.webservices.converter.ConverterService;
 import org.kimios.webservices.exceptions.DMServiceException;
-import org.kimios.webservices.IServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
-import javax.ws.rs.CookieParam;
 import javax.ws.rs.core.Response;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -124,7 +123,6 @@ public class ConverterServiceImpl implements ConverterService {
         }
     }
 
-    // private
 
     private Response wrapResponse(InputSource source) throws IOException {
 

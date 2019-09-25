@@ -2,18 +2,15 @@ package org.kimios.jod.controller.impl;
 
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.Response;
-import org.kimios.jod.controller.IJodConverterController;
 import org.kimios.exceptions.ConverterException;
+import org.kimios.jod.controller.IJodConverterController;
 import org.kimios.jodconverter.ApiClient;
 import org.kimios.jodconverter.ApiException;
 import org.kimios.jodconverter.handler.ConverterControllerApi;
 import org.kimios.kernel.controller.AKimiosController;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 @Transactional
 public class JodConverterController extends AKimiosController implements IJodConverterController {
@@ -32,10 +29,11 @@ public class JodConverterController extends AKimiosController implements IJodCon
 
     private ConverterControllerApi controllerApi;
 
-    public JodConverterController() {
+    public JodConverterController(String jodConverterUrl) {
+        this.jodConverterUrl = jodConverterUrl;
 
         ApiClient apiClient = new ApiClient();
-        apiClient.setBasePath(this.getJodConverterUrl());
+        apiClient.setBasePath(this.jodConverterUrl);
         controllerApi = new ConverterControllerApi(apiClient);
     }
 
@@ -53,7 +51,10 @@ public class JodConverterController extends AKimiosController implements IJodCon
             );
             Response response = call.execute();
 
-            FileOutputStream outStream = new FileOutputStream(fileResultName);
+            result = new File(fileResultName);
+            File resultParent = (result.getParentFile());
+            resultParent.mkdirs();
+            FileOutputStream outStream = new FileOutputStream(result);
             InputStream initialStream = response.body().byteStream();
             byte[] buffer = new byte[8 * 1024];
             int bytesRead;
@@ -63,7 +64,8 @@ public class JodConverterController extends AKimiosController implements IJodCon
             initialStream.close();
             outStream.close();
 
-            result = new File(fileResultName);
+        } catch (FileNotFoundException e) {
+            throw new ConverterException(e);
         } catch (IOException e) {
             throw new ConverterException(e);
         } catch (ApiException e) {
