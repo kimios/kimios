@@ -54,14 +54,11 @@ public class ConverterController extends AKimiosController implements IConverter
 
     private static Logger log = LoggerFactory.getLogger(ConverterController.class);
 
-    private final String temporaryRepository;
-
     private ConverterFactory converterFactory;
 
     private IJodConverterController jodConverterController;
 
     public ConverterController(IJodConverterController jodConverterController) {
-        temporaryRepository = ConfigurationManager.getValue(Config.DEFAULT_TEMPORARY_PATH);
         this.jodConverterController = jodConverterController;
     }
 
@@ -83,13 +80,17 @@ public class ConverterController extends AKimiosController implements IConverter
             if (version == null || !getSecurityAgent().isReadable(version.getDocument(), session.getUserName(), session.getUserSource(), session.getGroups())) {
                 throw new AccessDeniedException();
             }
+
+            InputSource inputSource = null;
             if (ConverterCacheHandler.cacheExist(version.getUid())) {
                 if(log.isDebugEnabled())
                     log.debug("input source already exists in cache, returning it");
-                return ConverterCacheHandler.load(version.getUid());
+
+                inputSource = ConverterCacheHandler.load(version.getUid());
+                if (inputSource != null)
+                    return inputSource;
             }
 
-            InputSource inputSource = null;
             // Build InputSource
             if (log.isDebugEnabled())
                 log.debug("building inputSource for {}", version.getDocument().getName());
@@ -97,7 +98,12 @@ public class ConverterController extends AKimiosController implements IConverter
 
             if (outputFormat.equalsIgnoreCase("pdf")) {
                 // try to use JodConverter
-                inputSource = this.convertWithJodConverter(source);
+                try {
+                    inputSource = this.convertWithJodConverter(source);
+                } catch (Exception e) {
+                    log.info("Exception raised while using JodConverter :");
+                    log.info(e.getMessage());
+                }
             }
             if (inputSource == null) {
                 // Get converter
@@ -139,6 +145,7 @@ public class ConverterController extends AKimiosController implements IConverter
     }
 
     private InputSource convertWithJodConverter(InputSource source) throws IOException {
+        String temporaryRepository = ConfigurationManager.getValue(Config.DEFAULT_TEMPORARY_PATH);
         // Copy given resource to temporary repository
         String sourcePath = sourcePath = temporaryRepository + "/" + source.getName() + "_" +
                 FileNameGenerator.generate() + "." + source.getType();
