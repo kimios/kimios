@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!--
   ~ Kimios - Document Management System Software
   ~ Copyright (C) 2008-2015  DevLib'
@@ -20,23 +21,8 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
         http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
-    <bean id="converterController" class="org.kimios.converter.controller.impl.ConverterController"
-          parent="kimiosCoreCtrl">
-        <property name="converterFactory">
-            <bean class="org.kimios.converter.ConverterFactory">
-                <constructor-arg ref="extensionRegistryManager" />
-            </bean>
-        </property>
-        <constructor-arg ref="jodConverterController" />
+    <bean id="jodConverterController" class="org.kimios.jod.controller.impl.JodConverterController">
+        <constructor-arg name="jodConverterUrl" value="${converter.jodconverter.url}" />
     </bean>
-
-    <!-- preview cache reset -->
-    <bean class="org.kimios.converter.cache.PreviewCacheHandler" />
-
-    <aop:config>
-        <aop:pointcut id="converterTx"
-                      expression="execution(* org.kimios.converter.controller.IConverterController.*(..))"/>
-        <aop:advisor advice-ref="txAdvice" pointcut-ref="converterTx"/>
-    </aop:config>
 
 </beans>

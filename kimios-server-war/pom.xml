@@ -82,6 +82,12 @@
         </dependency>
         <dependency>
             <groupId>org.kimios</groupId>
+            <artifactId>kimios-convert-jodconverter</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
             <artifactId>kimios-bonita</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
@@ -534,6 +540,10 @@
                         </weaveDependency>
                         <weaveDependency>
                             <groupId>org.kimios</groupId>
+                            <artifactId>kimios-convert-jodconverter</artifactId>
+                        </weaveDependency>
+                        <weaveDependency>
+                            <groupId>org.kimios</groupId>
                             <artifactId>kimios-bonita</artifactId>
                         </weaveDependency>
                         <weaveDependency>
@@ -561,6 +571,7 @@
                         WEB-INF/lib/kimios-bonita-${project.version}.jar,
                         WEB-INF/lib/kimios-share-${project.version}.jar,
                         WEB-INF/lib/kimios-convert-${project.version}.jar,
+                        WEB-INF/lib/kimios-convert-jodconverter-${project.version}.jar,
                         WEB-INF/lib/kimios-index-*.jar,
                         %regex[WEB-INF/lib/commons-logging-*.jar],
                         %regex[WEB-INF/lib/bc*-jdk14*.jar],
