@@ -84,8 +84,17 @@ public interface ExtensionService
     @Produces("application/json")
     public void trashEntity(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+            @QueryParam(value = "dmEntityId") @WebParam(name = "dmEntityId") long dmEntityId)
+            throws DMServiceException;
+
+    @GET
+    @Path("/trashForce")
+    @Produces("application/json")
+    public void trashEntityForce(
+            @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "dmEntityId") @WebParam(name = "dmEntityId") long dmEntityId,
-            @QueryParam(value = "force") @WebParam(name = "force") @DefaultValue(value = "false") boolean force)
+            @QueryParam(value = "force") @WebParam(name = "force") @DefaultValue(value = "false") boolean force
+    )
             throws DMServiceException;
 
     @GET

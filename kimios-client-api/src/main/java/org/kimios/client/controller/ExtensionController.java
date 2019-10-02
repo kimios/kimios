@@ -59,7 +59,7 @@ public class ExtensionController {
     public void addEntityToTrash(String sessionId, long documentId, boolean force)
         throws Exception {
         try {
-            client.trashEntity(sessionId, documentId, force);
+            client.trashEntityForce(sessionId, documentId, force);
         } catch (Exception e) {
             throw new ExceptionHelper().convertException(e);
         }
