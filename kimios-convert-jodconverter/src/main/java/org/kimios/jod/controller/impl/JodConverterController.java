@@ -2,8 +2,8 @@ package org.kimios.jod.controller.impl;
 
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.Response;
+import org.kimios.api.controller.IFileConverterController;
 import org.kimios.exceptions.ConverterException;
-import org.kimios.jod.controller.IJodConverterController;
 import org.kimios.jodconverter.ApiClient;
 import org.kimios.jodconverter.ApiException;
 import org.kimios.jodconverter.handler.ConverterControllerApi;
@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.*;
 
 @Transactional
-public class JodConverterController extends AKimiosController implements IJodConverterController {
+public class JodConverterController extends AKimiosController implements IFileConverterController {
 
     private static String OUT_FORMAT = "pdf";
 
@@ -28,6 +28,8 @@ public class JodConverterController extends AKimiosController implements IJodCon
     private String jodConverterUrl;
 
     private ConverterControllerApi controllerApi;
+
+    int score = 100;
 
     public JodConverterController(String jodConverterUrl) {
         this.jodConverterUrl = jodConverterUrl;
@@ -73,5 +75,15 @@ public class JodConverterController extends AKimiosController implements IJodCon
         }
 
         return result;
+    }
+
+    @Override
+    public int getScore() {
+        return this.score;
+    }
+
+    @Override
+    public int compareTo(IFileConverterController o) {
+        return Integer.compare(this.score, o.getScore());
     }
 }

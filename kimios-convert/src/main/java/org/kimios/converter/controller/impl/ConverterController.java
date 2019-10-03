@@ -22,31 +22,31 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.kimios.api.Converter;
 import org.kimios.api.InputSource;
+import org.kimios.api.controller.IFileConverterController;
 import org.kimios.converter.ConverterCacheHandler;
 import org.kimios.converter.ConverterDescriptor;
-import org.kimios.converter.impl.FileNameGenerator;
-import org.kimios.jod.controller.IJodConverterController;
-import org.kimios.kernel.configuration.Config;
-import org.kimios.kernel.controller.AKimiosController;
-import org.kimios.converter.controller.IConverterController;
 import org.kimios.converter.ConverterFactory;
-import org.kimios.exceptions.ConverterException;
+import org.kimios.converter.controller.IConverterController;
+import org.kimios.converter.impl.FileNameGenerator;
 import org.kimios.converter.source.InputSourceFactory;
 import org.kimios.converter.source.impl.FileInputSource;
+import org.kimios.exceptions.AccessDeniedException;
+import org.kimios.exceptions.ConverterException;
+import org.kimios.kernel.configuration.Config;
+import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.dms.model.Document;
 import org.kimios.kernel.dms.model.DocumentVersion;
-import org.kimios.exceptions.AccessDeniedException;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.utils.configuration.ConfigurationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.*;
 
 
 @Transactional
@@ -56,10 +56,14 @@ public class ConverterController extends AKimiosController implements IConverter
 
     private ConverterFactory converterFactory;
 
-    private IJodConverterController jodConverterController;
+    private List<IFileConverterController> fileConverterList;
 
-    public ConverterController(IJodConverterController jodConverterController) {
-        this.jodConverterController = jodConverterController;
+    public List<IFileConverterController> getFileConverterList() {
+        return fileConverterList;
+    }
+
+    public void setFileConverterList(List<IFileConverterController> fileConverterList) {
+        this.fileConverterList = fileConverterList;
     }
 
     public ConverterFactory getConverterFactory() {
@@ -157,7 +161,14 @@ public class ConverterController extends AKimiosController implements IConverter
         String targetPath = temporaryRepository + "/" +
                 fileName + "_dir/" + fileName + "." + "pdf";
 
-        File fileResult = this.jodConverterController.convertFile(new File(sourcePath), targetPath);
+        if (this.fileConverterList.size() == 0) {
+            return null;
+        }
+        File fileResult = null;
+        Iterator<IFileConverterController> iterator = new TreeSet(this.fileConverterList).descendingIterator();
+        while (fileResult == null && iterator.hasNext()) {
+            fileResult = iterator.next().convertFile(new File(sourcePath), targetPath);
+        }
 
         InputSource result = null;
         if (fileResult != null) {

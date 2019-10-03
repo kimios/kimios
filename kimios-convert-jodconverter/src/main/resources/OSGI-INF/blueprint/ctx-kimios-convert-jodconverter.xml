@@ -34,7 +34,6 @@
     <reference id="transferFactoryInstantiator" interface="org.kimios.kernel.filetransfer.IFileTransferFactoryInstantiator"/>
     <reference id="aclUpdater" interface="org.kimios.kernel.jobs.security.IACLUpdater"/>
 
-
     <bean id="jodConverterController" class="org.kimios.jod.controller.impl.JodConverterController">
         <property name="dmsFactoryInstantiator" ref="dmsFactoryInstantiator"></property>
         <property name="securityFactoryInstantiator" ref="securityFactoryInstantiator"></property>
@@ -50,6 +49,6 @@
         <tx:transaction method="*" value="Required"/>
     </bean>
 
-    <service interface="org.kimios.jod.controller.IJodConverterController" ref="jodConverterController" />
+    <service interface="org.kimios.api.controller.IFileConverterController" ref="jodConverterController" />
 
 </blueprint>
