@@ -43,6 +43,11 @@
                 <enabled>true</enabled>
             </releases>
         </repository>
+        <repository>
+            <id>aspose</id>
+            <name>aspose</name>
+            <url>https://artifact.aspose.com/repo/</url>
+        </repository>
     </repositories>
 
     <dependencies>
