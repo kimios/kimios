@@ -91,7 +91,12 @@ public class ExtensionServiceImpl extends CoreService implements ExtensionServic
     }
 
     @Override
-    public void trashEntity(String sessionId, long dmEntityId, boolean force) throws DMServiceException {
+    public void trashEntity(String sessionId, long dmEntityId) throws DMServiceException {
+        this.trashEntityForce(sessionId, dmEntityId, true);
+    }
+
+    @Override
+    public void trashEntityForce(String sessionId, long dmEntityId, boolean force) throws DMServiceException {
         try {
             Session session = getHelper().getSession(sessionId);
             extensionController.trashEntity(session, dmEntityId, force);

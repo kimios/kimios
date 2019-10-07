@@ -491,7 +491,7 @@ public class ShareTest extends TestAbstract {
         }
 
         try {
-            this.extensionService.trashEntity(sessions.get(Users.USER_TEST_1).getUid(), this.sharedDocuments.get(Users.USER_TEST_1).get(0), false);
+            this.extensionService.trashEntityForce(sessions.get(Users.USER_TEST_1).getUid(), this.sharedDocuments.get(Users.USER_TEST_1).get(0), false);
             fail();
         } catch (Exception e) {
             assertTrue(e instanceof DMServiceException);
@@ -499,7 +499,7 @@ public class ShareTest extends TestAbstract {
         }
 
         try {
-            this.extensionService.trashEntity(sessions.get(Users.USER_TEST_1).getUid(), this.sharedDocuments.get(Users.USER_TEST_1).get(0), true);
+            this.extensionService.trashEntityForce(sessions.get(Users.USER_TEST_1).getUid(), this.sharedDocuments.get(Users.USER_TEST_1).get(0), true);
             fail();
         } catch (Exception e) {
             assertTrue(e instanceof DMServiceException);
