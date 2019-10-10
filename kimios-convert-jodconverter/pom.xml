@@ -5,7 +5,7 @@
     <parent>
         <artifactId>kimios</artifactId>
         <groupId>org.kimios</groupId>
-        <version>1.2.2-SNAPSHOT</version>
+        <version>1.3-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -33,7 +33,7 @@
         <dependency>
             <groupId>org.kimios</groupId>
             <artifactId>kimios-kernel</artifactId>
-            <version>1.2.2-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
