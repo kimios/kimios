@@ -27,7 +27,7 @@
                 <constructor-arg ref="extensionRegistryManager" />
             </bean>
         </property>
-        <constructor-arg ref="jodConverterController" />
+        <!--<constructor-arg ref="jodConverterController" />-->
     </bean>
 
     <!-- preview cache reset -->

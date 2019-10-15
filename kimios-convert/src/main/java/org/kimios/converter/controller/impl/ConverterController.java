@@ -58,6 +58,14 @@ public class ConverterController extends AKimiosController implements IConverter
 
     private List<IFileConverterController> fileConverterList;
 
+    public ConverterController() {
+    }
+
+    public ConverterController(IFileConverterController jodConverterController) {
+        if (jodConverterController != null)
+            fileConverterList.add(jodConverterController);
+    }
+
     public List<IFileConverterController> getFileConverterList() {
         return fileConverterList;
     }
