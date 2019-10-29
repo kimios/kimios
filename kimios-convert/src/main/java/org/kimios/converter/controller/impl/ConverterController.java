@@ -42,10 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 
@@ -99,8 +96,15 @@ public class ConverterController extends AKimiosController implements IConverter
                     log.debug("input source already exists in cache, returning it");
 
                 inputSource = ConverterCacheHandler.load(version.getUid());
-                if (inputSource != null)
+                if (inputSource != null) {
+                    try {
+                        inputSource.getInputStream().available();
+                    } catch (FileNotFoundException e) {
+                        ConverterCacheHandler.cancelCache(version.getUid());
+                        log.info("input source not readable, doing conversion again: " + e.getMessage());
+                    }
                     return inputSource;
+                }
             }
 
             // Build InputSource
