@@ -228,7 +228,10 @@ public class DocumentVersionActionHandler extends Controller
         if (isInternetExplorer) {
             item = "attachment; filename=\"" + URLEncoder.encode(docName, "utf-8") + "\"";
         } else {
-            item = "attachment; filename=\"" + MimeUtility.encodeWord(docName) + "\"";
+            if(userAgent.contains("Firefox"))
+                item = "attachment; filename*=UTF-8''" + docName;
+            else
+                item = "attachment; filename=\"" + MimeUtility.encodeWord(docName) + "\"";
         }
 
         return  item;
