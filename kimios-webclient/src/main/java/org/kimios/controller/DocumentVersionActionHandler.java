@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class DocumentVersionActionHandler extends Controller
@@ -219,8 +220,6 @@ public class DocumentVersionActionHandler extends Controller
 
     private String encodeFileNameInHeader(HttpServletRequest request, String docName) throws Exception {
 
-
-
         String userAgent = request.getHeader("user-agent");
         boolean isInternetExplorer = (userAgent.indexOf("MSIE") > -1);
 
@@ -228,10 +227,13 @@ public class DocumentVersionActionHandler extends Controller
         if (isInternetExplorer) {
             item = "attachment; filename=\"" + URLEncoder.encode(docName, "utf-8") + "\"";
         } else {
-            if(userAgent.contains("Firefox"))
-                item = "attachment; filename*=UTF-8''" + docName;
-            else
+            if(userAgent.contains("Firefox")) {
+                item = "attachment; filename*=UTF-8''";
+                item += URLEncoder.encode(docName, StandardCharsets.UTF_8.toString())
+                        .replace("+", "%20");
+            } else {
                 item = "attachment; filename=\"" + MimeUtility.encodeWord(docName) + "\"";
+            }
         }
 
         return  item;
@@ -245,7 +247,9 @@ public class DocumentVersionActionHandler extends Controller
     {
         Document doc = documentController.getDocument(sessionUid, Long.parseLong(parameters.get("uid")));
         String docName = doc.getName() +  (StringUtils.isNotBlank(doc.getExtension()) ? "." + doc.getExtension() : "");
-        resp.setHeader("Content-Disposition",encodeFileNameInHeader(request, docName));
+        resp.setCharacterEncoding("UTF-8");
+        String attachment = encodeFileNameInHeader(request, docName);
+        resp.setHeader("Content-Disposition", attachment);
         resp.setContentType(doc.getMimeType());
         resp.setContentLength((int) doc.getLength());
         fileTransferController.downloadFileVersion(sessionUid, doc.getLastVersionId(), resp.getOutputStream(), false);
