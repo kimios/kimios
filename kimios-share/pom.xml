@@ -146,6 +146,7 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <packaging>bundle</packaging>
                     <classifier>osgi</classifier>
                     <supportedProjectTypes>
                         <supportedProjectType>jar</supportedProjectType>

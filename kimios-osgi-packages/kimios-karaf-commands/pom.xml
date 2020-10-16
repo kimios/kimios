@@ -180,6 +180,7 @@
                 </executions>
 
                 <configuration>
+                    <packaging>bundle</packaging>
                     <instructions>
                         <Karaf-Commands>*</Karaf-Commands>
                         <Import-Package>
@@ -204,8 +205,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.5.1</version>
                 <configuration>
-                    <target>1.6</target>
-                    <source>1.6</source>
+                    <target>1.8</target>
+                    <source>1.8</source>
                 </configuration>
             </plugin>
 
