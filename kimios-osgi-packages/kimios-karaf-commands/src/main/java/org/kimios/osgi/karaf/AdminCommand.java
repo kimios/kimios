@@ -25,9 +25,24 @@ public class AdminCommand extends KimiosCommand
 
     @Override protected void doExecuteKimiosCommand() throws Exception
     {
-        String user = login.split("@")[0];
-        String domain = login.split("@")[1];
-        Session kimiosSession = securityController.startSession(user, domain, password);
-        this.karafSession.put(KIMIOS_SESSION, kimiosSession);
+        String[] loginArg = login.split("@");
+        if (loginArg.length != 2) {
+            this.karafSession.getConsole().println("login must be <USERID>@<SOURCE>");
+            return;
+        }
+        String user = loginArg[0];
+        String domain = loginArg[1];
+        Session kimiosSession = null;
+        try {
+            kimiosSession = securityController.startSession(user, domain, password);
+        } catch (Exception e) {
+            this.karafSession.getConsole().println("login failed");
+        }
+        if (kimiosSession == null) {
+            this.karafSession.getConsole().println("login failed");
+        } else {
+            this.karafSession.getConsole().println("login ok");
+            this.karafSession.put(KIMIOS_SESSION, kimiosSession);
+        }
     }
 }
