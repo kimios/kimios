@@ -94,6 +94,7 @@
     <feature version="${project.version}" name="kimios-features">
         <requirement prerequisite="true">kimios-core</requirement>
         <bundle>mvn:org.kimios/kimios-docx4j-osgi/${project.version}/jar</bundle>
+        <bundle start-level="100">mvn:org.kimios/kimios-threads/${project.version}/jar/osgi</bundle>
         <bundle start-level="100">mvn:org.kimios/kimios-templates/${project.version}/jar/osgi</bundle>
         <bundle start-level="100">mvn:org.kimios/kimios-share/${project.version}/jar/osgi</bundle>
         <bundle start-level="100">mvn:org.kimios/kimios-convert/${project.version}/jar/osgi</bundle>

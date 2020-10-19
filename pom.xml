@@ -157,6 +157,7 @@
         <module>kimios-convert-jodconverter</module>
         <module>kimios-bundle-builder</module>
         <module>kimios-aspose-converters</module>
+        <module>kimios-threads</module>
     </modules>
     <packaging>pom</packaging>
     <build>

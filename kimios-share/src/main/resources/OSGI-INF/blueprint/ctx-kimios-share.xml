@@ -136,4 +136,7 @@
         <property name="launchShareCleaner" value="${dms.share.launch.cleaner}" />
     </bean>
 
+    <service id="shareCleanerOsgi" ref="shareCleaner"
+             interface="org.kimios.api.controller.IManageableServiceController" />
+
 </blueprint>
