@@ -80,4 +80,7 @@
     <service id="notificationCreatorOsgi" ref="notificationCreator"
              interface="org.kimios.api.controller.IManageableServiceController" />
 
+    <service id="notificationSenderOsgi" ref="notificationSender"
+             interface="org.kimios.api.controller.IManageableServiceController" />
+
 </blueprint>

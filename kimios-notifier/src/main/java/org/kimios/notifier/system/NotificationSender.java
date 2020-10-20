@@ -6,37 +6,34 @@ import org.kimios.kernel.deployment.DataInitializerCtrl;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.notifier.controller.INotifierController;
 import org.kimios.notifier.jobs.NotificationSenderJob;
-import org.kimios.utils.system.CustomScheduledThreadPoolExecutor;
+import org.kimios.utils.controller.threads.management.InSessionManageableServiceController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
 
-public class NotificationSender {
+public class NotificationSender extends InSessionManageableServiceController {
 
     private static Logger logger = LoggerFactory.getLogger(NotificationSender.class);
 
-    private volatile boolean active = true;
     private ISecurityController securityController;
     private INotifierController notifierController;
-    private CustomScheduledThreadPoolExecutor customScheduledThreadPoolExecutor;
+
+    public NotificationSender() {
+        super("Notification Sender", 0, 1, TimeUnit.MINUTES);
+        this.setDomain(StringUtils.isEmpty(System.getenv(DataInitializerCtrl.KIMIOS_DEFAULT_DOMAIN)) ?
+                (StringUtils.isEmpty(System.getProperty("kimios.default.domain")) ? "kimios" : System.getProperty("kimios.default.domain")) :
+                System.getenv(DataInitializerCtrl.KIMIOS_DEFAULT_DOMAIN));
+
+        this.setLogin(StringUtils.isEmpty(System.getenv(DataInitializerCtrl.KIMIOS_ADMIN_USERID)) ?
+                (StringUtils.isEmpty(System.getProperty("kimios.admin.userid")) ? "admin" : System.getProperty("kimios.admin.userid")) :
+                System.getenv(DataInitializerCtrl.KIMIOS_ADMIN_USERID));
+    }
 
     public void startJob() {
-        this.customScheduledThreadPoolExecutor = new CustomScheduledThreadPoolExecutor(1);
-
-        String defaultDomain =
-                StringUtils.isEmpty(System.getenv(DataInitializerCtrl.KIMIOS_DEFAULT_DOMAIN)) ?
-                        (StringUtils.isEmpty(System.getProperty("kimios.default.domain")) ? "kimios" : System.getProperty("kimios.default.domain")) :
-                        System.getenv(DataInitializerCtrl.KIMIOS_DEFAULT_DOMAIN);
-
-        String adminLogin =
-                StringUtils.isEmpty(System.getenv(DataInitializerCtrl.KIMIOS_ADMIN_USERID)) ?
-                        (StringUtils.isEmpty(System.getProperty("kimios.admin.userid")) ? "admin" : System.getProperty("kimios.admin.userid")) :
-                        System.getenv(DataInitializerCtrl.KIMIOS_ADMIN_USERID);
-
-        Session session = this.securityController.startSession(adminLogin, defaultDomain);
+        Session session = this.securityController.startSession(this.getLogin(), this.getDomain());
         NotificationSenderJob job = new NotificationSenderJob(notifierController, session);
-        this.customScheduledThreadPoolExecutor.scheduleAtFixedRate(job, 0, 1, TimeUnit.MINUTES);
+        this.scheduleJobAtFixedRate(job);
         logger.debug("Starting sending notifications");
     }
 
@@ -67,5 +64,13 @@ public class NotificationSender {
 
     public void setNotifierController(INotifierController notifierController) {
         this.notifierController = notifierController;
+    }
+
+    @Override
+    public void resumeThreadPoolExecutor() {
+        super.resumeThreadPoolExecutor();
+        Session session = this.securityController.startSession(this.getLogin(), this.getDomain());
+        NotificationSenderJob job = new NotificationSenderJob(notifierController, session);
+        this.scheduleJobAtFixedRate(job);
     }
 }
