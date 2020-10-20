@@ -77,4 +77,7 @@
     <service id="notifCtrlOsgi" ref="notifierController"
              interface="org.kimios.notifier.controller.INotifierController" />
 
+    <service id="notificationCreatorOsgi" ref="notificationCreator"
+             interface="org.kimios.api.controller.IManageableServiceController" />
+
 </blueprint>
