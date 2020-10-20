@@ -1,35 +1,35 @@
 package org.kimios.kernel.share.system;
 
 import org.apache.commons.lang.StringUtils;
-import org.kimios.api.controller.IManageableServiceController;
 import org.kimios.kernel.controller.ISecurityController;
 import org.kimios.kernel.deployment.DataInitializerCtrl;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.share.controller.IShareController;
 import org.kimios.kernel.share.jobs.ShareCleanerJob;
-import org.kimios.utils.system.CustomScheduledThreadPoolExecutor;
+import org.kimios.utils.controller.threads.management.InSessionManageableServiceController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class ShareCleaner implements IManageableServiceController {
+public class ShareCleaner extends InSessionManageableServiceController {
 
     private static Logger logger = LoggerFactory.getLogger(ShareCleaner.class);
 
     private ISecurityController securityController;
     private IShareController shareController;
-    private CustomScheduledThreadPoolExecutor customScheduledThreadPoolExecutor;
+
     private boolean launchShareCleaner;
 
     public ShareCleaner() {
-        this.initExecutor();
-    }
+        super("Share Cleaner", 0, 1, TimeUnit.MINUTES);
+        this.setDomain(StringUtils.isEmpty(System.getenv(DataInitializerCtrl.KIMIOS_DEFAULT_DOMAIN)) ?
+                        (StringUtils.isEmpty(System.getProperty("kimios.default.domain")) ? "kimios" : System.getProperty("kimios.default.domain")) :
+                        System.getenv(DataInitializerCtrl.KIMIOS_DEFAULT_DOMAIN));
 
-    private void initExecutor() {
-        this.customScheduledThreadPoolExecutor = new CustomScheduledThreadPoolExecutor(8);
-        this.customScheduledThreadPoolExecutor.setRemoveOnCancelPolicy(true);
+        this.setLogin(StringUtils.isEmpty(System.getenv(DataInitializerCtrl.KIMIOS_ADMIN_USERID)) ?
+                        (StringUtils.isEmpty(System.getProperty("kimios.admin.userid")) ? "admin" : System.getProperty("kimios.admin.userid")) :
+                        System.getenv(DataInitializerCtrl.KIMIOS_ADMIN_USERID));
     }
 
     public void startJob() {
@@ -44,19 +44,9 @@ public class ShareCleaner implements IManageableServiceController {
         message += " is going to be launched";
         logger.info(message);
 
-        String defaultDomain =
-                StringUtils.isEmpty(System.getenv(DataInitializerCtrl.KIMIOS_DEFAULT_DOMAIN)) ?
-                        (StringUtils.isEmpty(System.getProperty("kimios.default.domain")) ? "kimios" : System.getProperty("kimios.default.domain")) :
-                        System.getenv(DataInitializerCtrl.KIMIOS_DEFAULT_DOMAIN);
-
-        String adminLogin =
-                StringUtils.isEmpty(System.getenv(DataInitializerCtrl.KIMIOS_ADMIN_USERID)) ?
-                        (StringUtils.isEmpty(System.getProperty("kimios.admin.userid")) ? "admin" : System.getProperty("kimios.admin.userid")) :
-                        System.getenv(DataInitializerCtrl.KIMIOS_ADMIN_USERID);
-
-        Session session = this.securityController.startSession(adminLogin, defaultDomain);
+        Session session = this.securityController.startSession(this.getLogin(), this.getDomain());
         ShareCleanerJob job = new ShareCleanerJob(shareController, session);
-        this.customScheduledThreadPoolExecutor.scheduleAtFixedRate(job, 0, 1, TimeUnit.MINUTES);
+        this.scheduleJobAtFixedRate(job);
 
         logger.info("Share Cleaner started");
     }
@@ -99,60 +89,10 @@ public class ShareCleaner implements IManageableServiceController {
     }
 
     @Override
-    public void pauseThreadPoolExecutor() throws InterruptedException {
-        this.shutdownAndAwaitTermination(this.customScheduledThreadPoolExecutor);
-    }
-
-    @Override
     public void resumeThreadPoolExecutor() {
-        String defaultDomain =
-                StringUtils.isEmpty(System.getenv(DataInitializerCtrl.KIMIOS_DEFAULT_DOMAIN)) ?
-                        (StringUtils.isEmpty(System.getProperty("kimios.default.domain")) ? "kimios" : System.getProperty("kimios.default.domain")) :
-                        System.getenv(DataInitializerCtrl.KIMIOS_DEFAULT_DOMAIN);
-
-        String adminLogin =
-                StringUtils.isEmpty(System.getenv(DataInitializerCtrl.KIMIOS_ADMIN_USERID)) ?
-                        (StringUtils.isEmpty(System.getProperty("kimios.admin.userid")) ? "admin" : System.getProperty("kimios.admin.userid")) :
-                        System.getenv(DataInitializerCtrl.KIMIOS_ADMIN_USERID);
-        Session session = this.securityController.startSession(adminLogin, defaultDomain);
+        super.resumeThreadPoolExecutor();
+        Session session = this.securityController.startSession(this.getLogin(), this.getDomain());
         ShareCleanerJob job = new ShareCleanerJob(shareController, session);
-        this.initExecutor();
-        this.customScheduledThreadPoolExecutor.scheduleAtFixedRate(job, 0, 1, TimeUnit.MINUTES);
-        System.out.println("resumeThreadPoolExecutor() : " +
-                this.customScheduledThreadPoolExecutor.getTaskCount());
-    }
-
-    @Override
-    public String statusThreadPoolExecutor() {
-        return this.customScheduledThreadPoolExecutor.isTerminated() ?
-                "inactive" :
-                this.customScheduledThreadPoolExecutor.getTaskCount() > 0 ?
-                "active" :
-                this.customScheduledThreadPoolExecutor.isTerminating() ?
-                        "terminating" :
-                        "inactive";
-    }
-
-    @Override
-    public String serviceName() {
-        return this.getClass().getCanonicalName();
-    }
-
-    void shutdownAndAwaitTermination(ExecutorService pool) {
-        pool.shutdown(); // Disable new tasks from being submitted
-        try {
-            // Wait a while for existing tasks to terminate
-            if (!pool.awaitTermination(60, TimeUnit.SECONDS)) {
-                pool.shutdownNow(); // Cancel currently executing tasks
-                // Wait a while for tasks to respond to being cancelled
-                if (!pool.awaitTermination(60, TimeUnit.SECONDS))
-                    System.err.println("Pool did not terminate");
-            }
-        } catch (InterruptedException ie) {
-            // (Re-)Cancel if current thread also interrupted
-            pool.shutdownNow();
-            // Preserve interrupt status
-            Thread.currentThread().interrupt();
-        }
+        this.scheduleJobAtFixedRate(job);
     }
 }
