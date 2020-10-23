@@ -9,7 +9,7 @@ public interface IServiceWithThreadPoolExecutorManager {
 
     public void startAll();
 
-    public Map<Integer, AbstractMap.SimpleEntry<String, String>> statusAll();
+    public Map<Integer, AbstractMap.SimpleEntry<String, ServiceWithThreadPoolExecutorManagerState>> statusAll();
 
     public void startServiceThreadPoolExecutor(Integer id) throws Exception;
 

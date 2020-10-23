@@ -1,6 +1,7 @@
 package org.kimios.utils.controller.threads.management;
 
 import org.kimios.api.controller.IManageableServiceController;
+import org.kimios.api.controller.ServiceWithThreadPoolExecutorManagerState;
 import org.kimios.utils.system.CustomScheduledThreadPoolExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,14 +75,14 @@ public class ManageableServiceController implements IManageableServiceController
     }
 
     @Override
-    public String statusThreadPoolExecutor() {
+    public ServiceWithThreadPoolExecutorManagerState statusThreadPoolExecutor() {
         return this.customScheduledThreadPoolExecutor.isTerminated() ?
-                "inactive" :
+                ServiceWithThreadPoolExecutorManagerState.INACTIVE :
                 this.customScheduledThreadPoolExecutor.getTaskCount() > 0 ?
-                        "active" :
+                        ServiceWithThreadPoolExecutorManagerState.ACTIVE :
                         this.customScheduledThreadPoolExecutor.isTerminating() ?
-                                "terminating" :
-                                "inactive";
+                                ServiceWithThreadPoolExecutorManagerState.TERMINATING :
+                                ServiceWithThreadPoolExecutorManagerState.INACTIVE;
     }
 
     @Override

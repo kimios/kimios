@@ -5,6 +5,7 @@ import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.lifecycle.Reference;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 import org.kimios.api.controller.IServiceWithThreadPoolExecutorManager;
+import org.kimios.api.controller.ServiceWithThreadPoolExecutorManagerState;
 
 import java.util.*;
 import java.util.stream.IntStream;
@@ -49,13 +50,13 @@ public class ThreadsCommand extends KimiosCommand {
                         Map<Integer, Integer> servicesMap = new HashMap<>();
                         List<Integer> servicesIndexList = new ArrayList<>();
                         List<String> displayList = new ArrayList<>();
-                        Map<Integer, AbstractMap.SimpleEntry<String, String>> statusesMap =
+                        Map<Integer, AbstractMap.SimpleEntry<String, ServiceWithThreadPoolExecutorManagerState>> statusesMap =
                                 this.threadsManagerController.statusAll();
 
                         statusesMap.keySet().forEach(hashCode -> {
-                            AbstractMap.SimpleEntry<String, String> entry = statusesMap.get(hashCode);
+                            AbstractMap.SimpleEntry<String, ServiceWithThreadPoolExecutorManagerState> entry = statusesMap.get(hashCode);
                             String controllerName = entry.getKey();
-                            String status = entry.getValue();
+                            String status = entry.getValue().getValue();
                             servicesIndexList.add(hashCode);
                             displayList.add(controllerName + " status is " + status);
                         });

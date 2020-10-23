@@ -2,6 +2,7 @@ package org.kimios.threads.system;
 
 import org.kimios.api.controller.IManageableServiceController;
 import org.kimios.api.controller.IServiceWithThreadPoolExecutorManager;
+import org.kimios.api.controller.ServiceWithThreadPoolExecutorManagerState;
 import org.osgi.framework.ServiceReference;
 
 import java.io.Serializable;
@@ -40,12 +41,12 @@ public class ServiceWithThreadPoolExecutorManager implements IServiceWithThreadP
     }
 
     @Override
-    public Map<Integer, AbstractMap.SimpleEntry<String, String>> statusAll() {
-        Map<Integer, AbstractMap.SimpleEntry<String, String>> map = new HashMap<>();
+    public Map<Integer, AbstractMap.SimpleEntry<String, ServiceWithThreadPoolExecutorManagerState>> statusAll() {
+        Map<Integer, AbstractMap.SimpleEntry<String, ServiceWithThreadPoolExecutorManagerState>> map = new HashMap<>();
         this.controllerMap.keySet().forEach(hashCode ->
             map.put(
                     hashCode,
-                    new AbstractMap.SimpleEntry<String, String>(
+                    new AbstractMap.SimpleEntry<String, ServiceWithThreadPoolExecutorManagerState>(
                             this.controllerMap.get(hashCode).serviceName(),
                             this.controllerMap.get(hashCode).statusThreadPoolExecutor()
                     )
