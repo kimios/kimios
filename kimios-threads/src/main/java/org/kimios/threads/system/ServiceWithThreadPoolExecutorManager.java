@@ -1,13 +1,13 @@
 package org.kimios.threads.system;
 
 import org.kimios.api.controller.IManageableServiceController;
-import org.kimios.api.controller.IManager;
+import org.kimios.api.controller.IServiceWithThreadPoolExecutorManager;
 import org.osgi.framework.ServiceReference;
 
 import java.io.Serializable;
 import java.util.*;
 
-public class Manager implements IManager {
+public class ServiceWithThreadPoolExecutorManager implements IServiceWithThreadPoolExecutorManager {
 
     private List<IManageableServiceController> controllerList;
 

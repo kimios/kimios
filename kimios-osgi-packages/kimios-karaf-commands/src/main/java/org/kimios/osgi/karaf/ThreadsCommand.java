@@ -4,7 +4,7 @@ import org.apache.karaf.shell.api.action.Argument;
 import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.lifecycle.Reference;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
-import org.kimios.api.controller.IManager;
+import org.kimios.api.controller.IServiceWithThreadPoolExecutorManager;
 
 import java.util.*;
 import java.util.stream.IntStream;
@@ -20,7 +20,7 @@ import java.util.stream.IntStream;
 public class ThreadsCommand extends KimiosCommand {
 
     @Reference
-    protected IManager threadsManagerController;
+    protected IServiceWithThreadPoolExecutorManager threadsManagerController;
 
     @Argument(index = 0, name = "action",
             description = "start-all / stop-all / status-all / start <index> / stop <index>",
@@ -115,11 +115,11 @@ public class ThreadsCommand extends KimiosCommand {
         }
     }
 
-    public IManager getThreadsManagerController() {
+    public IServiceWithThreadPoolExecutorManager getThreadsManagerController() {
         return threadsManagerController;
     }
 
-    public void setThreadsManagerController(IManager threadsManagerController) {
+    public void setThreadsManagerController(IServiceWithThreadPoolExecutorManager threadsManagerController) {
         this.threadsManagerController = threadsManagerController;
     }
 }

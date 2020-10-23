@@ -3,7 +3,7 @@ package org.kimios.api.controller;
 import java.util.AbstractMap;
 import java.util.Map;
 
-public interface IManager {
+public interface IServiceWithThreadPoolExecutorManager {
 
     public void stopAll() throws InterruptedException;
 

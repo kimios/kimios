@@ -35,13 +35,13 @@
     </reference-list>
 
     <bean id="manager"
-          class="org.kimios.threads.system.Manager"
+          class="org.kimios.threads.system.ServiceWithThreadPoolExecutorManager"
           init-method="init"
           destroy-method="destroy">
         <property name="controllerList" ref="manageableList"/>
     </bean>
 
     <service id="managerOsgiCtl" ref="manager"
-             interface="org.kimios.api.controller.IManager" />
+             interface="org.kimios.api.controller.IServiceWithThreadPoolExecutorManager" />
 
 </blueprint>
