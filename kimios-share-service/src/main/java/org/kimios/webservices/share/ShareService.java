@@ -82,6 +82,7 @@ public interface ShareService {
 
     @GET
     @Path("/by-me")
+    @Produces("application/json")
     List<Share> listEntitiesSharedByMe(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId)
             throws DMServiceException;
 
