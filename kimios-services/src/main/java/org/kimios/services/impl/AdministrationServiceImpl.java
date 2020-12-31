@@ -20,6 +20,7 @@ import org.kimios.kernel.ws.pojo.Document;
 import org.kimios.kernel.ws.pojo.Role;
 import org.kimios.kernel.ws.pojo.Session;
 import org.kimios.kernel.ws.pojo.User;
+import org.kimios.kernel.ws.pojo.web.AuthenticationSourceParam;
 import org.kimios.utils.logging.LoggerManager;
 import org.kimios.webservices.AdministrationService;
 import org.kimios.webservices.exceptions.DMServiceException;
@@ -201,6 +202,18 @@ public class AdministrationServiceImpl extends CoreService implements Administra
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }
+    }
+
+    @Override
+    public void updateAuthenticationSource(AuthenticationSourceParam authenticationSourceParam) throws DMServiceException {
+        this.updateAuthenticationSource(
+                authenticationSourceParam.getSessionId(),
+                authenticationSourceParam.getName(),
+                authenticationSourceParam.getClassName(),
+                authenticationSourceParam.getEnableSso(),
+                authenticationSourceParam.getEnableMailCheck(),
+                authenticationSourceParam.getParameters()
+        );
     }
 
     /**

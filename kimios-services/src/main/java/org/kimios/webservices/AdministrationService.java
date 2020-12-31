@@ -17,8 +17,10 @@ package org.kimios.webservices;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.kimios.kernel.ws.pojo.*;
+import org.kimios.kernel.ws.pojo.web.AuthenticationSourceParam;
 import org.kimios.webservices.exceptions.DMServiceException;
 
 import javax.jws.WebMethod;
@@ -145,6 +147,14 @@ public interface AdministrationService
             @QueryParam(value = "enableSso") @WebParam(name = "enableSso") boolean enableSso,
             @QueryParam(value = "enableMailCheck") @WebParam(name = "enableMailCheck") boolean enableMailCheck,
             @WebParam(name = "params") Map<String, String>parameters)
+            throws DMServiceException;
+
+    @POST @ApiOperation(value ="")
+    @Path("/updateAuthenticationSourceFromObj")
+    @Produces("application/json")
+    @Consumes("application/json")
+    @WebMethod(operationName = "update-domain-obj-param")
+    public void updateAuthenticationSource(@ApiParam() AuthenticationSourceParam authenticationSourceParam)
             throws DMServiceException;
 
     @GET @ApiOperation(value ="")
