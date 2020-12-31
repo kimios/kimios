@@ -35,7 +35,7 @@ public interface AuthenticationSourceParamsFactory
     @Deprecated
     void updateParams(String sourceName, String xml, boolean enableSso, boolean enableMailCheck) throws AuthenticationSourceException, XSDException;
 
-    void updateParams(String sourceName, Map<String, String> params , boolean enableSso, boolean enableMailCheck);
+    void updateParams(String sourceName, Map<String, String> params , String javaClass, boolean enableSso, boolean enableMailCheck);
 
 
 }

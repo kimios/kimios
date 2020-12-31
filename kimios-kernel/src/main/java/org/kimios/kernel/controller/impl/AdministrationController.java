@@ -253,7 +253,7 @@ public class AdministrationController extends AKimiosController implements IAdmi
             throw new AccessDeniedException();
         }
         try {
-            authFactoryInstantiator.getAuthenticationSourceParamsFactory().updateParams(name, params, enableSso, enableMailCheck);
+            authFactoryInstantiator.getAuthenticationSourceParamsFactory().updateParams(name, params, className, enableSso, enableMailCheck);
         } catch (Exception e) {
             throw new ConfigException(e.getMessage());
         }

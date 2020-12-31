@@ -226,7 +226,7 @@ public class HAuthenticationSourceParamsFactory extends HFactory implements Auth
     }
 
     public void updateParams(String sourceName, Map<String, String> fields,
-                             boolean enableSso, boolean enableMailCheck)
+                             String javaClass, boolean enableSso, boolean enableMailCheck)
     {
         AuthenticationSourceBean beanAuth =
                 (AuthenticationSourceBean) getSession().createCriteria(AuthenticationSourceBean.class)
@@ -236,6 +236,7 @@ public class HAuthenticationSourceParamsFactory extends HFactory implements Auth
         beanAuth.getParameters()
                 .putAll(fields);
 
+        beanAuth.setJavaClass(javaClass);
         beanAuth.setEnableSso(enableSso);
         beanAuth.setEnableMailCheck(enableMailCheck);
         getSession().update(beanAuth);
