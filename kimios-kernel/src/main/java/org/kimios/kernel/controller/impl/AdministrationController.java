@@ -25,6 +25,7 @@ import org.kimios.api.events.annotations.DmsEventName;
 import org.kimios.api.events.annotations.DmsEventOccur;
 import org.kimios.exceptions.AccessDeniedException;
 import org.kimios.exceptions.DataSourceException;
+import org.kimios.kernel.hibernate.HFactory;
 import org.kimios.kernel.security.model.Role;
 import org.kimios.kernel.security.model.SecurityEntity;
 import org.kimios.kernel.security.model.SecurityEntityType;
@@ -550,9 +551,11 @@ public class AdministrationController extends AKimiosController implements IAdmi
         {
             throw new AccessDeniedException();
         }
-        return authFactoryInstantiator.getAuthenticationSourceFactory()
+        User user = authFactoryInstantiator.getAuthenticationSourceFactory()
                 .getAuthenticationSource(authenticationSourceName)
                 .getUserFactory().getUser(uid);
+        HFactory.initializeAndUnproxy(user.getEmails());
+        return user;
     }
 
     /**

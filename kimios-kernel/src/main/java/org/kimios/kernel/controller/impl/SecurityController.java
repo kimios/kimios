@@ -492,8 +492,10 @@ public class SecurityController extends AKimiosController implements ISecurityCo
 
     public User getUser(String userName, String userSource) throws ConfigException, DataSourceException
     {
-        return authFactoryInstantiator.getAuthenticationSourceFactory().getAuthenticationSource(userSource)
+        User user = authFactoryInstantiator.getAuthenticationSourceFactory().getAuthenticationSource(userSource)
                 .getUserFactory().getUser(userName);
+        HFactory.initializeAndUnproxy(user.getEmails());
+        return user;
     }
 
     public Session impersonnate(Session session, String userName, String userSource)

@@ -285,9 +285,11 @@ public interface AdministrationService
     @GET @ApiOperation(value ="")
     @Path("/getManageableUser")
     @Produces("application/json")
-    public User getManageableUser(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
-            String uid,
-            String authenticationSourceName) throws DMServiceException;
+    public User getManageableUser(
+            @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+            @QueryParam(value = "uid") @WebParam(name = "uid") String uid,
+            @QueryParam(value = "source") @WebParam(name = "source") String authenticationSourceName
+    ) throws DMServiceException;
 
     @GET @ApiOperation(value ="")
     @Path("/getManageableUsers")
