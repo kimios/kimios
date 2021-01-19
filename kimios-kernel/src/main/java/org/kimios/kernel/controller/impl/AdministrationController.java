@@ -35,6 +35,7 @@ import org.kimios.kernel.user.model.*;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /*
  * 
@@ -749,12 +750,11 @@ public class AdministrationController extends AKimiosController implements IAdmi
             throw new AccessDeniedException();
         }
         Collection<User> users = SessionManager.getInstance().getConnectedUsers();
-        org.kimios.kernel.ws.pojo.User[] connectedUsers = new org.kimios.kernel.ws.pojo.User[users.size()];
-        Iterator<User> it = users.iterator();
-        for (int i = 0; it.hasNext(); i++) {
-            connectedUsers[i] = it.next().toPojo();
-        }
-        return connectedUsers;
+        List<org.kimios.kernel.ws.pojo.User> connectedUsers = users.stream().map( userConnected -> {
+            User userWithData = this.getUser(session, userConnected.getUid(), userConnected.getAuthenticationSourceName());
+            return userWithData.toPojo();
+        }).collect(Collectors.toList());
+        return connectedUsers.toArray(new org.kimios.kernel.ws.pojo.User[connectedUsers.size()]);
     }
 
     /* (non-Javadoc)
