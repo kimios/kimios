@@ -37,7 +37,7 @@ public class HRoleFactory extends HFactory implements RoleFactory
     public void deleteRole(Role r) throws ConfigException, DataSourceException
     {
         try {
-            getSession().delete(r);
+            getSession().delete(getSession().contains(r) ? r : getSession().merge(r));
         } catch (HibernateException e) {
             boolean integrity = e instanceof ConstraintViolationException;
             throw new DataSourceException(e, e.getMessage());
