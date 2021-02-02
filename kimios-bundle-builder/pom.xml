@@ -12,8 +12,9 @@
     <packaging>pom</packaging>
 
     <properties>
-        <tomcat.name>apache-tomcat-8.5.35</tomcat.name>
-        <tomcat.archive.url>http://apache.rediris.es/tomcat/tomcat-8/v8.5.35/bin/apache-tomcat-8.5.35.zip</tomcat.archive.url>
+        <tomcat.version>8.5.34</tomcat.version>
+        <tomcat.name>apache-tomcat-${tomcat.version}</tomcat.name>
+        <tomcat.archive.url>http://archive.apache.org/dist/tomcat/tomcat-8/v${tomcat.version}/bin/${tomcat.name}.zip</tomcat.archive.url>
         <kimios.bundle.dirname>kimios</kimios.bundle.dirname>
     </properties>
 
