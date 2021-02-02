@@ -26,9 +26,9 @@ Ext.onReady(function () {
                     records: records
                 }),
                 afterBuild: function () {
-                    var newsPanel = new kimios.explorer.NewsPanel({});
-                    Ext.getCmp('kimios-center-panel').add(newsPanel);
-                    Ext.getCmp('kimios-center-panel').setActiveTab(newsPanel);
+                    // var newsPanel = new kimios.explorer.NewsPanel({});
+                    // Ext.getCmp('kimios-center-panel').add(newsPanel);
+                    // Ext.getCmp('kimios-center-panel').setActiveTab(newsPanel);
                     // call
                     var store = new Ext.data.JsonStore({
                         url: srcContextPath + '/register?action=check',
