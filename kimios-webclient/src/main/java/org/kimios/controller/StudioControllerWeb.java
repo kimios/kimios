@@ -296,11 +296,11 @@ public class StudioControllerWeb extends Controller {
             Meta meta = new Meta();
             meta.setUid(-1);
             meta.setName(String.valueOf(metaDatas.get("name")));
-            meta.setMetaType((Integer) metaDatas.get("metaType"));
+            meta.setMetaType(Integer.parseInt(metaDatas.get("metaType").toString()));
             if (String.valueOf(metaDatas.get("metaFeedUid")).isEmpty()) {
                 meta.setMetaFeedUid(-1L);
             } else {
-                meta.setMetaFeedUid(((Integer) metaDatas.get("metaFeedUid")).longValue());
+                meta.setMetaFeedUid(Long.parseLong(metaDatas.get("metaFeedUid").toString()));
             }
             meta.setDocumentTypeUid(docType.getUid());
             meta.setMandatory((Boolean) (metaDatas.get("mandatory") != null ? Boolean.parseBoolean(metaDatas.get("mandatory").toString()) : false));
