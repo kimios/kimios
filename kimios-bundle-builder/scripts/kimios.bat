@@ -31,7 +31,7 @@ echo %KIMIOS_SSL_OPTS%
 echo %KIMIOS_APP_OPTS%
 
 set JAVA_OPTS=-Xms256m -Xmx1024m %KIMIOS_SSL_OPTS% %KIMIOS_APP_OPTS%
-set JAVA_OPTS=%$JAVA_OPTS% -Dlogback.configurationFile=kimios_home/server/conf/logback.xml
+set JAVA_OPTS=%JAVA_OPTS% -Dlogback.configurationFile=kimios_home/server/conf/logback.xml
 
 echo %JAVA_OPTS%
 set KIMIOS_PID_FILE=kimios.pid
