@@ -15,44 +15,35 @@
  */
 package org.kimios.kernel.controller.impl;
 
-import org.apache.commons.lang.StringUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.apache.commons.lang.StringUtils;
+import org.kimios.api.events.annotations.DmsEvent;
+import org.kimios.api.events.annotations.DmsEventName;
 import org.kimios.exceptions.*;
 import org.kimios.kernel.configuration.Config;
 import org.kimios.kernel.controller.*;
-import org.kimios.kernel.dms.model.*;
-import org.kimios.kernel.dms.model.Bookmark;
-import org.kimios.kernel.dms.model.DMEntity;
-import org.kimios.kernel.dms.model.Document;
-import org.kimios.kernel.dms.model.DocumentVersion;
-import org.kimios.kernel.dms.model.Folder;
-import org.kimios.kernel.dms.model.Meta;
-import org.kimios.kernel.dms.model.MetaValue;
-import org.kimios.kernel.dms.model.SymbolicLink;
-import org.kimios.kernel.dms.model.WorkflowStatus;
-import org.kimios.kernel.dms.utils.PathUtils;
-import org.kimios.kernel.dms.*;
 import org.kimios.kernel.dms.FactoryInstantiator;
-import org.kimios.kernel.dms.utils.MetaPathHandler;
 import org.kimios.kernel.dms.MetaProcessor;
-import org.kimios.kernel.events.model.EventContext;
-import org.kimios.api.events.annotations.DmsEvent;
-import org.kimios.api.events.annotations.DmsEventName;
+import org.kimios.kernel.dms.MetaValueFactory;
+import org.kimios.kernel.dms.model.*;
+import org.kimios.kernel.dms.utils.MetaPathHandler;
+import org.kimios.kernel.dms.utils.PathUtils;
 import org.kimios.kernel.events.impl.AddonDataHandler;
+import org.kimios.kernel.events.model.EventContext;
 import org.kimios.kernel.filetransfer.model.DataTransfer;
 import org.kimios.kernel.filetransfer.zip.FileCompressionHelper;
 import org.kimios.kernel.log.model.DMEntityLog;
 import org.kimios.kernel.repositories.impl.RepositoryManager;
-import org.kimios.kernel.security.*;
+import org.kimios.kernel.security.DMEntitySecurityFactory;
 import org.kimios.kernel.security.model.DMEntitySecurity;
 import org.kimios.kernel.security.model.SecurityEntityType;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.share.model.Share;
 import org.kimios.kernel.share.model.ShareStatus;
 import org.kimios.kernel.user.model.User;
-import org.kimios.utils.hash.HashCalculator;
 import org.kimios.utils.configuration.ConfigurationManager;
+import org.kimios.utils.hash.HashCalculator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,6 +52,7 @@ import java.io.*;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Transactional
 public class DocumentController extends AKimiosController implements IDocumentController {
@@ -1404,7 +1396,18 @@ public class DocumentController extends AKimiosController implements IDocumentCo
             throws AccessDeniedException, ConfigException, DataSourceException {
         List<Document> docs = this.getDocuments(session, folderUid);
         log.debug("documents loaded for folder " + folderUid + ": " + docs.size());
-        return dmsFactoryInstantiator.getDocumentFactory().getDocumentsPojos(docs);
+        return dmsFactoryInstantiator.getDocumentFactory().getDocumentsPojos(docs)
+                .stream().map(doc -> {
+                    doc.setBookmarked(
+                            dmsFactoryInstantiator.getBookmarkFactory().isUserBookmark(
+                                    session.getUserName(),
+                                    session.getUserSource(),
+                                    doc.getUid(),
+                                    doc.getType()
+                            )
+                    );
+                    return doc;
+                }).collect(Collectors.toList());
     }
 
     public List<org.kimios.kernel.ws.pojo.Document> convertToPojos(Session session, List<Document> docs)

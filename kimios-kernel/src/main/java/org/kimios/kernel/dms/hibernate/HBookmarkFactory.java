@@ -183,5 +183,20 @@ public class HBookmarkFactory extends HFactory implements BookmarkFactory
             throw new DataSourceException(e, e.getMessage());
         }
     }
+
+    public boolean isUserBookmark(String userName, String userSource,
+                              long dmentityUid, int dmentityType) {
+        try {
+            List<Bookmark> bookmarks = (List<Bookmark>) getSession().createCriteria(Bookmark.class)
+                    .add(Restrictions.eq("owner", userName))
+                    .add(Restrictions.eq("ownerSource", userSource))
+                    .add(Restrictions.eq("ownerType", 1))
+                    .add(Restrictions.eq("uid", dmentityUid))
+                    .list();
+            return bookmarks.size() == 1;
+        } catch (HibernateException e) {
+            throw new DataSourceException(e);
+        }
+    }
 }
 

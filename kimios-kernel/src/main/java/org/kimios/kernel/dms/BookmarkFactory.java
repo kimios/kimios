@@ -39,5 +39,7 @@ public interface BookmarkFactory
 
     public List<DMEntity> getBookmarks(String userName, String userSource, List<Group> groups, String path)
             throws ConfigException, DataSourceException;
+
+    public boolean isUserBookmark(String userName, String userSource, long dmentityUid, int dmentityType);
 }
 

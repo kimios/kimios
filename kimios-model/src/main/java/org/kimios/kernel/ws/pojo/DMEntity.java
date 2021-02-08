@@ -55,6 +55,8 @@ public class DMEntity implements Serializable
 
     protected String addonDatas;
 
+    protected boolean bookmarked;
+
     protected Map<String, MetaValue> metaDatas = new HashMap<String, MetaValue>();
 
     public DMEntity()
@@ -184,5 +186,12 @@ public class DMEntity implements Serializable
         this.addonDatas = addonDatas;
     }
 
+    public boolean isBookmarked() {
+        return bookmarked;
+    }
+
+    public void setBookmarked(boolean bookmarked) {
+        this.bookmarked = bookmarked;
+    }
 }
 
