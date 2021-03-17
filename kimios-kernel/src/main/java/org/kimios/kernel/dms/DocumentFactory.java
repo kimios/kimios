@@ -67,5 +67,10 @@ public interface DocumentFactory
     public org.kimios.kernel.ws.pojo.Document getDocumentPojoFromId(long documentId)
             throws ConfigException, DataSourceException;
 
+    public void addTag(Long documentUid, String tagValue)
+            throws ConfigException, DataSourceException;
+
+    public void removeTag(Long documentUid, String tagValue)
+            throws ConfigException, DataSourceException;
 }
 

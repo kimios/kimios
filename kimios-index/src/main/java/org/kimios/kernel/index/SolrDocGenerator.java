@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -258,6 +259,17 @@ public class SolrDocGenerator {
         for (int i = 0; i < acls.size(); i++) {
             doc.addField("DocumentACL", acls.get(i).getRuleHash());
         }
+
+        // tags
+        if (! document.getTags().isEmpty()) {
+            Arrays.stream(document.getTags().split(Document.TAG_SEPARATOR)).forEach(tagEnclosed ->
+                    doc.addField(
+                            "DocumentTags",
+                            tagEnclosed.replaceFirst("^" + Document.TAG_ENCLOSURE, "")
+                                    .replaceFirst(Document.TAG_ENCLOSURE + "$", ""))
+            );
+        }
+
         return doc;
     }
 

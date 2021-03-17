@@ -15,12 +15,15 @@
  */
 package org.kimios.kernel.user.model;
 
-import org.hibernate.annotations.Formula;
-import org.hibernate.annotations.ManyToAny;
 import org.kimios.kernel.security.model.SecurityEntity;
 import org.kimios.kernel.security.model.SecurityEntityType;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;

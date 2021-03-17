@@ -51,7 +51,16 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.*;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.Vector;
 import java.util.stream.Collectors;
 
 @Transactional
@@ -1624,13 +1633,14 @@ public class DocumentController extends AKimiosController implements IDocumentCo
 
     private org.kimios.kernel.ws.pojo.Document buidDocumentPojoFromDocument(Document document)
             throws ConfigException, DataSourceException {
-        return FactoryInstantiator.getInstance()
+        org.kimios.kernel.ws.pojo.Document pojo = FactoryInstantiator.getInstance()
                 .getDocumentFactory()
                 .getDocumentPojoFromId(document.getUid());
+        return pojo;
     }
 
     @DmsEvent(eventName = {DmsEventName.DOCUMENT_UPDATE})
-    public void updateDocumentTag(Session session, long documentId, long tagUid, boolean action)
+    public void updateDocumentTag(Session session, long documentId, String tagValue, boolean action)
             throws AccessDeniedException, ConfigException, DataSourceException {
         Document doc = dmsFactoryInstantiator.getDocumentFactory().getDocument(documentId);
         // check access
@@ -1639,26 +1649,10 @@ public class DocumentController extends AKimiosController implements IDocumentCo
             throw new AccessDeniedException();
         }
 
-        DocumentVersion dv = dmsFactoryInstantiator.getDocumentVersionFactory().getLastDocumentVersion(doc);
-        MetaValueFactory mvf = dmsFactoryInstantiator.getMetaValueFactory();
-        DocumentType docType = dmsFactoryInstantiator.getDocumentTypeFactory()
-                .getDocumentType(dv.getDocumentType().getUid());
-        List<Meta> metas = dmsFactoryInstantiator.getMetaFactory().getMetas(docType);
-        Optional<Meta> opt = metas.stream()
-                .filter(
-                        meta -> meta.getUid() == tagUid
-                )
-                .findFirst();
-        if (opt.isPresent()) {
-            MetaValue mv = mvf.getMetaValue(dv, opt.get());
-            String newValue = (action) ? String.valueOf(tagUid) : "";
-            if (mv != null) {
-                mv.setValue(newValue);
-                mvf.updateMetaValue(mv);
-            } else {
-                MetaStringValue metaValue = new MetaStringValue(dv, opt.get(), String.valueOf(tagUid));
-                mvf.saveMetaValue(metaValue);
-            }
+        if (action) {
+            FactoryInstantiator.getInstance().getDocumentFactory().addTag(documentId, tagValue);
+        } else {
+            FactoryInstantiator.getInstance().getDocumentFactory().removeTag(documentId, tagValue);
         }
     }
 }

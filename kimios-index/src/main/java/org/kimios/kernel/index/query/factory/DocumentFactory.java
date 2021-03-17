@@ -23,7 +23,12 @@ import org.kimios.kernel.ws.pojo.Document;
 import org.kimios.kernel.ws.pojo.Folder;
 import org.kimios.kernel.ws.pojo.MetaValue;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+
 
 public class DocumentFactory {
 

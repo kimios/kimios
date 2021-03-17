@@ -200,7 +200,6 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
-                <version>2.3.7</version>
                 <executions>
                     <execution>
                         <id>bundle-manifest</id>
@@ -224,6 +223,7 @@
                         <Export-Package>
                             org.kimios.*,org.kimios.utils.*,org.kimios.kernel.configuration.*
                         </Export-Package>
+                        <!--, org.kimios.kernel.registries-->
                         <Meta-Persistence>META-INF/persistence.xml</Meta-Persistence>
                         <Kimios-Extension>org.kimios.api.MetaFeed</Kimios-Extension>
                         <Embed-Dependency>*;scope=compile|runtime;inline=false</Embed-Dependency>

@@ -22,7 +22,12 @@ import org.kimios.kernel.dms.hibernate.HDMEntityFactory;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+;
 
 /**
  * Created with IntelliJ IDEA. User: farf Date: 11/20/12 Time: 3:51 PM To change this template use File | Settings |

@@ -179,8 +179,8 @@ public interface DocumentService {
             @Multipart(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @ApiParam(name = "documentId", required = true)
             @Multipart(value = "documentId") @WebParam(name = "documentId") long documentId,
-            @ApiParam(name = "tagId", required = true)
-            @Multipart(value = "tagId") @WebParam(name = "tagId") long tagId,
+            @ApiParam(name = "tagValue", required = true)
+            @Multipart(value = "tagValue") @WebParam(name = "tagValue") String tagValue,
             @ApiParam(name = "action", required = true)
             @Multipart(value = "action") @WebParam(name = "action") boolean action
     ) throws DMServiceException;

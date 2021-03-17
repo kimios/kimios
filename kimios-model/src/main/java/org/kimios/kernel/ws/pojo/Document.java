@@ -16,10 +16,11 @@
 package org.kimios.kernel.ws.pojo;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
+;
 
 
 public class Document extends DMEntity implements Serializable
@@ -75,19 +76,21 @@ public class Document extends DMEntity implements Serializable
 
     private Float indexScore;
 
+    private List<String> tags = new ArrayList<>();
+
     public Document()
     {
         this.type = 3;
     }
 
     public Document(long uid, String name, String owner, String ownerSource,
-            Date creationDate, Date updateDate, long lastVersionId, Date versionCreationDate, Date versionUpdateDate, long folderUid,
-            String mimeType,
-            String extension, long documentTypeUid, String documentTypeName,
-            boolean checkedOut, String checkoutUser,
-            String checkoutUserSource, Date checkoutDate, long length,
-            long workflowStatusUid, String workflowStatusName,
-            boolean isOutOfWorkflow, String path, String addonDatas,
+                    Date creationDate, Date updateDate, long lastVersionId, Date versionCreationDate, Date versionUpdateDate, long folderUid,
+                    String mimeType,
+                    String extension, long documentTypeUid, String documentTypeName,
+                    boolean checkedOut, String checkoutUser,
+                    String checkoutUserSource, Date checkoutDate, long length,
+                    long workflowStatusUid, String workflowStatusName,
+                    boolean isOutOfWorkflow, String path, String addonDatas,
                     String customVersion, String customVersionPending,
                     String lastUpdateAuthor, String lastUpdateAuthorSource,
                     String validatorUserName, String validatorUserSource,
@@ -389,5 +392,13 @@ public class Document extends DMEntity implements Serializable
 
     public void setWorkflowName(String workflowName) {
         this.workflowName = workflowName;
+    }
+
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
     }
 }

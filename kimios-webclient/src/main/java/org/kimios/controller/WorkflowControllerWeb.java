@@ -23,7 +23,13 @@ import org.kimios.kernel.ws.pojo.DocumentWorkflowStatusRequest;
 import org.kimios.kernel.ws.pojo.WorkflowStatus;
 import org.kimios.kernel.bonita.webservices.pojo.TasksResponse;
 
-import java.util.*;
+;import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author jludmann

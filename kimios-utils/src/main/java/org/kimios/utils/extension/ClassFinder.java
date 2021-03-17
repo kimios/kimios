@@ -27,7 +27,12 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.*;
+;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.Set;
+import java.util.Vector;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -59,9 +64,9 @@ public class ClassFinder
     }
 
     public static Set findImplement(BundleUrlType bundleUrlType,
-                                              String pkg,
-                                              Class<?> impl,
-                                              ClassLoader cl)
+                                    String pkg,
+                                    Class<?> impl,
+                                    ClassLoader cl)
     {
         try {
             ArrayList<Vfs.UrlType> it = new ArrayList<Vfs.UrlType>();

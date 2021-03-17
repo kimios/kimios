@@ -15,15 +15,34 @@
  */
 package org.kimios.kernel.user.model;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Formula;
 import org.kimios.kernel.security.model.SecurityEntity;
 import org.kimios.kernel.security.model.SecurityEntityType;
 
-import javax.persistence.*;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.MapKeyClass;
+import javax.persistence.MapKeyColumn;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+;
 
 /**
  * Represents a DMS user object.
@@ -84,7 +103,7 @@ public class User implements SecurityEntity, Serializable
             joinColumns = { @JoinColumn(name = "user_id", referencedColumnName = "user_id"),
                     @JoinColumn(name = "authentication_source", referencedColumnName = "authentication_source") })
     @Column(name = "attribute_value")
-    private Map<String, String> attributes = new HashMap<java.lang.String, java.lang.String>();
+    private Map<String, String> attributes = new HashMap<String, String>();
 
     @Column(name = "user_enabled", nullable = false)
     private boolean enabled = true;

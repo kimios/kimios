@@ -51,7 +51,7 @@ public class DmsSolrFields
         sortFieldMapping.put("DocumentVersionOwnerSource", String.class);
         sortFieldMapping.put("DocumentVersionHash", String.class);
         sortFieldMapping.put("Attribute_SEARCHTAG", String.class);
-
+        sortFieldMapping.put("DocumentTags", String.class);
     }
 
     public static Map<String, Class> sortMetaFieldMapping = new HashMap<String, Class>();

@@ -26,7 +26,11 @@ import org.kimios.kernel.hibernate.HFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+;import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
 
 public class HDMEntityFactory extends HFactory implements DMEntityFactory {
     private static Logger log = LoggerFactory.getLogger(DMEntityFactory.class);

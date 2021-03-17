@@ -142,7 +142,6 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
-                <version>2.3.7</version>
                 <executions>
                     <execution>
                         <id>bundle-manifest</id>
@@ -214,11 +213,11 @@
                             org.apache.cxf.bus.resource,
                             org.apache.cxf.bus.osgi,
                             org.apache.cxf.bus.managers,
-                            org.apache.cxf.endpoint, org.apache.cxf.feature, org.apache.cxf.interceptor,
+                            org.apache.cxf.endpoint,
+                            org.apache.cxf.feature,
+                            org.apache.cxf.interceptor,
                             javax.ws.rs,
                             javax.jws,
-                            java.lang,
-                            java.util,
                             javax.xml,
                             javax.xml.ws,
                             javax.persistence,
@@ -231,7 +230,6 @@
                             com.fasterxml.jackson.core.type,
                             com.fasterxml.jackson.annotation,
                             com.fasterxml.jackson.jaxrs.json,
-                            org.kimios.kernel.*,
                             org.kimios.kernel.ws.pojo,
                             org.kimios.kernel.controller,
                             org.kimios.kernel.security,

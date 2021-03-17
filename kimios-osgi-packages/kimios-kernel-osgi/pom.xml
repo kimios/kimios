@@ -310,7 +310,6 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
-                <version>3.3.0</version>
                 <executions>
                     <execution>
                         <id>bundle-manifest</id>
@@ -395,6 +394,7 @@
                             org.kimios.api.*,
                             org.kimios.kernel.configuration,
                             org.kimios.kernel.user.ldap;resolution:=optional,
+                            org.kimios.kernel.registries,
                             org.kimios.converter,
                             org.kimios.webservices;resolution:=optional,
                             com.sun.xml.bind.marshaller;version="[2.2.11,3)",

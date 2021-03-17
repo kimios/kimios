@@ -301,10 +301,10 @@ public class DocumentServiceImpl extends CoreService implements DocumentService 
         }
     }
 
-    public void updateDocumentTag(String sessionId, long documentId, long tagUid, boolean action) throws DMServiceException {
+    public void updateDocumentTag(String sessionId, long documentId, String tagValue, boolean action) throws DMServiceException {
         try {
             Session session = getHelper().getSession(sessionId);
-            documentController.updateDocumentTag(session, documentId, tagUid, action);
+            documentController.updateDocumentTag(session, documentId, tagValue, action);
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }

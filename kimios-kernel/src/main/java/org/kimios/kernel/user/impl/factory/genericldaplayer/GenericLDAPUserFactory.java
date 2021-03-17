@@ -33,7 +33,12 @@ import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.SearchResult;
-import java.util.*;
+;import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Vector;
 
 public class GenericLDAPUserFactory extends GenericLDAPFactory implements UserFactory
 {

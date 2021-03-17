@@ -340,6 +340,6 @@ public interface IDocumentController {
     public List<Bookmark> getBookmarksInPath(Session session, String path) throws DataSourceException, ConfigException;
 
     @DmsEvent(eventName = {DmsEventName.DOCUMENT_UPDATE})
-    void updateDocumentTag(Session session, long documentId, long tagUid, boolean action)
+    void updateDocumentTag(Session session, long documentId, String tagValue, boolean action)
             throws AccessDeniedException, ConfigException, DataSourceException;
 }

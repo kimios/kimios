@@ -31,7 +31,15 @@ import org.kimios.webservices.exceptions.DMServiceException;
 import org.osgi.framework.BundleContext;
 
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+;
 
 import static org.junit.Assert.*;
 

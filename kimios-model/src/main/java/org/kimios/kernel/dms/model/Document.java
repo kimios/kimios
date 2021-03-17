@@ -21,7 +21,11 @@ import org.kimios.exceptions.ConfigException;
 import org.kimios.exceptions.DataSourceException;
 
 import javax.persistence.*;
-import java.util.*;
+;import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "document")
@@ -44,13 +48,18 @@ public class Document extends DMEntityImpl
 
     private List<DocumentVersion> versionList = new ArrayList<DocumentVersion>();
 
+    public static String TAG_SEPARATOR = ";";
+    public static String TAG_ENCLOSURE = "'";
+    @Column(name = "tags", nullable = false)
+    private String tags = "";
+
     public Document()
     {
         this.type = DMEntityType.DOCUMENT;
     }
 
     public Document(long uid, String name, String owner, String ownerSource, Date creationDate, Date updateDate,
-            long folderUid, String mimeType, String extension)
+                    long folderUid, String mimeType, String extension)
     {
         this.type = DMEntityType.DOCUMENT;
         this.uid = uid;
@@ -198,6 +207,14 @@ public class Document extends DMEntityImpl
     public void setLock(Lock lock)
     {
         this.lock = lock;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
     }
 }
 

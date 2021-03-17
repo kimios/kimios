@@ -6,7 +6,11 @@ import org.kimios.api.controller.ServiceWithThreadPoolExecutorManagerState;
 import org.osgi.framework.ServiceReference;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ServiceWithThreadPoolExecutorManager implements IServiceWithThreadPoolExecutorManager {
 
@@ -90,10 +94,14 @@ public class ServiceWithThreadPoolExecutorManager implements IServiceWithThreadP
 
     public void unbind(ServiceReference reference) {
         System.out.println(">>> unbind service");
-        Arrays.asList(reference.getPropertyKeys()).forEach(key ->
-                System.out.println("service property: " + key + " : " + reference.getProperty(key))
-        );
-        this.controllerMap.remove(reference.hashCode());
+        if (reference != null) {
+            Arrays.asList(reference.getPropertyKeys()).forEach(key ->
+                    System.out.println("service property: " + key + " : " + reference.getProperty(key))
+            );
+            this.controllerMap.remove(reference.hashCode());
+        } else {
+            System.out.println("reference is null");
+        }
         System.out.println("<<<");
     }
 }

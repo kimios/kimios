@@ -31,7 +31,18 @@ import org.kimios.kernel.share.model.Share;
 import org.kimios.kernel.share.model.ShareStatus;
 import org.kimios.utils.configuration.ConfigurationManager;
 
-import java.util.*;
+;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class HDocumentFactory extends HFactory implements DocumentFactory
 {
@@ -86,6 +97,7 @@ public class HDocumentFactory extends HFactory implements DocumentFactory
         }
     }
 
+    @Deprecated
     public Document getDocument(String name, String extension, Folder f) throws ConfigException,
             DataSourceException
     {
@@ -253,6 +265,67 @@ public class HDocumentFactory extends HFactory implements DocumentFactory
         }
     }
 
+    public void addTag(Long documentUid, String tagValue)
+            throws ConfigException, DataSourceException {
+        try {
+            Criteria criteria = getSession().createCriteria(Document.class)
+                    .add(Restrictions.idEq(documentUid))
+                    .setFetchMode("tags", FetchMode.JOIN);
+            Document document = (Document) criteria.list().get(0);
+
+            Pattern pattern = this.makeTagPattern(tagValue);
+            if (document.getTags() == null
+                    || !pattern.matcher(document.getTags()).matches()) {
+                String documentTags = document.getTags() == null ? "" : document.getTags();
+                if (documentTags.length() > 0) {
+                    documentTags += Document.TAG_SEPARATOR;
+                }
+                documentTags += Document.TAG_ENCLOSURE + tagValue + Document.TAG_ENCLOSURE;
+                document.setTags(documentTags);
+                this.saveDocument(document);
+            }
+        } catch (HibernateException e) {
+            throw new DataSourceException(e, e.getMessage());
+        } catch (NullPointerException e) {
+            throw new DataSourceException(e, e.getMessage());
+        }
+    }
+
+    private Pattern makeTagPattern(String tagValue) {
+        return Pattern.compile("(^|"
+                + Document.TAG_SEPARATOR
+                + ")("
+                + Document.TAG_ENCLOSURE
+                + tagValue
+                + Document.TAG_ENCLOSURE
+                + ")("
+                + Document.TAG_SEPARATOR
+                + "|$)"
+        );
+    }
+
+    public void removeTag(Long documentUid, String tagValue) {
+        try {
+            Document document = this.getDocument(documentUid);
+            Matcher matcher = this.makeTagPattern(tagValue)
+                    .matcher(document.getTags() == null ? "" : document.getTags());
+            if (matcher.matches()) {
+                String toBeReplaced = matcher.group();
+                String replacement = "";
+                if (matcher.group(1).equals(Document.TAG_SEPARATOR)) {
+                    replacement += Document.TAG_SEPARATOR;
+                }
+                replacement += matcher.group(2);
+                document.setTags(document.getTags().replaceFirst(toBeReplaced, replacement));
+                this.saveDocument(document);
+            }
+        } catch (HibernateException e) {
+            throw new DataSourceException(e, e.getMessage());
+        } catch (NullPointerException e) {
+            throw new DataSourceException(e, e.getMessage());
+        }
+    }
+
     public void removeRelatedDocument(Document document, Document toRemove) throws ConfigException, DataSourceException
     {
         try {
@@ -291,16 +364,16 @@ public class HDocumentFactory extends HFactory implements DocumentFactory
 
     public List<Document> getDocumentsFromIds(List<Long> listIds) throws ConfigException, DataSourceException
     {
-        List<Document> lists = null;
+        List<Document> list = null;
         if (listIds.size() > 0) {
             try {
                 String query = "from Document where uid in (:listIds)";
                 query += " ORDER by lower(name)";
-                lists = getSession()
+                list = getSession()
                         .createQuery(query)
                         .setParameterList("listIds", listIds)
                         .list();
-                return lists;
+                return list;
             } catch (HibernateException he) {
                 throw new DataSourceException(he, he.getMessage());
             }
@@ -313,55 +386,65 @@ public class HDocumentFactory extends HFactory implements DocumentFactory
     public org.kimios.kernel.ws.pojo.Document getDocumentPojoFromId(long documentId)
             throws ConfigException, DataSourceException
     {
+        org.kimios.kernel.ws.pojo.Document docPojo = null;
         try {
-
+            Document docEntity = this.getDocument(documentId);
+            if (docEntity == null) {
+                throw new DataSourceException(new Exception("document not found"));
+            }
             if(ConfigurationManager.getValue("jdbc.dialect").equals("org.hibernate.dialect.MySQL5InnoDBDialect")){
-                return (org.kimios.kernel.ws.pojo.Document)getSession().getNamedQuery("findDocumentPojoById")
+                docPojo = (org.kimios.kernel.ws.pojo.Document)getSession().getNamedQuery("findDocumentPojoById")
                         .setLong("documentId", documentId)
                         .uniqueResult();
 
             }   else {
                 String query = "from DocumentPojo where uid = :documentId";
-                return (org.kimios.kernel.ws.pojo.Document)getSession().createQuery(query)
+                docPojo = (org.kimios.kernel.ws.pojo.Document)getSession().createQuery(query)
                         .setLong("documentId", documentId)
                         .uniqueResult();
             }
-
-
+            docPojo.setTags(this.tagStrToTagList(docEntity.getTags()));
         } catch (HibernateException he) {
             throw new DataSourceException(he, he.getMessage());
         }
+
+        return docPojo;
     }
 
 
     public List<org.kimios.kernel.ws.pojo.Document> getDocumentsPojosFromIds(List<Long> listIds)
             throws ConfigException, DataSourceException
     {
-        List<org.kimios.kernel.ws.pojo.Document> lists = null;
+        List<org.kimios.kernel.ws.pojo.Document> list = new ArrayList<>();
         if (listIds.size() > 0) {
             try {
+                // to have the tags field
+                //TODO : get it from DocumentPojo or named query (just see below)
+                Map<Long, Document> mapEntities = this.getDocumentsFromIds(listIds)
+                        .stream()
+                        .collect(Collectors.toMap(docEntity -> docEntity.getUid(), docEntity -> docEntity));
 
                 //should check if mysql
-
                 if(ConfigurationManager.getValue("jdbc.dialect").equals("org.hibernate.dialect.MySQL5InnoDBDialect")){
-                    lists = getSession().getNamedQuery("documentPojosUid")
+                    list = getSession().getNamedQuery("documentPojosUid")
                             .setParameterList("idsList", listIds)
                             .list();
                 } else {
                     String query = "from DocumentPojo where uid in (:listIds)";
                     query += " ORDER by lower(name)";
-                    lists = getSession().createQuery(query)
+                    list = getSession().createQuery(query)
                             .setParameterList("listIds", listIds)
                             .list();
                 }
 
-                return lists;
+                list.forEach(docPojo ->
+                        docPojo.setTags(this.tagStrToTagList(mapEntities.get(docPojo.getUid()).getTags())));
             } catch (HibernateException he) {
                 throw new DataSourceException(he, he.getMessage());
             }
-        } else {
-            return new ArrayList<org.kimios.kernel.ws.pojo.Document>();
         }
+
+        return list;
     }
 
     public List<Document> getDocumentSince(Calendar since, String excludePath)
@@ -421,6 +504,20 @@ public class HDocumentFactory extends HFactory implements DocumentFactory
                 .setLong("documentId", document.getUid())
                 .executeUpdate();
 
+    }
+
+    private String removeTagStrEnclosures(String tagStr) {
+        return tagStr.replaceFirst("^" + Document.TAG_ENCLOSURE, "")
+                .replaceFirst(Document.TAG_ENCLOSURE + "$", "");
+    }
+
+    private List<String> tagStrToTagList(String tagsStr) {
+        return tagsStr == null ?
+                new ArrayList<String>() :
+                Arrays.asList(tagsStr.split(Document.TAG_SEPARATOR).clone())
+                        .stream()
+                        .map(tag -> this.removeTagStrEnclosures(tag))
+                        .collect(Collectors.toList());
     }
 }
 

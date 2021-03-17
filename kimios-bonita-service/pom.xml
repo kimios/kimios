@@ -112,7 +112,6 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
-                <version>2.3.7</version>
                 <executions>
                     <execution>
                         <id>bundle-manifest</id>
@@ -189,8 +188,6 @@
                             org.apache.cxf.interceptor,
                             javax.ws.rs,
                             javax.jws,
-                            java.lang,
-                            java.util,
                             javax.xml,
                             javax.xml.ws,
                             javax.persistence,
@@ -201,10 +198,9 @@
                             org.kimios.webservices.exceptions,
                             org.kimios.services.utils,
                             org.kimios.kernel.bonita.webservices.pojo,
-                            org.kimios.kernel.*,
+                            org.kimios.kernel.bonita.controller,
+                            org.kimios.kernel.security.model,
                             org.kimios.kernel.ws.pojo,
-                            org.kimios.kernel.controller,
-                            org.kimios.kernel.security,
                             org.kimios.utils.logging,
                             org.apache.cxf.aegis,
                             org.apache.cxf.aegis.databinding,

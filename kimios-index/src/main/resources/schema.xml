@@ -114,6 +114,7 @@
         <dynamicField name="MetaDataList_*" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
         <dynamicField name="Attribute_*" type="string_ci" indexed="true" stored="true" required="false" multiValued="true"/>
         <dynamicField name="FileMetaData_*" type="string" indexed="true" stored="true" required="false" multiValued="true"/>
+        <field name="DocumentTags" type="string" indexed="true" stored="true" required="false"  multiValued="true" />
     </fields>
 
     <uniqueKey>DocumentUid</uniqueKey>
