@@ -39,6 +39,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -273,17 +274,26 @@ public class HDocumentFactory extends HFactory implements DocumentFactory
                     .setFetchMode("tags", FetchMode.JOIN);
             Document document = (Document) criteria.list().get(0);
 
-            Pattern pattern = this.makeTagPattern(tagValue);
-            if (document.getTags() == null
-                    || !pattern.matcher(document.getTags()).matches()) {
-                String documentTags = document.getTags() == null ? "" : document.getTags();
-                if (documentTags.length() > 0) {
-                    documentTags += Document.TAG_SEPARATOR;
+            String newTagsStr = "";
+            if (document.getTags() == null) {
+                newTagsStr = this.addTagToTagsStr(newTagsStr, tagValue);
+            } else {
+                List<Pattern> patterns = this.makeTagPatterns(tagValue);
+                /*Pattern pattern1 = */
+                if (patterns.stream()
+                        .filter(pattern -> pattern.matcher(document.getTags()).matches())
+                        .findFirst()
+                        .isPresent()
+                ) {
+                    // tag is already set on this document
+                } else {
+                    // add tag
+
+                    newTagsStr = this.addTagToTagsStr(document.getTags(), tagValue);
                 }
-                documentTags += Document.TAG_ENCLOSURE + tagValue + Document.TAG_ENCLOSURE;
-                document.setTags(documentTags);
-                this.saveDocument(document);
             }
+            document.setTags(newTagsStr);
+            this.saveDocument(document);
         } catch (HibernateException e) {
             throw new DataSourceException(e, e.getMessage());
         } catch (NullPointerException e) {
@@ -291,33 +301,76 @@ public class HDocumentFactory extends HFactory implements DocumentFactory
         }
     }
 
-    private Pattern makeTagPattern(String tagValue) {
-        return Pattern.compile("(^|"
-                + Document.TAG_SEPARATOR
-                + ")("
-                + Document.TAG_ENCLOSURE
-                + tagValue
-                + Document.TAG_ENCLOSURE
-                + ")("
-                + Document.TAG_SEPARATOR
-                + "|$)"
+    private String addTagToTagsStr(String tagsStr, String tagValue) {
+        if (tagsStr.length() > 0) {
+            tagsStr += Document.TAG_SEPARATOR;
+        }
+        tagsStr += Document.TAG_ENCLOSURE + tagValue + Document.TAG_ENCLOSURE;
+
+        return tagsStr;
+    }
+
+    private List<Pattern> makeTagPatterns(String tagValue) {
+        List<Pattern> patterns = new ArrayList<>();
+        patterns.add(
+                Pattern.compile("^"
+                        + "("
+                        + Document.TAG_ENCLOSURE
+                        + tagValue
+                        + Document.TAG_ENCLOSURE
+                        + ")"
+                        + "$")
         );
+        patterns.add(
+                Pattern.compile("^.+"
+                        + "("
+                        + Document.TAG_SEPARATOR
+                        + Document.TAG_ENCLOSURE
+                        + tagValue
+                        + Document.TAG_ENCLOSURE
+                        + ")"
+                        + "$")
+        );
+        patterns.add(
+                Pattern.compile("^.+"
+                        + "("
+                        + Document.TAG_SEPARATOR
+                        + Document.TAG_ENCLOSURE
+                        + tagValue
+                        + Document.TAG_ENCLOSURE
+                        + ")"
+                        + Document.TAG_SEPARATOR
+                        + ".+$")
+        );
+        patterns.add(
+                Pattern.compile("^"
+                        + "("
+                        + Document.TAG_ENCLOSURE
+                        + tagValue
+                        + Document.TAG_ENCLOSURE
+                        + Document.TAG_SEPARATOR
+                        + ")"
+                        + ".+$")
+        );
+
+        return patterns;
     }
 
     public void removeTag(Long documentUid, String tagValue) {
         try {
             Document document = this.getDocument(documentUid);
-            Matcher matcher = this.makeTagPattern(tagValue)
-                    .matcher(document.getTags() == null ? "" : document.getTags());
-            if (matcher.matches()) {
-                String toBeReplaced = matcher.group();
-                String replacement = "";
-                if (matcher.group(1).equals(Document.TAG_SEPARATOR)) {
-                    replacement += Document.TAG_SEPARATOR;
+            if (document.getTags() != null) {
+                List<Pattern> patterns = this.makeTagPatterns(tagValue);
+                Optional<Matcher> optionalMatcherOk = patterns.stream()
+                        .map(pattern -> pattern.matcher(document.getTags()))
+                        .filter(matcher -> matcher.matches())
+                        .findFirst();
+                if (optionalMatcherOk.isPresent()) {
+                    Matcher matcherOk = optionalMatcherOk.get();
+                    String toBeReplaced = matcherOk.group(1);
+                    document.setTags(document.getTags().replaceFirst(toBeReplaced, ""));
+                    this.saveDocument(document);
                 }
-                replacement += matcher.group(2);
-                document.setTags(document.getTags().replaceFirst(toBeReplaced, replacement));
-                this.saveDocument(document);
             }
         } catch (HibernateException e) {
             throw new DataSourceException(e, e.getMessage());
@@ -438,7 +491,7 @@ public class HDocumentFactory extends HFactory implements DocumentFactory
                 }
 
                 list.forEach(docPojo ->
-                        docPojo.setTags(this.tagStrToTagList(mapEntities.get(docPojo.getUid()).getTags())));
+                        docPojo.setTags(this.tagStrToTagList(mapEntities.get(new Long(docPojo.getUid())).getTags())));
             } catch (HibernateException he) {
                 throw new DataSourceException(he, he.getMessage());
             }
@@ -512,7 +565,7 @@ public class HDocumentFactory extends HFactory implements DocumentFactory
     }
 
     private List<String> tagStrToTagList(String tagsStr) {
-        return tagsStr == null ?
+        return tagsStr == null || tagsStr.isEmpty() ?
                 new ArrayList<String>() :
                 Arrays.asList(tagsStr.split(Document.TAG_SEPARATOR).clone())
                         .stream()
