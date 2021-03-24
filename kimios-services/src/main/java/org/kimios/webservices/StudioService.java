@@ -41,9 +41,10 @@ public interface StudioService
     @GET @ApiOperation(value="")
     @Path("/getDocumentType")
     @Produces("application/json")
-    public DocumentType getDocumentType(@WebParam(name = "sessionId") String sessionId,
-            @QueryParam(value = "documentTypeId") @WebParam(name = "documentTypeId") long documentTypeId)
-            throws DMServiceException;
+    public DocumentType getDocumentType(
+            @QueryParam(value = "sessionId")@WebParam(name = "sessionId") String sessionId,
+            @QueryParam(value = "documentTypeId") @WebParam(name = "documentTypeId") long documentTypeId
+    ) throws DMServiceException;
 
     @GET @ApiOperation(value="")
     @Path("/getDocumentTypes")
