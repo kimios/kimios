@@ -93,7 +93,7 @@
         <apache.http.version>4.2.6</apache.http.version>
         <atomikos.version>3.9.3</atomikos.version>
         <cxf.version>3.1.8</cxf.version>
-        <jackson.version>2.6.6</jackson.version>
+        <jackson.version>2.6.7</jackson.version>
         <velocity.version>1.6.4</velocity.version>
         <javamail.version>1.5.6</javamail.version>
         <solr4j.version>4.6.0</solr4j.version>
