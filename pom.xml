@@ -158,6 +158,7 @@
         <module>kimios-bundle-builder</module>
         <module>kimios-aspose-converters</module>
         <module>kimios-threads</module>
+        <module>kimios-websocket</module>
     </modules>
     <packaging>pom</packaging>
     <build>

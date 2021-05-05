@@ -129,5 +129,9 @@
         <configfile finalname="${karaf.etc}/org.kimios.client.app.cfg">mvn:org.kimios/kimios-karaf-features/${project.version}/properties/kimios-client-cfg</configfile>
         <bundle>mvn:org.kimios/kimios-webclient/${project.version}/war/osgi</bundle>
     </feature>
+    <feature version="${project.version}" name="kimios-websocket">
+        <bundle>mvn:org.kimios/kimios-websocket/${project.version}/war/osgi</bundle>
+        <capability>kimios-websocket</capability>
+    </feature>
 </features>
 

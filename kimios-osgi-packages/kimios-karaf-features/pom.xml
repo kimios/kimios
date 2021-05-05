@@ -200,6 +200,12 @@
             <classifier>osgi</classifier>
             <type>war</type>
         </dependency>
+        <!--<dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-websocket</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+        </dependency>-->
     </dependencies>
 
     <build>

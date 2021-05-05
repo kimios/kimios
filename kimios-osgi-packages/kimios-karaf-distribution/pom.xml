@@ -72,10 +72,13 @@
             <type>jar</type>
             <scope>provided</scope>
         </dependency>
-
-
-
-        
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-websocket</artifactId>
+            <version>1.3-SNAPSHOT</version>
+            <type>war</type>
+            <scope>provided</scope>
+        </dependency>
 
     </dependencies>
 
@@ -220,6 +223,7 @@
                         <feature>kimios-services</feature>
                         <feature>kimios-etherpad-editor</feature>
                         <feature>kimios-web-standard</feature>
+                        <feature>kimios-websocket</feature>
                     </bootFeatures>
                 </configuration>
             </plugin>
