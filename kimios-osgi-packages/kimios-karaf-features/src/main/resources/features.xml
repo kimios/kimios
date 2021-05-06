@@ -6,7 +6,7 @@
     <feature name="kimios-dependencies" version="${project.version}" start-level="50">
         <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.dom4j/1.6.1_3</bundle>
         <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.aspectj/1.7.1_1</bundle>
-        <bundle start-level="80">mvn:commons-io/commons-io/2.2</bundle>
+        <bundle start-level="80">mvn:commons-io/commons-io/2.7</bundle>
         <bundle start-level="80">mvn:commons-lang/commons-lang/2.6</bundle>
         <bundle start-level="80">mvn:commons-collections/commons-collections/3.2.1</bundle>
         <bundle start-level="80">mvn:commons-codec/commons-codec/1.10</bundle>
