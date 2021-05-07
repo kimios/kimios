@@ -19,7 +19,7 @@
     <parent>
         <artifactId>kimios</artifactId>
         <groupId>org.kimios</groupId>
-        <version>1.2.2-SNAPSHOT</version>
+        <version>1.2.2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -53,13 +53,13 @@
         <dependency>
             <groupId>org.kimios</groupId>
             <artifactId>kimios-model</artifactId>
-            <version>1.2.2-SNAPSHOT</version>
+            <version>1.2.2</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.kimios</groupId>
             <artifactId>kimios-index</artifactId>
-            <version>1.2.2-SNAPSHOT</version>
+            <version>1.2.2</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -83,7 +83,7 @@
         <dependency>
             <groupId>org.kimios</groupId>
             <artifactId>kimios-share</artifactId>
-            <version>1.2.2-SNAPSHOT</version>
+            <version>1.2.2</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
