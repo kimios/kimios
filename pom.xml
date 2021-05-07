@@ -34,7 +34,7 @@
         <developerConnection>scm:git:ssh://git@gitlab.com/kimios/kimios.git</developerConnection>
       <tag>HEAD</tag>
   </scm>
-    <!-- internal Git Connexion 
+    <!-- internal Git Connexion
     <scm>
         <url>https://gitlab.devlib.infra/org-kimios/kimios</url>
         <connection>scm:git:ssh://git@gitlab.devlib.infra/org-kimios/kimios.git</connection>
@@ -222,6 +222,8 @@
                 <configuration>
                     <tagNameFormat>v@{project.version}</tagNameFormat>
                     <preparationGoals>clean install</preparationGoals>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <releaseProfiles>releases</releaseProfiles>
                 </configuration>
             </plugin>
 
@@ -320,6 +322,32 @@
                             </execution>
                         </executions>
                     </plugin>-->
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>releases</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>1.5.1</version>
+                        <executions>
+                            <execution>
+                                <id>default-deploy</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>deploy</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <serverId>kimios-private</serverId>
+                            <nexusUrl>https://repository.kimios.com/repository/kimios-private</nexusUrl>
+                            <skipStaging>true</skipStaging>
+                        </configuration>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
