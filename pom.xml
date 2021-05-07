@@ -84,6 +84,7 @@
         </license>
     </licenses>
     <properties>
+        <skipTests>true</skipTests>
         <spring.version>4.2.3.RELEASE</spring.version>
         <slfj.version>1.7.5</slfj.version>
         <apache.poi.version>3.12-beta1</apache.poi.version>
