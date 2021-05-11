@@ -43,6 +43,8 @@ public class Session implements Serializable
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastUse;
 
+    @Transient
+    private String webSocketToken;
 
     @Transient
     private Vector<Group> groups;
@@ -55,13 +57,14 @@ public class Session implements Serializable
     {
     }
 
-    public Session(String uid, String userName, String userSource, Date lastUse, Vector<Group> groups)
+    public Session(String uid, String userName, String userSource, Date lastUse, Vector<Group> groups, String webSocketToken)
     {
         this.uid = uid;
         this.userName = userName;
         this.userSource = userSource;
         this.lastUse = lastUse;
         this.groups = groups;
+        this.webSocketToken = webSocketToken;
     }
 
     public String getUserSource()
@@ -124,6 +127,10 @@ public class Session implements Serializable
         this.metaDatas = metaDatas;
     }
 
+    public String getWebSocketToken() {
+        return webSocketToken;
+    }
+
     @Override public String toString()
     {
         return "Session{" +
@@ -133,6 +140,7 @@ public class Session implements Serializable
                 ", lastUse=" + lastUse +
                 ", metaDatas='" + metaDatas + '\'' +
                 ", groups=" + groups +
+                ", webSocketToken='" + webSocketToken + '\'' +
                 '}';
     }
 }

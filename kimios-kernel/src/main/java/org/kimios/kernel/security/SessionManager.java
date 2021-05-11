@@ -235,7 +235,7 @@ public class SessionManager extends HFactory implements ISessionManager
             }
             Date startTime = new Date();
             User u = authenticationSourceFactory.getAuthenticationSource(userSource).getUserFactory().getUser(userName);
-            Session sUser = new Session(uid, u.getUid(), userSource, startTime, null);
+            Session sUser = new Session(uid, u.getUid(), userSource, startTime, null, generateSessionUid());
             Vector<Group> grps = new Vector<Group>();
             for (Group g : u.getGroups()) {
                 grps.add(g);

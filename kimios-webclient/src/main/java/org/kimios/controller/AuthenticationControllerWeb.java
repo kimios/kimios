@@ -36,7 +36,8 @@ public class AuthenticationControllerWeb extends Controller {
             String login = parameters.get("username");
             String password = parameters.get("password");
             String source = parameters.get("domain");
-            sessionUid = securityController.startSession(login, password, source);
+            Map<String, String> map = securityController.startSession(login, password, source);
+            sessionUid = map.get("sessionUid");
             return sessionUid;
         }
 

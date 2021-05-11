@@ -25,7 +25,9 @@ import org.kimios.webservices.exceptions.DMServiceException;
 
 import javax.jws.WebService;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @WebService(targetNamespace = "http://kimios.org", serviceName = "SecurityService", name = "SecurityService")
 public class SecurityServiceImpl extends CoreService implements SecurityService
@@ -170,7 +172,7 @@ public class SecurityServiceImpl extends CoreService implements SecurityService
         }
     }
 
-    public String startSession(String userName, String userSource, String password) throws DMServiceException
+    public Map<String, String> startSession(String userName, String userSource, String password) throws DMServiceException
     {
 
         try {
@@ -178,7 +180,10 @@ public class SecurityServiceImpl extends CoreService implements SecurityService
             Session session = securityController.startSession(userName, userSource, password);
 
             if (session != null) {
-                return session.getUid();
+                Map<String, String> map = new HashMap<>();
+                map.put("sessionUid", session.getUid());
+                map.put("wsToken", session.getWebSocketToken());
+                return map;
             } else {
                 throw new Exception("Error 01 : Invalid session");
             }

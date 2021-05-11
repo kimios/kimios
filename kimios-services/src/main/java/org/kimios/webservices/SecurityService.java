@@ -15,19 +15,34 @@
  */
 package org.kimios.webservices;
 
-import io.swagger.annotations.*;
-import org.apache.cxf.jaxrs.ext.multipart.Multipart;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.kimios.kernel.jobs.model.TaskInfo;
-import org.kimios.kernel.ws.pojo.*;
+import org.kimios.kernel.ws.pojo.AuthenticationSource;
+import org.kimios.kernel.ws.pojo.DMEntitySecurity;
+import org.kimios.kernel.ws.pojo.Group;
+import org.kimios.kernel.ws.pojo.SecurityEntity;
+import org.kimios.kernel.ws.pojo.UpdateSecurityCommand;
+import org.kimios.kernel.ws.pojo.UpdateSecurityWithXmlCommand;
+import org.kimios.kernel.ws.pojo.User;
 import org.kimios.webservices.exceptions.DMServiceException;
 
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
-import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -113,10 +128,10 @@ public interface SecurityService
     @ApiOperation(value = "Start Kimios Session",
             httpMethod = "POST",
             notes = "Start Kimios Session",
-            response = String.class,
+            response = Map.class,
             consumes = "application/x-www-form-urlencoded")
     @ApiResponses(value = { @ApiResponse(code = 200, message = "", response = String.class), @ApiResponse(code = 500, response = Exception.class, message = "Invalid Session") })
-    public String startSession(
+    public Map<String, String> startSession(
             @ApiParam(required = true, name = "userName")
             @FormParam(value = "userName") @WebParam(name = "userName") String userName,
             @ApiParam(required = true, name = "userSource")

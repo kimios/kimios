@@ -25,6 +25,7 @@ import org.kimios.webservices.SecurityService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 /**
@@ -49,7 +50,7 @@ public class SecurityController
     /**
      * Start a session
      */
-    public String startSession( String userName, String password, String source )
+    public Map<String, String> startSession(String userName, String password, String source )
         throws Exception, DMSException
     {
         try

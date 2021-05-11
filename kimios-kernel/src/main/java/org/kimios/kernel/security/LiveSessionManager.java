@@ -61,7 +61,7 @@ public class LiveSessionManager extends SessionManager
             }
             Date startTime = new Date();
             User u = authenticationSourceFactory.getAuthenticationSource(userSource).getUserFactory().getUser(userName);
-            Session sUser = new Session(uid, u.getUid(), userSource, startTime, null);
+            Session sUser = new Session(uid, u.getUid(), userSource, startTime, null, null);
             Vector<Group> grps = new Vector<Group>();
             for (Group g : u.getGroups()) {
                 grps.add(g);

@@ -1,5 +1,8 @@
 package org.kimios.websocket.websocket;
 
+import org.kimios.kernel.ws.pojo.UpdateNoticeMessage;
+import org.kimios.kernel.ws.pojo.UpdateNoticeType;
+import org.kimios.websocket.IKimiosWebSocketController;
 import org.kimios.websocket.model.Message;
 
 import javax.websocket.EncodeException;
@@ -12,13 +15,19 @@ import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-@ServerEndpoint(value = "/chat/{username}", decoders = MessageDecoder.class, encoders = MessageEncoder.class)
-public class ChatEndpoint {
+@ServerEndpoint(
+        value = "/chat/{username}",
+        decoders = { MessageDecoder.class, UpdateNoticeMessageDecoder.class },
+        encoders = { MessageEncoder.class, UpdateNoticeMessageEncoder.class }
+)
+public class ChatEndpoint implements IKimiosWebSocketController {
     private Session session;
     private static final Set<ChatEndpoint> chatEndpoints = new CopyOnWriteArraySet<>();
+    private static final Map<String, ChatEndpoint> chatEndpointsMap = new HashMap<String, ChatEndpoint>();
     private static HashMap<String, String> users = new HashMap<>();
 
     public ChatEndpoint() {
@@ -29,12 +38,16 @@ public class ChatEndpoint {
 
         this.session = session;
         chatEndpoints.add(this);
+        chatEndpointsMap.put(username, this);
         users.put(session.getId(), username);
 
         Message message = new Message();
         message.setFrom(username);
         message.setContent("Connected!");
         broadcast(message);
+
+        /*UpdateNoticeMessage updateNoticeMessage = new UpdateNoticeMessage(UpdateNoticeType.SHARES_BY_ME);
+        sendUpdateNotice(username, updateNoticeMessage);*/
     }
 
     @OnMessage
@@ -70,4 +83,18 @@ public class ChatEndpoint {
         });
     }
 
+    @Override
+    public void sendUpdateNotice(String sessionId, UpdateNoticeMessage updateNoticeMessage) {
+        try {
+            ChatEndpoint chatEndpoint = chatEndpointsMap.get(sessionId);
+            synchronized (chatEndpoint) {
+                chatEndpoint.session.getBasicRemote()
+                        .sendObject(updateNoticeMessage);
+            }
+        } catch (IOException | EncodeException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
