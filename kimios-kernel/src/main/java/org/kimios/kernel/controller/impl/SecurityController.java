@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 @Transactional
 public class SecurityController extends AKimiosController implements ISecurityController
@@ -518,4 +519,11 @@ public class SecurityController extends AKimiosController implements ISecurityCo
             return session;
     }
 
+    @Override
+    public boolean checkWebSocketToken(String token) {
+        return SessionManager.getInstance().getSessions().stream()
+                .filter(s -> s.getWebSocketToken().equals(token))
+                .collect(Collectors.toList())
+                .size() == 1;
+    }
 }

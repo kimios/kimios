@@ -39,6 +39,19 @@
             <artifactId>kimios-model</artifactId>
             <version>1.3-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-kernel</artifactId>
+            <version>1.3-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!--<dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+            <version>1</version>
+            <scope>compile</scope>
+        </dependency>-->
     </dependencies>
 
     <properties>
@@ -103,6 +116,7 @@
                             org.xml.sax,
                             org.xml.sax.helpers,
                             org.kimios.kernel.ws.pojo,
+                            org.kimios.kernel.controller,
                             *;resolution:=optional
                         </Import-Package>
                         <Include-Resource>{maven-resources}</Include-Resource>

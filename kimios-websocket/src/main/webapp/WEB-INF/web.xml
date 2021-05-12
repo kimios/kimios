@@ -15,4 +15,15 @@
     <url-pattern>/chat/*</url-pattern>
   </servlet-mapping>-->
 
+  <!--<context-param>
+    <param-name>blueprintLocation</param-name>
+    <param-value>OSGI-INF/ctx-kimios-websocket.xml</param-value>
+  </context-param>
+  <listener>
+    <listener-class>org.apache.aries.blueprint.web.BlueprintContextListener</listener-class>
+  </listener>-->
+  <!--<listener>
+    <listener-class>org.kimios.osgi.OsgiCoreListener</listener-class>
+  </listener>-->
+
 </web-app>

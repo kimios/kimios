@@ -1,10 +1,13 @@
 package org.kimios.websocket.websocket;
 
+import org.kimios.kernel.controller.ISecurityController;
 import org.kimios.kernel.ws.pojo.UpdateNoticeMessage;
-import org.kimios.kernel.ws.pojo.UpdateNoticeType;
 import org.kimios.websocket.IKimiosWebSocketController;
 import org.kimios.websocket.model.Message;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.websocket.EncodeException;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
@@ -30,11 +33,28 @@ public class ChatEndpoint implements IKimiosWebSocketController {
     private static final Map<String, ChatEndpoint> chatEndpointsMap = new HashMap<String, ChatEndpoint>();
     private static HashMap<String, String> users = new HashMap<>();
 
+    private ISecurityController securityController;
+
     public ChatEndpoint() {
+        try {
+            Context context = new InitialContext();
+            this.securityController = (ISecurityController) context
+                    .lookup("osgi:service/org.kimios.kernel.controller.ISecurityController");
+        } catch (NamingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void init() {
+        System.out.println("We are in init() of ChatEndpoint");
     }
 
     @OnOpen
     public void onOpen(Session session, @PathParam("username") String username) throws IOException, EncodeException {
+
+        if (! this.securityController.checkWebSocketToken(username)) {
+            return;
+        }
 
         this.session = session;
         chatEndpoints.add(this);
@@ -45,9 +65,6 @@ public class ChatEndpoint implements IKimiosWebSocketController {
         message.setFrom(username);
         message.setContent("Connected!");
         broadcast(message);
-
-        /*UpdateNoticeMessage updateNoticeMessage = new UpdateNoticeMessage(UpdateNoticeType.SHARES_BY_ME);
-        sendUpdateNotice(username, updateNoticeMessage);*/
     }
 
     @OnMessage
@@ -96,5 +113,13 @@ public class ChatEndpoint implements IKimiosWebSocketController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public ISecurityController getSecurityController() {
+        return securityController;
+    }
+
+    public void setSecurityController(ISecurityController securityController) {
+        this.securityController = securityController;
     }
 }

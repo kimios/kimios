@@ -185,4 +185,6 @@ public interface ISecurityController
     public void saveDefaultDMSecurityEntities(Session session, List<DMEntitySecurity> des, String objectType, String entityPath)
             throws ConfigException,
             DataSourceException;
+
+    public boolean checkWebSocketToken(String token);
 }
