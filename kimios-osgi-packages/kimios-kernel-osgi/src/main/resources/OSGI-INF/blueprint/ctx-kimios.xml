@@ -58,10 +58,10 @@
          <property name="contextHolder" ref="contextHolder" />
      </bean>
 
-     <bean id="eventInterceptor" class="org.kimios.kernel.events.interceptors.GenericInterceptor" init-method="init">
+     <!--<bean id="eventInterceptor" class="org.kimios.kernel.events.interceptors.GenericInterceptor" init-method="init">
          <argument ref="eventHandlerManager" />
          <argument ref="ruleManager" />
-     </bean>
+     </bean>-->
 
      <bean id="kernelAspect" class="org.kimios.kernel.events.interceptors.KimiosKernelAspect" factory-method="aspectOf">
          <property name="ruleManager" ref="ruleManager" />
