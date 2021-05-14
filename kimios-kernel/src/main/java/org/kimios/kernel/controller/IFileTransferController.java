@@ -56,7 +56,6 @@ public interface IFileTransferController
     /**
      * Start download transaction
      */
-    @DmsEvent( eventName = { DmsEventName.DOCUMENT_VERSION_READ } )
     public DataTransfer startDownloadTransaction( Session session, long documentVersionUid, boolean isCompressed )
         throws IOException, RepositoryException, DataSourceException, ConfigException, AccessDeniedException;
 
