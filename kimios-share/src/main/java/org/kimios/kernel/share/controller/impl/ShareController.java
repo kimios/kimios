@@ -16,6 +16,8 @@
 
 package org.kimios.kernel.share.controller.impl;
 
+import org.kimios.api.events.annotations.DmsEvent;
+import org.kimios.api.events.annotations.DmsEventName;
 import org.kimios.exceptions.AccessDeniedException;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.ISecurityController;
@@ -87,6 +89,7 @@ public class ShareController extends AKimiosController implements IShareControll
     }
 
     @Override
+    @DmsEvent(eventName = DmsEventName.DOCUMENT_SHARED)
     public Share shareEntity(Session session,
                              long dmEntityId,
                              String sharedToUserId,
