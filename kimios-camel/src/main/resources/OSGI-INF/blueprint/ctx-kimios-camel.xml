@@ -29,12 +29,80 @@
         <property name="csvPath" value="${dms.repository.default.path}"/>
     </bean>
 
+    <!--<reference id="connectionFactory" interface="javax.jms.ConnectionFactory" />
+
+    <bean id="jmsConfig" class="org.apache.camel.component.jms.JmsConfiguration">
+        <property name="connectionFactory" ref="connectionFactory"/>
+    </bean>
+
+    <bean id="jms" class="org.apache.camel.component.jms.JmsComponent">
+        <argument ref="jmsConfig"/>
+    </bean>-->
+
+    <!--<bean id="jmsConnectionFactory"
+          class="org.apache.activemq.ActiveMQConnectionFactory">
+        <property name="brokerURL" value="vm://amq-broker?create=false&amp;waitForStart=10000" />
+        <property name="userName" value="kimios"/>
+        <property name="password" value="kimios"/>
+    </bean>
+
+    <bean id="pooledConnectionFactory"
+          class="org.apache.activemq.pool.PooledConnectionFactory" init-method="start" destroy-method="stop">
+        <property name="maxConnections" value="8" />
+        <property name="connectionFactory" ref="jmsConnectionFactory" />
+    </bean>
+
+    <bean id="jmsConfig"
+          class="org.apache.camel.component.jms.JmsConfiguration">
+        <property name="connectionFactory" ref="pooledConnectionFactory"/>
+        <property name="concurrentConsumers" value="10"/>
+    </bean>
+
+    <bean id="jms"
+          class="org.apache.activemq.camel.component.ActiveMQComponent">
+        <property name="configuration" ref="jmsConfig"/>
+    </bean>-->
+
+<!--
+    <reference id="searchController" interface="org.kimios.kernel.index.controller.ISearchController" />
+-->
+
     <camelContext id="kimios" xmlns="http://camel.apache.org/schema/blueprint">
         <packageScan>
             <package>org.kimios.camel.routes.ext</package>
             <includes>**.*</includes>
         </packageScan>
         <routeBuilder ref="documentExporterRouteBuilder" />
+        <!--<route>
+            <from uri="timer:simple?period=5000"/>
+            <setBody>
+                <simple>Hello World</simple>
+            </setBody>
+            <to uri="stream:out"/>
+        </route>-->
+        <!--<route>
+            <from uri="timer:simple?period=5000"/>
+            <setBody>
+                <simple>Hello World</simple>
+            </setBody>
+            <to uri="jms:topic:hello.messages"/>
+        </route>-->
+        <!--<route>
+            &lt;!&ndash;<from uri="jms:topic:hello.messages"/>
+            <setBody>
+                <simple>Hello World</simple>
+            </setBody>&ndash;&gt;
+            &lt;!&ndash;<to uri="bean:searchController"/>&ndash;&gt;
+            <from uri="timer:simple?period=5000"/>
+            <bean ref="searchController" method="saveSearchQuery" />
+        </route>-->
+        <!--<route>
+            <from uri="jms:topic:hello.messages"/>
+            &lt;!&ndash;<setBody>
+                <simple>Hello World</simple>
+            </setBody>&ndash;&gt;
+            <to uri="websocket://localhost:8181/chat/chat/hello"/>
+        </route>-->
     </camelContext>
 
 </blueprint>

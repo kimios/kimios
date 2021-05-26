@@ -19,11 +19,9 @@ package org.kimios.camel.routes;
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.kimios.kernel.ws.pojo.Document;
-import org.kimios.kernel.ws.pojo.MetaValue;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Map;
 
 /**
  * Created by farf on 27/10/16.

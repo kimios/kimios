@@ -19,16 +19,9 @@ package org.kimios.camel.routes;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.dataformat.bindy.BindyAbstractDataFormat;
-import org.apache.camel.dataformat.bindy.BindyAbstractFactory;
-import org.apache.camel.dataformat.bindy.BindyCsvFactory;
 import org.apache.camel.dataformat.bindy.csv.BindyCsvDataFormat;
-import org.kimios.kernel.configuration.Config;
 import org.kimios.kernel.ws.pojo.Document;
-import org.kimios.utils.configuration.ConfigurationManager;
 
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
