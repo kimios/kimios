@@ -108,10 +108,10 @@
         <property name="configurationManager" ref="configurationManager" />
     </bean>
 
-    <!--<bean id="eventInterceptor" class="org.kimios.kernel.events.interceptors.GenericInterceptor" init-method="init">
+    <bean id="eventInterceptor" class="org.kimios.kernel.events.interceptors.GenericInterceptor" init-method="init">
         <constructor-arg ref="eventHandlerManager" />
         <constructor-arg ref="ruleManager" />
-    </bean>-->
+    </bean>
 
     <bean id="kernelAspect" class="org.kimios.kernel.events.interceptors.KimiosKernelAspect"
           factory-method="aspectOf" depends-on="eventHandlerManager,ruleManager">
