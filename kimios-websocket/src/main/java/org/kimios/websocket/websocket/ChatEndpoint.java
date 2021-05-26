@@ -64,7 +64,7 @@ public class ChatEndpoint implements IKimiosWebSocketController {
         Message message = new Message();
         message.setFrom(username);
         message.setContent("Connected!");
-        broadcast(message);
+        this.sendMessage(message);
     }
 
     @OnMessage
@@ -98,6 +98,15 @@ public class ChatEndpoint implements IKimiosWebSocketController {
                 }
             }
         });
+    }
+
+    private void sendMessage(Message message) throws IOException, EncodeException {
+        try {
+            session.getBasicRemote()
+                    .sendObject(message);
+        } catch (IOException | EncodeException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
