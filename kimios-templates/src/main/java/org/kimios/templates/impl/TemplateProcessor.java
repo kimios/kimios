@@ -17,9 +17,8 @@
 package org.kimios.templates.impl;
 
 import org.apache.commons.io.IOUtils;
-import org.kimios.api.templates.ITemplateProcessor;
 import org.kimios.api.templates.ITemplate;
-import org.kimios.kernel.templates.model.Template;
+import org.kimios.api.templates.ITemplateProcessor;
 import org.kimios.templates.impl.thymeleaf.KimiosTemplateResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
