@@ -24,7 +24,6 @@ import org.kimios.kernel.share.model.Share;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by farf on 19/07/15.

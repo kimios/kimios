@@ -16,11 +16,6 @@
 
 package org.kimios.kernel.share.controller;
 
-import org.kimios.kernel.security.model.Session;
-import org.kimios.kernel.share.model.Share;
-
-import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 /**
