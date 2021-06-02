@@ -88,6 +88,8 @@
               interface="org.kimios.kernel.controller.IDocumentVersionController"/>
      <service id="wksCtrlOsgi" ref="workspaceController"
               interface="org.kimios.kernel.controller.IWorkspaceController"/>
+    <service id="entCtrlOsgi" ref="dmEntityController"
+             interface="org.kimios.kernel.controller.IDmEntityController"/>
      <service id="fldCtrlOsgi" ref="folderController"
               interface="org.kimios.kernel.controller.IFolderController"/>
      <service id="fileTransferCtrlOsgi" ref="fileTransferController"

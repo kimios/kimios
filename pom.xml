@@ -149,6 +149,7 @@
         <module>kimios-notifier</module>
         <module>kimios-telemetry</module>
         <module>kimios-bundle-builder</module>
+        <module>kimios-zipper</module>
     </modules>
     <packaging>pom</packaging>
 
