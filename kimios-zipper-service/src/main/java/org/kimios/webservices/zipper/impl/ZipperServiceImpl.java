@@ -19,6 +19,22 @@ public class ZipperServiceImpl implements ZipperService {
     IZipperController zipperController;
     private IServiceHelper helper;
 
+    public IZipperController getZipperController() {
+        return zipperController;
+    }
+
+    public void setZipperController(IZipperController zipperController) {
+        this.zipperController = zipperController;
+    }
+
+    public IServiceHelper getHelper() {
+        return helper;
+    }
+
+    public void setHelper(IServiceHelper helper) {
+        this.helper = helper;
+    }
+
     @Override
     public Response makeZip(String sessionId, List<Long> ids) throws DMServiceException {
         try {
@@ -33,6 +49,4 @@ public class ZipperServiceImpl implements ZipperService {
             throw helper.convertException(e);
         }
     }
-
-
 }

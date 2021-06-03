@@ -31,9 +31,12 @@
 
     <reference id="zipperController"
                interface="org.kimios.zipper.controller.IZipperController"/>
+    <reference id="helper"
+               interface="org.kimios.webservices.IServiceHelper" />
 
     <bean id="zipperServiceBean" class="org.kimios.webservices.zipper.impl.ZipperServiceImpl">
-
+        <property name="zipperController" ref="zipperController" />
+        <property name="helper" ref="helper" />
     </bean>
 
     <service interface="org.kimios.webservices.zipper.impl.ZipperServiceImpl"
