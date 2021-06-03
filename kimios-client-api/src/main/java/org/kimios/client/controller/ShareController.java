@@ -18,12 +18,10 @@ package org.kimios.client.controller;
 
 import org.kimios.client.exception.ExceptionHelper;
 import org.kimios.kernel.share.model.MailContact;
-import org.kimios.kernel.share.model.ShareStatus;
 import org.kimios.kernel.ws.pojo.Share;
 import org.kimios.webservices.share.ShareService;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
