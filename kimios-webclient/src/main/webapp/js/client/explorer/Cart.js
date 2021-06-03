@@ -72,10 +72,9 @@ kimios.explorer.Cart = Ext.extend(Ext.Panel, {
                         var records = _this.cartGrid.getStore().getRange();
                         if (!records && records.length == 0)
                             return false;
-                        var link = srcContextPath + '/Converter?sessionId=' + sessionUid;
+                        var link = srcContextPath + '/Zipper?sessionId=' + sessionUid;
                         for (var i = 0; i < records.length; ++i)
-                            link += '&documentId=' + records[i].data.uid;
-                        link += '&converterImpl=org.kimios.converter.impl.FileToZip';
+                            link += '&id=' + records[i].data.uid;
                         window.location.href = link;
                     }
                 }
