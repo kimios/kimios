@@ -150,6 +150,7 @@
         <module>kimios-telemetry</module>
         <module>kimios-bundle-builder</module>
         <module>kimios-zipper</module>
+        <module>kimios-zipper-service</module>
     </modules>
     <packaging>pom</packaging>
 

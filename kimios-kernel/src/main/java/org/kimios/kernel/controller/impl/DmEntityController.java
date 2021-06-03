@@ -8,6 +8,7 @@ import org.kimios.kernel.controller.IDocumentController;
 import org.kimios.kernel.controller.IFolderController;
 import org.kimios.kernel.controller.IWorkspaceController;
 import org.kimios.kernel.dms.model.DMEntity;
+import org.kimios.kernel.dms.model.DMEntityImpl;
 import org.kimios.kernel.security.model.Session;
 
 public class DmEntityController implements IDmEntityController {
@@ -17,8 +18,8 @@ public class DmEntityController implements IDmEntityController {
     IDocumentController documentController;
 
     @Override
-    public DMEntity getEntity(Session session, long uid) throws DataSourceException, ConfigException, AccessDeniedException {
-        DMEntity entity = this.documentController.getDocument(session, uid);
+    public DMEntityImpl getEntity(Session session, long uid) throws DataSourceException, ConfigException, AccessDeniedException {
+        DMEntityImpl entity = this.documentController.getDocument(session, uid);
         if (entity == null) {
             entity = this.folderController.getFolder(session, uid);
         }

@@ -1,5 +1,5 @@
 kimios-start = {
- list = [ "kimios-exceptions" "kimios-interfaces" "kimios-model" "kimios-kernel" "kimios-index" "kimios-convert"  "kimios-share" "kimios-bonita" "hibernate-osgi" "kimios-editors" "org.kimios.osgi.commands" "kimios-services" "kimios-convert-service" "kimios-bonita-service" "kimios-share-service" "kimios-editors-service" "kimios-notifier" "kimios-telemetry"]
+ list = [ "kimios-exceptions" "kimios-interfaces" "kimios-model" "kimios-kernel" "kimios-index" "kimios-convert"  "kimios-share" "kimios-bonita" "hibernate-osgi" "kimios-editors" "org.kimios.osgi.commands" "kimios-services" "kimios-convert-service" "kimios-bonita-service" "kimios-share-service" "kimios-editors-service" "kimios-notifier" "kimios-telemetry" "kimios-zipper" "kimios-zipper-service"]
 
  echo "Stopping Kimios Kernel & Services"
  each ($list) { bundle:stop $it }

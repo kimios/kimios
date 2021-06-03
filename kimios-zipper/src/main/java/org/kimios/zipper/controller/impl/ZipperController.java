@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -29,10 +30,14 @@ public class ZipperController implements IZipperController {
     private IDocumentController documentController;
 
     @Override
-    public File makeZipWithEntities(Session session, List<DMEntityImpl> dmEntityList) throws ConfigException, IOException {
+    public File makeZipWithEntities(Session session, List<Long> dmEntityUidList) throws ConfigException, IOException {
 
         String zipFileName = session.getUserName() + "@" + session.getUserSource() + "_" + new Date().toInstant().toEpochMilli();
         LinkedHashMap<String, InputStream> inputStreamLinkedHashMap = new LinkedHashMap<>();
+        List<DMEntityImpl> dmEntityList = new ArrayList<>();
+        for (Long uid: dmEntityUidList) {
+            dmEntityList.add(this.dmEntityController.getEntity(session, uid));
+        }
         this.prepareZipFileInputStreams(session, dmEntityList, inputStreamLinkedHashMap, "");
         File zip = makeZipFromLinkedHashMap(inputStreamLinkedHashMap, zipFileName);
         return zip;
