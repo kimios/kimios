@@ -5,6 +5,7 @@ import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.controller.IDmEntityController;
 import org.kimios.kernel.controller.IDocumentController;
 import org.kimios.kernel.controller.IDocumentVersionController;
+import org.kimios.kernel.controller.IFolderController;
 import org.kimios.kernel.dms.model.DMEntityImpl;
 import org.kimios.kernel.dms.model.Document;
 import org.kimios.kernel.dms.model.Folder;
@@ -20,6 +21,8 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -28,6 +31,7 @@ public class ZipperController implements IZipperController {
     private IDmEntityController dmEntityController;
     private IDocumentVersionController documentVersionController;
     private IDocumentController documentController;
+    private IFolderController folderController;
 
     @Override
     public File makeZipWithEntities(Session session, List<Long> dmEntityUidList) throws ConfigException, IOException {
@@ -82,7 +86,13 @@ public class ZipperController implements IZipperController {
         for (DMEntityImpl dmEntity : dmEntityList) {
             if (dmEntity instanceof Document) {
                 inputStreamLinkedHashMap.put(
-                        (path == "" ? path : path + "/") + dmEntity.getName(),
+                        (path.equals("") ? path : path + "/")
+                                + dmEntity.getName()
+                                +
+                                ((((Document) dmEntity).getExtension() != null
+                                && !((Document) dmEntity).getExtension().isEmpty()) ?
+                                "." + ((Document) dmEntity).getExtension() :
+                                ""),
                         InputSourceFactory.getInputSource(
                                 documentVersionController.getLastDocumentVersion(session, dmEntity.getUid()),
                                 UUID.randomUUID().toString()
@@ -91,11 +101,17 @@ public class ZipperController implements IZipperController {
             } else {
                 if (dmEntity instanceof Folder) {
                     inputStreamLinkedHashMap.put(dmEntity.getName(), null);
+                    List<DMEntityImpl> entities =  Stream.concat(
+                            this.documentController.getDocuments(session, dmEntity.getUid())
+                                    .stream().map(document -> (DMEntityImpl)document),
+                            this.folderController.getFolders(session, dmEntity.getUid())
+                                    .stream().map(folder -> (DMEntityImpl)folder)
+                    ).collect(Collectors.toList());
                     this.prepareZipFileInputStreams(
                             session,
-                            this.documentController.getDocuments(session, dmEntity.getUid()),
+                            entities,
                             inputStreamLinkedHashMap,
-                            (path == "" ? path : path + "/") + dmEntity.getName()
+                            (path.equals("") ? path : path + "/") + dmEntity.getName()
                     );
                 }
             }
@@ -126,7 +142,15 @@ public class ZipperController implements IZipperController {
         this.documentController = documentController;
     }
 
-/*    private static void addEntityToZip(DMEntityImpl dmEntity, String entityName, ZipOutputStream zipOut) throws IOException {
+    public IFolderController getFolderController() {
+        return folderController;
+    }
+
+    public void setFolderController(IFolderController folderController) {
+        this.folderController = folderController;
+    }
+
+    /*    private static void addEntityToZip(DMEntityImpl dmEntity, String entityName, ZipOutputStream zipOut) throws IOException {
         if (dmEntity instanceof Folder) {
             zipOut.putNextEntry(new ZipEntry(entityName + "/"));
             zipOut.closeEntry();

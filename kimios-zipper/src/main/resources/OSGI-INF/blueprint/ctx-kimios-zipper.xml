@@ -24,11 +24,13 @@
     <reference id="dmEntityController" interface="org.kimios.kernel.controller.IDmEntityController" />
     <reference id="documentVersionController" interface="org.kimios.kernel.controller.IDocumentVersionController" />
     <reference id="documentController" interface="org.kimios.kernel.controller.IDocumentController" />
+    <reference id="folderController" interface="org.kimios.kernel.controller.IFolderController" />
 
     <bean id="zipperController" class="org.kimios.zipper.controller.impl.ZipperController">
         <property name="dmEntityController" ref="dmEntityController"></property>
         <property name="documentVersionController" ref="documentVersionController"></property>
         <property name="documentController" ref="documentController"></property>
+        <property name="folderController" ref="folderController"></property>
     </bean>
 
     <service id="zipperCtrlOsgi" ref="zipperController" interface="org.kimios.zipper.controller.IZipperController" />
