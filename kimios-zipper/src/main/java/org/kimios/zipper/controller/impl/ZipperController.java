@@ -100,7 +100,7 @@ public class ZipperController implements IZipperController {
                 );
             } else {
                 if (dmEntity instanceof Folder) {
-                    inputStreamLinkedHashMap.put(dmEntity.getName(), null);
+                    inputStreamLinkedHashMap.put(path + "/" + dmEntity.getName() + "/", null);
                     List<DMEntityImpl> entities =  Stream.concat(
                             this.documentController.getDocuments(session, dmEntity.getUid())
                                     .stream().map(document -> (DMEntityImpl)document),
