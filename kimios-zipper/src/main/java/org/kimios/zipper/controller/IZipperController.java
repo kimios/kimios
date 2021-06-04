@@ -10,4 +10,6 @@ import java.util.List;
 public interface IZipperController {
     File makeZipWithEntities(Session session, List<Long> dmEntityList)
             throws ConfigException, IOException;
+
+    void markFileDownloaded(File file);
 }

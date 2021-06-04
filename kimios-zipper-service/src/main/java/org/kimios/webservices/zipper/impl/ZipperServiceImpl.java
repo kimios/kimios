@@ -37,16 +37,20 @@ public class ZipperServiceImpl implements ZipperService {
 
     @Override
     public Response makeZip(String sessionId, List<Long> ids) throws DMServiceException {
+        File zip = null;
         try {
             Session session = helper.getSession(sessionId);
-            File zip = zipperController.makeZipWithEntities(session, ids);
+            zip = zipperController.makeZipWithEntities(session, ids);
+            String fileName = "files_from_kimios.zip";
             return Response.ok(new FileInputStream(zip)).header(
                     "Content-Disposition",
-                    "attachment; filename=\"" + zip.getName() + "\"")
+                    "attachment; filename=\"" + fileName + "\"")
                     .header("Content-Type", MediaType.APPLICATION_OCTET_STREAM)
                     .build();
         } catch (Exception e) {
             throw helper.convertException(e);
+        } finally {
+            zipperController.markFileDownloaded(zip);
         }
     }
 }

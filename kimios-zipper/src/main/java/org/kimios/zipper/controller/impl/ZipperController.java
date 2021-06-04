@@ -16,6 +16,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -32,26 +34,44 @@ public class ZipperController implements IZipperController {
     private IDocumentVersionController documentVersionController;
     private IDocumentController documentController;
     private IFolderController folderController;
+    private String zipFilesPath;
+
+    public void init() throws IOException {
+        if (! Files.isDirectory(Paths.get(zipFilesPath))) {
+            Files.createDirectory(Paths.get(zipFilesPath));
+        }
+    }
 
     @Override
     public File makeZipWithEntities(Session session, List<Long> dmEntityUidList) throws ConfigException, IOException {
-
-        String zipFileName = session.getUserName() + "@" + session.getUserSource() + "_" + new Date().toInstant().toEpochMilli();
+        String zipFileName =
+                session.getUserName()
+                + "@"
+                + session.getUserSource()
+                + "_"
+                + new Date().toInstant().toEpochMilli()
+                + ".zip";
         LinkedHashMap<String, InputStream> inputStreamLinkedHashMap = new LinkedHashMap<>();
         List<DMEntityImpl> dmEntityList = new ArrayList<>();
         for (Long uid: dmEntityUidList) {
             dmEntityList.add(this.dmEntityController.getEntity(session, uid));
         }
         this.prepareZipFileInputStreams(session, dmEntityList, inputStreamLinkedHashMap, "");
-        File zip = makeZipFromLinkedHashMap(inputStreamLinkedHashMap, zipFileName);
-        return zip;
+        File zipFile = Paths.get(zipFilesPath, zipFileName).toFile();
+        makeZipFromLinkedHashMap(inputStreamLinkedHashMap, zipFile);
+        return zipFile;
     }
 
-    private static File makeZipFromLinkedHashMap(
+    @Override
+    public void markFileDownloaded(File file) {
+        file.delete();
+    }
+
+    private static void makeZipFromLinkedHashMap(
             LinkedHashMap<String, InputStream> inputStreamLinkedHashMap,
-            String zipFileName
+            File zipFile
     ) throws IOException {
-        FileOutputStream fos = new FileOutputStream(zipFileName);
+        FileOutputStream fos = new FileOutputStream(zipFile);
         ZipOutputStream zipOut = new ZipOutputStream(fos);
         for (String entityName : inputStreamLinkedHashMap.keySet()) {
             InputStream inputStream = inputStreamLinkedHashMap.get(entityName);
@@ -73,8 +93,6 @@ public class ZipperController implements IZipperController {
             zipOut.closeEntry();
         }
         zipOut.close();
-
-        return new File(zipFileName);
     }
 
     private void prepareZipFileInputStreams(
@@ -148,6 +166,14 @@ public class ZipperController implements IZipperController {
 
     public void setFolderController(IFolderController folderController) {
         this.folderController = folderController;
+    }
+
+    public String getZipFilesPath() {
+        return zipFilesPath;
+    }
+
+    public void setZipFilesPath(String zipFilesPath) {
+        this.zipFilesPath = zipFilesPath;
     }
 
     /*    private static void addEntityToZip(DMEntityImpl dmEntity, String entityName, ZipOutputStream zipOut) throws IOException {
