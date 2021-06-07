@@ -175,25 +175,4 @@ public class ZipperController implements IZipperController {
     public void setZipFilesPath(String zipFilesPath) {
         this.zipFilesPath = zipFilesPath;
     }
-
-    /*    private static void addEntityToZip(DMEntityImpl dmEntity, String entityName, ZipOutputStream zipOut) throws IOException {
-        if (dmEntity instanceof Folder) {
-            zipOut.putNextEntry(new ZipEntry(entityName + "/"));
-            zipOut.closeEntry();
-            File[] children = fileToZip.listFiles();
-            for (File childFile : children) {
-                zipFile(childFile, fileName + "/" + childFile.getName(), zipOut);
-            }
-            return;
-        }
-        FileInputStream fis = new FileInputStream(fileToZip);
-        ZipEntry zipEntry = new ZipEntry(fileName);
-        zipOut.putNextEntry(zipEntry);
-        byte[] bytes = new byte[1024];
-        int length;
-        while ((length = fis.read(bytes)) >= 0) {
-            zipOut.write(bytes, 0, length);
-        }
-        fis.close();
-    }*/
 }

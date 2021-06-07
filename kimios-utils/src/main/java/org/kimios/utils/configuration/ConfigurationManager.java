@@ -18,8 +18,6 @@ package org.kimios.utils.configuration;
 import org.kimios.exceptions.ConfigException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.FactoryBean;
-import org.springframework.context.ApplicationContext;
 
 import java.util.HashMap;
 import java.util.List;
