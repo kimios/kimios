@@ -9,6 +9,9 @@ build:
   script:
     - echo "build…"
     - mvn clean install -B -DskipTests=true
+  only:
+    - web
+#  allow_failure: false
 
 # # Cache downloaded dependencies and plugins between builds.
 # # To keep cache across branches add 'key: "$CI_JOB_NAME"'
