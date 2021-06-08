@@ -1,8 +1,14 @@
 # This template uses jdk8 for verifying and deploying images
 image: maven:3.3.9-jdk-8
 
+variables:
+  TEST_VAR: "All jobs can use this variable's value"
+
 build:
-  script: "mvn clean install -B -DskipTests=true"
+  stage: build
+  script:
+    - echo "build…"
+    - mvn clean install -B -DskipTests=true
 
 # # Cache downloaded dependencies and plugins between builds.
 # # To keep cache across branches add 'key: "$CI_JOB_NAME"'
