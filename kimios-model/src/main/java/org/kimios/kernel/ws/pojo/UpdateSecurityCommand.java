@@ -16,7 +16,6 @@
 
 package org.kimios.kernel.ws.pojo;
 
-import javax.jws.WebParam;
 import java.util.List;
 
 /**
