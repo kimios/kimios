@@ -19,7 +19,7 @@
     <parent>
         <artifactId>kimios-docs</artifactId>
         <groupId>org.kimios</groupId>
-        <version>1.2.5-SNAPSHOT</version>
+        <version>1.2.5</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
