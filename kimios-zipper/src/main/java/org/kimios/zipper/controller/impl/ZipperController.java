@@ -16,8 +16,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -72,10 +74,11 @@ public class ZipperController implements IZipperController {
             File zipFile
     ) throws IOException {
         FileOutputStream fos = new FileOutputStream(zipFile);
-        ZipOutputStream zipOut = new ZipOutputStream(fos);
+        ZipOutputStream zipOut = new ZipOutputStream(fos, StandardCharsets.UTF_8);
         for (String entityName : inputStreamLinkedHashMap.keySet()) {
             InputStream inputStream = inputStreamLinkedHashMap.get(entityName);
-
+            entityName = Normalizer.normalize(entityName, Normalizer.Form.NFD);
+            entityName = entityName.replaceAll("[^\\x00-\\x7F]", "");
             String entryName = inputStream == null ?
                     entityName + "/" :
                     entityName;
