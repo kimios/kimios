@@ -19,7 +19,7 @@
     <parent>
         <artifactId>kimios-osgi-packages</artifactId>
         <groupId>org.kimios</groupId>
-        <version>1.2.5</version>
+        <version>1.2.6-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -30,7 +30,7 @@
     <properties>
         <solr4j.version>4.6.0</solr4j.version>
     </properties>
-    <version>1.2.5</version>
+    <version>1.2.6-SNAPSHOT</version>
     <dependencies>
         <dependency>
             <groupId>org.osgi</groupId>
