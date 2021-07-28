@@ -50,8 +50,6 @@ public class ShareController extends AKimiosController implements IShareControll
 
     private IMailShareController mailShareController;
 
-
-
     public ShareController(ShareFactory shareFactory,
                            ISecurityController securityController,
                            IMailShareController mailShareController){
@@ -59,7 +57,6 @@ public class ShareController extends AKimiosController implements IShareControll
         this.securityController = securityController;
         this.mailShareController = mailShareController;
     }
-
 
     @Override
     public List<Share> listEntitiesSharedByMe(Session session) throws Exception {
@@ -188,5 +185,39 @@ public class ShareController extends AKimiosController implements IShareControll
         shareFactory.saveShare(share);
 
         return share;
+    }
+
+    @Override
+    public Share retrieveShare(Session session, long shareId) throws Exception {
+        Share share = this.shareFactory.retrieveShare(shareId);
+        if (
+                (session.getUserName().equals(share.getCreatorId())
+                        && session.getUserSource().equals(share.getCreatorSource()))
+                        || getSecurityAgent().isAdmin(session.getUserName(), session.getUserName())
+        ) {
+            return share;
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public void updateShare(Session session, long shareId, String sharedToUserId, String sharedToUserSource,
+                            boolean read, boolean write, boolean fullAccess, Date expirationDate, boolean notify)
+            throws Exception {
+        Share share = this.retrieveShare(session, shareId);
+        if (share == null
+                || !this.securityController.hasFullAccess(session, share.getEntity().getUid())) {
+            throw new AccessDeniedException();
+        }
+
+        share.setTargetUserId(sharedToUserId);
+        share.setTargetUserSource(sharedToUserSource);
+        share.setRead(read);
+        share.setWrite(write);
+        share.setFullAccess(fullAccess);
+        share.setExpirationDate(expirationDate);
+        share.setNotify(notify);
+        this.shareFactory.saveShare(share);
     }
 }

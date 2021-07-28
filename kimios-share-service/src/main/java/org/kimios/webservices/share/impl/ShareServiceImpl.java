@@ -270,6 +270,36 @@ public class ShareServiceImpl implements ShareService {
         return downloadDocumentByToken(uriInfo, token, password);
     }
 
+    @Override
+    public Share retrieveShare(String sessionId, long id) throws DMServiceException {
+        try {
+            Session session = helper.getSession(sessionId);
+            org.kimios.kernel.share.model.Share share = this.shareController.retrieveShare(session, id);
+            Share sharePojo = null;
+            if (share != null)
+                sharePojo = share.toPojo();
+
+            return sharePojo;
+        } catch (Exception e) {
+            throw helper.convertException(e);
+        }
+    }
+
+    @Override
+    public void updateShare(String sessionId, long id, String userId, String userSource, boolean read, boolean write,
+                            boolean fullAccess, String expirationDate, boolean notify) throws DMServiceException {
+        try {
+            Session session = helper.getSession(sessionId);
+            if (session == null) {
+                throw helper.convertException(new Exception("session is null"));
+            }
+            this.shareController.updateShare(session, id, userId, userSource, read, write, fullAccess,
+                    new SimpleDateFormat("dd-MM-yyyy HH:mm").parse(expirationDate), notify);
+        } catch (Exception e) {
+            throw helper.convertException(e);
+        }
+    }
+
     private Response buildRequiredPasswordResponse(UriInfo uri, String methodAction, Map<String, String> hiddenParams)
             throws DMServiceException {
         Response response;

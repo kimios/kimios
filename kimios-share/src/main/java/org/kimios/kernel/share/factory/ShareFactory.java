@@ -116,4 +116,14 @@ public class ShareFactory extends HFactory {
         return share;
     }
 
+    public Share retrieveShare(long id) {
+        String query = "select s from Share s " +
+                " where s.id = :id";
+        Share item = (Share)getSession()
+                .createQuery(query)
+                .setParameter("id", id)
+                .uniqueResult();
+        return item;
+    }
+
 }

@@ -179,4 +179,30 @@ public interface ShareService {
             @FormParam(value = "password") String password
     ) throws DMServiceException;
 
+    @GET
+    @Path("/share")
+    @Consumes( MediaType.APPLICATION_FORM_URLENCODED )
+    @Produces(MediaType.APPLICATION_JSON)
+    Share retrieveShare(
+            @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+            @QueryParam(value = "id") @WebParam(name = "id") long id
+    )
+            throws DMServiceException;
+
+    @POST
+    @Path("/update")
+    @Consumes( MediaType.APPLICATION_FORM_URLENCODED )
+    @Produces(MediaType.APPLICATION_JSON)
+    void updateShare(
+            @FormParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+            @FormParam(value = "id") @WebParam(name = "id") long id,
+            @FormParam(value = "targetUserId") @WebParam(name = "targetUserId") String userId,
+            @FormParam(value = "targetUserSource") @WebParam(name = "targetUserId") String userSource,
+            @FormParam(value = "read") @WebParam(name = "read") boolean read,
+            @FormParam(value = "write") @WebParam(name = "write") boolean write,
+            @FormParam(value = "fullAccess") @WebParam(name = "fullAccess") boolean fullAccess,
+            @FormParam(value = "expirationDate") @WebParam(name="expirationDate") String expirationDate,
+            @FormParam(value = "notify")@WebParam(name = "notity") boolean notify
+    )
+            throws DMServiceException;
 }
