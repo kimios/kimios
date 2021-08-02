@@ -89,9 +89,9 @@ public interface ShareService {
 
     @POST
     @Path("/remove")
-    @Consumes("multipart/form-data")
-    void removeShare(@Multipart(value="sessionId") @WebParam(name = "sessionId") String sessionId,
-                     @Multipart(value="shareId") @WebParam(name = "shareId") long shareId)
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    void removeShare(@FormParam(value="sessionId") @WebParam(name = "sessionId") String sessionId,
+                     @FormParam(value="shareId") @WebParam(name = "shareId") long shareId)
         throws DMServiceException;
 
 
