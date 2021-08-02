@@ -1,0 +1,35 @@
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+			      http://maven.apache.org/xsd/settings-1.0.0.xsd">
+    <servers>
+
+        <server>
+            <id>kimios-private</id>
+            <username>${env.KIMIOS_REPO_USER}</username>
+            <password>${env.KIMIOS_REPO_PASS}</password>
+        </server>
+
+    </servers>
+
+    <profiles>
+        <profile>
+            <id>gitlabci-profile</id>
+            <repositories>
+                <repository>
+                    <id>kimios-private</id>
+                    <name>Kimios repository</name>
+                    <url>${env.KIMIOS_REPO_URL}</url>
+                </repository>
+            </repositories>
+            <properties>
+                <kimios.repo.url>${env.KIMIOS_REPO_URL}</kimios.repo.url>
+            </properties>
+        </profile>
+    </profiles>
+
+    <activeProfiles>
+        <activeProfile>gitlabci-profile</activeProfile>
+    </activeProfiles>
+
+</settings>
