@@ -177,6 +177,9 @@ public class DocumentFactory {
                 pojo.setLastUpdateAuthorSource(doc.get("DocumentVersionLastUpdateAuthorSource") != null ?
                         doc.get("DocumentVersionLastUpdateAuthorSource").toString() : "");
                 pojo.setAddonDatas((String) doc.get("DocumentRawAddonDatas"));
+                pojo.setTags(doc.get("DocumentTags") != null ?
+                        (List<String>) doc.get("DocumentTags") :
+                        new ArrayList<>());
 
                 for (String fieldName : doc.getFieldNames()) {
 

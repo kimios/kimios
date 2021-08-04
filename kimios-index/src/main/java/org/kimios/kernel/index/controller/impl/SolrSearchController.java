@@ -54,6 +54,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -1228,6 +1229,11 @@ public class SolrSearchController
                         if(it != null)
                             queries.add((c.getOperator() != null && c.getOperator().length() > 0 ?
                                     c.getOperator() + " " : "") + it);
+                    } else if (c.getFieldName().equals("DocumentTags")) {
+                        //TODO : enhance that (couplage fort)
+                        String filterQuery = QueryBuilder.tagsQuery("DocumentTags",
+                                Arrays.asList(c.getQuery().split("\\|\\|").clone()));
+                        filterQueries.add(filterQuery);
                     }
                 }
             }

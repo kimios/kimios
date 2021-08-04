@@ -30,6 +30,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 
 /**
@@ -195,4 +196,8 @@ public class QueryBuilder
         return documentPathQuery;
     }
 
+    public static String tagsQuery(String documentTagsName, List<String> values) {
+        return values.stream().map(val -> documentTagsName + ':' + ClientUtils.escapeQueryChars(val))
+                .collect(Collectors.joining(" OR "));
+    }
 }
