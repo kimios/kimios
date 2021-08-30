@@ -262,17 +262,17 @@ public class StudioControllerWeb extends Controller {
         int p = 0;
         for (Map metaDatas : l) {
             Meta meta = new Meta();
-            int metaUid = -1;
+            long metaUid = -1;
             if (metaDatas.get("uid") != null) {
-                metaUid = (Integer) metaDatas.get("uid");
+                metaUid = (Long) metaDatas.get("uid");
             }
             meta.setUid(metaUid);
             meta.setName(String.valueOf(metaDatas.get("name")));
-            meta.setMetaType((Integer) metaDatas.get("metaType"));
+            meta.setMetaType(Math.toIntExact((Long) metaDatas.get("metaType")));
             if (String.valueOf(metaDatas.get("metaFeedUid")).isEmpty()) {
                 meta.setMetaFeedUid(-1L);
             } else {
-                meta.setMetaFeedUid(((Integer) metaDatas.get("metaFeedUid")).longValue());
+                meta.setMetaFeedUid(((Long) metaDatas.get("metaFeedUid")).longValue());
             }
             meta.setDocumentTypeUid(docType.getUid());
             meta.setMandatory(metaDatas.get("mandatory") != null ? (Boolean) metaDatas.get("mandatory") : false);
@@ -301,11 +301,26 @@ public class StudioControllerWeb extends Controller {
             Meta meta = new Meta();
             meta.setUid(-1);
             meta.setName(String.valueOf(metaDatas.get("name")));
-            meta.setMetaType((Integer) metaDatas.get("metaType"));
+            Integer metaType = null;
+            if (metaDatas.get("metaType") instanceof Long) {
+                metaType = Math.toIntExact((Long) metaDatas.get("metaType"));
+            } else {
+                if (metaDatas.get("metaType") instanceof Integer) {
+                    metaType = (Integer) metaDatas.get("metaType");
+                } else {
+                    if (metaDatas.get("metaType") instanceof String) {
+                        metaType = Integer.parseInt((String) metaDatas.get("metaType"));
+                    }
+                }
+            }
+            if (metaType == null) {
+                continue;
+            }
+            meta.setMetaType(metaType);
             if (String.valueOf(metaDatas.get("metaFeedUid")).isEmpty()) {
                 meta.setMetaFeedUid(-1L);
             } else {
-                meta.setMetaFeedUid(((Integer) metaDatas.get("metaFeedUid")).longValue());
+                meta.setMetaFeedUid((Long) metaDatas.get("metaFeedUid"));
             }
             meta.setDocumentTypeUid(docType.getUid());
             meta.setMandatory((Boolean) (metaDatas.get("mandatory") != null ? Boolean.parseBoolean(metaDatas.get("mandatory").toString()) : false));
