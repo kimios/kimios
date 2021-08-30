@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 @Transactional
 public class StudioController extends AKimiosController implements IStudioController
@@ -262,7 +263,10 @@ public class StudioController extends AKimiosController implements IStudioContro
         {
             throw new AccessDeniedException();
         }
-        List<String> availables = new ArrayList<String>(metaFeedManager.listAsString());
+        List<String> availables = new ArrayList<String>(metaFeedManager.listAsString())
+                .stream()
+                .filter(className -> !className.matches("^.+\\.MetaFeedImpl$"))
+                .collect(Collectors.toList());
         return availables;
     }
 
