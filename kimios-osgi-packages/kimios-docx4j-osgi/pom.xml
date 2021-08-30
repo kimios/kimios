@@ -461,9 +461,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>stax</groupId>
+            <groupId>javax.xml.stream</groupId>
             <artifactId>stax-api</artifactId>
-            <version>1.0.1</version>
+            <version>1.0-2</version>
             <scope>provided</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/stax/stax -->
