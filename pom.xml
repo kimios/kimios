@@ -159,6 +159,7 @@
         <module>kimios-aspose-converters</module>
         <module>kimios-threads</module>
         <module>kimios-websocket</module>
+        <module>kimios-convert-libreoffice</module>
     </modules>
     <packaging>pom</packaging>
     <build>
