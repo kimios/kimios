@@ -34,7 +34,7 @@
     <reference id="transferFactoryInstantiator" interface="org.kimios.kernel.filetransfer.IFileTransferFactoryInstantiator"/>
     <reference id="aclUpdater" interface="org.kimios.kernel.jobs.security.IACLUpdater"/>
 
-    <bean id="libreofficeConverter" class="org.kimios.convert.libreoffice.wrapper">
+    <bean id="libreofficeConverter" class="org.kimios.convert.libreoffice.wrapper.Converter">
         <property name="dmsFactoryInstantiator" ref="dmsFactoryInstantiator"></property>
         <property name="securityFactoryInstantiator" ref="securityFactoryInstantiator"></property>
         <property name="authFactoryInstantiator" ref="authFactoryInstantiator"></property>
