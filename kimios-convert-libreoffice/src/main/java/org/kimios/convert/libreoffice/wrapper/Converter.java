@@ -3,6 +3,8 @@ package org.kimios.convert.libreoffice.wrapper;
 import org.kimios.api.controller.IFileConverterController;
 import org.kimios.exceptions.ConverterException;
 import org.kimios.kernel.controller.AKimiosController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.BufferedReader;
@@ -11,11 +13,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.stream.Collectors;
 
 @Transactional
 public class Converter extends AKimiosController implements IFileConverterController {
+
+    private static Logger logger = LoggerFactory.getLogger(Converter.class);
 
     public static String LIBREOFFICE_DEFAULT_PATH = "/usr/bin/libreoffice";
 
@@ -42,7 +45,6 @@ public class Converter extends AKimiosController implements IFileConverterContro
                 file.getName().replaceFirst("^(.*)\\..+$", "$1.pdf")
         );
         if (fileDirectory == null) {
-            //TODO log error
             throw new ConverterException("file has no parent directory");
         }
 
@@ -78,7 +80,8 @@ public class Converter extends AKimiosController implements IFileConverterContro
                 System.out.println(output);
                 System.exit(0);*/
             } else {
-                // log error
+                throw new ConverterException("libreoffice command has failed: "
+                        + processBuilder.command().stream().collect(Collectors.joining(" ")));
             }
 
             if (! fileOutput.isFile() || ! fileOutput.canRead()) {
@@ -89,7 +92,7 @@ public class Converter extends AKimiosController implements IFileConverterContro
             Files.copy(fileOutput.toPath(), fileOutputStream);
 
         } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            throw new ConverterException(e);
         }
 
         return fileResult;
