@@ -14,12 +14,14 @@ public class Converter extends AKimiosController implements IFileConverterContro
     public static String LIBREOFFICE_DEFAULT_PATH = "/usr/bin/libreoffice";
 
     private String libreOfficePath = "";
-
-    boolean isWindows = System.getProperty("os.name")
-            .toLowerCase().startsWith("windows");
+    private int score = 200;
 
     @Override
     public File convertFile(File file, String fileResultName) throws ConverterException {
+        if (this.libreOfficePath.isEmpty()) {
+            this.libreOfficePath = LIBREOFFICE_DEFAULT_PATH;
+        }
+
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command("libreoffice", "--headless", "--convert-to", "pdf", file.getAbsolutePath());
 
@@ -56,11 +58,28 @@ public class Converter extends AKimiosController implements IFileConverterContro
 
     @Override
     public int getScore() {
-        return 0;
+        return this.score;
     }
 
     @Override
     public int compareTo(IFileConverterController o) {
         return 0;
+    }
+
+    public String getLibreOfficePath() {
+        return libreOfficePath;
+    }
+
+    public void setLibreOfficePath(String libreOfficePath) {
+        this.libreOfficePath = libreOfficePath;
+    }
+
+    public void init() throws Exception {
+        File file = new File(libreOfficePath);
+        if (! file.isFile() || ! file.canExecute()) {
+            throw new Exception("libreoffice binary is not found or is not executable at given path: "
+                    + libreOfficePath
+                    + ". Install LibreOffice and set parameter dms.converter.libreoffice.path");
+        }
     }
 }

@@ -99,6 +99,7 @@
         <bundle start-level="100">mvn:org.kimios/kimios-share/${project.version}/jar/osgi</bundle>
         <bundle start-level="100">mvn:org.kimios/kimios-convert/${project.version}/jar/osgi</bundle>
         <bundle start-level="100">mvn:org.kimios/kimios-convert-jodconverter/${project.version}/jar/osgi</bundle>
+        <bundle start-level="100">mvn:org.kimios/kimios-convert-libreoffice/${project.version}/jar/osgi</bundle>
         <bundle start-level="100">mvn:org.kimios/kimios-bonita/${project.version}/jar/osgi</bundle>
         <bundle start-level="100">mvn:org.kimios/kimios-karaf-commands/${project.version}</bundle>
         <bundle start-level="100">mvn:org.kimios/kimios-camel/${project.version}</bundle>

@@ -160,6 +160,13 @@
         </dependency>
         <dependency>
             <groupId>org.kimios</groupId>
+            <artifactId>kimios-convert-libreoffice</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+            <classifier>osgi</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
             <artifactId>kimios-karaf-commands</artifactId>
             <version>${project.version}</version>
         </dependency>
