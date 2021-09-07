@@ -118,7 +118,8 @@ kimios.share.MailPanel = Ext.extend(kimios.FormPanel, {
                 {
                     xtype: 'datefield',
                     id: 'shareExpirationDate',
-                    scope: this
+                    scope: this,
+                    format: 'd-m-Y'
                 },
                 {
                     xtype: 'timefield',

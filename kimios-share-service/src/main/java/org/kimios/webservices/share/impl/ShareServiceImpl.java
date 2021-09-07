@@ -121,7 +121,7 @@ public class ShareServiceImpl implements ShareService {
             List<org.kimios.kernel.share.model.Share> shares = new ArrayList<>();
             for (Long docId : documentIds) {
                 //TODO check date's format sent by other clients than included web client
-                Date date = new SimpleDateFormat("MM/dd/yyyy HH:mm").parse(expirationDate);
+                Date date = new SimpleDateFormat("dd-MM-yyyy HH:mm").parse(expirationDate);
                 for (MailContact mailContact : recipients) {
                     org.kimios.kernel.share.model.Share share = mailShareController.createShare(session, docId, date, mailContact);
                     mailShareController.sendDocumentByEmail(session, share, subject,
