@@ -16,16 +16,26 @@
 
 package org.kimios.webservices.share;
 
-import io.swagger.annotations.*;
-import org.apache.cxf.jaxrs.ext.multipart.Multipart;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.kimios.kernel.share.model.MailContact;
 import org.kimios.kernel.ws.pojo.Share;
+import org.kimios.kernel.ws.pojo.web.ShareByEmailFullContactParam;
 import org.kimios.webservices.exceptions.DMServiceException;
 
+import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -134,6 +144,14 @@ public interface ShareService {
             @ApiParam(value = "expirationDate")
             @QueryParam(value = "expirationDate") String expirationDate)
 
+            throws DMServiceException;
+
+    @POST @ApiOperation(value ="")
+    @Path("/share-by-mail-obj-param")
+    @Produces("application/json")
+    @Consumes("application/json")
+    @WebMethod(operationName = "share-by-mail-obj-param")
+    public void shareByEmailFullContact(@ApiParam() ShareByEmailFullContactParam shareByEmailFullContactParam)
             throws DMServiceException;
 
 

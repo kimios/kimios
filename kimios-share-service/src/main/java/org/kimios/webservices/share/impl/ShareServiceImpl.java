@@ -24,6 +24,7 @@ import org.kimios.kernel.share.controller.IShareController;
 import org.kimios.kernel.share.controller.IShareTransferController;
 import org.kimios.kernel.share.model.MailContact;
 import org.kimios.kernel.ws.pojo.Share;
+import org.kimios.kernel.ws.pojo.web.ShareByEmailFullContactParam;
 import org.kimios.webservices.FileTransferService;
 import org.kimios.webservices.IServiceHelper;
 import org.kimios.webservices.exceptions.DMServiceException;
@@ -132,6 +133,23 @@ public class ShareServiceImpl implements ShareService {
         } catch (Exception e) {
             throw helper.convertException(e);
         }
+    }
+
+    @Override
+    public void shareByEmailFullContact(ShareByEmailFullContactParam shareByEmailFullContactParam)
+            throws DMServiceException {
+        this.shareByEmailFullContact(
+                shareByEmailFullContactParam.getSessionId(),
+                shareByEmailFullContactParam.getDocumentIds(),
+                shareByEmailFullContactParam.getRecipients(),
+                shareByEmailFullContactParam.getSubject(),
+                shareByEmailFullContactParam.getContent(),
+                shareByEmailFullContactParam.getSenderAddress(),
+                shareByEmailFullContactParam.getSenderName(),
+                shareByEmailFullContactParam.getDefaultSender(),
+                shareByEmailFullContactParam.getPassword(),
+                shareByEmailFullContactParam.getExpirationDate()
+        );
     }
 
     @Override
