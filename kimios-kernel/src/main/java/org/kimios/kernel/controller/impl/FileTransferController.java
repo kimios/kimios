@@ -414,23 +414,26 @@ public class FileTransferController
                         + transac.getShare().getExpirationDate().toString()
                         + ")"));
             }
-            if (transac.getTransferMode() == DataTransfer.TOKEN
-                    && transac.getPassword() != null
-                    && !transac.getPassword().isEmpty()) {
-                if (password == null) {
-                    throw new RequiredPasswordException(new DmsKernelException("password needed"));
-                } else {
-                    if ( ! transac.getPassword()
-                            .equals(securityFactoryInstantiator.getCredentialsGenerator().generatePassword(password))) {
-                        throw new RequiredPasswordException(new DmsKernelException("wrong password"));
+            if (transac.getTransferMode() == DataTransfer.TOKEN) {
+                if (transac.getPassword() != null
+                        && !transac.getPassword().isEmpty()) {
+                    if (password == null) {
+                        throw new RequiredPasswordException(new DmsKernelException("password needed"));
+                    } else {
+                        if (!transac.getPassword()
+                                .equals(securityFactoryInstantiator.getCredentialsGenerator().generatePassword(password))) {
+                            throw new RequiredPasswordException(new DmsKernelException("wrong password"));
+                        }
                     }
                 }
+                DocumentVersion dv = dmsFactoryInstantiator.getDocumentVersionFactory().getDocumentVersion(
+                        transac.getDocumentVersionUid());
+                String filename = dv.getDocument().getName() + "." + dv.getDocument().getExtension();
+                return new DocumentWrapper(ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH) + "/" +
+                        dv.getStoragePath(), filename, dv.getLength());
+            } else {
+                throw new DmsKernelException("unhandled DataTransfer");
             }
-            DocumentVersion dv = dmsFactoryInstantiator.getDocumentVersionFactory().getDocumentVersion(
-                    transac.getDocumentVersionUid());
-            String filename = dv.getDocument().getName() + "." + dv.getDocument().getExtension();
-            return new DocumentWrapper(ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH) + "/" +
-                    dv.getStoragePath(), filename, dv.getLength());
         } else {
             throw new AccessDeniedException();
         }

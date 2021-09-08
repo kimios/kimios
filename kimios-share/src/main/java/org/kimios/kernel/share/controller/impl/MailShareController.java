@@ -315,7 +315,7 @@ public class MailShareController extends AKimiosController implements IMailShare
                                 doc);
                         finalContent = processShareNotify(finalContent, user, new ArrayList<User>(), items);
                         // if needed, build separate email to notify password
-                        if (password != null) {
+                        if (password != null && ! password.isEmpty()) {
                             finalContentPassword = processShareNotifyPassword(content, user, new ArrayList<User>(), items.values(), password);
                             MultiPartEmail emailPassword = initShareNotificationEmail(session, share,
                                     subject, senderAddress, senderName, defaultSender, mailContact);
