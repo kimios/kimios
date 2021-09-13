@@ -79,7 +79,7 @@ public class ConverterFactory {
                 return new BarcodeTransformer();
             }
 
-            throw new ConverterNotFound("Converter Not Found");
+            throw new ConverterNotFound("Converter Not Found: " + className);
 
 
         } catch (InvocationTargetException e) {

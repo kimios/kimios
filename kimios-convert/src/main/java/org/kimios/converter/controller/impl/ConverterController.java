@@ -184,7 +184,9 @@ public class ConverterController extends AKimiosController implements IConverter
         File fileResult = null;
         Iterator<IFileConverterController> iterator = new TreeSet(this.fileConverterList).descendingIterator();
         while (fileResult == null && iterator.hasNext()) {
-            fileResult = iterator.next().convertFile(new File(sourcePath), targetPath);
+            IFileConverterController fileConverterController = iterator.next();
+            log.info("trying to convert with " + fileConverterController.getClass().getName());
+            fileResult = fileConverterController.convertFile(new File(sourcePath), targetPath);
         }
 
         InputSource result = null;
