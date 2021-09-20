@@ -62,6 +62,10 @@
         <feature>camel-blueprint</feature>
         <feature>camel-csv</feature>
         <feature>camel-bindy</feature>
+        <feature>webconsole</feature>
+        <bundle>mvn:javax.mail/javax.mail-api/1.5.6</bundle>
+        <bundle>mvn:com.google.code.gson/gson/${gson.version}</bundle>
+        <bundle>mvn:org.eclipse.jetty.websocket/javax-websocket-client-impl/9.2.14.v20151106</bundle>
         <capability>kimios-dep</capability>
     </feature>
     <feature name="kimios-solr" version="${project.version}">
@@ -132,6 +136,7 @@
     </feature>
     <feature version="${project.version}" name="kimios-websocket">
         <bundle>mvn:org.kimios/kimios-websocket/${project.version}/war/osgi</bundle>
+        <bundle start-level="90">mvn:org.kimios/kimios-websocket-client/${project.version}/jar/osgi</bundle>
         <capability>kimios-websocket</capability>
     </feature>
 </features>

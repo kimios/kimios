@@ -121,6 +121,8 @@
         <aspose-words.version>16.11.0</aspose-words.version>
         <aspose-email.version>16.11.0</aspose-email.version>
         <aspose.path>${user.home}/Development/DMS/patched-aspose</aspose.path>
+        <gson.version>2.8.5</gson.version>
+        <javax.websocket-api.version>1.1</javax.websocket-api.version>
     </properties>
     <modules>
         <module>kimios-exceptions</module>
@@ -160,6 +162,7 @@
         <module>kimios-threads</module>
         <module>kimios-websocket</module>
         <module>kimios-convert-libreoffice</module>
+        <module>kimios-websocket-client</module>
     </modules>
     <packaging>pom</packaging>
     <build>
