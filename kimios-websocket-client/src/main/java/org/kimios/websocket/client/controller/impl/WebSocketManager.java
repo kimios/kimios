@@ -91,4 +91,8 @@ public class WebSocketManager implements IWebSocketManager {
             Thread.currentThread().setContextClassLoader(orig);
         }
     }
+
+    public void display(UpdateNoticeMessage updateNoticeMessage) {
+        System.out.println("display() with camel : " + updateNoticeMessage.toString());
+    }
 }

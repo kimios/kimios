@@ -56,6 +56,13 @@
         </dependency>
 
         <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-stream</artifactId>
+            <version>${camel.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.kimios</groupId>
             <artifactId>kimios-index</artifactId>
             <version>${project.version}</version>
@@ -79,6 +86,13 @@
         <dependency>
             <groupId>org.kimios</groupId>
             <artifactId>kimios-utils</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-websocket-client</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>

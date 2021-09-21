@@ -21,6 +21,9 @@ import org.kimios.converter.ConverterDescriptor;
 import org.kimios.converter.controller.IConverterController;
 import org.kimios.kernel.configuration.Config;
 import org.kimios.kernel.security.model.Session;
+import org.kimios.kernel.ws.pojo.UpdateNoticeMessage;
+import org.kimios.kernel.ws.pojo.UpdateNoticeType;
+import org.kimios.services.utils.CamelToolInterface;
 import org.kimios.utils.configuration.ConfigurationManager;
 import org.kimios.webservices.IServiceHelper;
 import org.kimios.webservices.converter.ConverterService;
@@ -43,16 +46,19 @@ public class ConverterServiceImpl implements ConverterService {
 
     private IConverterController convertController;
     private IServiceHelper helper;
+    private CamelToolInterface camelTool;
     private static Logger logger = LoggerFactory.getLogger(ConverterServiceImpl.class);
 
-    public ConverterServiceImpl(IConverterController controller, IServiceHelper helper) {
+    public ConverterServiceImpl(IConverterController controller, IServiceHelper helper, CamelToolInterface camelTool) {
         this.convertController = controller;
         this.helper = helper;
+        this.camelTool = camelTool;
     }
 
 
     public Response convertDocument(String sessionId, Long documentId, String converterImpl, String outputFormat, Boolean inline) throws DMServiceException {
         try {
+            this.camelTool.sendUpdateNotice(new UpdateNoticeMessage(UpdateNoticeType.SHARES_BY_ME));
             Session session = helper.getSession(sessionId);
             if (inline) {
                 return wrapResponseInline(convertController.convertDocument(session, documentId, converterImpl, outputFormat));

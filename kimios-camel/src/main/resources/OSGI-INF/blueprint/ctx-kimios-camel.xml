@@ -29,6 +29,9 @@
         <property name="csvPath" value="${dms.repository.default.path}"/>
     </bean>
 
+    <bean id="updateNotifierRouteBuilder" class="org.kimios.camel.routes.UpdateNotifierRouteBuilder">
+    </bean>
+
     <!--<reference id="connectionFactory" interface="javax.jms.ConnectionFactory" />
 
     <bean id="jmsConfig" class="org.apache.camel.component.jms.JmsConfiguration">
@@ -66,6 +69,7 @@
 <!--
     <reference id="searchController" interface="org.kimios.kernel.index.controller.ISearchController" />
 -->
+    <reference id="webSocketManager" interface="org.kimios.websocket.client.controller.IWebSocketManager" />
 
     <camelContext id="kimios" xmlns="http://camel.apache.org/schema/blueprint">
         <packageScan>
@@ -73,6 +77,7 @@
             <includes>**.*</includes>
         </packageScan>
         <routeBuilder ref="documentExporterRouteBuilder" />
+        <routeBuilder ref="updateNotifierRouteBuilder" />
         <!--<route>
             <from uri="timer:simple?period=5000"/>
             <setBody>

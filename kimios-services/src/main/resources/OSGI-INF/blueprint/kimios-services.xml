@@ -100,7 +100,9 @@
         <property name="camelContext" ref="kimiosCamelContext" />
     </bean>
 
-   <bean id="jaxws-and-aegis-service-factory" class="org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean"
+    <service id="camelToolOsgi" ref="camelTool" interface="org.kimios.services.utils.CamelToolInterface" />
+
+    <bean id="jaxws-and-aegis-service-factory" class="org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean"
           scope="prototype">
         <property name="dataBinding">
             <bean class="org.apache.cxf.aegis.databinding.AegisDatabinding">
