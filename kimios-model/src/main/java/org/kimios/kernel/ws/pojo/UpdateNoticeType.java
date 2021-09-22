@@ -5,7 +5,9 @@ public enum UpdateNoticeType {
     SHARES_WITH_ME("shares with me"),
     DOCUMENT("document"),
     FOLDER("folder"),
-    WORKSPACE("workspace");
+    WORKSPACE("workspace"),
+    PREVIEW_READY("preview ready"),
+    PREVIEW_PROCESSING("preview processing");
 
     private final String value;
 

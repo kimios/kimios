@@ -3,6 +3,7 @@ package org.kimios.kernel.ws.pojo;
 public class UpdateNoticeMessage {
     private UpdateNoticeType updateNoticeType;
     private String token;
+    private String message;
 
     public UpdateNoticeMessage(UpdateNoticeType updateNoticeType, String token) {
         this.updateNoticeType = updateNoticeType;
@@ -29,5 +30,13 @@ public class UpdateNoticeMessage {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }
