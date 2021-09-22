@@ -39,10 +39,14 @@
 
     <reference id="camelToolOsgi" interface="org.kimios.services.utils.CamelToolInterface" />
 
+    <reference id="securityController"
+               interface="org.kimios.kernel.controller.ISecurityController"/>
+
     <bean id="converterServiceBean" class="org.kimios.webservices.converter.impl.ConverterServiceImpl">
         <argument ref="converterController"/>
         <argument ref="serviceHelper"/>
         <argument ref="camelToolOsgi" />
+        <argument ref="securityController" />
     </bean>
 
     <service interface="org.kimios.webservices.converter.ConverterService" ref="converterServiceBean"/>

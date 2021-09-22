@@ -20,6 +20,7 @@ import org.kimios.api.InputSource;
 import org.kimios.converter.ConverterDescriptor;
 import org.kimios.converter.controller.IConverterController;
 import org.kimios.kernel.configuration.Config;
+import org.kimios.kernel.controller.ISecurityController;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.ws.pojo.UpdateNoticeMessage;
 import org.kimios.kernel.ws.pojo.UpdateNoticeType;
@@ -45,14 +46,21 @@ public class ConverterServiceImpl implements ConverterService {
 
 
     private IConverterController convertController;
+    private ISecurityController securityController;
     private IServiceHelper helper;
     private CamelToolInterface camelTool;
     private static Logger logger = LoggerFactory.getLogger(ConverterServiceImpl.class);
 
-    public ConverterServiceImpl(IConverterController controller, IServiceHelper helper, CamelToolInterface camelTool) {
+    public ConverterServiceImpl(
+            IConverterController controller,
+            IServiceHelper helper,
+            CamelToolInterface camelTool,
+            ISecurityController securityController
+    ) {
         this.convertController = controller;
         this.helper = helper;
         this.camelTool = camelTool;
+        this.securityController = securityController;
     }
 
 
@@ -61,7 +69,7 @@ public class ConverterServiceImpl implements ConverterService {
             this.camelTool.sendUpdateNotice(
                     new UpdateNoticeMessage(
                             UpdateNoticeType.SHARES_BY_ME,
-                            helper.getSession(sessionId).getWebSocketToken()
+                            this.securityController.getSystemWebSocketToken()
                     )
             );
             Session session = helper.getSession(sessionId);

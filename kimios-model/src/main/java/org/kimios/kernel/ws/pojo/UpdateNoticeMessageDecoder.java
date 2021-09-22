@@ -1,7 +1,6 @@
-package org.kimios.websocket.websocket;
+package org.kimios.kernel.ws.pojo;
 
 import com.google.gson.Gson;
-import org.kimios.kernel.ws.pojo.UpdateNoticeMessage;
 
 import javax.websocket.DecodeException;
 import javax.websocket.Decoder;

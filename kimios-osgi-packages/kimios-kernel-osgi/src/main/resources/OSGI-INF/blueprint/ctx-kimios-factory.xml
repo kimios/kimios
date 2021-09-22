@@ -243,7 +243,8 @@
     </bean>  -->
 
 
-    <bean id="securityController" class="org.kimios.kernel.controller.impl.SecurityController">
+    <bean id="securityController" class="org.kimios.kernel.controller.impl.SecurityController"
+          init-method="init">
         <property name="dmsFactoryInstantiator" ref="dmsfi"></property>
         <property name="securityFactoryInstantiator" ref="securityfi"></property>
         <property name="authFactoryInstantiator" ref="userfi"></property>

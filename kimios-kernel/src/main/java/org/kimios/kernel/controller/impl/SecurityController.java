@@ -36,6 +36,7 @@ import org.kimios.kernel.user.model.AuthenticationSource;
 import org.kimios.kernel.user.model.Group;
 import org.kimios.kernel.user.model.User;
 import org.kimios.kernel.jobs.model.TaskInfo;
+import org.kimios.utils.session.SessionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,6 +51,8 @@ import java.util.stream.Collectors;
 public class SecurityController extends AKimiosController implements ISecurityController
 {
     private static Logger log = LoggerFactory.getLogger(ISecurityController.class);
+
+    private String systemWebSocketToken;
 
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.ISecurityController#getDMEntitySecurityies(org.kimios.kernel.security.Session, long, int)
@@ -521,9 +524,19 @@ public class SecurityController extends AKimiosController implements ISecurityCo
 
     @Override
     public boolean checkWebSocketToken(String token) {
-        return SessionManager.getInstance().getSessions().stream()
+        return this.systemWebSocketToken.equals(token)
+                || SessionManager.getInstance().getSessions().stream()
                 .filter(s -> s.getWebSocketToken().equals(token))
                 .collect(Collectors.toList())
                 .size() == 1;
+    }
+
+    @Override
+    public String getSystemWebSocketToken() {
+        return this.systemWebSocketToken;
+    }
+
+    public void init() {
+        this.systemWebSocketToken = SessionUtils.generateSessionUid();
     }
 }

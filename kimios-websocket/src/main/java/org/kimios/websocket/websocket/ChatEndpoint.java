@@ -2,6 +2,8 @@ package org.kimios.websocket.websocket;
 
 import org.kimios.kernel.controller.ISecurityController;
 import org.kimios.kernel.ws.pojo.UpdateNoticeMessage;
+import org.kimios.kernel.ws.pojo.UpdateNoticeMessageDecoder;
+import org.kimios.kernel.ws.pojo.UpdateNoticeMessageEncoder;
 import org.kimios.websocket.IKimiosWebSocketController;
 import org.kimios.websocket.model.Message;
 

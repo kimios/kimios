@@ -19,6 +19,6 @@ public class UpdateNotifierRouteBuilder extends RouteBuilder {
                         exchange.getOut().setHeaders(exchange.getIn().getHeaders());
                     }
                 })
-                .to("bean:webSocketManager?method=display");
+                .to("bean:webSocketManager?method=sendUpdateNotice");
     }
 }

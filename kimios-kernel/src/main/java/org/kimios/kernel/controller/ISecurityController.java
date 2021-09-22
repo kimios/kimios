@@ -187,4 +187,6 @@ public interface ISecurityController
             DataSourceException;
 
     public boolean checkWebSocketToken(String token);
+
+    public String getSystemWebSocketToken();
 }

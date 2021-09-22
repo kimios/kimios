@@ -2,6 +2,8 @@ package org.kimios.websocket.client.controller.impl;
 
 import org.eclipse.jetty.websocket.jsr356.JettyClientContainerProvider;
 import org.kimios.kernel.ws.pojo.UpdateNoticeMessage;
+import org.kimios.kernel.ws.pojo.UpdateNoticeMessageDecoder;
+import org.kimios.kernel.ws.pojo.UpdateNoticeMessageEncoder;
 import org.kimios.websocket.client.controller.IWebSocketManager;
 import org.kimios.websocket.client.controller.KimiosWebSocketClientEndpointConfigConfigurator;
 
@@ -18,7 +20,11 @@ import java.io.IOException;
 import java.net.URI;
 
 
-@ClientEndpoint(configurator = KimiosWebSocketClientEndpointConfigConfigurator.class)
+@ClientEndpoint(
+        configurator = KimiosWebSocketClientEndpointConfigConfigurator.class,
+        decoders = { UpdateNoticeMessageDecoder.class },
+        encoders = { UpdateNoticeMessageEncoder.class }
+)
 public class WebSocketManager implements IWebSocketManager {
 
     private String webSocketUrl;
@@ -61,13 +67,16 @@ public class WebSocketManager implements IWebSocketManager {
 
     @Override
     public void sendUpdateNotice(UpdateNoticeMessage updateNoticeMessage) {
-        if (this.session == null) {
+        if (this.session == null || !this.session.isOpen()) {
             String urlConnection = this.webSocketUrl + "/" + updateNoticeMessage.getToken();
             this.connect(urlConnection);
         }
         try {
             session.getBasicRemote().sendObject(updateNoticeMessage);
-        } catch (IOException | EncodeException e) {
+        } catch (IOException e) {
+            System.out.println("is webSocket open (session.isOpen())? " + (session.isOpen() ? "true" : "false"));
+            e.printStackTrace();
+        } catch (EncodeException e) {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
