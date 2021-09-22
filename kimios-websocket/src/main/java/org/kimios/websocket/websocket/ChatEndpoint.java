@@ -68,9 +68,9 @@ public class ChatEndpoint implements IKimiosWebSocketController {
     }
 
     @OnMessage
-    public void onMessage(Session session, Message message) throws IOException, EncodeException {
-        message.setFrom(users.get(session.getId()));
-        broadcast(message);
+    public void onMessage(Session session, UpdateNoticeMessage message) throws IOException, EncodeException {
+        // message.setFrom(users.get(session.getId()));
+        System.out.println("IKimiosWebSocketController: received message : " + message.toString());
     }
 
     @OnClose

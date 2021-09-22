@@ -60,9 +60,9 @@ public class WebSocketManager implements IWebSocketManager {
     }
 
     @Override
-    public void sendUpdateNotice(UpdateNoticeMessage updateNoticeMessage, String token) {
+    public void sendUpdateNotice(UpdateNoticeMessage updateNoticeMessage) {
         if (this.session == null) {
-            String urlConnection = this.webSocketUrl + "/" + token;
+            String urlConnection = this.webSocketUrl + "/" + updateNoticeMessage.getToken();
             this.connect(urlConnection);
         }
         try {

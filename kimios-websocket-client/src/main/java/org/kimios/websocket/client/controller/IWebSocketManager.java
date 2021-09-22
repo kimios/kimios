@@ -4,7 +4,7 @@ import org.kimios.kernel.ws.pojo.UpdateNoticeMessage;
 
 public interface IWebSocketManager {
 
-    void sendUpdateNotice(UpdateNoticeMessage updateNoticeMessage, String token);
+    void sendUpdateNotice(UpdateNoticeMessage updateNoticeMessage);
 
     public void display(UpdateNoticeMessage updateNoticeMessage);
 }
