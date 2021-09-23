@@ -20,6 +20,8 @@ import org.kimios.api.InputSource;
 import org.kimios.converter.ConverterDescriptor;
 import org.kimios.exceptions.ConverterException;
 import org.kimios.kernel.security.model.Session;
+import org.kimios.kernel.ws.pojo.DataTransaction;
+import org.kimios.kernel.ws.pojo.DataTransactionWrapper;
 
 import java.util.List;
 import java.util.Map;
@@ -64,4 +66,5 @@ public interface IConverterController {
 
     Map<String, List<ConverterDescriptor>> loadDescriptors() throws Exception;
 
+    public long convertDataTransactionToPdf(DataTransactionWrapper dataTransactionWrapper) throws Exception;
 }

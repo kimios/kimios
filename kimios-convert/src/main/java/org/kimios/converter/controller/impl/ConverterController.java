@@ -36,13 +36,21 @@ import org.kimios.kernel.configuration.Config;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.dms.model.Document;
 import org.kimios.kernel.dms.model.DocumentVersion;
+import org.kimios.kernel.filetransfer.model.DataTransfer;
+import org.kimios.kernel.security.SessionManager;
 import org.kimios.kernel.security.model.Session;
+import org.kimios.kernel.ws.pojo.DataTransaction;
+import org.kimios.kernel.ws.pojo.DataTransactionWrapper;
 import org.kimios.utils.configuration.ConfigurationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -293,5 +301,15 @@ public class ConverterController extends AKimiosController implements IConverter
         } else  {
             return mapper.readValue(this.getClass().getResourceAsStream("/default-converters.json"), new TypeReference<Map<String,List<ConverterDescriptor>>>(){});
         }
+    }
+
+    @Override
+    public long convertDataTransactionToPdf(DataTransactionWrapper dataTransactionWrapper) throws Exception {
+        Session session = SessionManager.getInstance().getSession(dataTransactionWrapper.getSession().getSessionUid());
+        DataTransfer transac = transferFactoryInstantiator.getDataTransferFactory()
+                .getDataTransfer(dataTransactionWrapper.getDataTransaction().getUid());
+        this.convertDocumentVersion(session, transac.getDocumentVersionUid(), "JodConverter", "pdf");
+
+        return dataTransactionWrapper.getDataTransaction().getUid();
     }
 }

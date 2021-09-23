@@ -17,6 +17,7 @@ package org.kimios.services.impl;
 
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.ws.pojo.DataTransaction;
+import org.kimios.kernel.ws.pojo.DataTransactionWrapper;
 import org.kimios.kernel.ws.pojo.DocumentWrapper;
 import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.FileTransferService;
@@ -96,12 +97,17 @@ public class FileTransferServiceImpl
      * @return
      * @throws DMServiceException
      */
-    public DataTransaction startDownloadTransaction(String sessionUid, long documentVersionUid, boolean isCompressed)
-            throws DMServiceException {
+    public DataTransaction startDownloadTransaction(
+            String sessionUid, long documentVersionUid, boolean isCompressed, boolean convertToPdf
+    ) throws DMServiceException {
         try {
             Session session = getHelper().getSession(sessionUid);
             DataTransaction dtr =
-                    transferController.startDownloadTransaction(session, documentVersionUid, isCompressed).toPojo();
+                    transferController.startDownloadTransaction(session, documentVersionUid, isCompressed)
+                            .toPojo();
+            if (convertToPdf) {
+                this.camelTool.launchDocumentVersionConversion(new DataTransactionWrapper(session.toPojo(), dtr));
+            }
             return dtr;
         } catch (Exception e) {
             throw getHelper().convertException(e);

@@ -143,5 +143,15 @@ public class Session implements Serializable
                 ", webSocketToken='" + webSocketToken + '\'' +
                 '}';
     }
+
+    public org.kimios.kernel.ws.pojo.Session toPojo() {
+        return new org.kimios.kernel.ws.pojo.Session(
+                this.getUid(),
+                this.getUserName(),
+                this.getUserSource(),
+                this.getLastUse(),
+                this.getMetaDatas()
+        );
+    }
 }
 

@@ -372,7 +372,7 @@ public class FileTransferController
     {
         try
         {
-            DataTransaction transac = client.startDownloadTransaction( sessionId, documentVersionId, isCompressed );
+            DataTransaction transac = client.startDownloadTransaction( sessionId, documentVersionId, isCompressed, false );
 
             if ( restMode )
             {

@@ -32,6 +32,10 @@
     <bean id="updateNotifierRouteBuilder" class="org.kimios.camel.routes.UpdateNotifierRouteBuilder">
     </bean>
 
+    <bean id="convertDocumentVersionRouteBuilder" class="org.kimios.camel.routes.ConvertDocumentVersionRouteBuilder" >
+        <property name="converterController" ref="converterController" />
+    </bean>
+
     <!--<reference id="connectionFactory" interface="javax.jms.ConnectionFactory" />
 
     <bean id="jmsConfig" class="org.apache.camel.component.jms.JmsConfiguration">
@@ -71,6 +75,8 @@
 -->
     <reference id="webSocketManager" interface="org.kimios.websocket.client.controller.IWebSocketManager" />
 
+    <reference id="converterController" interface="org.kimios.converter.controller.IConverterController" />
+
     <camelContext id="kimios" xmlns="http://camel.apache.org/schema/blueprint">
         <packageScan>
             <package>org.kimios.camel.routes.ext</package>
@@ -78,6 +84,7 @@
         </packageScan>
         <routeBuilder ref="documentExporterRouteBuilder" />
         <routeBuilder ref="updateNotifierRouteBuilder" />
+        <routeBuilder ref="convertDocumentVersionRouteBuilder" />
         <!--<route>
             <from uri="timer:simple?period=5000"/>
             <setBody>

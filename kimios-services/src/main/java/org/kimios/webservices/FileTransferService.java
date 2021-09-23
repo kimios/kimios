@@ -67,13 +67,14 @@ public interface FileTransferService
         throws DMServiceException;
 
      @GET @ApiOperation(value ="")
-    @Path("/startDownloadTransaction")
-    @Produces(MediaType.APPLICATION_JSON)
-    public DataTransaction startDownloadTransaction(
-        @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
-        @QueryParam(value = "documentVersionId") @WebParam(name = "documentVersionId") long documentVersionId,
-        @QueryParam(value = "isCompressed") @WebParam(name = "isCompressed") boolean isCompressed )
-        throws DMServiceException;
+     @Path("/startDownloadTransaction")
+     @Produces(MediaType.APPLICATION_JSON)
+     public DataTransaction startDownloadTransaction(
+             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+             @QueryParam(value = "documentVersionId") @WebParam(name = "documentVersionId") long documentVersionId,
+             @QueryParam(value = "isCompressed") @WebParam(name = "isCompressed") boolean isCompressed,
+             @QueryParam(value = "convertToPdf") @WebParam(name = "convertToPdf") boolean convertToPdf
+     ) throws DMServiceException;
 
 
     public byte[] getChunck( @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
