@@ -66,12 +66,6 @@ public class ConverterServiceImpl implements ConverterService {
 
     public Response convertDocument(String sessionId, Long documentId, String converterImpl, String outputFormat, Boolean inline) throws DMServiceException {
         try {
-            this.camelTool.sendUpdateNotice(
-                    new UpdateNoticeMessage(
-                            UpdateNoticeType.SHARES_BY_ME,
-                            this.securityController.getSystemWebSocketToken()
-                    )
-            );
             Session session = helper.getSession(sessionId);
             if (inline) {
                 return wrapResponseInline(convertController.convertDocument(session, documentId, converterImpl, outputFormat));

@@ -523,12 +523,19 @@ public class SecurityController extends AKimiosController implements ISecurityCo
     }
 
     @Override
-    public boolean checkWebSocketToken(String token) {
-        return this.systemWebSocketToken.equals(token)
-                || SessionManager.getInstance().getSessions().stream()
-                .filter(s -> s.getWebSocketToken().equals(token))
-                .collect(Collectors.toList())
-                .size() == 1;
+    public String checkWebSocketToken(String token) {
+        String sessionUid = null;
+        if (token.equals(this.getSystemWebSocketToken())) {
+            sessionUid = "kernel";
+        } else {
+            List<Session> sessions = SessionManager.getInstance().getSessions().stream()
+                    .filter(s -> s.getWebSocketToken().equals(token))
+                    .collect(Collectors.toList());
+            if (sessions.size() > 0) {
+                sessionUid = sessions.get(0).getUid();
+            }
+        }
+        return sessionUid;
     }
 
     @Override

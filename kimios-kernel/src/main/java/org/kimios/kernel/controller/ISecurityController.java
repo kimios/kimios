@@ -186,7 +186,7 @@ public interface ISecurityController
             throws ConfigException,
             DataSourceException;
 
-    public boolean checkWebSocketToken(String token);
+    public String checkWebSocketToken(String token);
 
     public String getSystemWebSocketToken();
 }

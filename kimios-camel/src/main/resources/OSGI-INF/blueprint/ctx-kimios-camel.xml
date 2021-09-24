@@ -34,6 +34,7 @@
 
     <bean id="convertDocumentVersionRouteBuilder" class="org.kimios.camel.routes.ConvertDocumentVersionRouteBuilder" >
         <property name="converterController" ref="converterController" />
+        <property name="securityController" ref="securityController" />
     </bean>
 
     <!--<reference id="connectionFactory" interface="javax.jms.ConnectionFactory" />
@@ -76,6 +77,8 @@
     <reference id="webSocketManager" interface="org.kimios.websocket.client.controller.IWebSocketManager" />
 
     <reference id="converterController" interface="org.kimios.converter.controller.IConverterController" />
+
+    <reference id="securityController" interface="org.kimios.kernel.controller.ISecurityController" />
 
     <camelContext id="kimios" xmlns="http://camel.apache.org/schema/blueprint">
         <packageScan>

@@ -19,6 +19,8 @@ import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.ws.pojo.DataTransaction;
 import org.kimios.kernel.ws.pojo.DataTransactionWrapper;
 import org.kimios.kernel.ws.pojo.DocumentWrapper;
+import org.kimios.kernel.ws.pojo.UpdateNoticeMessage;
+import org.kimios.kernel.ws.pojo.UpdateNoticeType;
 import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.FileTransferService;
 import org.slf4j.Logger;
@@ -106,6 +108,13 @@ public class FileTransferServiceImpl
                     transferController.startDownloadTransaction(session, documentVersionUid, isCompressed)
                             .toPojo();
             if (convertToPdf) {
+                this.camelTool.sendUpdateNotice(
+                        new UpdateNoticeMessage(
+                                UpdateNoticeType.PREVIEW_PROCESSING,
+                                session.getWebSocketToken(),
+                                session.getUid()
+                        )
+                );
                 this.camelTool.launchDocumentVersionConversion(new DataTransactionWrapper(session.toPojo(), dtr));
             }
             return dtr;

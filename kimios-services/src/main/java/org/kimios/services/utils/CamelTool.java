@@ -55,8 +55,8 @@ public class CamelTool implements CamelToolInterface {
         template.sendBodyAndHeader(
                 "direct:documentVersionConversion",
                 dataTransactionWrapper,
-                null,
-                null
+                "header_example",
+                "header_example_value"
         );
     }
 
