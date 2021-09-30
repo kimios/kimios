@@ -39,7 +39,6 @@ import org.kimios.kernel.dms.model.DocumentVersion;
 import org.kimios.kernel.filetransfer.model.DataTransfer;
 import org.kimios.kernel.security.SessionManager;
 import org.kimios.kernel.security.model.Session;
-import org.kimios.kernel.ws.pojo.DataTransaction;
 import org.kimios.kernel.ws.pojo.DataTransactionWrapper;
 import org.kimios.utils.configuration.ConfigurationManager;
 import org.slf4j.Logger;
