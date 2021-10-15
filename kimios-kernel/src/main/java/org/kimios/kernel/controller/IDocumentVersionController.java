@@ -22,6 +22,7 @@ import org.kimios.api.events.annotations.DmsEventName;
 import org.kimios.kernel.security.model.Session;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 public interface IDocumentVersionController
@@ -64,6 +65,23 @@ public interface IDocumentVersionController
     @DmsEvent(eventName = { DmsEventName.DOCUMENT_VERSION_UPDATE })
     public void updateDocumentVersion(Session session, long documentId,
                                       long documentTypeId, List<MetaValue> metaValues) throws XMLException, CheckoutViolationException,
+            ConfigException, DataSourceException, AccessDeniedException;
+
+    /**
+     * Update document version for document type and meta data changes
+     *
+     * @param session
+     * @param documentId
+     * @param documentTypeId
+     * @param metaValuesMap
+     * @throws XMLException
+     * @throws CheckoutViolationException
+     * @throws ConfigException
+     * @throws DataSourceException
+     * @throws AccessDeniedException
+     */
+    public void updateDocumentVersion(Session session, long documentId,
+                                      long documentTypeId, Map<Long, String> metaValuesMap) throws XMLException, CheckoutViolationException,
             ConfigException, DataSourceException, AccessDeniedException;
 
     /**

@@ -456,6 +456,27 @@
         <property name="converterController" ref="converterController"/>
     </bean>
 
+    <bean id="documentVersionRestOnlyServiceBean" class="org.kimios.services.impl.DocumentVersionRestOnlyServiceImpl">
+        <property name="helper" ref="serviceHelper"/>
+        <property name="securityController" ref="securityController"/>
+        <property name="documentController" ref="documentController"/>
+        <property name="documentVersionController" ref="documentVersionController"/>
+        <property name="folderController" ref="folderController"/>
+        <property name="workspaceController" ref="workspaceController"/>
+        <property name="pathController" ref="pathController"/>
+        <property name="informationController" ref="informationController"/>
+        <property name="workflowController" ref="workflowController"/>
+        <property name="studioController" ref="studioController"/>
+        <property name="transferController" ref="fileTransferController"/>
+        <property name="reportingController" ref="reportingController"/>
+        <property name="administrationController" ref="administrationController"/>
+        <property name="searchController" ref="searchController"/>
+        <property name="searchManagementController" ref="searchManagementController" />
+        <property name="ruleController" ref="rulesController"/>
+        <property name="extensionController" ref="extensionController"/>
+        <property name="converterController" ref="converterController"/>
+    </bean>
+
     <bean id="folderServiceBean" class="org.kimios.services.impl.FolderServiceImpl">
         <property name="helper" ref="serviceHelper"/>
         <property name="securityController" ref="securityController"/>
@@ -709,6 +730,7 @@
     <service interface="org.kimios.webservices.FolderService" ref="folderServiceBean"/>
     <service interface="org.kimios.webservices.DocumentService" ref="documentServiceBean"/>
     <service interface="org.kimios.webservices.DocumentVersionService" ref="documentVersionServiceBean"/>
+    <service interface="org.kimios.webservices.DocumentVersionRestOnlyService" ref="documentVersionRestOnlyServiceBean"/>
     <service interface="org.kimios.webservices.InformationService" ref="informationServiceBean"/>
     <service interface="org.kimios.webservices.LogService" ref="logServiceBean"/>
     <service interface="org.kimios.webservices.ReportingService" ref="reportingServiceBean"/>
@@ -739,6 +761,7 @@
             <ref component-id="folderServiceBean"/>
             <ref component-id="documentServiceBean"/>
             <ref component-id="documentVersionServiceBean"/>
+            <ref component-id="documentVersionRestOnlyServiceBean"/>
             <ref component-id="administrationServiceBean"/>
             <ref component-id="studioServiceBean"/>
             <ref component-id="informationServiceBean"/>

@@ -37,7 +37,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 /**
  * @author Fabien Alin
@@ -389,6 +391,24 @@ public class DocumentVersionController extends AKimiosController implements IDoc
         } else {
             throw new AccessDeniedException();
         }
+    }
+
+    @Override
+    public void updateDocumentVersion(
+            Session session, long documentId, long documentTypeId, Map<Long, String> metaValuesMap
+    ) throws XMLException, CheckoutViolationException, ConfigException, DataSourceException, AccessDeniedException {
+        org.kimios.kernel.dms.model.DocumentVersion documentVersion =
+                this.getLastDocumentVersion(session, documentId);
+        List<MetaValue> metaValues = metaValuesMap.entrySet()
+                .stream().map(metaStringEntry -> MetaProcessor.toMetaValue(
+                        documentVersion,
+                        metaStringEntry.getKey(),
+                        metaStringEntry.getValue()
+                ))
+                .filter(metaValue -> metaValue != null)
+                .collect(Collectors.toList());
+
+        this.updateDocumentVersion(session, documentId, documentTypeId, metaValues);
     }
 
 

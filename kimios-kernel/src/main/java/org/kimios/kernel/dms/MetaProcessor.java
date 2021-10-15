@@ -154,4 +154,9 @@ public class MetaProcessor {
         }
         return metaV;
     }
+
+    public static MetaValue toMetaValue(DocumentVersion version, long metaUid, String metaValue) {
+        Meta m = FactoryInstantiator.getInstance().getMetaFactory().getMeta(metaUid);
+        return toMetaValue(m.getMetaType(), version, m, metaValue);
+    }
 }
