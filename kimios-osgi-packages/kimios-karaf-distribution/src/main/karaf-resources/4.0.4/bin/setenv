@@ -64,6 +64,7 @@ export JAVA_MAX_PERM_MEM=512m # Maximum perm memory for the JVM
 #export KIMIOS_REPO_TMP_PATH=
 #export KIMIOS_SOLR_HOME=
 #export KIMIOS_SOLR_SERVER_URL=
+#export KIMIOS_ZIP_EXPORT_PATH=
 
 export KARAF_OPTS="-Dkimios.db.url=$KIMIOS_JDBC_URL \
 -Dkimios.db.user=$KIMIOS_JDBC_USER \
@@ -73,6 +74,7 @@ export KARAF_OPTS="-Dkimios.db.url=$KIMIOS_JDBC_URL \
 -Dkimios.index.solr.home=$KIMIOS_SOLR_HOME \
 -Dkimios.index.solr.server.url=$KIMIOS_SOLR_SERVER_URL \
 -Djodconverter.url=$JODCONVERTER_URL \
+-Dkimios.zip.export.tmp.path=$KIMIOS_ZIP_EXPORT_PATH \
 -Djavax.xml.transform.TransformerFactory=org.apache.xalan.processor.TransformerFactoryImpl"
 # export KARAF_DEBUG # Enable debug mode
 # export KARAF_REDIRECT # Enable/set the std/err redirection when using bin/start

@@ -305,6 +305,8 @@ kimios.ContextMenu = new function () {
         this.folderMenu.add(this.getRefreshItem());
         this.folderMenu.addSeparator();
         this.folderMenu.add(this.getPropertiesItem());
+        this.folderMenu.addSeparator();
+        this.folderMenu.add(this.getCartItem());
     };
 
     this.initDocumentMenu = function (config) {
@@ -598,6 +600,8 @@ kimios.ContextMenu = new function () {
         this.gridMenu.add(this.getRefreshItem());
         this.gridMenu.addSeparator();
         this.gridMenu.add(this.getPropertiesItem());
+        this.gridMenu.addSeparator();
+        this.gridMenu.add(this.getCartItem());
     };
 
     this.initWGridMenu = function (config) {

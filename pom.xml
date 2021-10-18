@@ -34,7 +34,7 @@
         <developerConnection>scm:git:ssh://git@gitlab.com/kimios/kimios.git</developerConnection>
       <tag>HEAD</tag>
   </scm>
-    <!-- internal Git Connexion 
+    <!-- internal Git Connexion
     <scm>
         <url>https://gitlab.devlib.infra/org-kimios/kimios</url>
         <connection>scm:git:ssh://git@gitlab.devlib.infra/org-kimios/kimios.git</connection>
@@ -163,6 +163,8 @@
         <module>kimios-websocket</module>
         <module>kimios-convert-libreoffice</module>
         <module>kimios-websocket-client</module>
+        <module>kimios-zipper</module>
+        <module>kimios-zipper-service</module>
     </modules>
     <packaging>pom</packaging>
     <build>

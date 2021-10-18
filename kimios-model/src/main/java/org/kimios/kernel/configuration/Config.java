@@ -70,4 +70,6 @@ public class Config
 
     public static String VERSION_ID_INCREMENTOR = "dms.version.id.incrementor";
 
+    public static String ZIP_EXPORT_PATH = "dms.zip.export.tmp.path";
+
 }

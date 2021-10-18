@@ -217,6 +217,11 @@
     </bean>
     <bean id="workspaceController" class="org.kimios.kernel.controller.impl.WorkspaceController"
             parent="kimiosCoreCtrl"/>
+    <bean id="dmEntityController" class="org.kimios.kernel.controller.impl.DmEntityController">
+        <property name="documentController" ref="documentController" />
+        <property name="folderController" ref="folderController" />
+        <property name="workspaceController" ref="workspaceController" />
+    </bean>
     <bean id="pathController" class="org.kimios.kernel.controller.impl.PathController" parent="kimiosCoreCtrl"/>
     <bean id="informationController" class="org.kimios.kernel.controller.impl.ServerInformationController"
             parent="kimiosCoreCtrl"/>

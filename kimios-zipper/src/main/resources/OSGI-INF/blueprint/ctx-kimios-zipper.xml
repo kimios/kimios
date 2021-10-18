@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Kimios - Document Management System Software
+  ~ Copyright (C) 2008-2015  DevLib'
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as
+  ~ published by the Free Software Foundation, either version 2 of the
+  ~ License, or (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ aong with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:tx="http://aries.apache.org/xmlns/transactions/v1.0.0"
+           xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
+           xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0
+        http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd" default-activation="eager">
+
+    <cm:property-placeholder id="kimiosServerCfg" persistent-id="org.kimios.server.app" update-strategy="none"
+                             activation="eager">
+    </cm:property-placeholder>
+
+    <reference id="dmEntityController" interface="org.kimios.kernel.controller.IDmEntityController" />
+    <reference id="documentVersionController" interface="org.kimios.kernel.controller.IDocumentVersionController" />
+    <reference id="documentController" interface="org.kimios.kernel.controller.IDocumentController" />
+    <reference id="folderController" interface="org.kimios.kernel.controller.IFolderController" />
+
+    <bean id="zipperController" class="org.kimios.zipper.controller.impl.ZipperController"
+          init-method="init">
+        <property name="dmEntityController" ref="dmEntityController"></property>
+        <property name="documentVersionController" ref="documentVersionController"></property>
+        <property name="documentController" ref="documentController"></property>
+        <property name="folderController" ref="folderController"></property>
+        <property name="zipFilesPath" value="${dms.zip.export.tmp.path}" />
+    </bean>
+
+    <service id="zipperCtrlOsgi" ref="zipperController" interface="org.kimios.zipper.controller.IZipperController" />
+
+</blueprint>

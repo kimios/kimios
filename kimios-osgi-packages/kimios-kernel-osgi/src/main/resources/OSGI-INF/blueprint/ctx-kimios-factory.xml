@@ -316,6 +316,11 @@
 
         <tx:transaction method="*" value="Required"/>
     </bean>
+    <bean id="dmEntityController" class="org.kimios.kernel.controller.impl.DmEntityController">
+        <property name="documentController" ref="documentController" />
+        <property name="folderController" ref="folderController" />
+        <property name="workspaceController" ref="workspaceController" />
+    </bean>
     <bean id="pathController" class="org.kimios.kernel.controller.impl.PathController">
         <property name="dmsFactoryInstantiator" ref="dmsfi"></property>
         <property name="securityFactoryInstantiator" ref="securityfi"></property>

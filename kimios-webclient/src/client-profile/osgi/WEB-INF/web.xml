@@ -77,6 +77,10 @@
         <servlet-class>org.kimios.controller.ConverterServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>Zipper</servlet-name>
+        <servlet-class>org.kimios.controller.ZipperServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>Registration</servlet-name>
         <servlet-class>org.kimios.controller.RegistrationServlet</servlet-class>
     </servlet>
@@ -107,6 +111,10 @@
     <servlet-mapping>
         <servlet-name>Converter</servlet-name>
         <url-pattern>/Converter</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Zipper</servlet-name>
+        <url-pattern>/Zipper</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>

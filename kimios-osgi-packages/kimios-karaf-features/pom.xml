@@ -213,6 +213,21 @@
             <version>${project.version}</version>
             <type>jar</type>
         </dependency>-->
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-zipper</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+            <classifier>osgi</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-zipper-service</artifactId>
+            <version>${project.version}</version>
+            <classifier>blueprint</classifier>
+        </dependency>
+
+
     </dependencies>
 
     <build>
