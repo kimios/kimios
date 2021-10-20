@@ -21,6 +21,7 @@ import org.kimios.kernel.ws.pojo.DataTransactionWrapper;
 import org.kimios.kernel.ws.pojo.DocumentWrapper;
 import org.kimios.kernel.ws.pojo.UpdateNoticeMessage;
 import org.kimios.kernel.ws.pojo.UpdateNoticeType;
+import org.kimios.services.utils.FileStreamingOutput;
 import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.FileTransferService;
 import org.slf4j.Logger;
@@ -193,6 +194,33 @@ public class FileTransferServiceImpl
     public Response downloadDocument(String sessionId, final long transactionId, Boolean inline)
             throws DMServiceException {
         return this.downloadDocument(sessionId, transactionId, inline, null);
+    }
+
+    @Override
+    public Response downloadFile(String sessionId, long transactionId) throws DMServiceException {
+        try {
+            final Session session = getHelper().getSession(sessionId);
+            if (session == null) {
+                throw new DMServiceException("access denied");
+            }
+
+            FileStreamingOutput sOutput = new FileStreamingOutput(this.transferController, session, transactionId);
+            String fileName = "files_from_kimios.zip";
+            Response.ResponseBuilder response = Response.ok(sOutput);
+            response.header("Content-Description", "File Transfer");
+            response.header("Content-Type", MediaType.APPLICATION_OCTET_STREAM);
+            response.header("Content-Transfer-Encoding", "binary");
+            response.header("Expires", "0");
+            response.header("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
+            response.header("Pragma", "public");
+            response.header("Content-Length", sOutput.getFile().length());
+            response.header("Content-Disposition", "attachment;" + " filename=\"" + fileName + "\"");
+            return response.build();
+
+
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
     }
 
 

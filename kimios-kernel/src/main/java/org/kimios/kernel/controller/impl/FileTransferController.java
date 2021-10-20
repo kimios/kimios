@@ -15,6 +15,7 @@
  */
 package org.kimios.kernel.controller.impl;
 
+import org.apache.commons.io.IOUtils;
 import org.kimios.api.events.annotations.DmsEvent;
 import org.kimios.api.events.annotations.DmsEventName;
 import org.kimios.api.templates.ITemplate;
@@ -258,6 +259,27 @@ public class FileTransferController
         return transac;
     }
 
+    /**
+     * Start download transaction
+     */
+    @Transactional(noRollbackFor = Exception.class)
+    public DataTransfer startDownloadTransaction(Session session, File file)
+            throws IOException, RepositoryException, DataSourceException, ConfigException, AccessDeniedException {
+
+        DataTransfer transac = new DataTransfer();
+        transac.setDocumentVersionUid(-1);
+        transac.setIsCompressed(false);
+        transac.setLastActivityDate(new Date());
+        transac.setUserName(session.getUserName());
+        transac.setUserSource(session.getUserSource());
+        transac.setDataSize(file.length());
+        transac.setTransferMode(DataTransfer.DOWNLOAD);
+        transac.setStatus(DataTransferStatus.ACTIVE);
+        transferFactoryInstantiator.getDataTransferFactory().updateDataTransfer(transac);
+
+        return transac;
+    }
+
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IFileTransferController#getChunk(org.kimios.kernel.security.Session, long, long, int)
     */
@@ -458,6 +480,32 @@ public class FileTransferController
         }
     }
 
+    public File readFileStream(Session session, long transactionId, OutputStream fileStream)
+            throws ConfigException, AccessDeniedException, DataSourceException, IOException {
+        DataTransfer transac = transferFactoryInstantiator.getDataTransferFactory().getDataTransfer(transactionId);
+        File file = null;
+        if (
+                transac != null
+                && transac.getTransferMode() == DataTransfer.DOWNLOAD
+                && transac.getStatus().equals(DataTransferStatus.ACTIVE)
+                && transac.getUserName().equals(session.getUserName())
+                && transac.getUserSource().equals(session.getUserSource())
+        ) {
+            file = new File(transac.getFilePath());
+            if (
+                    file != null
+                            && file.exists()
+                    && file.canRead()
+            ) {
+                IOUtils.copy(new FileInputStream(file), fileStream);
+            } else {
+                throw new AccessDeniedException();
+            }
+        } else {
+            throw new AccessDeniedException();
+        }
+        return file;
+    }
 
     /**
      * Create Token For Download Transaction

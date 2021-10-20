@@ -16,7 +16,6 @@
 
 package org.kimios.kernel.factory;
 
-import com.github.zafarkhaja.semver.Version;
 import org.kimios.api.VersionIncrementor;
 import org.kimios.kernel.configuration.Config;
 import org.kimios.kernel.dms.model.Document;

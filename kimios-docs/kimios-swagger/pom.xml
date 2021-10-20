@@ -72,12 +72,6 @@
         </dependency>
         <dependency>
             <groupId>org.kimios</groupId>
-            <artifactId>kimios-model</artifactId>
-            <version>${project.version}</version>
-            <classifier>pojos</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.kimios</groupId>
             <artifactId>kimios-share-service</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -114,6 +108,16 @@
         <dependency>
             <groupId>org.kimios</groupId>
             <artifactId>kimios-exceptions</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-zipper</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-zipper-service</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

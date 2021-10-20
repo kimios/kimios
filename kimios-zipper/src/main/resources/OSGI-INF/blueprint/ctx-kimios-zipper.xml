@@ -37,6 +37,8 @@
         <property name="documentController" ref="documentController"></property>
         <property name="folderController" ref="folderController"></property>
         <property name="zipFilesPath" value="${dms.zip.export.tmp.path}" />
+
+        <!--<tx:transaction method="*" value="Required"/>-->
     </bean>
 
     <service id="zipperCtrlOsgi" ref="zipperController" interface="org.kimios.zipper.controller.IZipperController" />

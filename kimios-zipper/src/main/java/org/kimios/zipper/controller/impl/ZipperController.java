@@ -1,6 +1,7 @@
 package org.kimios.zipper.controller.impl;
 
 import org.kimios.converter.source.InputSourceFactory;
+import org.kimios.exceptions.AccessDeniedException;
 import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.controller.IDmEntityController;
 import org.kimios.kernel.controller.IDocumentController;
@@ -10,7 +11,10 @@ import org.kimios.kernel.dms.model.DMEntityImpl;
 import org.kimios.kernel.dms.model.Document;
 import org.kimios.kernel.dms.model.Folder;
 import org.kimios.kernel.security.model.Session;
+import org.kimios.kernel.ws.pojo.DMEntityTree;
+import org.kimios.kernel.ws.pojo.DMEntityTreeNode;
 import org.kimios.zipper.controller.IZipperController;
+// import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -30,6 +34,7 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+// @Transactional
 public class ZipperController implements IZipperController {
 
     private IDmEntityController dmEntityController;
@@ -65,8 +70,50 @@ public class ZipperController implements IZipperController {
     }
 
     @Override
+    public File makeZipFromEntityTree(Session session, DMEntityTree dmEntityTree) throws ConfigException, IOException {
+        String zipFileName =
+                session.getUserName()
+                        + "@"
+                        + session.getUserSource()
+                        + "_"
+                        + new Date().toInstant().toEpochMilli()
+                        + ".zip";
+        LinkedHashMap<String, InputStream> inputStreamLinkedHashMap = new LinkedHashMap<>();
+        for (DMEntityTreeNode node : dmEntityTree.getTreeNodeList()) {
+            this.prepareZipFileInputStreamsFromDMEntityTreeNode(session, node, inputStreamLinkedHashMap, "");
+        }
+        File zipFile = Paths.get(zipFilesPath, zipFileName).toFile();
+        makeZipFromLinkedHashMap(inputStreamLinkedHashMap, zipFile);
+        return zipFile;
+    }
+
+    private void prepareZipFileInputStreamsFromDMEntityUid(
+            Session session,
+            Long dmEntityUid,
+            LinkedHashMap<String, InputStream> inputStreamLinkedHashMap,
+            String s
+    ) throws IOException {
+        DMEntityImpl dmEntity = dmEntityController.getEntity(session, dmEntityUid);
+        inputStreamLinkedHashMap.put(
+                dmEntity.getName()
+                        +
+                        ((dmEntity instanceof Document
+                                && ((Document) dmEntity).getExtension() != null
+                                && !((Document) dmEntity).getExtension().isEmpty()) ?
+                                "." + ((Document) dmEntity).getExtension() :
+                                ""),
+                InputSourceFactory.getInputSource(
+                        documentVersionController.getLastDocumentVersion(session, dmEntity.getUid()),
+                        UUID.randomUUID().toString()
+                ).getInputStream()
+        );
+    }
+
+    @Override
     public void markFileDownloaded(File file) {
-        file.delete();
+        if (file != null) {
+            file.delete();
+        }
     }
 
     private static void makeZipFromLinkedHashMap(
@@ -133,6 +180,56 @@ public class ZipperController implements IZipperController {
                             entities,
                             inputStreamLinkedHashMap,
                             (path.equals("") ? path : path + "/") + dmEntity.getName()
+                    );
+                }
+            }
+        }
+    }
+
+    private void prepareZipFileInputStreamsFromDMEntityTreeNode(
+            Session session,
+            DMEntityTreeNode dmEntityTreeNode,
+            LinkedHashMap<String, InputStream> inputStreamLinkedHashMap,
+            String path
+    ) throws IOException {
+        DMEntityImpl dmEntity = dmEntityController.getEntity(session, dmEntityTreeNode.getDmEntityUid());
+        Document document = null;
+        try {
+            document = this.documentController.getDocument(session, dmEntityTreeNode.getDmEntityUid());
+        } catch (AccessDeniedException ade) {
+
+        }
+        if (document != null) {
+            inputStreamLinkedHashMap.put(
+                    (path.equals("") ? path : path + "/")
+                            + dmEntity.getName()
+                            +
+                            (document.getExtension() != null
+                                    && !(document.getExtension().isEmpty()) ?
+                                    "." + document.getExtension() :
+                                    ""),
+                    InputSourceFactory.getInputSource(
+                            documentVersionController.getLastDocumentVersion(session, document.getUid()),
+                            UUID.randomUUID().toString()
+                    ).getInputStream()
+            );
+        } else {
+            Folder folder = null;
+            try {
+                folder = this.folderController.getFolder(session, dmEntityTreeNode.getDmEntityUid());
+            } catch (AccessDeniedException ade) {
+
+            }
+            if (folder != null
+                    && dmEntityTreeNode.getChildren() != null
+                    && dmEntityTreeNode.getChildren().size() > 0) {
+                inputStreamLinkedHashMap.put(path + "/" + folder.getName() + "/", null);
+                for (DMEntityTreeNode node : dmEntityTreeNode.getChildren()) {
+                    this.prepareZipFileInputStreamsFromDMEntityTreeNode(
+                            session,
+                            node,
+                            inputStreamLinkedHashMap,
+                            (path.equals("") ? path : path + "/") + folder.getName()
                     );
                 }
             }

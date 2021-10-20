@@ -80,6 +80,8 @@ public class HDataTransferFactory extends HFactory implements DataTransferFactor
         } catch (HibernateException e) {
             boolean integrity = e instanceof ConstraintViolationException;
             throw new DataSourceException(e, e.getMessage());
+        } catch (Exception e) {
+            throw new DataSourceException(e, e.getMessage());
         }
     }
 

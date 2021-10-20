@@ -114,6 +114,13 @@ public interface FileTransferService
                                       @DefaultValue("true") @QueryParam("inline") Boolean inline)
             throws DMServiceException;
 
+    @GET @ApiOperation(value ="")
+    @Path( "/downloadFile" )
+    @Produces( MediaType.APPLICATION_OCTET_STREAM )
+    public Response downloadFile( @QueryParam("sessionId") String sessionId,
+                                      @QueryParam("transactionId") long transactionId)
+            throws DMServiceException;
+
      @GET @ApiOperation(value ="")
     @Path( "/downloadDocumentWithCustomFileName" )
     @Produces( MediaType.APPLICATION_OCTET_STREAM )

@@ -23,6 +23,7 @@ import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.share.model.Share;
 import org.kimios.kernel.ws.pojo.DocumentWrapper;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -58,6 +59,13 @@ public interface IFileTransferController
      */
     public DataTransfer startDownloadTransaction( Session session, long documentVersionUid, boolean isCompressed )
         throws IOException, RepositoryException, DataSourceException, ConfigException, AccessDeniedException;
+
+    /**
+     * Start download transaction
+     */
+    public DataTransfer startDownloadTransaction( Session session, File file)
+            throws IOException, RepositoryException, DataSourceException, ConfigException, AccessDeniedException;
+
 
     /**
      * Send chunk to client for a given offset and chunk size, in a given download transaction
@@ -105,6 +113,9 @@ public interface IFileTransferController
 
 
     public void readVersionStream(String transactionToken, OutputStream versionStream)
+            throws ConfigException, AccessDeniedException, DataSourceException, IOException;
+
+    public File readFileStream(Session session, long transactionId, OutputStream versionStream)
             throws ConfigException, AccessDeniedException, DataSourceException, IOException;
 
     public DataTransfer startDownloadTransactionToken(Session session, long documentVersionUid, String password,

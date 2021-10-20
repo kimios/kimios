@@ -31,6 +31,8 @@
 
     <reference id="zipperController"
                interface="org.kimios.zipper.controller.IZipperController"/>
+    <reference id="fileTransferController"
+               interface="org.kimios.kernel.controller.IFileTransferController"/>
     <reference id="helper"
                interface="org.kimios.webservices.IServiceHelper" />
 
@@ -39,8 +41,17 @@
         <property name="helper" ref="helper" />
     </bean>
 
-    <service interface="org.kimios.webservices.zipper.impl.ZipperServiceImpl"
+    <service interface="org.kimios.webservices.zipper.ZipperService"
              ref="zipperServiceBean"/>
+
+    <bean id="zipperRestServiceBean" class="org.kimios.webservices.zipper.impl.ZipperRestServiceImpl">
+        <property name="zipperController" ref="zipperController" />
+        <property name="helper" ref="helper" />
+        <property name="fileTransferController" ref="fileTransferController" />
+    </bean>
+
+    <service interface="org.kimios.webservices.zipper.ZipperRestService"
+             ref="zipperRestServiceBean"/>
 
     <!-- Service endpoint -->
     <jaxws:endpoint id="zipperServiceWs"
@@ -78,6 +89,7 @@
         </jaxrs:providers>
         <jaxrs:serviceBeans>
             <ref component-id="zipperServiceBean" />
+            <ref component-id="zipperRestServiceBean" />
         </jaxrs:serviceBeans>
         <jaxrs:extensionMappings>
             <entry key="json" value="application/json"/>
@@ -88,6 +100,27 @@
             </bean>
         </jaxrs:features>
     </jaxrs:server>
+
+    <!--<jaxrs:server id="kimiosZipperRestOnlyServer"
+                  address="/rest/zip-rest-only/">
+        <jaxrs:providers>
+            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
+            <bean class="org.kimios.services.utils.DateParamConverter"/>
+            <bean id="exceptionMapper2" class="org.kimios.services.utils.JaxRSExceptionMapper"/>
+            <bean id="corsFilter2" class="org.apache.cxf.rs.security.cors.CrossOriginResourceSharingFilter" />
+        </jaxrs:providers>
+        <jaxrs:serviceBeans>
+            <ref component-id="zipperRestServiceBean" />
+        </jaxrs:serviceBeans>
+        <jaxrs:extensionMappings>
+            <entry key="json" value="application/json"/>
+        </jaxrs:extensionMappings>
+        <jaxrs:features>
+            <bean id="swagger2Feature2" class="org.apache.cxf.jaxrs.swagger.Swagger2Feature">
+                <property name="basePath" value="/services/rest/zip-rest-only/"/>
+            </bean>
+        </jaxrs:features>
+    </jaxrs:server>-->
 
 </blueprint>
 

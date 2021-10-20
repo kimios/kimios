@@ -32,7 +32,11 @@ public class DmEntityController implements IDmEntityController {
             }
         }
         if (entity == null) {
-            entity = this.workspaceController.getWorkspace(session, uid);
+            try {
+                entity = this.workspaceController.getWorkspace(session, uid);
+            } catch (AccessDeniedException ade) {
+                // access denied OR entity is not a folder
+            }
         }
         return entity;
     }

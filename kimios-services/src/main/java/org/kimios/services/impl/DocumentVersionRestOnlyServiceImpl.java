@@ -36,7 +36,8 @@ public class DocumentVersionRestOnlyServiceImpl extends CoreService implements D
                 // if (current document type is the same than sent and new document version creation is asked)
                 // OR document type is different
                 if (
-                        (currentDocumentVersion.getDocumentType().getUid() == updateDocumentVersionMetaData.getDocumentTypeUid()
+                        currentDocumentVersion.getDocumentType() == null
+                        || (currentDocumentVersion.getDocumentType().getUid() == updateDocumentVersionMetaData.getDocumentTypeUid()
                                 && updateDocumentVersionMetaData.isCreateNewVersion())
                                 || (currentDocumentVersion.getDocumentType().getUid() != updateDocumentVersionMetaData.getDocumentTypeUid())
                 ) {
