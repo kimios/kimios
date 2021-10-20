@@ -6,6 +6,7 @@ import org.kimios.exceptions.ConfigException;
 import org.kimios.kernel.controller.IDmEntityController;
 import org.kimios.kernel.controller.IDocumentController;
 import org.kimios.kernel.controller.IDocumentVersionController;
+import org.kimios.kernel.controller.IFileTransferController;
 import org.kimios.kernel.controller.IFolderController;
 import org.kimios.kernel.dms.model.DMEntityImpl;
 import org.kimios.kernel.dms.model.Document;
@@ -14,7 +15,6 @@ import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.ws.pojo.DMEntityTree;
 import org.kimios.kernel.ws.pojo.DMEntityTreeNode;
 import org.kimios.zipper.controller.IZipperController;
-// import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -34,13 +34,13 @@ import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-// @Transactional
 public class ZipperController implements IZipperController {
 
     private IDmEntityController dmEntityController;
     private IDocumentVersionController documentVersionController;
     private IDocumentController documentController;
     private IFolderController folderController;
+    private IFileTransferController fileTransferController;
     private String zipFilesPath;
 
     public void init() throws IOException {
@@ -114,6 +114,12 @@ public class ZipperController implements IZipperController {
         if (file != null) {
             file.delete();
         }
+    }
+
+    @Override
+    public long makeZipFromEntityTreeAndStartDownloadTransaction(Session session, DMEntityTree dmEntityTree) throws IOException {
+        File zip = makeZipFromEntityTree(session, dmEntityTree);
+        return this.fileTransferController.startDownloadTransaction(session, zip).getUid();
     }
 
     private static void makeZipFromLinkedHashMap(
@@ -274,5 +280,13 @@ public class ZipperController implements IZipperController {
 
     public void setZipFilesPath(String zipFilesPath) {
         this.zipFilesPath = zipFilesPath;
+    }
+
+    public IFileTransferController getFileTransferController() {
+        return fileTransferController;
+    }
+
+    public void setFileTransferController(IFileTransferController fileTransferController) {
+        this.fileTransferController = fileTransferController;
     }
 }

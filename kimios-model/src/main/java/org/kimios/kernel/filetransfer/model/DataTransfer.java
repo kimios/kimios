@@ -54,7 +54,7 @@ public class DataTransfer implements Serializable
     private Date lastActivityDate;
 
     @ManyToOne(targetEntity = DocumentVersion.class)
-    @JoinColumn(name = "document_version_id", insertable = false, updatable = false)
+    @JoinColumn(name = "document_version_id", insertable = false, updatable = false, nullable = true)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private DocumentVersion version;
 
@@ -62,8 +62,8 @@ public class DataTransfer implements Serializable
     @JoinColumn(name="dm_entity_share_id", updatable=false)
     private Share share;
 
-    @Column(name = "document_version_id", nullable = false)
-    private long documentVersionUid;
+    @Column(name = "document_version_id", nullable = true)
+    private Long documentVersionUid;
 
     @Column(name = "is_compressed", nullable = false)
     private boolean isCompressed = false;
@@ -170,12 +170,12 @@ public class DataTransfer implements Serializable
         this.lastActivityDate = lastActivityDate;
     }
 
-    public long getDocumentVersionUid()
+    public Long getDocumentVersionUid()
     {
         return documentVersionUid;
     }
 
-    public void setDocumentVersionUid(long documentVersionUid)
+    public void setDocumentVersionUid(Long documentVersionUid)
     {
         this.documentVersionUid = documentVersionUid;
     }

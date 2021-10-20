@@ -16,4 +16,6 @@ public interface IZipperController {
             throws ConfigException, IOException;
 
     void markFileDownloaded(File file);
+
+    long makeZipFromEntityTreeAndStartDownloadTransaction(Session session, DMEntityTree dmEntityTree) throws IOException;
 }

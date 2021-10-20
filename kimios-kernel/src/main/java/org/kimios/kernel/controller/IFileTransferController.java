@@ -121,4 +121,7 @@ public interface IFileTransferController
     public DataTransfer startDownloadTransactionToken(Session session, long documentVersionUid, String password,
                                                       Share share)
             throws IOException, RepositoryException, DataSourceException, ConfigException, AccessDeniedException;
+
+    public DataTransfer findDataTransfer(Session session, long transactionId)
+            throws DataSourceException, AccessDeniedException;
 }

@@ -267,7 +267,6 @@ public class FileTransferController
             throws IOException, RepositoryException, DataSourceException, ConfigException, AccessDeniedException {
 
         DataTransfer transac = new DataTransfer();
-        transac.setDocumentVersionUid(-1);
         transac.setIsCompressed(false);
         transac.setLastActivityDate(new Date());
         transac.setUserName(session.getUserName());
@@ -275,7 +274,8 @@ public class FileTransferController
         transac.setDataSize(file.length());
         transac.setTransferMode(DataTransfer.DOWNLOAD);
         transac.setStatus(DataTransferStatus.ACTIVE);
-        transferFactoryInstantiator.getDataTransferFactory().updateDataTransfer(transac);
+        transac.setFilePath(file.getAbsolutePath());
+        transferFactoryInstantiator.getDataTransferFactory().addDataTransfer(transac);
 
         return transac;
     }
@@ -541,6 +541,23 @@ public class FileTransferController
 
 
         return transac;
+    }
+
+    @Override
+    public DataTransfer findDataTransfer(Session session, long transactionId) throws DataSourceException, AccessDeniedException {
+        DataTransfer transac = transferFactoryInstantiator
+                .getDataTransferFactory().getDataTransfer(transactionId);
+        if (
+                getSecurityAgent().isAdmin(session.getUserName(), session.getUserSource())
+                || (
+                        session.getUserName().equals(transac.getUserName())
+                                && session.getUserSource().equals(transac.getUserSource())
+                )
+        ) {
+            return transac;
+        } else {
+            throw new AccessDeniedException();
+        }
     }
 
     public void readVersionStream(String transactionToken, OutputStream versionStream)

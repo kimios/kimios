@@ -15,6 +15,7 @@
  */
 package org.kimios.services.impl;
 
+import org.kimios.kernel.filetransfer.model.DataTransfer;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.ws.pojo.DataTransaction;
 import org.kimios.kernel.ws.pojo.DataTransactionWrapper;
@@ -31,6 +32,7 @@ import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.*;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -204,6 +206,8 @@ public class FileTransferServiceImpl
                 throw new DMServiceException("access denied");
             }
 
+            DataTransfer dataTransfer = this.transferController.findDataTransfer(session, transactionId);
+            File file = new File(dataTransfer.getFilePath());
             FileStreamingOutput sOutput = new FileStreamingOutput(this.transferController, session, transactionId);
             String fileName = "files_from_kimios.zip";
             Response.ResponseBuilder response = Response.ok(sOutput);
@@ -213,7 +217,7 @@ public class FileTransferServiceImpl
             response.header("Expires", "0");
             response.header("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
             response.header("Pragma", "public");
-            response.header("Content-Length", sOutput.getFile().length());
+            response.header("Content-Length", file.length());
             response.header("Content-Disposition", "attachment;" + " filename=\"" + fileName + "\"");
             return response.build();
 
