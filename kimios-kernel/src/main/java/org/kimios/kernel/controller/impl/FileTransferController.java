@@ -498,6 +498,8 @@ public class FileTransferController
                     && file.canRead()
             ) {
                 IOUtils.copy(new FileInputStream(file), fileStream);
+                transac.setStatus(DataTransferStatus.EXPIRED);
+                transferFactoryInstantiator.getDataTransferFactory().updateDataTransfer(transac);
             } else {
                 throw new AccessDeniedException();
             }
