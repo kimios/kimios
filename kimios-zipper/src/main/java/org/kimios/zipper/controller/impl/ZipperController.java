@@ -131,7 +131,7 @@ public class ZipperController implements IZipperController {
         for (String entityName : inputStreamLinkedHashMap.keySet()) {
             InputStream inputStream = inputStreamLinkedHashMap.get(entityName);
             entityName = Normalizer.normalize(entityName, Normalizer.Form.NFD);
-            entityName = entityName.replaceAll("[^\\x00-\\x7F]", "");
+            // entityName = entityName.replaceAll("[^\\x00-\\x7F]", "");
             String entryName = inputStream == null ?
                     entityName + "/" :
                     entityName;
