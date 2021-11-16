@@ -122,6 +122,14 @@ public interface AdministrationService
             @WebParam(name = "parameters") Map<String, String> params)
             throws DMServiceException;
 
+    @POST @ApiOperation(value ="")
+    @Path("/createAuthenticationSourceFromObj")
+    @Produces("application/json")
+    @Consumes("application/json")
+    @WebMethod(operationName = "create-domain-obj-param")
+    public void createAuthenticationSourceFromObj(@ApiParam() AuthenticationSourceParam authenticationSourceParam)
+            throws DMServiceException;
+
     @GET @ApiOperation(value ="")
     @Path("/updateAuthenticationSourceFromXml")
     @Produces("application/json")

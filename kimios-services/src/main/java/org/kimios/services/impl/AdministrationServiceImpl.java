@@ -174,6 +174,18 @@ public class AdministrationServiceImpl extends CoreService implements Administra
         }
     }
 
+    @Override
+    public void createAuthenticationSourceFromObj(AuthenticationSourceParam authenticationSourceParam) throws DMServiceException {
+        this.createAuthenticationSource(
+                authenticationSourceParam.getSessionId(),
+                authenticationSourceParam.getName(),
+                authenticationSourceParam.getClassName(),
+                authenticationSourceParam.getEnableSso(),
+                authenticationSourceParam.getEnableMailCheck(),
+                authenticationSourceParam.getParameters()
+        );
+    }
+
     /**
      * Update authentication source
      */
