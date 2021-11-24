@@ -48,6 +48,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.io.*;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
@@ -1654,5 +1655,46 @@ public class DocumentController extends AKimiosController implements IDocumentCo
         } else {
             FactoryInstantiator.getInstance().getDocumentFactory().removeTag(documentId, tagValue);
         }
+    }
+
+    /**
+     * Returns all document's parents in this order: direct document folder to workspace
+     *
+     * @param session
+     * @param uid
+     * @return
+     */
+    public List<org.kimios.kernel.ws.pojo.DMEntity> retrieveDocumentParents(Session session, long uid) {
+        List<DMEntityImpl> parents = new ArrayList<>();
+        Document document = this.getDocument(session, uid);
+        // document's parent is a folder
+        Folder parent = document.getFolder();
+        parents.add(parent);
+
+        Folder currentFolder = parent;
+        DMEntityImpl parentParent = null;
+        boolean go = true;
+        while (go) {
+            try {
+                parentParent = currentFolder.getParent();
+                Folder folder = this.fldCtrl.getFolder(session, parentParent.getUid());
+                parents.add(folder);
+                currentFolder = folder;
+            } catch (EntityNotFoundException e) {
+                try {
+                    if (parentParent != null) {
+                        Workspace workspace = this.wksCtrl.getWorkspace(session, parentParent.getUid());
+                        parents.add(workspace);
+                    } else {
+                        throw e;
+                    }
+                    go = false;
+                } catch (Exception ex) {
+                    throw ex;
+                }
+            }
+        }
+
+        return parents.stream().map(dmEntity -> dmEntity.toPojo()).collect(Collectors.toList());
     }
 }

@@ -20,6 +20,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
+import org.kimios.kernel.dms.model.DMEntityImpl;
 import org.kimios.kernel.ws.pojo.*;
 import org.kimios.webservices.exceptions.DMServiceException;
 
@@ -29,6 +30,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.InputStream;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA. User: farf Date: 4/1/12 Time: 4:59 PM To change this template use File | Settings | File
@@ -350,4 +352,11 @@ public interface DocumentService {
     @Produces("text/csv")
     public InputStream exportToCsv(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
                                 @PathParam(value = "folderId") @WebParam(name = "folderId") long folderUid) throws DMServiceException;
+
+    @GET @ApiOperation(value = "")
+    @Path("/retrieveDocumentParents")
+    @Produces("application/json")
+    public List<DMEntity> retrieveDocumentParents(
+            @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+            @QueryParam(value = "documentId") @WebParam(name = "documentId") long documentId) throws DMServiceException;
 }

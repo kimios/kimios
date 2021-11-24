@@ -342,4 +342,7 @@ public interface IDocumentController {
     @DmsEvent(eventName = {DmsEventName.DOCUMENT_UPDATE})
     void updateDocumentTag(Session session, long documentId, String tagValue, boolean action)
             throws AccessDeniedException, ConfigException, DataSourceException;
+
+    public List<org.kimios.kernel.ws.pojo.DMEntity> retrieveDocumentParents(Session session, long uid)
+            throws AccessDeniedException, DataSourceException, ConfigException;
 }

@@ -23,6 +23,7 @@ import org.kimios.kernel.dms.model.MetaValue;
 import org.kimios.kernel.dms.model.SymbolicLink;
 import org.kimios.kernel.security.model.DMEntitySecurity;
 import org.kimios.kernel.security.model.Session;
+import org.kimios.kernel.ws.pojo.DMEntity;
 import org.kimios.kernel.ws.pojo.Document;
 import org.kimios.kernel.ws.pojo.WorkflowStatus;
 import org.kimios.webservices.DocumentService;
@@ -700,6 +701,17 @@ public class DocumentServiceImpl extends CoreService implements DocumentService 
             List<Document> documents = documentController.getDocumentsPojos(session, folderId);
             return camelTool.generateCsv(documents);
 
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
+
+    @Override
+    public List<DMEntity> retrieveDocumentParents(String sessionId, long documentId) throws DMServiceException {
+        try {
+            Session session = getHelper().getSession(sessionId);
+            List<DMEntity> parents = this.documentController.retrieveDocumentParents(session, documentId);
+            return parents;
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }
