@@ -15,6 +15,8 @@
  */
 package org.kimios.kernel.log;
 
+import org.kimios.websocket.client.controller.IWebSocketManager;
+
 public class FactoryInstantiator implements ILogFactoryInstantiator {
     private static FactoryInstantiator instance;
 
@@ -33,6 +35,8 @@ public class FactoryInstantiator implements ILogFactoryInstantiator {
     private LogFactory logFactory;
 
     private DMEntityLogFactory entityLogFactory;
+
+    private IWebSocketManager webSocketManager;
 
     @Override
     public LogFactory getLogFactory()
@@ -54,6 +58,14 @@ public class FactoryInstantiator implements ILogFactoryInstantiator {
     public void setEntityLogFactory(DMEntityLogFactory entityLogFactory)
     {
         this.entityLogFactory = entityLogFactory;
+    }
+
+    public IWebSocketManager getWebSocketManager() {
+        return webSocketManager;
+    }
+
+    public void setWebSocketManager(IWebSocketManager webSocketManager) {
+        this.webSocketManager = webSocketManager;
     }
 
     public static void setInstance(FactoryInstantiator instance)

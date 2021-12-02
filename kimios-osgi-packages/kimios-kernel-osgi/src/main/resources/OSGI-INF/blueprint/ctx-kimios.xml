@@ -41,7 +41,7 @@
           factory-method="createInstance">
     </bean>
 
-
+    <reference id="webSocketManager" interface="org.kimios.websocket.client.controller.IWebSocketManager" />
 
     <bean id="eventHandlerManager" class="org.kimios.kernel.events.EventHandlerManager">
         <argument ref="extensionRegistryManager" />

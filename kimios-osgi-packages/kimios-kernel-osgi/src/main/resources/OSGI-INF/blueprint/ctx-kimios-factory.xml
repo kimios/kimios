@@ -216,6 +216,7 @@
                 <property name="provider" ref="dbFactoryProvider"></property>
             </bean>
         </property>
+        <property name="webSocketManager" ref="webSocketManager" />
     </bean>
     <!-- Transfer -->
     <bean id="transferfi" class="org.kimios.kernel.filetransfer.FactoryInstantiator" factory-method="getInstance">

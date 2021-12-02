@@ -15,21 +15,26 @@
  */
 package org.kimios.kernel.events.impl;
 
-import org.kimios.kernel.dms.model.*;
-import org.kimios.kernel.events.model.EventContext;
-import org.kimios.kernel.events.GenericEventHandler;
 import org.kimios.api.events.annotations.DmsEvent;
 import org.kimios.api.events.annotations.DmsEventName;
 import org.kimios.api.events.annotations.DmsEventOccur;
+import org.kimios.kernel.dms.model.DMEntity;
+import org.kimios.kernel.dms.model.DMEntityImpl;
+import org.kimios.kernel.dms.model.Document;
+import org.kimios.kernel.dms.model.Folder;
+import org.kimios.kernel.dms.model.Workspace;
+import org.kimios.kernel.events.GenericEventHandler;
+import org.kimios.kernel.events.model.EventContext;
 import org.kimios.kernel.log.ActionType;
-import org.kimios.kernel.log.model.DMEntityLog;
 import org.kimios.kernel.log.FactoryInstantiator;
+import org.kimios.kernel.log.model.DMEntityLog;
 import org.kimios.kernel.share.model.Share;
+import org.kimios.kernel.ws.pojo.UpdateNoticeMessage;
+import org.kimios.kernel.ws.pojo.UpdateNoticeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Date;
-import java.util.List;
 
 public class ActionLogger extends GenericEventHandler
 {
@@ -84,6 +89,14 @@ public class ActionLogger extends GenericEventHandler
         document.setUid((Long) returnObj);
         ctx.setEntity(document);
         saveLog(new DMEntityLog<Document>(), ActionType.CREATE, ctx);
+        FactoryInstantiator.getInstance().getWebSocketManager().sendUpdateNotice(
+                new UpdateNoticeMessage(
+                        UpdateNoticeType.DOCUMENT,
+                        ctx.getSession().getWebSocketToken(),
+                        ctx.getSession().getUid(),
+                        document.getUid() + " created"
+                )
+        );
     }
 
     @DmsEvent(eventName = { DmsEventName.DOCUMENT_UPDATE }, when = DmsEventOccur.AFTER)
