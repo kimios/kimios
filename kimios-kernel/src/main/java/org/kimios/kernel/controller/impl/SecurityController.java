@@ -543,6 +543,14 @@ public class SecurityController extends AKimiosController implements ISecurityCo
         return this.systemWebSocketToken;
     }
 
+    @Override
+    public String getSessionUserNameAndSource(String sessionUid) throws DataSourceException, ConfigException {
+        Session session = SessionManager.getInstance().getSession(sessionUid);
+        return session != null ?
+                session.getUserName() + "@" + session.getUserSource() :
+                "null";
+    }
+
     public void init() {
         this.systemWebSocketToken = SessionUtils.generateSessionUid();
     }

@@ -17,13 +17,18 @@ package org.kimios.webservices;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.kimios.kernel.ws.pojo.Log;
+import org.kimios.kernel.ws.pojo.UpdateNoticeMessage;
 import org.kimios.webservices.exceptions.DMServiceException;
 
+import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -53,5 +58,13 @@ public interface LogService
     @Produces("application/json")
     public Log[] getWorkspaceLogs(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "workspaceId") @WebParam(name = "workspaceId") long workspaceId)
+            throws DMServiceException;
+
+    @POST @ApiOperation(value ="")
+    @Path("/sendUpdateNotice")
+    @Produces("application/json")
+    @Consumes("application/json")
+    @WebMethod(operationName = "send-update-notice")
+    public UpdateNoticeMessage sendUpdateNotice(@ApiParam() UpdateNoticeMessage updateNoticeMessage)
             throws DMServiceException;
 }

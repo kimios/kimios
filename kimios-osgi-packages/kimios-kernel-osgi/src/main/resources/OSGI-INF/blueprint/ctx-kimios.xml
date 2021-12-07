@@ -165,6 +165,13 @@
         <argument ref="extensionRegistryManager" />
     </bean>
 
+    <bean id="keepAliveSender" class="org.kimios.websocket.system.KeepAliveSender"
+          init-method="startJob" destroy-method="stopJob"
+    >
+        <property name="securityController" ref="securityController" />
+        <property name="webSocketManager" ref="webSocketManager" />
+    </bean>
+
 </blueprint>
               
 

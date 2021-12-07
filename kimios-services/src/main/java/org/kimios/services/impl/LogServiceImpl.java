@@ -21,6 +21,7 @@ import org.kimios.kernel.dms.model.Workspace;
 import org.kimios.kernel.log.model.DMEntityLog;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.ws.pojo.Log;
+import org.kimios.kernel.ws.pojo.UpdateNoticeMessage;
 import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.LogService;
 
@@ -79,6 +80,17 @@ public class LogServiceImpl extends CoreService implements LogService
             return pojos;
         } catch (Exception e) {
             throw getHelper().convertException(e);
+        }
+    }
+
+    @Override
+    public UpdateNoticeMessage sendUpdateNotice(UpdateNoticeMessage updateNoticeMessage) throws DMServiceException {
+        String sessionUid = updateNoticeMessage.getSessionId();
+        if (sessionUid == null) {
+            return updateNoticeMessage;
+        } else {
+            // TODO do something
+            return updateNoticeMessage;
         }
     }
 }

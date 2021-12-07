@@ -4,6 +4,7 @@ import org.eclipse.jetty.websocket.jsr356.JettyClientContainerProvider;
 import org.kimios.kernel.ws.pojo.UpdateNoticeMessage;
 import org.kimios.kernel.ws.pojo.UpdateNoticeMessageDecoder;
 import org.kimios.kernel.ws.pojo.UpdateNoticeMessageEncoder;
+import org.kimios.kernel.ws.pojo.UpdateNoticeType;
 import org.kimios.websocket.client.controller.IWebSocketManager;
 import org.kimios.websocket.client.controller.KimiosWebSocketClientEndpointConfigConfigurator;
 
@@ -56,8 +57,13 @@ public class WebSocketManager implements IWebSocketManager {
 
     //response
     @OnMessage
-    public void onMessage(String text) {
-        System.out.println("Received response in client from server: " + text);
+    public void onMessage(UpdateNoticeMessage message) {
+        System.out.println("Received response in client from server: " + message.toString());
+
+        // handle ping, response pong
+        if (message.getUpdateNoticeType() == UpdateNoticeType.KEEP_ALIVE_PING) {
+            this.sendUpdateNotice(new UpdateNoticeMessage(UpdateNoticeType.KEEP_ALIVE_PONG, null, null));
+        }
     }
 
     @OnError

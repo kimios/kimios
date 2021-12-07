@@ -5,6 +5,7 @@ import org.kimios.kernel.controller.ISecurityController;
 import org.kimios.kernel.ws.pojo.UpdateNoticeMessage;
 import org.kimios.kernel.ws.pojo.UpdateNoticeMessageDecoder;
 import org.kimios.kernel.ws.pojo.UpdateNoticeMessageEncoder;
+import org.kimios.kernel.ws.pojo.UpdateNoticeType;
 import org.kimios.websocket.IKimiosWebSocketController;
 import org.kimios.websocket.model.Message;
 
@@ -39,48 +40,92 @@ public class ChatEndpoint implements IKimiosWebSocketController {
 
     private ISecurityController securityController;
     private Gson gson = new Gson();
+    private int lookupAttempts = 10;
 
     public ChatEndpoint() {
         try {
-            Context context = new InitialContext();
-            this.securityController = (ISecurityController) context
-                    .lookup("osgi:service/org.kimios.kernel.controller.ISecurityController");
-        } catch (NamingException e) {
+            this.init();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void init() {
-        System.out.println("We are in init() of ChatEndpoint");
+    public void init() throws NamingException, InterruptedException {
+        this.lookupAttempts--;
+        try {
+            Context context = new InitialContext();
+            this.securityController = (ISecurityController) context
+                    .lookup("osgi:service/org.kimios.kernel.controller.ISecurityController");
+            System.out.println("WebSocket securityController lookup successful, remaining attempts " + lookupAttempts);
+        } catch (NamingException e) {
+            if (this.lookupAttempts > 0) {
+                Thread.sleep(10000);
+                this.init();
+            } else {
+                throw e;
+            }
+        }
     }
 
     @OnOpen
     public void onOpen(Session session, @PathParam("username") String username) throws IOException, EncodeException {
 
-        String kimiosSessionUid = this.securityController.checkWebSocketToken(username);
-        if (kimiosSessionUid == null) {
-            return;
+        try {
+            String kimiosSessionUid = this.securityController.checkWebSocketToken(username);
+            if (kimiosSessionUid == null) {
+                return;
+            }
+
+            this.session = session;
+            chatEndpoints.add(this);
+            chatEndpointsMap.put(username, this);
+            users.put(session.getId(), this.securityController.getSessionUserNameAndSource(kimiosSessionUid));
+
+            webSocketSessions.put(kimiosSessionUid, session);
+
+            Message message = new Message();
+            message.setFrom(username);
+            message.setContent("Connected!");
+            this.sendMessage(message);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        this.session = session;
-        chatEndpoints.add(this);
-        chatEndpointsMap.put(username, this);
-        users.put(session.getId(), username);
-
-        webSocketSessions.put(kimiosSessionUid, session);
-
-        Message message = new Message();
-        message.setFrom(username);
-        message.setContent("Connected!");
-        this.sendMessage(message);
     }
 
     @OnMessage
     public void onMessage(Session session, UpdateNoticeMessage message) throws IOException, EncodeException {
         // message.setFrom(users.get(session.getId()));
-        System.out.println("IKimiosWebSocketController: received message : " + message.toString());
+        System.out.println(
+                "IKimiosWebSocketController: received message : "
+                        + (message == null ? "null" : message.toString())
+        );
 
-        this.sendUpdateNotice(message.getSessionId(), message);
+        switch (message.getUpdateNoticeType()) {
+            case KEEP_ALIVE_PING: this.sendKeepAliveToAll();
+                break;
+            case KEEP_ALIVE_PONG: this.handlePong(session, message);
+                break;
+            default: this.sendUpdateNotice(message.getSessionId(), message);
+        }
+    }
+
+    private void handlePong(Session session, UpdateNoticeMessage message) {
+        final String[] kimiosSessionId = {null};
+        webSocketSessions.forEach((kimiosSessId, sess) -> {
+            if (sess.getId().equals(session.getId())) {
+                kimiosSessionId[0] = kimiosSessId;
+            }
+        });
+        if (kimiosSessionId[0] == null) {
+            System.out.println("WebSocket received pong from unknown session " + session.getId());
+        }
+        System.out.println(
+                "Websocket received pong from session "
+                        + session.getId()
+                        + " ("
+                        + users.get(session.getId())
+                        + ")"
+        );
     }
 
     @OnClose
@@ -137,6 +182,41 @@ public class ChatEndpoint implements IKimiosWebSocketController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void sendKeepAliveToAll() {
+        webSocketSessions.forEach((key, sessionDestination) -> {
+            try {
+                if (sessionDestination == null) {
+                    return;
+                }
+                UpdateNoticeMessage updateNoticeMessage = new UpdateNoticeMessage(
+                        UpdateNoticeType.KEEP_ALIVE_PING,
+                        null,
+                        null
+                );
+                synchronized (sessionDestination) {
+                    sessionDestination.getBasicRemote()
+                            .sendObject(gson.toJson(updateNoticeMessage, UpdateNoticeMessage.class));
+                    System.out.println(
+                            "UpdateNoticeMessage sent to "
+                                    + users.get(sessionDestination.getId())
+                                    + " (" + key + ")"
+                    );
+                }
+            } catch (IOException | EncodeException e) {
+                e.printStackTrace();
+                webSocketSessions.remove(sessionDestination);
+                System.out.println("WebSocket session removed for kimios session: "
+                        + key
+                        + " ("
+                        + users.get(sessionDestination.getId())
+                );
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     public ISecurityController getSecurityController() {

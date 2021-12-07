@@ -21,7 +21,7 @@ public class UpdateNoticeMessage {
 
     @Override
     public String toString() {
-        return "{ updateNoticeType: " + updateNoticeType.getValue() + " ; "
+        return "{ updateNoticeType: " + (updateNoticeType == null ? "null" : updateNoticeType.getValue()) + " ; "
                 + "token: " + token + " ; "
                 + "sessionId: " + sessionId + " ; "
                 + "message: " + message + " ; "

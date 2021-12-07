@@ -7,7 +7,9 @@ public enum UpdateNoticeType {
     FOLDER("folder"),
     WORKSPACE("workspace"),
     PREVIEW_READY("preview ready"),
-    PREVIEW_PROCESSING("preview processing");
+    PREVIEW_PROCESSING("preview processing"),
+    KEEP_ALIVE_PING("keep alive ping"),
+    KEEP_ALIVE_PONG("keep alive pong");
 
     private final String value;
 

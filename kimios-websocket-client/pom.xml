@@ -22,7 +22,7 @@
         <dependency>
             <groupId>org.kimios</groupId>
             <artifactId>kimios-model</artifactId>
-            <version>1.3-SNAPSHOT</version>
+            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.ops4j.pax.web/pax-web-jetty -->
@@ -30,6 +30,24 @@
             <groupId>org.eclipse.jetty.websocket</groupId>
             <artifactId>javax-websocket-client-impl</artifactId>
             <version>9.2.14.v20151106</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-utils</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.5</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-interfaces</artifactId>
+            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
 

@@ -189,4 +189,6 @@ public interface ISecurityController
     public String checkWebSocketToken(String token);
 
     public String getSystemWebSocketToken();
+
+    public String getSessionUserNameAndSource(String sessionUid) throws DataSourceException, ConfigException;
 }
