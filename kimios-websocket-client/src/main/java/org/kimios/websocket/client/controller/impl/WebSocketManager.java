@@ -37,7 +37,7 @@ public class WebSocketManager implements IWebSocketManager {
     public WebSocketManager(){}
 
     public void init() {
-        System.out.println("je suis là, gros !");
+        System.out.println("websocket manager started");
     }
 
     public void connect(String connectionUrl) {

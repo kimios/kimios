@@ -217,6 +217,8 @@
             </bean>
         </property>
         <property name="webSocketManager" ref="webSocketManager" />
+        <property name="securityController" ref="securityController" />
+        <property name="sessionManager" ref="sessionManager" />
     </bean>
     <!-- Transfer -->
     <bean id="transferfi" class="org.kimios.kernel.filetransfer.FactoryInstantiator" factory-method="getInstance">

@@ -15,6 +15,7 @@
  */
 package org.kimios.kernel.events.impl;
 
+import com.google.gson.Gson;
 import org.kimios.api.events.annotations.DmsEvent;
 import org.kimios.api.events.annotations.DmsEventName;
 import org.kimios.api.events.annotations.DmsEventOccur;
@@ -39,6 +40,8 @@ import java.util.Date;
 public class ActionLogger extends GenericEventHandler
 {
     private static Logger logger = LoggerFactory.getLogger(ActionLogger.class);
+
+    Gson gson = new Gson();
 
     @DmsEvent(eventName = { DmsEventName.WORKSPACE_CREATE }, when = DmsEventOccur.AFTER)
     public void createWorkspace(Object[] paramsObj, Object returnObj, EventContext ctx) throws Exception
@@ -89,13 +92,14 @@ public class ActionLogger extends GenericEventHandler
         document.setUid((Long) returnObj);
         ctx.setEntity(document);
         saveLog(new DMEntityLog<Document>(), ActionType.CREATE, ctx);
-        FactoryInstantiator.getInstance().getWebSocketManager().sendUpdateNotice(
+        sendUpdateNotice(
                 new UpdateNoticeMessage(
                         UpdateNoticeType.DOCUMENT,
                         ctx.getSession().getWebSocketToken(),
                         ctx.getSession().getUid(),
-                        document.getUid() + " created"
-                )
+                        gson.toJson(document)
+                ),
+                (org.kimios.kernel.dms.model.DMEntityImpl) document
         );
     }
 
@@ -248,6 +252,21 @@ public class ActionLogger extends GenericEventHandler
                     ctx.getEvent() + " - " + (ctx.getEntity() != null ? ctx.getEntity().getUid() : " Entity is null"),
                     e);
         }
+    }
+
+    private void sendUpdateNotice(UpdateNoticeMessage updateNoticeMessage, DMEntityImpl dmEntity) {
+        FactoryInstantiator.getInstance().getSessionManager().getSessions().forEach(session -> {
+            if (FactoryInstantiator.getInstance().getSecurityController().canRead(session, dmEntity.getUid())) {
+                FactoryInstantiator.getInstance().getWebSocketManager().sendUpdateNotice(
+                        new UpdateNoticeMessage(
+                                updateNoticeMessage.getUpdateNoticeType(),
+                                null,
+                                session.getUid(),
+                                updateNoticeMessage.getMessage()
+                        )
+                );
+            }
+        });
     }
 }
 
