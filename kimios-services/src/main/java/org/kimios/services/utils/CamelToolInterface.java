@@ -11,4 +11,6 @@ public interface CamelToolInterface extends CamelContextAware {
     public InputStream generateCsv(List documentList) throws IOException;
 
     public void sendUpdateNotice(UpdateNoticeMessage updateNoticeMessage);
+
+    void generateShareDmsEvent(org.kimios.kernel.ws.pojo.Share share);
 }

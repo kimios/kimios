@@ -25,6 +25,7 @@ import org.kimios.kernel.share.controller.IShareTransferController;
 import org.kimios.kernel.share.model.MailContact;
 import org.kimios.kernel.ws.pojo.Share;
 import org.kimios.kernel.ws.pojo.web.ShareByEmailFullContactParam;
+import org.kimios.services.utils.CamelToolInterface;
 import org.kimios.webservices.FileTransferService;
 import org.kimios.webservices.IServiceHelper;
 import org.kimios.webservices.exceptions.DMServiceException;
@@ -56,6 +57,7 @@ public class ShareServiceImpl implements ShareService {
     private IServiceHelper helper;
     private IDocumentController documentController;
     private FileTransferService fileTransferService;
+    private CamelToolInterface camelTool;
 
     private static String DOWNLOAD_DOCUMENT_BY_TOKEN_AND_PASSWORD_FORM_ACTION = "downloadDocumentByTokenAndPassword";
 
@@ -78,6 +80,14 @@ public class ShareServiceImpl implements ShareService {
 
     public void setFileTransferService(FileTransferService fileTransferService) {
         this.fileTransferService = fileTransferService;
+    }
+
+    public CamelToolInterface getCamelTool() {
+        return camelTool;
+    }
+
+    public void setCamelTool(CamelToolInterface camelTool) {
+        this.camelTool = camelTool;
     }
 
     @Override
@@ -183,7 +193,7 @@ public class ShareServiceImpl implements ShareService {
                         .parse(expirationDate);
             }
 
-            shareController.shareEntity(session,
+            Share share = shareController.shareEntity(session,
                     dmEntityId,
                     userId,
                     userSource,
@@ -192,7 +202,9 @@ public class ShareServiceImpl implements ShareService {
                     fullAccess,
                     date,
                     notify
-                    );
+                    ).toPojo();
+
+            this.camelTool.generateShareDmsEvent(share);
         } catch (Exception e) {
             throw helper.convertException(e);
         }

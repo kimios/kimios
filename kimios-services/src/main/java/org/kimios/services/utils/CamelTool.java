@@ -2,8 +2,7 @@ package org.kimios.services.utils;
 
 import org.apache.camel.CamelContext;
 import org.kimios.kernel.configuration.Config;
-import org.kimios.kernel.filetransfer.model.DataTransfer;
-import org.kimios.kernel.ws.pojo.DataTransaction;
+import org.kimios.kernel.ws.pojo.Share;
 import org.kimios.kernel.ws.pojo.DataTransactionWrapper;
 import org.kimios.kernel.ws.pojo.UpdateNoticeMessage;
 import org.kimios.utils.configuration.ConfigurationManager;
@@ -47,6 +46,15 @@ public class CamelTool implements CamelToolInterface {
                 updateNoticeMessage,
                 "header_example",
                 "header_example_value"
+        );
+    }
+
+    @Override
+    public void generateShareDmsEvent(Share share) {
+        org.apache.camel.ProducerTemplate template = camelContext.createProducerTemplate();
+        template.sendBody(
+                "direct:generateShareDmsEvent",
+                share
         );
     }
 

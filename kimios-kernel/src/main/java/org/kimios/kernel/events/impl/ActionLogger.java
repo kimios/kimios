@@ -29,7 +29,7 @@ import org.kimios.kernel.events.model.EventContext;
 import org.kimios.kernel.log.ActionType;
 import org.kimios.kernel.log.FactoryInstantiator;
 import org.kimios.kernel.log.model.DMEntityLog;
-import org.kimios.kernel.share.model.Share;
+import org.kimios.kernel.ws.pojo.Share;
 import org.kimios.kernel.ws.pojo.UpdateNoticeMessage;
 import org.kimios.kernel.ws.pojo.UpdateNoticeType;
 import org.slf4j.Logger;
@@ -92,14 +92,9 @@ public class ActionLogger extends GenericEventHandler
         document.setUid((Long) returnObj);
         ctx.setEntity(document);
         saveLog(new DMEntityLog<Document>(), ActionType.CREATE, ctx);
-        sendUpdateNotice(
-                new UpdateNoticeMessage(
-                        UpdateNoticeType.DOCUMENT,
-                        ctx.getSession().getWebSocketToken(),
-                        ctx.getSession().getUid(),
-                        gson.toJson(document)
-                ),
-                (org.kimios.kernel.dms.model.DMEntityImpl) document
+        sendDocumentUpdateNotice(
+                ctx.getSession().getUid(),
+                document
         );
     }
 
@@ -207,9 +202,10 @@ public class ActionLogger extends GenericEventHandler
     @DmsEvent(eventName = { DmsEventName.DOCUMENT_SHARED }, when = DmsEventOccur.AFTER)
     public void shareDocuments(Object[] paramsObj, Object returnObj, EventContext ctx)
     {
-        Share share = (Share) paramsObj[1];
+        Share share = (Share)EventContext.getParameters().get("share");
         ctx.setEntity(org.kimios.kernel.dms.FactoryInstantiator.getInstance().getDocumentFactory().getDocument(share.getEntity().getUid()));
         saveLog(new DMEntityLog<Document>(), ActionType.DOCUMENT_SHARED, ctx);
+        sendShareUpdateNotice(ctx.getSession().getUid(), share);
     }
 
     private <T extends DMEntityImpl> void saveLog(DMEntityLog<T> log, int actionType, EventContext ctx)
@@ -254,18 +250,43 @@ public class ActionLogger extends GenericEventHandler
         }
     }
 
-    private void sendUpdateNotice(UpdateNoticeMessage updateNoticeMessage, DMEntityImpl dmEntity) {
+    private void sendDocumentUpdateNotice(String sessionUid, Document document) {
         FactoryInstantiator.getInstance().getSessionManager().getSessions().forEach(session -> {
-            if (FactoryInstantiator.getInstance().getSecurityController().canRead(session, dmEntity.getUid())) {
+            if (FactoryInstantiator.getInstance().getSecurityController().canRead(session, document.getUid())) {
                 FactoryInstantiator.getInstance().getWebSocketManager().sendUpdateNotice(
                         new UpdateNoticeMessage(
-                                updateNoticeMessage.getUpdateNoticeType(),
+                                UpdateNoticeType.DOCUMENT,
                                 null,
-                                session.getUid(),
-                                updateNoticeMessage.getMessage()
+                                sessionUid,
+                                gson.toJson(document)
                         )
                 );
             }
+        });
+    }
+
+    private void sendShareUpdateNotice(String sessionUid, Share share) {
+        // to share creator
+        FactoryInstantiator.getInstance().getWebSocketManager().sendUpdateNotice(
+                new UpdateNoticeMessage(
+                        UpdateNoticeType.SHARES_BY_ME,
+                        null,
+                        sessionUid
+                )
+        );
+
+        // to all share target user sessions
+        FactoryInstantiator.getInstance().getSessionManager().getSessions().stream().filter(session ->
+                session.getUserName().equals(share.getTargetUserId())
+                && session.getUserSource().equals(share.getTargetUserSource())
+        ).forEach(session -> {
+            FactoryInstantiator.getInstance().getWebSocketManager().sendUpdateNotice(
+                    new UpdateNoticeMessage(
+                            UpdateNoticeType.SHARES_WITH_ME,
+                            null,
+                            session.getUid()
+                    )
+            );
         });
     }
 }

@@ -36,6 +36,8 @@
         <property name="converterController" ref="converterController" />
         <property name="securityController" ref="securityController" />
     </bean>
+    
+    <bean id="generateShareDmsEventRouteBuilder" class="org.kimios.camel.routes.GenerateShareDmsEventRouteBuilder" />
 
     <!--<reference id="connectionFactory" interface="javax.jms.ConnectionFactory" />
 
@@ -80,6 +82,8 @@
 
     <reference id="securityController" interface="org.kimios.kernel.controller.ISecurityController" />
 
+    <reference id="documentController" interface="org.kimios.kernel.controller.IDocumentController" />
+
     <camelContext id="kimios" xmlns="http://camel.apache.org/schema/blueprint">
         <packageScan>
             <package>org.kimios.camel.routes.ext</package>
@@ -88,6 +92,7 @@
         <routeBuilder ref="documentExporterRouteBuilder" />
         <routeBuilder ref="updateNotifierRouteBuilder" />
         <routeBuilder ref="convertDocumentVersionRouteBuilder" />
+        <routeBuilder ref="generateShareDmsEventRouteBuilder" />
         <!--<route>
             <from uri="timer:simple?period=5000"/>
             <setBody>

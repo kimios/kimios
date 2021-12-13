@@ -22,6 +22,7 @@ import org.kimios.kernel.dms.model.*;
 import org.kimios.kernel.log.model.DMEntityLog;
 import org.kimios.kernel.security.model.DMEntitySecurity;
 import org.kimios.kernel.security.model.Session;
+import org.kimios.kernel.ws.pojo.Share;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -345,4 +346,7 @@ public interface IDocumentController {
 
     public List<org.kimios.kernel.ws.pojo.DMEntity> retrieveDocumentParents(Session session, long uid)
             throws AccessDeniedException, DataSourceException, ConfigException;
+
+    @DmsEvent(eventName = DmsEventName.DOCUMENT_SHARED)
+    public void generateShareDmsEvent(Share share) throws DataSourceException, ConfigException, AccessDeniedException;
 }

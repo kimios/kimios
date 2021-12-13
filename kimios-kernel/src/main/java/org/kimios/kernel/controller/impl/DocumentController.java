@@ -1697,4 +1697,12 @@ public class DocumentController extends AKimiosController implements IDocumentCo
 
         return parents.stream().map(dmEntity -> dmEntity.toPojo()).collect(Collectors.toList());
     }
+
+    @Override
+    @DmsEvent(eventName = {DmsEventName.DOCUMENT_SHARED})
+    public void generateShareDmsEvent(org.kimios.kernel.ws.pojo.Share share) throws DataSourceException, ConfigException, AccessDeniedException {
+        EventContext initialContext = EventContext.get();
+        EventContext.clear();
+        EventContext.addParameter("share", share);
+    }
 }

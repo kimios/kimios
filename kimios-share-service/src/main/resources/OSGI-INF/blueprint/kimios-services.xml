@@ -47,6 +47,8 @@
     <reference id="fileTransferService"
                interface="org.kimios.webservices.FileTransferService" />
 
+    <reference id="camelToolOsgi" interface="org.kimios.services.utils.CamelToolInterface" />
+
     <bean id="shareServiceBean" class="org.kimios.webservices.share.impl.ShareServiceImpl">
         <argument ref="mailShareController"/>
         <argument ref="shareController" />
@@ -54,6 +56,7 @@
         <argument ref="serviceHelper"/>
         <argument ref="shareTransferController" />
         <property name="fileTransferService" ref="fileTransferService" />
+        <property name="camelTool" ref="camelToolOsgi" />
     </bean>
 
     <service interface="org.kimios.webservices.share.impl.ShareServiceImpl"
