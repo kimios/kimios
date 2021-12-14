@@ -1,6 +1,7 @@
 package org.kimios.services.utils;
 
 import org.apache.camel.CamelContextAware;
+import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.ws.pojo.UpdateNoticeMessage;
 
 import java.io.IOException;
@@ -12,5 +13,5 @@ public interface CamelToolInterface extends CamelContextAware {
 
     public void sendUpdateNotice(UpdateNoticeMessage updateNoticeMessage);
 
-    void generateShareDmsEvent(org.kimios.kernel.ws.pojo.Share share);
+    void generateShareDmsEvent(org.kimios.kernel.ws.pojo.Share share, Session session);
 }

@@ -204,7 +204,7 @@ public class ShareServiceImpl implements ShareService {
                     notify
                     ).toPojo();
 
-            this.camelTool.generateShareDmsEvent(share);
+            this.camelTool.generateShareDmsEvent(share, session);
         } catch (Exception e) {
             throw helper.convertException(e);
         }

@@ -42,6 +42,7 @@ import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.share.model.Share;
 import org.kimios.kernel.share.model.ShareStatus;
 import org.kimios.kernel.user.model.User;
+import org.kimios.kernel.ws.pojo.ShareSessionWrapper;
 import org.kimios.utils.configuration.ConfigurationManager;
 import org.kimios.utils.hash.HashCalculator;
 import org.slf4j.Logger;
@@ -1700,9 +1701,9 @@ public class DocumentController extends AKimiosController implements IDocumentCo
 
     @Override
     @DmsEvent(eventName = {DmsEventName.DOCUMENT_SHARED})
-    public void generateShareDmsEvent(org.kimios.kernel.ws.pojo.Share share) throws DataSourceException, ConfigException, AccessDeniedException {
-        EventContext initialContext = EventContext.get();
+    public void generateShareDmsEvent(ShareSessionWrapper shareSessionWrapper) throws DataSourceException, ConfigException, AccessDeniedException {
         EventContext.clear();
-        EventContext.addParameter("share", share);
+        EventContext.addParameter("share", shareSessionWrapper.getShare());
+        EventContext.get().setSession(shareSessionWrapper.getSession());
     }
 }

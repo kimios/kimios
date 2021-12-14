@@ -29,7 +29,9 @@ import org.kimios.kernel.events.model.EventContext;
 import org.kimios.kernel.log.ActionType;
 import org.kimios.kernel.log.FactoryInstantiator;
 import org.kimios.kernel.log.model.DMEntityLog;
+import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.ws.pojo.Share;
+import org.kimios.kernel.ws.pojo.ShareSessionWrapper;
 import org.kimios.kernel.ws.pojo.UpdateNoticeMessage;
 import org.kimios.kernel.ws.pojo.UpdateNoticeType;
 import org.slf4j.Logger;
@@ -202,10 +204,29 @@ public class ActionLogger extends GenericEventHandler
     @DmsEvent(eventName = { DmsEventName.DOCUMENT_SHARED }, when = DmsEventOccur.AFTER)
     public void shareDocuments(Object[] paramsObj, Object returnObj, EventContext ctx)
     {
-        Share share = (Share)EventContext.getParameters().get("share");
-        ctx.setEntity(org.kimios.kernel.dms.FactoryInstantiator.getInstance().getDocumentFactory().getDocument(share.getEntity().getUid()));
+        ShareSessionWrapper shareSessionWrapper = (ShareSessionWrapper) paramsObj[0];
+        if (shareSessionWrapper == null) {
+            logger.error("After DmsEventName.DOCUMENT_SHARED: shareSessionWrapper is null");
+            return;
+        }
+        Share share = shareSessionWrapper.getShare();
+        Session session = shareSessionWrapper.getSession();
+        if (share == null) {
+            logger.error("After DmsEventName.DOCUMENT_SHARED: share is null");
+            return;
+        }
+        if (session == null) {
+            logger.error("After DmsEventName.DOCUMENT_SHARED: session is null");
+            return;
+        }
+
+        ctx.setEntity(
+                org.kimios.kernel.dms.FactoryInstantiator
+                        .getInstance().getDocumentFactory().getDocument(share.getEntity().getUid())
+        );
+        ctx.setSession(session);
         saveLog(new DMEntityLog<Document>(), ActionType.DOCUMENT_SHARED, ctx);
-        sendShareUpdateNotice(ctx.getSession().getUid(), share);
+        sendShareUpdateNotice(session, share);
     }
 
     private <T extends DMEntityImpl> void saveLog(DMEntityLog<T> log, int actionType, EventContext ctx)
@@ -257,7 +278,7 @@ public class ActionLogger extends GenericEventHandler
                         new UpdateNoticeMessage(
                                 UpdateNoticeType.DOCUMENT,
                                 null,
-                                sessionUid,
+                                session.getUid(),
                                 gson.toJson(document)
                         )
                 );
@@ -265,26 +286,26 @@ public class ActionLogger extends GenericEventHandler
         });
     }
 
-    private void sendShareUpdateNotice(String sessionUid, Share share) {
+    private void sendShareUpdateNotice(Session session, Share share) {
         // to share creator
         FactoryInstantiator.getInstance().getWebSocketManager().sendUpdateNotice(
                 new UpdateNoticeMessage(
                         UpdateNoticeType.SHARES_BY_ME,
                         null,
-                        sessionUid
+                        session.getUid()
                 )
         );
 
         // to all share target user sessions
-        FactoryInstantiator.getInstance().getSessionManager().getSessions().stream().filter(session ->
-                session.getUserName().equals(share.getTargetUserId())
-                && session.getUserSource().equals(share.getTargetUserSource())
-        ).forEach(session -> {
+        FactoryInstantiator.getInstance().getSessionManager().getSessions().stream().filter(sess ->
+                sess.getUserName().equals(share.getTargetUserId())
+                && sess.getUserSource().equals(share.getTargetUserSource())
+        ).forEach(sess -> {
             FactoryInstantiator.getInstance().getWebSocketManager().sendUpdateNotice(
                     new UpdateNoticeMessage(
                             UpdateNoticeType.SHARES_WITH_ME,
                             null,
-                            session.getUid()
+                            sess.getUid()
                     )
             );
         });

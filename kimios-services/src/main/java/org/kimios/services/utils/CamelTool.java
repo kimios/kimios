@@ -2,8 +2,10 @@ package org.kimios.services.utils;
 
 import org.apache.camel.CamelContext;
 import org.kimios.kernel.configuration.Config;
+import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.ws.pojo.Share;
 import org.kimios.kernel.ws.pojo.DataTransactionWrapper;
+import org.kimios.kernel.ws.pojo.ShareSessionWrapper;
 import org.kimios.kernel.ws.pojo.UpdateNoticeMessage;
 import org.kimios.utils.configuration.ConfigurationManager;
 
@@ -50,11 +52,11 @@ public class CamelTool implements CamelToolInterface {
     }
 
     @Override
-    public void generateShareDmsEvent(Share share) {
+    public void generateShareDmsEvent(Share share, Session session) {
         org.apache.camel.ProducerTemplate template = camelContext.createProducerTemplate();
         template.sendBody(
                 "direct:generateShareDmsEvent",
-                share
+                new ShareSessionWrapper(share, session)
         );
     }
 

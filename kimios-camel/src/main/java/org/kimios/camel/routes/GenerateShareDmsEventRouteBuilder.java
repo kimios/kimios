@@ -4,6 +4,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.kimios.kernel.ws.pojo.Share;
+import org.kimios.kernel.ws.pojo.ShareSessionWrapper;
 
 public class GenerateShareDmsEventRouteBuilder  extends RouteBuilder {
     @Override
@@ -13,9 +14,9 @@ public class GenerateShareDmsEventRouteBuilder  extends RouteBuilder {
                 .process(new Processor() {
                     @Override
                     public void process(Exchange exchange) throws Exception {
-                        Share share = exchange.getIn().getBody(Share.class);
+                        ShareSessionWrapper shareSessionWrapper = exchange.getIn().getBody(ShareSessionWrapper.class);
 
-                        exchange.getOut().setBody(share);
+                        exchange.getOut().setBody(shareSessionWrapper);
                         exchange.getOut().setHeaders(exchange.getIn().getHeaders());
                     }
                 })

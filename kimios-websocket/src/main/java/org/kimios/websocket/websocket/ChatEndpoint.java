@@ -176,6 +176,13 @@ public class ChatEndpoint implements IKimiosWebSocketController {
             synchronized (sessionDestination) {
                 sessionDestination.getBasicRemote()
                         .sendObject(gson.toJson(updateNoticeMessage, UpdateNoticeMessage.class));
+                System.out.println(
+                        "UpdateNoticeMessage ("
+                                + updateNoticeMessage.getUpdateNoticeType().getValue()
+                                + ") sent to "
+                                + users.get(sessionDestination.getId())
+                                + " (" + sessionId + ")"
+                );
             }
         } catch (IOException | EncodeException e) {
             e.printStackTrace();
