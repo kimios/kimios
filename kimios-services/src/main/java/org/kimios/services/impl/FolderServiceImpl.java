@@ -127,5 +127,28 @@ public class FolderServiceImpl extends CoreService implements FolderService
             throw getHelper().convertException(e);
         }
     }
+
+    @Override
+    public boolean canBeMoved(String sessionId, long folderId) throws DMServiceException {
+        try {
+            Session session = getHelper().getSession(sessionId);
+            return this.folderController.canBeMoved(session, folderId);
+
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+
+    }
+
+    @Override
+    public boolean isWriteable(String sessionId, long folderId) throws DMServiceException {
+        try {
+            Session session = getHelper().getSession(sessionId);
+            return this.folderController.isWriteable(session, folderId);
+
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
 }
 

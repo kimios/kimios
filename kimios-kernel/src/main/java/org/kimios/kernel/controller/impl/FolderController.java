@@ -287,17 +287,10 @@ public class FolderController extends AKimiosController implements IFolderContro
         boolean proceed = false;
         if (parentUid != folder.getParentUid()) {
             // move
-            proceed = getSecurityAgent()
-                    .isWritable(folder.getParent(), session.getUserName(), session.getUserSource(), session.getGroups())
-                    && !getSecurityAgent()
-                    .hasAnyChildNotWritable(folder, session.getUserName(), session.getUserSource(), session.getGroups())
-                    && !getSecurityAgent().hasAnyChildCheckedOut(folder, session.getUserName(), session.getUserSource())
-                    && getSecurityAgent()
-                    .isWritable(parent, session.getUserName(), session.getUserSource(), session.getGroups());
+            proceed = this.canBeMoved(session, folder);
         } else {
             //name change
-            proceed = getSecurityAgent()
-                    .isWritable(folder, session.getUserName(), session.getUserSource(), session.getGroups());
+            proceed = this.isWriteable(session, folder);
         }
         if (proceed) {
             folder.setParentUid(parentUid);
@@ -315,6 +308,36 @@ public class FolderController extends AKimiosController implements IFolderContro
         } else {
             throw new AccessDeniedException();
         }
+    }
+
+    public boolean canBeMoved(Session session, long folderUid) throws ConfigException, DataSourceException {
+        Folder folder = dmsFactoryInstantiator.getFolderFactory().getFolder(folderUid);
+
+        return this.canBeMoved(session, folder);
+    }
+
+    private boolean canBeMoved(Session session, Folder folder) throws ConfigException, DataSourceException {
+        DMEntityImpl parent =
+                (DMEntityImpl) dmsFactoryInstantiator.getDmEntityFactory().getEntity(folder.getParentUid());
+
+        return getSecurityAgent()
+                .isWritable(folder.getParent(), session.getUserName(), session.getUserSource(), session.getGroups())
+                && !getSecurityAgent()
+                .hasAnyChildNotWritable(folder, session.getUserName(), session.getUserSource(), session.getGroups())
+                && !getSecurityAgent().hasAnyChildCheckedOut(folder, session.getUserName(), session.getUserSource())
+                && getSecurityAgent()
+                .isWritable(parent, session.getUserName(), session.getUserSource(), session.getGroups());
+    }
+
+    public boolean isWriteable(Session session, long folderUid) throws ConfigException, DataSourceException {
+        Folder folder = dmsFactoryInstantiator.getFolderFactory().getFolder(folderUid);
+
+        return this.isWriteable(session, folder);
+    }
+
+    public boolean isWriteable(Session session, Folder folder) throws ConfigException, DataSourceException {
+        return getSecurityAgent()
+                .isWritable(folder, session.getUserName(), session.getUserSource(), session.getGroups());
     }
 
     /* (non-Javadoc)

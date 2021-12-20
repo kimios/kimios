@@ -15,15 +15,15 @@
  */
 package org.kimios.kernel.controller;
 
-import org.kimios.exceptions.ConfigException;
-import org.kimios.kernel.dms.model.Folder;
-import org.kimios.kernel.dms.model.MetaValue;
 import org.kimios.api.events.annotations.DmsEvent;
 import org.kimios.api.events.annotations.DmsEventName;
 import org.kimios.exceptions.AccessDeniedException;
+import org.kimios.exceptions.ConfigException;
 import org.kimios.exceptions.DataSourceException;
 import org.kimios.exceptions.NamingException;
 import org.kimios.exceptions.TreeException;
+import org.kimios.kernel.dms.model.Folder;
+import org.kimios.kernel.dms.model.MetaValue;
 import org.kimios.kernel.log.model.DMEntityLog;
 import org.kimios.kernel.security.model.Session;
 
@@ -88,4 +88,8 @@ public interface IFolderController {
     public Map<org.kimios.kernel.ws.pojo.Folder, List<org.kimios.kernel.ws.pojo.MetaValue>>
     getFolderWithMetaDatas(Session session, List<Long> folders)
             throws ConfigException, DataSourceException, AccessDeniedException;
+
+    public boolean canBeMoved(Session session, long folderId) throws ConfigException, DataSourceException;
+
+    public boolean isWriteable(Session session, long folderId) throws ConfigException, DataSourceException;
 }

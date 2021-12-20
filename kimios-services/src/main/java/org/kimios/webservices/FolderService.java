@@ -28,6 +28,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
 import java.util.HashMap;
 import java.util.List;
 
@@ -97,5 +98,21 @@ public interface FolderService {
     public HashMap<Folder, List<MetaValue>>
     getFoldersWithMetaValues(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
                              @QueryParam(value = "foldersId") @WebParam(name = "foldersId") List<Long> foldersIds)
+            throws DMServiceException;
+
+    @GET
+    @ApiOperation(value = "")
+    @Path("/canBeMoved")
+    @Produces(MediaType.APPLICATION_JSON)
+    public boolean canBeMoved(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+                              @QueryParam(value = "folderId") @WebParam(name = "folderId") long folderId)
+            throws DMServiceException;
+
+    @GET
+    @ApiOperation(value = "")
+    @Path("/isWriteable")
+    @Produces(MediaType.APPLICATION_JSON)
+    public boolean isWriteable(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+                               @QueryParam(value = "folderId") @WebParam(name = "folderId") long folderId)
             throws DMServiceException;
 }
