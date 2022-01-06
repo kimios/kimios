@@ -2,8 +2,9 @@ package org.kimios.websocket.websocket;
 
 import com.google.gson.Gson;
 import org.kimios.kernel.controller.ISecurityController;
+import org.kimios.kernel.ws.pojo.DataMessage;
+import org.kimios.kernel.ws.pojo.DataMessageEncoder;
 import org.kimios.kernel.ws.pojo.UpdateNoticeMessage;
-import org.kimios.kernel.ws.pojo.UpdateNoticeMessageDecoder;
 import org.kimios.kernel.ws.pojo.UpdateNoticeMessageEncoder;
 import org.kimios.kernel.ws.pojo.UpdateNoticeType;
 import org.kimios.websocket.IKimiosWebSocketController;
@@ -28,8 +29,8 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 @ServerEndpoint(
         value = "/chat/{username}",
-        decoders = { MessageDecoder.class, UpdateNoticeMessageDecoder.class },
-        encoders = { MessageEncoder.class, UpdateNoticeMessageEncoder.class }
+        decoders = { org.kimios.kernel.ws.pojo.MessageDecoder.class },
+        encoders = { MessageEncoder.class, UpdateNoticeMessageEncoder.class, DataMessageEncoder.class}
 )
 public class ChatEndpoint implements IKimiosWebSocketController {
     private Session session;
@@ -93,19 +94,28 @@ public class ChatEndpoint implements IKimiosWebSocketController {
     }
 
     @OnMessage
-    public void onMessage(Session session, UpdateNoticeMessage message) throws IOException, EncodeException {
+    public void onMessage(Session session, org.kimios.kernel.ws.pojo.Message message) throws IOException, EncodeException {
         // message.setFrom(users.get(session.getId()));
         System.out.println(
                 "IKimiosWebSocketController: received message : "
-                        + (message == null ? "null" : message.toString())
+                        + (message == null ? "null" : message.getClass().toString() + " " + message.toString())
         );
 
-        switch (message.getUpdateNoticeType()) {
-            case KEEP_ALIVE_PING: this.sendKeepAliveToAll();
-                break;
-            case KEEP_ALIVE_PONG: this.handlePong(session, message);
-                break;
-            default: this.sendUpdateNotice(message.getSessionId(), message);
+        if (message instanceof UpdateNoticeMessage) {
+            switch (((UpdateNoticeMessage) message).getUpdateNoticeType()) {
+                case KEEP_ALIVE_PING:
+                    this.sendKeepAliveToAll();
+                    break;
+                case KEEP_ALIVE_PONG:
+                    this.handlePong(session, (UpdateNoticeMessage) message);
+                    break;
+                default:
+                    this.sendUpdateNotice(message.getSessionId(), (UpdateNoticeMessage) message);
+            }
+        } else {
+            if (message instanceof DataMessage) {
+                this.sendData(message.getSessionId(), (DataMessage) message);
+            }
         }
     }
 
@@ -179,6 +189,33 @@ public class ChatEndpoint implements IKimiosWebSocketController {
                 System.out.println(
                         "UpdateNoticeMessage ("
                                 + updateNoticeMessage.getUpdateNoticeType().getValue()
+                                + ") sent to "
+                                + users.get(sessionDestination.getId())
+                                + " (" + sessionId + ")"
+                );
+            }
+        } catch (IOException | EncodeException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void sendData(String sessionId, DataMessage dataMessage) {
+        try {
+            // ChatEndpoint chatEndpoint = chatEndpointsMap.get(sessionId);
+            Session sessionDestination = webSocketSessions.get(sessionId);
+            if (sessionDestination == null) {
+                return;
+            }
+            dataMessage.clearSessionId();
+            synchronized (sessionDestination) {
+                sessionDestination.getBasicRemote()
+                        .sendObject(gson.toJson(dataMessage, DataMessage.class));
+                System.out.println(
+                        "DataMessage (with list size of "
+                                + dataMessage.getDmEntityList().size()
                                 + ") sent to "
                                 + users.get(sessionDestination.getId())
                                 + " (" + sessionId + ")"

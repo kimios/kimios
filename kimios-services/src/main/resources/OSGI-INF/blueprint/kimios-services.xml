@@ -496,6 +496,7 @@
         <property name="ruleController" ref="rulesController"/>
         <property name="extensionController" ref="extensionController"/>
         <property name="converterController" ref="converterController"/>
+        <property name="camelTool" ref="camelTool" />
     </bean>
 
     <bean id="workspaceServiceBean" class="org.kimios.services.impl.WorkspaceServiceImpl">

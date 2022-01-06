@@ -17,14 +17,22 @@ package org.kimios.webservices;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
-import org.kimios.kernel.ws.pojo.MetaValue;
+import org.kimios.kernel.ws.pojo.DataMessage;
 import org.kimios.kernel.ws.pojo.Folder;
+import org.kimios.kernel.ws.pojo.MetaValue;
+import org.kimios.kernel.ws.pojo.UpdateNoticeMessage;
+import org.kimios.kernel.ws.pojo.web.DMEntityTreeParam;
+import org.kimios.kernel.ws.pojo.web.FolderUidListParam;
 import org.kimios.webservices.exceptions.DMServiceException;
 
+import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -48,12 +56,21 @@ public interface FolderService {
     public Folder getFolder(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
                             @QueryParam(value = "folderId") @WebParam(name = "folderId") long folderId) throws DMServiceException;
 
-    @GET
+    @GET 
     @ApiOperation(value = "")
     @Path("/getFolders")
     @Produces("application/json")
     public Folder[] getFolders(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
-                               @QueryParam(value = "parentId") @WebParam(name = "parentId") long parentId) throws DMServiceException;
+                                      @QueryParam(value = "parentId") @WebParam(name = "parentId") long parentId) throws DMServiceException;
+
+    @POST
+    @ApiOperation(value = "")
+    @Path("/getFoldersFolders")
+    @Produces("application/json")
+    @Consumes("application/json")
+    @WebMethod(operationName = "get-folders-folders")
+    public void getFoldersFolders(@ApiParam() FolderUidListParam folderUidListParam)
+            throws DMServiceException;
 
     @GET
     @ApiOperation(value = "")
@@ -114,5 +131,14 @@ public interface FolderService {
     @Produces(MediaType.APPLICATION_JSON)
     public boolean isWriteable(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
                                @QueryParam(value = "folderId") @WebParam(name = "folderId") long folderId)
+            throws DMServiceException;
+
+    @POST
+    @ApiOperation(value ="")
+    @Path("/sendData")
+    @Produces("application/json")
+    @Consumes("application/json")
+    @WebMethod(operationName = "send-data")
+    public DataMessage sendData(@ApiParam() DataMessage dataMessage)
             throws DMServiceException;
 }

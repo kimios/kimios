@@ -1,29 +1,25 @@
 package org.kimios.kernel.ws.pojo;
 
-public class UpdateNoticeMessage {
+public class UpdateNoticeMessage extends Message {
     private UpdateNoticeType updateNoticeType;
-    private String token;
     private String message;
-    private String sessionId;
 
     public UpdateNoticeMessage(UpdateNoticeType updateNoticeType, String token, String sessionId) {
+        super(token, sessionId);
         this.updateNoticeType = updateNoticeType;
-        this.token = token;
-        this.sessionId = sessionId;
     }
 
     public UpdateNoticeMessage(UpdateNoticeType updateNoticeType, String token, String sessionId, String message) {
+        super(token, sessionId);
         this.updateNoticeType = updateNoticeType;
-        this.token = token;
-        this.sessionId = sessionId;
         this.message = message;
     }
 
     @Override
     public String toString() {
         return "{ updateNoticeType: " + (updateNoticeType == null ? "null" : updateNoticeType.getValue()) + " ; "
-                + "token: " + token + " ; "
-                + "sessionId: " + sessionId + " ; "
+                + "token: " + getToken() + " ; "
+                + "sessionId: " + getSessionId() + " ; "
                 + "message: " + message + " ; "
                 + " }";
     }
@@ -36,31 +32,11 @@ public class UpdateNoticeMessage {
         this.updateNoticeType = updateNoticeType;
     }
 
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
     public String getMessage() {
         return message;
     }
 
     public void setMessage(String message) {
         this.message = message;
-    }
-
-    public String getSessionId() {
-        return sessionId;
-    }
-
-    public void clearSessionId() {
-        this.sessionId = null;
-    }
-
-    public void clearToken() {
-        this.token = null;
     }
 }

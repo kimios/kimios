@@ -15,14 +15,18 @@
  */
 package org.kimios.services.impl;
 
-import org.kimios.kernel.ws.pojo.MetaValue;
+import org.kimios.exceptions.AccessDeniedException;
 import org.kimios.kernel.security.model.Session;
+import org.kimios.kernel.ws.pojo.DataMessage;
 import org.kimios.kernel.ws.pojo.Folder;
-import org.kimios.webservices.exceptions.DMServiceException;
+import org.kimios.kernel.ws.pojo.MetaValue;
+import org.kimios.kernel.ws.pojo.web.FolderUidListParam;
 import org.kimios.webservices.FolderService;
+import org.kimios.webservices.exceptions.DMServiceException;
 
 import javax.jws.WebService;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -59,6 +63,27 @@ public class FolderServiceImpl extends CoreService implements FolderService
             return r;
         } catch (Exception e) {
             throw getHelper().convertException(e);
+        }
+    }
+
+    @Override
+    public void getFoldersFolders(FolderUidListParam folderUidListParam) throws DMServiceException {
+        Session session;
+        try {
+            session = getHelper().getSession(folderUidListParam.getSessionId());
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+        if (session == null) {
+            throw getHelper().convertException(new AccessDeniedException());
+        }
+        for (Long uid : folderUidListParam.getFolderUidList()) {
+            this.camelTool.sendData(new DataMessage(
+                    session.getWebSocketToken(),
+                    session.getUid(),
+                    Arrays.asList(this.getFolders(folderUidListParam.getSessionId(), uid)),
+                    uid
+            ));
         }
     }
 
@@ -149,6 +174,11 @@ public class FolderServiceImpl extends CoreService implements FolderService
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }
+    }
+
+    @Override
+    public DataMessage sendData(DataMessage dataMessage) throws DMServiceException {
+        return null;
     }
 }
 

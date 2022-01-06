@@ -32,6 +32,9 @@
     <bean id="updateNotifierRouteBuilder" class="org.kimios.camel.routes.UpdateNotifierRouteBuilder">
     </bean>
 
+    <bean id="dataSenderRouteBuilder" class="org.kimios.camel.routes.DataSenderRouteBuilder">
+    </bean>
+
     <bean id="convertDocumentVersionRouteBuilder" class="org.kimios.camel.routes.ConvertDocumentVersionRouteBuilder" >
         <property name="converterController" ref="converterController" />
         <property name="securityController" ref="securityController" />
@@ -93,6 +96,7 @@
         <routeBuilder ref="updateNotifierRouteBuilder" />
         <routeBuilder ref="convertDocumentVersionRouteBuilder" />
         <routeBuilder ref="generateShareDmsEventRouteBuilder" />
+        <routeBuilder ref="dataSenderRouteBuilder" />
         <!--<route>
             <from uri="timer:simple?period=5000"/>
             <setBody>

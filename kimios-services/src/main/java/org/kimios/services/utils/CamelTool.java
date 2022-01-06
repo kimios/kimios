@@ -3,6 +3,7 @@ package org.kimios.services.utils;
 import org.apache.camel.CamelContext;
 import org.kimios.kernel.configuration.Config;
 import org.kimios.kernel.security.model.Session;
+import org.kimios.kernel.ws.pojo.DataMessage;
 import org.kimios.kernel.ws.pojo.Share;
 import org.kimios.kernel.ws.pojo.DataTransactionWrapper;
 import org.kimios.kernel.ws.pojo.ShareSessionWrapper;
@@ -41,6 +42,7 @@ public class CamelTool implements CamelToolInterface {
 
     }
 
+    @Override
     public void sendUpdateNotice(UpdateNoticeMessage updateNoticeMessage) {
         org.apache.camel.ProducerTemplate template = camelContext.createProducerTemplate();
         template.sendBodyAndHeader(
@@ -48,6 +50,15 @@ public class CamelTool implements CamelToolInterface {
                 updateNoticeMessage,
                 "header_example",
                 "header_example_value"
+        );
+    }
+
+    @Override
+    public void sendData(DataMessage dataMessage) {
+        org.apache.camel.ProducerTemplate template = camelContext.createProducerTemplate();
+        template.sendBody(
+                "direct:sendData",
+                dataMessage
         );
     }
 
@@ -60,6 +71,7 @@ public class CamelTool implements CamelToolInterface {
         );
     }
 
+    @Override
     public void launchDocumentVersionConversion(DataTransactionWrapper dataTransactionWrapper) {
         org.apache.camel.ProducerTemplate template = camelContext.createProducerTemplate();
         template.sendBodyAndHeader(
