@@ -1,23 +1,35 @@
 package org.kimios.kernel.ws.pojo;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DataMessage extends Message {
 
     private List<DMEntity> dmEntityList;
-    private long parentUid;
+    private DMEntity parent;
 
-    public DataMessage(String token, String sessionId, List<DMEntity> dmEntityList, long parentUid) {
+    public DataMessage(String token, String sessionId, List<DMEntity> dmEntityList, DMEntity parent) {
         super(token, sessionId);
         this.dmEntityList = dmEntityList;
-        this.parentUid = parentUid;
+        this.parent = parent;
     }
 
     public List<DMEntity> getDmEntityList() {
         return dmEntityList;
     }
 
-    public long getParentUid() {
-        return parentUid;
+    public DMEntity getParent() {
+        return parent;
+    }
+
+    @Override
+    public String toString() {
+        return "{ parent: " + parent.toString() + " ; "
+                + "\n"
+                + "dmEntityList (" + dmEntityList.size() + ") : ["
+                + "\n"
+                + dmEntityList.stream().map(dmEntity -> dmEntity.toString()).collect(Collectors.joining("\n"))
+                + (dmEntityList.size() > 0 ? "\n" : "")
+                + "]}";
     }
 }

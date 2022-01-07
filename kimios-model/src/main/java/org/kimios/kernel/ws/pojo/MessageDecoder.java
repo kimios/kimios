@@ -13,7 +13,7 @@ public class MessageDecoder implements Decoder.Text<Message> {
     @Override
     public Message decode(String s) throws DecodeException {
         Message message;
-        if (s.contains("updateNoticetype:")) {
+        if (s.contains("\"updateNoticeType\":")) {
             message = new UpdateNoticeMessageDecoder().decode(s);
         } else {
             message = new DataMessageDecoder().decode(s);

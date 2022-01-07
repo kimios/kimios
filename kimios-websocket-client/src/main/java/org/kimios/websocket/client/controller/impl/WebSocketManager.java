@@ -2,12 +2,11 @@ package org.kimios.websocket.client.controller.impl;
 
 import org.eclipse.jetty.websocket.jsr356.JettyClientContainerProvider;
 import org.kimios.kernel.ws.pojo.DataMessage;
-import org.kimios.kernel.ws.pojo.DataMessageDecoder;
 import org.kimios.kernel.ws.pojo.DataMessageEncoder;
+import org.kimios.kernel.ws.pojo.Message;
+import org.kimios.kernel.ws.pojo.MessageDecoder;
 import org.kimios.kernel.ws.pojo.UpdateNoticeMessage;
-import org.kimios.kernel.ws.pojo.UpdateNoticeMessageDecoder;
 import org.kimios.kernel.ws.pojo.UpdateNoticeMessageEncoder;
-import org.kimios.kernel.ws.pojo.UpdateNoticeType;
 import org.kimios.websocket.client.controller.IWebSocketManager;
 import org.kimios.websocket.client.controller.KimiosWebSocketClientEndpointConfigConfigurator;
 
@@ -26,7 +25,7 @@ import java.net.URI;
 
 @ClientEndpoint(
         configurator = KimiosWebSocketClientEndpointConfigConfigurator.class,
-        decoders = { UpdateNoticeMessageDecoder.class, DataMessageDecoder.class },
+        decoders = { MessageDecoder.class },
         encoders = { UpdateNoticeMessageEncoder.class, DataMessageEncoder.class }
 )
 public class WebSocketManager implements IWebSocketManager {
@@ -60,13 +59,7 @@ public class WebSocketManager implements IWebSocketManager {
 
     //response
     @OnMessage
-    public void onMessage(UpdateNoticeMessage message) {
-        System.out.println("Received response in client from server: " + message.toString());
-
-        // handle ping, response pong
-        if (message.getUpdateNoticeType() == UpdateNoticeType.KEEP_ALIVE_PING) {
-            this.sendUpdateNotice(new UpdateNoticeMessage(UpdateNoticeType.KEEP_ALIVE_PONG, null, null));
-        }
+    public void onMessage(Message message) {
     }
 
     @OnError

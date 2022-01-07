@@ -17,6 +17,7 @@ package org.kimios.services.impl;
 
 import org.kimios.exceptions.AccessDeniedException;
 import org.kimios.kernel.security.model.Session;
+import org.kimios.kernel.ws.pojo.Bookmark;
 import org.kimios.kernel.ws.pojo.DataMessage;
 import org.kimios.kernel.ws.pojo.Folder;
 import org.kimios.kernel.ws.pojo.MetaValue;
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @WebService(targetNamespace = "http://kimios.org", serviceName = "FolderService", name = "FolderService")
 public class FolderServiceImpl extends CoreService implements FolderService
@@ -77,12 +79,21 @@ public class FolderServiceImpl extends CoreService implements FolderService
         if (session == null) {
             throw getHelper().convertException(new AccessDeniedException());
         }
+        List<Bookmark> bookmarkList = this.documentController.getBookmarks(session)
+                .stream().map(bookmark -> bookmark.toPojo())
+                .collect(Collectors.toList());
+        List<Long> bookmarkedUidList = bookmarkList.stream().map(bookmark -> bookmark.getDmEntityUid())
+                .collect(Collectors.toList());
         for (Long uid : folderUidListParam.getFolderUidList()) {
+            Folder parent = this.getFolder(folderUidListParam.getSessionId(), uid);
             this.camelTool.sendData(new DataMessage(
                     session.getWebSocketToken(),
                     session.getUid(),
-                    Arrays.asList(this.getFolders(folderUidListParam.getSessionId(), uid)),
-                    uid
+                    Arrays.asList(this.getFolders(folderUidListParam.getSessionId(), uid)).stream().map(folder -> {
+                        folder.setBookmarked(bookmarkedUidList.contains(folder.getUid()));
+                        return folder;
+                    }).collect(Collectors.toList()),
+                    parent
             ));
         }
     }
