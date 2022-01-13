@@ -85,7 +85,22 @@ public class FolderServiceImpl extends CoreService implements FolderService
         List<Long> bookmarkedUidList = bookmarkList.stream().map(bookmark -> bookmark.getDmEntityUid())
                 .collect(Collectors.toList());
         for (Long uid : folderUidListParam.getFolderUidList()) {
-            Folder parent = this.getFolder(folderUidListParam.getSessionId(), uid);
+            Folder parentFolder = null;
+            try{
+                parentFolder = this.getFolder(folderUidListParam.getSessionId(), uid);
+            } catch (Exception e) {
+
+            }
+            // folder with this uid has not been found
+            // maybe this is a workspace
+            org.kimios.kernel.ws.pojo.Workspace workspace = null;
+            try {
+                if (parentFolder == null) {
+                    workspace = this.workspaceController.getWorkspace(session, uid).toPojo();
+                }
+            } catch (Exception e) {
+                throw getHelper().convertException(e);
+            }
             this.camelTool.sendData(new DataMessage(
                     session.getWebSocketToken(),
                     session.getUid(),
@@ -93,7 +108,7 @@ public class FolderServiceImpl extends CoreService implements FolderService
                         folder.setBookmarked(bookmarkedUidList.contains(folder.getUid()));
                         return folder;
                     }).collect(Collectors.toList()),
-                    parent
+                    parentFolder != null ? parentFolder : workspace
             ));
         }
     }
