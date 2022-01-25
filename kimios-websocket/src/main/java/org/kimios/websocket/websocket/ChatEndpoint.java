@@ -141,10 +141,20 @@ public class ChatEndpoint implements IKimiosWebSocketController {
     @OnClose
     public void onClose(Session session) throws IOException, EncodeException {
         chatEndpoints.remove(this);
-        Message message = new Message();
-        message.setFrom(users.get(session.getId()));
-        message.setContent("Disconnected!");
-        broadcast(message);
+        Map.Entry<String, Session> entryToRemove = webSocketSessions.entrySet()
+                .stream()
+                .filter(entry -> entry.getValue().getId().equals(session.getId()))
+                .findFirst()
+                .orElse(null);
+        if (entryToRemove != null) {
+            webSocketSessions.remove(entryToRemove.getKey());
+            System.out.println("WebSocket session removed for kimios session: "
+                    + entryToRemove.getKey()
+                    + " ("
+                    + users.get(entryToRemove.getValue().getId())
+                    + ")"
+            );
+        }
     }
 
     @OnError
@@ -241,6 +251,12 @@ public class ChatEndpoint implements IKimiosWebSocketController {
                         null
                 );
                 synchronized (sessionDestination) {
+                    System.out.println(
+                            "sending UpdateNoticeMessage to "
+                                    + users.get(sessionDestination.getId())
+                                    + " (" + key + ")"
+                    );
+                    System.out.println("webSocketSessions.size() : " + webSocketSessions.size());
                     sessionDestination.getBasicRemote()
                             .sendObject(gson.toJson(updateNoticeMessage, UpdateNoticeMessage.class));
                     System.out.println(
@@ -250,13 +266,13 @@ public class ChatEndpoint implements IKimiosWebSocketController {
                     );
                 }
             } catch (IOException | EncodeException e) {
-                e.printStackTrace();
-                webSocketSessions.remove(sessionDestination);
-                System.out.println("WebSocket session removed for kimios session: "
-                        + key
-                        + " ("
-                        + users.get(sessionDestination.getId())
-                );
+                System.out.println(e.getClass());
+                System.out.println(this);
+                try {
+                    sessionDestination.close();
+                } catch (IOException ioException) {
+                    System.out.println("catch " + ioException.getClass() + " when closing websocket session");
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
