@@ -25,6 +25,7 @@ import org.kimios.api.events.annotations.DmsEventName;
 import org.kimios.api.events.annotations.DmsEventOccur;
 import org.kimios.exceptions.AccessDeniedException;
 import org.kimios.exceptions.DataSourceException;
+import org.kimios.kernel.events.model.EventContext;
 import org.kimios.kernel.hibernate.HFactory;
 import org.kimios.kernel.security.model.Role;
 import org.kimios.kernel.security.model.SecurityEntity;
@@ -523,6 +524,9 @@ public class AdministrationController extends AKimiosController implements IAdmi
                 .getUserFactory();
         f.addUserToGroup(new User(uid, authenticationSourceName),
                 new Group(gid, "", authenticationSourceName));
+        EventContext.addParameter("group", gid);
+        EventContext.addParameter("user", uid);
+        EventContext.addParameter("source", authenticationSourceName);
     }
 
     /* (non-Javadoc)

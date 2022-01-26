@@ -9,7 +9,8 @@ public enum UpdateNoticeType {
     PREVIEW_READY("preview ready"),
     PREVIEW_PROCESSING("preview processing"),
     KEEP_ALIVE_PING("keep alive ping"),
-    KEEP_ALIVE_PONG("keep alive pong");
+    KEEP_ALIVE_PONG("keep alive pong"),
+    USER_GROUP_ADD("user add group");
 
     private final String value;
 

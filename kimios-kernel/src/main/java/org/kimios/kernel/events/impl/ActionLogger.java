@@ -15,6 +15,9 @@
  */
 package org.kimios.kernel.events.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.Gson;
 import org.kimios.api.events.annotations.DmsEvent;
 import org.kimios.api.events.annotations.DmsEventName;
@@ -229,6 +232,18 @@ public class ActionLogger extends GenericEventHandler
         sendShareUpdateNotice(session, share);
     }
 
+    @DmsEvent(eventName = { DmsEventName.USER_GROUP_ADD }, when = DmsEventOccur.AFTER)
+    public void userGroupAdd(Object[] paramsObj, Object returnObj, EventContext ctx) {
+        String group = (String) EventContext.getParameters().get("group");
+        String user = (String) EventContext.getParameters().get("user");
+        String source = (String) EventContext.getParameters().get("source");
+
+        if (group == null || user == null || source == null) {
+            return;
+        }
+        this.sendUserAddGroup(source, group, user);
+    }
+
     private <T extends DMEntityImpl> void saveLog(DMEntityLog<T> log, int actionType, EventContext ctx)
     {
         try {
@@ -306,6 +321,36 @@ public class ActionLogger extends GenericEventHandler
                             UpdateNoticeType.SHARES_WITH_ME,
                             null,
                             sess.getUid()
+                    )
+            );
+        });
+    }
+
+    private void sendUserAddGroup(String source, String group, String user) {
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode rootNode = mapper.createObjectNode();
+        rootNode.put("source", source);
+        rootNode.put("group", group);
+        rootNode.put("user", user);
+
+        String jsonString = "";
+        try {
+            jsonString = mapper.writer().writeValueAsString(rootNode);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        String finalJsonString = jsonString;
+        FactoryInstantiator.getInstance().getSessionManager().getSessions().stream().filter(sess ->
+                FactoryInstantiator.getInstance().getSecurityController().isAdmin(sess)
+        ).forEach(sess -> {
+            FactoryInstantiator.getInstance().getWebSocketManager().sendUpdateNotice(
+                    new UpdateNoticeMessage(
+                            UpdateNoticeType.USER_GROUP_ADD,
+                            null,
+                            sess.getUid(),
+                            finalJsonString
                     )
             );
         });
