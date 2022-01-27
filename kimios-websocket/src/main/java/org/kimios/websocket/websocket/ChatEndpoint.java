@@ -25,6 +25,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 @ServerEndpoint(
@@ -37,7 +39,7 @@ public class ChatEndpoint implements IKimiosWebSocketController {
     private static final Set<ChatEndpoint> chatEndpoints = new CopyOnWriteArraySet<>();
     private static final Map<String, ChatEndpoint> chatEndpointsMap = new HashMap<String, ChatEndpoint>();
     private static HashMap<String, String> users = new HashMap<>();
-    private static final HashMap<String, Session> webSocketSessions = new HashMap<>();
+    private static final ConcurrentMap<String, Session> webSocketSessions = new ConcurrentHashMap<>();
 
     private ISecurityController securityController;
     private Gson gson = new Gson();
@@ -57,7 +59,7 @@ public class ChatEndpoint implements IKimiosWebSocketController {
             Context context = new InitialContext();
             this.securityController = (ISecurityController) context
                     .lookup("osgi:service/org.kimios.kernel.controller.ISecurityController");
-            System.out.println("WebSocket securityController lookup successful, remaining attempts " + lookupAttempts);
+            System.out.println(hashCode() + " WebSocket securityController lookup successful, remaining attempts " + lookupAttempts);
         } catch (NamingException e) {
             if (this.lookupAttempts > 0) {
                 Thread.sleep(10000);
@@ -70,18 +72,12 @@ public class ChatEndpoint implements IKimiosWebSocketController {
 
     @OnOpen
     public void onOpen(Session session, @PathParam("username") String username) throws IOException, EncodeException {
-
         try {
             String kimiosSessionUid = this.securityController.checkWebSocketToken(username);
             if (kimiosSessionUid == null) {
                 return;
             }
-
             this.session = session;
-            chatEndpoints.add(this);
-            chatEndpointsMap.put(username, this);
-            users.put(session.getId(), this.securityController.getSessionUserNameAndSource(kimiosSessionUid));
-
             webSocketSessions.put(kimiosSessionUid, session);
 
             Message message = new Message();
@@ -95,11 +91,7 @@ public class ChatEndpoint implements IKimiosWebSocketController {
 
     @OnMessage
     public void onMessage(Session session, org.kimios.kernel.ws.pojo.Message message) throws IOException, EncodeException {
-        // message.setFrom(users.get(session.getId()));
-        System.out.println(
-                "IKimiosWebSocketController: received message : "
-                        + (message == null ? "null" : message.getClass().toString() + " " + message.toString())
-        );
+        System.out.println("onMessage() " + this.hashCode());
 
         if (message instanceof UpdateNoticeMessage) {
             switch (((UpdateNoticeMessage) message).getUpdateNoticeType()) {
@@ -129,13 +121,6 @@ public class ChatEndpoint implements IKimiosWebSocketController {
         if (kimiosSessionId[0] == null) {
             System.out.println("WebSocket received pong from unknown session " + session.getId());
         }
-        System.out.println(
-                "Websocket received pong from session "
-                        + session.getId()
-                        + " ("
-                        + users.get(session.getId())
-                        + ")"
-        );
     }
 
     @OnClose
@@ -186,23 +171,25 @@ public class ChatEndpoint implements IKimiosWebSocketController {
 
     @Override
     public void sendUpdateNotice(String sessionId, UpdateNoticeMessage updateNoticeMessage) {
+        System.out.println("sendUpdateNotice() : " + this.hashCode());
         try {
             // ChatEndpoint chatEndpoint = chatEndpointsMap.get(sessionId);
             Session sessionDestination = webSocketSessions.get(sessionId);
             if (sessionDestination == null) {
+                // System.out.println("message not sent, no websocket session found");
                 return;
             }
             updateNoticeMessage.clearSessionId();
             synchronized (sessionDestination) {
                 sessionDestination.getBasicRemote()
                         .sendObject(gson.toJson(updateNoticeMessage, UpdateNoticeMessage.class));
-                System.out.println(
+                /*System.out.println(
                         "UpdateNoticeMessage ("
                                 + updateNoticeMessage.getUpdateNoticeType().getValue()
                                 + ") sent to "
                                 + users.get(sessionDestination.getId())
                                 + " (" + sessionId + ")"
-                );
+                );*/
             }
         } catch (IOException | EncodeException e) {
             e.printStackTrace();
@@ -223,13 +210,13 @@ public class ChatEndpoint implements IKimiosWebSocketController {
             synchronized (sessionDestination) {
                 sessionDestination.getBasicRemote()
                         .sendObject(gson.toJson(dataMessage, DataMessage.class));
-                System.out.println(
+                /*System.out.println(
                         "DataMessage (with list size of "
                                 + dataMessage.getDmEntityList().size()
                                 + ") sent to "
                                 + users.get(sessionDestination.getId())
                                 + " (" + sessionId + ")"
-                );
+                );*/
             }
         } catch (IOException | EncodeException e) {
             e.printStackTrace();
@@ -240,6 +227,7 @@ public class ChatEndpoint implements IKimiosWebSocketController {
 
     @Override
     public void sendKeepAliveToAll() {
+        System.out.println("sendKeepAliveToAll() : " + this.hashCode());
         webSocketSessions.forEach((key, sessionDestination) -> {
             try {
                 if (sessionDestination == null) {
@@ -251,27 +239,27 @@ public class ChatEndpoint implements IKimiosWebSocketController {
                         null
                 );
                 synchronized (sessionDestination) {
-                    System.out.println(
+                    /*System.out.println(
                             "sending UpdateNoticeMessage to "
                                     + users.get(sessionDestination.getId())
                                     + " (" + key + ")"
                     );
                     System.out.println("webSocketSessions.size() : " + webSocketSessions.size());
-                    sessionDestination.getBasicRemote()
+*/                    sessionDestination.getBasicRemote()
                             .sendObject(gson.toJson(updateNoticeMessage, UpdateNoticeMessage.class));
-                    System.out.println(
+                    /*System.out.println(
                             "UpdateNoticeMessage sent to "
                                     + users.get(sessionDestination.getId())
                                     + " (" + key + ")"
-                    );
+                    );*/
                 }
             } catch (IOException | EncodeException e) {
-                System.out.println(e.getClass());
-                System.out.println(this);
+                // System.out.println(e.getClass());
+                // System.out.println(this);
                 try {
                     sessionDestination.close();
                 } catch (IOException ioException) {
-                    System.out.println("catch " + ioException.getClass() + " when closing websocket session");
+                    // System.out.println("catch " + ioException.getClass() + " when closing websocket session");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
