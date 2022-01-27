@@ -205,6 +205,7 @@ public interface IAdministrationController
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IAdministrationController#removeUserFromGroup(org.kimios.kernel.security.Session, java.lang.String, java.lang.String, java.lang.String)
     */
+    @DmsEvent(eventName = { DmsEventName.USER_GROUP_REMOVE })
     public void removeUserFromGroup(Session session, String uid,
             String gid, String authenticationSourceName)
             throws AccessDeniedException, ConfigException, DataSourceException;

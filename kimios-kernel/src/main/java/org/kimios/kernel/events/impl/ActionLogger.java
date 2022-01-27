@@ -241,7 +241,19 @@ public class ActionLogger extends GenericEventHandler
         if (group == null || user == null || source == null) {
             return;
         }
-        this.sendUserAddGroup(source, group, user);
+        this.sendUserGroupChange(source, group, user, UpdateNoticeType.USER_GROUP_ADD);
+    }
+
+    @DmsEvent(eventName = { DmsEventName.USER_GROUP_REMOVE }, when = DmsEventOccur.AFTER)
+    public void userGroupRemove(Object[] paramsObj, Object returnObj, EventContext ctx) {
+        String group = (String) EventContext.getParameters().get("group");
+        String user = (String) EventContext.getParameters().get("user");
+        String source = (String) EventContext.getParameters().get("source");
+
+        if (group == null || user == null || source == null) {
+            return;
+        }
+        this.sendUserGroupChange(source, group, user, UpdateNoticeType.USER_GROUP_REMOVE);
     }
 
     private <T extends DMEntityImpl> void saveLog(DMEntityLog<T> log, int actionType, EventContext ctx)
@@ -326,7 +338,7 @@ public class ActionLogger extends GenericEventHandler
         });
     }
 
-    private void sendUserAddGroup(String source, String group, String user) {
+    private void sendUserGroupChange(String source, String group, String user, UpdateNoticeType updateNoticeType) {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode rootNode = mapper.createObjectNode();
         rootNode.put("source", source);
@@ -347,7 +359,7 @@ public class ActionLogger extends GenericEventHandler
         ).forEach(sess -> {
             FactoryInstantiator.getInstance().getWebSocketManager().sendUpdateNotice(
                     new UpdateNoticeMessage(
-                            UpdateNoticeType.USER_GROUP_ADD,
+                            updateNoticeType,
                             null,
                             sess.getUid(),
                             finalJsonString

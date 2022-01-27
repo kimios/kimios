@@ -532,6 +532,7 @@ public class AdministrationController extends AKimiosController implements IAdmi
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IAdministrationController#removeUserFromGroup(org.kimios.kernel.security.Session, java.lang.String, java.lang.String, java.lang.String)
     */
+    @DmsEvent(eventName = { DmsEventName.USER_GROUP_REMOVE })
     public void removeUserFromGroup(Session session, String uid, String gid, String authenticationSourceName)
             throws AccessDeniedException,
             ConfigException, DataSourceException
@@ -546,6 +547,10 @@ public class AdministrationController extends AKimiosController implements IAdmi
                 .getUserFactory();
         f.removeUserFromGroup(new User(uid, authenticationSourceName),
                 new Group(gid, "", authenticationSourceName));
+
+        EventContext.addParameter("group", gid);
+        EventContext.addParameter("user", uid);
+        EventContext.addParameter("source", authenticationSourceName);
     }
 
     /* (non-Javadoc)
