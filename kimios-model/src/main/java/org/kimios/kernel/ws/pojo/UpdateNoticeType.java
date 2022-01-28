@@ -11,7 +11,13 @@ public enum UpdateNoticeType {
     KEEP_ALIVE_PING("keep alive ping"),
     KEEP_ALIVE_PONG("keep alive pong"),
     USER_GROUP_ADD("user group add"),
-    USER_GROUP_REMOVE("user group remove");
+    USER_GROUP_REMOVE("user group remove"),
+    USER_CREATED("user created"),
+    USER_MODIFIED("user modified"),
+    USER_REMOVED("user_removed"),
+    GROUP_CREATED("group created"),
+    GROUP_REMOVED("group removed"),
+    GROUP_MODIFIED("group modified");
 
     private final String value;
 

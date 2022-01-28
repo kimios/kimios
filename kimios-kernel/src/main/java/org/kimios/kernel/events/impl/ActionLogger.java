@@ -40,13 +40,28 @@ import org.kimios.kernel.ws.pojo.UpdateNoticeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.AbstractMap;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ActionLogger extends GenericEventHandler
 {
     private static Logger logger = LoggerFactory.getLogger(ActionLogger.class);
 
     Gson gson = new Gson();
+    Map<UpdateNoticeType, RuleCheckFunctionalInterface> noticeSendingRules = new HashMap<>();
+
+    public ActionLogger() {
+        RuleCheckFunctionalInterface mustBeAdmin = (session) ->  isAdmin(session);
+
+        noticeSendingRules.put(
+                UpdateNoticeType.GROUP_CREATED,
+                mustBeAdmin
+        );
+    }
 
     @DmsEvent(eventName = { DmsEventName.WORKSPACE_CREATE }, when = DmsEventOccur.AFTER)
     public void createWorkspace(Object[] paramsObj, Object returnObj, EventContext ctx) throws Exception
@@ -256,6 +271,72 @@ public class ActionLogger extends GenericEventHandler
         this.sendUserGroupChange(source, group, user, UpdateNoticeType.USER_GROUP_REMOVE);
     }
 
+    @DmsEvent(eventName = { DmsEventName.USER_CREATE }, when = DmsEventOccur.AFTER)
+    public void userCreate(Object[] paramsObj, Object returnObj, EventContext ctx) {
+        String user = (String) EventContext.getParameters().get("user");
+        String source = (String) EventContext.getParameters().get("source");
+        Map<String, Object> messageProperties = this.makePropertiesMap(
+                new AbstractMap.SimpleEntry<String, Object>("user", user),
+                new AbstractMap.SimpleEntry<String, Object>("source", source)
+        );
+        this.sendUpdateNoticeWithMessage(messageProperties, UpdateNoticeType.USER_CREATED);
+    }
+
+    @DmsEvent(eventName = { DmsEventName.USER_DELETE }, when = DmsEventOccur.AFTER)
+    public void userDelete(Object[] paramsObj, Object returnObj, EventContext ctx) {
+        String user = (String) EventContext.getParameters().get("user");
+        String source = (String) EventContext.getParameters().get("source");
+        Map<String, Object> messageProperties = this.makePropertiesMap(
+                new AbstractMap.SimpleEntry<String, Object>("user", user),
+                new AbstractMap.SimpleEntry<String, Object>("source", source)
+        );
+        this.sendUpdateNoticeWithMessage(messageProperties, UpdateNoticeType.USER_REMOVED);
+    }
+
+    @DmsEvent(eventName = { DmsEventName.USER_UPDATE }, when = DmsEventOccur.AFTER)
+    public void userUpdate(Object[] paramsObj, Object returnObj, EventContext ctx) {
+        String user = (String) EventContext.getParameters().get("user");
+        String source = (String) EventContext.getParameters().get("source");
+        Map<String, Object> messageProperties = this.makePropertiesMap(
+                new AbstractMap.SimpleEntry<String, Object>("user", user),
+                new AbstractMap.SimpleEntry<String, Object>("source", source)
+        );
+        this.sendUpdateNoticeWithMessage(messageProperties, UpdateNoticeType.USER_MODIFIED);
+    }
+
+    @DmsEvent(eventName = { DmsEventName.GROUP_CREATE }, when = DmsEventOccur.AFTER)
+    public void groupCreate(Object[] paramsObj, Object returnObj, EventContext ctx) {
+        String group = (String) EventContext.getParameters().get("group");
+        String source = (String) EventContext.getParameters().get("source");
+        Map<String, Object> messageProperties = this.makePropertiesMap(
+                new AbstractMap.SimpleEntry<String, Object>("group", group),
+                new AbstractMap.SimpleEntry<String, Object>("source", source)
+        );
+        this.sendUpdateNoticeWithMessage(messageProperties, UpdateNoticeType.GROUP_CREATED);
+    }
+
+    @DmsEvent(eventName = { DmsEventName.GROUP_UPDATE }, when = DmsEventOccur.AFTER)
+    public void groupUpdate(Object[] paramsObj, Object returnObj, EventContext ctx) {
+        String group = (String) EventContext.getParameters().get("group");
+        String source = (String) EventContext.getParameters().get("source");
+        Map<String, Object> messageProperties = this.makePropertiesMap(
+                new AbstractMap.SimpleEntry<String, Object>("group", group),
+                new AbstractMap.SimpleEntry<String, Object>("source", source)
+        );
+        this.sendUpdateNoticeWithMessage(messageProperties, UpdateNoticeType.GROUP_MODIFIED);
+    }
+
+    @DmsEvent(eventName = { DmsEventName.GROUP_DELETE }, when = DmsEventOccur.AFTER)
+    public void groupDelete(Object[] paramsObj, Object returnObj, EventContext ctx) {
+        String group = (String) EventContext.getParameters().get("group");
+        String source = (String) EventContext.getParameters().get("source");
+        Map<String, Object> messageProperties = this.makePropertiesMap(
+                new AbstractMap.SimpleEntry<String, Object>("group", group),
+                new AbstractMap.SimpleEntry<String, Object>("source", source)
+        );
+        this.sendUpdateNoticeWithMessage(messageProperties, UpdateNoticeType.GROUP_REMOVED);
+    }
+
     private <T extends DMEntityImpl> void saveLog(DMEntityLog<T> log, int actionType, EventContext ctx)
     {
         try {
@@ -355,7 +436,7 @@ public class ActionLogger extends GenericEventHandler
 
         String finalJsonString = jsonString;
         FactoryInstantiator.getInstance().getSessionManager().getSessions().stream().filter(sess ->
-                FactoryInstantiator.getInstance().getSecurityController().isAdmin(sess)
+                shouldReceiveNotice(sess, updateNoticeType)
         ).forEach(sess -> {
             FactoryInstantiator.getInstance().getWebSocketManager().sendUpdateNotice(
                     new UpdateNoticeMessage(
@@ -366,6 +447,52 @@ public class ActionLogger extends GenericEventHandler
                     )
             );
         });
+    }
+
+    private Map<String, Object> makePropertiesMap(AbstractMap.SimpleEntry<String, Object>... entries) {
+        return Arrays.stream(entries)
+                .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
+    }
+
+    private void sendUserChange(String source, String user, UpdateNoticeType updateNoticeType) {
+        Map<String, Object> messageProperties = new HashMap<>();
+        messageProperties.put("source", source);
+        messageProperties.put("user", user);
+        this.sendUpdateNoticeWithMessage(messageProperties, updateNoticeType);
+    }
+
+    private void sendUpdateNoticeWithMessage(Map<String, Object> messageProperties, UpdateNoticeType updateNoticeType) {
+        FactoryInstantiator.getInstance().getSessionManager().getSessions().stream().filter(sess ->
+                shouldReceiveNotice(sess, updateNoticeType)
+        ).forEach(sess ->
+            FactoryInstantiator.getInstance().getWebSocketManager().sendUpdateNotice(
+                    new UpdateNoticeMessage(
+                            updateNoticeType,
+                            null,
+                            sess.getUid(),
+                            gson.toJson(messageProperties)
+                    )
+            )
+        );
+    }
+
+    private boolean shouldReceiveNotice(Session session, UpdateNoticeType updateNoticeType) {
+        RuleCheckFunctionalInterface ruleCheckFunctionalInterface =
+                this.noticeSendingRules.get(updateNoticeType);
+
+        if (ruleCheckFunctionalInterface == null) {
+            return true;
+        }
+        return ruleCheckFunctionalInterface.check(session);
+    }
+
+    private boolean isAdmin(Session session) {
+        return FactoryInstantiator.getInstance().getSecurityController().isAdmin(session);
+    }
+
+    @FunctionalInterface
+    public interface RuleCheckFunctionalInterface {
+        Boolean check(Session session);
     }
 }
 

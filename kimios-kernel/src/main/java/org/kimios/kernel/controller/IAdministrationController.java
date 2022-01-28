@@ -182,6 +182,7 @@ public interface IAdministrationController
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IAdministrationController#updateGroup(org.kimios.kernel.security.Session, java.lang.String, java.lang.String, java.lang.String)
     */
+    @DmsEvent(eventName = { DmsEventName.GROUP_UPDATE })
     public void updateGroup(Session session, String gid, String name,
             String authenticationSourceName) throws AccessDeniedException,
             ConfigException, DataSourceException;

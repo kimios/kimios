@@ -379,11 +379,15 @@ public class AdministrationController extends AKimiosController implements IAdmi
                 .getUserFactory();
         f.saveUser(new User(uid, firstName, lastName, phoneNumber, new Date(), mail, authenticationSourceName, enabled),
                 password);
+
+        EventContext.addParameter("source", authenticationSourceName);
+        EventContext.addParameter("user", uid);
     }
 
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IAdministrationController#updateUser(org.kimios.kernel.security.Session, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
     */
+    @DmsEvent(eventName = { DmsEventName.USER_UPDATE })
     public void updateUser(Session session, String uid, String firstName, String lastName, String phoneNumber, String mail, String password,
             String authenticationSourceName, boolean enabled)
             throws AccessDeniedException, ConfigException, DataSourceException
@@ -407,8 +411,12 @@ public class AdministrationController extends AKimiosController implements IAdmi
         u.setPhoneNumber(phoneNumber);
         u.setEnabled(enabled);
         f.updateUser(u, password);
+
+        EventContext.addParameter("source", authenticationSourceName);
+        EventContext.addParameter("user", uid);
     }
 
+    @DmsEvent(eventName = { DmsEventName.USER_UPDATE })
     public void updateUserEmails(Session session, String uid, String authenticationSource, List<String> emails)
             throws AccessDeniedException, ConfigException, DataSourceException
     {
@@ -428,6 +436,8 @@ public class AdministrationController extends AKimiosController implements IAdmi
         User u = f.getUser(uid);
         f.addUserEmails(uid, emails);
 
+        EventContext.addParameter("source", authenticationSource);
+        EventContext.addParameter("user", uid);
     }
 
 
@@ -451,6 +461,9 @@ public class AdministrationController extends AKimiosController implements IAdmi
                 .getAuthenticationSource(authenticationSourceName)
                 .getUserFactory();
         f.deleteUser(new User(uid, authenticationSourceName));
+
+        EventContext.addParameter("source", authenticationSourceName);
+        EventContext.addParameter("user", uid);
     }
 
     /* (non-Javadoc)
@@ -469,11 +482,15 @@ public class AdministrationController extends AKimiosController implements IAdmi
         GroupFactory f = authFactoryInstantiator.getAuthenticationSourceFactory()
                 .getAuthenticationSource(authenticationSourceName).getGroupFactory();
         f.saveGroup(new Group(gid, name, authenticationSourceName));
+
+        EventContext.addParameter("source", authenticationSourceName);
+        EventContext.addParameter("group", gid);
     }
 
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IAdministrationController#updateGroup(org.kimios.kernel.security.Session, java.lang.String, java.lang.String, java.lang.String)
     */
+    @DmsEvent(eventName = { DmsEventName.GROUP_UPDATE })
     public void updateGroup(Session session, String gid, String name, String authenticationSourceName)
             throws AccessDeniedException, ConfigException,
             DataSourceException
@@ -486,6 +503,9 @@ public class AdministrationController extends AKimiosController implements IAdmi
         GroupFactory f = authFactoryInstantiator.getAuthenticationSourceFactory()
                 .getAuthenticationSource(authenticationSourceName).getGroupFactory();
         f.updateGroup(new Group(gid, name, authenticationSourceName));
+
+        EventContext.addParameter("source", authenticationSourceName);
+        EventContext.addParameter("group", gid);
     }
 
     /* (non-Javadoc)
@@ -504,6 +524,9 @@ public class AdministrationController extends AKimiosController implements IAdmi
         GroupFactory f = authFactoryInstantiator.getAuthenticationSourceFactory()
                 .getAuthenticationSource(authenticationSourceName).getGroupFactory();
         f.deleteGroup(new Group(gid, "", authenticationSourceName));
+
+        EventContext.addParameter("source", authenticationSourceName);
+        EventContext.addParameter("group", gid);
     }
 
     /* (non-Javadoc)
