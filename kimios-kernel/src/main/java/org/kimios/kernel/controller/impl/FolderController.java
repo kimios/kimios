@@ -302,6 +302,7 @@ public class FolderController extends AKimiosController implements IFolderContro
                 folder.setUpdateDate(new Date());
                 log.debug("Preparing to move: updated path (new: " + folder.getPath() + ")");
                 dmsFactoryInstantiator.getFolderFactory().updateFolder(folder);
+                EventContext.addParameter("folder", folder);
             } else {
                 throw new TreeException("");
             }

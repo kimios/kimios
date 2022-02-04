@@ -155,7 +155,7 @@ public class WorkspaceController extends AKimiosController implements IWorkspace
                 logger.debug("workspace name didn't change...  nothing t do! CurrentName: {} ==> Submitted Name {}", w.getName(), name);
             }
 
-
+            EventContext.addParameter("workspace", w);
         } else {
             throw new AccessDeniedException();
         }
