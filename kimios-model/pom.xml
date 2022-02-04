@@ -107,7 +107,7 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
             <scope>provided</scope>
-            <version>4.3.6.Final</version>
+            <version>${hibernate.version}</version>
         </dependency>
 
 

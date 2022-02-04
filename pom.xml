@@ -88,7 +88,7 @@
         <slfj.version>1.7.5</slfj.version>
         <apache.poi.version>3.12-beta1</apache.poi.version>
         <lucene.version>3.6.0</lucene.version>
-        <hibernate.version>4.2.15.Final</hibernate.version>
+        <hibernate.version>4.3.6.Final</hibernate.version>
         <apache.pdfbox.version>1.8.9</apache.pdfbox.version>
         <apache.http.version>4.2.6</apache.http.version>
         <atomikos.version>3.9.3</atomikos.version>
