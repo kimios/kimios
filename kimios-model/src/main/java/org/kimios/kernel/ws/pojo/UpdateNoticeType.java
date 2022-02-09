@@ -26,9 +26,25 @@ public enum UpdateNoticeType {
     FOLDER_REMOVED("folder removed"),
     // todo : virtual folders
     DOCUMENT_CREATED("document created"),
+    DOCUMENT_UPDATE("document update"),
     DOCUMENT_VERSION_CREATED("document version created"),
     DOCUMENT_VERSION_UPDATED("document version updated"),
-    DOCUMENT_REMOVED("document removed");
+    DOCUMENT_REMOVED("document removed"),
+    DOCUMENT_CHECKOUT("document checkout"),
+    DOCUMENT_CHECKIN("document checkin"),
+    DOCUMENT_ADD_RELATED("document add_related"),
+    DOCUMENT_REMOVE_RELATED("document remove_related"),
+    DOCUMENT_VERSION_CREATE("document version_create"),
+    DOCUMENT_VERSION_CREATE_FROM_LATEST("document version_create_from_latest"),
+    DOCUMENT_VERSION_UPDATE("document version_update"),
+    DOCUMENT_VERSION_READ("document version_read"),
+    META_VALUE_UPDATE("meta value_update"),
+    DOCUMENT_VERSION_COMMENT_CREATE("document version_comment_create"),
+    DOCUMENT_VERSION_COMMENT_UPDATE("document version_comment_update"),
+    DOCUMENT_VERSION_COMMENT_DELETE("document version_comment_delete"),
+    DOCUMENT_TRASH("document trash"),
+    DOCUMENT_UNTRASH("document untrash"),
+    DOCUMENT_SHARED("document shared");
     private final String value;
 
     UpdateNoticeType(String state) {

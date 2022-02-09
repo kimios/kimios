@@ -83,7 +83,24 @@ public class ActionLogger extends GenericEventHandler
                         UpdateNoticeType.WORKSPACE_REMOVED,
                         UpdateNoticeType.FOLDER_CREATED,
                         UpdateNoticeType.FOLDER_UPDATED,
-                        UpdateNoticeType.FOLDER_REMOVED
+                        UpdateNoticeType.FOLDER_REMOVED,
+                        UpdateNoticeType.DOCUMENT_CREATED,
+                        UpdateNoticeType.DOCUMENT_REMOVED,
+                        UpdateNoticeType.DOCUMENT_UPDATE,
+                        UpdateNoticeType.DOCUMENT_CHECKIN,
+                        UpdateNoticeType.DOCUMENT_CHECKOUT,
+                        UpdateNoticeType.DOCUMENT_TRASH,
+                        UpdateNoticeType.DOCUMENT_UNTRASH,
+                        UpdateNoticeType.DOCUMENT_ADD_RELATED,
+                        UpdateNoticeType.DOCUMENT_REMOVE_RELATED,
+                        UpdateNoticeType.DOCUMENT_VERSION_COMMENT_CREATE,
+                        UpdateNoticeType.META_VALUE_UPDATE,
+                        UpdateNoticeType.DOCUMENT_VERSION_COMMENT_DELETE,
+                        UpdateNoticeType.DOCUMENT_VERSION_CREATE,
+                        UpdateNoticeType.DOCUMENT_VERSION_CREATE_FROM_LATEST,
+                        UpdateNoticeType.DOCUMENT_VERSION_UPDATE,
+                        UpdateNoticeType.DOCUMENT_VERSION_UPDATED,
+                        UpdateNoticeType.DOCUMENT_VERSION_CREATED,
                 })
         );
 
@@ -178,42 +195,84 @@ public class ActionLogger extends GenericEventHandler
     public void updateDocument(Object[] paramsObj, Object returnObj, EventContext ctx)
     {
         saveLog(new DMEntityLog<Document>(), ActionType.UPDATE, ctx);
+
+        Document doc = (Document) ctx.getEntity();
+        Map<String, Object> messageProperties = this.makePropertiesMap(
+                new AbstractMap.SimpleEntry<String, Object>("dmEntityId", doc.getUid())
+        );
+        this.sendUpdateNoticeWithMessage(messageProperties, UpdateNoticeType.DOCUMENT_UPDATE, doc.getUid());
     }
 
     @DmsEvent(eventName = { DmsEventName.DOCUMENT_DELETE }, when = DmsEventOccur.AFTER)
     public void deleteDocument(Object[] paramsObj, Object returnObj, EventContext ctx)
     {
         saveLog(new DMEntityLog<Document>(), ActionType.DELETE, ctx);
+
+        Document doc = (Document) ctx.getEntity();
+        Map<String, Object> messageProperties = this.makePropertiesMap(
+                new AbstractMap.SimpleEntry<String, Object>("dmEntityId", doc.getUid())
+        );
+        this.sendUpdateNoticeWithMessage(messageProperties, UpdateNoticeType.DOCUMENT_REMOVED, doc.getUid());
     }
 
     @DmsEvent(eventName = { DmsEventName.DOCUMENT_CHECKOUT }, when = DmsEventOccur.AFTER)
     public void checkoutDocument(Object[] paramsObj, Object returnObj, EventContext ctx)
     {
         saveLog(new DMEntityLog<Document>(), ActionType.CHECKOUT, ctx);
+
+        Document doc = (Document) ctx.getEntity();
+        Map<String, Object> messageProperties = this.makePropertiesMap(
+                new AbstractMap.SimpleEntry<String, Object>("dmEntityId", doc.getUid())
+        );
+        this.sendUpdateNoticeWithMessage(messageProperties, UpdateNoticeType.DOCUMENT_CHECKOUT, doc.getUid());
     }
 
     @DmsEvent(eventName = { DmsEventName.DOCUMENT_CHECKIN }, when = DmsEventOccur.AFTER)
     public void checkinDocument(Object[] paramsObj, Object returnObj, EventContext ctx)
     {
         saveLog(new DMEntityLog<Document>(), ActionType.CHECKIN, ctx);
+
+        Document doc = (Document) ctx.getEntity();
+        Map<String, Object> messageProperties = this.makePropertiesMap(
+                new AbstractMap.SimpleEntry<String, Object>("dmEntityId", doc.getUid())
+        );
+        this.sendUpdateNoticeWithMessage(messageProperties, UpdateNoticeType.DOCUMENT_CHECKIN, doc.getUid());
     }
 
     @DmsEvent(eventName = { DmsEventName.DOCUMENT_ADD_RELATED }, when = DmsEventOccur.AFTER)
     public void addRelatedDocument(Object[] paramsObj, Object returnObj, EventContext ctx)
     {
         saveLog(new DMEntityLog<Document>(), ActionType.ADD_RELATED_DOCUMENT, ctx);
+
+        Document doc = (Document) ctx.getEntity();
+        Map<String, Object> messageProperties = this.makePropertiesMap(
+                new AbstractMap.SimpleEntry<String, Object>("dmEntityId", doc.getUid())
+        );
+        this.sendUpdateNoticeWithMessage(messageProperties, UpdateNoticeType.DOCUMENT_ADD_RELATED, doc.getUid());
     }
 
     @DmsEvent(eventName = { DmsEventName.DOCUMENT_REMOVE_RELATED }, when = DmsEventOccur.AFTER)
     public void removeRelatedDocument(Object[] paramsObj, Object returnObj, EventContext ctx) throws Exception
     {
         saveLog(new DMEntityLog<Document>(), ActionType.REMOVE_RELATED_DOCUMENT, ctx);
+
+        Document doc = (Document) ctx.getEntity();
+        Map<String, Object> messageProperties = this.makePropertiesMap(
+                new AbstractMap.SimpleEntry<String, Object>("dmEntityId", doc.getUid())
+        );
+        this.sendUpdateNoticeWithMessage(messageProperties, UpdateNoticeType.DOCUMENT_REMOVE_RELATED, doc.getUid());
     }
 
     @DmsEvent(eventName = { DmsEventName.DOCUMENT_VERSION_CREATE }, when = DmsEventOccur.AFTER)
     public void createDocumentVersion(Object[] paramsObj, Object returnObj, EventContext ctx) throws Exception
     {
         saveLog(new DMEntityLog<Document>(), ActionType.CREATE_DOCUMENT_VERSION, ctx);
+
+        Document doc = (Document) ctx.getEntity();
+        Map<String, Object> messageProperties = this.makePropertiesMap(
+                new AbstractMap.SimpleEntry<String, Object>("dmEntityId", doc.getUid())
+        );
+        this.sendUpdateNoticeWithMessage(messageProperties, UpdateNoticeType.DOCUMENT_VERSION_CREATE, doc.getUid());
     }
 
     @DmsEvent(eventName = { DmsEventName.DOCUMENT_VERSION_CREATE_FROM_LATEST }, when = DmsEventOccur.AFTER)
@@ -221,12 +280,24 @@ public class ActionLogger extends GenericEventHandler
             throws Exception
     {
         saveLog(new DMEntityLog<Document>(), ActionType.CREATE_DOCUMENT_VERSION_FROM_LATEST, ctx);
+
+        Document doc = (Document) ctx.getEntity();
+        Map<String, Object> messageProperties = this.makePropertiesMap(
+                new AbstractMap.SimpleEntry<String, Object>("dmEntityId", doc.getUid())
+        );
+        this.sendUpdateNoticeWithMessage(messageProperties, UpdateNoticeType.DOCUMENT_VERSION_CREATE_FROM_LATEST, doc.getUid());
     }
 
     @DmsEvent(eventName = { DmsEventName.DOCUMENT_VERSION_UPDATE }, when = DmsEventOccur.AFTER)
     public void updateDocumentVersion(Object[] paramsObj, Object returnObj, EventContext ctx)
     {
         saveLog(new DMEntityLog<Document>(), ActionType.UPDATE_DOCUMENT_VERSION, ctx);
+
+        Document doc = (Document) ctx.getEntity();
+        Map<String, Object> messageProperties = this.makePropertiesMap(
+                new AbstractMap.SimpleEntry<String, Object>("dmEntityId", doc.getUid())
+        );
+        this.sendUpdateNoticeWithMessage(messageProperties, UpdateNoticeType.DOCUMENT_VERSION_UPDATE, doc.getUid());
     }
 
     @DmsEvent(eventName = { DmsEventName.FILE_UPLOAD }, when = DmsEventOccur.AFTER)
@@ -247,6 +318,12 @@ public class ActionLogger extends GenericEventHandler
         ctx.setEntity((DMEntity)EventContext.getParameters().get("document"));
         if(ctx.getEntity() instanceof Document){
             saveLog(new DMEntityLog<Document>(), ActionType.TRASH_DOCUMENT, ctx);
+
+            Document doc = (Document) ctx.getEntity();
+            Map<String, Object> messageProperties = this.makePropertiesMap(
+                    new AbstractMap.SimpleEntry<String, Object>("dmEntityId", doc.getUid())
+            );
+            this.sendUpdateNoticeWithMessage(messageProperties, UpdateNoticeType.DOCUMENT_TRASH, doc.getUid());
         } else if(ctx.getEntity() instanceof Folder){
             saveLog(new DMEntityLog<Folder>(), ActionType.TRASH_ENTITY, ctx);
         } else if(ctx.getEntity() instanceof Workspace){
@@ -259,9 +336,15 @@ public class ActionLogger extends GenericEventHandler
     public void untrashDocument(Object[] paramsObj, Object returnObj, EventContext ctx)
     {
         ctx.setEntity((DMEntity)EventContext.getParameters().get("document"));
-        if(ctx.getEntity() instanceof Document)
+        if(ctx.getEntity() instanceof Document) {
             saveLog(new DMEntityLog<Document>(), ActionType.UNTRASH_DOCUMENT, ctx);
-        else if(ctx.getEntity() instanceof Folder){
+
+            Document doc = (Document) ctx.getEntity();
+            Map<String, Object> messageProperties = this.makePropertiesMap(
+                    new AbstractMap.SimpleEntry<String, Object>("dmEntityId", doc.getUid())
+            );
+            this.sendUpdateNoticeWithMessage(messageProperties, UpdateNoticeType.DOCUMENT_UNTRASH, doc.getUid());
+        } else if(ctx.getEntity() instanceof Folder){
             saveLog(new DMEntityLog<Folder>(), ActionType.UNTRASH_ENTITY, ctx);
         } else if(ctx.getEntity() instanceof Workspace){
             saveLog(new DMEntityLog<Workspace>(), ActionType.UNTRASH_ENTITY, ctx);
@@ -499,6 +582,8 @@ public class ActionLogger extends GenericEventHandler
                 .orElse(null);
         if (updateNoticeGroup == null) {
             // update notice type must be in a group
+            logger.info("UpdateNoticeType '"
+                    + updateNoticeType + "' is not in a group, update notice message can't be sent");
             return;
         }
 
@@ -530,7 +615,7 @@ public class ActionLogger extends GenericEventHandler
     }
 
     private void sendUpdateNoticeWithMessage(Map<String, Object> messageProperties, UpdateNoticeType updateNoticeType,
-                                             Long dmEntityType) {
+                                             Long dmEntityId) {
         String updateNoticeGroup = noticeTypeGroups
                 .entrySet()
                 .stream()
@@ -540,11 +625,13 @@ public class ActionLogger extends GenericEventHandler
                 .orElse(null);
         if (updateNoticeGroup == null) {
             // update notice type must be in a group
+            logger.info("UpdateNoticeType '"
+                    + updateNoticeType + "' is not in a group, update notice message can't be sent");
             return;
         }
 
         FactoryInstantiator.getInstance().getSessionManager().getSessions().stream().filter(sess ->
-                shouldReceiveNotice(sess, updateNoticeGroup, dmEntityType)
+                shouldReceiveNotice(sess, updateNoticeGroup, dmEntityId)
         ).forEach(sess ->
             FactoryInstantiator.getInstance().getWebSocketManager().sendUpdateNotice(
                     new UpdateNoticeMessage(
