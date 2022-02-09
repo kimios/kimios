@@ -41,7 +41,8 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.5</version>
+            <version>${slfj.version}</version>
+            <type>jar</type>
             <scope>provided</scope>
         </dependency>
         <dependency>

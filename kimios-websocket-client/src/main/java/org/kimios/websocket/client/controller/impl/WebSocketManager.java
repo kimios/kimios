@@ -9,6 +9,8 @@ import org.kimios.kernel.ws.pojo.UpdateNoticeMessage;
 import org.kimios.kernel.ws.pojo.UpdateNoticeMessageEncoder;
 import org.kimios.websocket.client.controller.IWebSocketManager;
 import org.kimios.websocket.client.controller.KimiosWebSocketClientEndpointConfigConfigurator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.websocket.ClientEndpoint;
 import javax.websocket.DeploymentException;
@@ -30,6 +32,8 @@ import java.net.URI;
 )
 public class WebSocketManager implements IWebSocketManager {
 
+    private Logger logger = LoggerFactory.getLogger(WebSocketManager.class);
+
     private String webSocketUrl;
 
     private Session session;
@@ -39,7 +43,7 @@ public class WebSocketManager implements IWebSocketManager {
     public WebSocketManager(){}
 
     public void init() {
-        System.out.println("websocket manager started");
+        logger.info("websocket manager started");
     }
 
     public void connect(String connectionUrl) {
@@ -53,7 +57,7 @@ public class WebSocketManager implements IWebSocketManager {
 
     @OnOpen
     public void onOpen(Session session, EndpointConfig config) {
-        System.out.println("Connected to endpoint: " + session.getBasicRemote());
+        logger.info("Connected to endpoint: " + session.getBasicRemote());
         this.session = session;
     }
 
@@ -76,7 +80,7 @@ public class WebSocketManager implements IWebSocketManager {
         try {
             session.getBasicRemote().sendObject(updateNoticeMessage);
         } catch (IOException e) {
-            System.out.println("is webSocket open (session.isOpen())? " + (session.isOpen() ? "true" : "false"));
+            logger.debug("is webSocket open (session.isOpen())? " + (session.isOpen() ? "true" : "false"));
             e.printStackTrace();
         } catch (EncodeException e) {
             e.printStackTrace();
@@ -94,7 +98,7 @@ public class WebSocketManager implements IWebSocketManager {
         try {
             session.getBasicRemote().sendObject(dataMessage);
         } catch (IOException e) {
-            System.out.println("is webSocket open (session.isOpen())? " + (session.isOpen() ? "true" : "false"));
+            logger.debug("is webSocket open (session.isOpen())? " + (session.isOpen() ? "true" : "false"));
             e.printStackTrace();
         } catch (EncodeException e) {
             e.printStackTrace();
@@ -122,6 +126,6 @@ public class WebSocketManager implements IWebSocketManager {
     }
 
     public void display(UpdateNoticeMessage updateNoticeMessage) {
-        System.out.println("display() with camel : " + updateNoticeMessage.toString());
+        logger.debug("display() with camel : " + updateNoticeMessage.toString());
     }
 }

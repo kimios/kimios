@@ -4,6 +4,8 @@ import org.kimios.api.controller.IManageableServiceController;
 import org.kimios.api.controller.IServiceWithThreadPoolExecutorManager;
 import org.kimios.api.controller.ServiceWithThreadPoolExecutorManagerState;
 import org.osgi.framework.ServiceReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.AbstractMap;
@@ -13,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 
 public class ServiceWithThreadPoolExecutorManager implements IServiceWithThreadPoolExecutorManager {
+
+    private static Logger log = LoggerFactory.getLogger(ServiceWithThreadPoolExecutorManager.class);
 
     private List<IManageableServiceController> controllerList;
 
@@ -28,20 +32,20 @@ public class ServiceWithThreadPoolExecutorManager implements IServiceWithThreadP
 
     @Override
     public void stopAll() throws InterruptedException {
-        System.out.println("stopping all threads now");
+        log.info("stopping all threads now");
         for (IManageableServiceController controller : controllerList) {
             controller.pauseThreadPoolExecutor();
         }
-        System.out.println("all threads stopped");
+        log.info("all threads stopped");
     }
 
     @Override
     public void startAll() {
-        System.out.println("starting all threads now");
+        log.info("starting all threads now");
         for (IManageableServiceController controller : controllerList) {
             controller.resumeThreadPoolExecutor();
         }
-        System.out.println("all threads started");
+        log.info("all threads started");
     }
 
     @Override
@@ -70,38 +74,38 @@ public class ServiceWithThreadPoolExecutorManager implements IServiceWithThreadP
     }
 
     public void init() {
-        System.out.println("threads manager init");
+        log.info("threads manager init");
     }
 
     public void destroy() {
-        System.out.println("threads manager destroy");
+        log.info("threads manager destroy");
     }
 
     public void bind(ServiceReference reference) {
-        System.out.println(">>> bind service");
+        log.info(">>> bind service");
         Arrays.asList(reference.getPropertyKeys()).forEach(key ->
-                System.out.println("service property: " + key + " : " + reference.getProperty(key))
+                log.info("service property: " + key + " : " + reference.getProperty(key))
         );
         this.controllerMap.put(
                 reference.hashCode(),
                 (IManageableServiceController) reference.getBundle().getBundleContext().getService(reference)
         );
-        System.out.println("<<<");
+        log.info("<<<");
     }
 
     public void bind(Serializable service) {
     }
 
     public void unbind(ServiceReference reference) {
-        System.out.println(">>> unbind service");
+        log.info(">>> unbind service");
         if (reference != null) {
             Arrays.asList(reference.getPropertyKeys()).forEach(key ->
-                    System.out.println("service property: " + key + " : " + reference.getProperty(key))
+                    log.info("service property: " + key + " : " + reference.getProperty(key))
             );
             this.controllerMap.remove(reference.hashCode());
         } else {
-            System.out.println("reference is null");
+            log.info("reference is null");
         }
-        System.out.println("<<<");
+        log.info("<<<");
     }
 }
