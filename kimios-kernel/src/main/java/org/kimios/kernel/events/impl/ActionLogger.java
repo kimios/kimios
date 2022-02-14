@@ -98,9 +98,7 @@ public class ActionLogger extends GenericEventHandler
                         UpdateNoticeType.DOCUMENT_VERSION_COMMENT_DELETE,
                         UpdateNoticeType.DOCUMENT_VERSION_CREATE,
                         UpdateNoticeType.DOCUMENT_VERSION_CREATE_FROM_LATEST,
-                        UpdateNoticeType.DOCUMENT_VERSION_UPDATE,
-                        UpdateNoticeType.DOCUMENT_VERSION_UPDATED,
-                        UpdateNoticeType.DOCUMENT_VERSION_CREATED,
+                        UpdateNoticeType.DOCUMENT_VERSION_UPDATE
                 })
         );
 

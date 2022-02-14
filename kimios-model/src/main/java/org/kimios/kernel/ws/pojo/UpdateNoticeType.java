@@ -27,8 +27,6 @@ public enum UpdateNoticeType {
     // todo : virtual folders
     DOCUMENT_CREATED("document created"),
     DOCUMENT_UPDATE("document update"),
-    DOCUMENT_VERSION_CREATED("document version created"),
-    DOCUMENT_VERSION_UPDATED("document version updated"),
     DOCUMENT_REMOVED("document removed"),
     DOCUMENT_CHECKOUT("document checkout"),
     DOCUMENT_CHECKIN("document checkin"),
