@@ -25,7 +25,7 @@ import javax.persistence.Table;
 @Table(name = "meta_number_value")
 public class MetaNumberValue extends MetaValueBean<Double>
 {
-    @Column(name = "meta_number_value", nullable = false)
+    @Column(name = "meta_number_value", nullable = true)
     private double value;
 
     public MetaNumberValue()
