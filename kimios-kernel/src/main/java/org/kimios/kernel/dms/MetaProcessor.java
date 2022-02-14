@@ -115,7 +115,8 @@ public class MetaProcessor {
                         Boolean.parseBoolean(metaValue));
                 break;
             case MetaType.DATE:
-                if (Long.parseLong(metaValue) != -1) {
+                if (metaValue != null
+                        && Long.parseLong(metaValue) != -1) {
                     metaV = new MetaDateValue(
                             version,
                             meta,
@@ -126,10 +127,13 @@ public class MetaProcessor {
 
                 break;
             case MetaType.NUMBER:
-                metaV = new MetaNumberValue(
-                        version,
-                        meta,
-                        Double.parseDouble(metaValue));
+                metaV = metaValue == null ?
+                        null :
+                        new MetaNumberValue(
+                                version,
+                                meta,
+                                Double.parseDouble(metaValue)
+                        );
                 break;
             case MetaType.STRING:
                 metaV = new MetaStringValue(
