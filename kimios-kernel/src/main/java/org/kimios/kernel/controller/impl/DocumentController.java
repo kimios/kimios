@@ -18,6 +18,7 @@ package org.kimios.kernel.controller.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.commons.lang.StringUtils;
+import org.apache.tika.Tika;
 import org.kimios.api.events.annotations.DmsEvent;
 import org.kimios.api.events.annotations.DmsEventName;
 import org.kimios.exceptions.*;
@@ -51,6 +52,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.io.*;
+import java.nio.file.Files;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 ;
@@ -738,13 +740,16 @@ public class DocumentController extends AKimiosController implements IDocumentCo
             DataTransfer dt = ftCtrl.startUploadTransaction(s, documentId, false);
             DataTransfer transac = transferFactoryInstantiator.getDataTransferFactory().getDataTransfer(dt.getUid());
 
-            this.writeFile(
-                    new File(
-                            ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH)
-                                    + transac.getFilePath()
-                    ),
-                    documentStream
-            );
+            String filePath = ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH) + transac.getFilePath();
+            this.writeFile(new File(filePath), documentStream);
+
+            String completeName = new File(filePath).getName() +
+                    document.getExtension() == null || document.getExtension().isEmpty() ?
+                    "" :
+                    "." + document.getExtension();
+            String mimeType = this.detectMimeType(filePath, completeName);
+            document.setMimeType(mimeType);
+            dmsFactoryInstantiator.getDocumentFactory().updateDocument(document);
 
             DocumentVersion dv =
                     dmsFactoryInstantiator.getDocumentVersionFactory().getDocumentVersion(transac.getDocumentVersionUid());
@@ -772,6 +777,21 @@ public class DocumentController extends AKimiosController implements IDocumentCo
         } catch (Exception e){
             throw new DmsKernelException(e);
         }
+    }
+
+    private String detectMimeType(String filePath, String completeName) {
+        Tika tika = new Tika();
+        File file = new File(filePath);
+        String mimeType = "";
+        try {
+            mimeType = tika.detect(Files.readAllBytes(file.toPath()), completeName);
+        } catch (IOException ioException) {
+            log.error(ioException.getClass().getName());
+            log.error(ioException.getMessage());
+            log.error(ioException.getCause().getMessage());
+        }
+
+        return mimeType;
     }
 
     @DmsEvent(eventName = {DmsEventName.FILE_UPLOAD})
