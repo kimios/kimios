@@ -39,6 +39,10 @@
         <property name="converterController" ref="converterController" />
         <property name="securityController" ref="securityController" />
     </bean>
+
+    <bean id="getFoldersAndSendDataRouteBuilder" class="org.kimios.camel.routes.GetFoldersAndSendDataRouteBuilder" >
+        <property name="folderController" ref="folderController" />
+    </bean>
     
     <bean id="generateShareDmsEventRouteBuilder" class="org.kimios.camel.routes.GenerateShareDmsEventRouteBuilder" />
 
@@ -87,6 +91,8 @@
 
     <reference id="documentController" interface="org.kimios.kernel.controller.IDocumentController" />
 
+    <reference id="folderController" interface="org.kimios.kernel.controller.IFolderController" />
+
     <camelContext id="kimios" xmlns="http://camel.apache.org/schema/blueprint">
         <packageScan>
             <package>org.kimios.camel.routes.ext</package>
@@ -97,6 +103,7 @@
         <routeBuilder ref="convertDocumentVersionRouteBuilder" />
         <routeBuilder ref="generateShareDmsEventRouteBuilder" />
         <routeBuilder ref="dataSenderRouteBuilder" />
+        <routeBuilder ref="getFoldersAndSendDataRouteBuilder" />
         <!--<route>
             <from uri="timer:simple?period=5000"/>
             <setBody>

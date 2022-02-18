@@ -8,6 +8,7 @@ import org.kimios.kernel.ws.pojo.Share;
 import org.kimios.kernel.ws.pojo.DataTransactionWrapper;
 import org.kimios.kernel.ws.pojo.ShareSessionWrapper;
 import org.kimios.kernel.ws.pojo.UpdateNoticeMessage;
+import org.kimios.kernel.ws.pojo.task.TaskGetFoldersAndSendData;
 import org.kimios.utils.configuration.ConfigurationManager;
 
 import java.io.FileInputStream;
@@ -82,4 +83,11 @@ public class CamelTool implements CamelToolInterface {
         );
     }
 
+    public void getFoldersAndSendData(TaskGetFoldersAndSendData taskGetFoldersAndSendData) {
+        org.apache.camel.ProducerTemplate template = camelContext.createProducerTemplate();
+        template.sendBody(
+                "direct:getFoldersAndSendData",
+                taskGetFoldersAndSendData
+        );
+    }
 }

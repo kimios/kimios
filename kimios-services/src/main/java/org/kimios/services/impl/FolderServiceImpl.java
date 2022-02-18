@@ -21,13 +21,13 @@ import org.kimios.kernel.ws.pojo.Bookmark;
 import org.kimios.kernel.ws.pojo.DataMessage;
 import org.kimios.kernel.ws.pojo.Folder;
 import org.kimios.kernel.ws.pojo.MetaValue;
+import org.kimios.kernel.ws.pojo.task.TaskGetFoldersAndSendData;
 import org.kimios.kernel.ws.pojo.web.FolderUidListParam;
 import org.kimios.webservices.FolderService;
 import org.kimios.webservices.exceptions.DMServiceException;
 
 import javax.jws.WebService;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -101,14 +101,11 @@ public class FolderServiceImpl extends CoreService implements FolderService
             } catch (Exception e) {
                 throw getHelper().convertException(e);
             }
-            this.camelTool.sendData(new DataMessage(
-                    session.getWebSocketToken(),
-                    session.getUid(),
-                    Arrays.asList(this.getFolders(folderUidListParam.getSessionId(), uid)).stream().map(folder -> {
-                        folder.setBookmarked(bookmarkedUidList.contains(folder.getUid()));
-                        return folder;
-                    }).collect(Collectors.toList()),
-                    parentFolder != null ? parentFolder : workspace
+
+            this.camelTool.getFoldersAndSendData(new TaskGetFoldersAndSendData(
+                    session,
+                    parentFolder != null ? parentFolder : workspace,
+                    bookmarkedUidList
             ));
         }
     }
