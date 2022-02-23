@@ -8,6 +8,13 @@ public class DataMessage extends Message {
     private List<DMEntity> dmEntityList;
     private DMEntity parent;
 
+    public DataMessage() {
+    }
+
+    public DataMessage(String token, String sessionId) {
+        super(token, sessionId);
+    }
+
     public DataMessage(String token, String sessionId, List<DMEntity> dmEntityList, DMEntity parent) {
         super(token, sessionId);
         this.dmEntityList = dmEntityList;

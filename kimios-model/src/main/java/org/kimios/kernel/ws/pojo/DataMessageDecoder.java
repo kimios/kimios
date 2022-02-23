@@ -1,18 +1,25 @@
 package org.kimios.kernel.ws.pojo;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.websocket.DecodeException;
 import javax.websocket.Decoder;
 import javax.websocket.EndpointConfig;
+import java.io.IOException;
 
 public class DataMessageDecoder implements Decoder.Text<DataMessage> {
 
-    private static Gson gson = new Gson();
+    private static ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public DataMessage decode(String s) throws DecodeException {
-        DataMessage dataMessage = gson.fromJson(s, DataMessage.class);
+        DataMessage dataMessage = null;
+        try {
+            dataMessage = objectMapper.readValue(s, DataMessage.class);
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+            throw new DecodeException("ioException", "in DataMessageDecoder");
+        }
         return dataMessage;
     }
 

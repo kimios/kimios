@@ -4,6 +4,9 @@ public class Message {
     private String token;
     private String sessionId;
 
+    public Message() {
+    }
+
     public Message(String token, String sessionId) {
         this.token = token;
         this.sessionId = sessionId;
