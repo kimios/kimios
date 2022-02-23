@@ -79,11 +79,6 @@ public class ChatEndpoint implements IKimiosWebSocketController {
             }
             this.session = session;
             webSocketSessions.put(kimiosSessionUid, session);
-
-            Message message = new Message();
-            message.setFrom(username);
-            message.setContent("Connected!");
-            this.sendMessage(message);
         } catch (Exception e) {
             e.printStackTrace();
         }
