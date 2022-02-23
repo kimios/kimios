@@ -203,8 +203,7 @@ public class ChatEndpoint implements IKimiosWebSocketController {
             }
             dataMessage.clearSessionId();
             synchronized (sessionDestination) {
-                sessionDestination.getBasicRemote()
-                        .sendObject(gson.toJson(dataMessage, DataMessage.class));
+                sessionDestination.getBasicRemote().sendObject(dataMessage);
                 /*System.out.println(
                         "DataMessage (with list size of "
                                 + dataMessage.getDmEntityList().size()
