@@ -122,6 +122,7 @@
                             org.xml.sax,
                             org.xml.sax.helpers,
                             org.kimios.kernel.ws.pojo,
+                            org.kimios.kernel.ws.pojo.web,
                             org.kimios.kernel.controller,
                             *;resolution:=optional
                         </Import-Package>

@@ -415,5 +415,15 @@ public class SessionManager extends HFactory implements ISessionManager
     protected String generateSessionUid() {
         return SessionUtils.generateSessionUid();
     }
+
+    public String updateWebSocketToken(String uid) {
+        Session s = sessions.get(uid);
+        if (s == null) {
+            return null;
+        }
+        s.setWebSocketToken(this.generateSessionUid());
+
+        return s.getWebSocketToken();
+    }
 }
 

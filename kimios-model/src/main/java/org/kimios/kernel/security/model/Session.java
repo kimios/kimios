@@ -131,6 +131,10 @@ public class Session implements Serializable
         return webSocketToken;
     }
 
+    public void setWebSocketToken(String token) {
+        this.webSocketToken = token;
+    }
+
     @Override public String toString()
     {
         return "Session{" +

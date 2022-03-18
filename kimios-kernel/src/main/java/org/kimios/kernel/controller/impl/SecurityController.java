@@ -36,6 +36,7 @@ import org.kimios.kernel.user.model.AuthenticationSource;
 import org.kimios.kernel.user.model.Group;
 import org.kimios.kernel.user.model.User;
 import org.kimios.kernel.jobs.model.TaskInfo;
+import org.kimios.kernel.ws.pojo.web.SessionUidParam;
 import org.kimios.utils.session.SessionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -523,8 +524,9 @@ public class SecurityController extends AKimiosController implements ISecurityCo
     }
 
     @Override
-    public String checkWebSocketToken(String token) {
+    public SessionUidParam checkWebSocketToken(String token) {
         String sessionUid = null;
+        String webSocketToken = null;
         if (token.equals(this.getSystemWebSocketToken())) {
             sessionUid = "kernel";
         } else {
@@ -533,9 +535,10 @@ public class SecurityController extends AKimiosController implements ISecurityCo
                     .collect(Collectors.toList());
             if (sessions.size() > 0) {
                 sessionUid = sessions.get(0).getUid();
+                webSocketToken = SessionManager.getInstance().updateWebSocketToken(sessionUid);
             }
         }
-        return sessionUid;
+        return new SessionUidParam(sessionUid, webSocketToken);
     }
 
     @Override

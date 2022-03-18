@@ -28,6 +28,7 @@ import org.kimios.kernel.user.model.AuthenticationSource;
 import org.kimios.kernel.user.model.Group;
 import org.kimios.kernel.user.model.User;
 import org.kimios.kernel.jobs.model.TaskInfo;
+import org.kimios.kernel.ws.pojo.web.SessionUidParam;
 
 import java.util.List;
 
@@ -186,7 +187,7 @@ public interface ISecurityController
             throws ConfigException,
             DataSourceException;
 
-    public String checkWebSocketToken(String token);
+    public SessionUidParam checkWebSocketToken(String token);
 
     public String getSystemWebSocketToken();
 
