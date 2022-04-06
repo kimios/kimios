@@ -24,6 +24,7 @@ import org.kimios.kernel.dms.model.SymbolicLink;
 import org.kimios.kernel.security.model.DMEntitySecurity;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.ws.pojo.DMEntity;
+import org.kimios.kernel.ws.pojo.DMEntityWrapper;
 import org.kimios.kernel.ws.pojo.Document;
 import org.kimios.kernel.ws.pojo.WorkflowStatus;
 import org.kimios.webservices.DocumentService;
@@ -712,6 +713,24 @@ public class DocumentServiceImpl extends CoreService implements DocumentService 
             Session session = getHelper().getSession(sessionId);
             List<DMEntity> parents = this.documentController.retrieveDocumentParents(session, documentId);
             return parents;
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
+
+    @Override
+    public DMEntityWrapper retrieveDocumentWrapper(String sessionId, long documentId) throws DMServiceException {
+        try {
+            Session session = getHelper().getSession(sessionId);
+
+            Document document = this.getDocument(sessionId, documentId);
+
+            return new DMEntityWrapper(
+                    document,
+                    this.securityController.canRead(session, documentId),
+                    this.securityController.canWrite(session, documentId),
+                    this.securityController.hasFullAccess(session, documentId)
+            );
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }

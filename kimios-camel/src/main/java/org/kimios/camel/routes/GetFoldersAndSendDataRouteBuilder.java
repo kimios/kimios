@@ -5,8 +5,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.kimios.kernel.controller.IDocumentController;
 import org.kimios.kernel.controller.IFolderController;
+import org.kimios.kernel.controller.ISecurityController;
 import org.kimios.kernel.dms.model.Folder;
-import org.kimios.kernel.ws.pojo.DMEntity;
+import org.kimios.kernel.ws.pojo.DMEntityWrapper;
 import org.kimios.kernel.ws.pojo.DataMessage;
 import org.kimios.kernel.ws.pojo.Document;
 import org.kimios.kernel.ws.pojo.task.TaskGetFoldersAndSendData;
@@ -19,6 +20,7 @@ public class GetFoldersAndSendDataRouteBuilder extends RouteBuilder {
 
     private IFolderController folderController;
     private IDocumentController documentController;
+    private ISecurityController securityController;
 
     public IFolderController getFolderController() {
         return folderController;
@@ -36,21 +38,35 @@ public class GetFoldersAndSendDataRouteBuilder extends RouteBuilder {
         this.documentController = documentController;
     }
 
+    public ISecurityController getSecurityController() {
+        return securityController;
+    }
+
+    public void setSecurityController(ISecurityController securityController) {
+        this.securityController = securityController;
+    }
+
     @Override
     public void configure() throws Exception {
         from("direct:getFoldersAndSendData")
-                .process(new GetFoldersProcessor(this.folderController, this.documentController))
+                .process(new GetFoldersProcessor(this.folderController, this.documentController, this.securityController))
                 .to("direct:sendData");
     }
 
     private class GetFoldersProcessor implements Processor {
         private IFolderController folderController;
         private IDocumentController documentController;
+        private ISecurityController securityController;
 
-        public GetFoldersProcessor(IFolderController folderController, IDocumentController documentController) {
+        public GetFoldersProcessor(
+                IFolderController folderController,
+                IDocumentController documentController,
+                ISecurityController securityController
+        ) {
             super();
             this.folderController = folderController;
             this.documentController = documentController;
+            this.securityController = securityController;
         }
 
         @Override
@@ -68,7 +84,7 @@ public class GetFoldersAndSendDataRouteBuilder extends RouteBuilder {
                         taskGetFoldersAndSendData.getSession(), taskGetFoldersAndSendData.getParent().getUid());
             }
 
-            List<DMEntity> entityList = new ArrayList<>();
+            List<DMEntityWrapper> entityList = new ArrayList<>();
             entityList.addAll(
                     folderList
                             .stream()
@@ -78,15 +94,46 @@ public class GetFoldersAndSendDataRouteBuilder extends RouteBuilder {
                                         taskGetFoldersAndSendData.getBookmarkedUidList().contains(folder.getUid()));
                                 return folder;
                             })
+                            .map(folder -> new DMEntityWrapper(folder))
                             .collect(Collectors.toList())
             );
-            entityList.addAll(documentList);
+            entityList.addAll(
+                    documentList.stream().map(document -> new DMEntityWrapper(document))
+                    .collect(Collectors.toList())
+            );
+
+            // add permissions canRead, canWrite, hasFullAccess 
+            entityList.stream().map(dmEntityWrapper -> {
+                long dmEntityUid = dmEntityWrapper.getDmEntity().getUid();
+                dmEntityWrapper.setCanRead(
+                        this.securityController.canRead(taskGetFoldersAndSendData.getSession(), dmEntityUid));
+                dmEntityWrapper.setCanWrite(
+                        this.securityController.canWrite(taskGetFoldersAndSendData.getSession(), dmEntityUid));
+                dmEntityWrapper.setHasFullAccess(
+                        this.securityController.hasFullAccess(taskGetFoldersAndSendData.getSession(), dmEntityUid));
+
+                return dmEntityWrapper;
+            });
 
             DataMessage dataMessage = new DataMessage(
                     taskGetFoldersAndSendData.getSession().getWebSocketToken(),
                     taskGetFoldersAndSendData.getSession().getUid(),
                     entityList,
-                    taskGetFoldersAndSendData.getParent()
+                    new DMEntityWrapper(
+                            taskGetFoldersAndSendData.getParent(),
+                            this.securityController.canRead(
+                                    taskGetFoldersAndSendData.getSession(),
+                                    taskGetFoldersAndSendData.getParent().getUid()
+                            ),
+                            this.securityController.canWrite(
+                                    taskGetFoldersAndSendData.getSession(),
+                                    taskGetFoldersAndSendData.getParent().getUid()
+                            ),
+                            this.securityController.hasFullAccess(
+                                    taskGetFoldersAndSendData.getSession(),
+                                    taskGetFoldersAndSendData.getParent().getUid()
+                            )
+                    )
             );
             exchange.getOut().setBody(dataMessage);
             exchange.getOut().setHeaders(exchange.getIn().getHeaders());

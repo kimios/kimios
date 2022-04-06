@@ -43,6 +43,7 @@
     <bean id="getFoldersAndSendDataRouteBuilder" class="org.kimios.camel.routes.GetFoldersAndSendDataRouteBuilder" >
         <property name="folderController" ref="folderController" />
         <property name="documentController" ref="documentController" />
+        <property name="securityController" ref="securityController" />
     </bean>
     
     <bean id="generateShareDmsEventRouteBuilder" class="org.kimios.camel.routes.GenerateShareDmsEventRouteBuilder" />

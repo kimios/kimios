@@ -5,8 +5,8 @@ import java.util.stream.Collectors;
 
 public class DataMessage extends Message {
 
-    private List<DMEntity> dmEntityList;
-    private DMEntity parent;
+    private List<DMEntityWrapper> dmEntityList;
+    private DMEntityWrapper parent;
 
     public DataMessage() {
     }
@@ -15,27 +15,27 @@ public class DataMessage extends Message {
         super(token, sessionId);
     }
 
-    public DataMessage(String token, String sessionId, List<DMEntity> dmEntityList, DMEntity parent) {
+    public DataMessage(String token, String sessionId, List<DMEntityWrapper> dmEntityList, DMEntityWrapper parent) {
         super(token, sessionId);
         this.dmEntityList = dmEntityList;
         this.parent = parent;
     }
 
-    public List<DMEntity> getDmEntityList() {
+    public List<DMEntityWrapper> getDmEntityList() {
         return dmEntityList;
     }
 
-    public DMEntity getParent() {
+    public DMEntityWrapper getParent() {
         return parent;
     }
 
     @Override
     public String toString() {
-        return "{ parent: " + parent.toString() + " ; "
+        return "{ parent: " + parent.getDmEntity().toString() + " ; "
                 + "\n"
                 + "dmEntityList (" + dmEntityList.size() + ") : ["
                 + "\n"
-                + dmEntityList.stream().map(dmEntity -> dmEntity.toString()).collect(Collectors.joining("\n"))
+                + dmEntityList.stream().map(dmEntityWrapper -> dmEntityWrapper.getDmEntity().toString()).collect(Collectors.joining("\n"))
                 + (dmEntityList.size() > 0 ? "\n" : "")
                 + "]}";
     }

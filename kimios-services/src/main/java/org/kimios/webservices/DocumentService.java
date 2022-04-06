@@ -359,4 +359,12 @@ public interface DocumentService {
     public List<DMEntity> retrieveDocumentParents(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "documentId") @WebParam(name = "documentId") long documentId) throws DMServiceException;
+
+    @GET @ApiOperation(value = "")
+    @Path("/getDocumentWrapper")
+    @Produces("application/json")
+    public DMEntityWrapper retrieveDocumentWrapper(
+            @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+            @QueryParam(value = "documentId") @WebParam(name = "documentId") long documentId) throws DMServiceException;
+
 }
