@@ -48,9 +48,22 @@ public interface DocumentService {
                                 @QueryParam(value = "documentId") @WebParam(name = "documentId") long documentId) throws DMServiceException;
 
     @GET @ApiOperation(value ="")
+    @Path("/getDocumentWrapper")
+    @Produces("application/json")
+    public DMEntityWrapper getDocumentWrapper(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+                                @QueryParam(value = "documentId") @WebParam(name = "documentId") long documentId) throws DMServiceException;
+
+
+    @GET @ApiOperation(value ="")
     @Path("/getDocuments")
     @Produces("application/json")
     public Document[] getDocuments(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+                                   @QueryParam(value = "folderId") @WebParam(name = "folderId") long folderUid) throws DMServiceException;
+
+    @GET @ApiOperation(value ="")
+    @Path("/getDocumentWrappers")
+    @Produces("application/json")
+    public List<DMEntityWrapper> getDocumentWrappers(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
                                    @QueryParam(value = "folderId") @WebParam(name = "folderId") long folderUid) throws DMServiceException;
 
     @GET @ApiOperation(value ="")
@@ -357,6 +370,13 @@ public interface DocumentService {
     @Path("/retrieveDocumentParents")
     @Produces("application/json")
     public List<DMEntity> retrieveDocumentParents(
+            @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+            @QueryParam(value = "documentId") @WebParam(name = "documentId") long documentId) throws DMServiceException;
+
+    @GET @ApiOperation(value = "")
+    @Path("/retrieveDocumentParentWrappers")
+    @Produces("application/json")
+    public List<DMEntityWrapper> retrieveDocumentParentWrappers(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "documentId") @WebParam(name = "documentId") long documentId) throws DMServiceException;
 

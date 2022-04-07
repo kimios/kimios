@@ -18,6 +18,7 @@ package org.kimios.webservices;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
+import org.kimios.kernel.ws.pojo.DMEntityWrapper;
 import org.kimios.kernel.ws.pojo.Workspace;
 import org.kimios.webservices.exceptions.DMServiceException;
 
@@ -27,6 +28,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import java.util.List;
 
 /**
  * Created by IntelliJ IDEA. User: farf Date: 4/1/12 Time: 4:57 PM
@@ -45,9 +47,22 @@ public interface WorkspaceService
             throws DMServiceException;
 
     @GET @ApiOperation(value="")
+    @Path("/getWorkspaceWrapper")
+    @Produces("application/json")
+    public DMEntityWrapper getWorkspaceWrapper(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+                                  @QueryParam(value = "workspaceId") @WebParam(name = "workspaceId") long workspaceId)
+            throws DMServiceException;
+
+    @GET @ApiOperation(value="")
     @Path("/getWorkspaces")
     @Produces("application/json")
     public Workspace[] getWorkspaces(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId)
+            throws DMServiceException;
+
+    @GET @ApiOperation(value="")
+    @Path("/getWorkspaceWrappers")
+    @Produces("application/json")
+    public List<DMEntityWrapper> getWorkspaceWrappers(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId)
             throws DMServiceException;
 
     @GET @ApiOperation(value="")

@@ -18,6 +18,7 @@ package org.kimios.services.impl;
 import org.kimios.exceptions.AccessDeniedException;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.ws.pojo.Bookmark;
+import org.kimios.kernel.ws.pojo.DMEntityWrapper;
 import org.kimios.kernel.ws.pojo.DataMessage;
 import org.kimios.kernel.ws.pojo.Folder;
 import org.kimios.kernel.ws.pojo.MetaValue;
@@ -51,6 +52,26 @@ public class FolderServiceImpl extends CoreService implements FolderService
         }
     }
 
+    @Override
+    public DMEntityWrapper getFolderWrapper(String sessionUid, long folderUid) throws DMServiceException {
+        try {
+
+            Session session = getHelper().getSession(sessionUid);
+
+            Folder f = folderController.getFolder(session, folderUid).toPojo();
+
+            return new DMEntityWrapper(
+                    f,
+                    this.securityController.canRead(session, f.getUid()),
+                    this.securityController.canWrite(session, f.getUid()),
+                    this.securityController.hasFullAccess(session, f.getUid())
+            );
+        } catch (Exception e) {
+
+            throw getHelper().convertException(e);
+        }
+    }
+
     public Folder[] getFolders(String sessionUid, long parentUid) throws DMServiceException
     {
         try {
@@ -63,6 +84,24 @@ public class FolderServiceImpl extends CoreService implements FolderService
                 i++;
             }
             return r;
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
+
+    @Override
+    public List<DMEntityWrapper> getFolderWrappers(String sessionId, long parentId) throws DMServiceException {
+        try {
+            Session session = getHelper().getSession(sessionId);
+            return this.folderController.getFolders(session, parentId).stream()
+                    .map(folder -> folder.toPojo())
+                    .map(folder -> new DMEntityWrapper(
+                            folder,
+                            this.securityController.canRead(session, folder.getUid()),
+                            this.securityController.canWrite(session, folder.getUid()),
+                            this.securityController.hasFullAccess(session, folder.getUid())
+                    ))
+                    .collect(Collectors.toList());
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }

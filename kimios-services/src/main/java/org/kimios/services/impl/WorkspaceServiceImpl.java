@@ -17,11 +17,13 @@ package org.kimios.services.impl;
 
 import org.kimios.kernel.dms.model.Workspace;
 import org.kimios.kernel.security.model.Session;
+import org.kimios.kernel.ws.pojo.DMEntityWrapper;
 import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.WorkspaceService;
 
 import javax.jws.WebService;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @WebService(targetNamespace = "http://kimios.org", serviceName = "WorkspaceService", name = "WorkspaceService")
@@ -43,6 +45,25 @@ public class WorkspaceServiceImpl extends CoreService implements WorkspaceServic
         }
     }
 
+    @Override
+    public DMEntityWrapper getWorkspaceWrapper(String sessionUid, long workspaceUid) throws DMServiceException {
+        try {
+
+            Session session = getHelper().getSession(sessionUid);
+
+            org.kimios.kernel.ws.pojo.Workspace ws = workspaceController.getWorkspace(session, workspaceUid).toPojo();
+
+            return new DMEntityWrapper(
+                            ws,
+                            this.securityController.canRead(session, ws.getUid()),
+                            this.securityController.canWrite(session, ws.getUid()),
+                            this.securityController.hasFullAccess(session, ws.getUid())
+                    );
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
+
     public org.kimios.kernel.ws.pojo.Workspace[] getWorkspaces(String sessionUid) throws DMServiceException
     {
 
@@ -59,6 +80,26 @@ public class WorkspaceServiceImpl extends CoreService implements WorkspaceServic
             }
 
             return r;
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
+
+    @Override
+    public List<DMEntityWrapper> getWorkspaceWrappers(String sessionUid) throws DMServiceException {
+        try {
+
+            Session session = getHelper().getSession(sessionUid);
+
+            return workspaceController.getWorkspaces(session).stream()
+                    .map(workspace -> workspace.toPojo())
+                    .map(workspace -> new DMEntityWrapper(
+                            workspace,
+                            this.securityController.canRead(session, workspace.getUid()),
+                            this.securityController.canWrite(session, workspace.getUid()),
+                            this.securityController.hasFullAccess(session, workspace.getUid())
+                    ))
+                    .collect(Collectors.toList());
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }

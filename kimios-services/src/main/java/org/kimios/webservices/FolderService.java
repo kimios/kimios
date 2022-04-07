@@ -19,11 +19,10 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
+import org.kimios.kernel.ws.pojo.DMEntityWrapper;
 import org.kimios.kernel.ws.pojo.DataMessage;
 import org.kimios.kernel.ws.pojo.Folder;
 import org.kimios.kernel.ws.pojo.MetaValue;
-import org.kimios.kernel.ws.pojo.UpdateNoticeMessage;
-import org.kimios.kernel.ws.pojo.web.DMEntityTreeParam;
 import org.kimios.kernel.ws.pojo.web.FolderUidListParam;
 import org.kimios.webservices.exceptions.DMServiceException;
 
@@ -56,12 +55,26 @@ public interface FolderService {
     public Folder getFolder(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
                             @QueryParam(value = "folderId") @WebParam(name = "folderId") long folderId) throws DMServiceException;
 
+    @GET
+    @ApiOperation(value = "")
+    @Path("/getFolderWrapper")
+    @Produces("application/json")
+    public DMEntityWrapper getFolderWrapper(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+                            @QueryParam(value = "folderId") @WebParam(name = "folderId") long folderId) throws DMServiceException;
+
     @GET 
     @ApiOperation(value = "")
     @Path("/getFolders")
     @Produces("application/json")
     public Folder[] getFolders(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
                                       @QueryParam(value = "parentId") @WebParam(name = "parentId") long parentId) throws DMServiceException;
+
+    @GET
+    @ApiOperation(value = "")
+    @Path("/getFolderWrappers")
+    @Produces("application/json")
+    public List<DMEntityWrapper> getFolderWrappers(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+                                               @QueryParam(value = "parentId") @WebParam(name = "parentId") long parentId) throws DMServiceException;
 
     @POST
     @ApiOperation(value = "")

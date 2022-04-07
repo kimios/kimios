@@ -34,6 +34,7 @@ import javax.jws.WebService;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @WebService(targetNamespace = "http://kimios.org", serviceName = "DocumentService", name = "DocumentService")
 public class DocumentServiceImpl extends CoreService implements DocumentService {
@@ -56,6 +57,24 @@ public class DocumentServiceImpl extends CoreService implements DocumentService 
         }
     }
 
+    @Override
+    public DMEntityWrapper getDocumentWrapper(String sessionId, long documentId) throws DMServiceException {
+        try {
+            Session session = getHelper().getSession(sessionId);
+            org.kimios.kernel.dms.model.Document doc = documentController.getDocument(session, documentId);
+            Document document = documentController.getDocumentPojo(doc);
+
+            return new DMEntityWrapper(
+                    document,
+                    this.securityController.canRead(session, document.getUid()),
+                    this.securityController.canWrite(session, document.getUid()),
+                    this.securityController.hasFullAccess(session, document.getUid())
+            );
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
+
     /**
      * @param sessionId
      * @param folderId
@@ -73,6 +92,25 @@ public class DocumentServiceImpl extends CoreService implements DocumentService 
                 pojos[i++] = d;
             }
             return pojos;
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
+
+    @Override
+    public List<DMEntityWrapper> getDocumentWrappers(String sessionId, long folderId) throws DMServiceException {
+        try {
+            Session session = getHelper().getSession(sessionId);
+            return this.documentController.getDocumentsPojos(session, folderId).stream()
+                    .map(
+                            document -> new DMEntityWrapper(
+                                    document,
+                                    this.securityController.canRead(session, document.getUid()),
+                                    this.securityController.canWrite(session, document.getUid()),
+                                    this.securityController.hasFullAccess(session, document.getUid())
+                            )
+                    )
+                    .collect(Collectors.toList());
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }
@@ -715,6 +753,26 @@ public class DocumentServiceImpl extends CoreService implements DocumentService 
             return parents;
         } catch (Exception e) {
             throw getHelper().convertException(e);
+        }
+    }
+
+    @Override
+    public List<DMEntityWrapper> retrieveDocumentParentWrappers(String sessionId, long documentId) throws DMServiceException {
+        try {
+            Session session = getHelper().getSession(sessionId);
+            List<DMEntity> parents = this.documentController.retrieveDocumentParents(session, documentId);
+            return parents.stream()
+                    .map(
+                            dmEntity -> new DMEntityWrapper(
+                                    dmEntity,
+                                    this.securityController.canRead(session, dmEntity.getUid()),
+                                    this.securityController.canWrite(session, dmEntity.getUid()),
+                                    this.securityController.hasFullAccess(session, dmEntity.getUid())
+                            )
+                    ).collect(Collectors.toList());
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+
         }
     }
 
