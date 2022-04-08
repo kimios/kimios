@@ -1664,6 +1664,8 @@ public class DocumentController extends AKimiosController implements IDocumentCo
     @DmsEvent(eventName = {DmsEventName.DOCUMENT_UPDATE})
     public void updateDocumentTag(Session session, long documentId, String tagValue, boolean action)
             throws AccessDeniedException, ConfigException, DataSourceException {
+        EventContext initialContext = EventContext.get();
+        EventContext.clear();
         Document doc = dmsFactoryInstantiator.getDocumentFactory().getDocument(documentId);
         // check access
         if (doc == null
@@ -1676,6 +1678,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
         } else {
             FactoryInstantiator.getInstance().getDocumentFactory().removeTag(documentId, tagValue);
         }
+        initialContext.setEntity(doc);
     }
 
     /**
