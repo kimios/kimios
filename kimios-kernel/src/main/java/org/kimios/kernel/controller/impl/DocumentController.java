@@ -1675,6 +1675,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
 
         if (action) {
             FactoryInstantiator.getInstance().getDocumentFactory().addTag(documentId, tagValue);
+            EventContext.addParameter("newTag", tagValue);
         } else {
             FactoryInstantiator.getInstance().getDocumentFactory().removeTag(documentId, tagValue);
         }

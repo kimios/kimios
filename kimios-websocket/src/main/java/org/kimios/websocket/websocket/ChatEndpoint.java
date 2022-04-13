@@ -144,7 +144,7 @@ public class ChatEndpoint implements IKimiosWebSocketController {
 
     @Override
     public void sendUpdateNotice(String sessionId, UpdateNoticeMessage updateNoticeMessage) {
-        System.out.println("sendUpdateNotice() : " + this.hashCode());
+        System.out.println("sendUpdateNotice() " + updateNoticeMessage.getUpdateNoticeType().name() + " : " + this.hashCode());
         try {
             // ChatEndpoint chatEndpoint = chatEndpointsMap.get(sessionId);
             Session sessionDestination = webSocketSessions.get(sessionId);

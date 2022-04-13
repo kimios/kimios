@@ -42,7 +42,8 @@ public enum UpdateNoticeType {
     DOCUMENT_VERSION_COMMENT_DELETE("document version_comment_delete"),
     DOCUMENT_TRASH("document trash"),
     DOCUMENT_UNTRASH("document untrash"),
-    DOCUMENT_SHARED("document shared");
+    DOCUMENT_SHARED("document shared"),
+    NEW_TAG("new tag");
     private final String value;
 
     UpdateNoticeType(String state) {

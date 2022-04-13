@@ -98,7 +98,8 @@ public class ActionLogger extends GenericEventHandler
                         UpdateNoticeType.DOCUMENT_VERSION_COMMENT_DELETE,
                         UpdateNoticeType.DOCUMENT_VERSION_CREATE,
                         UpdateNoticeType.DOCUMENT_VERSION_CREATE_FROM_LATEST,
-                        UpdateNoticeType.DOCUMENT_VERSION_UPDATE
+                        UpdateNoticeType.DOCUMENT_VERSION_UPDATE,
+                        UpdateNoticeType.NEW_TAG
                 })
         );
 
@@ -199,6 +200,12 @@ public class ActionLogger extends GenericEventHandler
                 new AbstractMap.SimpleEntry<String, Object>("dmEntityId", doc.getUid())
         );
         this.sendUpdateNoticeWithMessage(messageProperties, UpdateNoticeType.DOCUMENT_UPDATE, doc.getUid());
+
+        String newTag = (String) EventContext.getParameters().get("newTag");
+        if (newTag != null) {
+            messageProperties = this.makePropertiesMap(new AbstractMap.SimpleEntry<String, Object>("tag", newTag));
+            this.sendUpdateNoticeWithMessage(messageProperties, UpdateNoticeType.NEW_TAG, doc.getUid());
+        }
     }
 
     @DmsEvent(eventName = { DmsEventName.DOCUMENT_DELETE }, when = DmsEventOccur.AFTER)
