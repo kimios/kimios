@@ -593,7 +593,9 @@ public class AdministrationController extends AKimiosController implements IAdmi
         User user = authFactoryInstantiator.getAuthenticationSourceFactory()
                 .getAuthenticationSource(authenticationSourceName)
                 .getUserFactory().getUser(uid);
-        HFactory.initializeAndUnproxy(user.getEmails());
+        if (user != null) {
+            HFactory.initializeAndUnproxy(user.getEmails());
+        }
         return user;
     }
 
