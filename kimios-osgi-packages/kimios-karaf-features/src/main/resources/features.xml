@@ -142,5 +142,8 @@
         <bundle start-level="90">mvn:org.kimios/kimios-websocket-client/${project.version}/jar/osgi</bundle>
         <capability>kimios-websocket</capability>
     </feature>
+    <feature name="kimios-itest" version="${project.version}">
+        <bundle>mvn:org.kimios/kimios-integration-test/${project.version}/jar/osgi</bundle>
+    </feature>
 </features>
 
