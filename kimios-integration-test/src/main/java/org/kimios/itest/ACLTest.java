@@ -121,6 +121,9 @@ public class ACLTest extends AKimiosController {
     private void testACL() throws Exception {
         int nb = 0;
 
+        AccessRight fffAccessRight = new AccessRight(false, false, false);
+        AccessRight tffAccessRight = new AccessRight(true, false, false);
+
         User user1 = this.administrationController.getUser(session, array[0][0], "kimios");
         Session user1Session = this.securityController.startSession(user1.getUid(), "kimios");
 
@@ -129,7 +132,7 @@ public class ACLTest extends AKimiosController {
                 this.securityController.canWrite(user1Session, this.workspace.getUid()),
                 this.securityController.hasFullAccess(user1Session, this.workspace.getUid())
         );
-        this.shouldBeEqual(user1AccessRight, new AccessRight(false, false, false));
+        this.shouldBeEqual(user1AccessRight, fffAccessRight);
         logger.info("test " + nb++ + " ok");
 
         List<DMEntitySecurity> securityList = new ArrayList<>();
@@ -151,8 +154,47 @@ public class ACLTest extends AKimiosController {
                 true
         );
         this.updateAccessRight(user1AccessRight, user1Session, this.workspace.getUid());
-        this.shouldBeEqual(user1AccessRight, new AccessRight(true, false, false));
+        this.shouldBeEqual(user1AccessRight, tffAccessRight);
         logger.info("test " + nb++ + " ok");
+
+        User user2 = this.administrationController.getUser(session, array[1][0], "kimios");
+        Session user2Session = this.securityController.startSession(user2.getUid(), "kimios");
+        AccessRight user2AccessRight = new AccessRight();
+        this.updateAccessRight(user2AccessRight, user2Session, this.workspace.getUid());
+        this.shouldBeEqual(user2AccessRight, fffAccessRight);
+        logger.info("test " + nb++ + " ok");
+
+        User user3 = this.administrationController.getUser(session, array[2][0], "kimios");
+        Session user3Session = this.securityController.startSession(user3.getUid(), "kimios");
+        AccessRight user3AccessRight = new AccessRight();
+        this.updateAccessRight(user3AccessRight, user3Session, this.workspace.getUid());
+        this.shouldBeEqual(user3AccessRight, fffAccessRight);
+        logger.info("test " + nb++ + " ok");
+
+        securityList = new ArrayList<>();
+        securityList.add(new DMEntitySecurity(
+                this.workspace.getUid(),
+                this.workspace.getType(),
+                user2.getUid(),
+                user2.getAuthenticationSourceName(),
+                user2.getType(),
+                true,
+                false,
+                false
+        ));
+        this.securityController.updateDMEntitySecurities(
+                session,
+                this.workspace.getUid(),
+                securityList,
+                false,
+                true
+        );
+        this.updateAccessRight(user1AccessRight, user1Session, this.workspace.getUid());
+        this.updateAccessRight(user2AccessRight, user2Session, this.workspace.getUid());
+        this.updateAccessRight(user3AccessRight, user3Session, this.workspace.getUid());
+        this.shouldBeEqual(user1AccessRight, tffAccessRight, "user1AccessRight");
+        this.shouldBeEqual(user2AccessRight, tffAccessRight, "user2AccessRight");
+        this.shouldBeEqual(user3AccessRight, fffAccessRight, "user3AccessRight");
     }
 
     private void setUp() throws Exception {
@@ -303,6 +345,17 @@ public class ACLTest extends AKimiosController {
     private void shouldBeEqual(AccessRight accessRight1, AccessRight accessRight2) throws Exception {
         if (! accessRight1.equals(accessRight2)) {
             throw new Exception("access right should be equal "
+                    + accessRight1.toString()
+                    + " <> "
+                    + accessRight2.toString()
+            );
+        }
+    }
+
+    private void shouldBeEqual(AccessRight accessRight1, AccessRight accessRight2, String message) throws Exception {
+        if (! accessRight1.equals(accessRight2)) {
+            throw new Exception(message
+                    + " "
                     + accessRight1.toString()
                     + " <> "
                     + accessRight2.toString()
