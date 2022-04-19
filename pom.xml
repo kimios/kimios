@@ -165,6 +165,7 @@
         <module>kimios-websocket-client</module>
         <module>kimios-zipper</module>
         <module>kimios-zipper-service</module>
+        <module>kimios-test-pax-exam</module>
         <module>kimios-integration-test</module>
     </modules>
     <packaging>pom</packaging>
