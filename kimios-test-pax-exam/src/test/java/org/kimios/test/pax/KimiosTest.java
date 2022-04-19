@@ -4,6 +4,7 @@ import aQute.bnd.osgi.Constants;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kimios.kernel.controller.ISecurityController;
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.ProbeBuilder;
@@ -13,6 +14,7 @@ import org.ops4j.pax.exam.karaf.options.LogLevelOption;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerClass;
 
+import javax.inject.Inject;
 import java.io.File;
 
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.*;
@@ -20,6 +22,9 @@ import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.*;
 @RunWith(PaxExam.class)
 @ExamReactorStrategy(PerClass.class)
 public class KimiosTest {
+
+    @Inject
+    private ISecurityController securityController;
 
     @ProbeBuilder
     public TestProbeBuilder probeConfiguration(TestProbeBuilder probe) {
@@ -31,7 +36,7 @@ public class KimiosTest {
     public static Option[] configure() throws Exception {
         return new Option[]{
                 karafDistributionConfiguration()
-                        .frameworkUrl("mvn:org.apache.karaf/apache-karaf/4.0.4/tar.gz")
+                        .frameworkUrl("mvn:org.kimios/kimios-karaf-distribution/1.3-SNAPSHOT/tar.gz")
                         .karafVersion("4.0.4")
                         .useDeployFolder(false)
                         .unpackDirectory(new File("target/paxexam/unpack")),
@@ -48,6 +53,55 @@ public class KimiosTest {
                                 + "https://oss.sonatype.org/content/repositories/snapshots@id=sonatype.snapshots.deploy@snapshots@noreleases, "
                                 + "https://oss.sonatype.org/content/repositories/ops4j-snapshots@id=ops4j.sonatype.snapshots.deploy@snapshots@noreleases, "
                                 + "http://repository.springsource.com/maven/bundles/external@id=spring-ebr-repository@snapshots@noreleases"
+                ),
+                /*replaceConfigurationFile(
+                        "etc/org.kimios.server.app.cfg",
+                        targetFile
+                ),*/
+                editConfigurationFilePut(
+                        "etc/org.kimios.server.app.cfg",
+                        "jdbc.url",
+                        "jdbc:postgresql://172.92.0.1:5436/kimios_solr"
+                ),
+                editConfigurationFilePut(
+                        "etc/org.kimios.server.app.cfg",
+                        "jdbc.driver",
+                        "org.postgresql.Driver"
+                ),
+                editConfigurationFilePut(
+                        "etc/org.kimios.server.app.cfg",
+                        "jdbc.user",
+                        "kimios"
+                ),
+                editConfigurationFilePut(
+                        "etc/org.kimios.server.app.cfg",
+                        "jdbc.password",
+                        "kimios"
+                ),
+                editConfigurationFilePut(
+                        "etc/org.kimios.server.app.cfg",
+                        "dms.repository.default.path",
+                        "/home/tom/dev/kimios/docker/data-1.3-SNAPSHOT-solr/repository"
+                ),
+                editConfigurationFilePut(
+                        "etc/org.kimios.server.app.cfg",
+                        "dms.repository.tmp.path",
+                        "/home/tom/dev/kimios/docker/data-1.3-SNAPSHOT-solr/tmp"
+                ),
+                editConfigurationFilePut(
+                        "etc/org.kimios.server.app.cfg",
+                        "dms.index.solr.home",
+                        "/home/tom/dev/kimios/docker/data-1.3-SNAPSHOT-solr/index"
+                ),
+                editConfigurationFilePut(
+                        "etc/org.kimios.server.app.cfg",
+                        "etherpad.url",
+                        "http://localhost:9001"
+                ),
+                editConfigurationFilePut(
+                        "etc/org.kimios.server.app.cfg",
+                        "dms.session.timeout",
+                        "60"
                 ),
 
                 // install features
@@ -106,5 +160,6 @@ public class KimiosTest {
         // assertBundleInstalled("ippon-osgi-sample-command");
 
         Assert.assertEquals("1", "1");
+        Assert.assertNotNull("securityController not null", securityController);
     }
 }
