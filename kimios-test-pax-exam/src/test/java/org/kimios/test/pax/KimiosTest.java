@@ -4,7 +4,10 @@ import aQute.bnd.osgi.Constants;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kimios.kernel.controller.IAdministrationController;
 import org.kimios.kernel.controller.ISecurityController;
+import org.kimios.kernel.security.model.Session;
+import org.kimios.kernel.user.model.AuthenticationSource;
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.ProbeBuilder;
@@ -16,6 +19,13 @@ import org.ops4j.pax.exam.spi.reactors.PerClass;
 
 import javax.inject.Inject;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Date;
+import java.util.List;
 
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.*;
 
@@ -26,6 +36,9 @@ public class KimiosTest {
     @Inject
     private ISecurityController securityController;
 
+    @Inject
+    private IAdministrationController administrationController;
+
     @ProbeBuilder
     public TestProbeBuilder probeConfiguration(TestProbeBuilder probe) {
         probe.setHeader(Constants.DYNAMICIMPORT_PACKAGE, "*,org.apache.felix.service.*;status=provisional");
@@ -34,12 +47,18 @@ public class KimiosTest {
 
     @Configuration
     public static Option[] configure() throws Exception {
+        File serverAppCfg = resourceToFile(
+                "org.kimios.server.app.cfg", "/tmp/kimios_1" + new Date().toString());
+        File paxLoggingCfg = resourceToFile(
+                "org.ops4j.pax.logging.cfg", "/tmp/kimios_2" + new Date().toString());
+
         return new Option[]{
                 karafDistributionConfiguration()
                         .frameworkUrl("mvn:org.kimios/kimios-karaf-distribution/1.3-SNAPSHOT/tar.gz")
                         .karafVersion("4.0.4")
                         .useDeployFolder(false)
                         .unpackDirectory(new File("target/paxexam/unpack")),
+                // debugConfiguration("5005", true),
                 logLevel(LogLevelOption.LogLevel.WARN),
 
                 editConfigurationFilePut(
@@ -54,14 +73,38 @@ public class KimiosTest {
                                 + "https://oss.sonatype.org/content/repositories/ops4j-snapshots@id=ops4j.sonatype.snapshots.deploy@snapshots@noreleases, "
                                 + "http://repository.springsource.com/maven/bundles/external@id=spring-ebr-repository@snapshots@noreleases"
                 ),
-                /*replaceConfigurationFile(
+                replaceConfigurationFile(
                         "etc/org.kimios.server.app.cfg",
-                        targetFile
-                ),*/
+                        serverAppCfg
+                ),
+                replaceConfigurationFile(
+                        "etc/org.ops4j.pax.logging.cfg",
+                        paxLoggingCfg
+                ),
+                /*editConfigurationFilePut(
+                        "etc/org.ops4j.pax.logging.cfg",
+                        "log4j.logger.org.hibernate.SQL",
+                        "debug"
+                ),
                 editConfigurationFilePut(
+                        "etc/org.ops4j.pax.logging.cfg",
+                        "log4j.logger.org.hibernate.type",
+                        "trace"
+                ),
+                editConfigurationFilePut(
+                        "etc/org.ops4j.pax.logging.cfg",
+                        "log4j.logger.org.hibernate.type.descriptor.sql",
+                        "trace"
+                ),*/
+                /*editConfigurationFilePut(
                         "etc/org.kimios.server.app.cfg",
                         "jdbc.url",
                         "jdbc:postgresql://172.92.0.1:5436/kimios_solr"
+                ),
+                editConfigurationFilePut(
+                        "etc/org.kimios.server.app.cfg",
+                        "jdbc.databasetype",
+                        "postgresql"
                 ),
                 editConfigurationFilePut(
                         "etc/org.kimios.server.app.cfg",
@@ -77,6 +120,11 @@ public class KimiosTest {
                         "etc/org.kimios.server.app.cfg",
                         "jdbc.password",
                         "kimios"
+                ),
+                editConfigurationFilePut(
+                        "etc/org.kimios.server.app.cfg",
+                        "jdbc.dialect",
+                        "org.hibernate.dialect.PostgreSQLDialect"
                 ),
                 editConfigurationFilePut(
                         "etc/org.kimios.server.app.cfg",
@@ -103,7 +151,37 @@ public class KimiosTest {
                         "dms.session.timeout",
                         "60"
                 ),
-
+                editConfigurationFilePut(
+                        "etc/org.kimios.server.app.cfg",
+                        "dms.mail.port",
+                        "25"
+                ),
+                editConfigurationFilePut(
+                        "etc/org.kimios.server.app.cfg",
+                        "dms.index.solr.mode.server",
+                "false"
+                ),
+                editConfigurationFilePut(
+                        "etc/org.kimios.server.app.cfg",
+                        "dms.mail.tlsauth",
+                        "false"
+                ),
+                editConfigurationFilePut(
+                        "etc/org.kimios.server.app.cfg",
+                        "dms.mail.ssl",
+                        "false"
+                ),
+                editConfigurationFilePut(
+                        "etc/org.kimios.server.app.cfg",
+                        "dms.mail.debug",
+                        "true"
+                ),
+                editConfigurationFilePut(
+                        "etc/org.kimios.server.app.cfg",
+                        "dms.server.name",
+                        "kimios-Server"
+                ),
+*/
                 // install features
                 /*features(maven().groupId("org.apache.karaf.features").artifactId("standard").type("xml").classifier("features").versionAsInProject(), "jdbc"),
                 features(maven().groupId("org.apache.karaf.features").artifactId("standard").type("xml").classifier("features").versionAsInProject(), "hibernate"),
@@ -161,5 +239,30 @@ public class KimiosTest {
 
         Assert.assertEquals("1", "1");
         Assert.assertNotNull("securityController not null", securityController);
+
+        Assert.assertNotNull("administrationController", administrationController);
+        List<AuthenticationSource> authenticationSourceList = this.securityController.getAuthenticationSources();
+        Assert.assertNotNull(authenticationSourceList);
+        Assert.assertTrue(authenticationSourceList.size() > 0);
+
+        Session session = this.securityController.startSession("admin", "kimios");
+        Assert.assertNotNull("admin session not null", session);
+    }
+
+    private static File resourceToFile(String resourcePath, String filePath) throws IOException {
+        InputStream initialStream = KimiosTest.class
+                .getClassLoader().getResourceAsStream(resourcePath);
+        File targetFile = new File(filePath);
+        OutputStream outStream = new FileOutputStream(targetFile);
+
+        byte[] buffer = new byte[8 * 1024];
+        int bytesRead;
+        while ((bytesRead = initialStream.read(buffer)) != -1) {
+            outStream.write(buffer, 0, bytesRead);
+        }
+        initialStream.close();
+        outStream.close();
+
+        return targetFile;
     }
 }

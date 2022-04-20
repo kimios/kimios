@@ -230,7 +230,6 @@
                         <feature>kimios-etherpad-editor</feature>
                         <feature>kimios-web-standard</feature>
                         <feature>kimios-websocket</feature>
-                        <feature>kimios-itest</feature>
                     </bootFeatures>
                 </configuration>
             </plugin>

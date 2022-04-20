@@ -79,7 +79,9 @@
         <properties>
             <!-- <property name="hibernate.archive.autodetection" value="class"/> -->
             <property name="hibernate.hbm2ddl.auto" value="update" />
-            <property name="hibernate.show_sql" value="false" />
+            <property name="hibernate.show_sql" value="true" />
+            <property name="hibernate.format_sql" value="true"/>
+            <property name="hibernate.use_sql_comments" value="true"/>
             <!-- The following line is what's used in Hibernate 4 instead of a TransactionManagerLookup class -->
             <property name="hibernate.transaction.jta.platform" value="org.hibernate.osgi.OsgiJtaPlatform" />
             <property name="hibernate.current_session_context_class" value="jta" />
