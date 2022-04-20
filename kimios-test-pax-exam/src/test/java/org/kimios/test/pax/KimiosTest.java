@@ -1,13 +1,19 @@
 package org.kimios.test.pax;
 
 import aQute.bnd.osgi.Constants;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kimios.kernel.controller.IAdministrationController;
+import org.kimios.kernel.controller.IFolderController;
 import org.kimios.kernel.controller.ISecurityController;
+import org.kimios.kernel.controller.IWorkspaceController;
+import org.kimios.kernel.security.model.DMEntitySecurity;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.user.model.AuthenticationSource;
+import org.kimios.kernel.user.model.User;
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.ProbeBuilder;
@@ -24,6 +30,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -38,6 +45,12 @@ public class KimiosTest {
 
     @Inject
     private IAdministrationController administrationController;
+
+    @Inject
+    private IWorkspaceController workspaceController;
+
+    @Inject
+    private IFolderController folderController;
 
     @ProbeBuilder
     public TestProbeBuilder probeConfiguration(TestProbeBuilder probe) {
@@ -264,5 +277,120 @@ public class KimiosTest {
         outStream.close();
 
         return targetFile;
+    }
+
+    @Test
+    public void testACL() {
+        ACLTestUtils aclTestUtils = new ACLTestUtils(
+                this.securityController,
+                this.administrationController,
+                this.workspaceController,
+                this.folderController
+        );
+
+        try {
+            aclTestUtils.setUp();
+        } catch (Exception e) {
+            System.out.println("********************************");
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            Assert.fail();
+        }
+
+        AccessRight fffAccessRight = new AccessRight(false, false, false);
+        AccessRight tffAccessRight = new AccessRight(true, false, false);
+
+        User user1 = this.administrationController.getUser(aclTestUtils.getSession(), aclTestUtils.getArray()[0][0], "kimios");
+        Session user1Session = this.securityController.startSession(user1.getUid(), "kimios");
+
+        AccessRight user1AccessRight = new AccessRight(
+                this.securityController.canRead(user1Session, aclTestUtils.getWorkspace().getUid()),
+                this.securityController.canWrite(user1Session, aclTestUtils.getWorkspace().getUid()),
+                this.securityController.hasFullAccess(user1Session, aclTestUtils.getWorkspace().getUid())
+        );
+        Assert.assertEquals(user1AccessRight, fffAccessRight);
+
+        List<DMEntitySecurity> securityList = new ArrayList<>();
+        securityList.add(new DMEntitySecurity(
+                aclTestUtils.getWorkspace().getUid(),
+                aclTestUtils.getWorkspace().getType(),
+                user1.getUid(),
+                user1.getAuthenticationSourceName(),
+                user1.getType(),
+                true,
+                false,
+                false
+        ));
+        this.securityController.updateDMEntitySecurities(
+                aclTestUtils.getSession(),
+                aclTestUtils.getWorkspace().getUid(),
+                securityList,
+                false,
+                true
+        );
+        aclTestUtils.updateAccessRight(user1AccessRight, user1Session, aclTestUtils.getWorkspace().getUid());
+        Assert.assertEquals(user1AccessRight, tffAccessRight);
+
+        User user2 = this.administrationController.getUser(aclTestUtils.getSession(), aclTestUtils.getArray()[1][0], "kimios");
+        Session user2Session = this.securityController.startSession(user2.getUid(), "kimios");
+        AccessRight user2AccessRight = new AccessRight();
+        aclTestUtils.updateAccessRight(user2AccessRight, user2Session, aclTestUtils.getWorkspace().getUid());
+        Assert.assertEquals(user2AccessRight, fffAccessRight);
+
+        User user3 = this.administrationController.getUser(aclTestUtils.getSession(), aclTestUtils.getArray()[2][0], "kimios");
+        Session user3Session = this.securityController.startSession(user3.getUid(), "kimios");
+        AccessRight user3AccessRight = new AccessRight();
+        aclTestUtils.updateAccessRight(user3AccessRight, user3Session, aclTestUtils.getWorkspace().getUid());
+        Assert.assertEquals(user3AccessRight, fffAccessRight);
+
+/*        securityList = new ArrayList<>();
+        securityList.add(new DMEntitySecurity(
+                aclTestUtils.getWorkspace().getUid(),
+                aclTestUtils.getWorkspace().getType(),
+                user2.getUid(),
+                user2.getAuthenticationSourceName(),
+                user2.getType(),
+                true,
+                false,
+                false
+        ));
+        this.securityController.updateDMEntitySecurities(
+                aclTestUtils.getSession(),
+                aclTestUtils.getWorkspace().getUid(),
+                securityList,
+                false,
+                true
+        );
+        aclTestUtils.updateAccessRight(user1AccessRight, user1Session, aclTestUtils.getWorkspace().getUid());
+        aclTestUtils.updateAccessRight(user2AccessRight, user2Session, aclTestUtils.getWorkspace().getUid());
+        aclTestUtils.updateAccessRight(user3AccessRight, user3Session, aclTestUtils.getWorkspace().getUid());
+        Assert.assertEquals(user1AccessRight, tffAccessRight);
+        Assert.assertEquals(user2AccessRight, tffAccessRight);
+        Assert.assertEquals(user3AccessRight, fffAccessRight);*/
+
+        try {
+            aclTestUtils.tearDown();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+
+        Assert.assertTrue(true);
+    }
+
+    @AfterClass
+    public static void deleteTestData() {
+        System.out.println("*********************");
+        System.out.println("in deleteTestData()");
+        if (ACLTestUtils.instance != null) {
+            ACLTestUtils aclTestUtils = ACLTestUtils.instance;
+            try {
+                System.out.println("tearDown()");
+                aclTestUtils.tearDown();
+            } catch (Exception e) {
+                System.out.println("********************************");
+                System.out.println(e.getMessage());
+            }
+        }
     }
 }
