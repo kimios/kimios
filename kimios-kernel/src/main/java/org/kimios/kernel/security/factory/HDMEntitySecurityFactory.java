@@ -268,6 +268,15 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
         }
     }
 
+    public void deleteAcl(DMEntityACL dmEntityACL) {
+        try {
+            dmEntityACL = (DMEntityACL) this.getSession().merge(dmEntityACL);
+            getSession().delete(dmEntityACL);
+        } catch (HibernateException ex) {
+            throw new DataSourceException(ex);
+        }
+    }
+
     public void deleteAclsForSecurityRule (String ruleHash)
             throws ConfigException, DataSourceException {
         try {
@@ -546,7 +555,6 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
         }
     }
 
-
     public List<DMEntityACL> saveDMEntitySecurity(DMEntitySecurity des, Share share)
             throws ConfigException, DataSourceException {
 
@@ -570,6 +578,11 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
                 } catch (NonUniqueObjectException o) {
                     log.error("already existing acl! entity " + des.getDmEntity().getPath() + " {} - {}@{}", "read", des.getName(), des.getSource());
                     readAcl = (DMEntityACL) getSession().merge(readAcl);
+                    try {
+                        getSession().saveOrUpdate(readAcl);
+                    } catch (HibernateException e) {
+                        throw new DataSourceException(e, e.getMessage());
+                    }
                     ret.add(readAcl);
                 }
             }
@@ -583,6 +596,11 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
                 } catch (NonUniqueObjectException o) {
                     log.error("already existing acl! entity " + des.getDmEntity().getPath() + " {} - {}@{}", "write", des.getName(), des.getSource());
                     writeAcl = (DMEntityACL) getSession().merge(writeAcl);
+                    try {
+                        getSession().saveOrUpdate(writeAcl);
+                    } catch (HibernateException e) {
+                        throw new DataSourceException(e, e.getMessage());
+                    }
                     ret.add(writeAcl);
                 }
             }
@@ -596,6 +614,11 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
                 } catch (NonUniqueObjectException e) {
                     log.error("already existing acl! entity " + des.getDmEntity().getPath() + " {} - {}@{}", "fullaccess", des.getName(), des.getSource());
                     fullAcl = (DMEntityACL) getSession().merge(fullAcl);
+                    try {
+                        getSession().saveOrUpdate(fullAcl);
+                    } catch (HibernateException ex) {
+                        throw new DataSourceException(ex, ex.getMessage());
+                    }
                     ret.add(fullAcl);
                 }
             }
@@ -609,6 +632,11 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
                 } catch (NonUniqueObjectException e) {
                     log.error("already existing acl! entity " + des.getDmEntity().getPath() + " {} - {}@{}", "noaccess", des.getName(), des.getSource());
                     noAcl = (DMEntityACL) getSession().merge(noAcl);
+                    try {
+                        getSession().saveOrUpdate(noAcl);
+                    } catch (HibernateException ex) {
+                        throw new DataSourceException(ex, ex.getMessage());
+                    }
                     ret.add(noAcl);
                 }
             }
@@ -619,6 +647,20 @@ public class HDMEntitySecurityFactory extends HFactory implements DMEntitySecuri
         } catch (HibernateException e) {
             throw new DataSourceException(e);
         }
+    }
+
+    public void saveDMEntityACL(DMEntityACL dmEntityACL) {
+        try {
+            this.getSession().saveOrUpdate(dmEntityACL);
+        } catch (NonUniqueObjectException e) {
+            dmEntityACL = (DMEntityACL) this.getSession().merge(dmEntityACL);
+            try {
+                getSession().saveOrUpdate(dmEntityACL);
+            } catch (HibernateException ex) {
+                throw new DataSourceException(ex, ex.getMessage());
+            }
+        }
+
     }
 
     public List<DMEntityACL> generateDMEntityAclsFromSecuritiesObject(List<DMEntitySecurity> securities, DMEntity entity) {

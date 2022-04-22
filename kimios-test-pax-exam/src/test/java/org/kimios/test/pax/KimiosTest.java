@@ -299,6 +299,8 @@ public class KimiosTest {
 
         AccessRight fffAccessRight = new AccessRight(false, false, false);
         AccessRight tffAccessRight = new AccessRight(true, false, false);
+        AccessRight ttfAccessRight = new AccessRight(true, true, false);
+        AccessRight tttAccessRight = new AccessRight(true, true, true);
 
         User user1 = this.administrationController.getUser(aclTestUtils.getSession(), aclTestUtils.getArray()[0][0], "kimios");
         Session user1Session = this.securityController.startSession(user1.getUid(), "kimios");
@@ -343,7 +345,51 @@ public class KimiosTest {
         aclTestUtils.updateAccessRight(user3AccessRight, user3Session, aclTestUtils.getWorkspace().getUid());
         Assert.assertEquals(user3AccessRight, fffAccessRight);
 
-/*        securityList = new ArrayList<>();
+        // add write right to user1 for workspace
+        securityList = new ArrayList<>();
+        securityList.add(new DMEntitySecurity(
+                aclTestUtils.getWorkspace().getUid(),
+                aclTestUtils.getWorkspace().getType(),
+                user1.getUid(),
+                user1.getAuthenticationSourceName(),
+                user1.getType(),
+                false,
+                true,
+                false
+        ));
+        this.securityController.updateDMEntitySecurities(
+                aclTestUtils.getSession(),
+                aclTestUtils.getWorkspace().getUid(),
+                securityList,
+                false,
+                true
+        );
+        aclTestUtils.updateAccessRight(user1AccessRight, user1Session, aclTestUtils.getWorkspace().getUid());
+        Assert.assertEquals(user1AccessRight, ttfAccessRight);
+
+        securityList = new ArrayList<>();
+        securityList.add(new DMEntitySecurity(
+                aclTestUtils.getWorkspace().getUid(),
+                aclTestUtils.getWorkspace().getType(),
+                user1.getUid(),
+                user1.getAuthenticationSourceName(),
+                user1.getType(),
+                true,
+                false,
+                false
+        ));
+        this.securityController.updateDMEntitySecurities(
+                aclTestUtils.getSession(),
+                aclTestUtils.getWorkspace().getUid(),
+                securityList,
+                false,
+                true
+        );
+        aclTestUtils.updateAccessRight(user1AccessRight, user1Session, aclTestUtils.getWorkspace().getUid());
+        Assert.assertEquals(user1AccessRight, tffAccessRight);
+
+        // add read right to user2 for workspace
+        securityList = new ArrayList<>();
         securityList.add(new DMEntitySecurity(
                 aclTestUtils.getWorkspace().getUid(),
                 aclTestUtils.getWorkspace().getType(),
@@ -364,9 +410,82 @@ public class KimiosTest {
         aclTestUtils.updateAccessRight(user1AccessRight, user1Session, aclTestUtils.getWorkspace().getUid());
         aclTestUtils.updateAccessRight(user2AccessRight, user2Session, aclTestUtils.getWorkspace().getUid());
         aclTestUtils.updateAccessRight(user3AccessRight, user3Session, aclTestUtils.getWorkspace().getUid());
-        Assert.assertEquals(user1AccessRight, tffAccessRight);
-        Assert.assertEquals(user2AccessRight, tffAccessRight);
-        Assert.assertEquals(user3AccessRight, fffAccessRight);*/
+        Assert.assertEquals(fffAccessRight, user1AccessRight);
+        Assert.assertEquals(tffAccessRight, user2AccessRight);
+        Assert.assertEquals(fffAccessRight, user3AccessRight);
+
+        // add read right to user3 and write for user2 for workspace
+        securityList = new ArrayList<>();
+        securityList.add(new DMEntitySecurity(
+                aclTestUtils.getWorkspace().getUid(),
+                aclTestUtils.getWorkspace().getType(),
+                user3.getUid(),
+                user3.getAuthenticationSourceName(),
+                user3.getType(),
+                true,
+                false,
+                false
+        ));
+        securityList.add(new DMEntitySecurity(
+                aclTestUtils.getWorkspace().getUid(),
+                aclTestUtils.getWorkspace().getType(),
+                user2.getUid(),
+                user2.getAuthenticationSourceName(),
+                user2.getType(),
+                true,
+                true,
+                false
+        ));
+        this.securityController.updateDMEntitySecurities(
+                aclTestUtils.getSession(),
+                aclTestUtils.getWorkspace().getUid(),
+                securityList,
+                false,
+                true
+        );
+        aclTestUtils.updateAccessRight(user1AccessRight, user1Session, aclTestUtils.getWorkspace().getUid());
+        aclTestUtils.updateAccessRight(user2AccessRight, user2Session, aclTestUtils.getWorkspace().getUid());
+        aclTestUtils.updateAccessRight(user3AccessRight, user3Session, aclTestUtils.getWorkspace().getUid());
+        Assert.assertEquals(fffAccessRight, user1AccessRight);
+        Assert.assertEquals(ttfAccessRight, user2AccessRight);
+        Assert.assertEquals(tffAccessRight, user3AccessRight);
+
+        // add right with appendMode
+        securityList = new ArrayList<>();
+        securityList.add(new DMEntitySecurity(
+                aclTestUtils.getWorkspace().getUid(),
+                aclTestUtils.getWorkspace().getType(),
+                user1.getUid(),
+                user1.getAuthenticationSourceName(),
+                user1.getType(),
+                true,
+                false,
+                false
+        ));
+        securityList.add(new DMEntitySecurity(
+                aclTestUtils.getWorkspace().getUid(),
+                aclTestUtils.getWorkspace().getType(),
+                user3.getUid(),
+                user3.getAuthenticationSourceName(),
+                user3.getType(),
+                true,
+                false,
+                true
+        ));
+        this.securityController.updateDMEntitySecurities(
+                aclTestUtils.getSession(),
+                aclTestUtils.getWorkspace().getUid(),
+                securityList,
+                false,
+                false
+        );
+        aclTestUtils.updateAccessRight(user1AccessRight, user1Session, aclTestUtils.getWorkspace().getUid());
+        aclTestUtils.updateAccessRight(user2AccessRight, user2Session, aclTestUtils.getWorkspace().getUid());
+        aclTestUtils.updateAccessRight(user3AccessRight, user3Session, aclTestUtils.getWorkspace().getUid());
+        Assert.assertEquals(tffAccessRight, user1AccessRight);
+        Assert.assertEquals(fffAccessRight, user2AccessRight);
+        Assert.assertEquals(tttAccessRight, user3AccessRight);
+
 
         try {
             aclTestUtils.tearDown();

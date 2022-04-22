@@ -31,6 +31,8 @@ public interface DMEntitySecurityFactory {
 
     public List<DMEntityACL> getDMEntityACL(DMEntity e) throws ConfigException, DataSourceException;
 
+    public void saveDMEntityACL(DMEntityACL dmEntityACL) throws ConfigException, DataSourceException;
+
     public List<DMEntityACL> saveDMEntitySecurity(DMEntitySecurity des, Share share) throws ConfigException, DataSourceException;
 
     public void updateDMEntitySecurity(DMEntitySecurity des) throws ConfigException, DataSourceException;
@@ -67,6 +69,8 @@ public interface DMEntitySecurityFactory {
     public void createSecurityEntityRules(String secEntityName, String secEntitySource, int secEntityType, Share share);
 
     public void deleteSecurityEntityRules(String secEntityName, String secEntitySource, int secEntityType);
+
+    public void deleteAcl(DMEntityACL dmEntityACL) throws ConfigException, DataSourceException;
 
     public void deleteAclsForShare (long shareId) throws ConfigException, DataSourceException;
 }

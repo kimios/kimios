@@ -15,27 +15,35 @@
  */
 package org.kimios.kernel.controller.impl;
 
+import org.kimios.api.events.annotations.DmsEvent;
+import org.kimios.api.events.annotations.DmsEventName;
+import org.kimios.exceptions.AccessDeniedException;
 import org.kimios.exceptions.ConfigException;
+import org.kimios.exceptions.DataSourceException;
+import org.kimios.exceptions.XMLException;
 import org.kimios.kernel.controller.AKimiosController;
 import org.kimios.kernel.controller.ISecurityController;
 import org.kimios.kernel.dms.model.DMEntity;
 import org.kimios.kernel.events.model.EventContext;
-import org.kimios.api.events.annotations.DmsEvent;
-import org.kimios.api.events.annotations.DmsEventName;
-import org.kimios.exceptions.AccessDeniedException;
-import org.kimios.exceptions.DataSourceException;
-import org.kimios.exceptions.XMLException;
 import org.kimios.kernel.hibernate.HFactory;
 import org.kimios.kernel.jobs.ThreadManager;
 import org.kimios.kernel.jobs.model.TaskDurationType;
+import org.kimios.kernel.jobs.model.TaskInfo;
 import org.kimios.kernel.jobs.security.ACLUpdateJob;
-import org.kimios.kernel.security.*;
-import org.kimios.kernel.security.model.*;
+import org.kimios.kernel.security.DMEntitySecurityFactory;
+import org.kimios.kernel.security.FactoryInstantiator;
+import org.kimios.kernel.security.SessionManager;
+import org.kimios.kernel.security.model.DMEntityACL;
+import org.kimios.kernel.security.model.DMEntitySecurity;
+import org.kimios.kernel.security.model.DMEntitySecurityUtil;
+import org.kimios.kernel.security.model.Role;
+import org.kimios.kernel.security.model.SecurityEntityType;
+import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.share.model.Share;
 import org.kimios.kernel.user.model.AuthenticationSource;
 import org.kimios.kernel.user.model.Group;
 import org.kimios.kernel.user.model.User;
-import org.kimios.kernel.jobs.model.TaskInfo;
+import org.kimios.kernel.ws.pojo.ACLUpdate;
 import org.kimios.kernel.ws.pojo.web.SessionUidParam;
 import org.kimios.utils.session.SessionUtils;
 import org.slf4j.Logger;
@@ -284,11 +292,18 @@ public class SecurityController extends AKimiosController implements ISecurityCo
                             .startJob(session, new ACLUpdateJob(aclUpdater, session, entity, newSubmittedSecurities, removedAcls, appendMode));
                     info.setTaskResultType(TaskDurationType.FUTURE_RESULT);
                 } else {
-                    fact.cleanACL(entity);
-                    List<DMEntityACL> nAcls = new ArrayList<DMEntityACL>();
-                    for (DMEntitySecurity acl : submittedSecurities) {
-                        nAcls.addAll(fact.saveDMEntitySecurity(acl, null));
-                    }
+                    // merge ACLs
+                    List<DMEntitySecurity> currentSecurities = fact.getDMEntitySecurities(entity);
+                    List<DMEntityACL> currentAcls = fact.generateDMEntityAclsFromSecuritiesObject(
+                            currentSecurities, entity);
+                    List<DMEntityACL> aclsFromSubmittedSecurities = fact.generateDMEntityAclsFromSecuritiesObject(
+                            submittedSecurities, entity);
+                    ACLUpdate aclUpdate = this.prepareACLUpdate(currentAcls, aclsFromSubmittedSecurities);
+
+                    List<DMEntityACL> nAcls = aclUpdate.getToBeAdded();
+                    nAcls.forEach(dmEntityACL -> fact.saveDMEntityACL(dmEntityACL));
+                    aclUpdate.getToBeDeleted().forEach(dmEntityACL -> fact.deleteAcl(dmEntityACL));
+
                     //set acl in the context for event handler
                     EventContext.addParameter("acls", nAcls);
                 }
@@ -300,6 +315,20 @@ public class SecurityController extends AKimiosController implements ISecurityCo
         } else {
             throw new AccessDeniedException();
         }
+    }
+
+    private ACLUpdate prepareACLUpdate(List<DMEntityACL> currentAcls, List<DMEntityACL> aclsFromSubmittedSecurities) {
+        // acls not submitted have to be deleted
+        List<DMEntityACL> toBeDeleted = currentAcls.stream()
+                .filter(dmEntityACL -> ! aclsFromSubmittedSecurities.contains(dmEntityACL))
+                .collect(Collectors.toList());
+
+        // absent submitted acls have to be added
+        List<DMEntityACL> toBeAdded = aclsFromSubmittedSecurities.stream()
+                .filter(dmEntityACL -> ! currentAcls.contains(dmEntityACL))
+                .collect(Collectors.toList());
+
+        return new ACLUpdate(toBeDeleted, toBeAdded);
     }
 
 
