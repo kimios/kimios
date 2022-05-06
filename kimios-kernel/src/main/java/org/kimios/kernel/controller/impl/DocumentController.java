@@ -53,6 +53,9 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 ;
@@ -796,8 +799,9 @@ public class DocumentController extends AKimiosController implements IDocumentCo
 
     @DmsEvent(eventName = {DmsEventName.FILE_UPLOAD})
     public void uploadNewDocumentVersion(
-            Session s, long documentId, InputStream documentStream, String hashMd5, String hashSha1)
-    throws ConfigException, DmsKernelException {
+            Session s, long documentId, InputStream documentStream, String hashMd5, String hashSha1, String fileName
+            , boolean force
+    ) throws ConfigException, DmsKernelException {
 
         try {
             EventContext initialContext = EventContext.get();
@@ -808,21 +812,38 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                     s.getGroups())) {
                 throw new AccessDeniedException();
             }
-            vrsCtrl.createDocumentVersionFromLatest(s, documentId);
+
             DataTransfer dt = null;
 
             dt = ftCtrl.startUploadTransaction(s, documentId, false);
 
             DataTransfer transac = transferFactoryInstantiator.getDataTransferFactory().getDataTransfer(dt.getUid());
 
+            String fileTmpPath = ConfigurationManager.getValue(Config.DEFAULT_TEMPORARY_PATH)
+                    + transac.getFilePath();
             this.writeFile(
-                    new File(
-                            ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH)
-                                    + transac.getFilePath()
-                    ),
+                    new File(fileTmpPath),
                     documentStream
             );
 
+            if (! force) {
+                // check same media type
+                // if not and without force param set to true, exception is thrown
+                String mediaType = this.detectMimeType(fileTmpPath, fileName);
+                if (!mediaType.equals(document.getMimeType())) {
+                    throw new NewVersionCandidateWithDifferentMediaType(
+                            "new version candidate has different media type than current document file"
+                    );
+                }
+            }
+
+            Path originalPath = Paths.get(fileTmpPath);
+            Path newPath = Paths.get(ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH)
+                    + transac.getFilePath());
+            Files.copy(originalPath, newPath, StandardCopyOption.REPLACE_EXISTING);
+            Files.delete(originalPath);
+
+            vrsCtrl.createDocumentVersionFromLatest(s, documentId);
             DocumentVersion dv =
                     dmsFactoryInstantiator.getDocumentVersionFactory().getDocumentVersion(transac.getDocumentVersionUid());
             this.updateDocumentVersion(s, dv, hashMd5, hashSha1, transac, document);
@@ -838,6 +859,8 @@ public class DocumentController extends AKimiosController implements IDocumentCo
             throw new AccessDeniedException();
         } catch (NoSuchAlgorithmException e) {
             throw new ConfigException(e);
+        } catch (NewVersionCandidateWithDifferentMediaType e){
+            throw e;
         } catch (Exception e){
             throw new DmsKernelException(e);
         }
@@ -939,7 +962,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
         return path;
     }
 
-    private void writeFile(File file, InputStream documentStream) throws IOException {
+    private void writeFile(File file, InputStream documentStream) throws FileNotFoundException, IOException {
         OutputStream out = new FileOutputStream(file, true);
 
         byte[] b = new byte[2048];

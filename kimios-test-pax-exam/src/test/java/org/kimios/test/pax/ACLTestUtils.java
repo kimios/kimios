@@ -1,11 +1,7 @@
 package org.kimios.test.pax;
 
 import org.kimios.exceptions.AccessDeniedException;
-import org.kimios.kernel.controller.AKimiosController;
-import org.kimios.kernel.controller.IAdministrationController;
-import org.kimios.kernel.controller.IFolderController;
-import org.kimios.kernel.controller.ISecurityController;
-import org.kimios.kernel.controller.IWorkspaceController;
+import org.kimios.kernel.controller.*;
 import org.kimios.kernel.dms.model.Folder;
 import org.kimios.kernel.dms.model.Workspace;
 import org.kimios.kernel.security.model.DMEntitySecurity;
@@ -23,11 +19,11 @@ public class ACLTestUtils extends AKimiosController {
 
     private static Logger logger = LoggerFactory.getLogger(ACLTestUtils.class);
 
-    private static String WORKSPACE_TEST = "workspace_test";
-    private static String FOLDER_TEST_1 = "folder_test_1";
-    private static String FOLDER_TEST_2 = "folder_test_2";
-    private static String FOLDER_TEST_3 = "folder_test_3";
-    private static String[] FOLDERS_TEST = {
+    public static String WORKSPACE_TEST = "workspace_test";
+    public static String FOLDER_TEST_1 = "folder_test_1";
+    public static String FOLDER_TEST_2 = "folder_test_2";
+    public static String FOLDER_TEST_3 = "folder_test_3";
+    public static String[] FOLDERS_TEST = {
             FOLDER_TEST_1,
             FOLDER_TEST_2,
             FOLDER_TEST_3
@@ -37,6 +33,10 @@ public class ACLTestUtils extends AKimiosController {
     private IAdministrationController administrationController;
     private IWorkspaceController workspaceController;
     private IFolderController folderController;
+
+    private IDocumentController documentController;
+
+    private IDocumentVersionController documentVersionController;
 
     private Session session;
     private Workspace workspace;
@@ -69,12 +69,16 @@ public class ACLTestUtils extends AKimiosController {
             ISecurityController securityController,
             IAdministrationController administrationController,
             IWorkspaceController workspaceController,
-            IFolderController folderController
+            IFolderController folderController,
+            IDocumentController documentController,
+            IDocumentVersionController documentVersionController
     ) {
         this.securityController = securityController;
         this.administrationController = administrationController;
         this.workspaceController = workspaceController;
         this.folderController = folderController;
+        this.documentController = documentController;
+        this.documentVersionController = documentVersionController;
 
         instance = this;
     }
@@ -109,6 +113,14 @@ public class ACLTestUtils extends AKimiosController {
 
     public void setFolderController(IFolderController folderController) {
         this.folderController = folderController;
+    }
+
+    public IDocumentController getDocumentController() {
+        return documentController;
+    }
+
+    public void setDocumentController(IDocumentController documentController) {
+        this.documentController = documentController;
     }
 
     public String[][] getArray() {

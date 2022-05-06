@@ -155,6 +155,10 @@ public class ServiceHelper implements IServiceHelper {
             return new DMServiceException(18, "Error 18 : " + e.toString(), e);
         }
 
+        if (e instanceof NewVersionCandidateWithDifferentMediaType) {
+            return new DMServiceException(19, "Error 19 : " + e.toString(), e);
+        }
+
         if (e instanceof Exception) {
             return new DMServiceException(0, e.getMessage(), e);
         }

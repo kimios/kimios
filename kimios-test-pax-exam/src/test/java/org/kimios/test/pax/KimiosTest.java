@@ -1,15 +1,15 @@
 package org.kimios.test.pax;
 
 import aQute.bnd.osgi.Constants;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.kimios.kernel.controller.IAdministrationController;
-import org.kimios.kernel.controller.IFolderController;
-import org.kimios.kernel.controller.ISecurityController;
-import org.kimios.kernel.controller.IWorkspaceController;
+import org.junit.runners.MethodSorters;
+import org.kimios.exceptions.DmsKernelException;
+import org.kimios.exceptions.NewVersionCandidateWithDifferentMediaType;
+import org.kimios.kernel.controller.*;
+import org.kimios.kernel.dms.model.Document;
+import org.kimios.kernel.dms.model.DocumentVersion;
 import org.kimios.kernel.security.model.DMEntitySecurity;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.user.model.AuthenticationSource;
@@ -24,12 +24,7 @@ import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerClass;
 
 import javax.inject.Inject;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -38,6 +33,7 @@ import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.*;
 
 @RunWith(PaxExam.class)
 @ExamReactorStrategy(PerClass.class)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class KimiosTest {
 
     @Inject
@@ -51,6 +47,15 @@ public class KimiosTest {
 
     @Inject
     private IFolderController folderController;
+
+    @Inject
+    private IDocumentController documentController;
+
+    @Inject
+    private IDocumentVersionController documentVersionController;
+
+    @Rule
+    public ExpectedException exceptionRule = ExpectedException.none();
 
     @ProbeBuilder
     public TestProbeBuilder probeConfiguration(TestProbeBuilder probe) {
@@ -263,8 +268,11 @@ public class KimiosTest {
     }
 
     private static File resourceToFile(String resourcePath, String filePath) throws IOException {
-        InputStream initialStream = KimiosTest.class
-                .getClassLoader().getResourceAsStream(resourcePath);
+        ClassLoader classloader = KimiosTest.class.getClassLoader();
+        InputStream initialStream = classloader.getResourceAsStream(resourcePath);
+        if (initialStream == null) {
+            throw new IOException("resource not found <" + resourcePath + ">");
+        }
         File targetFile = new File(filePath);
         OutputStream outStream = new FileOutputStream(targetFile);
 
@@ -285,7 +293,9 @@ public class KimiosTest {
                 this.securityController,
                 this.administrationController,
                 this.workspaceController,
-                this.folderController
+                this.folderController,
+                this.documentController,
+                this.documentVersionController
         );
 
         try {
@@ -495,6 +505,107 @@ public class KimiosTest {
         }
 
         Assert.assertTrue(true);
+    }
+
+    @Test
+    public void testUploadNewDocumentVersion() {
+        Assert.assertNotNull(this.documentController);
+
+        String[] documentSampleTab = { "sample1.pdf", "sample2.png" };
+        String documentSampleResourceDir = "documents/";
+        String documentSampleTmpDir = "/tmp/";
+
+        for(String documentSample: documentSampleTab) {
+            try {
+
+                resourceToFile(documentSampleResourceDir + documentSample,
+                        documentSampleTmpDir + documentSample);
+            } catch (IOException e) {
+                Assert.fail("failed to copy resource to file : " + documentSampleResourceDir + documentSample + " to "
+                        + documentSampleTmpDir + documentSample + " (" + e.getMessage() + ")");
+            }
+        }
+        Session adminSession = this.securityController.startSession("admin", "kimios");
+        InputStream inputStream = null;
+        try {
+            inputStream = new FileInputStream(documentSampleTmpDir + documentSampleTab[0]);
+        } catch (FileNotFoundException e) {
+            Assert.fail(e.getMessage());
+        }
+        long documentId = -1;
+        try {
+            documentId = this.documentController.createDocumentFromFullPathWithProperties(
+                    adminSession,
+                    "/" + ACLTestUtils.WORKSPACE_TEST + "/" + ACLTestUtils.FOLDERS_TEST[0] + "/" + documentSampleTab[0],
+                    false,
+                    new ArrayList<>(),
+                    false,
+                    -1,
+                    new ArrayList<>(),
+                    inputStream,
+                    null,
+                    null
+            );
+        } catch (IOException e) {
+            Assert.fail(e.getMessage());
+        }
+
+        Assert.assertNotEquals(-1, documentId);
+
+        Document document = this.documentController.getDocument(adminSession, documentId);
+        Assert.assertNotNull(document);
+        List< DocumentVersion> documentVersionList = this.documentVersionController.getDocumentVersions(adminSession, documentId);
+        Assert.assertEquals(1, documentVersionList.size());
+
+        try {
+            this.documentController.uploadNewDocumentVersion(
+                    adminSession,
+                    documentId,
+                    inputStream,
+                    null,
+                    null,
+                    documentSampleTab[0],
+                    false
+            );
+        } catch (DmsKernelException e) {
+            Assert.fail(e.toString());
+        }
+        documentVersionList = this.documentVersionController.getDocumentVersions(adminSession, documentId);
+        Assert.assertEquals(2, documentVersionList.size());
+
+        try {
+            inputStream = new FileInputStream(documentSampleTmpDir + documentSampleTab[1]);
+        } catch (FileNotFoundException e) {
+            Assert.fail(e.getMessage());
+        }
+        exceptionRule.expect(NewVersionCandidateWithDifferentMediaType.class);
+        this.documentController.uploadNewDocumentVersion(
+                adminSession,
+                documentId,
+                inputStream,
+                null,
+                null,
+                documentSampleTab[1],
+                false
+        );
+        documentVersionList = this.documentVersionController.getDocumentVersions(adminSession, documentId);
+        Assert.assertEquals(2, documentVersionList.size());
+
+        try {
+            this.documentController.uploadNewDocumentVersion(
+                    adminSession,
+                    documentId,
+                    inputStream,
+                    null,
+                    null,
+                    documentSampleTab[1],
+                    true
+            );
+        } catch (DmsKernelException e) {
+            Assert.fail(e.toString());
+        }
+        documentVersionList = this.documentVersionController.getDocumentVersions(adminSession, documentId);
+        Assert.assertEquals(3, documentVersionList.size());
     }
 
     @AfterClass

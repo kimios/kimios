@@ -157,7 +157,8 @@ public interface IDocumentController {
 
     @DmsEvent(eventName = {DmsEventName.FILE_UPLOAD})
     public void uploadNewDocumentVersion(
-            Session s, long documentId, InputStream documentStream, String hashMd5, String hashSha1
+            Session s, long documentId, InputStream documentStream, String hashMd5, String hashSha1, String fileName
+            , boolean force
     ) throws ConfigException, DmsKernelException;
 
     /**

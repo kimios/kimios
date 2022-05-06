@@ -172,7 +172,9 @@ public interface DocumentService {
             @ApiParam(name = "document", required = true)
             @Multipart(value = "document") @WebParam(name = "document") InputStream documentStream,
             @Multipart(value = "md5") String hashMd5,
-            @Multipart(value = "sha1") String hashSha1
+            @Multipart(value = "sha1") String hashSha1,
+            @Multipart(value = "fileNane") String fileName,
+            @Multipart(value = "force") boolean force
     ) throws DMServiceException;
 
     @GET @ApiOperation(value ="")

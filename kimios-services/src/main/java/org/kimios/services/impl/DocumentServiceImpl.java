@@ -312,10 +312,12 @@ public class DocumentServiceImpl extends CoreService implements DocumentService 
     }
 
     @Override
-    public void uploadNewDocumentVersion(String sessionId, long documentId, InputStream documentStream, String hashMd5, String hashSha1) throws DMServiceException {
+    public void uploadNewDocumentVersion(String sessionId, long documentId, InputStream documentStream, String hashMd5,
+                                         String hashSha1, String fileName, boolean force) throws DMServiceException {
         try {
             Session session = getHelper().getSession(sessionId);
-            documentController.uploadNewDocumentVersion(session, documentId, documentStream, hashMd5, hashSha1);
+            documentController.uploadNewDocumentVersion(session, documentId, documentStream, hashMd5, hashSha1, fileName
+                    , force);
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }
