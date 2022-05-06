@@ -14,7 +14,7 @@
     <properties>
         <tomcat.version>8.5.34</tomcat.version>
         <tomcat.name>apache-tomcat-${tomcat.version}</tomcat.name>
-        <tomcat.archive.url>http://archive.apache.org/dist/tomcat/tomcat-8/v${tomcat.version}/bin/${tomcat.name}.zip</tomcat.archive.url>
+        <tomcat.archive.url>https://archive.apache.org/dist/tomcat/tomcat-8/v${tomcat.version}/bin/${tomcat.name}.zip</tomcat.archive.url>
         <kimios.bundle.dirname>kimios</kimios.bundle.dirname>
     </properties>
 
