@@ -23,7 +23,6 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.kimios</groupId>
     <artifactId>kimios-utils</artifactId>
 
     <packaging>jar</packaging>
