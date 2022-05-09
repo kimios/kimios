@@ -20,15 +20,14 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
-import org.kimios.kernel.dms.model.DMEntityImpl;
 import org.kimios.kernel.ws.pojo.*;
+import org.kimios.kernel.ws.pojo.web.ConfirmNewVersionParam;
 import org.kimios.webservices.exceptions.DMServiceException;
 
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import java.io.InputStream;
 import java.util.List;
 
@@ -393,4 +392,19 @@ public interface DocumentService {
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "documentId") @WebParam(name = "documentId") long documentId) throws DMServiceException;
 
+    @POST @ApiOperation(value ="")
+    @Path("/confirmNewVersion")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Long confirmNewVersion(
+            @ApiParam(value = "confirmNewVersionParam") ConfirmNewVersionParam confirmNewVersionParam
+    ) throws DMServiceException;
+
+    @POST @ApiOperation(value ="")
+    @Path("/abortNewVersion")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Boolean abortNewVersion(
+            @ApiParam(value = "confirmNewVersionParam") ConfirmNewVersionParam confirmNewVersionParam
+    ) throws DMServiceException;
 }

@@ -39,6 +39,7 @@ public class JaxRSExceptionMapper implements javax.ws.rs.ext.ExceptionMapper<DMS
         if (exception instanceof DMServiceException) {
             wrap = new ExceptionMessageWrapper(exception.getMessage(), exception.getCode(), exception.getClass().getName());
             wrap.setStackTrace(exception.getStackTrace());
+            wrap.setDataTransferId(exception.getDataTransferId());
         } else {
             wrap = new ExceptionMessageWrapper(exception.getMessage(), exception.getClass().getName());
             wrap.setStackTrace(exception.getStackTrace());

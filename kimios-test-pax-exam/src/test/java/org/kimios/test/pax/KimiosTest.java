@@ -14,6 +14,8 @@ import org.kimios.kernel.security.model.DMEntitySecurity;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.user.model.AuthenticationSource;
 import org.kimios.kernel.user.model.User;
+import org.kimios.webservices.DocumentService;
+import org.kimios.webservices.exceptions.DMServiceException;
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.ProbeBuilder;
@@ -53,6 +55,9 @@ public class KimiosTest {
 
     @Inject
     private IDocumentVersionController documentVersionController;
+
+    @Inject
+    private DocumentService documentService;
 
     @Rule
     public ExpectedException exceptionRule = ExpectedException.none();
@@ -508,7 +513,7 @@ public class KimiosTest {
     }
 
     @Test
-    public void testUploadNewDocumentVersion() {
+    public void testUploadNewDocumentVersion() throws DMServiceException {
         Assert.assertNotNull(this.documentController);
 
         String[] documentSampleTab = { "sample1.pdf", "sample2.png" };
@@ -558,8 +563,8 @@ public class KimiosTest {
         Assert.assertEquals(1, documentVersionList.size());
 
         try {
-            this.documentController.uploadNewDocumentVersion(
-                    adminSession,
+            this.documentService.uploadNewDocumentVersion(
+                    adminSession.getUid(),
                     documentId,
                     inputStream,
                     null,
@@ -567,7 +572,7 @@ public class KimiosTest {
                     documentSampleTab[0],
                     false
             );
-        } catch (DmsKernelException e) {
+        } catch (DMServiceException e) {
             Assert.fail(e.toString());
         }
         documentVersionList = this.documentVersionController.getDocumentVersions(adminSession, documentId);
@@ -578,9 +583,9 @@ public class KimiosTest {
         } catch (FileNotFoundException e) {
             Assert.fail(e.getMessage());
         }
-        exceptionRule.expect(NewVersionCandidateWithDifferentMediaType.class);
-        this.documentController.uploadNewDocumentVersion(
-                adminSession,
+        exceptionRule.expect(DMServiceException.class);
+        this.documentService.uploadNewDocumentVersion(
+                adminSession.getUid(),
                 documentId,
                 inputStream,
                 null,
@@ -592,8 +597,8 @@ public class KimiosTest {
         Assert.assertEquals(2, documentVersionList.size());
 
         try {
-            this.documentController.uploadNewDocumentVersion(
-                    adminSession,
+            this.documentService.uploadNewDocumentVersion(
+                    adminSession.getUid(),
                     documentId,
                     inputStream,
                     null,
@@ -601,7 +606,7 @@ public class KimiosTest {
                     documentSampleTab[1],
                     true
             );
-        } catch (DmsKernelException e) {
+        } catch (DMServiceException e) {
             Assert.fail(e.toString());
         }
         documentVersionList = this.documentVersionController.getDocumentVersions(adminSession, documentId);

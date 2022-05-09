@@ -26,6 +26,7 @@ public class ExceptionMessageWrapper {
 
     private StackTraceElement[] stacktrace;
 
+    private long dataTransferId;
 
     @JsonIgnore
     private String name;
@@ -80,5 +81,13 @@ public class ExceptionMessageWrapper {
 
     public void setStackTrace(StackTraceElement[] stackTrace) {
         this.stacktrace = stackTrace;
+    }
+
+    public long getDataTransferId() {
+        return dataTransferId;
+    }
+
+    public void setDataTransferId(long dataTransferId) {
+        this.dataTransferId = dataTransferId;
     }
 }

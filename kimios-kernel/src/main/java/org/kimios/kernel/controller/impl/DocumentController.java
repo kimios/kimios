@@ -33,6 +33,7 @@ import org.kimios.kernel.dms.utils.PathUtils;
 import org.kimios.kernel.events.impl.AddonDataHandler;
 import org.kimios.kernel.events.model.EventContext;
 import org.kimios.kernel.filetransfer.model.DataTransfer;
+import org.kimios.kernel.filetransfer.model.DataTransferStatus;
 import org.kimios.kernel.filetransfer.zip.FileCompressionHelper;
 import org.kimios.kernel.log.model.DMEntityLog;
 import org.kimios.kernel.repositories.impl.RepositoryManager;
@@ -797,17 +798,15 @@ public class DocumentController extends AKimiosController implements IDocumentCo
         return mimeType;
     }
 
-    @DmsEvent(eventName = {DmsEventName.FILE_UPLOAD})
-    public void uploadNewDocumentVersion(
+    public long initNewDocumentVersionUpload(
             Session s, long documentId, InputStream documentStream, String hashMd5, String hashSha1, String fileName
             , boolean force
     ) throws ConfigException, DmsKernelException {
 
         try {
-            EventContext initialContext = EventContext.get();
-            EventContext.clear();
-
             Document document = dmsFactoryInstantiator.getDocumentFactory().getDocument(documentId);
+
+            // check document writable
             if (!getSecurityAgent().isWritable(document, s.getUserName(), s.getUserSource(),
                     s.getGroups())) {
                 throw new AccessDeniedException();
@@ -826,44 +825,47 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                     documentStream
             );
 
-            if (! force) {
-                // check same media type
-                // if not and without force param set to true, exception is thrown
-                String mediaType = this.detectMimeType(fileTmpPath, fileName);
-                if (!mediaType.equals(document.getMimeType())) {
-                    throw new NewVersionCandidateWithDifferentMediaType(
-                            "new version candidate has different media type than current document file"
-                    );
-                }
-            }
-
-            Path originalPath = Paths.get(fileTmpPath);
-            Path newPath = Paths.get(ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH)
-                    + transac.getFilePath());
-            Files.copy(originalPath, newPath, StandardCopyOption.REPLACE_EXISTING);
-            Files.delete(originalPath);
-
-            vrsCtrl.createDocumentVersionFromLatest(s, documentId);
-            DocumentVersion dv =
-                    dmsFactoryInstantiator.getDocumentVersionFactory().getDocumentVersion(transac.getDocumentVersionUid());
-            this.updateDocumentVersion(s, dv, hashMd5, hashSha1, transac, document);
-            if (transac.isHasBeenCheckedOutOnStart()) {
-                User u = authFactoryInstantiator.getAuthenticationSourceFactory().getAuthenticationSource(
-                        s.getUserSource()).getUserFactory().getUser(s.getUserName());
-                dmsFactoryInstantiator.getLockFactory().checkin(document, u);
-            }
-            transferFactoryInstantiator.getDataTransferFactory().removeDataTransfer(transac);
-
-            initialContext.setEntity(document);
+            return transac.getUid();
         } catch (IOException e) {
-            throw new AccessDeniedException();
-        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        } catch (ConfigException e) {
             throw new ConfigException(e);
-        } catch (NewVersionCandidateWithDifferentMediaType e){
-            throw e;
-        } catch (Exception e){
+        }  catch (Exception e){
             throw new DmsKernelException(e);
         }
+    }
+
+    public Boolean checkNewVersionCandidate(Session session, long dataTransferId, String fileName) throws DataSourceException,
+            AccessDeniedException, DmsKernelException {
+        DataTransfer transac = transferFactoryInstantiator.getDataTransferFactory().getDataTransfer(dataTransferId);
+        if ( session == null
+                || !session.getUserName().equals(transac.getUserName())
+                || !session.getUserSource().equals(transac.getUserSource())) {
+            throw new AccessDeniedException();
+        }
+
+        Long documentVersionId = transac.getDocumentVersionUid();
+        DocumentVersion documentVersion = vrsCtrl.getDocumentVersion(session, documentVersionId);
+        Document document = documentVersion.getDocument();
+        if (!getSecurityAgent().isWritable(document, session.getUserName(), session.getUserSource(),
+                session.getGroups())) {
+            throw new AccessDeniedException();
+        }
+
+        String fileTmpPath = ConfigurationManager.getValue(Config.DEFAULT_TEMPORARY_PATH)
+                + transac.getFilePath();
+
+        // check same media type
+        // if not and without force param set to true, exception is thrown
+        String mediaType = this.detectMimeType(fileTmpPath, fileName);
+        if (!mediaType.equals(document.getMimeType())) {
+            throw new NewVersionCandidateWithDifferentMediaType(
+                    "new version candidate has different media type than current document file",
+                    transac.getUid()
+            );
+        }
+
+        return true;
     }
 
     private void updateDocumentVersion(
@@ -1752,5 +1754,94 @@ public class DocumentController extends AKimiosController implements IDocumentCo
         EventContext.clear();
         EventContext.addParameter("share", shareSessionWrapper.getShare());
         EventContext.get().setSession(shareSessionWrapper.getSession());
+    }
+
+    @Override
+    @DmsEvent(eventName = {DmsEventName.FILE_UPLOAD})
+    public long confirmNewVersion(Session session, long dataTransferId)
+            throws DataSourceException, AccessDeniedException, ConfigException {
+        long newDocumentVersionId;
+        EventContext initialContext = EventContext.get();
+        EventContext.clear();
+
+        DataTransfer transac = transferFactoryInstantiator.getDataTransferFactory().getDataTransfer(dataTransferId);
+        if ( session == null
+                || !session.getUserName().equals(transac.getUserName())
+                || !session.getUserSource().equals(transac.getUserSource())) {
+            throw new AccessDeniedException();
+        }
+
+        Long documentVersionId = transac.getDocumentVersionUid();
+        DocumentVersion documentVersion = vrsCtrl.getDocumentVersion(session, documentVersionId);
+        Document document = documentVersion.getDocument();
+        if (!getSecurityAgent().isWritable(document, session.getUserName(), session.getUserSource(),
+                session.getGroups())) {
+            throw new AccessDeniedException();
+        }
+
+        try {
+
+            String fileTmpPath = ConfigurationManager.getValue(Config.DEFAULT_TEMPORARY_PATH)
+                    + transac.getFilePath();
+            Path originalPath = Paths.get(fileTmpPath);
+            Path newPath = Paths.get(ConfigurationManager.getValue(Config.DEFAULT_REPOSITORY_PATH)
+                    + transac.getFilePath());
+
+            Files.copy(originalPath, newPath, StandardCopyOption.REPLACE_EXISTING);
+
+            Files.delete(originalPath);
+
+            newDocumentVersionId = vrsCtrl.createDocumentVersionFromLatest(session, document.getUid());
+            DocumentVersion dv =
+                    dmsFactoryInstantiator.getDocumentVersionFactory().getDocumentVersion(transac.getDocumentVersionUid());
+            this.updateDocumentVersion(session, dv, transac.getHashMD5(), transac.getHashSHA(), transac, document);
+            if (transac.isHasBeenCheckedOutOnStart()) {
+                User u = authFactoryInstantiator.getAuthenticationSourceFactory().getAuthenticationSource(
+                        session.getUserSource()).getUserFactory().getUser(session.getUserName());
+                dmsFactoryInstantiator.getLockFactory().checkin(document, u);
+            }
+            transferFactoryInstantiator.getDataTransferFactory().removeDataTransfer(transac);
+
+            initialContext.setEntity(document);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchAlgorithmException e) {
+            throw new ConfigException(e);
+        }
+
+        return newDocumentVersionId;
+    }
+
+    @Override
+    public Boolean abortNewVersion(Session session, long dataTransferId) throws DataSourceException, AccessDeniedException {
+        DataTransfer transac = transferFactoryInstantiator.getDataTransferFactory().getDataTransfer(dataTransferId);
+        if ( session == null
+                || transac == null
+                || !session.getUserName().equals(transac.getUserName())
+                || !session.getUserSource().equals(transac.getUserSource())) {
+            throw new AccessDeniedException();
+        }
+
+        Long documentVersionId = transac.getDocumentVersionUid();
+        DocumentVersion documentVersion = vrsCtrl.getDocumentVersion(session, documentVersionId);
+        Document document = documentVersion.getDocument();
+        if (!getSecurityAgent().isWritable(document, session.getUserName(), session.getUserSource(),
+                session.getGroups())) {
+            throw new AccessDeniedException();
+        }
+
+        try {
+            String fileTmpPath = ConfigurationManager.getValue(Config.DEFAULT_TEMPORARY_PATH)
+                    + transac.getFilePath();
+            Path originalPath = Paths.get(fileTmpPath);
+            Files.delete(originalPath);
+
+            transac.setStatus(DataTransferStatus.EXPIRED);
+            transferFactoryInstantiator.getDataTransferFactory().updateDataTransfer(transac);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return true;
     }
 }

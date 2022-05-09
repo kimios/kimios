@@ -27,6 +27,7 @@ import org.kimios.kernel.ws.pojo.DMEntity;
 import org.kimios.kernel.ws.pojo.DMEntityWrapper;
 import org.kimios.kernel.ws.pojo.Document;
 import org.kimios.kernel.ws.pojo.WorkflowStatus;
+import org.kimios.kernel.ws.pojo.web.ConfirmNewVersionParam;
 import org.kimios.webservices.DocumentService;
 import org.kimios.webservices.exceptions.DMServiceException;
 
@@ -316,8 +317,12 @@ public class DocumentServiceImpl extends CoreService implements DocumentService 
                                          String hashSha1, String fileName, boolean force) throws DMServiceException {
         try {
             Session session = getHelper().getSession(sessionId);
-            documentController.uploadNewDocumentVersion(session, documentId, documentStream, hashMd5, hashSha1, fileName
+            long dataTransferId = documentController.initNewDocumentVersionUpload(session, documentId, documentStream, hashMd5, hashSha1, fileName
                     , force);
+            if (! force) {
+                this.documentController.checkNewVersionCandidate(session, dataTransferId, fileName);
+            }
+            this.documentController.confirmNewVersion(session, dataTransferId);
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }
@@ -791,6 +796,26 @@ public class DocumentServiceImpl extends CoreService implements DocumentService 
                     this.securityController.canWrite(session, documentId),
                     this.securityController.hasFullAccess(session, documentId)
             );
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
+
+    @Override
+    public Long confirmNewVersion(ConfirmNewVersionParam confirmNewVersionParam) throws DMServiceException {
+        try {
+            Session session = getHelper().getSession(confirmNewVersionParam.getSessionId());
+            return this.documentController.confirmNewVersion(session, confirmNewVersionParam.getDataTransferId());
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
+
+    @Override
+    public Boolean abortNewVersion(ConfirmNewVersionParam confirmNewVersionParam) throws DMServiceException {
+        try {
+            Session session = getHelper().getSession(confirmNewVersionParam.getSessionId());
+            return this.documentController.abortNewVersion(session, confirmNewVersionParam.getDataTransferId());
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }

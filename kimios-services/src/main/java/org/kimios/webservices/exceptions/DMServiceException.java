@@ -35,12 +35,20 @@ public class DMServiceException extends Exception
     {
         super(message, cause);
         code = 0;
+        dataTransferId = -1;
     }
 
     public DMServiceException(int code, String message, Throwable cause)
     {
         super(message, cause);
         this.code = code;
+        dataTransferId = -1;
+    }
+
+    public DMServiceException(String s, Throwable throwable, int code, long dataTransferId) {
+        super(s, throwable);
+        this.code = code;
+        this.dataTransferId = dataTransferId;
     }
 
     private int code = 0;
@@ -53,5 +61,15 @@ public class DMServiceException extends Exception
     public void setCode(int code)
     {
         this.code = code;
+    }
+
+    private long dataTransferId;
+
+    public long getDataTransferId() {
+        return dataTransferId;
+    }
+
+    public void setDataTransferId(long dataTransferId) {
+        this.dataTransferId = dataTransferId;
     }
 }

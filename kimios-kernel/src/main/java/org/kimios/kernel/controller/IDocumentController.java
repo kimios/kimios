@@ -22,7 +22,6 @@ import org.kimios.kernel.dms.model.*;
 import org.kimios.kernel.log.model.DMEntityLog;
 import org.kimios.kernel.security.model.DMEntitySecurity;
 import org.kimios.kernel.security.model.Session;
-import org.kimios.kernel.ws.pojo.Share;
 import org.kimios.kernel.ws.pojo.ShareSessionWrapper;
 
 import java.io.IOException;
@@ -155,8 +154,7 @@ public interface IDocumentController {
                                              String hashMd5,
                                              String hashSha1) throws IOException;
 
-    @DmsEvent(eventName = {DmsEventName.FILE_UPLOAD})
-    public void uploadNewDocumentVersion(
+    public long initNewDocumentVersionUpload(
             Session s, long documentId, InputStream documentStream, String hashMd5, String hashSha1, String fileName
             , boolean force
     ) throws ConfigException, DmsKernelException;
@@ -351,4 +349,11 @@ public interface IDocumentController {
 
     @DmsEvent(eventName = DmsEventName.DOCUMENT_SHARED)
     public void generateShareDmsEvent(ShareSessionWrapper shareSessionWrapper) throws DataSourceException, ConfigException, AccessDeniedException;
+
+    @DmsEvent(eventName = {DmsEventName.FILE_UPLOAD})
+    public long confirmNewVersion(Session session, long dataTransferId) throws DataSourceException, AccessDeniedException;
+
+    public Boolean abortNewVersion(Session session, long dataTransferId) throws DataSourceException, AccessDeniedException;
+
+    Boolean checkNewVersionCandidate(Session session, long dataTransferId, String fileName) throws DataSourceException, AccessDeniedException, DmsKernelException;
 }
