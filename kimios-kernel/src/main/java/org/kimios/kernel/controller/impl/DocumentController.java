@@ -18,7 +18,6 @@ package org.kimios.kernel.controller.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.commons.lang.StringUtils;
-import org.apache.tika.Tika;
 import org.kimios.api.events.annotations.DmsEvent;
 import org.kimios.api.events.annotations.DmsEventName;
 import org.kimios.exceptions.*;
@@ -47,6 +46,7 @@ import org.kimios.kernel.user.model.User;
 import org.kimios.kernel.ws.pojo.ShareSessionWrapper;
 import org.kimios.utils.configuration.ConfigurationManager;
 import org.kimios.utils.hash.HashCalculator;
+import org.kimios.utils.media.controller.IMediaUtilsController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,16 +59,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
-;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Transactional
@@ -86,6 +77,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
 
     IFileTransferController ftCtrl;
 
+    IMediaUtilsController mediaUtilsController;
 
     public IWorkspaceController getWksCtrl() {
         return wksCtrl;
@@ -125,6 +117,14 @@ public class DocumentController extends AKimiosController implements IDocumentCo
 
     public void setFtCtrl(IFileTransferController ftCtrl) {
         this.ftCtrl = ftCtrl;
+    }
+
+    public IMediaUtilsController getMediaUtilsController() {
+        return mediaUtilsController;
+    }
+
+    public void setMediaUtilsController(IMediaUtilsController mediaUtilsController) {
+        this.mediaUtilsController = mediaUtilsController;
     }
 
     /**
@@ -783,19 +783,8 @@ public class DocumentController extends AKimiosController implements IDocumentCo
         }
     }
 
-    private String detectMimeType(String filePath, String completeName) {
-        Tika tika = new Tika();
-        File file = new File(filePath);
-        String mimeType = "";
-        try {
-            mimeType = tika.detect(Files.readAllBytes(file.toPath()), completeName);
-        } catch (IOException ioException) {
-            log.error(ioException.getClass().getName());
-            log.error(ioException.getMessage());
-            log.error(ioException.getCause().getMessage());
-        }
-
-        return mimeType;
+    private String detectMimeType(String filePath, String completeName) throws IOException {
+        return mediaUtilsController.detectMimeType(filePath, completeName);
     }
 
     public long initNewDocumentVersionUpload(
@@ -857,7 +846,12 @@ public class DocumentController extends AKimiosController implements IDocumentCo
 
         // check same media type
         // if not and without force param set to true, exception is thrown
-        String mediaType = this.detectMimeType(fileTmpPath, fileName);
+        String mediaType = null;
+        try {
+            mediaType = this.detectMimeType(fileTmpPath, fileName);
+        } catch (IOException e) {
+            throw new DmsKernelException(e);
+        }
         if (!mediaType.equals(document.getMimeType())) {
             throw new NewVersionCandidateWithDifferentMediaType(
                     "new version candidate has different media type than current document file",

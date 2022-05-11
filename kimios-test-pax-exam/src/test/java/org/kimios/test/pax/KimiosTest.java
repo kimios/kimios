@@ -5,8 +5,6 @@ import org.junit.*;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
-import org.kimios.exceptions.DmsKernelException;
-import org.kimios.exceptions.NewVersionCandidateWithDifferentMediaType;
 import org.kimios.kernel.controller.*;
 import org.kimios.kernel.dms.model.Document;
 import org.kimios.kernel.dms.model.DocumentVersion;
@@ -14,6 +12,7 @@ import org.kimios.kernel.security.model.DMEntitySecurity;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.user.model.AuthenticationSource;
 import org.kimios.kernel.user.model.User;
+import org.kimios.utils.media.controller.IMediaUtilsController;
 import org.kimios.webservices.DocumentService;
 import org.kimios.webservices.exceptions.DMServiceException;
 import org.ops4j.pax.exam.Configuration;
@@ -27,9 +26,8 @@ import org.ops4j.pax.exam.spi.reactors.PerClass;
 
 import javax.inject.Inject;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.*;
 
@@ -58,6 +56,9 @@ public class KimiosTest {
 
     @Inject
     private DocumentService documentService;
+
+    @Inject
+    private IMediaUtilsController mediaUtilsController;
 
     @Rule
     public ExpectedException exceptionRule = ExpectedException.none();
@@ -612,6 +613,51 @@ public class KimiosTest {
         documentVersionList = this.documentVersionController.getDocumentVersions(adminSession, documentId);
         Assert.assertEquals(3, documentVersionList.size());
     }
+
+    @Test
+    public void testMediaUtils() {
+        String documentSampleResourceDir = "documents/";
+        String documentSampleTmpDir = "/tmp/" + new Date().getTime() + "/";
+        File file = new File(documentSampleTmpDir);
+        file.mkdir();
+        String[] resources = { "sample1.pdf", "sample2.png" };
+        Map<String, String> typeMap = new HashMap<>();
+        typeMap.put(resources[0], "application/pdf");
+        typeMap.put(resources[1], "image/png");
+
+        List<MediaUtilsTestResource> mediaUtilsTestResourceList = Arrays.asList(resources).stream().map(resourceName ->
+                new MediaUtilsTestResource(
+                        documentSampleResourceDir + resourceName,
+                        documentSampleTmpDir + resourceName,
+                        typeMap.get(resourceName),
+                        resourceName
+                )
+        ).collect(Collectors.toList());
+
+        mediaUtilsTestResourceList.forEach(mediaUtilsTestResource ->
+                {
+                    try {
+                        resourceToFile(mediaUtilsTestResource.getResourcePath(), mediaUtilsTestResource.getFileTmpPath());
+                    } catch (IOException e) {
+                        Assert.fail(e.getClass().getName() + " " + e.getMessage());
+                    }
+                }
+        );
+
+        mediaUtilsTestResourceList.forEach(mediaUtilsTestResource -> {
+            String result = null;
+            try {
+                result = mediaUtilsController.detectMimeType(mediaUtilsTestResource.getFileTmpPath(), mediaUtilsTestResource.getResourceName());
+            } catch (IOException e) {
+                Assert.fail(e.getClass().getName() + " " + e.getMessage());
+            }
+            Assert.assertEquals(mediaUtilsTestResource.getMediaType(), result);
+        });
+
+
+    }
+
+
 
     @AfterClass
     public static void deleteTestData() {

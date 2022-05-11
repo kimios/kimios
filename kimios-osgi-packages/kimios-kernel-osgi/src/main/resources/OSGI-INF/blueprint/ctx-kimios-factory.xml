@@ -276,6 +276,7 @@
         <property name="secCtrl" ref="securityController"/>
         <property name="vrsCtrl" ref="documentVersionController"/>
         <property name="ftCtrl" ref="fileTransferController"/>
+        <property name="mediaUtilsController" ref="mediaUtilsController" />
 
         <tx:transaction method="*" value="Required"/>
     </bean>

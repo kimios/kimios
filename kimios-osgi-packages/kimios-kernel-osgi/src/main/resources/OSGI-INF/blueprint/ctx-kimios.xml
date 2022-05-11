@@ -41,6 +41,8 @@
           factory-method="createInstance">
     </bean>
 
+    <reference id="mediaUtilsController" interface="org.kimios.utils.media.controller.IMediaUtilsController" />
+
     <reference id="webSocketManager" interface="org.kimios.websocket.client.controller.IWebSocketManager" />
 
     <bean id="eventHandlerManager" class="org.kimios.kernel.events.EventHandlerManager">

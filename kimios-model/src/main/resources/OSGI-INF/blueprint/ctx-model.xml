@@ -34,5 +34,9 @@
         <!--<jpa:context unitname="kimiosPu" property="entityManager"/>-->
     </bean>
 
+    <bean id="mediaUtilsController" class="org.kimios.utils.media.controller.impl.MediaUtilsController" />
+
+    <service id="mediaUtilsCtrlOsgi" ref="mediaUtilsController"
+             interface="org.kimios.utils.media.controller.IMediaUtilsController" />
 
 </blueprint>
