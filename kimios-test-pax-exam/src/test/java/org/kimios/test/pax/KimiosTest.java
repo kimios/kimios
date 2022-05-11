@@ -620,10 +620,12 @@ public class KimiosTest {
         String documentSampleTmpDir = "/tmp/" + new Date().getTime() + "/";
         File file = new File(documentSampleTmpDir);
         file.mkdir();
-        String[] resources = { "sample1.pdf", "sample2.png" };
+        String[] resources = { "sample1.pdf", "sample2.png", "sample1", "sample2" };
         Map<String, String> typeMap = new HashMap<>();
         typeMap.put(resources[0], "application/pdf");
         typeMap.put(resources[1], "image/png");
+        typeMap.put(resources[2], "application/pdf");
+        typeMap.put(resources[3], "image/png");
 
         List<MediaUtilsTestResource> mediaUtilsTestResourceList = Arrays.asList(resources).stream().map(resourceName ->
                 new MediaUtilsTestResource(
