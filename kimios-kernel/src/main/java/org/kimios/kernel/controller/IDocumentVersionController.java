@@ -210,4 +210,6 @@ public interface IDocumentVersionController
      * List document versions orphans
      */
     public List<DocumentVersion> getOprhansDocumentVersion();
+
+    String getMediaType(Session session, long documentVersionId) throws Exception;
 }

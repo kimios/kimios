@@ -20,6 +20,7 @@ import org.kimios.converter.controller.IConverterController;
 import org.kimios.kernel.index.controller.ISearchController;
 import org.kimios.kernel.index.controller.ISearchManagementController;
 import org.kimios.services.utils.CamelTool;
+import org.kimios.utils.media.controller.IMediaUtilsController;
 import org.kimios.webservices.IServiceHelper;
 
 public abstract class CoreService
@@ -71,6 +72,8 @@ public abstract class CoreService
     protected IExtensionController extensionController;
 
     protected IConverterController convertController;
+
+    protected IMediaUtilsController mediaUtilsController;
 
     public IExtensionController getExtensionController()
     {
@@ -251,6 +254,14 @@ public abstract class CoreService
 
     public void setCamelTool(CamelTool camelTool) {
         this.camelTool = camelTool;
+    }
+
+    public IMediaUtilsController getMediaUtilsController() {
+        return mediaUtilsController;
+    }
+
+    public void setMediaUtilsController(IMediaUtilsController mediaUtilsController) {
+        this.mediaUtilsController = mediaUtilsController;
     }
 }
 

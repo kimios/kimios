@@ -291,6 +291,7 @@
         <property name="aclUpdater" ref="aclUpdater"/>
         <property name="extensionRegistryManager" ref="extensionRegistryManager"/>
         <property name="configurationManager" ref="configurationManager"/>
+        <property name="mediaUtilsController" ref="mediaUtilsController" />
 
         <tx:transaction method="*" value="Required"/>
     </bean>

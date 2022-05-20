@@ -20,6 +20,7 @@ import org.kimios.kernel.security.model.Session;
 import org.kimios.kernel.ws.pojo.DocumentComment;
 import org.kimios.kernel.ws.pojo.DocumentVersion;
 import org.kimios.kernel.ws.pojo.Meta;
+import org.kimios.kernel.ws.pojo.web.StringResponse;
 import org.kimios.webservices.exceptions.DMServiceException;
 import org.kimios.webservices.DocumentVersionService;
 
@@ -539,6 +540,16 @@ public class DocumentVersionServiceImpl extends CoreService implements DocumentV
             }
 
             return pojos;
+        } catch (Exception e) {
+            throw getHelper().convertException(e);
+        }
+    }
+
+    @Override
+    public StringResponse getMediaType(String sessionId, long documentVersionId) throws DMServiceException {
+        try {
+            Session session = getHelper().getSession(sessionId);
+            return new StringResponse(documentVersionController.getMediaType(session, documentVersionId));
         } catch (Exception e) {
             throw getHelper().convertException(e);
         }

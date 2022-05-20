@@ -28,6 +28,7 @@ import org.kimios.kernel.repositories.impl.RepositoryManager;
 import org.kimios.kernel.security.model.Session;
 import org.kimios.utils.configuration.ConfigurationManager;
 import org.kimios.utils.hash.HashCalculator;
+import org.kimios.utils.media.controller.IMediaUtilsController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,6 +50,8 @@ import java.util.stream.Collectors;
 public class DocumentVersionController extends AKimiosController implements IDocumentVersionController {
 
     private static Logger logger = LoggerFactory.getLogger(DocumentVersionController.class);
+
+    IMediaUtilsController mediaUtilsController;
 
     /* (non-Javadoc)
     * @see org.kimios.kernel.controller.impl.IDocumentVersionController#getDocumentVersion(org.kimios.kernel.security.Session, long)
@@ -713,6 +716,24 @@ public class DocumentVersionController extends AKimiosController implements IDoc
         } else {
             throw new AccessDeniedException();
         }
+    }
+
+    public String getMediaType(Session session, long documentVersionId)
+            throws Exception {
+        DocumentVersion dv = this.getDocumentVersion(session, documentVersionId);
+        if (!getSecurityAgent()
+                .isReadable(dv.getDocument(), session.getUserName(), session.getUserSource(), session.getGroups())) {
+            throw new AccessDeniedException();
+        }
+        return this.mediaUtilsController.detectMimeType(RepositoryManager.directFileAccess(dv).getAbsolutePath(), "");
+    }
+
+    public IMediaUtilsController getMediaUtilsController() {
+        return mediaUtilsController;
+    }
+
+    public void setMediaUtilsController(IMediaUtilsController mediaUtilsController) {
+        this.mediaUtilsController = mediaUtilsController;
     }
 }
 

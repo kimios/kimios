@@ -21,6 +21,7 @@ import org.apache.cxf.rs.security.cors.CrossOriginResourceSharing;
 import org.kimios.kernel.ws.pojo.DocumentComment;
 import org.kimios.kernel.ws.pojo.DocumentVersion;
 import org.kimios.kernel.ws.pojo.Meta;
+import org.kimios.kernel.ws.pojo.web.StringResponse;
 import org.kimios.webservices.exceptions.DMServiceException;
 
 import javax.jws.WebParam;
@@ -190,6 +191,14 @@ public interface DocumentVersionService
     @GET @ApiOperation(value ="")
     @Path("/getMetaValues")
     @Produces("application/json") List<org.kimios.kernel.ws.pojo.MetaValue> getMetaValues(
+            @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+            @QueryParam(value = "documentVersionId") @WebParam(name = "documentVersionId") long documentVersionId)
+            throws DMServiceException;
+
+    @GET @ApiOperation(value ="")
+    @Path("/getMediaType")
+    @Produces("application/json")
+    StringResponse getMediaType(
             @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
             @QueryParam(value = "documentVersionId") @WebParam(name = "documentVersionId") long documentVersionId)
             throws DMServiceException;

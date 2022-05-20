@@ -89,6 +89,8 @@
     <reference id="pathController"
             interface="org.kimios.kernel.controller.IPathController"/>
 
+    <reference id="mediaUtilsController"
+               interface="org.kimios.utils.media.controller.IMediaUtilsController" />
 
     <!-- Service beans -->
 
@@ -454,6 +456,7 @@
         <property name="ruleController" ref="rulesController"/>
         <property name="extensionController" ref="extensionController"/>
         <property name="converterController" ref="converterController"/>
+        <property name="mediaUtilsController" ref="mediaUtilsController" />
     </bean>
 
     <bean id="documentVersionRestOnlyServiceBean" class="org.kimios.services.impl.DocumentVersionRestOnlyServiceImpl">
