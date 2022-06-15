@@ -156,6 +156,16 @@ public class DocumentController extends AKimiosController implements IDocumentCo
         return d;
     }
 
+    @Override
+    public Document getDocument(Session session, String path) throws DataSourceException, ConfigException, AccessDeniedException {
+        Document d = dmsFactoryInstantiator.getDocumentFactory().getDocument(path);
+        if (d == null ||
+                !getSecurityAgent().isReadable(d, session.getUserName(), session.getUserSource(), session.getGroups())) {
+            throw new AccessDeniedException();
+        }
+        return d;
+    }
+
     /**
      * Get a document from its uid with its shareSet (active shares only) loaded
      */
@@ -717,7 +727,7 @@ public class DocumentController extends AKimiosController implements IDocumentCo
                                                          boolean isSecurityInherited, List<DMEntitySecurity> items,
                                                          boolean isRecursive, long documentTypeId, List<MetaValue> metaValues,
                                                          InputStream documentStream, String hashMd5, String hashSha1)
-            throws NamingException, ConfigException, DataSourceException, AccessDeniedException {
+            throws DmsKernelException, ConfigException {
 
         try {
 
@@ -778,6 +788,8 @@ public class DocumentController extends AKimiosController implements IDocumentCo
             throw new AccessDeniedException();
         } catch (NoSuchAlgorithmException e) {
             throw new ConfigException(e);
+        } catch (NamingException e) {
+            throw e;
         } catch (Exception e){
             throw new DmsKernelException(e);
         }

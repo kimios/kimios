@@ -96,6 +96,13 @@ public interface ShareService {
     List<Share> listEntitiesSharedByMe(@QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId)
             throws DMServiceException;
 
+    @GET
+    @Path("/document")
+    @Produces(MediaType.APPLICATION_JSON)
+    List<Share> listDocumentShares(
+            @QueryParam(value = "sessionId") @WebParam(name = "sessionId") String sessionId,
+            @QueryParam(value = "documentId") @WebParam(name = "documentId") long documentId
+    ) throws DMServiceException;
 
     @POST
     @Path("/remove")

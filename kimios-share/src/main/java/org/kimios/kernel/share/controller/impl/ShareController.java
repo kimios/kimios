@@ -220,4 +220,14 @@ public class ShareController extends AKimiosController implements IShareControll
         share.setNotify(notify);
         this.shareFactory.saveShare(share);
     }
+
+    @Override
+    public List<Share> listDocumentShares(Session session, long documentId) throws Exception {
+        return shareFactory.listDocumentShares(
+                session.getUserName(),
+                session.getUserSource(),
+                documentId,
+                ShareStatus.ACTIVE
+        );
+    }
 }

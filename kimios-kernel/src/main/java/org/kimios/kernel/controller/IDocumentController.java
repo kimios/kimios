@@ -43,6 +43,19 @@ public interface IDocumentController {
             AccessDeniedException;
 
     /**
+     * get a document from its path
+     *
+     * @param session
+     * @param path
+     * @return
+     * @throws DataSourceException
+     * @throws ConfigException
+     * @throws AccessDeniedException
+     */
+    Document getDocument(Session session, String path) throws DataSourceException, ConfigException,
+            AccessDeniedException;
+
+    /**
      * @param session
      * @return
      * @throws ConfigException
@@ -152,7 +165,7 @@ public interface IDocumentController {
                                              List<MetaValue> metaValues,
                                              InputStream documentStream,
                                              String hashMd5,
-                                             String hashSha1) throws IOException;
+                                             String hashSha1) throws DmsKernelException, ConfigException;
 
     public long initNewDocumentVersionUpload(
             Session s, long documentId, InputStream documentStream, String hashMd5, String hashSha1, String fileName

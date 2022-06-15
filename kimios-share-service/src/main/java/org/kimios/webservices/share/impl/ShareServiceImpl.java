@@ -41,6 +41,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 /**
@@ -234,14 +235,29 @@ public class ShareServiceImpl implements ShareService {
         try {
             Session session = helper.getSession(sessionId);
             List<org.kimios.kernel.share.model.Share> shares =  shareController.listEntitiesSharedByMe(session);
-            List<Share> items = new ArrayList<Share>();
-            for(org.kimios.kernel.share.model.Share s: shares){
-                Share sPojo = s.toPojo();
-                if(s.getEntity().getType() == 3){
-                    sPojo.setEntity(documentController.getDocumentPojo((Document)s.getEntity()));
-                }
-                items.add(sPojo);
-            }
+            List<Share> items = shares.stream()
+                    .map(share -> {
+                        Share sPojo = share.toPojo();
+                        if (share.getEntity().getType() == 3) {
+                            sPojo.setEntity(documentController.getDocumentPojo((Document) share.getEntity()));
+                        }
+                        return sPojo;
+                    })
+                    .collect(Collectors.toList());
+            return items;
+        } catch (Exception e) {
+            throw helper.convertException(e);
+        }
+    }
+
+    @Override
+    public List<Share> listDocumentShares(String sessionId, long documentId) throws DMServiceException {
+        try {
+            Session session = helper.getSession(sessionId);
+            List<org.kimios.kernel.share.model.Share> shares =  shareController.listDocumentShares(session, documentId);
+            List<Share> items = shares.stream()
+                    .map(share -> share.toPojo())
+                    .collect(Collectors.toList());
             return items;
         } catch (Exception e) {
             throw helper.convertException(e);

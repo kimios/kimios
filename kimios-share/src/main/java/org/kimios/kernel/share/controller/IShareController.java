@@ -45,4 +45,6 @@ public interface IShareController {
 
     void updateShare(Session session, long shareId, String sharedToUserId, String sharedToUserSource, boolean read,
                      boolean write, boolean fullAcces, Date expirationDate, boolean notify) throws Exception;
+
+    List<Share> listDocumentShares(Session session, long documentId) throws Exception;
 }

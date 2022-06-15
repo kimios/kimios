@@ -1,6 +1,7 @@
 package org.kimios.test.pax;
 
 import org.kimios.exceptions.AccessDeniedException;
+import org.kimios.exceptions.NamingException;
 import org.kimios.kernel.controller.*;
 import org.kimios.kernel.dms.model.Folder;
 import org.kimios.kernel.dms.model.Workspace;
@@ -10,9 +11,7 @@ import org.kimios.kernel.user.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ACLTestUtils extends AKimiosController {
@@ -42,7 +41,31 @@ public class ACLTestUtils extends AKimiosController {
     private Workspace workspace;
     private List<Folder> folderList = new ArrayList<>();
 
+    public static Map<String, Long> folderMap = new HashMap<>();
+
     public static ACLTestUtils instance;
+
+    public static ACLTestUtils getInstance() {
+        return instance;
+    }
+
+    public static void createInstance(
+            ISecurityController securityController,
+            IAdministrationController administrationController,
+            IWorkspaceController workspaceController,
+            IFolderController folderController,
+            IDocumentController documentController,
+            IDocumentVersionController documentVersionController
+    ) {
+        instance = new ACLTestUtils(
+                securityController,
+                administrationController,
+                workspaceController,
+                folderController,
+                documentController,
+                documentVersionController
+        );
+    }
 
     public Session getSession() {
         return session;
@@ -56,7 +79,7 @@ public class ACLTestUtils extends AKimiosController {
         return folderList;
     }
 
-    private String array[][] = {
+    public static String array[][] = {
             {"testuser_1", "test1", "user1"},
             {"testuser_2", "test2", "user2"},
             {"testuser_3", "test3", "user3"}
@@ -241,7 +264,7 @@ public class ACLTestUtils extends AKimiosController {
     }
 
     public void setUp() throws Exception {
-        session = this.securityController.startSession("admin", "kimios");
+        session = securityController.startSession("admin", "kimios");
 
         if (session == null) {
             logger.error("session is null");
@@ -287,25 +310,33 @@ public class ACLTestUtils extends AKimiosController {
     }
 
     private void createWorkspaceAndFolders(String workspaceName, String[] folderNameList) throws Exception {
+        Workspace workspace = null;
         try {
-            Workspace workspace = this.workspaceController.getWorkspace(session, workspaceName);
+            workspace = this.workspaceController.getWorkspace(session, workspaceName);
+        } catch (AccessDeniedException e) {
+            // do nothing
+        }
+        try {
             if (workspace != null) {
                 this.workspaceController.deleteWorkspace(session, workspace.getUid());
             }
-        } catch (Exception e) {
-            // do nothing
-        }
-        this.workspaceController.createWorkspace(session, workspaceName);
-        this.workspace = this.workspaceController.getWorkspace(session, workspaceName);
-        for (String folder: folderNameList) {
-            long folderUid = this.folderController.createFolder(session, folder, this.workspace.getUid(), false);
-            Folder folder1 = this.folderController.getFolder(session, folderUid);
-            this.folderList.add(folder1);
-            for (String folder2: folderNameList) {
-                long subFolderUid = this.folderController.createFolder(session, folder2, folderUid, false);
-                Folder subFolder = this.folderController.getFolder(session, subFolderUid);
-                this.folderList.add(subFolder);
+            this.workspaceController.createWorkspace(session, workspaceName);
+            this.workspace = this.workspaceController.getWorkspace(session, workspaceName);
+            for (String folder: folderNameList) {
+                long folderUid = this.folderController.createFolder(session, folder, this.workspace.getUid(), false);
+                Folder folder1 = this.folderController.getFolder(session, folderUid);
+                this.folderList.add(folder1);
+                folderMap.put(folder, folderUid);
+                for (String folder2: folderNameList) {
+                    long subFolderUid = this.folderController.createFolder(session, folder2, folderUid, false);
+                    Folder subFolder = this.folderController.getFolder(session, subFolderUid);
+                    this.folderList.add(subFolder);
+                }
             }
+        } catch (NamingException e) {
+            // do nothing
+        } catch (Exception e) {
+            throw e;
         }
     }
 

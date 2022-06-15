@@ -31,6 +31,8 @@ public interface DocumentFactory
 
     public Document getDocument(String name, String extension, Folder f) throws ConfigException, DataSourceException;
 
+    public Document getDocument(String path) throws ConfigException, DataSourceException;
+
     public List<Document> getDocuments() throws ConfigException, DataSourceException;
 
     public int getDocumentsNumber() throws ConfigException, DataSourceException;

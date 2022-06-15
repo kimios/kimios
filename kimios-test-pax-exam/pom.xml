@@ -69,12 +69,7 @@
             <version>4.12</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.ops4j.pax.exam</groupId>
-            <artifactId>pax-exam-junit4</artifactId>
-            <version>4.8.0</version>
-            <scope>test</scope>
-        </dependency>
+
         <!-- https://mvnrepository.com/artifact/org.apache.karaf.package/org.apache.karaf.package.core -->
         <dependency>
             <groupId>org.apache.karaf.package</groupId>
@@ -82,12 +77,7 @@
             <version>4.0.4</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.ops4j.pax.exam</groupId>
-            <artifactId>pax-exam-container-karaf</artifactId>
-            <version>4.8.0</version>
-            <scope>test</scope>
-        </dependency>
+
         <dependency>
             <groupId>org.apache.karaf.shell</groupId>
             <artifactId>org.apache.karaf.shell.core</artifactId>
@@ -130,6 +120,12 @@
             <groupId>org.kimios</groupId>
             <artifactId>kimios-services</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-share</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>

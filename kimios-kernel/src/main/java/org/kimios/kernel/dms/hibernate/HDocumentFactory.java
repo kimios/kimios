@@ -127,6 +127,20 @@ public class HDocumentFactory extends HFactory implements DocumentFactory
         }
     }
 
+    @Override
+    public Document getDocument(String path) throws ConfigException, DataSourceException {
+        try {
+            Query q = getSession().createQuery(
+                                "from Document d where d.path=:path")
+                        .setString("path", path);
+            List<Document> list = q.list();
+
+            return list.size() == 1 ? list.get(0) : null;
+        } catch (HibernateException e) {
+            throw new DataSourceException(e, e.getMessage());
+        }
+    }
+
     public List<Document> getDocuments() throws ConfigException,
             DataSourceException
     {

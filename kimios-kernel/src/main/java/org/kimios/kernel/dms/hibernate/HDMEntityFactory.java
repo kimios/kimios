@@ -369,6 +369,25 @@ public class HDMEntityFactory extends HFactory implements DMEntityFactory {
                     .setString("pathExt", path + "/%")
                     .executeUpdate();
 
+            String cleanSharesRules =
+                    "DELETE FROM dm_security_rules"
+                            + " WHERE dm_entity_share_id IN "
+                            + "(SELECT id FROM dm_entity_share INNER JOIN dm_entity ON dm_entity_share.dm_entity_id = dm_entity.dm_entity_id "
+                            + " WHERE dm_entity.dm_entity_path LIKE :pathExact OR dm_entity_path LIKE :pathExt)";
+            getSession().createSQLQuery(cleanSharesRules)
+                    .setString("pathExact", path)
+                    .setString("pathExt", path + "/%")
+                    .executeUpdate();
+
+            String cleanShares =
+                    "DELETE FROM dm_entity_share"
+                    + " WHERE dm_entity_id IN "
+                    + "(SELECT dm_entity_id FROM dm_entity WHERE dm_entity_path LIKE :pathExact OR dm_entity_path LIKE :pathExt)";
+            getSession().createSQLQuery(cleanShares)
+                    .setString("pathExact", path)
+                    .setString("pathExt", path + "/%")
+                    .executeUpdate();
+
             getSession().createQuery("delete from DMEntityImpl where path like :pathExact or path like :pathExt")
                     .setString("pathExact", path)
                     .setString("pathExt", path + "/%")

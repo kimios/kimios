@@ -67,6 +67,25 @@ public class ShareFactory extends HFactory {
         return items;
     }
 
+    public List<Share> listDocumentShares(
+            String userId,
+            String userSource,
+            long documentId,
+            ShareStatus ... shareStatuses
+    ){
+        String query = "select s from Share s where s.creatorId = :userId and s.creatorSource = :userSource "
+                + " and s.shareStatus in (:shareStatuses) "
+                + " and s.entity.uid = :documentId"
+                + " and s.entity.type = 3";
+        return getSession()
+                .createQuery(query)
+                .setString("userId", userId)
+                .setString("userSource", userSource)
+                .setParameterList("shareStatuses", shareStatuses)
+                .setLong("documentId", documentId)
+                .list();
+    }
+
     public List<Share> listExpiredShares(){
         String query = "select s from Share s " +
                 " where s.expirationDate <=  CURRENT_TIMESTAMP()"
