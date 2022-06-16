@@ -227,7 +227,9 @@ public class ShareController extends AKimiosController implements IShareControll
                 session.getUserName(),
                 session.getUserSource(),
                 documentId,
-                ShareStatus.ACTIVE
+                ShareStatus.ACTIVE,
+                ShareStatus.DISABLED,
+                ShareStatus.EXPIRED
         );
     }
 }
