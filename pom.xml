@@ -166,7 +166,8 @@
         <module>kimios-zipper</module>
         <module>kimios-zipper-service</module>
         <module>kimios-test-pax-exam</module>
-        <module>kimios-integration-test</module>
+        <module>kimios-plugin-center</module>
+        <module>kimios-plugin-center-service</module>
     </modules>
     <packaging>pom</packaging>
     <build>

@@ -74,6 +74,8 @@
         <class>org.kimios.kernel.templates.model.Template</class>
         <class>org.kimios.kernel.notification.model.Notification</class>
         <class>org.kimios.kernel.notification.model.NotificationStatus</class>
+        <class>org.kimios.kernel.plugin.model.Plugin</class>
+        <class>org.kimios.kernel.plugin.model.PluginStatus</class>
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
 
         <properties>

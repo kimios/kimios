@@ -226,7 +226,19 @@
             <version>${project.version}</version>
             <classifier>blueprint</classifier>
         </dependency>
-
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-plugin-center</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+            <classifier>osgi</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.kimios</groupId>
+            <artifactId>kimios-plugin-center-service</artifactId>
+            <version>${project.version}</version>
+            <classifier>blueprint</classifier>
+        </dependency>
 
     </dependencies>
 

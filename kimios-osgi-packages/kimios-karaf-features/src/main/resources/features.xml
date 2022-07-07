@@ -102,6 +102,7 @@
         <bundle start-level="100">mvn:org.kimios/kimios-threads/${project.version}/jar/osgi</bundle>
         <bundle start-level="100">mvn:org.kimios/kimios-templates/${project.version}/jar/osgi</bundle>
         <bundle start-level="100">mvn:org.kimios/kimios-share/${project.version}/jar/osgi</bundle>
+        <bundle start-level="100">mvn:org.kimios/kimios-plugin-center/${project.version}/jar/osgi</bundle>
         <bundle start-level="100">mvn:org.kimios/kimios-convert/${project.version}/jar/osgi</bundle>
         <bundle start-level="100">mvn:org.kimios/kimios-convert-jodconverter/${project.version}/jar/osgi</bundle>
         <bundle start-level="100">mvn:org.kimios/kimios-convert-libreoffice/${project.version}/jar/osgi</bundle>
@@ -123,6 +124,7 @@
         <bundle>mvn:org.kimios/kimios-convert-service/${project.version}/jar/blueprint</bundle>
         <bundle>mvn:org.kimios/kimios-share-service/${project.version}/jar/blueprint</bundle>
         <bundle>mvn:org.kimios/kimios-zipper-service/${project.version}/jar/blueprint</bundle>
+        <bundle>mvn:org.kimios/kimios-plugin-center-service/${project.version}/jar/blueprint</bundle>
     </feature>
     <feature name="kimios-etherpad-editor" version="${project.version}">
         <feature>kimios-core</feature>
