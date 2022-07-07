@@ -28,7 +28,7 @@
     <description>Devlib' :: Apache Solr ${solr4j.version}</description>
     <packaging>bundle</packaging>
     <properties>
-        <solr4j.version>4.6.0</solr4j.version>
+        <solr4j.version>8.8.2</solr4j.version>
     </properties>
     <version>1.3-SNAPSHOT</version>
     <dependencies>
